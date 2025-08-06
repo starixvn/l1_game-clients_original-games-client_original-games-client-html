@@ -41,12 +41,11 @@ describe('URL Context', () => {
     describe('parseContextFromURL', () => {
         it('should parse valid URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct&rurl=https://example.com';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&rurl=https://example.com';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'en',
                 gameId: 1001,
-                isDirectMode: true,
                 redirectUrl: 'https://example.com'
             };
 
@@ -75,7 +74,6 @@ describe('URL Context', () => {
                 token: 'abc123',
                 language: 'en',
                 gameId: 0,
-                isDirectMode: false,
                 redirectUrl: null
             };
 
@@ -88,12 +86,11 @@ describe('URL Context', () => {
 
         it('should handle invalid gameId parameter', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&gameId=invalid&ref=d_direct';
+            globalThis.location.search = '?token=abc123&gameId=invalid';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: null,
                 gameId: NaN,
-                isDirectMode: false,
                 redirectUrl: null
             };
 
@@ -104,36 +101,13 @@ describe('URL Context', () => {
             expect(result).toEqual(expected);
         });
 
-        it('should set isDirectMode to false when ref is present and redirectUrl is not', () => {
-            // Arrange
-            globalThis.location.search = '?ref=d_direct&token=abc123';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(false);
-        });
-
-        it('should set isDirectMode to true when ref and redirectUrl are both present', () => {
-            // Arrange
-            globalThis.location.search = '?ref=d_direct&rurl=redirect&token=abc123&gameId=1001';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(true);
-        });
-
         it('should handle multiple URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1002&ref=d_direct&rurl=https://example.com&cg=Credit_VN';
+            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1002&rurl=https://example.com&cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'vi-VN',
                 gameId: 1002,
-                isDirectMode: true,
                 redirectUrl: 'https://example.com'
             };
 
@@ -146,12 +120,11 @@ describe('URL Context', () => {
 
         it('should handle HTML-encoded ampersands in URL parameters', () => {
             // Arrange
-            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1003&amp;ref=d_direct&amp;rurl=https://example.com&amp;cg=Credit_VN';
+            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1003&amp;rurl=https://example.com&amp;cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'c2ee0ee1-5bd8-409a-944e-42d3f131d8d9',
                 language: 'vi-VN',
                 gameId: 1003,
-                isDirectMode: true,
                 redirectUrl: 'https://example.com'
             };
 
@@ -166,11 +139,10 @@ describe('URL Context', () => {
     describe('loadURLContext', () => {
         it('should return context from URL when available', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct&rurl=https://example.com';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&rurl=https://example.com';
             const expectedContext = {
                 language: 'en',
                 gameId: 1001,
-                isDirectMode: true,
                 redirectUrl: 'https://example.com'
             };
 
@@ -199,7 +171,6 @@ describe('URL Context', () => {
             const localStorageContext = {
                 language: 'en',
                 gameId: 1001,
-                isDirectMode: false,
                 redirectUrl: null
             };
             mockStorageHelper.get.mockReturnValue(localStorageContext);
@@ -234,7 +205,7 @@ describe('URL Context', () => {
         it('should update context in localStorage', () => {
             // Arrange
             const existingContext = { language: 'en', gameId: 1001 };
-            const newContext = { gameId: 1002, isDirectMode: true };
+            const newContext = { gameId: 1002 };
             mockStorageHelper.get.mockReturnValue(existingContext);
 
             // Act
@@ -271,7 +242,7 @@ describe('URL Context', () => {
 
         it('should not store latestGameId when gameId is not provided', () => {
             // Arrange
-            const newContext = { isDirectMode: true };
+            const newContext = { language: 'en' };
             mockStorageHelper.get.mockReturnValue({});
 
             // Act

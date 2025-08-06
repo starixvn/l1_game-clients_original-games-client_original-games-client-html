@@ -2,17 +2,17 @@
 
 ## Overview
 
-This guide addresses the redundancy between `ref` (direct mode) and `op=SP` (SabaPlay) URL parameters and provides solutions for handling these combinations effectively.
+This guide addresses the redundancy between `rurl` (redirect URL) and `op=SP` (SabaPlay) URL parameters and provides solutions for handling these combinations effectively.
 
 ## 🚨 Latest Updates (Latest Version)
 
 ### Key Improvements Applied
 
-**1. Enhanced Direct Mode Logic**
+**1. Enhanced Redirect URL Logic**
 
--   **Change**: Direct mode calculation now properly handles lobby access
+-   **Change**: Redirect URL calculation now properly handles lobby access
 -   **Implementation**: `effectiveRedirectUrl = gameId === 0 ? null : redirectUrl`
--   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present
+-   **Impact**: Allows lobby access even when `rurl` parameters are present
 
 **2. User-Specific Storage**
 
@@ -32,21 +32,21 @@ This guide addresses the redundancy between `ref` (direct mode) and `op=SP` (Sab
 
 Based on the URL Parameter Combinations Matrix, the following combinations are redundant:
 
-| Combination | URL Example                                    | Issue                   | Behavior                            |
-| ----------- | ---------------------------------------------- | ----------------------- | ----------------------------------- |
-| 4           | `?gameId=0&ref=d_direct&op=SP`                 | Redundant SabaPlay flag | Both trigger auto nickname creation |
-| 6           | `?gameId=0&ref=d_direct&rurl=<base64>&op=SP`   | Redundant SabaPlay flag | Both support redirect URL           |
-| 10          | `?gameId=123&ref=d_direct&op=SP`               | Redundant SabaPlay flag | Both trigger auto nickname creation |
-| 12          | `?gameId=123&ref=d_direct&rurl=<base64>&op=SP` | Redundant SabaPlay flag | Both support redirect URL           |
-| 16          | `?ref=d_direct&op=SP`                          | Redundant flags         | Both trigger auto nickname creation |
+| Combination | URL Example                       | Issue                   | Behavior                  |
+| ----------- | --------------------------------- | ----------------------- | ------------------------- |
+| 4           | `?gameId=0&rurl=<base64>&op=SP`   | Redundant SabaPlay flag | Both support redirect URL |
+| 6           | `?gameId=0&rurl=<base64>&op=SP`   | Redundant SabaPlay flag | Both support redirect URL |
+| 10          | `?gameId=123&rurl=<base64>&op=SP` | Redundant SabaPlay flag | Both support redirect URL |
+| 12          | `?gameId=123&rurl=<base64>&op=SP` | Redundant SabaPlay flag | Both support redirect URL |
+| 16          | `?rurl=<base64>&op=SP`            | Redundant flags         | Both support redirect URL |
 
 ### Your Specific Case
 
-**URL**: `http://localhost:3000?token=d5548fbd-06d9-4b23-aff2-b8731a88916e&lang=vi-VN&appType=1&ref=d_direct&op=GN&cg=Credit_VN`
+**URL**: `http://localhost:3000?token=d5548fbd-06d9-4b23-aff2-b8731a88916e&lang=vi-VN&appType=1&rurl=<base64>&op=GN&cg=Credit_VN`
 
 **Analysis**:
 
--   `ref=d_direct` → `isDirectMode = true` (if `rurl` is present and `gameId > 0`)
+-   `rurl=<base64>` → `redirectUrl = <decoded_url>` (if `gameId > 0`)
 -   `op=GN` → `isSabaPlay = false` (only `op=SP` sets this to true)
 -   **Result**: No redundancy in this case
 -   **Issue**: Missing `rurl` parameter for post-game redirect
@@ -56,7 +56,7 @@ Based on the URL Parameter Combinations Matrix, the following combinations are r
 ### 1. Updated Parameter Parsing
 
 ```typescript
-// Enhanced redirect URL logic with smart direct mode calculation
+// Enhanced redirect URL logic with smart calculation
 let searchParams = globalThis.location?.search;
 
 // Fix: Handle HTML-encoded ampersands
@@ -65,26 +65,24 @@ if (searchParams) {
 }
 
 const params = new URLSearchParams(searchParams);
-const ref = params.get("ref");
 const redirectUrl = params.get("rurl");
 const isSabaPlay = params.get("op") === "SP";
 const gameId = Number(params.get("gameId") || 0);
 
-// Enhanced direct mode logic
+// Enhanced redirect URL logic
 const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
-const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
 
 // Detect redundant combinations
-const isRedundantCombination = isDirectMode && isSabaPlay;
+const isRedundantCombination = redirectUrl && isSabaPlay;
 
 // Determine effective mode for business logic
-let effectiveMode: "direct" | "sabaplay" | "normal" = "normal";
+let effectiveMode: "redirect" | "sabaplay" | "normal" = "normal";
 if (isRedundantCombination) {
-    // When both are present, prioritize direct mode for game selection logic
+    // When both are present, prioritize redirect URL for navigation logic
     // but keep SabaPlay for UI/branding purposes
-    effectiveMode = "direct";
-} else if (isDirectMode) {
-    effectiveMode = "direct";
+    effectiveMode = "redirect";
+} else if (redirectUrl) {
+    effectiveMode = "redirect";
 } else if (isSabaPlay) {
     effectiveMode = "sabaplay";
 }
@@ -108,7 +106,7 @@ const setUserSpecificGameId = (username: string, gameId: number): void => {
 
 // Enhanced game selection logic with user-specific storage
 const getEffectiveGameId = (urlContext: URLContextModel, username: string): number => {
-    if (urlContext.isDirectMode) {
+    if (urlContext.redirectUrl && urlContext.gameId > 0) {
         return urlContext.gameId; // Use URL gameId directly
     } else {
         // Use user-specific latestGameId for SSO logic
@@ -125,15 +123,15 @@ const getEffectiveGameId = (urlContext: URLContextModel, username: string): numb
  * Determines if auto nickname creation should be triggered
  */
 export function shouldAutoCreateNickname(context: URLContextModel): boolean {
-    return !!(context.isDirectMode || context.isSabaPlay);
+    return !!context.isSabaPlay;
 }
 
 /**
  * Determines the effective game selection mode
  */
-export function getGameSelectionMode(context: URLContextModel): "direct" | "sso" {
-    // Direct mode always bypasses SSO logic, even when redundant with SabaPlay
-    return context.isDirectMode ? "direct" : "sso";
+export function getGameSelectionMode(context: URLContextModel): "redirect" | "sso" {
+    // Redirect mode always bypasses SSO logic, even when redundant with SabaPlay
+    return context.redirectUrl && context.gameId > 0 ? "redirect" : "sso";
 }
 
 /**
@@ -145,13 +143,13 @@ export function validateURLCombination(context: URLContextModel): {
     recommendations: string[];
     warnings: string[];
 } {
-    const isRedundant = context.isDirectMode && context.isSabaPlay;
+    const isRedundant = context.redirectUrl && context.isSabaPlay;
     const warnings = [];
     const recommendations = [];
 
     if (isRedundant) {
-        warnings.push("Redundant combination: both ref and op=SP parameters present");
-        recommendations.push("Use either ref=d_direct OR op=SP, not both");
+        warnings.push("Redundant combination: both rurl and op=SP parameters present");
+        recommendations.push("Use either rurl OR op=SP, not both");
         recommendations.push("Consider using op=SP for SabaPlay integration");
     }
 
@@ -174,7 +172,7 @@ export function validateURLCombination(context: URLContextModel): {
 ### 1. Direct Access (Recommended)
 
 ```
-?ref=d_direct&rurl=<base64-encoded-url>
+?rurl=<base64-encoded-url>&gameId=123
 ```
 
 -   **Use Case**: Direct game access from external systems
@@ -196,20 +194,8 @@ export function validateURLCombination(context: URLContextModel): {
 ### 3. Lobby Access (Fixed)
 
 ```
-?gameId=0&ref=d_direct&rurl=<base64>  // rurl ignored, lobby access allowed
+?gameId=0&rurl=<base64>  // rurl ignored, lobby access allowed
 ?gameId=0&op=SP&rurl=<base64>     // rurl ignored, lobby access allowed
-```
-
--   **Use Case**: Lobby access with redirect parameters
--   **Behavior**: rurl ignored when gameId=0, lobby access prioritized
--   **User Storage**: Uses user-specific latestGameId for SSO logic
-
-### 4. Avoid Redundant Combinations
-
-```
-❌ ?ref=d_direct&op=SP&rurl=<base64-encoded-url>  // Redundant
-✅ ?ref=d_direct&rurl=<base64-encoded-url>       // Direct access
-✅ ?op=SP&rurl=<base64-encoded-url>          // SabaPlay integration
 ```
 
 ## Implementation Guidelines
@@ -219,13 +205,13 @@ export function validateURLCombination(context: URLContextModel): {
 ```typescript
 // Auto nickname creation
 if (shouldAutoCreateNickname(urlContext)) {
-    console.log(`Auto creating nickname - DirectMode: ${urlContext.isDirectMode}, SabaPlay: ${urlContext.isSabaPlay}`);
+    console.log(`Auto creating nickname - SabaPlay: ${urlContext.isSabaPlay}`);
     authorizeInfo = await autoCreateNickname(session, signOut);
 }
 
 // Game selection logic with user-specific storage
 const gameSelectionMode = getGameSelectionMode(urlContext);
-if (gameSelectionMode === "direct") {
+if (gameSelectionMode === "redirect") {
     currentGameId = urlContext.gameId; // Use URL gameId directly
 } else {
     // Use user-specific latestGameId for SSO logic
@@ -302,9 +288,8 @@ if (urlContext.redirectUrl) {
 ### 1. Your Specific Case
 
 ```typescript
-// Test URL: ?ref=d_direct&op=GN
+// Test URL: ?op=GN
 const context = parseContextFromURL();
-expect(context.isDirectMode).toBe(false); // No rurl, so not direct mode
 expect(context.isSabaPlay).toBe(false);
 expect(context.isRedundantCombination).toBe(false);
 expect(context.effectiveMode).toBe("normal");
@@ -313,12 +298,12 @@ expect(context.effectiveMode).toBe("normal");
 ### 2. Redundant Combination
 
 ```typescript
-// Test URL: ?ref=d_direct&op=SP&gameId=123
+// Test URL: ?op=SP&gameId=123&rurl=<base64>
 const context = parseContextFromURL();
-expect(context.isDirectMode).toBe(true);
 expect(context.isSabaPlay).toBe(true);
+expect(context.redirectUrl).toBe("<base64>");
 expect(context.isRedundantCombination).toBe(true);
-expect(context.effectiveMode).toBe("direct");
+expect(context.effectiveMode).toBe("redirect");
 ```
 
 ### 3. SabaPlay with Redirect
@@ -326,7 +311,6 @@ expect(context.effectiveMode).toBe("direct");
 ```typescript
 // Test URL: ?op=SP&rurl=<base64>
 const context = parseContextFromURL();
-expect(context.isDirectMode).toBe(false);
 expect(context.isSabaPlay).toBe(true);
 expect(context.redirectUrl).toBe("<base64>");
 expect(context.effectiveMode).toBe("sabaplay");
@@ -340,7 +324,6 @@ const context = parseContextFromURL();
 expect(context.token).toBe("test");
 expect(context.gameId).toBe(123);
 expect(context.isSabaPlay).toBe(true);
-expect(context.isDirectMode).toBe(true); // SabaPlay with gameId > 0
 ```
 
 ### 5. User-Specific Storage
@@ -364,10 +347,10 @@ expect(getUserSpecificGameId(user1)).not.toBe(getUserSpecificGameId(user2));
 
 ### 1. URL Parameter Guidelines
 
--   **Use `ref=d_direct`** for direct access scenarios
+-   **Use `rurl`** for direct access scenarios with redirect
 -   **Use `op=SP`** for SabaPlay platform integration
 -   **Always include `rurl`** when post-game redirect is needed
--   **Avoid combining both** `ref` and `op=SP` in the same URL
+-   **Avoid combining both** `rurl` and `op=SP` in the same URL
 -   **Handle HTML-encoded ampersands** properly
 -   **Use user-specific storage** for game tracking
 
@@ -376,7 +359,7 @@ expect(getUserSpecificGameId(user1)).not.toBe(getUserSpecificGameId(user2));
 #### Direct Game Access
 
 ```
-https://game.example.com?token=<token>&ref=d_direct&gameId=123&rurl=<base64-encoded-redirect>
+https://game.example.com?token=<token>&gameId=123&rurl=<base64-encoded-redirect>
 ```
 
 #### SabaPlay Integration
@@ -388,7 +371,7 @@ https://game.example.com?token=<token>&op=SP&gameId=123&rurl=<base64-encoded-red
 #### Lobby Access (Fixed)
 
 ```
-https://game.example.com?token=<token>&gameId=0&ref=d_direct&rurl=<base64>  // rurl ignored
+https://game.example.com?token=<token>&gameId=0&rurl=<base64>  // rurl ignored
 https://game.example.com?token=<token>&gameId=0&op=SP&rurl=<base64>     // rurl ignored
 ```
 

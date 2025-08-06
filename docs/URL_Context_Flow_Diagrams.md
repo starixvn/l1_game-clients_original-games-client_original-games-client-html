@@ -7,67 +7,66 @@ flowchart TD
     A1[User accesses application] --> B1[URL Context Parsing]
     B1 --> C1[Decode HTML-encoded ampersands]
     C1 --> D1{URL Parameters Present?}
-    D1 -->|Yes| E1[Parse gameId, isDirectMode, redirectUrl, isSabaPlay]
+    D1 -->|Yes| E1[Parse gameId, redirectUrl, isSabaPlay]
     D1 -->|No| F1[Load from localStorage]
 
     E1 --> G1[Calculate effectiveRedirectUrl]
-    G1 --> H1[Determine isDirectMode]
-    H1 --> I1[Store in localStorage]
-    F1 --> I1
-    I1 --> J1[Clear URL parameters]
-    J1 --> K1[SplashScreen Initialization]
+    G1 --> H1[Store in localStorage]
+    F1 --> H1
+    H1 --> I1[Clear URL parameters]
+    I1 --> J1[SplashScreen Initialization]
 
-    K1 --> L1[Get Session]
-    L1 --> M1{Session Valid?}
-    M1 -->|No| N1[Redirect to Timeout]
-    M1 -->|Yes| O1{UM Session?}
+    J1 --> K1[Get Session]
+    K1 --> L1{Session Valid?}
+    L1 -->|No| M1[Redirect to Timeout]
+    L1 -->|Yes| N1{UM Session?}
 
-    O1 -->|Yes| P1[Render UM Page]
-    O1 -->|No| Q1[Authorize User]
+    N1 -->|Yes| O1[Render UM Page]
+    N1 -->|No| P1[Authorize User]
 
-    Q1 --> R1{User Authorized?}
-    R1 -->|No| S1{isDirectMode or isSabaPlay?}
-    R1 -->|Yes| T1[Load Lobby Configs]
+    P1 --> Q1{User Authorized?}
+    Q1 -->|No| R1{isSabaPlay?}
+    Q1 -->|Yes| S1[Load Lobby Configs]
 
-    S1 -->|Yes| U1[Auto Create Nickname]
-    S1 -->|No| V1[Render Register]
+    R1 -->|Yes| T1[Auto Create Nickname]
+    R1 -->|No| U1[Render Register]
 
-    U1 --> W1{Success?}
-    W1 -->|No| N1
-    W1 -->|Yes| T1
+    T1 --> V1{Success?}
+    V1 -->|No| M1
+    V1 -->|Yes| S1
 
-    T1 --> X1{isDirectMode?}
-    X1 -->|Yes| Y1[Use URL gameId]
-    X1 -->|No| Z1[Apply SSO Redirect Logic]
+    S1 --> W1{gameId > 0?}
+    W1 -->|Yes| X1[Use URL gameId]
+    W1 -->|No| Y1[Apply SSO Redirect Logic]
 
-    Z1 --> AA1{firstSSOToLobby?}
-    AA1 -->|Yes| BB1[Set gameId equals 0 Lobby]
-    AA1 -->|No| CC1[Use user-specific latestGameId and Check Service]
+    Y1 --> Z1{firstSSOToLobby?}
+    Z1 -->|Yes| AA1[Set gameId equals 0 Lobby]
+    Z1 -->|No| BB1[Use user-specific latestGameId and Check Service]
 
-    Y1 --> DD1[Set currentGameId]
-    BB1 --> DD1
-    CC1 --> DD1
+    X1 --> CC1[Set currentGameId]
+    AA1 --> CC1
+    BB1 --> CC1
 
-    DD1 --> EE1[Custom Startup]
-    EE1 --> FF1[Preload Resources]
-    FF1 --> GG1[Render Dashboard]
+    CC1 --> DD1[Custom Startup]
+    DD1 --> EE1[Preload Resources]
+    EE1 --> FF1[Render Dashboard]
 
-    V1 --> HH1[User Registration]
-    HH1 --> II1[Submit Form]
-    II1 --> JJ1{isDirectMode?}
-    JJ1 -->|Yes| KK1[Keep Original gameId]
-    JJ1 -->|No| LL1[Update toLoadGameId]
+    U1 --> GG1[User Registration]
+    GG1 --> HH1[Submit Form]
+    HH1 --> II1{redirectUrl present?}
+    II1 -->|Yes| JJ1[Keep Original gameId]
+    II1 -->|No| KK1[Update toLoadGameId]
 
-    LL1 --> MM1{firstSSOToLobby?}
-    MM1 -->|Yes| NN1[Set toLoadGameId equals 0]
-    MM1 -->|No| OO1[Find Available Game]
+    KK1 --> LL1{firstSSOToLobby?}
+    LL1 -->|Yes| MM1[Set toLoadGameId equals 0]
+    LL1 -->|No| NN1[Find Available Game]
 
-    KK1 --> PP1[Trigger Preload]
-    NN1 --> PP1
-    OO1 --> PP1
+    JJ1 --> OO1[Trigger Preload]
+    MM1 --> OO1
+    NN1 --> OO1
 
-    PP1 --> FF1
-    FF1 --> GG1
+    OO1 --> EE1
+    EE1 --> FF1
 ```
 
 ## 2. URL Context Parameter Decision Tree
@@ -79,46 +78,42 @@ flowchart TD
     B2 -->|Other or None| D2[isSabaPlay is false]
 
     C2 --> E2{gameId parameter?}
-    E2 -->|Yes| F2[isDirectMode is true]
-    E2 -->|No| G2[isDirectMode is false]
+    E2 -->|Yes| F2[Use gameId directly]
+    E2 -->|No| G2[Apply SSO logic]
 
-    D2 --> H2{ref parameter?}
-    H2 -->|Yes| I2{gameId parameter?}
-    H2 -->|No| J2[isDirectMode is false]
+    D2 --> H2{gameId parameter?}
+    H2 -->|Yes| I2{gameId equals 0?}
+    H2 -->|No| J2[Apply SSO logic]
 
-    I2 -->|Yes| K2{gameId equals 0?}
-    I2 -->|No| L2[isDirectMode is false]
+    I2 -->|Yes| K2[Apply SSO logic]
+    I2 -->|No| L2{redirectUrl present?}
+    L2 -->|Yes| M2[Use gameId directly]
+    L2 -->|No| N2[Apply SSO logic]
 
-    K2 -->|Yes| M2[isDirectMode is false]
-    K2 -->|No| N2{redirectUrl present?}
-    N2 -->|Yes| O2[isDirectMode is true]
-    N2 -->|No| P2[isDirectMode is false]
+    F2 --> O2[Use gameId directly]
+    G2 --> P2[Apply SSO logic]
+    J2 --> P2
+    K2 --> P2
+    N2 --> P2
+    M2 --> O2
 
-    F2 --> Q2[Use gameId directly]
-    G2 --> R2[Apply SSO logic]
-    J2 --> R2
-    L2 --> R2
-    M2 --> R2
-    P2 --> R2
-    O2 --> Q2
+    P2 --> Q2{firstSSOToLobby?}
+    Q2 -->|Yes| R2[Set gameId equals 0 lobby]
+    Q2 -->|No| S2[Use user-specific latestGameId]
 
-    R2 --> S2{firstSSOToLobby?}
-    S2 -->|Yes| T2[Set gameId equals 0 lobby]
-    S2 -->|No| U2[Use user-specific latestGameId]
+    S2 --> T2{Service Available?}
+    T2 -->|Yes| U2[Keep gameId]
+    T2 -->|No| V2[Find Available Game]
 
-    U2 --> V2{Service Available?}
-    V2 -->|Yes| W2[Keep gameId]
-    V2 -->|No| X2[Find Available Game]
+    A2 --> W2{rurl parameter?}
+    W2 -->|Present| X2[redirectUrl equals rurl]
+    W2 -->|Not Present| Y2[redirectUrl is empty string]
 
-    A2 --> Y2{rurl parameter?}
-    Y2 -->|Present| Z2[redirectUrl equals rurl]
-    Y2 -->|Not Present| AA2[redirectUrl is empty string]
-
-    Z2 --> BB2{isSabaPlay?}
-    BB2 -->|Yes| CC2[Always use redirectUrl]
-    BB2 -->|No| DD2{gameId equals 0?}
-    DD2 -->|Yes| EE2[redirectUrl is null]
-    DD2 -->|No| FF2[Use redirectUrl]
+    X2 --> Z2{isSabaPlay?}
+    Z2 -->|Yes| AA2[Always use redirectUrl]
+    Z2 -->|No| BB2{gameId equals 0?}
+    BB2 -->|Yes| CC2[redirectUrl is null]
+    BB2 -->|No| DD2[Use redirectUrl]
 ```
 
 ## 3. Registration Flow Decision Matrix
@@ -135,7 +130,7 @@ flowchart TD
 
     H3 --> I3{Success?}
     I3 -->|No| G3
-    I3 -->|Yes| J3{isDirectMode?}
+    I3 -->|Yes| J3{redirectUrl present?}
 
     J3 -->|Yes| K3[Keep Original gameId]
     J3 -->|No| L3[Call updateToLoadGameId]
@@ -257,7 +252,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A7[Auto Nickname Creation] --> B7{isDirectMode or isSabaPlay?}
+    A7[Auto Nickname Creation] --> B7{isSabaPlay?}
     B7 -->|Yes| C7[Generate Random Name]
     B7 -->|No| D7[Show Registration Form]
 
@@ -354,18 +349,18 @@ flowchart TD
     G10 --> I10
     H10 --> I10
 
-    I10 --> J10{ref present AND effectiveRedirectUrl?}
-    J10 -->|Yes| K10[Direct Mode from ref]
+    I10 --> J10{redirectUrl present AND gameId > 0?}
+    J10 -->|Yes| K10[Game Access with Redirect]
     J10 -->|No| L10{isSabaPlay AND gameId > 0?}
-    L10 -->|Yes| M10[Direct Mode from SabaPlay]
-    L10 -->|No| N10[Not Direct Mode]
+    L10 -->|Yes| M10[Game Access from SabaPlay]
+    L10 -->|No| N10[Normal SSO Flow]
 
-    K10 --> O10[isDirectMode = true]
+    K10 --> O10[Use URL gameId directly]
     M10 --> O10
-    N10 --> P10[isDirectMode = false]
+    N10 --> P10[Apply SSO Logic]
 
     O10 --> Q10[Skip SSO Logic]
-    P10 --> R10[Apply SSO Logic]
+    P10 --> R10[Apply Business Rules]
 
     Q10 --> S10[Use URL gameId directly]
     R10 --> T10[Apply Business Rules]
@@ -469,20 +464,16 @@ flowchart TD
 ```mermaid
 flowchart TD
     A13[Analytics Login] --> B13[Get URL Context]
-    B13 --> C13{isDirectMode?}
-    C13 -->|Yes| D13[ssoMethod is SSO_Direct_Mode_To_Game]
-    C13 -->|No| E13{gameId greater than 0?}
+    B13 --> C13{gameId greater than 0?}
+    C13 -->|Yes| D13[ssoMethod is SSO_To_Game]
+    C13 -->|No| E13[ssoMethod is SSO_To_Lobby]
 
-    E13 -->|Yes| F13[ssoMethod is SSO_To_Game]
-    E13 -->|No| G13[ssoMethod is SSO_To_Lobby]
+    D13 --> F13[Set Analytics Context]
+    E13 --> F13
 
-    D13 --> H13[Set Analytics Context]
-    F13 --> H13
-    G13 --> H13
-
-    H13 --> I13[Track gameId]
-    I13 --> J13[Track language]
-    J13 --> K13[Track gameName if gameId greater than 0]
+    F13 --> G13[Track gameId]
+    G13 --> H13[Track language]
+    H13 --> I13[Track gameName if gameId greater than 0]
 ```
 
 ## 14. Error Handling Flow

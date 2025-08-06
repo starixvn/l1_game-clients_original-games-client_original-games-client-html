@@ -298,7 +298,6 @@ describe("SplashScreen Component", () => {
             // Arrange
             const urlContext = {
                 gameId: 123,
-                isDirectMode: true,
                 token: "test-token",
                 language: "en",
             };
@@ -326,7 +325,6 @@ describe("SplashScreen Component", () => {
             // Arrange
             const urlContext = {
                 gameId: 123,
-                isDirectMode: false,
                 token: "test-token",
                 language: "en",
             };
@@ -348,7 +346,6 @@ describe("SplashScreen Component", () => {
             // Arrange
             const urlContext = {
                 gameId: 123,
-                isDirectMode: false,
                 token: "test-token",
                 language: "en",
             };

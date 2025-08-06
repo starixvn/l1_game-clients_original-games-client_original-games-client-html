@@ -38,7 +38,6 @@ const loadedGames: Record<number, boolean> = {};
 const PreloadResources: React.FC<{
     setIsDonePreload: Function;
     gameId: number;
-    isDirectMode?: boolean;
     bannerId?: number;
     locale?: string;
     gameIdsIcon?: number[];

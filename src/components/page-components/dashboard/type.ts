@@ -9,7 +9,6 @@ export type DashboardProps = {
     session: SSOResponse;
     queryGame: number;
     setIsUm: Function;
-    directMode: boolean;
     tolgee: TolgeeInstance;
     authorizeResponse: AuthorizeResponse;
     lobbyConfigs: ILobbyConfigs;

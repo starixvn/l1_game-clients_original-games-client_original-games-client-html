@@ -86,9 +86,7 @@ export class AnalyticsHelper {
     static login(urlContext: URLContextModel) {
         try {
             let ssoMethod = "SSO_To_Lobby";
-            if (urlContext.isDirectMode) {
-                ssoMethod = `SSO_Direct_Mode_To_Game`;
-            } else if (urlContext.gameId) {
+            if (urlContext.gameId) {
                 ssoMethod = `SSO_To_Game`;
             }
 

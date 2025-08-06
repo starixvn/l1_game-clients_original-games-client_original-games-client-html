@@ -40,9 +40,7 @@ export const Games: React.FC<Props> = ({
     userStakeLevel,
     updateUserStakeLevel,
     openGameId,
-    directMode,
 }) => {
-    const { isDirectMode } = useContext(URLContext);
     const { theme } = useTheme();
     const { session } = usePlayerContext();
     const settingDispatch = useSettingDispatch();

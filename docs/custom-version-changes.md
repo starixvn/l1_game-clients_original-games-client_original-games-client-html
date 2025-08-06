@@ -181,8 +181,7 @@ export const Games: React.FC<Props> = ({
 
     return (
         <div className={styles["game-wrapper"]}>
-            {directMode ? getGameComponentById(openGameId) : renderSwiper(openGameId)}
-            {!isDirectMode && isMobileOnly && <SwitchGamesGuide />}
+            {getGameComponentById(openGameId)}
         </div>
     );
 };

@@ -26,21 +26,21 @@ This document describes the complete workflow for the **custom version** of the 
 [URLContext] parseContextFromURL - URL search params: ?token=xxx&lang=vi-VN&appType=1&gameId=1003&op=SP&cg=SabaPlay_VN
 [URLContext] parseContextFromURL - Decoded search params: ?token=xxx&lang=vi-VN&appType=1&gameId=1003&op=SP&cg=SabaPlay_VN
 [URLContext] parseContextFromURL - All params: (6) [Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
-[URLContext] parseContextFromURL - Direct mode calculation: {ref: null, redirectUrl: null, effectiveRedirectUrl: null, isSabaPlay: true, gameId: 1003, isDirectMode: true}
-[URLContext] parseContextFromURL - Parsed result: {token: 'xxx', language: 'vi-VN', gameId: 1003, isDirectMode: true, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
-[URLContext] loadURLContext - Context from URL: {token: 'xxx', language: 'vi-VN', gameId: 1003, isDirectMode: true, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
-[URLContext] loadURLContext - Context from localStorage: {language: 'vi-VN', gameId: 0, isDirectMode: true, redirectUrl: null, firstSSOToLobby: false, isSabaPlay: true}
-[URLContext] loadURLContext - Storing context in localStorage: {token: undefined, language: 'vi-VN', gameId: 1003, isDirectMode: true, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
-[URLContext] loadURLContext - Final context returned: {token: 'xxx', language: 'vi-VN', gameId: 1003, isDirectMode: true, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
+[URLContext] parseContextFromURL - SabaPlay calculation: {op: 'SP', isSabaPlay: true, gameId: 1003}
+[URLContext] parseContextFromURL - Parsed result: {token: 'xxx', language: 'vi-VN', gameId: 1003, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
+[URLContext] loadURLContext - Context from URL: {token: 'xxx', language: 'vi-VN', gameId: 1003, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
+[URLContext] loadURLContext - Context from localStorage: {language: 'vi-VN', gameId: 0, redirectUrl: null, firstSSOToLobby: false, isSabaPlay: true}
+[URLContext] loadURLContext - Storing context in localStorage: {token: undefined, language: 'vi-VN', gameId: 1003, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
+[URLContext] loadURLContext - Final context returned: {token: 'xxx', language: 'vi-VN', gameId: 1003, redirectUrl: null, firstSSOToLobby: true, isSabaPlay: true}
 ```
 
 #### Key Logic:
 
 1. **HTML-encoded ampersands handling**: Decodes `&amp;` to `&` before parsing
 2. **User-specific latestGameId**: Uses username to create isolated storage keys
-3. **Direct mode calculation**:
-    - `isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0)`
-    - When `gameId=0` (lobby), `effectiveRedirectUrl` is set to `null` to ignore `rurl`
+3. **SabaPlay calculation**:
+    - `isSabaPlay = op === 'SP'`
+    - Triggers auto nickname creation for SabaPlay platform integration
 4. **Context storage**: Stores context in localStorage without token for security
 
 ## Splash Screen Initialization
@@ -51,7 +51,7 @@ This document describes the complete workflow for the **custom version** of the 
 
 ```
 [SplashScreen] handleInitialization - Starting initialization
-[SplashScreen] handleInitialization - URL Context values: {gameId: 1003, isDirectMode: true, token: 'xxx', language: 'vi-VN', firstSSOToLobby: true, isSabaPlay: true}
+[SplashScreen] handleInitialization - URL Context values: {gameId: 1003, token: 'xxx', language: 'vi-VN', firstSSOToLobby: true, isSabaPlay: true}
 [SplashScreen] handleInitialization - Session retrieved: {isAuthenticated: true, umInfo: null, username: 'SabaPlay_4100300~401837', language: 'vi-VN', ss: 'xxx'}
 [SplashScreen] handleInitialization - Language loaded: vi
 [SplashScreen] handleInitialization - Authorization result: {authorized: true, user: {...}, umInfo: null, isUM: false}
@@ -62,7 +62,6 @@ This document describes the complete workflow for the **custom version** of the 
 [SplashScreen] handleInitialization - Final authorization check: true
 [SplashScreen] handleInitialization - User authorized, loading lobby configs
 [SplashScreen] handleInitialization - Initial toLoadGameId: 1003
-[SplashScreen] handleInitialization - isDirectMode: true
 [SplashScreen] handleInitialization - Custom version: Always direct to specific game, default to 1005 if no valid gameId
 [SplashScreen] handleInitialization - Final toLoadGameId set: 1003
 [SplashScreen] handleInitialization - Running custom startup
@@ -103,7 +102,7 @@ This document describes the complete workflow for the **custom version** of the 
 #### Console Logs:
 
 ```
-[Dashboard] constructor - Props received: {queryGame: 1003, directMode: true, authorizeResponse: {...}, lobbyConfigs: {...}}
+[Dashboard] constructor - Props received: {queryGame: 1003, authorizeResponse: {...}, lobbyConfigs: {...}}
 [Dashboard] constructor - Initial state set: {queryGame: 1003, openGameId: null, authorizeInfo: {...}}
 [Dashboard] constructor - Dashboard initialized successfully
 [Dashboard] render - Component render called
@@ -119,7 +118,7 @@ This document describes the complete workflow for the **custom version** of the 
 
 #### Key Logic:
 
-1. **Props validation**: Validates queryGame, directMode, authorizeResponse, lobbyConfigs
+1. **Props validation**: Validates queryGame, authorizeResponse, lobbyConfigs
 2. **State initialization**: Sets initial state with queryGame and empty openGameId
 3. **Game offer check**: Verifies if the requested game is available
 4. **Game opening**: Automatically opens the game if it's in the offer list
@@ -132,9 +131,9 @@ This document describes the complete workflow for the **custom version** of the 
 #### Console Logs:
 
 ```
-[DashboardHandler] constructor - Props: {router: {...}, data-testid: 'dashboard-component', session: {...}, queryGame: 1003, setIsUm: ƒ, directMode: true, authorizeResponse: {...}, lobbyConfigs: {...}}
+[DashboardHandler] constructor - Props: {router: {...}, data-testid: 'dashboard-component', session: {...}, queryGame: 1003, setIsUm: ƒ, authorizeResponse: {...}, lobbyConfigs: {...}}
 [DashboardHandler] checkIsNotOfferGame - offerGames: (7) [1001, 1002, 1003, 1004, 1005, 1006, 1007]
-[DashboardHandler] checkIsNotOfferGame - props: {directMode: true, queryGame: 1003}
+[DashboardHandler] checkIsNotOfferGame - props: {queryGame: 1003}
 [DashboardHandler] checkIsNotOfferGame - Direct mode result: false
 [DashboardHandler] shouldRenderGames - Input: {offerGames: Array(7), openGameId: 1003}
 [DashboardHandler] shouldRenderGames - URL context: {backToLobby: true, ssoRedirectGameId: 1003}

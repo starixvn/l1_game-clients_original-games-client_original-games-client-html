@@ -241,7 +241,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 updateUserStakeLevel={this.handleUpdateUserStakeLevel}
                 openGameId={urlContext.gameId}
                 openGameName={openGameName}
-                directMode={this.props.directMode}
             />
         );
     }

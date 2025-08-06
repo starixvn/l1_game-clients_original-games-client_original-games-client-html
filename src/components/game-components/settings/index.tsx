@@ -8,7 +8,7 @@ const ButtonSettingClassName = "setting-button";
 
 export function Settings() {
     const clickSound = useClickSound();
-    const { backToRedirectUrl, isDirectMode, redirectUrl } = useContext(URLContext);
+    const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobbyOnclick = () => {
         clickSound();
@@ -19,13 +19,13 @@ export function Settings() {
     return (
         <div className={styles["settings-container"]}>
             <div className={styles["setting-right"]}>
-                {isDirectMode && redirectUrl && (
+                {redirectUrl && (
                     <button className={styles[ButtonSettingClassName]} onClick={() => handleBackToLobbyOnclick()}>
                         <span id="icon-home" className="icon-home" />
                     </button>
                 )}
 
-                {!isDirectMode && (
+                {!redirectUrl && (
                     <button className={styles[ButtonSettingClassName]} onClick={() => handleBackToLobbyOnclick()}>
                         <span id="icon-list-game" className={`icon-list-game ${styles["icon-list-game"]}`} />
                     </button>

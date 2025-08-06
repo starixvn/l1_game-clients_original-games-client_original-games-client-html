@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive analysis of the URL context parameters (`isDirectMode`, `redirectUrl`, `isSabaPlay`, `gameId`) and their critical roles in the first login to lobby flow of the gaming application.
+This document provides a comprehensive analysis of the URL context parameters (`redirectUrl`, `isSabaPlay`, `gameId`) and their critical roles in the first login to lobby flow of the gaming application.
 
 ## 🚨 Latest Updates (Latest Version)
 
@@ -20,11 +20,11 @@ This document provides a comprehensive analysis of the URL context parameters (`
 -   **Implementation**: `searchParams.replace(/&amp;/g, '&')` before parsing
 -   **Impact**: Fixes URL parsing issues in various integrations
 
-**3. Enhanced Direct Mode Logic**
+**3. Enhanced Redirect URL Logic**
 
--   **Change**: Smart direct mode calculation that properly handles lobby access and SabaPlay integration
+-   **Change**: Smart redirect URL calculation that properly handles lobby access and SabaPlay integration
 -   **Implementation**: `effectiveRedirectUrl = isSabaPlay ? redirectUrl : (gameId === 0 ? null : redirectUrl)`
--   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present, and proper SabaPlay handling
+-   **Impact**: Allows lobby access even when `rurl` parameters are present, and proper SabaPlay handling
 
 ## URL Context Parameters
 
@@ -40,28 +40,27 @@ This document provides a comprehensive analysis of the URL context parameters (`
 -   `> 0`: Specific game ID to load
 -   `-1`: Initial state (not yet determined)
 
-### 2. `isDirectMode` (boolean)
+### 2. `isSabaPlay` (boolean)
 
-**Purpose**: Controls whether the user should be taken directly to a specific game or follow SSO redirect logic
-**Source**: Enhanced calculation based on multiple parameters
+**Purpose**: Controls automatic nickname creation for SabaPlay platform integration
+**Source**: URL parameter `?op=SP`
 **Default**: `false`
 
 **Current Logic**:
 
 ```typescript
-const effectiveRedirectUrl = isSabaPlay ? redirectUrl : gameId === 0 ? null : redirectUrl;
-const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
+const isSabaPlay = op === "SP";
 ```
 
 **Behavior**:
 
--   `true`: Skip SSO redirect logic, use URL gameId directly
--   `false`: Apply SSO redirect logic, may change gameId based on business rules
+-   `true`: Triggers automatic nickname creation, bypasses manual registration
+-   `false`: Shows manual registration form for new users
 
 ### 3. `redirectUrl` (string)
 
 **Purpose**: Base64 encoded URL to redirect to after game completion or back to lobby action
-**Source**: URL parameter `?rurl=<base64-encoded-url>` (only when `isDirectMode=true`)
+**Source**: URL parameter `?rurl=<base64-encoded-url>`
 **Default**: `""` (empty string)
 
 **Usage**: Used in `backToRedirectUrl` function to handle post-game navigation
@@ -74,7 +73,7 @@ const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !=
 
 **Behavior**:
 
--   `true`: Triggers auto nickname creation (same as Direct Mode)
+-   `true`: Triggers auto nickname creation
 -   `false`: Normal registration flow
 
 ## URL Context Parsing Flow
@@ -97,15 +96,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const language = params.get("lang");
     const gameId = Number(params.get("gameId") || 0);
     const redirectUrl = params.get("rurl");
-    const ref = params.get("ref");
     const isSabaPlay = params.get("op") === "SP";
-
-    // Enhanced direct mode logic with SabaPlay handling
-    const effectiveRedirectUrl = isSabaPlay ? redirectUrl : gameId === 0 ? null : redirectUrl;
-    const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
-
-    return { token, language, gameId, isDirectMode, redirectUrl: effectiveRedirectUrl, firstSSOToLobby: true, isSabaPlay };
-}
 ```
 
 ## User-Specific Storage Implementation
@@ -154,15 +145,13 @@ flowchart TD
     D1 -->|Yes| E1[Parse all parameters]
     D1 -->|No| F1[Return undefined]
 
-    E1 --> G1[Extract gameId, isDirectMode, redirectUrl, isSabaPlay]
-    G1 --> H1[Calculate effectiveRedirectUrl]
-    H1 --> I1[Determine isDirectMode]
-    I1 --> J1[Store in localStorage]
-    J1 --> K1[Clear URL parameters]
-    K1 --> L1[loadURLContext returns context]
+    E1 --> G1[Extract gameId, redirectUrl, isSabaPlay]
+    G1 --> H1[Store in localStorage]
+    H1 --> I1[Clear URL parameters]
+    I1 --> J1[loadURLContext returns context]
 
-    F1 --> M1[Load from localStorage]
-    M1 --> L1
+    F1 --> L1[Load from localStorage]
+    L1 --> K1
 ```
 
 ### 2. SplashScreen Initialization Flow
@@ -179,7 +168,7 @@ flowchart TD
     F2 -->|No| H2[Authorize User]
 
     H2 --> I2{User Authorized?}
-    I2 -->|No| J2{isDirectMode or isSabaPlay?}
+    I2 -->|No| J2{isSabaPlay?}
     I2 -->|Yes| K2[Load Lobby Configs]
 
     J2 -->|Yes| L2[Auto Create Nickname]
@@ -189,7 +178,7 @@ flowchart TD
     T2 -->|No| E2
     T2 -->|Yes| K2
 
-    K2 --> U2{isDirectMode?}
+    K2 --> U2{gameId > 0?}
     U2 -->|Yes| V2[Use URL gameId]
     U2 -->|No| W2[Apply SSO Redirect Logic]
 
@@ -207,7 +196,7 @@ flowchart TD
 
     M2 --> EE2[User Registration]
     EE2 --> FF2[Submit Form]
-    FF2 --> GG2{isDirectMode?}
+    FF2 --> GG2{redirectUrl present?}
     GG2 -->|Yes| HH2[Keep Original gameId]
     GG2 -->|No| II2[Update toLoadGameId]
 
@@ -236,7 +225,7 @@ flowchart TD
 
     G3 --> H3{Success?}
     H3 -->|No| F3
-    H3 -->|Yes| I3{isDirectMode?}
+    H3 -->|Yes| I3{redirectUrl present?}
 
     I3 -->|Yes| J3[Keep Original gameId]
     I3 -->|No| K3[Update toLoadGameId]
@@ -289,16 +278,16 @@ flowchart TD
 
 ## Critical Decision Points
 
-### 1. Direct Mode vs Non-Direct Mode
+### 1. Game Access with Redirect URL vs Normal SSO
 
-**Direct Mode (`isDirectMode = true`)**:
+**Game Access with Redirect URL (`redirectUrl` present)**:
 
 -   Uses URL `gameId` directly without modification
 -   Skips SSO redirect logic
 -   Triggers auto nickname creation for unauthorized users
 -   Used for direct game access scenarios
 
-**Non-Direct Mode (`isDirectMode = false`)**:
+**Normal SSO Flow (`redirectUrl` not present)**:
 
 -   Applies SSO redirect logic
 -   May change `gameId` based on business rules
@@ -463,9 +452,7 @@ Flow: No cross-user interference, proper game tracking per user
 // From analytic-helper.ts
 static login(urlContext: URLContextModel) {
     let ssoMethod = "SSO_To_Lobby";
-    if (urlContext.isDirectMode) {
-        ssoMethod = `SSO_Direct_Mode_To_Game`;
-    } else if (urlContext.gameId) {
+    if (urlContext.gameId) {
         ssoMethod = `SSO_To_Game`;
     }
 
@@ -481,12 +468,12 @@ static login(urlContext: URLContextModel) {
 
 ### Test Cases to Cover:
 
-1. **Direct Mode Scenarios**:
+1. **Game Access Scenarios**:
 
     - Direct game access with valid gameId
-    - Direct mode with invalid gameId
-    - Direct mode with unauthorized user
-    - Lobby access in direct mode (queryGame=0)
+    - Game access with invalid gameId
+    - Game access with unauthorized user
+    - Lobby access (queryGame=0)
 
 2. **SabaPlay Scenarios**:
 
@@ -589,7 +576,7 @@ static login(urlContext: URLContextModel) {
 
 ## Conclusion
 
-The URL context parameters (`isDirectMode`, `redirectUrl`, `isSabaPlay`, `gameId`) play critical roles in determining the user's journey from first login to lobby/game. Understanding these parameters and their interactions is essential for:
+The URL context parameters (`redirectUrl`, `isSabaPlay`, `gameId`) play critical roles in determining the user's journey from first login to lobby/game. Understanding these parameters and their interactions is essential for:
 
 -   Debugging user flow issues
 -   Implementing new features

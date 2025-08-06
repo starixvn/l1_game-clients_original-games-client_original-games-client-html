@@ -15,7 +15,7 @@ export const ConnectFailedMessage: React.FC<{
     enableBackdrop: boolean;
 }> = ({ tolgeeNamespace, id, onReconnect, reason, enableBackdrop }) => {
     const { t } = useTranslator([tolgeeNamespace]);
-    const { backToRedirectUrl, redirectUrl, isDirectMode } = useContext(URLContext);
+    const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobby = () => {
         updateURLContext({ gameId: 0 });
@@ -42,22 +42,19 @@ export const ConnectFailedMessage: React.FC<{
 
     const renderButtons = () => {
         if (reason === ConnectFailedReasonKey.lostConnection) {
-            if (isDirectMode) {
-                return redirectUrl ? (
-                    renderLostConnectionButtons()
-                ) : (
-                    <button onClick={() => onReconnect()} className={`btn-green w-100`}>
-                        {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
-                    </button>
-                );
-            }
-            return renderLostConnectionButtons();
+            return redirectUrl ? (
+                renderLostConnectionButtons()
+            ) : (
+                <button onClick={() => onReconnect()} className={`btn-green w-100`}>
+                    {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
+                </button>
+            );
         }
-        return isDirectMode && !redirectUrl ? null : (
+        return redirectUrl ? (
             <button onClick={handleBackToLobbyWithReload} className={`btn-green w-100`}>
                 {t(`${ResourceTypes.COMMON}.ok`)}
             </button>
-        );
+        ) : null;
     };
 
     return (

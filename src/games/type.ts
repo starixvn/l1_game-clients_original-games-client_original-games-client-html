@@ -6,5 +6,4 @@ export type Props = {
     updateUserStakeLevel: Function;
     openGameId: number;
     openGameName: string;
-    directMode: boolean;
 };

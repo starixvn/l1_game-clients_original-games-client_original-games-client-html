@@ -47,7 +47,7 @@ flowchart TD
     C --> D{URL Parameters Present?}
     D -->|Yes| E[Parse gameId from URL]
     D -->|No| F[Load from localStorage]
-    E --> G[Calculate enhanced direct mode]
+    E --> G[Calculate enhanced redirect URL]
     G --> H[Store in localStorage]
     F --> H
     H --> I[SplashScreen Initialization]
@@ -98,16 +98,6 @@ let toLoadGameId = gameId;
 // If no gameId provided or gameId is 0, use default game 1005
 if (!toLoadGameId || toLoadGameId === 0) {
     toLoadGameId = 1005;
-}
-
-// Validate if the gameId is available in the enabled games
-const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
-const isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
-
-// If game is not available, use default game 1005
-if (!isGameAvailable) {
-    toLoadGameId = 1005;
-}
 ```
 
 ### URL Context Parsing:
@@ -210,7 +200,7 @@ renderGames() {
             updateUserStakeLevel={this.handleUpdateUserStakeLevel}
             openGameId={urlContext.gameId}
             openGameName={openGameName}
-            directMode={this.props.directMode}
+
         />
     );
 }
@@ -222,7 +212,7 @@ renderGames() {
 
 ```typescript
 // Custom version: No swiper functionality, direct game rendering
-export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId, directMode }) => {
+export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId }) => {
     const getGameComponentById = (gameId: number) => {
         // Game component selection logic
         switch (gameId) {

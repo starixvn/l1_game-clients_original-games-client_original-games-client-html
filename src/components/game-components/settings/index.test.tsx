@@ -59,7 +59,6 @@ describe("Settings Component", () => {
 
         mockUseContext.mockReturnValue({
             backToRedirectUrl: mockBackToRedirectUrl,
-            isDirectMode: true,
             redirectUrl: "test-url",
         });
     });
@@ -75,10 +74,9 @@ describe("Settings Component", () => {
         expect(updateURLContext).toHaveBeenCalledWith({ gameId: 0 });
     });
 
-    test("should render home and PF button when it is direct mode and return url not empty", () => {
+    test("should render home and PF button when redirectUrl is not empty", () => {
         mockUseContext.mockReturnValue({
             backToRedirectUrl: mockBackToRedirectUrl,
-            isDirectMode: true,
             redirectUrl: "test-url",
         });
 
@@ -87,10 +85,10 @@ describe("Settings Component", () => {
         expect(container.querySelector(ICON_PF_SELECTOR)).toBeInTheDocument();
     });
 
-    test("should render list game and PF button when it is not direct mode", () => {
+    test("should render list game and PF button when redirectUrl is empty", () => {
         mockUseContext.mockReturnValue({
             backToRedirectUrl: mockBackToRedirectUrl,
-            isDirectMode: false,
+            redirectUrl: "",
         });
 
         const { container } = render(<Settings />);
@@ -98,26 +96,25 @@ describe("Settings Component", () => {
         expect(container.querySelector(ICON_PF_SELECTOR)).toBeInTheDocument();
     });
 
-    test.each([[true]])("should not render list game when it is direct mode", (isDirectMode: boolean) => {
+    test("should not render list game when redirectUrl is not empty", () => {
         mockUseContext.mockReturnValue({
             backToRedirectUrl: mockBackToRedirectUrl,
-            isDirectMode,
+            redirectUrl: "test-url",
         });
 
         const { container } = render(<Settings />);
         expect(container.querySelector(ICON_LIST_GAME_SELECTOR)).not.toBeInTheDocument();
     });
 
-    test("should render only PF button when it is direct mode but redirect url is empty", () => {
+    test("should render only PF button when redirectUrl is empty", () => {
         mockUseContext.mockReturnValue({
             backToRedirectUrl: mockBackToRedirectUrl,
-            isDirectMode: true,
             redirectUrl: "",
         });
 
         const { container } = render(<Settings />);
         expect(container.querySelector(ICON_HOME_SELECTOR)).not.toBeInTheDocument();
-        expect(container.querySelector(ICON_LIST_GAME_SELECTOR)).not.toBeInTheDocument();
+        expect(container.querySelector(ICON_LIST_GAME_SELECTOR)).toBeInTheDocument();
         expect(container.querySelector(ICON_PF_SELECTOR)).toBeInTheDocument();
     });
 

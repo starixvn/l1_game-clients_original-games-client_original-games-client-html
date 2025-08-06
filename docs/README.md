@@ -1,6 +1,6 @@
 # URL Context Documentation
 
-This documentation provides comprehensive analysis of the URL context parameters (`isDirectMode`, `redirectUrl`, `isSabaPlay`, `gameId`) and their critical roles in the first login to lobby flow of the gaming application.
+This documentation provides comprehensive analysis of the URL context parameters (`redirectUrl`, `isSabaPlay`, `gameId`) and their critical roles in the first login to lobby flow of the gaming application.
 
 ## 🚨 Latest Updates (Custom Version - Latest)
 
@@ -79,7 +79,7 @@ if (!isGameAvailable) {
 -   **[URL Parameter Combinations](URL_Parameter_Combinations.md)** - Complete matrix of all parameter combinations and behaviors
 -   **[URL Context Flow Diagrams](URL_Context_Flow_Diagrams.md)** - Visual flow diagrams for all application scenarios
 -   **[URL Context Testing Guide](URL_Context_Testing_Guide.md)** - Comprehensive testing guidelines and test cases
--   **[isDirectMode vs isSabaPlay Analysis](isDirectMode_vs_isSabaPlay_Analysis.md)** - Detailed comparison and confusion analysis
+-   **[isSabaPlay Analysis](isDirectMode_vs_isSabaPlay_Analysis.md)** - Auto nickname creation parameter analysis
 
 ### Testing Documentation
 
@@ -225,7 +225,7 @@ if (!isGameAvailable) {
 ### URL Context Parameters
 
 -   **`gameId`**: Determines which game to load or whether to show the lobby
--   **`isDirectMode`**: Controls SSO redirect logic bypass
+-   **`isSabaPlay`**: Controls auto nickname creation for platform integration
 -   **`redirectUrl`**: Base64 encoded URL for post-game redirection
 -   **`isSabaPlay`**: Identifies SabaPlay platform integration
 

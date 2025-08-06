@@ -40,7 +40,7 @@ describe(ConnectFailedMessage.name, () => {
     describe("when restrictPlayPermission", () => {
         const reason = ConnectFailedReasonKey.restrictPlayPermission;
 
-        describe("when direct mode = false", () => {
+        describe("when redirectUrl has data", () => {
             const original = window.location;
 
             beforeAll(() => {
@@ -58,7 +58,7 @@ describe(ConnectFailedMessage.name, () => {
 
             it("should render button ok", () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: false });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl" });
 
                 // act
                 const { container, getByRole } = renderComponent(reason);
@@ -70,7 +70,7 @@ describe(ConnectFailedMessage.name, () => {
 
             it("should back to lobby & reload when click ok", () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: false });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl" });
                 const { getByRole } = renderComponent(reason);
 
                 // act
@@ -82,13 +82,13 @@ describe(ConnectFailedMessage.name, () => {
             });
         });
 
-        describe("when direct mode = true and returnURL has data", () => {
+        describe("when redirectUrl has data and backToRedirectUrl function", () => {
             afterEach(() => {
                 jest.clearAllMocks();
             });
             it("should render button ok", () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: true, redirectUrl: "returnUrl" });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl" });
 
                 // act
                 const { container, getByRole } = renderComponent(reason);
@@ -98,10 +98,10 @@ describe(ConnectFailedMessage.name, () => {
                 expect(getByRole("button").textContent).toBe("Common.ok");
             });
 
-            it("should back to lobby & reload when click ok", () => {
+            it("should back to lobby & call backToRedirectUrl when click ok", () => {
                 // arrange
                 const backToRedirectUrl = jest.fn();
-                useContextMock.mockReturnValue({ isDirectMode: true, redirectUrl: "returnUrl", backToRedirectUrl });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl", backToRedirectUrl });
                 const { getByRole } = renderComponent(reason);
 
                 // act
@@ -113,10 +113,10 @@ describe(ConnectFailedMessage.name, () => {
             });
         });
 
-        describe("when direct mode = true and returnURL not has data", () => {
+        describe("when redirectUrl not has data", () => {
             it("should not render button ok", () => {
                 // act
-                useContextMock.mockReturnValue({ isDirectMode: true });
+                useContextMock.mockReturnValue({});
                 const { container, queryByRole } = renderComponent(reason);
 
                 // assert
@@ -131,10 +131,10 @@ describe(ConnectFailedMessage.name, () => {
         afterEach(() => {
             jest.clearAllMocks();
         });
-        describe("when direct mode = false", () => {
+        describe("when redirectUrl has data", () => {
             it("should render buttons back & reconnect", () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: false });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl" });
 
                 // act
                 const { container, getAllByRole } = renderComponent(reason);
@@ -150,60 +150,7 @@ describe(ConnectFailedMessage.name, () => {
             it("should back to lobby when click back", () => {
                 // arrange
                 const backToRedirectUrl = jest.fn();
-                useContextMock.mockReturnValue({ isDirectMode: false, backToRedirectUrl });
-                const { getAllByRole } = renderComponent(reason);
-                const backButton = getAllByRole("button")[0];
-
-                // act
-                backButton.click();
-
-                // assert
-                expect(updateURLContext).toHaveBeenCalledWith({ gameId: 0 });
-                expect(backToRedirectUrl).toHaveBeenCalledWith(undefined);
-            });
-
-            it(callReconnectMess, () => {
-                // arrange
-                useContextMock.mockReturnValue({ isDirectMode: false });
-                const onReconnect = jest.fn();
-                const { getAllByRole } = render(
-                    <ConnectFailedMessage
-                        enableBackdrop={enableBackdrop}
-                        id={gameId}
-                        onReconnect={onReconnect}
-                        reason={reason}
-                        tolgeeNamespace={ns}
-                    />
-                );
-                const reconnectButton = getAllByRole("button")[1];
-
-                // act
-                reconnectButton.click();
-
-                // assert
-                expect(onReconnect).toHaveBeenCalled();
-            });
-        });
-
-        describe("when direct mode = true and returnUrl has data", () => {
-            it("should render buttons back & reconnect", () => {
-                // arrange
-                useContextMock.mockReturnValue({ isDirectMode: true, redirectUrl: "returnUrl" });
-
-                // act
-                const { container, getAllByRole } = renderComponent(reason);
-                const buttons = getAllByRole("button");
-
-                // assert
-                expect(container).toMatchSnapshot();
-                expect(buttons.length).toBe(2);
-                expect(buttons[0].textContent).toBe("Common.back");
-                expect(buttons[1].textContent).toBe(reconnectMess);
-            });
-            it("should back to lobby when click back", () => {
-                // arrange
-                const backToRedirectUrl = jest.fn();
-                useContextMock.mockReturnValue({ isDirectMode: true, redirectUrl: "returnUrl", backToRedirectUrl });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl", backToRedirectUrl });
                 const { getAllByRole } = renderComponent(reason);
                 const backButton = getAllByRole("button")[0];
 
@@ -217,7 +164,7 @@ describe(ConnectFailedMessage.name, () => {
 
             it(callReconnectMess, () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: true, redirectUrl: "returnUrl" });
+                useContextMock.mockReturnValue({ redirectUrl: "returnUrl" });
                 const onReconnect = jest.fn();
                 const { getAllByRole } = render(
                     <ConnectFailedMessage
@@ -238,10 +185,10 @@ describe(ConnectFailedMessage.name, () => {
             });
         });
 
-        describe("when direct mode = true and returnURL not has data", () => {
+        describe("when redirectUrl not has data", () => {
             it("should render only reconnect button", () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: true });
+                useContextMock.mockReturnValue({});
 
                 // act
                 const { container, getAllByRole } = renderComponent(reason);
@@ -254,7 +201,7 @@ describe(ConnectFailedMessage.name, () => {
             });
             it(callReconnectMess, () => {
                 // arrange
-                useContextMock.mockReturnValue({ isDirectMode: true });
+                useContextMock.mockReturnValue({});
                 const onReconnect = jest.fn();
                 const { getAllByRole } = render(
                     <ConnectFailedMessage

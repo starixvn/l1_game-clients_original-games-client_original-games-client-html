@@ -8,7 +8,6 @@ export type URLContextModel = {
     token?: string;
     language?: string;
     gameId?: number;
-    isDirectMode?: boolean;
     redirectUrl?: string;
     backToLobby?: boolean;
     backToRedirectUrl?: Function;
@@ -30,12 +29,8 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const language = params.get("lang");
     const gameId = Number(params.get("gameId") || 0);
     const redirectUrl = params.get("rurl");
-    const ref = params.get("ref");
 
-    // Simplified direct mode logic: only use ref + redirectUrl combination
-    const isDirectMode = !!(ref && redirectUrl);
-
-    return { token, language, gameId, isDirectMode, redirectUrl };
+    return { token, language, gameId, redirectUrl };
 }
 
 export function loadURLContext(): URLContextModel {

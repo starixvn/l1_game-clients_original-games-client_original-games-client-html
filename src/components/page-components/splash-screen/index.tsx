@@ -98,7 +98,7 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 };
 
 const SplashScreen: React.FC = () => {
-    const { gameId, isDirectMode, token, language } = useContext(URLContext);
+    const { gameId, token, language } = useContext(URLContext);
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -230,7 +230,6 @@ const SplashScreen: React.FC = () => {
                 session={player?.session}
                 queryGame={currentGameId < 0 ? gameId : currentGameId}
                 setIsUm={setIsUm}
-                directMode={isDirectMode}
                 tolgee={tolgee}
                 authorizeResponse={authorizeResponse}
                 lobbyConfigs={lobbyConfigs}
@@ -270,13 +269,12 @@ const SplashScreen: React.FC = () => {
                     data-testid="preload-resources"
                     bannerId={bannerId}
                     setIsDonePreload={() => {
-                        setIsRenderDashboard(true);
+                        setIsDoneLoadConfig(true);
                     }}
                     gameId={currentGameId}
-                    isDirectMode={isDirectMode}
                     locale={locale}
                     gameIdsIcon={gameOfferIds}
-                    durationDelayDonePreload={DURATION_HOLD_SPLASH_SCREEN}
+                    durationDelayDonePreload={2000}
                 />
             )}
         </>

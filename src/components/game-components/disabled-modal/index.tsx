@@ -8,8 +8,8 @@ import Styles from "./disabled-modal.module.scss";
 
 const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage }) => {
     const { t } = useCommonTranslate();
-    const { backToRedirectUrl, redirectUrl, isDirectMode } = useContext(URLContext);
-    const showOkButton = !isDirectMode || (isDirectMode && redirectUrl);
+    const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
+    const showOkButton = !!redirectUrl;
 
     return (
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={true}>

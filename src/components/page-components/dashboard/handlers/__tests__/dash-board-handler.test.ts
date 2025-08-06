@@ -31,8 +31,7 @@ jest.mock('../../../../../_shared/helpers', () => ({
 }));
 jest.mock('../../../../../_shared/react-contexts', () => ({
     loadURLContext: jest.fn().mockReturnValue({
-        gameId: 0,
-        isDirectMode: false
+        gameId: 0
     })
 }));
 
@@ -107,7 +106,6 @@ describe('DashboardHandler', () => {
             system: 1
         } as SSOResponse,
         queryGame: 1001,
-        directMode: false,
         setIsUm: jest.fn(),
         tolgee: {} as TolgeeInstance,
         authorizeResponse: {
@@ -191,7 +189,6 @@ describe('DashboardHandler', () => {
         mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
         mockLoadURLContext.mockReturnValue({
             gameId: 1001,
-            isDirectMode: false,
             token: 'test-token',
             language: 'en',
         });
@@ -227,7 +224,6 @@ describe('DashboardHandler', () => {
             // Arrange
             const props = {
                 ...defaultProps,
-                directMode: true,
                 queryGame: 9999 // Game not in offer
             };
             const handler = new DashboardHandler(props, jest.fn());
@@ -243,7 +239,6 @@ describe('DashboardHandler', () => {
             // Arrange
             const props = {
                 ...defaultProps,
-                directMode: true,
                 queryGame: 1001 // Game in offer
             };
             const handler = new DashboardHandler(props, jest.fn());

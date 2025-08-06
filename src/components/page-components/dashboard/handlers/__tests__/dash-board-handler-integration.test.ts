@@ -76,7 +76,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0, // This is the key issue - queryGame is 0
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -182,7 +181,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -271,7 +269,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -362,7 +359,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -446,7 +442,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 1001,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -531,7 +526,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 9999,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -619,7 +613,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
@@ -674,7 +667,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -732,7 +724,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
@@ -762,7 +753,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -819,7 +809,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 1001, // Specific game access
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
@@ -849,7 +838,7 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 1001,
-                directMode: false,
+                
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {
@@ -932,7 +921,6 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 1001,
-                directMode: true,
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {

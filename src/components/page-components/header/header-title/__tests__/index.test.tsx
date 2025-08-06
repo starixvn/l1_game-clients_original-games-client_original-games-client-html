@@ -65,7 +65,6 @@ describe("HeaderTitle component", () => {
         const { useURLContext } = require("../../../../../_shared/react-contexts");
         useURLContext.mockReturnValue({
             isSabaPlay: false,
-            isDirectMode: false,
         });
 
         const { useTranslator } = require("../../../../../_shared/react-hooks");
@@ -106,36 +105,14 @@ describe("HeaderTitle component", () => {
     });
 
     describe("when isRenderGames is false", () => {
+        test("renders default logo", () => {
+            // Act
+            render(<HeaderTitle isRenderGames={false} openingGameId={mockGameId} />);
+            const image = screen.getByAltText("Logo") as HTMLImageElement;
 
-
-        describe("and isDirectMode is false", () => {
-            test("renders default logo", () => {
-                // Act
-                render(<HeaderTitle isRenderGames={false} openingGameId={mockGameId} />);
-                const image = screen.getByAltText("Logo") as HTMLImageElement;
-
-                // Assert
-                expect(image).toBeInTheDocument();
-                expect(image.src).toContain("logo-site.svg");
-            });
-        });
-
-        describe("and isDirectMode is true", () => {
-            test("renders nothing", () => {
-                // Arrange
-                const { useURLContext } = require("../../../../../_shared/react-contexts");
-                useURLContext.mockReturnValue({
-                    isSabaPlay: false,
-                    isDirectMode: true,
-                });
-
-                // Act
-                render(<HeaderTitle isRenderGames={false} openingGameId={mockGameId} />);
-                const images = screen.queryAllByRole("img");
-
-                // Assert
-                expect(images.length).toBe(0);
-            });
+            // Assert
+            expect(image).toBeInTheDocument();
+            expect(image.src).toContain("logo-site.svg");
         });
     });
 

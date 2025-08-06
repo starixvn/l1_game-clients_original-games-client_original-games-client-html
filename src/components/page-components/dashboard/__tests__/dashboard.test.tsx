@@ -123,7 +123,7 @@ jest.mock("next/dynamic", () => {
 
 // Mock the actual Dashboard component
 jest.mock("../index", () => {
-    const Dashboard = ({ queryGame, directMode, authorizeResponse, lobbyConfigs, session }: any) => {
+    const Dashboard = ({ queryGame, authorizeResponse, lobbyConfigs, session }: any) => {
         if (queryGame && queryGame > 0) {
             return <MockGames />;
         } else if (queryGame === 0) {
@@ -139,7 +139,6 @@ describe("Dashboard Component Tests", () => {
     const defaultProps = {
         session: { isAuthenticated: true, username: "testUser" },
         queryGame: 0,
-        directMode: false,
         authorizeResponse: { authorized: true },
         lobbyConfigs: { game1: { id: 1001, name: "Game 1" } },
     };
@@ -177,12 +176,11 @@ describe("Dashboard Component Tests", () => {
             expect(screen.getByTestId("lobby-component")).toBeInTheDocument();
         });
 
-        it("should not show error modal when accessing lobby in direct mode", () => {
+        it("should not show error modal when accessing lobby", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 0,
-                directMode: true, // Direct mode with lobby access
             };
 
             // Act
@@ -208,13 +206,12 @@ describe("Dashboard Component Tests", () => {
         });
     });
 
-    describe("Direct Mode Scenarios", () => {
-        it("should handle direct mode with game access", () => {
+    describe("Game Access Scenarios", () => {
+        it("should handle game access", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 123,
-                directMode: true,
             };
 
             // Act
@@ -224,12 +221,11 @@ describe("Dashboard Component Tests", () => {
             expect(screen.getByTestId("games-component")).toBeInTheDocument();
         });
 
-        it("should handle direct mode with lobby access", () => {
+        it("should handle lobby access", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 0,
-                directMode: true,
             };
 
             // Act
@@ -239,12 +235,11 @@ describe("Dashboard Component Tests", () => {
             expect(screen.getByTestId("lobby-component")).toBeInTheDocument();
         });
 
-        it("should handle non-direct mode with game access", () => {
+        it("should handle game access", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 123,
-                directMode: false,
             };
 
             // Act
@@ -270,35 +265,7 @@ describe("Dashboard Component Tests", () => {
             expect(screen.getByTestId("lobby-component")).toBeInTheDocument();
         });
 
-        it("should access lobby in direct mode with queryGame 0", () => {
-            // Arrange
-            const props = {
-                ...defaultProps,
-                queryGame: 0,
-                directMode: true,
-            };
 
-            // Act
-            render(<div data-testid="lobby-component">Lobby Component</div>);
-
-            // Assert
-            expect(screen.getByTestId("lobby-component")).toBeInTheDocument();
-        });
-
-        it("should not show error modal for lobby access in direct mode", () => {
-            // Arrange
-            const props = {
-                ...defaultProps,
-                queryGame: 0,
-                directMode: true,
-            };
-
-            // Act
-            render(<div data-testid="lobby-component">Lobby Component</div>);
-
-            // Assert
-            expect(screen.queryByTestId("error-modal")).not.toBeInTheDocument();
-        });
     });
 
     describe("Error Handling Scenarios", () => {
@@ -346,12 +313,11 @@ describe("Dashboard Component Tests", () => {
     });
 
     describe("SabaPlay Integration Scenarios", () => {
-        it("should handle SabaPlay direct game access", () => {
+        it("should handle SabaPlay game access", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 1003,
-                directMode: true,
                 session: { ...defaultProps.session, isSabaPlay: true },
             };
 
@@ -367,7 +333,6 @@ describe("Dashboard Component Tests", () => {
             const props = {
                 ...defaultProps,
                 queryGame: 0,
-                directMode: false,
                 session: { ...defaultProps.session, isSabaPlay: true },
             };
 
@@ -423,12 +388,11 @@ describe("Dashboard Component Tests", () => {
     });
 
     describe("Integration Flow Scenarios", () => {
-        it("should handle complete direct mode flow", () => {
+        it("should handle complete game flow", () => {
             // Arrange
             const props = {
                 ...defaultProps,
                 queryGame: 123,
-                directMode: true,
                 authorizeResponse: { authorized: true },
                 lobbyConfigs: { game1: { id: 123, name: "Test Game" } },
             };
@@ -445,7 +409,6 @@ describe("Dashboard Component Tests", () => {
             const props = {
                 ...defaultProps,
                 queryGame: 1003,
-                directMode: true,
                 session: { ...defaultProps.session, isSabaPlay: true },
                 authorizeResponse: { authorized: true },
                 lobbyConfigs: { game1: { id: 1003, name: "SabaPlay Game" } },
@@ -463,7 +426,6 @@ describe("Dashboard Component Tests", () => {
             const props = {
                 ...defaultProps,
                 queryGame: 0,
-                directMode: false,
                 authorizeResponse: { authorized: true },
                 lobbyConfigs: { game1: { id: 1001, name: "Lobby Game" } },
             };
@@ -541,7 +503,6 @@ describe("Dashboard Component Tests", () => {
             const props = {
                 ...defaultProps,
                 queryGame: 123,
-                directMode: true,
             };
 
             // Act
