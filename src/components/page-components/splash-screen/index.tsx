@@ -98,7 +98,7 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 };
 
 const SplashScreen: React.FC = () => {
-    const { gameId, isDirectMode, token, language, firstSSOToLobby, isSabaPlay } = useContext(URLContext);
+    const { gameId, isDirectMode, token, language } = useContext(URLContext);
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -240,60 +240,29 @@ const SplashScreen: React.FC = () => {
 
 
 
-    const logoProps = {
-        postfix: isSabaPlay ? `-sabaplay` : ``,
-        width: isSabaPlay ? 173 : 195,
-        height: isSabaPlay ? 205 : 162,
-    };
     return (
         <>
-            <div className={`${Styles.page} ${isSabaPlay ? Styles.sabaPlayBg : ''}`} data-testid="splash-screen">
+            <div className={Styles.page} data-testid="splash-screen">
                 <div className={Styles["center"]}>
                     <div className={Styles["logo"]}>
                         <Image
-                            src={`/static/images/splash-screen/2x/logo${logoProps.postfix}.png?v=${buildVersion}`}
-                            width={logoProps.width}
-                            height={logoProps.height}
+                            src={`/static/images/splash-screen/2x/logo.png?v=${buildVersion}`}
+                            width={195}
+                            height={162}
                             alt="logo"
                             priority={true}
                         />
-                        {isSabaPlay && locale && (
-                            <>
-                                <div className={Styles["slogan-image"]}>
-                                    <Image
-                                        src={`/static/images/splash-screen/slogan-sabaplay/slogan-sabaplay-${locale}.webp?v=${buildVersion}`}
-                                        width={354}
-                                        height={46}
-                                        alt="slogan"
-                                        priority={true}
-                                    />
-                                </div>
-                                <div className={Styles["loading-bar-sabaplay"]}>
-                                    <Image
-                                        src={`/static/images/splash-screen/loading-bar-sabaplay.gif?v=${buildVersion}`}
-                                        width={108}
-                                        height={6}
-                                        alt="loading"
-                                        priority={true}
-                                    />
-                                </div>
-                            </>
-                        )}
                     </div>
 
-                    {!isSabaPlay && (
-                        <div className={Styles["slogan"]} data-testid="splash-screen-slogan">{locale && t("SabaNumber.splashscreen_slogan")}</div>
-                    )}
+                    <div className={Styles["slogan"]} data-testid="splash-screen-slogan">{locale && t("SabaNumber.splashscreen_slogan")}</div>
                 </div>
 
-                {!isSabaPlay && (
-                    <div className={"loading"}>
-                        <div className={"progress"}>
-                            <div className={"progress-bar"} id="progress-bar" data-testid="progress-bar"></div>
-                        </div>
-                        <p className={"text-first-download"} data-testid="download-message">{locale && t("Common.message_download_first_visit")}</p>
+                <div className={"loading"}>
+                    <div className={"progress"}>
+                        <div className={"progress-bar"} id="progress-bar" data-testid="progress-bar"></div>
                     </div>
-                )}
+                    <p className={"text-first-download"} data-testid="download-message">{locale && t("Common.message_download_first_visit")}</p>
+                </div>
             </div>
 
             {isDoneLoadConfig && currentGameId >= 0 && (

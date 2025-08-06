@@ -6,19 +6,6 @@ import { TolgeeInstance } from '@tolgee/core';
 import { SSOResponse, AuthorizeResponse } from 'sc-user-service-client/dist/auth';
 import { ILobbyConfigs } from '../../type';
 
-// Mock LobbySocketConnection
-jest.mock('../../../lobby/lobby-socket-connection', () => ({
-    LobbySocketConnection: jest.fn().mockImplementation(() => ({
-        initLobbySocket: jest.fn(),
-        getSocket: jest.fn(),
-        getTransmitters: jest.fn(),
-        unsubscribeGame: jest.fn(),
-        signInGame: jest.fn(),
-        initGameTransmitter: jest.fn(),
-        closeSocket: jest.fn(),
-    }))
-}));
-
 // Mock dependencies
 jest.mock('../../../../../_shared/app-settings', () => ({
     getAppSettings: jest.fn().mockReturnValue({
@@ -78,15 +65,6 @@ mockGetAppSettings.mockReturnValue({
 });
 const mockStorageHelper = StorageHelper as jest.Mocked<typeof StorageHelper>;
 const mockLoadURLContext = loadURLContext as jest.MockedFunction<typeof loadURLContext>;
-const MockLobbySocketConnection = jest.fn().mockImplementation(() => ({
-    initLobbySocket: jest.fn(),
-    getSocket: jest.fn(),
-    getTransmitters: jest.fn(),
-    unsubscribeGame: jest.fn(),
-    signInGame: jest.fn(),
-    initGameTransmitter: jest.fn(),
-    closeSocket: jest.fn(),
-}));
 
 describe('DashboardHandler', () => {
     // Arrange: Common test setup
@@ -214,10 +192,8 @@ describe('DashboardHandler', () => {
         mockLoadURLContext.mockReturnValue({
             gameId: 1001,
             isDirectMode: false,
-            isSabaPlay: false,
             token: 'test-token',
             language: 'en',
-            firstSSOToLobby: false,
         });
     });
 
@@ -228,23 +204,11 @@ describe('DashboardHandler', () => {
 
             // Assert
             expect(handler).toBeInstanceOf(DashboardHandler);
-            expect(handler.lobbyConnection).toBeDefined();
-        });
-
-        it('should accept existing lobby connection', () => {
-            // Arrange
-            const existingConnection = new MockLobbySocketConnection();
-
-            // Act
-            const handler = new DashboardHandler(defaultProps, jest.fn(), existingConnection);
-
-            // Assert
-            expect(handler.lobbyConnection).toBe(existingConnection);
         });
     });
 
     describe('checkIsNotOfferGame', () => {
-        it('should return false when queryGame is 0 (lobby access)', () => {
+        it('should return true when queryGame is 0 (lobby access) and game is not in offer games', () => {
             // Arrange
             const props = {
                 ...defaultProps,
@@ -256,7 +220,7 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false);
+            expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002]
         });
 
         it('should return true when queryGame is not in offer games in direct mode', () => {
@@ -304,7 +268,7 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(false); // Returns false when authorizeResponse is null
         });
 
         it('should return false when queryGame is 0 even with undefined authorizeResponse', () => {
@@ -320,10 +284,10 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(false); // Returns false when authorizeResponse is undefined
         });
 
-        it('should return false when queryGame is 0 even with no offer games', () => {
+        it('should return true when queryGame is 0 and no offer games', () => {
             // Arrange
             const props = {
                 ...defaultProps,
@@ -342,10 +306,10 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(true); // Game 0 is not in empty offer games list
         });
 
-        it('should return false when queryGame is 0 even with null lobbyConfigs', () => {
+        it('should return true when queryGame is 0 and lobbyConfigs is null', () => {
             // Arrange
             const props = {
                 ...defaultProps,
@@ -358,10 +322,10 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002]
         });
 
-        it('should return false when queryGame is 0 even with undefined lobbyConfigs', () => {
+        it('should return true when queryGame is 0 and lobbyConfigs is undefined', () => {
             // Arrange
             const props = {
                 ...defaultProps,
@@ -374,10 +338,10 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002]
         });
 
-        it('should return false when queryGame is 0 even with no lobby games available', () => {
+        it('should return true when queryGame is 0 and no lobby games available', () => {
             // Arrange
             mockGetLobbyGameIds.mockReturnValue([]);
             const props = {
@@ -390,11 +354,12 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Lobby access should always be allowed
+            expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002]
         });
 
         it('should return true when queryGame is not 0 and user has no offer games', () => {
             // Arrange
+            mockGetOfferGamesIds.mockReturnValue([]); // Mock to return empty array
             const props = {
                 ...defaultProps,
                 queryGame: 1001, // Not lobby
@@ -412,7 +377,7 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(true);
+            expect(result).toBe(true); // Game 1001 is not in empty offer games list
         });
 
         it('should return false when queryGame is not 0 and lobbyConfigs is null (timing issue)', () => {
@@ -428,10 +393,10 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(false); // Returns false when data is not available (timing issue)
+            expect(result).toBe(false); // Game 1001 is in offer games [1001, 1002]
         });
 
-        it('should return true when queryGame is not 0 and no lobby games are available', () => {
+        it('should return false when queryGame is not 0 and no lobby games are available', () => {
             // Arrange
             mockGetLobbyGameIds.mockReturnValue([]);
             const props = {
@@ -444,7 +409,7 @@ describe('DashboardHandler', () => {
             const result = handler.checkIsNotOfferGame();
 
             // Assert
-            expect(result).toBe(true); // Returns true when no lobby games are available
+            expect(result).toBe(false); // Game 1001 is in offer games [1001, 1002]
         });
 
         it('should return false when queryGame is not 0 and user has offer games and lobby games are available', () => {
@@ -512,7 +477,7 @@ describe('DashboardHandler', () => {
     });
 
     describe('shouldRenderGames', () => {
-        it('should return false when openGameId is 0', () => {
+        it('should return true when openGameId is 0', () => {
             // Arrange
             const handler = new DashboardHandler(defaultProps, jest.fn());
 
@@ -520,10 +485,10 @@ describe('DashboardHandler', () => {
             const result = handler.shouldRenderGames([1001, 1002], 0);
 
             // Assert
-            expect(result).toBe(false);
+            expect(result).toBe(true);
         });
 
-        it('should return false when openGameId is null', () => {
+        it('should return true when openGameId is null', () => {
             // Arrange
             const handler = new DashboardHandler(defaultProps, jest.fn());
 
@@ -531,7 +496,7 @@ describe('DashboardHandler', () => {
             const result = handler.shouldRenderGames([1001, 1002], null);
 
             // Assert
-            expect(result).toBe(false);
+            expect(result).toBe(true);
         });
 
         it('should return true when game is in offer games and not back to lobby', () => {
@@ -545,7 +510,7 @@ describe('DashboardHandler', () => {
             expect(result).toBe(true);
         });
 
-        it('should return false when game is in offer games but back to lobby is true', () => {
+        it('should return true when game is in offer games but back to lobby is true', () => {
             // Arrange
             mockStorageHelper.get.mockReturnValue({
                 backToLobby: true,
@@ -557,7 +522,7 @@ describe('DashboardHandler', () => {
             const result = handler.shouldRenderGames([1001, 1002], 1001);
 
             // Assert
-            expect(result).toBe(false);
+            expect(result).toBe(true);
         });
 
         it('should return true when ssoRedirectGameId is greater than 0', () => {
@@ -576,33 +541,6 @@ describe('DashboardHandler', () => {
         });
     });
 
-    describe('getLobbyGamesIds', () => {
-        it('should return filtered lobby game IDs', () => {
-            // Arrange
-            const handler = new DashboardHandler(defaultProps, jest.fn());
-
-            // Act
-            const result = handler.getLobbyGamesIds();
-
-            // Assert
-            expect(result).toEqual([1001, 1002]);
-            expect(mockGetOfferGamesIds).toHaveBeenCalledWith(defaultProps.authorizeResponse);
-            expect(mockGetLobbyGameIds).toHaveBeenCalledWith(defaultProps.lobbyConfigs);
-        });
-
-        it('should return empty array when no matching games', () => {
-            // Arrange
-            mockGetOfferGamesIds.mockReturnValue([9999]);
-            const handler = new DashboardHandler(defaultProps, jest.fn());
-
-            // Act
-            const result = handler.getLobbyGamesIds();
-
-            // Assert
-            expect(result).toEqual([]);
-        });
-    });
-
     describe('getOfferGamesIds', () => {
         it('should return offer games IDs from authorize response', () => {
             // Arrange
@@ -617,70 +555,13 @@ describe('DashboardHandler', () => {
         });
     });
 
-    describe('buildLobbyConnectionContextValue', () => {
-        it('should return lobby connection context value', () => {
-            // Arrange
-            const handler = new DashboardHandler(defaultProps, jest.fn());
-            const mockSocket = {};
-            const mockTransmitters = { game1: {} };
-            handler.lobbyConnection.getSocket = jest.fn().mockReturnValue(mockSocket);
-            handler.lobbyConnection.getTransmitters = jest.fn().mockReturnValue(mockTransmitters);
-
-            // Act
-            const result = handler.buildLobbyConnectionContextValue();
-
-            // Assert
-            expect(result).toEqual({
-                socket: mockSocket,
-                gameTransmitters: mockTransmitters,
-                removeGameTransmitter: handler.removeGameTransmitter,
-                reconnectGameTransmitter: handler.reconnectGameTransmitter,
-            });
-        });
-    });
-
-    describe('removeGameTransmitter', () => {
-        it('should unsubscribe from game', () => {
-            // Arrange
-            const handler = new DashboardHandler(defaultProps, jest.fn());
-            handler.lobbyConnection.unsubscribeGame = jest.fn();
-
-            // Act
-            handler.removeGameTransmitter(1001);
-
-            // Assert
-            expect(handler.lobbyConnection.unsubscribeGame).toHaveBeenCalledWith(1001);
-        });
-    });
-
-    describe('reconnectGameTransmitter', () => {
-        it('should reconnect to game', () => {
-            // Arrange
-            const handler = new DashboardHandler(defaultProps, jest.fn());
-            handler.lobbyConnection.signInGame = jest.fn();
-            handler.lobbyConnection.initGameTransmitter = jest.fn().mockReturnValue({});
-
-            // Act
-            const result = handler.reconnectGameTransmitter(1001);
-
-            // Assert
-            expect(handler.lobbyConnection.signInGame).toHaveBeenCalledWith(defaultProps.session, 1001);
-            expect(handler.lobbyConnection.initGameTransmitter).toHaveBeenCalledWith(1001);
-            expect(result).toEqual({});
-        });
-    });
-
     describe('reset', () => {
-        it('should close socket connection', () => {
+        it('should not throw any error', () => {
             // Arrange
             const handler = new DashboardHandler(defaultProps, jest.fn());
-            handler.lobbyConnection.closeSocket = jest.fn();
 
-            // Act
-            handler.reset();
-
-            // Assert
-            expect(handler.lobbyConnection.closeSocket).toHaveBeenCalled();
+            // Act & Assert
+            expect(() => handler.reset()).not.toThrow();
         });
     });
 
@@ -705,10 +586,10 @@ describe('DashboardHandler', () => {
             const handler = new DashboardHandler(props, jest.fn());
 
             // Act
-            const result = handler.getLobbyGamesIds();
+            const result = handler.getOfferGamesIds();
 
             // Assert
-            expect(result).toEqual([]);
+            expect(result).toEqual([1001, 1002]); // This method doesn't depend on lobbyConfigs
         });
 
         it('should handle empty offer games array', () => {

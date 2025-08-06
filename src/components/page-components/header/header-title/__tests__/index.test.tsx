@@ -106,24 +106,7 @@ describe("HeaderTitle component", () => {
     });
 
     describe("when isRenderGames is false", () => {
-        describe("and isSabaPlay is true", () => {
-            test("renders SABAPLAY logo", () => {
-                // Arrange
-                const { useURLContext } = require("../../../../../_shared/react-contexts");
-                useURLContext.mockReturnValue({
-                    isSabaPlay: true,
-                    isDirectMode: false,
-                });
 
-                // Act
-                render(<HeaderTitle isRenderGames={false} openingGameId={mockGameId} />);
-                const image = screen.getByAltText("SABAPLAY Number Games Logo") as HTMLImageElement;
-
-                // Assert
-                expect(image).toBeInTheDocument();
-                expect(image.src).toContain("logo-sabaplay-number-games.webp");
-            });
-        });
 
         describe("and isDirectMode is false", () => {
             test("renders default logo", () => {

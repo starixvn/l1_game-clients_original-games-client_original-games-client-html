@@ -4,11 +4,6 @@ import { ResourceTypes } from "../../../_shared/resources";
 
 const Footer = () => {
     const { t } = useTranslator();
-    const { isSabaPlay } = useURLContext();
-
-    if (isSabaPlay) {
-        return null;
-    }
 
     return (
         <h3 className="text-center copyright">

@@ -12,8 +12,6 @@ export type URLContextModel = {
     redirectUrl?: string;
     backToLobby?: boolean;
     backToRedirectUrl?: Function;
-    firstSSOToLobby?: boolean;
-    isSabaPlay?: boolean;
 };
 
 export function parseContextFromURL(): URLContextModel | undefined {
@@ -33,17 +31,11 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const gameId = Number(params.get("gameId") || 0);
     const redirectUrl = params.get("rurl");
     const ref = params.get("ref");
-    const isSabaPlay = params.get("op") === "SP";
 
-    // Fix: When gameId=0 (lobby), ignore rurl parameter to allow lobby access
-    // Treat SabaPlay URLs as direct mode since they should go directly to the specified game
-    // But when gameId=0 (lobby), treat it like op=GN to go through SSO redirect logic
-    // Also keep the existing logic for ref + redirectUrl, but ignore redirectUrl when gameId=0
-    // Update: For SabaPlay, always use redirectUrl regardless of gameId
-    const effectiveRedirectUrl = isSabaPlay ? redirectUrl : (gameId === 0 ? null : redirectUrl);
-    const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
+    // Simplified direct mode logic: only use ref + redirectUrl combination
+    const isDirectMode = !!(ref && redirectUrl);
 
-    return { token, language, gameId, isDirectMode, redirectUrl: effectiveRedirectUrl, firstSSOToLobby: true, isSabaPlay };
+    return { token, language, gameId, isDirectMode, redirectUrl };
 }
 
 export function loadURLContext(): URLContextModel {
@@ -88,7 +80,7 @@ export function updateURLContext(context: Partial<URLContextModel>) {
         setUserLatestGameId(context.gameId, username);
     }
 
-    const updatedContext = { ...contextFromLocalStorage, ...context, firstSSOToLobby: false };
+    const updatedContext = { ...contextFromLocalStorage, ...context };
     StorageHelper.set(localStorageKeys.url, updatedContext);
 }
 

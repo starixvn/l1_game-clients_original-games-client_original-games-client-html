@@ -6,10 +6,15 @@ import { URLContext } from "../../_shared/react-contexts/url-context";
 import { PlayerContext } from "../../_shared/react-contexts/auth";
 import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "../../services/auth-service";
 import { getUserLatestGameId } from "../../_shared/helpers";
+import { getEnabledRenderGameSettings } from "../../_shared/helpers/lobby-helper";
 
 // Mock dependencies
 jest.mock("../../services/auth-service");
-jest.mock("../../_shared/helpers");
+jest.mock("../../_shared/helpers", () => ({
+    ...jest.requireActual("../../_shared/helpers"),
+    getEnabledRenderGameSettings: jest.fn(),
+    getUserLatestGameId: jest.fn(),
+}));
 
 // Mock Tolgee
 jest.mock("../../_shared/tolgee", () => ({
@@ -72,6 +77,9 @@ jest.mock("../../_shared/helpers/preload-resources", () => ({
     getAndHandleGameOfferIds: jest.fn(),
     getAndHandleBannerOffer: jest.fn(),
 }));
+
+// Mock getEnabledRenderGameSettings
+const mockGetEnabledRenderGameSettings = require("../../_shared/helpers").getEnabledRenderGameSettings;
 
 // Mock session and authorization responses
 const mockSession = {
@@ -140,6 +148,18 @@ const mockLobbyConfigs = {
 describe("SplashScreen Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockGetEnabledRenderGameSettings.mockReturnValue([
+            { 
+                id: 123, 
+                gameName: "Test Game",
+                gameResourceConfigs: { path: "/test" }
+            },
+            { 
+                id: 1005, 
+                gameName: "Default Game",
+                gameResourceConfigs: { path: "/default" }
+            }
+        ]);
     });
 
     const renderSplashScreen = (urlContext: any, playerContext: any = {}) => {
@@ -279,10 +299,8 @@ describe("SplashScreen Component", () => {
             const urlContext = {
                 gameId: 123,
                 isDirectMode: true,
-                isSabaPlay: false,
                 token: "test-token",
                 language: "en",
-                firstSSOToLobby: false,
             };
 
             (sso as jest.Mock).mockResolvedValue(mockSession);
@@ -300,31 +318,7 @@ describe("SplashScreen Component", () => {
             });
         });
 
-        it("should handle SabaPlay mode", async () => {
-            // Arrange
-            const urlContext = {
-                gameId: 0,
-                isDirectMode: true,
-                isSabaPlay: true,
-                token: "test-token",
-                language: "en",
-                firstSSOToLobby: false,
-            };
 
-            (sso as jest.Mock).mockResolvedValue(mockSession);
-            (authorize as jest.Mock).mockResolvedValue(mockAuthorizeResponse);
-            (getLobbyConfigs as jest.Mock).mockResolvedValue(mockLobbyConfigs);
-
-            // Act
-            await act(async () => {
-                renderSplashScreen(urlContext);
-            });
-
-            // Assert
-            await waitFor(() => {
-                expect(screen.getByTestId("splash-screen")).toBeInTheDocument();
-            });
-        });
     });
 
     describe("Error Handling Tests", () => {
@@ -333,10 +327,8 @@ describe("SplashScreen Component", () => {
             const urlContext = {
                 gameId: 123,
                 isDirectMode: false,
-                isSabaPlay: false,
                 token: "test-token",
                 language: "en",
-                firstSSOToLobby: false,
             };
 
             (sso as jest.Mock).mockResolvedValue(null);
@@ -357,10 +349,8 @@ describe("SplashScreen Component", () => {
             const urlContext = {
                 gameId: 123,
                 isDirectMode: false,
-                isSabaPlay: false,
                 token: "test-token",
                 language: "en",
-                firstSSOToLobby: false,
             };
 
             (sso as jest.Mock).mockResolvedValue(mockSession);

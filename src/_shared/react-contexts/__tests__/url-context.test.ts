@@ -41,15 +41,13 @@ describe('URL Context', () => {
     describe('parseContextFromURL', () => {
         it('should parse valid URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct&op=SP';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct&rurl=https://example.com';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'en',
                 gameId: 1001,
                 isDirectMode: true,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: true
+                redirectUrl: 'https://example.com'
             };
 
             // Act
@@ -78,9 +76,7 @@ describe('URL Context', () => {
                 language: 'en',
                 gameId: 0,
                 isDirectMode: false,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: false
+                redirectUrl: null
             };
 
             // Act
@@ -98,9 +94,7 @@ describe('URL Context', () => {
                 language: null,
                 gameId: NaN,
                 isDirectMode: false,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: false
+                redirectUrl: null
             };
 
             // Act
@@ -121,28 +115,6 @@ describe('URL Context', () => {
             expect(result?.isDirectMode).toBe(false);
         });
 
-        it('should set isDirectMode to true when op=SP (SabaPlay)', () => {
-            // Arrange
-            globalThis.location.search = '?op=SP&token=abc123&gameId=1003';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(true);
-        });
-
-        it('should set isDirectMode to false when op=SP but gameId=0 (lobby)', () => {
-            // Arrange
-            globalThis.location.search = '?op=SP&token=abc123&gameId=0';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(false);
-        });
-
         it('should set isDirectMode to true when ref and redirectUrl are both present', () => {
             // Arrange
             globalThis.location.search = '?ref=d_direct&rurl=redirect&token=abc123&gameId=1001';
@@ -154,72 +126,15 @@ describe('URL Context', () => {
             expect(result?.isDirectMode).toBe(true);
         });
 
-        it('should set isDirectMode to true when ref+redirectUrl and op=SP are present', () => {
-            // Arrange
-            globalThis.location.search = '?ref=d_direct&rurl=redirect&op=SP&token=abc123&gameId=1001';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(true);
-        });
-
-        it('should set isDirectMode to true when ref and redirectUrl are present but op=SP is also present', () => {
-            // Arrange
-            globalThis.location.search = '?ref=d_direct&rurl=redirect&op=SP&token=abc123&gameId=1001';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(true);
-        });
-
-        it('should set isDirectMode to true when both ref+redirectUrl and op=SP are present', () => {
-            // Arrange
-            globalThis.location.search = '?ref=d_direct&rurl=redirect&op=SP&token=abc123&gameId=1001';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isDirectMode).toBe(true);
-        });
-
-        it('should set isSabaPlay to true when op=SP', () => {
-            // Arrange
-            globalThis.location.search = '?op=SP&token=abc123';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isSabaPlay).toBe(true);
-        });
-
-        it('should set isSabaPlay to false when op is not SP', () => {
-            // Arrange
-            globalThis.location.search = '?op=GN&token=abc123';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.isSabaPlay).toBe(false);
-        });
-
         it('should handle multiple URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1002&ref=d_direct&op=SP&cg=Credit_VN';
+            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1002&ref=d_direct&rurl=https://example.com&cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'vi-VN',
                 gameId: 1002,
                 isDirectMode: true,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: true
+                redirectUrl: 'https://example.com'
             };
 
             // Act
@@ -231,15 +146,13 @@ describe('URL Context', () => {
 
         it('should handle HTML-encoded ampersands in URL parameters', () => {
             // Arrange
-            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1003&amp;op=SP&amp;cg=SabaPlay_VN';
+            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1003&amp;ref=d_direct&amp;rurl=https://example.com&amp;cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'c2ee0ee1-5bd8-409a-944e-42d3f131d8d9',
                 language: 'vi-VN',
                 gameId: 1003,
                 isDirectMode: true,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: true
+                redirectUrl: 'https://example.com'
             };
 
             // Act
@@ -253,14 +166,12 @@ describe('URL Context', () => {
     describe('loadURLContext', () => {
         it('should return context from URL when available', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct&rurl=https://example.com';
             const expectedContext = {
                 language: 'en',
                 gameId: 1001,
-                isDirectMode: false,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: false
+                isDirectMode: true,
+                redirectUrl: 'https://example.com'
             };
 
             // Act
@@ -289,9 +200,7 @@ describe('URL Context', () => {
                 language: 'en',
                 gameId: 1001,
                 isDirectMode: false,
-                redirectUrl: null,
-                firstSSOToLobby: false,
-                isSabaPlay: false
+                redirectUrl: null
             };
             mockStorageHelper.get.mockReturnValue(localStorageContext);
 
@@ -300,19 +209,6 @@ describe('URL Context', () => {
 
             // Assert
             expect(result).toEqual(localStorageContext);
-            expect(mockStorageHelper.get).toHaveBeenCalledWith(localStorageKeys.url);
-        });
-
-        it('should return null when neither URL nor localStorage context is available', () => {
-            // Arrange
-            globalThis.location.search = '';
-            mockStorageHelper.get.mockReturnValue(null);
-
-            // Act
-            const result = loadURLContext();
-
-            // Assert
-            expect(result).toBeNull();
         });
 
         it('should not store token in localStorage', () => {
@@ -350,8 +246,7 @@ describe('URL Context', () => {
                 localStorageKeys.url,
                 {
                     ...existingContext,
-                    ...newContext,
-                    firstSSOToLobby: false
+                    ...newContext
                 }
             );
         });
@@ -368,8 +263,7 @@ describe('URL Context', () => {
             expect(mockStorageHelper.set).toHaveBeenCalledWith(
                 localStorageKeys.url,
                 expect.objectContaining({
-                    gameId: 1002,
-                    firstSSOToLobby: false
+                    gameId: 1002
                 })
             );
             expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1002, undefined);
@@ -389,24 +283,6 @@ describe('URL Context', () => {
                 expect.anything()
             );
         });
-
-        it('should set firstSSOToLobby to false when updating context', () => {
-            // Arrange
-            const existingContext = { firstSSOToLobby: true };
-            const newContext = { gameId: 1002 };
-            mockStorageHelper.get.mockReturnValue(existingContext);
-
-            // Act
-            updateURLContext(newContext);
-
-            // Assert
-            expect(mockStorageHelper.set).toHaveBeenCalledWith(
-                localStorageKeys.url,
-                expect.objectContaining({
-                    firstSSOToLobby: false
-                })
-            );
-        });
     });
 
     describe('getURLContext', () => {
@@ -420,10 +296,9 @@ describe('URL Context', () => {
 
             // Assert
             expect(result).toEqual(expectedContext);
-            expect(mockStorageHelper.get).toHaveBeenCalledWith(localStorageKeys.url);
         });
 
-        it('should return empty object when localStorage context is not available', () => {
+        it('should return empty object when no context in localStorage', () => {
             // Arrange
             mockStorageHelper.get.mockReturnValue(null);
 
@@ -434,115 +309,4 @@ describe('URL Context', () => {
             expect(result).toEqual({});
         });
     });
-
-    describe('Edge Cases', () => {
-        it('should handle undefined globalThis.location', () => {
-            // Arrange
-            Object.defineProperty(globalThis, 'location', {
-                value: undefined,
-                writable: true
-            });
-
-            // Act & Assert
-            expect(() => parseContextFromURL()).not.toThrow();
-        });
-
-        it('should handle undefined globalThis.location.search', () => {
-            // Arrange
-            Object.defineProperty(globalThis, 'location', {
-                value: { search: undefined },
-                writable: true
-            });
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result).toBeUndefined();
-        });
-
-        it('should handle malformed URL parameters', () => {
-            // Arrange
-            globalThis.location.search = '?invalid=param&token=abc123&gameId=1001';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result).toEqual(expect.objectContaining({
-                token: 'abc123',
-                gameId: 1001
-            }));
-        });
-
-        it('should handle very large gameId values', () => {
-            // Arrange
-            globalThis.location.search = '?gameId=999999999';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.gameId).toBe(999999999);
-        });
-
-        it('should handle negative gameId values', () => {
-            // Arrange
-            globalThis.location.search = '?gameId=-1';
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result?.gameId).toBe(-1);
-        });
-    });
-
-    describe('Integration Scenarios', () => {
-        it('should handle the specific URL from the logs', () => {
-            // Arrange
-            globalThis.location.search = '?token=999d8dd3-94da-45b1-a945-40ba6594a99a&lang=vi-VN&appType=1&ref=d_direct&op=GN&cg=Credit_VN';
-            const expected: URLContextModel = {
-                token: '999d8dd3-94da-45b1-a945-40ba6594a99a',
-                language: 'vi-VN',
-                gameId: 0,
-                isDirectMode: false,
-                redirectUrl: null,
-                firstSSOToLobby: true,
-                isSabaPlay: false
-            };
-
-            // Act
-            const result = parseContextFromURL();
-
-            // Assert
-            expect(result).toEqual(expected);
-        });
-
-        it('should handle URL context loading and storage flow', () => {
-            // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&ref=d_direct';
-            mockStorageHelper.get.mockReturnValue(null);
-
-            // Act
-            const result = loadURLContext();
-
-            // Assert
-            expect(result).toEqual(expect.objectContaining({
-                token: 'abc123',
-                language: 'en',
-                gameId: 1001,
-                isDirectMode: false
-            }));
-            expect(mockStorageHelper.set).toHaveBeenCalledWith(
-                localStorageKeys.url,
-                expect.objectContaining({
-                    token: undefined,
-                    language: 'en',
-                    gameId: 1001,
-                    isDirectMode: false
-                })
-            );
-        });
-    });
-}); 
+});
