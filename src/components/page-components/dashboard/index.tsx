@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import React from "react";
 import { isDesktop, isMobile, isMobileOnly } from "react-device-detect";
-import SwiperCore from "swiper";
 
 import { ErrorNoGameOffer } from "../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, localStorageKeys, StorageHelper } from "../../../_shared/helpers";
@@ -26,7 +25,6 @@ import { ErrorApiText } from "../../game-components/error-api-text";
 
 import Header from "../header";
 
-import ButtonSwipe from "./button-swipe";
 import Styles from "./dashboard.module.scss";
 import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
@@ -42,7 +40,6 @@ const LandscapeMode = dynamic(() => import("./landscape-mode/landscape-mode"));
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
     private readonly dashboardHandler: DashboardHandler;
     private readonly notificationHandler: NotificationHandler;
-    private readonly swiperRef = React.createRef<SwiperCore>();
     private backToLobbyEventId = null;
     private isUpdatingBalance = false;
 
@@ -66,8 +63,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             openGameId: null,
             openGameName: "",
             isLandscapeMode: false,
-            isChangedGame: false,
-            isChangePrevGame: false,
 
             dashBoardHeight: 0,
         };
@@ -93,7 +88,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             buildVersion && location.reload();
         }
 
-        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => {});
+        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => { });
 
         this.notificationHandler =
             notificationHandler ??
@@ -247,12 +242,9 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 openGameId={urlContext.gameId}
                 openGameName={openGameName}
                 directMode={this.props.directMode}
-                lobbyGamesIds={[]}
-                swiperRef={this.swiperRef}
             />
         );
     }
-
 
 
 
@@ -265,14 +257,10 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         window.history.pushState(null, null, "/");
 
-        const { isShowErrorModal, authorizeInfo, isBlockUI, isChangedGame, isChangePrevGame, openGameId } = this.state;
+        const { isShowErrorModal, authorizeInfo, isBlockUI, openGameId } = this.state;
         const offerGames = this.dashboardHandler.getOfferGamesIds();
         const isRenderGames = true; // Custom version: Always render games
 
-        const allowSwipeGameOndDesktop = !this.props.directMode && !isMobileOnly && isRenderGames;
-
-        const allowSwipeGameOndDesktopStyle = isChangePrevGame ? Styles["slide-left"] : Styles["slide-right"];
-        const changeGameStyle = isChangedGame && allowSwipeGameOndDesktop ? allowSwipeGameOndDesktopStyle : "";
         const isNoGameOffer = this.state.apiError?.message === ErrorNoGameOffer;
         const renderOfferGameContainer = () => this.renderGames(); // Custom version: Always render games
 
@@ -291,9 +279,8 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <SettingContextProvider>
-                    {allowSwipeGameOndDesktop && <ButtonSwipe isPrev={true} swiper={this.swiperRef} />}
                     <div
-                        className={`${Styles["dashboard"]} ${changeGameStyle} ${!isRenderGames ? "no-scroll" : ""} ${isMobileOnly ? Styles["hidden-scrollbar"] : ""
+                        className={`${Styles["dashboard"]} ${!isRenderGames ? "no-scroll" : ""} ${isMobileOnly ? Styles["hidden-scrollbar"] : ""
                             }`}
                         id={"dashboard"}
                         style={this.setDashBoardStyle(isRenderGames)}
@@ -327,7 +314,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                             </div>
                         )}
                     </div>
-                    {allowSwipeGameOndDesktop && <ButtonSwipe isPrev={false} swiper={this.swiperRef} />}
                 </SettingContextProvider>
             </PlayerContextProvider>
         );

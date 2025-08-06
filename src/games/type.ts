@@ -7,6 +7,4 @@ export type Props = {
     openGameId: number;
     openGameName: string;
     directMode: boolean;
-    lobbyGamesIds: Array<number>;
-    swiperRef: any;
 };

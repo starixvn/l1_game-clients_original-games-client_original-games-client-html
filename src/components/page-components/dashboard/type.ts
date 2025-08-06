@@ -30,8 +30,6 @@ export type DashboardState = {
     openGameId: number;
     openGameName: string;
     isLandscapeMode: boolean;
-    isChangedGame: boolean;
-    isChangePrevGame: boolean;
 
     dashBoardHeight: number;
 };
