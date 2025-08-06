@@ -1,8 +1,8 @@
-# Latest Workflow Documentation
+# Latest Workflow Documentation (Custom Version)
 
 ## Overview
 
-This document describes the complete workflow for the game client application, including URL parsing, authentication, routing, and game rendering based on the latest console.logs and code analysis.
+This document describes the complete workflow for the **custom version** of the game client application, including URL parsing, authentication, routing, and game rendering. This version has been modified to remove the Register component, lobby functionality, and swiper functionality while implementing custom game routing logic.
 
 ## Table of Contents
 
@@ -11,8 +11,8 @@ This document describes the complete workflow for the game client application, i
 3. [Authentication Flow](#authentication-flow)
 4. [Dashboard Rendering](#dashboard-rendering)
 5. [Game Rendering Logic](#game-rendering-logic)
-6. [Register Flow](#register-flow)
-7. [Lobby Rendering](#lobby-rendering)
+6. [Auto Nickname Creation](#auto-nickname-creation)
+7. [Custom Game Routing](#custom-game-routing)
 8. [Header Title Logic](#header-title-logic)
 
 ## URL Context Parsing
@@ -63,7 +63,7 @@ This document describes the complete workflow for the game client application, i
 [SplashScreen] handleInitialization - User authorized, loading lobby configs
 [SplashScreen] handleInitialization - Initial toLoadGameId: 1003
 [SplashScreen] handleInitialization - isDirectMode: true
-[SplashScreen] handleInitialization - Direct mode, using URL gameId directly: 1003
+[SplashScreen] handleInitialization - Custom version: Always direct to specific game, default to 1005 if no valid gameId
 [SplashScreen] handleInitialization - Final toLoadGameId set: 1003
 [SplashScreen] handleInitialization - Running custom startup
 [SplashScreen] handleInitialization - Custom startup completed, isDoneLoadConfig set to true
@@ -75,9 +75,11 @@ This document describes the complete workflow for the game client application, i
 2. **Language loading**: Maps language codes and sets Tolgee language
 3. **Authorization check**: Verifies user authorization status
 4. **Auto nickname creation**: For SabaPlay users who aren't authorized
-5. **Game ID determination**:
-    - Direct mode: Uses URL gameId directly
-    - Non-direct mode: Goes through SSO redirect logic
+5. **Custom game routing**: 
+    - **Custom version logic**: Always direct to specific game ID
+    - **Default game ID**: 1005 if no valid game ID provided or game not found
+    - **Validation**: Checks if game ID is available in enabled games
+    - **Fallback**: Always defaults to game 1005 for invalid scenarios
 6. **User-specific latestGameId**: Uses `getUserLatestGameId(player?.session?.username)`
 
 ## Authentication Flow
@@ -89,13 +91,10 @@ This document describes the complete workflow for the game client application, i
 [SplashScreen] handleInitialization - Auto nickname creation result: {authorized: true, user: {...}, umInfo: null, isUM: false}
 ```
 
-### SSO Redirect Logic
-
-```
-[SplashScreen] getSSORedirectToGameId - Input values: {urlGameId: 0, userLatestGameId: 0, toLoadGameId: 0, firstSSOToLobby: true}
-[SplashScreen] getSSORedirectToGameId - First SSO to lobby, redirecting to lobby
-[SplashScreen] getSSORedirectToGameId - Final result: 0
-```
+**Key Changes in Custom Version**:
+- **No manual registration**: Register component has been completely removed
+- **Automatic nickname creation**: SabaPlay users get automatic nickname generation
+- **Seamless experience**: No user intervention required for registration
 
 ## Dashboard Rendering
 
@@ -124,6 +123,7 @@ This document describes the complete workflow for the game client application, i
 2. **State initialization**: Sets initial state with queryGame and empty openGameId
 3. **Game offer check**: Verifies if the requested game is available
 4. **Game opening**: Automatically opens the game if it's in the offer list
+5. **No lobby rendering**: Custom version always renders games, no lobby interface
 
 ## Game Rendering Logic
 
@@ -147,7 +147,7 @@ This document describes the complete workflow for the game client application, i
 
 1. **Game offer validation**: Checks if the game is in the available offer list
 2. **Direct mode handling**: Special logic for direct mode with `queryGame: 0` (lobby)
-3. **Game rendering decision**: Determines whether to render games or lobby
+3. **Game rendering decision**: **Custom version always renders games, no lobby**
 4. **Effective game ID calculation**: Uses openGameId or falls back to ssoRedirectGameId
 
 ### Special Cases:
@@ -155,84 +155,73 @@ This document describes the complete workflow for the game client application, i
 -   **Lobby access with direct mode**: `queryGame: 0` returns `false` for "not in offer"
 -   **Invalid game IDs**: Returns `true` for "not in offer" and shows error modal
 
-## Register Flow
+## Auto Nickname Creation
 
-### File: `src/components/page-components/dashboard/register/register.tsx`
+### File: `src/components/page-components/splash-screen/index.tsx`
+
+#### Key Logic:
+
+1. **Automatic trigger**: For SabaPlay users who aren't authorized
+2. **No manual form**: No registration form shown to users
+3. **Automatic generation**: Uses NameGenerator utility from shared helpers
+4. **Seamless flow**: User doesn't see any registration process
+
+#### Shared Utilities (Moved from Register Component):
+
+-   **NameGenerator**: `src/_shared/helpers/name-generator.ts`
+-   **MAX_AVATAR_ID**: `src/_shared/helpers/avatar-helper.ts`
+-   **AvatarGallery**: `src/components/game-components/avatar-gallery/`
+
+## Custom Game Routing
+
+### File: `src/components/page-components/splash-screen/index.tsx`
+
+#### Custom Version Logic:
+
+```typescript
+// Custom version: Always direct to specific game, default to 1005 if no valid gameId
+let toLoadGameId = gameId;
+
+// If no gameId provided or gameId is 0, use default game 1005
+if (!toLoadGameId || toLoadGameId === 0) {
+    toLoadGameId = 1005;
+}
+
+// Validate if the gameId is available in the enabled games
+const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+const isGameAvailable = enabledRenderGameSettings.some(game => game.id === toLoadGameId);
+
+// If game is not available, use default game 1005
+if (!isGameAvailable) {
+    toLoadGameId = 1005;
+}
+```
+
+#### Behavior:
+
+-   **Valid game ID provided**: Direct to specified game
+-   **No game ID or game ID = 0**: Default to game 1005
+-   **Invalid game ID**: Default to game 1005
+-   **Game not in enabled list**: Default to game 1005
+
+## Game Component Rendering
+
+### File: `src/games/games.tsx`
+
+#### Key Changes in Custom Version:
+
+1. **No Swiper functionality**: Removed all swiper-related imports and logic
+2. **No game switching**: Users cannot switch between games
+3. **Single game rendering**: Only renders the specified game component
+4. **No SwitchGamesGuide**: Removed the guide component for switching games
 
 #### Console Logs:
 
 ```
-[Register] constructor - Props received: {session: {...}, isDirectMode: true, gameId: 1003, firstSSOToLobby: true, isSabaPlay: true}
-[Register] constructor - gameId from props: 1003
-[Register] constructor - Initial state set: {avatar: 5, isGalleryOpened: false, isValidUsername: true, name: 'Player123', formValidity: '', isTriggerPreloadResources: false, isDonePreloadResource: false, authorizeResponse: null, lobbyConfigs: null, isUm: false, isClickRegister: false, toLoadGameId: 1003}
-[Register] componentDidMount - Register component mounted
-[Register] componentDidMount - Current state: {avatar: 5, isGalleryOpened: false, isValidUsername: true, name: 'Player123', formValidity: '', isTriggerPreloadResources: false, isDonePreloadResource: false, authorizeResponse: null, lobbyConfigs: null, isUm: false, isClickRegister: false, toLoadGameId: 1003}
-[Register] submit - Form submitted
-[Register] submit - Form data: {name: 'Player123', avatar: 5}
-[Register] submit - Props: {isDirectMode: true, gameId: 1003, isSabaPlay: true}
-[Register] submit - Creating nickname...
-[Register] submit - createNickname result: {authorized: true, user: {...}, umInfo: null, isUM: false}
-[Register] submit - Authorization successful
-[Register] submit - Direct mode, keeping original gameId
-[Register] render - Current state: {avatar: 5, isGalleryOpened: false, isValidUsername: true, name: 'Player123', formValidity: '', isTriggerPreloadResources: true, isDonePreloadResource: false, authorizeResponse: {...}, lobbyConfigs: null, isUm: false, isClickRegister: true, toLoadGameId: 1003}
-[Register] render - Props: {isDirectMode: true, isSabaPlay: true, gameId: 1003}
-[Register] render - isDonePreloadResource: false
-[Register] render - Rendering Register form
+[Games] render - Rendering game component for gameId: 1003
+[Games] getGameComponentById - Getting component for game: 1003
+[Games] getGameComponentById - Returning BacBall component
 ```
-
-#### Key Logic:
-
-1. **Initial state setup**: Sets default avatar, generated name, and toLoadGameId
-2. **Form validation**: Validates username format and requirements
-3. **Nickname creation**: Calls API to create user nickname
-4. **Game ID handling**:
-    - Direct mode: Keeps original gameId
-    - Non-direct mode: Determines gameId through SSO redirect logic
-5. **Preload resources**: Triggers resource preloading after successful registration
-
-## Preload Resource Register
-
-### File: `src/components/page-components/dashboard/register/preload-resource/index.tsx`
-
-#### Console Logs:
-
-```
-[PreloadResourceRegister] Component props: {isDirectMode: true, gameId: 1003, session: {...}, authorizeResponse: {...}}
-[PreloadResourceRegister] useEffect - Component mounted, calling handleAuthorizedAccess
-[PreloadResourceRegister] handleAuthorizedAccess - Starting
-[PreloadResourceRegister] handleAuthorizedAccess - Lobby configs result: {lobbyConfigs: {...}}
-[PreloadResourceRegister] handleAuthorizedAccess - Lobby configs found, updating
-[PreloadResourceRegister] handleAuthorizedAccess - Calling updateStatePreloadResource after lobby configs
-[PreloadResourceRegister] useMemo - Calculating render result: {isDirectMode: true, gameId: 1003}
-[PreloadResourceRegister] useMemo - Rendering PreloadResources for direct mode
-```
-
-#### Key Logic:
-
-1. **Lobby configs loading**: Fetches lobby configurations
-2. **Banner and game offers**: Handles banner offers and game offer IDs
-3. **Resource preloading**: Preloads game resources based on mode and gameId
-4. **State updates**: Updates parent component state when preloading completes
-
-## Lobby Rendering
-
-### File: `src/components/page-components/lobby/lobby.tsx`
-
-#### Console Logs:
-
-```
-[Lobby] AnalyticsHelper.trackLobby() called
-[Lobby] useEffect - Setting showPFSetting to empty string
-[Lobby] useEffect - Broadcasting OPEN_GAME_ID: 0
-[Lobby] handleOpenGame - Opening game: 1003
-```
-
-#### Key Logic:
-
-1. **Analytics tracking**: Tracks lobby visits
-2. **Settings reset**: Clears PF settings on lobby entry
-3. **Game transmitter**: Broadcasts lobby state to other components
-4. **Game opening**: Handles game selection from lobby
 
 ## Header Title Logic
 
@@ -246,10 +235,10 @@ This document describes the complete workflow for the game client application, i
     - Direct mode: No logo (empty)
 2. **Title display**:
     - Games mode: Shows game name with animation
-    - Lobby mode: Shows logo
+    - **Custom version**: Always shows game name (no lobby mode)
 3. **Translation**: Uses game-specific translation namespace
 
-## Complete Workflow Summary
+## Complete Workflow Summary (Custom Version)
 
 ### 1. URL Parsing Phase
 
@@ -263,79 +252,119 @@ This document describes the complete workflow for the game client application, i
 -   Retrieves and validates session
 -   Loads language settings
 -   Checks authorization status
--   Auto-creates nickname for SabaPlay users if needed
--   Determines target gameId based on mode
+-   **Auto-creates nickname for SabaPlay users if needed (no manual registration)**
+-   **Determines target gameId using custom routing logic (default to 1005)**
 
 ### 3. Authentication Phase
 
 -   Validates user credentials
--   Creates nickname if required
+-   **Creates nickname automatically if required (no manual form)**
 -   Loads lobby configurations
--   Handles SSO redirect logic
+-   **Handles custom game routing logic**
 
 ### 4. Dashboard Phase
 
 -   Initializes dashboard with props
 -   Validates game availability
--   Determines rendering mode (games vs lobby)
+-   **Always renders games (no lobby interface)**
 -   Opens games automatically if in direct mode
 
 ### 5. Game Rendering Phase
 
 -   Checks if game is in offer list
 -   Handles special cases (lobby with direct mode)
--   Renders appropriate component (games or lobby)
--   Manages game transmitters and connections
+-   **Renders single game component (no swiper, no game switching)**
+-   **No game transmitters or lobby connections**
 
-### 6. Register Phase (if needed)
+### 6. Auto Nickname Creation Phase (if needed)
 
--   Shows registration form for new users
--   Validates username and avatar
--   Creates user account
+-   **No registration form shown**
+-   **Automatic nickname generation for SabaPlay users**
+-   **Seamless user experience**
 -   Preloads resources
 -   Redirects to dashboard
 
-### 7. Lobby Phase
+### 7. **No Lobby Phase**
 
--   Tracks analytics
--   Manages game selection
--   Handles game opening
--   Broadcasts state changes
+-   **Lobby functionality completely removed**
+-   **No game selection interface**
+-   **No lobby analytics or state management**
 
-## Key Improvements in Latest Version
+## Key Changes in Custom Version
 
-1. **User-specific latestGameId**: Prevents cross-user interference
-2. **HTML-encoded ampersands handling**: Fixes URL parsing issues
-3. **Smart direct mode logic**: Handles lobby access properly
-4. **rurl parameter ignoring**: Prioritizes lobby access over redirects
-5. **Enhanced error handling**: Better error modal management
-6. **Comprehensive logging**: Detailed console logs for debugging
+1. **Register component removal**: No manual registration, automatic nickname creation only
+2. **Lobby functionality removal**: Direct game access only, no lobby interface
+3. **Swiper functionality removal**: One game per session, no game switching
+4. **Custom game routing**: Default to game 1005 for invalid scenarios
+5. **Shared utilities refactoring**: Maintained functionality after component removal
+6. **User-specific latestGameId**: Prevents cross-user interference
+7. **HTML-encoded ampersands handling**: Fixes URL parsing issues
+8. **Smart direct mode logic**: Handles lobby access properly
+9. **Enhanced error handling**: Better error modal management
+10. **Comprehensive logging**: Detailed console logs for debugging
 
-## Testing Scenarios
+## Testing Scenarios (Custom Version)
 
 ### Scenario 1: SabaPlay Direct Game Access
 
 -   URL: `?token=xxx&gameId=1003&op=SP`
--   Expected: Direct mode, game 1003, no error modal
+-   Expected: Direct mode, game 1003, no error modal, no registration form
 
-### Scenario 2: SabaPlay Lobby Access
+### Scenario 2: SabaPlay Invalid Game Access
+
+-   URL: `?token=xxx&gameId=9999&op=SP`
+-   Expected: Direct mode, fallback to game 1005, no error modal
+
+### Scenario 3: SabaPlay No Game ID
 
 -   URL: `?token=xxx&op=SP` (no gameId)
--   Expected: Non-direct mode, lobby, no error modal
+-   Expected: Direct mode, default to game 1005, no error modal
 
-### Scenario 3: SabaPlay Lobby with rurl
+### Scenario 4: SabaPlay User Without Nickname
 
--   URL: `?token=xxx&ref=d_direct&rurl=xxx&op=SP`
--   Expected: Non-direct mode, lobby, rurl ignored
+-   URL: `?token=xxx&gameId=1003&op=SP`
+-   Expected: Automatic nickname creation, no manual registration form
 
-### Scenario 4: Regular User Game Access
+### Scenario 5: One Game Per Session
 
--   URL: `?token=xxx&gameId=1003&op=GN`
--   Expected: Non-direct mode, SSO redirect logic
+-   User attempts to switch games
+-   Expected: No swiper functionality, single game only, no game switching
 
-### Scenario 5: Regular User Lobby Access
+### Scenario 6: HTML-Encoded URL
 
--   URL: `?token=xxx&op=GN`
--   Expected: Non-direct mode, lobby
+-   URL: `?token=xxx&amp;gameId=1003&amp;op=SP`
+-   Expected: Properly parsed, direct mode, game 1003
 
-This documentation provides a comprehensive overview of the latest workflow based on the console.logs and code analysis.
+### Scenario 7: User-Specific Storage
+
+-   Multiple users accessing same application
+-   Expected: Each user has isolated latestGameId storage
+
+## Custom Version Features
+
+### 1. Automatic Nickname Creation
+-   No manual registration required
+-   Automatic nickname generation for SabaPlay users
+-   Seamless user experience
+
+### 2. Direct Game Access
+-   No lobby interface
+-   Direct routing to specific games
+-   Simplified application flow
+
+### 3. One Game Per Session
+-   No game switching functionality
+-   Enforced single-game model
+-   Consistent user experience
+
+### 4. Smart Game Routing
+-   Default to game 1005 for invalid scenarios
+-   Validation against enabled games
+-   Proper fallback mechanisms
+
+### 5. User-Specific Storage
+-   Isolated game tracking per user
+-   No cross-user interference
+-   Secure user data handling
+
+This documentation provides a comprehensive overview of the custom version workflow with all major changes applied.

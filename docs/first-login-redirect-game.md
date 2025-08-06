@@ -1,32 +1,44 @@
-# Game ID Flow Workflow Analysis
+# Game ID Flow Workflow Analysis (Custom Version)
 
 ## Overview
 
-This document outlines the complete workflow for how `gameId` is handled throughout the application, from initial URL parsing to game selection and navigation.
+This document outlines the complete workflow for how `gameId` is handled throughout the **custom version** of the application, from initial URL parsing to game selection and navigation. The custom version removes the Register component, lobby functionality, and implements custom game routing logic.
 
-## 🚨 Latest Updates (Latest Version)
+## 🚨 Latest Updates (Custom Version - Latest)
 
-### Key Improvements Applied
+### Major Custom Version Changes Applied
 
-**1. User-Specific latestGameId Storage**
+**1. Register Component Removal**
+
+-   **Change**: Completely removed the Register component page while keeping auto-create nickname flow
+-   **Implementation**: Automatic nickname creation for SabaPlay users without manual intervention
+-   **Impact**: Streamlined user experience, no manual registration required
+
+**2. Lobby Functionality Removal**
+
+-   **Change**: Removed entire lobby system and related components
+-   **Implementation**: Direct game access only, no lobby interface
+-   **Impact**: Simplified application flow, direct game access only
+
+**3. Custom Game Routing Logic**
+
+-   **Change**: Implemented custom version that directs users to specific game ID
+-   **Implementation**: Default to game 1005 if no valid game ID provided or game not found
+-   **Impact**: Predictable game routing with proper fallbacks
+
+**4. User-Specific latestGameId Storage**
 
 -   **Change**: `latestGameId` is now stored per user using username-based keys
 -   **Implementation**: `getUserLatestGameId(username)` and `setUserLatestGameId(username, gameId)`
 -   **Impact**: Prevents cross-user state leakage and ensures proper game tracking
 
-**2. HTML-Encoded Ampersands Handling**
+**5. HTML-Encoded Ampersands Handling**
 
 -   **Change**: URLs with `&amp;` are now properly decoded before parsing
 -   **Implementation**: `searchParams.replace(/&amp;/g, '&')` before parsing
 -   **Impact**: Fixes URL parsing issues in various integrations
 
-**3. Enhanced Direct Mode Logic**
-
--   **Change**: Direct mode calculation now properly handles lobby access
--   **Implementation**: `effectiveRedirectUrl = gameId === 0 ? null : redirectUrl`
--   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present
-
-## 1. Initial Application Load Flow
+## 1. Initial Application Load Flow (Custom Version)
 
 ```mermaid
 flowchart TD
@@ -46,40 +58,57 @@ flowchart TD
     L -->|Yes| M[Render UM Page]
     L -->|No| N{User Authorized?}
 
-    N -->|No| O{Direct Mode OR isSabaPlay?}
-    O -->|Yes| P[Auto Create Nickname]
-    O -->|No| Q[Render Register]
+    N -->|No| O{isSabaPlay?}
+    O -->|Yes| P[Auto Create Nickname - No Manual Registration]
+    O -->|No| Q[Error - No Registration Available]
     P --> R{Authorization Success?}
     R -->|No| K
     R -->|Yes| S[Load Lobby Configs]
 
     N -->|Yes| S
-    Q --> T[User Registration]
-    T --> S
 
-    S --> U{Direct Mode?}
-    U -->|Yes| V[Use URL gameId]
-    U -->|No| W[Get SSO Redirect GameId]
-    W --> X{firstSSOToLobby?}
-    X -->|Yes| Y[Find Available Game Service]
-    X -->|No| Z[Use user-specific latestGameId]
-    Y --> AA[Set toLoadGameId]
-    Z --> AA
-    V --> AA
+    S --> T[Custom Game Routing Logic]
+    T --> U{Valid gameId provided?}
+    U -->|Yes| V[Use provided gameId]
+    U -->|No| W[Default to game 1005]
+    V --> X{Game available in enabled list?}
+    X -->|Yes| Y[Use gameId]
+    X -->|No| W
+    W --> Z[Set toLoadGameId to 1005]
+    Y --> Z
 
-    AA --> BB[Render Dashboard]
+    Z --> AA[Render Dashboard - Always Games, No Lobby]
 ```
 
-## 2. Game ID Sources and Priority
+## 2. Custom Game Routing Logic
 
-### Priority Order:
+### Priority Order (Custom Version):
 
 1. **URL Parameter** (`?gameId=X`) - Highest priority
-2. **Direct Mode** - Uses URL gameId directly
-3. **SSO Redirect Logic** - For non-direct mode with firstSSOToLobby
-4. **User-Specific Latest Game ID** - From localStorage per user
-5. **Available Game Service** - First available game from lobby configs
-6. **Default (0)** - Lobby mode
+2. **Custom Validation** - Check if game is available in enabled games
+3. **Default Fallback** - Always default to game 1005 for invalid scenarios
+4. **No Lobby Mode** - Lobby functionality completely removed
+
+### Custom Game Routing Implementation:
+
+```typescript
+// Custom version: Always direct to specific game, default to 1005 if no valid gameId
+let toLoadGameId = gameId;
+
+// If no gameId provided or gameId is 0, use default game 1005
+if (!toLoadGameId || toLoadGameId === 0) {
+    toLoadGameId = 1005;
+}
+
+// Validate if the gameId is available in the enabled games
+const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+const isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
+
+// If game is not available, use default game 1005
+if (!isGameAvailable) {
+    toLoadGameId = 1005;
+}
+```
 
 ### URL Context Parsing:
 
@@ -98,411 +127,195 @@ const params = new URLSearchParams(searchParams);
 gameId = Number(params.get("gameId") || 0);
 ref = params.get("ref");
 redirectUrl = params.get("rurl");
-isSabaPlay = params.get("op") === "SP";
-
-// Enhanced direct mode logic
-effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
-isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
 ```
 
-### User-Specific Storage:
+## 3. SplashScreen Game ID Logic (Custom Version)
 
-```javascript
-// User-specific latestGameId handling
-const getUserSpecificGameId = (username: string): number => {
-    if (!username) return 0;
-    const key = `${localStorageKeys.latestGameId}_${username}`;
-    return StorageHelper.get(key) || 0;
-};
-
-const setUserSpecificGameId = (username: string, gameId: number): void => {
-    if (!username) return;
-    const key = `${localStorageKeys.latestGameId}_${username}`;
-    StorageHelper.set(key, gameId);
-};
-```
-
-## 3. SplashScreen Component Flow
-
-```mermaid
-flowchart TD
-    A[SplashScreen Mount] --> B[Get Session]
-    B --> C{Session Valid?}
-    C -->|No| D[Sign Out]
-    C -->|Yes| E{UM Session?}
-    E -->|Yes| F[Handle UM]
-    E -->|No| G[Authorize User]
-
-    G --> H{Authorized?}
-    H -->|No| I{Direct Mode OR isSabaPlay?}
-    I -->|Yes| J[Auto Create Nickname]
-    I -->|No| K[Render Register]
-    J --> L{Success?}
-    L -->|No| D
-    L -->|Yes| M[Load Lobby Configs]
-
-    H -->|Yes| M
-    K --> N[User Registration]
-    N --> M
-
-    M --> O{Direct Mode?}
-    O -->|Yes| P[Use URL gameId]
-    O -->|No| Q[SSO Redirect Logic]
-    Q --> R{firstSSOToLobby?}
-    R -->|Yes| S[Find Available Game]
-    R -->|No| T[Use user-specific latestGameId]
-    S --> U[Set Current GameId]
-    T --> U
-    P --> U
-
-    U --> V[Custom Startup]
-    V --> W[Preload Resources]
-    W --> X[Render Dashboard]
-```
-
-## 4. Register Component Flow
-
-```mermaid
-flowchart TD
-    A[Register Component] --> B[Initialize with gameId from props]
-    B --> C[User Fills Form]
-    C --> D[Submit Registration]
-    D --> E{Name Valid?}
-    E -->|No| F[Show Error]
-    E -->|Yes| G[Create Nickname]
-
-    G --> H{Success?}
-    H -->|No| F
-    H -->|Yes| I{Direct Mode?}
-    I -->|Yes| J[Keep Original gameId]
-    I -->|No| K[Update toLoadGameId]
-    K --> L[Get Lobby Configs]
-    L --> M[Find Available Game Service]
-    M --> N[Set toLoadGameId]
-
-    J --> O[Trigger Preload]
-    N --> O
-    O --> P[Preload Resources]
-    P --> Q[Render Dashboard]
-```
-
-## 5. Dashboard Component Flow
-
-```mermaid
-flowchart TD
-    A[Dashboard Mount] --> B[Constructor with queryGame]
-    B --> C[componentDidMount]
-    C --> D{queryGame Present?}
-    D -->|Yes| E[openGame queryGame]
-    D -->|No| F[Render Lobby]
-
-    E --> G[Set State: queryGame, openGameId]
-    G --> H[Update URL Context]
-    H --> I[Render Games]
-
-    F --> J[Update URL Context: backToLobby]
-    J --> K[Render Lobby Component]
-
-    K --> L[User Clicks Game]
-    L --> M[openGameFromLobby]
-    M --> N{GameId Different?}
-    N -->|Yes| O[Remove Game Transmitter]
-    N -->|No| P[Force Update]
-    O --> Q[Set openGameId]
-    P --> Q
-    Q --> R[Update URL Context]
-    R --> I
-```
-
-## 6. Lobby Component Flow
-
-```mermaid
-flowchart TD
-    A[Lobby Component] --> B[Initialize]
-    B --> C[Broadcast OPEN_GAME_ID: 0]
-    C --> D[Render Banner & Layout]
-    D --> E[User Clicks Game]
-    E --> F[handleOpenGame]
-    F --> G[Call openGame with gameId]
-    G --> H[Dashboard openGameFromLobby]
-```
-
-## 7. Settings Component Flow
-
-```mermaid
-flowchart TD
-    A[Settings Component] --> B[User Clicks Back to Lobby]
-    B --> C[handleBackToLobbyOnclick]
-    C --> D[Update URL Context: gameId = 0]
-    D --> E[backToRedirectUrl]
-    E --> F{redirectUrl Present?}
-    F -->|Yes| G[Decode & Redirect]
-    F -->|No| H[Broadcast BACK_TO_LOBBY]
-    H --> I[Dashboard resetGameIdDashboardEvent]
-    I --> J[Set openGameId = 0]
-    J --> K[Render Lobby]
-```
-
-## 8. URL Context Management
-
-```mermaid
-flowchart TD
-    A[URL Context Update] --> B[updateURLContext]
-    B --> C{gameId Present?}
-    C -->|Yes| D[Update user-specific latestGameId]
-    C -->|No| E[Skip gameId Update]
-    D --> F[Store in localStorage with username key]
-    E --> F
-    F --> G[Context Updated]
-```
-
-## 9. Key State Variables
-
-### SplashScreen State:
-
--   `currentGameId`: Final gameId to load
--   `gameId`: Original URL gameId
--   `latestGameId`: User-specific from localStorage
-
-### Register State:
-
--   `toLoadGameId`: GameId to pass to Dashboard
--   `gameId`: From props (original URL gameId)
-
-### Dashboard State:
-
--   `queryGame`: GameId from props
--   `openGameId`: Currently open game
--   `gameTransmitters`: Active game connections
-
-## 10. Critical Decision Points
-
-### 1. Direct Mode vs Non-Direct Mode:
-
--   **Direct Mode**: Uses URL gameId directly, no SSO redirect logic
--   **Non-Direct Mode**: Applies SSO redirect logic, may change gameId
-
-### 2. isSabaPlay Logic:
-
--   **True**: Triggers auto nickname creation (same as Direct Mode)
--   **False**: Normal registration flow
--   **Note**: `isSabaPlay` is determined by URL parameter `op=SP`
-
-### 3. firstSSOToLobby Logic:
-
--   **True**: Search for available game services
--   **False**: Use user-specific latestGameId from localStorage
-
-### 4. Game Service Availability:
-
--   Check each enabled game setting for service availability
--   Select first available game if current game unavailable
-
-### 5. Authorization Flow:
-
--   **Authorized**: Proceed to game/lobby
--   **Not Authorized + (Direct Mode OR isSabaPlay)**: Auto-create nickname
--   **Not Authorized + Non-Direct Mode + !isSabaPlay**: Show registration
-
-### 6. User-Specific Storage:
-
--   **Isolation**: Each user has isolated game tracking
--   **Prevention**: Prevents cross-user state interference
--   **Fallback**: Uses global storage when username not available
-
-## 11. Console Log Analysis Points
-
-### Key Log Patterns to Monitor:
-
-1. `[URLContext]` - URL parsing and context updates
-2. `[SplashScreen]` - Initialization and gameId determination
-3. `[Register]` - Registration flow and gameId updates
-4. `[Dashboard]` - Game opening and state management
-5. `[Lobby]` - Lobby interactions and game selection
-6. `[Settings]` - Back to lobby functionality
-
-### Critical Log Messages:
-
--   `Final toLoadGameId` - Final gameId decision
--   `Rendering Dashboard with gameId` - Dashboard rendering
--   `openGame called with gameId` - Game opening
--   `updateURLContext called with` - Context updates
--   `User-specific latestGameId` - User-specific storage operations
-
-## 12. Common Flow Scenarios
-
-### Scenario 1: Direct Game Access
-
-```
-URL: ?gameId=123&ref=d_direct
-Flow: URL → SplashScreen → Dashboard → Game 123
-```
-
-### Scenario 2: Lobby Access
-
-```
-URL: (no gameId)
-Flow: URL → SplashScreen → Dashboard → Lobby → User selects game
-```
-
-### Scenario 3: New User Registration
-
-```
-URL: ?gameId=123
-Flow: URL → SplashScreen → Register → Dashboard → Game 123
-```
-
-### Scenario 4: SSO Redirect
-
-```
-URL: (no gameId, firstSSOToLobby=true)
-Flow: URL → SplashScreen → Find available game → Dashboard → Available game
-```
-
-### Scenario 5: SabaPlay Auto Registration
-
-```
-URL: ?op=SP&gameId=123
-Flow: URL → SplashScreen → Auto Create Nickname → Dashboard → Game 123
-```
-
-**Key Steps in SabaPlay Flow:**
-
-1. `isSabaPlay = true` from URL parameter `op=SP`
-2. User not authorized triggers auto nickname creation
-3. Auto-generated nickname and avatar created
-4. Direct navigation to game without registration form
-
-### Scenario 6: HTML-Encoded URL (Fixed)
-
-```
-URL: ?token=test&amp;gameId=123&amp;op=SP
-Flow: URL → SplashScreen → Auto Create Nickname → Dashboard → Game 123
-```
-
-**Key Steps in HTML-Encoded URL Flow:**
-
-1. HTML-encoded ampersands are decoded before parsing
-2. URL parameters are properly extracted
-3. Normal flow continues with decoded parameters
-
-### Scenario 7: User-Specific Storage (Fixed)
-
-```
-Multiple users accessing same application
-Flow: Each user has isolated game tracking, no cross-user interference
-```
-
-**Key Steps in User-Specific Storage Flow:**
-
-1. Each user's latestGameId is stored with username-based keys
-2. Game tracking is isolated per user
-3. No cross-user state leakage occurs
-
-## 13. Recent Bug Fixes and Improvements
-
-### Bug Fix 1: Cross-User latestGameId Interference - FIXED ✅
-
-**Issue**: `latestGameId` was stored globally, causing cross-user interference when multiple users accessed the application.
-
-**Root Cause**:
-
--   Global localStorage key used for all users
--   No user-specific isolation
-
-**Fix Applied**:
-
--   **Storage Helper**: Added `getUserLatestGameId(username)` and `setUserLatestGameId(username, gameId)`
--   **Splash Screen**: Uses user-specific latestGameId instead of global one
--   **URL Context**: Stores and retrieves user-specific game IDs
-
-**Impact**: Each user now has isolated game tracking, preventing cross-user interference.
-
-### Bug Fix 2: HTML-Encoded Ampersands Breaking URL Parsing - FIXED ✅
-
-**Issue**: URLs with `&amp;` (HTML-encoded ampersands) failed to parse correctly.
-
-**Root Cause**:
-
--   URLSearchParams didn't handle HTML-encoded ampersands
--   Parsing failed for certain integration scenarios
-
-**Fix Applied**:
-
--   **URL Context**: Added `searchParams.replace(/&amp;/g, '&')` before parsing
--   **Comprehensive Testing**: Verified all URL parameter combinations work
-
-**Impact**: All URL parsing scenarios now work correctly, including HTML-encoded parameters.
-
-### Bug Fix 3: Enhanced Direct Mode Logic - FIXED ✅
-
-**Issue**: Direct mode calculation didn't properly handle lobby access scenarios.
-
-**Root Cause**:
-
--   Direct mode logic didn't account for lobby access with `ref` and `rurl` parameters
--   `rurl` parameter was always considered for direct mode calculation
-
-**Fix Applied**:
-
--   **URL Context**: Enhanced direct mode logic to ignore `rurl` when `gameId=0`
--   **Effective Redirect URL**: Set to `null` when accessing lobby to prioritize lobby access
-
-**Impact**: Users can now access lobby properly even when `ref` and `rurl` parameters are present.
-
-## 14. Testing Coverage
-
-### Key Test Cases:
+### Auto Nickname Creation Flow:
 
 ```typescript
-it("should handle user-specific storage isolation", () => {
-    const user1 = "user1";
-    const user2 = "user2";
-    const gameId1 = 123;
-    const gameId2 = 456;
+// Custom version: No manual registration, automatic nickname creation only
+if (!authorizeInfo?.authorized && isSabaPlay) {
+    // Auto create nickname without user intervention
+    const autoCreateResult = await autoCreateNickname(session, isSabaPlay);
 
-    setUserSpecificGameId(user1, gameId1);
-    setUserSpecificGameId(user2, gameId2);
-
-    expect(getUserSpecificGameId(user1)).toBe(gameId1);
-    expect(getUserSpecificGameId(user2)).toBe(gameId2);
-    expect(getUserSpecificGameId(user1)).not.toBe(getUserSpecificGameId(user2));
-});
-
-it("should handle HTML-encoded URLs correctly", () => {
-    const searchParams = "?token=test&amp;gameId=123&amp;op=SP";
-    const result = parseContextFromURL();
-    expect(result?.token).toBe("test");
-    expect(result?.gameId).toBe(123);
-    expect(result?.isSabaPlay).toBe(true);
-});
-
-it("should calculate direct mode correctly with enhanced logic", () => {
-    const testCases = [
-        {
-            params: { gameId: "0", ref: "true", rurl: "test" },
-            expected: { isDirectMode: false, redirectUrl: null }, // rurl ignored when gameId=0
-        },
-        {
-            params: { gameId: "123", ref: "true", rurl: "test" },
-            expected: { isDirectMode: true, redirectUrl: "test" },
-        },
-        {
-            params: { gameId: "123", op: "SP" },
-            expected: { isDirectMode: true, redirectUrl: null }, // SabaPlay with gameId > 0
-        },
-        {
-            params: { gameId: "0", op: "SP" },
-            expected: { isDirectMode: false, redirectUrl: null }, // SabaPlay with gameId = 0
-        },
-    ];
-
-    testCases.forEach(({ params, expected }) => {
-        const result = parseContextFromURL();
-        expect(result?.isDirectMode).toBe(expected.isDirectMode);
-        expect(result?.redirectUrl).toBe(expected.redirectUrl);
-    });
-});
+    if (autoCreateResult?.authorized) {
+        // Continue with auto-created nickname
+        authorizeInfo = autoCreateResult;
+    } else {
+        // Handle error case
+        this.signOut();
+        return;
+    }
+}
 ```
 
-This workflow analysis provides a comprehensive understanding of how gameId flows through the application, enabling better debugging and feature development. The latest improvements ensure better user isolation, more robust URL parsing, and smarter lobby access handling.
+### Custom Game Routing Flow:
+
+```typescript
+// Custom version: Always direct to specific game, default to 1005 if no valid gameId
+let toLoadGameId = gameId;
+
+// If no gameId provided or gameId is 0, use default game 1005
+if (!toLoadGameId || toLoadGameId === 0) {
+    toLoadGameId = 1005;
+}
+
+// Validate if the gameId is available in the enabled games
+const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+const isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
+
+// If game is not available, use default game 1005
+if (!isGameAvailable) {
+    toLoadGameId = 1005;
+}
+
+// Set the final game ID
+this.setState({ toLoadGameId });
+```
+
+## 4. Dashboard Rendering (Custom Version)
+
+### Always Render Games:
+
+```typescript
+// Custom version: Always render games, no lobby interface
+renderDashBoard() {
+    const isRenderGames = true; // Custom version: Always render games
+    const renderOfferGameContainer = () => this.renderGames();
+
+    return (
+        <div className={styles["dashboard"]}>
+            <Header />
+            <SoundSettings />
+            {isNoGameOffer ? <></> : renderOfferGameContainer()}
+            <MusicPlayer />
+        </div>
+    );
+}
+```
+
+### Game Component Rendering:
+
+```typescript
+// Custom version: Direct game rendering, no swiper functionality
+renderGames() {
+    const { userStakeLevel, openGameName } = this.state;
+    const urlContext = loadURLContext();
+
+    return (
+        <Games
+            setApiErrorMessage={this.notificationHandler.handleShowApiErrorMessage}
+            userStakeLevel={userStakeLevel}
+            updateUserStakeLevel={this.handleUpdateUserStakeLevel}
+            openGameId={urlContext.gameId}
+            openGameName={openGameName}
+            directMode={this.props.directMode}
+        />
+    );
+}
+```
+
+## 5. Game Component Logic (Custom Version)
+
+### Simplified Game Rendering:
+
+```typescript
+// Custom version: No swiper functionality, direct game rendering
+export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId, directMode }) => {
+    const getGameComponentById = (gameId: number) => {
+        // Game component selection logic
+        switch (gameId) {
+            case GameIds.BacBall1:
+            case GameIds.BacBall2:
+                return <BacBall key={`game-${gameId}`} {...gameProps} />;
+            // ... other games
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className={`game-container ${styles["game-wrapper"]} ${styles["open-chips"]}`}>
+            <SystemContextProvider>
+                <div className={styles["game-list"]}>{getGameComponentById(openGameId)}</div>
+            </SystemContextProvider>
+        </div>
+    );
+};
+```
+
+## 6. Testing Scenarios (Custom Version)
+
+### Scenario 1: SabaPlay Direct Game Access
+
+-   **URL**: `?token=xxx&gameId=1003&op=SP`
+-   **Expected**: Direct mode, game 1003, no error modal, no registration form
+
+### Scenario 2: SabaPlay Invalid Game Access
+
+-   **URL**: `?token=xxx&gameId=9999&op=SP`
+-   **Expected**: Direct mode, fallback to game 1005, no error modal
+
+### Scenario 3: SabaPlay No Game ID
+
+-   **URL**: `?token=xxx&op=SP` (no gameId)
+-   **Expected**: Direct mode, default to game 1005, no error modal
+
+### Scenario 4: SabaPlay User Without Nickname
+
+-   **URL**: `?token=xxx&gameId=1003&op=SP`
+-   **Expected**: Automatic nickname creation, no manual registration form
+
+### Scenario 5: One Game Per Session
+
+-   **Action**: User attempts to switch games
+-   **Expected**: No swiper functionality, single game only, no game switching
+
+## 7. Key Changes Summary
+
+### Removed Functionality:
+
+1. **Register Component**: No manual registration form
+2. **Lobby System**: No lobby interface or game selection
+3. **Swiper Functionality**: No game switching within session
+4. **SSO Redirect Logic**: Simplified to custom routing
+
+### Added Functionality:
+
+1. **Automatic Nickname Creation**: Seamless SabaPlay user onboarding
+2. **Custom Game Routing**: Predictable fallback to game 1005
+3. **Direct Game Access**: Simplified application flow
+4. **One Game Per Session**: Consistent user experience
+
+### Modified Logic:
+
+1. **Game ID Validation**: Always validates against enabled games
+2. **Fallback Mechanism**: Always defaults to game 1005
+3. **Dashboard Rendering**: Always renders games, never lobby
+4. **User Experience**: Streamlined, no manual intervention required
+
+## 8. Impact Analysis
+
+### Positive Impacts:
+
+1. **Simplified User Experience**: No manual registration or lobby navigation
+2. **Consistent Game Experience**: One game per session ensures focused gameplay
+3. **Predictable Routing**: Always defaults to game 1005 for invalid scenarios
+4. **Reduced Complexity**: Fewer components and less code to maintain
+
+### Technical Benefits:
+
+1. **Reduced Bundle Size**: Fewer components and dependencies
+2. **Simplified State Management**: Less complex state logic
+3. **Better Performance**: No swiper animations or lobby loading
+4. **Easier Testing**: Fewer components to test
+
+### Business Benefits:
+
+1. **Streamlined Onboarding**: Automatic nickname creation
+2. **Focused User Experience**: Single game per session
+3. **Reduced Support**: Less complexity means fewer user issues
+4. **Predictable User Flow**: Consistent experience across all users
+
+This custom version provides a streamlined, single-game-per-session experience with predictable fallback behavior to game 1005, while maintaining all essential functionality through automatic processes.

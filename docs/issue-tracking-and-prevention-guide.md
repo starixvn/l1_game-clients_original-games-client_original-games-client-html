@@ -4,6 +4,158 @@
 
 This document tracks issues, errors, and best practices encountered during development to prevent similar problems in the future. It serves as a reference for maintaining code quality and ensuring robust testing practices.
 
+## Custom Version Implementation Issues (Resolved: 2024-12-19)
+
+### 1. Register Component Removal Issues
+
+#### **Issue Description**
+- **Problem**: Removing the Register component while maintaining auto-create nickname functionality
+- **Root Cause**: Essential utilities and components were tightly coupled to the Register component
+- **Impact**: Build errors and missing functionality after component removal
+
+#### **Solution Implemented**
+1. **Moved Essential Utilities**:
+   - `NameGenerator` → `src/_shared/helpers/name-generator.ts`
+   - `MAX_AVATAR_ID` → `src/_shared/helpers/avatar-helper.ts`
+   - `AvatarGallery` → `src/components/game-components/avatar-gallery/`
+
+2. **Updated Import Paths**:
+   - Updated all components that imported from the removed Register component
+   - Fixed import paths in profile-picture, user-info, and change-avatar components
+
+#### **Prevention Strategy**
+- Always identify dependencies before removing components
+- Move essential utilities to shared locations before component removal
+- Update all import paths systematically
+- Test functionality after each major component removal
+
+### 2. Lobby Functionality Removal Issues
+
+#### **Issue Description**
+- **Problem**: Removing lobby system while maintaining game functionality
+- **Root Cause**: Dashboard logic was tightly coupled to lobby rendering
+- **Impact**: Build errors and missing game rendering logic
+
+#### **Solution Implemented**
+1. **Simplified Dashboard Logic**:
+   ```typescript
+   // Before: Conditional lobby/games rendering
+   const isRenderGames = this.dashboardHandler.shouldRenderGames();
+   
+   // After: Always render games
+   const isRenderGames = true; // Custom version: Always render games
+   ```
+
+2. **Created Dummy Functions**:
+   - `src/_shared/helpers/scoreboard-registry.ts` for scoreboard compatibility
+   - Updated all game scoreboard imports
+
+3. **Removed Lobby Dependencies**:
+   - Deleted lobby connection context
+   - Removed lobby-related imports and state
+
+#### **Prevention Strategy**
+- Identify all dependencies before removing major functionality
+- Create placeholder functions for compatibility
+- Test build process after each major removal
+- Update all related imports and references
+
+### 3. Swiper Functionality Removal Issues
+
+#### **Issue Description**
+- **Problem**: Removing swiper components while maintaining game rendering
+- **Root Cause**: Games component was tightly coupled to swiper logic
+- **Impact**: Build errors and missing game rendering
+
+#### **Solution Implemented**
+1. **Simplified Games Component**:
+   ```typescript
+   // Before: Swiper-based rendering
+   return (
+       <Swiper>
+           {renderSwiperItems()}
+       </Swiper>
+   );
+   
+   // After: Direct game rendering
+   return (
+       <div>
+           {getGameComponentById(openGameId)}
+       </div>
+   );
+   ```
+
+2. **Updated Type Definitions**:
+   - Removed `swiperRef` and `lobbyGamesIds` from Props type
+   - Removed swiper-related state from DashboardState
+
+3. **Cleaned Up Imports**:
+   - Removed Swiper imports from games component
+   - Removed ButtonSwipe imports from dashboard
+
+#### **Prevention Strategy**
+- Remove functionality incrementally
+- Update type definitions immediately after removing props
+- Test component rendering after each change
+- Clean up unused imports systematically
+
+### 4. Custom Game Routing Implementation
+
+#### **Issue Description**
+- **Problem**: Implementing custom routing logic with fallback to game 1005
+- **Root Cause**: Complex validation logic for game availability
+- **Impact**: Need for robust fallback mechanism
+
+#### **Solution Implemented**
+```typescript
+// Custom version: Always direct to specific game, default to 1005 if no valid gameId
+let toLoadGameId = gameId;
+
+// If no gameId provided or gameId is 0, use default game 1005
+if (!toLoadGameId || toLoadGameId === 0) {
+    toLoadGameId = 1005;
+}
+
+// Validate if the gameId is available in the enabled games
+const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+const isGameAvailable = enabledRenderGameSettings.some(game => game.id === toLoadGameId);
+
+// If game is not available, use default game 1005
+if (!isGameAvailable) {
+    toLoadGameId = 1005;
+}
+```
+
+#### **Prevention Strategy**
+- Always implement fallback logic for critical routing
+- Validate inputs against available options
+- Test edge cases (invalid game IDs, missing parameters)
+- Document fallback behavior clearly
+
+### 5. Build and TypeScript Issues
+
+#### **Issue Description**
+- **Problem**: Multiple TypeScript errors after major refactoring
+- **Root Cause**: Incomplete type updates and missing properties
+- **Impact**: Build failures and development blocking
+
+#### **Solution Implemented**
+1. **Systematic Type Updates**:
+   - Updated all component Props types
+   - Updated all state interfaces
+   - Fixed missing property errors
+
+2. **Incremental Testing**:
+   - Ran `npm run build` after each major change
+   - Fixed errors immediately before proceeding
+   - Tested development server after each fix
+
+#### **Prevention Strategy**
+- Run build process frequently during major refactoring
+- Fix TypeScript errors immediately
+- Use incremental approach for large changes
+- Test both build and development server
+
 ## Recent Issues Resolved
 
 ### 1. Dashboard Handler Timing Issue (Resolved: 2024-07-24)

@@ -20,11 +20,11 @@ This document provides a comprehensive analysis of all possible combinations of 
 -   **Implementation**: `searchParams.replace(/&amp;/g, '&')` before parsing
 -   **Impact**: Fixes URL parsing issues in various integrations
 
-**3. Smart Direct Mode Logic**
+**3. Enhanced Direct Mode Logic**
 
--   **Change**: Enhanced direct mode calculation that properly handles lobby access
--   **Implementation**: `effectiveRedirectUrl = gameId === 0 ? null : redirectUrl`
--   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present
+-   **Change**: Smart direct mode calculation that properly handles lobby access and SabaPlay integration
+-   **Implementation**: `effectiveRedirectUrl = isSabaPlay ? redirectUrl : (gameId === 0 ? null : redirectUrl)`
+-   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present, and proper SabaPlay handling
 
 ## Parameter Definitions
 
@@ -40,11 +40,8 @@ This document provides a comprehensive analysis of all possible combinations of 
 
 ```typescript
 // Current implementation in url-context.ts
-const ref = params.get("ref"); // Returns string value or null
+const effectiveRedirectUrl = isSabaPlay ? redirectUrl : (gameId === 0 ? null : redirectUrl);
 const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
-
-// Where effectiveRedirectUrl is calculated as:
-const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 ```
 
 **Note**: The `ref` parameter is a string with two valid values: `"d_direct"` and `"m_direct"`. Only these specific values will enable direct mode when combined with a valid `redirectUrl`. Invalid values are ignored.
@@ -66,7 +63,7 @@ const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 | 3   | `0`    | ❌           | ❌          | ❌         | `?gameId=0&ref=d_direct`                       | Normal SSO to Lobby (ref ignored)            | URL → SplashScreen → Register → Dashboard → Lobby                | ref ignored when gameId=0             |
 | 4   | `0`    | ❌           | ❌          | ✅         | `?gameId=0&ref=d_direct&op=SP`                 | SabaPlay to Lobby (ref ignored)              | URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby    | ref ignored when gameId=0             |
 | 5   | `0`    | ❌           | ✅          | ❌         | `?gameId=0&ref=d_direct&rurl=<base64>`         | Normal SSO to Lobby (rurl ignored)           | URL → SplashScreen → Register → Dashboard → Lobby                | rurl ignored when gameId=0            |
-| 6   | `0`    | ❌           | ✅          | ✅         | `?gameId=0&ref=d_direct&rurl=<base64>&op=SP`   | SabaPlay to Lobby (rurl ignored)             | URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby    | rurl ignored when gameId=0            |
+| 6   | `0`    | ❌           | ✅          | ✅         | `?gameId=0&ref=d_direct&rurl=<base64>&op=SP`   | SabaPlay to Lobby (rurl used)                | URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby    | rurl used for SabaPlay                |
 | 7   | `>0`   | ❌           | N/A         | ❌         | `?gameId=123`                                  | Normal SSO to Game                           | URL → SplashScreen → Register → Dashboard → Available Game       | SSO with game redirect                |
 | 8   | `>0`   | ✅           | N/A         | ❌         | `?gameId=123&op=SP`                            | SabaPlay to Game                             | URL → SplashScreen → Auto Create Nickname → Dashboard → Game 123 | SabaPlay integration to specific game |
 | 9   | `>0`   | ✅           | ❌          | ❌         | `?gameId=123&ref=d_direct`                     | Direct Mode to Game                          | URL → SplashScreen → Auto Create Nickname → Dashboard → Game 123 | Direct game access                    |
@@ -97,6 +94,7 @@ const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 -   **Analytics**: `SSO_To_Lobby` (with SabaPlay context)
 -   **Game Selection**: Lobby mode (gameId = 0)
 -   **User-Specific Storage**: Uses user-specific latestGameId
+-   **Redirect URL**: Always used for SabaPlay (combination 6)
 
 ### Category 2: Game Access (gameId > 0)
 
@@ -133,10 +131,16 @@ const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 -   **Trigger**: Post-game completion or back to lobby action
 -   **Validation**: URL format validation before storage
 
-#### Redirect URL Ignored (Combinations 5, 6)
+#### Redirect URL for SabaPlay (Combination 6)
 
--   **Behavior**: `rurl` parameter is ignored when `gameId=0`
--   **Reason**: Prioritizes lobby access over redirect logic
+-   **Behavior**: `rurl` parameter is used for SabaPlay even when `gameId=0`
+-   **Reason**: SabaPlay always uses redirectUrl regardless of gameId
+-   **Impact**: SabaPlay users can access lobby with redirect functionality
+
+#### Redirect URL Ignored (Combination 5)
+
+-   **Behavior**: `rurl` parameter is ignored when `gameId=0` and not SabaPlay
+-   **Reason**: Prioritizes lobby access over redirect logic for non-SabaPlay
 -   **Impact**: Users can access lobby even with `ref` and `rurl` parameters
 
 ## Registration Flow Variations
@@ -220,7 +224,7 @@ let toLoadGameId = urlGameId > 0 ? urlGameId : userLatestGameId;
 
 // Update user-specific storage when game is selected
 if (toLoadGameId > 0) {
-    setUserLatestGameId(session?.username, toLoadGameId);
+    setUserLatestGameId(toLoadGameId, session?.username);
 }
 ```
 
@@ -301,6 +305,7 @@ const analyticsContext = {
 4. **With redirect URL**: `?gameId=123&ref=d_direct&rurl=<base64>`
 5. **HTML-encoded URL**: `?token=xxx&amp;gameId=123&amp;op=SP`
 6. **Current production URL**: `?token=xxx&lang=vi-VN&appType=1&ref=d_direct&op=GN&cg=Credit_VN`
+7. **SabaPlay with redirect**: `?gameId=0&op=SP&rurl=<base64>`
 
 ### Edge Case Tests
 
@@ -308,7 +313,7 @@ const analyticsContext = {
 2. **Invalid gameId**: `?gameId=999999`
 3. **Invalid redirect URL**: `?rurl=invalid-base64`
 4. **Conflicting flags**: `?ref=d_direct&op=SP` (redundant)
-5. **Lobby with rurl**: `?gameId=0&ref=d_direct&rurl=<base64>` (rurl ignored)
+5. **Lobby with rurl**: `?gameId=0&ref=d_direct&rurl=<base64>` (rurl ignored for non-SabaPlay)
 6. **Multiple users**: Test user-specific storage isolation
 7. **Different ref values**: `?ref=d_direct`, `?ref=m_direct`, `?ref=invalid_value`
 
@@ -477,21 +482,22 @@ function getUserSpecificGameId(username: string): number {
 
 **Impact**: All URL parsing scenarios now work correctly, including HTML-encoded parameters.
 
-### Bug Fix 3: SabaPlay Lobby Access Issues - FIXED ✅
+### Bug Fix 3: Enhanced SabaPlay Integration - FIXED ✅
 
-**Issue**: SabaPlay users with `ref` and `rurl` parameters couldn't access lobby when `gameId=0`.
+**Issue**: SabaPlay integration needed better handling of redirect URLs and lobby access.
 
 **Root Cause**:
 
--   Direct mode logic didn't properly handle lobby access scenarios
--   `rurl` parameter was always considered for direct mode calculation
+-   SabaPlay logic didn't properly handle all scenarios
+-   Redirect URL handling was inconsistent
 
 **Fix Applied**:
 
--   **URL Context**: Enhanced direct mode logic to ignore `rurl` when `gameId=0`
--   **Effective Redirect URL**: Set to `null` when accessing lobby to prioritize lobby access
+-   **URL Context**: Enhanced SabaPlay logic to always use redirectUrl regardless of gameId
+-   **Effective Redirect URL**: Improved calculation for SabaPlay scenarios
+-   **Direct Mode Logic**: Better integration between SabaPlay and direct mode
 
-**Impact**: SabaPlay users can now access lobby properly regardless of `ref` and `rurl` parameters.
+**Impact**: SabaPlay integration now works consistently across all scenarios.
 
 ### Bug Fix 4: Dashboard Error Modal for Lobby Access - FIXED ✅
 
@@ -517,12 +523,13 @@ function getUserSpecificGameId(username: string): number {
 -   Network errors are handled gracefully
 -   User-specific storage prevents cross-user interference
 -   HTML-encoded URLs are properly parsed
+-   SabaPlay integration works consistently
 
 **Updated Combination Behavior**:
 
 -   **Before Fix**: Combinations 1, 2, 3, 5, 7, 9, 11, 13, 15 could get stuck
 -   **After Fix**: All combinations complete successfully with proper error handling
--   **New Behavior**: Lobby access with `ref` and `rurl` now works properly (combinations 3, 4, 5, 6)
+-   **New Behavior**: SabaPlay always uses redirectUrl regardless of gameId (combination 6)
 -   **User Isolation**: Each user has isolated game tracking
 
 ## Conclusion
@@ -540,5 +547,6 @@ The parameter combinations provide flexibility for different integration scenari
 -   **User isolation**: No cross-user state interference
 -   **Robust URL parsing**: Handles HTML-encoded parameters
 -   **Smart lobby access**: Proper handling of lobby scenarios
+-   **Enhanced SabaPlay integration**: Consistent behavior across all scenarios
 -   **Enhanced error handling**: Better fallback mechanisms
 -   **Comprehensive logging**: Detailed debugging information

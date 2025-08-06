@@ -20,11 +20,11 @@ This document provides a comprehensive analysis of the URL context parameters (`
 -   **Implementation**: `searchParams.replace(/&amp;/g, '&')` before parsing
 -   **Impact**: Fixes URL parsing issues in various integrations
 
-**3. Smart Direct Mode Logic**
+**3. Enhanced Direct Mode Logic**
 
--   **Change**: Enhanced direct mode calculation that properly handles lobby access
--   **Implementation**: `effectiveRedirectUrl = gameId === 0 ? null : redirectUrl`
--   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present
+-   **Change**: Smart direct mode calculation that properly handles lobby access and SabaPlay integration
+-   **Implementation**: `effectiveRedirectUrl = isSabaPlay ? redirectUrl : (gameId === 0 ? null : redirectUrl)`
+-   **Impact**: Allows lobby access even when `ref` and `rurl` parameters are present, and proper SabaPlay handling
 
 ## URL Context Parameters
 
@@ -49,8 +49,8 @@ This document provides a comprehensive analysis of the URL context parameters (`
 **Current Logic**:
 
 ```typescript
+const effectiveRedirectUrl = isSabaPlay ? redirectUrl : gameId === 0 ? null : redirectUrl;
 const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
-const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 ```
 
 **Behavior**:
@@ -82,35 +82,29 @@ const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
 ```typescript
 // From url-context.ts (Latest Version)
 export function parseContextFromURL(): URLContextModel | undefined {
-    let searchParams = globalThis.location?.search;
+    // Fix: Handle HTML-encoded ampersands by decoding them first
+    const rawSearch = globalThis.location?.search || "";
+    const decodedSearch = rawSearch.replace(/&amp;/g, "&");
 
-    // Fix: Handle HTML-encoded ampersands
-    if (searchParams) {
-        searchParams = searchParams.replace(/&amp;/g, "&");
+    const params = new URLSearchParams(decodedSearch);
+
+    // Reload page
+    if (Array.from(params.values()).length === 0) {
+        return;
     }
-
-    const params = new URLSearchParams(searchParams);
 
     const token = params.get("token");
     const language = params.get("lang");
     const gameId = Number(params.get("gameId") || 0);
-    const ref = params.get("ref");
     const redirectUrl = params.get("rurl");
+    const ref = params.get("ref");
     const isSabaPlay = params.get("op") === "SP";
 
-    // Enhanced direct mode logic
-    const effectiveRedirectUrl = gameId === 0 ? null : redirectUrl;
+    // Enhanced direct mode logic with SabaPlay handling
+    const effectiveRedirectUrl = isSabaPlay ? redirectUrl : gameId === 0 ? null : redirectUrl;
     const isDirectMode = !!(ref && effectiveRedirectUrl) || (isSabaPlay && gameId !== 0);
 
-    return {
-        token,
-        language,
-        gameId,
-        isDirectMode,
-        redirectUrl: effectiveRedirectUrl,
-        firstSSOToLobby: true,
-        isSabaPlay,
-    };
+    return { token, language, gameId, isDirectMode, redirectUrl: effectiveRedirectUrl, firstSSOToLobby: true, isSabaPlay };
 }
 ```
 
@@ -120,17 +114,22 @@ export function parseContextFromURL(): URLContextModel | undefined {
 
 ```typescript
 // From storage-helper.ts
-export const getUserLatestGameId = (username: string): number => {
-    if (!username) return 0;
-    const key = `${localStorageKeys.latestGameId}_${username}`;
-    return StorageHelper.get(key) || 0;
-};
+export function getUserLatestGameId(username?: string): number {
+    if (!username) {
+        return StorageHelper.get<number>(localStorageKeys.latestGameId) || 0;
+    }
+    const userKey = buildUserSpecificLocalStorageKey(localStorageKeys.userLatestGameId, username);
+    return StorageHelper.get<number>(userKey) || 0;
+}
 
-export const setUserLatestGameId = (username: string, gameId: number): void => {
-    if (!username) return;
-    const key = `${localStorageKeys.latestGameId}_${username}`;
-    StorageHelper.set(key, gameId);
-};
+export function setUserLatestGameId(gameId: number, username?: string): void {
+    if (!username) {
+        StorageHelper.set(localStorageKeys.latestGameId, gameId);
+        return;
+    }
+    const userKey = buildUserSpecificLocalStorageKey(localStorageKeys.userLatestGameId, username);
+    StorageHelper.set(userKey, gameId);
+}
 ```
 
 ### Usage in Components
@@ -186,25 +185,42 @@ flowchart TD
     J2 -->|Yes| L2[Auto Create Nickname]
     J2 -->|No| M2[Render Register]
 
-    L2 --> N2{Success?}
-    N2 -->|No| E2
-    N2 -->|Yes| K2
+    L2 --> T2{Success?}
+    T2 -->|No| E2
+    T2 -->|Yes| K2
 
-    K2 --> O2{isDirectMode?}
-    O2 -->|Yes| P2[Use URL gameId]
-    O2 -->|No| Q2[Apply SSO Redirect Logic]
+    K2 --> U2{isDirectMode?}
+    U2 -->|Yes| V2[Use URL gameId]
+    U2 -->|No| W2[Apply SSO Redirect Logic]
 
-    Q2 --> R2{firstSSOToLobby?}
-    R2 -->|Yes| S2[Set gameId equals 0 Lobby]
-    R2 -->|No| T2[Use user-specific latestGameId and Check Service]
+    W2 --> X2{firstSSOToLobby?}
+    X2 -->|Yes| Y2[Set gameId equals 0 Lobby]
+    X2 -->|No| Z2[Use user-specific latestGameId and Check Service]
 
-    P2 --> U2[Set currentGameId]
-    S2 --> U2
-    T2 --> U2
+    V2 --> AA2[Set currentGameId]
+    Y2 --> AA2
+    Z2 --> AA2
 
-    U2 --> V2[Render Dashboard]
-    M2 --> W2[User Registration]
-    W2 --> V2
+    AA2 --> BB2[Custom Startup]
+    BB2 --> CC2[Preload Resources]
+    CC2 --> DD2[Render Dashboard]
+
+    M2 --> EE2[User Registration]
+    EE2 --> FF2[Submit Form]
+    FF2 --> GG2{isDirectMode?}
+    GG2 -->|Yes| HH2[Keep Original gameId]
+    GG2 -->|No| II2[Update toLoadGameId]
+
+    II2 --> JJ2{firstSSOToLobby?}
+    JJ2 -->|Yes| KK2[Set toLoadGameId equals 0]
+    JJ2 -->|No| LL2[Find Available Game]
+
+    HH2 --> MM2[Trigger Preload]
+    KK2 --> MM2
+    LL2 --> MM2
+
+    MM2 --> CC2
+    CC2 --> DD2
 ```
 
 ### 3. Registration Flow (Register Component)
@@ -296,6 +312,7 @@ flowchart TD
 -   Triggers auto nickname creation (same as Direct Mode)
 -   Determined by URL parameter `op=SP`
 -   Used for SabaPlay platform integration
+-   Always uses `redirectUrl` regardless of `gameId` value
 
 ### 3. First SSO to Lobby Logic (`firstSSOToLobby = true`)
 
@@ -370,7 +387,7 @@ Flow: URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby
 
 ```
 URL: ?ref=d_direct&rurl=xxx&op=SP
-Flow: URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby (rurl ignored)
+Flow: URL → SplashScreen → Auto Create Nickname → Dashboard → Lobby (rurl used for SabaPlay)
 ```
 
 ### Scenario 4: HTML-Encoded URL (Fixed)
@@ -537,21 +554,22 @@ static login(urlContext: URLContextModel) {
 
 **Impact**: All URL parsing scenarios now work correctly, including HTML-encoded parameters.
 
-### Bug Fix 3: SabaPlay Lobby Access Issues - FIXED ✅
+### Bug Fix 3: Enhanced SabaPlay Integration - FIXED ✅
 
-**Issue**: SabaPlay users with `ref` and `rurl` parameters couldn't access lobby when `gameId=0`.
+**Issue**: SabaPlay integration needed better handling of redirect URLs and lobby access.
 
 **Root Cause**:
 
--   Direct mode logic didn't properly handle lobby access scenarios
--   `rurl` parameter was always considered for direct mode calculation
+-   SabaPlay logic didn't properly handle all scenarios
+-   Redirect URL handling was inconsistent
 
 **Fix Applied**:
 
--   **URL Context**: Enhanced direct mode logic to ignore `rurl` when `gameId=0`
--   **Effective Redirect URL**: Set to `null` when accessing lobby to prioritize lobby access
+-   **URL Context**: Enhanced SabaPlay logic to always use redirectUrl regardless of gameId
+-   **Effective Redirect URL**: Improved calculation for SabaPlay scenarios
+-   **Direct Mode Logic**: Better integration between SabaPlay and direct mode
 
-**Impact**: SabaPlay users can now access lobby properly regardless of `ref` and `rurl` parameters.
+**Impact**: SabaPlay integration now works consistently across all scenarios.
 
 ### Bug Fix 4: Dashboard Error Modal for Lobby Access - FIXED ✅
 
@@ -584,5 +602,6 @@ The flow is designed to handle various integration scenarios while maintaining a
 -   **User isolation**: No cross-user state interference
 -   **Robust URL parsing**: Handles HTML-encoded parameters
 -   **Smart lobby access**: Proper handling of lobby scenarios
+-   **Enhanced SabaPlay integration**: Consistent behavior across all scenarios
 -   **Enhanced error handling**: Better fallback mechanisms
 -   **Comprehensive logging**: Detailed debugging information
