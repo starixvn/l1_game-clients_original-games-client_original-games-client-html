@@ -3,7 +3,7 @@ import { Converter } from "sc-scoreboards";
 
 import { Round } from "../../components/game-base/type";
 import { BeadRoadElement, BigRoadElement, BigRoadRound } from "../../components/game-components/round-history/scoreboard/elements";
-import { registerBigRoadElement } from "../../components/page-components/lobby/games/components/scoreboard";
+import { registerBigRoadElement } from "../../_shared/helpers/scoreboard-registry";
 import { withTranslator } from "../../components/page-components/translator";
 import styles from "./scoreboard-elements.module.scss";
 import { SicBallBetOptions } from "./sic-ball-constants";

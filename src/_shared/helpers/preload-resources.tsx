@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
 import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
 import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
-import { getGameIdOfferBanner } from "../../components/page-components/lobby/banners/banner";
+
 import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings, getGameSettings } from "../app-settings";
 import { downloadAndCacheImage } from "./image-cache-controller";
@@ -12,10 +12,8 @@ const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
 export const DURATION_HOLD_SPLASH_SCREEN = 1000;
 
 export const getAndHandleBannerOffer = (authorizeInfo: AuthorizeResponse, lobbyConfigs: LobbyConfigs, callbackFn: Function) => {
-    const gameIdsOfferBanner = getGameIdOfferBanner(authorizeInfo, lobbyConfigs as any);
-    if (gameIdsOfferBanner.length > 0) {
-        callbackFn(gameIdsOfferBanner[0]);
-    }
+    // Custom version: No banner functionality since lobby is removed
+    return;
 };
 
 export const getAndHandleGameOfferIds = (authorizeInfo: AuthorizeResponse, lobbyConfigs: LobbyConfigs, callbackFn: Function) => {

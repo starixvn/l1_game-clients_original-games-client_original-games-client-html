@@ -182,15 +182,21 @@ const SplashScreen: React.FC = () => {
 
             const lobbyConfigs = await loadLobbyConfigs(session, authorizeInfo);
 
+            // Custom version: Always direct to specific game, default to 1005 if no valid gameId
             let toLoadGameId = gameId;
-
-            if (!isDirectMode && !isSabaPlay) {
-                toLoadGameId = await getSSORedirectToGameId(lobbyConfigs as any, authorizeInfo, gameId);
-            } else {
-                // Fix: If URL gameId is 0, use latestGameId as fallback for direct mode
-                if (toLoadGameId === 0 && latestGameId > 0) {
-                    toLoadGameId = latestGameId;
-                }
+            
+            // If no gameId provided or gameId is 0, use default game 1005
+            if (!toLoadGameId || toLoadGameId === 0) {
+                toLoadGameId = 1005;
+            }
+            
+            // Validate if the gameId is available in the enabled games
+            const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+            const isGameAvailable = enabledRenderGameSettings.some(game => game.id === toLoadGameId);
+            
+            // If game is not available, use default game 1005
+            if (!isGameAvailable) {
+                toLoadGameId = 1005;
             }
 
             setCurrentGameId(toLoadGameId);
@@ -210,53 +216,7 @@ const SplashScreen: React.FC = () => {
         handleInitialization();
     }, []);
 
-    const getSSORedirectToGameId = async (lobbyConfigs: ILobbyConfigs, authorizeInfo: AuthorizeResponse, urlGameId: number) => {
-        if (!lobbyConfigs || !authorizeInfo) {
-            return 0;
-        }
 
-        // Fix: Prioritize gameId from URL over user-specific latestGameId
-        const userLatestGameId = getUserLatestGameId(player?.session?.username);
-        let toLoadGameId = urlGameId > 0 ? urlGameId : userLatestGameId;
-
-
-
-        const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs, authorizeInfo);
-
-        if (firstSSOToLobby && enabledRenderGameSettings.length > 0) {
-            // Business requirement: Redirect to lobby instead of specific game
-            toLoadGameId = 0;
-        } else if (!firstSSOToLobby) {
-            // Only check for available game service if not firstSSOToLobby
-            if (toLoadGameId !== 0) {
-                const isFoundToLoadGame = await isFoundToLoadGameId(enabledRenderGameSettings, toLoadGameId);
-
-                if (!isFoundToLoadGame) {
-                    for (const gameSetting of enabledRenderGameSettings) {
-                        const isServiceAvailable = await getServiceStatusIsAvailable(gameSetting);
-                        if (isServiceAvailable) {
-                            toLoadGameId = gameSetting.id;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return toLoadGameId;
-    };
-
-    const isFoundToLoadGameId = async (enabledRenderGameSettings: GameSettings[], toLoadGameId: number) => {
-        let isFoundToLoadGameId = false;
-        const gameSetting = enabledRenderGameSettings.find((gameSetting) => gameSetting.id === toLoadGameId);
-        if (gameSetting) {
-            const isServiceAvailable = await getServiceStatusIsAvailable(gameSetting);
-            if (isServiceAvailable) {
-                isFoundToLoadGameId = true;
-            }
-        }
-        return isFoundToLoadGameId;
-    };
 
     if (player?.session?.isUM || isUm) {
         return <UMPage data-testid="um-page" />;
