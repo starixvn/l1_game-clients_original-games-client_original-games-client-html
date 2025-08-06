@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SettingEventActionType, usePlayerContext, useSettingContext, useSettingDispatch } from "../../../../_shared/react-contexts";
 import { useClickSound } from "../../../../_shared/react-hooks";
 import { updateUserAvatar } from "../../../../services/user-setting-service";
-import { AvatarGallery } from "../../dashboard/register/avatar-gallery";
+import { AvatarGallery } from "../../../game-components/avatar-gallery";
 import Styles from "./index.module.scss";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";

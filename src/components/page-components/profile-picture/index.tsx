@@ -1,7 +1,7 @@
 import React from "react";
 
 import { buildVersion } from "../../../_shared/constants";
-import { MAX_AVATAR_ID } from "../dashboard/register/avatar-gallery";
+import { MAX_AVATAR_ID } from "../../../_shared/helpers/avatar-helper";
 import Styles from "./profile-picture.module.scss";
 import Image from "next/image";
 

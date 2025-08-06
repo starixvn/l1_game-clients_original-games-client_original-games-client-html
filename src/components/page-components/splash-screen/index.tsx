@@ -29,8 +29,8 @@ import { tolgee } from "../../../_shared/tolgee";
 import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "../../../services/auth-service";
 import { updateSignInSMStatus } from "../../../services/user-setting-service";
 import { GameSettings } from "../../game-base/type";
-import { MAX_AVATAR_ID } from "../dashboard/register/avatar-gallery";
-import NameGenerator from "../dashboard/register/name-generator";
+import { MAX_AVATAR_ID } from "../../../_shared/helpers/avatar-helper";
+import NameGenerator from "../../../_shared/helpers/name-generator";
 import { ILobbyConfigs } from "../dashboard/type";
 import Styles from "./splash-screen.module.scss";
 
@@ -41,7 +41,7 @@ export type SplashScreenState = {
 };
 
 const UMPage = dynamic(() => import("../um-page"));
-const Register = dynamic(() => import("../dashboard/register/register"));
+
 const Dashboard = dynamic(() => import("../dashboard"));
 
 export const customStartup = async (
@@ -110,12 +110,11 @@ const SplashScreen: React.FC = () => {
     const [isUm, setIsUm] = useState(player?.session?.isUM);
     const [bannerId, setBannerId] = useState<number>(0);
     const [locale, setLocale] = useState<string>();
-    const [currentSession, setCurrentSession] = useState<SSOResponse>();
+
     const [gameOfferIds, setGameOfferIds] = useState<number[]>([]);
     const [currentGameId, setCurrentGameId] = useState<number>(-1);
     const [authorizeResponse, setAuthorizeResponse] = useState<AuthorizeResponse>(null);
     const [lobbyConfigs, setLobbyConfigs] = useState<ILobbyConfigs>(null);
-    const [isRenderRegister, setIsRenderRegister] = useState<boolean>(false);
     const [isRenderDashboard, setIsRenderDashboard] = useState<boolean>(false);
     const [isDoneLoadConfig, setIsDoneLoadConfig] = useState<boolean>(false);
 
@@ -166,7 +165,6 @@ const SplashScreen: React.FC = () => {
                 return;
             }
 
-            setCurrentSession(session);
             authorizeInfo = await authorize(session);
 
             if (authorizeInfo.errorCode === "SB0002") {
@@ -174,13 +172,12 @@ const SplashScreen: React.FC = () => {
                 return;
             }
 
-            if (!authorizeInfo?.authorized && (isDirectMode || isSabaPlay)) {
-                authorizeInfo = await autoCreateNickname(session, signOut);
-            }
-
             if (!authorizeInfo?.authorized) {
-                setIsRenderRegister(true);
-                return;
+                authorizeInfo = await autoCreateNickname(session, signOut);
+                if (!authorizeInfo?.authorized) {
+                    signOut();
+                    return;
+                }
             }
 
             const lobbyConfigs = await loadLobbyConfigs(session, authorizeInfo);
@@ -281,9 +278,7 @@ const SplashScreen: React.FC = () => {
         );
     }
 
-    if (isRenderRegister) {
-        return <Register data-testid="register-component" session={currentSession} isUm={isUm} isDirectMode={isDirectMode} gameId={gameId} firstSSOToLobby={firstSSOToLobby} isSabaPlay={isSabaPlay} />;
-    }
+
 
     const logoProps = {
         postfix: isSabaPlay ? `-sabaplay` : ``,

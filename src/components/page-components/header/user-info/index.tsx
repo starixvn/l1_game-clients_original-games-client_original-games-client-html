@@ -12,7 +12,7 @@ import {
 import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
 import { SettingEventActionType, usePlayerContext, useSettingDispatch } from "../../../../_shared/react-contexts";
 import { useClickSound } from "../../../../_shared/react-hooks";
-import { MAX_AVATAR_ID } from "../../dashboard/register/avatar-gallery";
+import { MAX_AVATAR_ID } from "../../../../_shared/helpers/avatar-helper";
 import Styles from "./user-info.module.scss";
 
 export const UserInfo: React.FC<{

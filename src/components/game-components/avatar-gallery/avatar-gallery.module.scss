@@ -1,0 +1,34 @@
+.gallery {
+    background: #242c32;
+    border-radius: 0.5rem;
+    padding: 1.6rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.6rem;
+
+    h3 {
+        color: #fff;
+        font-size: 1.6rem;
+        margin: 0;
+    }
+
+    .close {
+        cursor: pointer;
+        font-size: 1.6rem;
+        color: #fff;
+        padding: 0.4rem;
+    }
+}
+
+.content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    gap: 0.8rem;
+}
