@@ -19,11 +19,19 @@ export const UserInfo: React.FC<{
     customizeClass?: string;
     isLobby: boolean;
 }> = ({ customizeClass, isLobby }) => {
+    console.log("[UserInfo] UserInfo component rendering with:", { customizeClass, isLobby });
     const clickSound = useClickSound();
     const [classCursor, setClassCursor] = useState<string>();
     const settingDispatch = useSettingDispatch();
     const { authorizeInfo } = usePlayerContext();
     const [userInfo, setUserInfo] = useState<User>(authorizeInfo?.user);
+
+    console.log("[UserInfo] initial userInfo:", {
+        name: userInfo?.name,
+        red: userInfo?.red,
+        avatarId: userInfo?.avatarId,
+        currency: userInfo?.currency
+    });
 
     let deviceClass = "";
     if (isMobileOnly) {
@@ -31,6 +39,7 @@ export const UserInfo: React.FC<{
     }
 
     const handleClickAvatar = () => {
+        console.log("[UserInfo] handleClickAvatar called, isLobby:", isLobby);
         if (isLobby) {
             document.body.classList.add("no-scroll");
             clickSound();
@@ -44,7 +53,9 @@ export const UserInfo: React.FC<{
     };
 
     useEffect(() => {
+        console.log("[UserInfo] setting up userInfoRed event listener");
         const userInfoRedHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.USER_INFO_RED, ({ userInfoRed }) => {
+            console.log("[UserInfo] userInfoRed event received:", userInfoRed);
             setUserInfo({
                 ...userInfo,
                 red: userInfoRed,
@@ -52,12 +63,15 @@ export const UserInfo: React.FC<{
         });
 
         return () => {
+            console.log("[UserInfo] cleaning up userInfoRed event listener");
             unsubscribeGlobalMessageEvent(userInfoRedHandlerId as any);
         };
     }, []);
 
     useEffect(() => {
+        console.log("[UserInfo] setting up event listeners for user info updates");
         const userInfoRedHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.USER_INFO_RED, ({ userInfoRed }) => {
+            console.log("[UserInfo] userInfoRed event received:", userInfoRed);
             setUserInfo({
                 ...userInfo,
                 red: userInfoRed,
@@ -65,6 +79,7 @@ export const UserInfo: React.FC<{
         });
 
         const avatarIdHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.CHANGE_AVATAR_ID, ({ avatarId }) => {
+            console.log("[UserInfo] changeAvatarId event received:", avatarId);
             setUserInfo({
                 ...userInfo,
                 avatarId: avatarId,
@@ -72,6 +87,7 @@ export const UserInfo: React.FC<{
         });
 
         return () => {
+            console.log("[UserInfo] cleaning up event listeners");
             unsubscribeGlobalMessageEvent(userInfoRedHandlerId as any);
             unsubscribeGlobalMessageEvent(avatarIdHandlerId as any);
         };
@@ -79,8 +95,10 @@ export const UserInfo: React.FC<{
 
     useEffect(() => {
         if (isLobby) {
+            console.log("[UserInfo] setting cursor class for lobby");
             setClassCursor(Styles["user-cursor"]);
         } else {
+            console.log("[UserInfo] clearing cursor class");
             setClassCursor("");
         }
     }, [isLobby]);
@@ -103,6 +121,7 @@ export const UserInfo: React.FC<{
 };
 
 const UserName: React.FC<{ name: string }> = ({ name }) => {
+    console.log("[UserInfo] UserName component rendering with name:", name);
     return useMemo(() => {
         return (
             <div id="user-info_user-name" className={Styles["user-name"]} data-testid="user-name">
@@ -113,6 +132,7 @@ const UserName: React.FC<{ name: string }> = ({ name }) => {
 };
 
 const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
+    console.log("[UserInfo] UserAmount component rendering with amount:", amount);
     return useMemo(() => {
         return (
             <>
@@ -124,6 +144,7 @@ const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
 };
 
 const UserCurrency: React.FC<{ currency: string; isDisplayPlayerCurrency: boolean }> = ({ currency, isDisplayPlayerCurrency }) => {
+    console.log("[UserInfo] UserCurrency component rendering with:", { currency, isDisplayPlayerCurrency });
     return useMemo(() => {
         if (!isDisplayPlayerCurrency) {
             return <></>;
@@ -138,6 +159,7 @@ const UserAvatar: React.FC<{ avatarId: number; classCursor: string; handleClickA
     classCursor,
     handleClickAvatar,
 }) => {
+    console.log("[UserInfo] UserAvatar component rendering with:", { avatarId, classCursor: !!classCursor });
     return (
         <div data-testid="avatar" className={`${Styles["avatar"]} ${classCursor}`} onClick={() => handleClickAvatar?.()}>
             {avatarId > 0 && avatarId <= MAX_AVATAR_ID ? (

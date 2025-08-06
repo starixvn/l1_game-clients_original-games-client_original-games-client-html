@@ -70,20 +70,24 @@ export class AnalyticsHelper {
     private static ssoContext: SSOContext;
 
     static setPlayerSession(playerSession: SSOResponse) {
+        console.log("[AnalyticsHelper] setPlayerSession called with:", playerSession?.username);
         AnalyticsHelper.playerContext.playerId = playerSession?.username;
     }
 
     static injectPlayerInfo(analyticParams: any, propertyName) {
+        console.log("[AnalyticsHelper] injectPlayerInfo called with propertyName:", propertyName);
         if (AnalyticsHelper.playerContext?.playerId) {
             analyticParams[propertyName] = AnalyticsHelper.playerContext?.playerId;
         }
     }
 
     static trackEvent(event: string, params: TrackingParameter) {
+        console.log("[AnalyticsHelper] trackEvent called:", event, params);
         AnalyticsHelper.send(commandNames.event, event, params);
     }
 
     static login(urlContext: URLContextModel) {
+        console.log("[AnalyticsHelper] login called with urlContext:", urlContext);
         try {
             let ssoMethod = "SSO_To_Lobby";
             if (urlContext.gameId) {
@@ -100,20 +104,24 @@ export class AnalyticsHelper {
                 AnalyticsHelper.ssoContext.gameName = getGameSettings(urlContext.gameId)?.gameName;
             }
         } catch (e) {
+            console.error("[AnalyticsHelper] login error:", e);
         }
     }
 
     static trackFunction(params: TrackingParameter) {
+        console.log("[AnalyticsHelper] trackFunction called:", params);
         try {
             params.page = AnalyticsHelper.playerContext.page;
             params.playerId = AnalyticsHelper.playerContext.playerId;
 
             AnalyticsHelper.send(commandNames.event, TrackingEvent.Function, params);
         } catch (e) {
+            console.error("[AnalyticsHelper] trackFunction error:", e);
         }
     }
 
     static trackPage(params: { page_title: string; language?: string }) {
+        console.log("[AnalyticsHelper] trackPage called:", params);
         AnalyticsHelper.injectPlayerInfo(params, "client_id");
         AnalyticsHelper.playerContext.page = params?.page_title;
         AnalyticsHelper.playerContext.language = params?.language;
@@ -125,10 +133,12 @@ export class AnalyticsHelper {
     }
 
     static trackLobby() {
+        console.log("[AnalyticsHelper] trackLobby called");
         AnalyticsHelper.trackPage({ page_title: TrackingFunction.Lobby });
     }
 
     static setUser(playerId: string, tagId?: string) {
+        console.log("[AnalyticsHelper] setUser called with playerId:", playerId);
         if (!tagId) {
             tagId = getAppSettings().googleAnalyticId;
         }
@@ -144,9 +154,11 @@ export class AnalyticsHelper {
     }
 
     static send(command: string, event: string, params: any) {
+        console.log("[AnalyticsHelper] send called:", command, event, params);
         try {
             globalThis.gtag && globalThis.gtag(command, event, params);
         } catch (e) {
+            console.error("[AnalyticsHelper] send error:", e);
         }
     }
 }

@@ -10,13 +10,19 @@ const ProfilePicture: React.FC<{ avatarId: number; isEditable?: boolean; onClick
     isEditable = false,
     onClick,
 }) => {
+    console.log("[ProfilePicture] ProfilePicture component rendering with:", { avatarId, isEditable });
+
     const handleClick = () => {
+        console.log("[ProfilePicture] handleClick called");
         onClick && onClick();
     };
 
+    const hasValidAvatar = avatarId > 0 && avatarId <= MAX_AVATAR_ID;
+    console.log("[ProfilePicture] hasValidAvatar:", hasValidAvatar);
+
     return (
         <div className={Styles["profile-picture"]} onClick={handleClick} data-testid="profile-picture">
-            {avatarId > 0 && avatarId <= MAX_AVATAR_ID ? (
+            {hasValidAvatar ? (
                 <Image
                     src={`/static/images/avatar/${avatarId}.jpg?v=${buildVersion}`}
                     className={`img-fluid ${Styles["avatar"]}`}
@@ -34,6 +40,7 @@ const ProfilePicture: React.FC<{ avatarId: number; isEditable?: boolean; onClick
 };
 
 const EditIcon = () => {
+    console.log("[ProfilePicture] EditIcon component rendering");
     return (
         <div className={Styles["chose-avatar"]} data-testid="edit-icon">
             <span className={`icon-pencil ${Styles["icon-edit"]}`}></span>

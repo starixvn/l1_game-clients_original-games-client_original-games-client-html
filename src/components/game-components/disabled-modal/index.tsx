@@ -7,9 +7,17 @@ import { ModalType } from "../base-dialog/type";
 import Styles from "./disabled-modal.module.scss";
 
 const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage }) => {
+    console.log("[DisabledModal] rendering with disableMessage:", disableMessage);
     const { t } = useCommonTranslate();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
     const showOkButton = !!redirectUrl;
+
+    console.log("[DisabledModal] showOkButton:", showOkButton, "redirectUrl:", redirectUrl);
+
+    const handleOkClick = () => {
+        console.log("[DisabledModal] OK button clicked");
+        backToRedirectUrl(redirectUrl);
+    };
 
     return (
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={true}>
@@ -29,7 +37,7 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
                 <div className={Styles.message}>{disableMessage || t({ key: "message_disabled_game" })}</div>
                 <div className={Styles["list-action"]}>
                     {showOkButton && (
-                        <button onClick={() => backToRedirectUrl(redirectUrl)} className={`btn-yellow ${Styles["ok"]}`}>
+                        <button onClick={handleOkClick} className={`btn-yellow ${Styles["ok"]}`}>
                             {t({ key: "ok" })}
                         </button>
                     )}

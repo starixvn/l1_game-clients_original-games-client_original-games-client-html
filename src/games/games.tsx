@@ -41,12 +41,16 @@ export const Games: React.FC<Props> = ({
     updateUserStakeLevel,
     openGameId,
 }) => {
+    console.log("[Games] Games component rendering with:", { openGameId, userStakeLevel });
     const { theme } = useTheme();
     const { session } = usePlayerContext();
     const settingDispatch = useSettingDispatch();
+
     useEffect(() => {
+        console.log("[Games] useEffect called, getting chip settings");
         (async () => {
             const chipSettings = await getChipSettings(session);
+            console.log("[Games] chip settings received:", chipSettings);
             settingDispatch({
                 type: SettingEventActionType.UPDATE_CHIPS,
                 payload: {
@@ -64,6 +68,7 @@ export const Games: React.FC<Props> = ({
     };
 
     const getGameComponentById = (gameId: number) => {
+        console.log("[Games] getGameComponentById called with gameId:", gameId);
         const { gameSettings } = getAppSettings();
 
         const gameProps = {
@@ -75,33 +80,44 @@ export const Games: React.FC<Props> = ({
             updateUserStakeLevel,
         };
 
+        console.log("[Games] gameProps:", gameProps);
+
         switch (gameId) {
             case GameIds.BacBall1:
             case GameIds.BacBall2:
+                console.log("[Games] rendering BacBall component");
                 return <BacBall key={`game-${gameId}`} {...gameProps} />;
 
             case GameIds.NextBall1:
             case GameIds.NextBall2:
+                console.log("[Games] rendering NextBall component");
                 return <NextBall key={`game-${gameId}`} {...gameProps} />;
 
             case GameIds.SeBall1:
+                console.log("[Games] rendering SeBall component");
                 return <SeBall key={`game-${gameId}`} {...gameProps} />;
 
             case GameIds.LuckyThree:
+                console.log("[Games] rendering LuckyThree component");
                 return <LuckyThree key={`game-${gameId}`} {...gameProps} />;
 
             case GameIds.SicBall:
+                console.log("[Games] rendering SicBall component");
                 return <SicBall key={`game-${gameId}`} {...gameProps} />;
             default:
+                console.log("[Games] no matching game component found for gameId:", gameId);
                 return null;
         }
     };
+
+    const gameComponent = getGameComponentById(openGameId);
+    console.log("[Games] gameComponent:", !!gameComponent);
 
     return (
         <div className={`game-container ${styles["game-wrapper"]} ${styles["open-chips"]}`}>
             <SystemContextProvider>
                 <div className={`${styles["game-list"]} ${isMobileOnly ? styles[isIOS ? "ios-device" : "android-device"] : ""}`}>
-                    {getGameComponentById(openGameId)}
+                    {gameComponent}
                 </div>
             </SystemContextProvider>
         </div>

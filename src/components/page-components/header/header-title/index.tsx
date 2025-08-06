@@ -12,15 +12,19 @@ type Props = {
 };
 
 const HeaderTitle: React.FC<Props> = (props) => {
+    console.log("[HeaderTitle] HeaderTitle component rendering with props:", props);
     const { gameSettings } = getAppSettings();
     const { openingGameId, isRenderGames } = props;
     const appSetting = gameSettings[openingGameId];
     const tolgeeNamespace = appSetting ? appSetting["tolgeeNamespace"] : ResourceTypes.SABA_NUMBER;
     const { redirectUrl, backToRedirectUrl } = useURLContext();
 
+    console.log("[HeaderTitle] context:", { openingGameId, isRenderGames, tolgeeNamespace, redirectUrl: !!redirectUrl });
+
     const { t } = useTranslator([tolgeeNamespace]);
 
     const handleClickLogo = () => {
+        console.log("[HeaderTitle] handleClickLogo called");
         if (backToRedirectUrl && redirectUrl) {
             backToRedirectUrl(redirectUrl);
         }
@@ -35,6 +39,8 @@ const HeaderTitle: React.FC<Props> = (props) => {
     ) : (
         logo
     );
+
+    console.log("[HeaderTitle] rendering headerTitle:", isRenderGames ? "game name" : "logo");
 
     return (
         <div key={`game-name-${openingGameId}`} id="img-game-name" className={Styles["header-left"]}>

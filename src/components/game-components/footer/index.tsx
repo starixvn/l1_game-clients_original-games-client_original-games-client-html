@@ -3,13 +3,18 @@ import { useTranslator } from "../../../_shared/react-hooks/use-translator";
 import { ResourceTypes } from "../../../_shared/resources";
 
 const Footer = () => {
+    console.log("[Footer] Footer component rendering");
     const { t } = useTranslator();
+
+    const copyrightText = t(`copyright-text`, {
+        year: new Date().getFullYear(),
+    }).replaceTolgeeFormat();
+
+    console.log("[Footer] copyright text:", copyrightText);
 
     return (
         <h3 className="text-center copyright">
-            {t(`${ResourceTypes.SABA_NUMBER}.copyright`, {
-                year: new Date().getFullYear(),
-            }).replaceTolgeeFormat()}
+            {copyrightText}
         </h3>
     );
 };

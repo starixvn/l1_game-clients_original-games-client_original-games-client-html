@@ -7,14 +7,18 @@ import styles from "./settings.module.scss";
 const ButtonSettingClassName = "setting-button";
 
 export function Settings() {
+    console.log("[Settings] Settings component rendering");
     const clickSound = useClickSound();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobbyOnclick = () => {
+        console.log("[Settings] handleBackToLobbyOnclick called");
         clickSound();
         updateURLContext({ gameId: 0 });
         backToRedirectUrl(redirectUrl);
     };
+
+    console.log("[Settings] redirectUrl:", redirectUrl);
 
     return (
         <div className={styles["settings-container"]}>

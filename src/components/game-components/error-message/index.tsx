@@ -14,26 +14,35 @@ export const ConnectFailedMessage: React.FC<{
     reason: string;
     enableBackdrop: boolean;
 }> = ({ tolgeeNamespace, id, onReconnect, reason, enableBackdrop }) => {
+    console.log("[ConnectFailedMessage] rendering with:", { tolgeeNamespace, id, reason, enableBackdrop });
     const { t } = useTranslator([tolgeeNamespace]);
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobby = () => {
+        console.log("[ConnectFailedMessage] handleBackToLobby called");
         updateURLContext({ gameId: 0 });
         backToRedirectUrl(redirectUrl);
     };
 
     const handleBackToLobbyWithReload = () => {
+        console.log("[ConnectFailedMessage] handleBackToLobbyWithReload called");
         updateURLContext({ backToLobby: true, gameId: 0 });
         redirectUrl ? backToRedirectUrl(redirectUrl) : window.location.reload();
     };
 
+    const handleReconnect = () => {
+        console.log("[ConnectFailedMessage] handleReconnect called");
+        onReconnect();
+    };
+
     const renderLostConnectionButtons = () => {
+        console.log("[ConnectFailedMessage] rendering lost connection buttons");
         return (
             <div className="d-flex">
                 <button onClick={handleBackToLobby} className={`btn-grey`}>
                     {t(`${ResourceTypes.COMMON}.back`)}
                 </button>
-                <button onClick={() => onReconnect()} className={`${Styles["btn-reconnect"]} btn-green`}>
+                <button onClick={handleReconnect} className={`${Styles["btn-reconnect"]} btn-green`}>
                     {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
                 </button>
             </div>
@@ -41,11 +50,12 @@ export const ConnectFailedMessage: React.FC<{
     };
 
     const renderButtons = () => {
+        console.log("[ConnectFailedMessage] renderButtons called, reason:", reason);
         if (reason === ConnectFailedReasonKey.lostConnection) {
             return redirectUrl ? (
                 renderLostConnectionButtons()
             ) : (
-                <button onClick={() => onReconnect()} className={`btn-green w-100`}>
+                <button onClick={handleReconnect} className={`btn-green w-100`}>
                     {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
                 </button>
             );

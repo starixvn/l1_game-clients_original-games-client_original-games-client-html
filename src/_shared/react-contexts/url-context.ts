@@ -14,14 +14,19 @@ export type URLContextModel = {
 };
 
 export function parseContextFromURL(): URLContextModel | undefined {
+    console.log("[URLContext] parseContextFromURL called");
     // Fix: Handle HTML-encoded ampersands by decoding them first
     const rawSearch = globalThis.location?.search || '';
     const decodedSearch = rawSearch.replace(/&amp;/g, '&');
+
+    console.log("[URLContext] rawSearch:", rawSearch);
+    console.log("[URLContext] decodedSearch:", decodedSearch);
 
     const params = new URLSearchParams(decodedSearch);
 
     // Reload page
     if (Array.from(params.values()).length === 0) {
+        console.log("[URLContext] no params found, returning undefined");
         return;
     }
 
@@ -30,12 +35,18 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const gameId = Number(params.get("gameId") || 0);
     const redirectUrl = params.get("rurl");
 
-    return { token, language, gameId, redirectUrl };
+    const context = { token, language, gameId, redirectUrl };
+    console.log("[URLContext] parsed context:", context);
+    return context;
 }
 
 export function loadURLContext(): URLContextModel {
+    console.log("[URLContext] loadURLContext called");
     const contextFromURL = parseContextFromURL();
     const contextFromLocalStorage = StorageHelper?.get(localStorageKeys.url) || null;
+
+    console.log("[URLContext] contextFromURL:", contextFromURL);
+    console.log("[URLContext] contextFromLocalStorage:", contextFromLocalStorage);
 
     if (!!contextFromURL) {
         const contextString = { ...contextFromURL, token: undefined };
@@ -43,18 +54,24 @@ export function loadURLContext(): URLContextModel {
         globalThis.history.pushState(null, "", globalThis.location?.href.split("?")[0]);
         StorageHelper?.set(localStorageKeys.url, contextString);
         AnalyticsHelper?.login(contextFromURL);
+        console.log("[URLContext] using contextFromURL");
+        return contextFromURL;
     }
 
-    return contextFromURL || contextFromLocalStorage;
+    console.log("[URLContext] using contextFromLocalStorage");
+    return contextFromLocalStorage;
 }
 
 export const initialURLContextData = {
     ...loadURLContext(),
     backToRedirectUrl: (redirectUrl: string) => {
+        console.log("[URLContext] backToRedirectUrl called with:", redirectUrl);
         if (!isEmpty(redirectUrl)) {
             const decodedUrl = GameUtils.base64Decode(redirectUrl);
+            console.log("[URLContext] decoded redirect URL:", decodedUrl);
             globalThis.location.href = decodedUrl;
         } else {
+            console.log("[URLContext] no redirect URL, going back to lobby");
             updateURLContext({ backToLobby: true, gameId: 0 });
             GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.BACK_TO_LOBBY]: {} });
         }
@@ -66,19 +83,24 @@ export const URLContext = createContext<URLContextModel>(initialURLContextData);
 export const useURLContext = () => useContext(URLContext);
 
 export function updateURLContext(context: Partial<URLContextModel>) {
+    console.log("[URLContext] updateURLContext called with:", context);
     const contextFromLocalStorage = StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
 
     if (context.gameId !== undefined) {
         // Use user-specific latestGameId if username is available in the session
         const session = StorageHelper.get<any>(localStorageKeys.session);
         const username = session?.username;
+        console.log("[URLContext] setting user latest game ID:", context.gameId, "for user:", username);
         setUserLatestGameId(context.gameId, username);
     }
 
     const updatedContext = { ...contextFromLocalStorage, ...context };
+    console.log("[URLContext] updated context:", updatedContext);
     StorageHelper.set(localStorageKeys.url, updatedContext);
 }
 
 export function getURLContext() {
-    return StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
+    const context = StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
+    console.log("[URLContext] getURLContext returned:", context);
+    return context;
 }

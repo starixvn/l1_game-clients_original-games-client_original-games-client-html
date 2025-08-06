@@ -42,6 +42,7 @@ export default class NameGenerator {
     public static PATTERN = "^[a-zA-Z0-9]{3,14}$";
 
     public static generateName(): string {
+        console.log("[NameGenerator] generateName called");
         const dictionaries = [Colors, Animals, Marvels, Fruits, Cools, NEW_202010];
 
         const randomDictionaryIndex = Math.floor(Math.random() * dictionaries.length);
@@ -60,12 +61,16 @@ export default class NameGenerator {
         }
         const randomNumber = Math.floor(Math.random() * +maxNumber);
 
-        return `${shortName}${randomNumber}`;
+        const generatedName = `${shortName}${randomNumber}`;
+        console.log("[NameGenerator] generated name:", generatedName);
+        return generatedName;
     }
 
     public static validateName(name: string): boolean {
+        console.log("[NameGenerator] validateName called with:", name);
         const regex = new RegExp(NameGenerator.PATTERN);
-
-        return (name || "").match(regex) !== null;
+        const isValid = (name || "").match(regex) !== null;
+        console.log("[NameGenerator] validation result:", isValid);
+        return isValid;
     }
 }
