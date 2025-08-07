@@ -80,7 +80,8 @@ class PreloadManager {
         locale: string,
         gameIdsIcon: number[],
         bannerId: number,
-        onComplete: () => void
+        onComplete: () => void,
+        onProgress?: (progress: number) => void
     ): Promise<void> {
         const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
 
@@ -115,7 +116,7 @@ class PreloadManager {
         }
 
         // Start new preload
-        const preloadPromise = this.executePreload(gameId, locale, gameIdsIcon, bannerId, preloadKey);
+        const preloadPromise = this.executePreload(gameId, locale, gameIdsIcon, bannerId, preloadKey, onProgress);
         this.activePreloads.set(preloadKey, preloadPromise);
 
         try {
@@ -146,7 +147,8 @@ class PreloadManager {
         locale: string,
         gameIdsIcon: number[],
         bannerId: number,
-        preloadKey: string
+        preloadKey: string,
+        onProgress?: (progress: number) => void
     ): Promise<void> {
         console.log(`[PreloadManager] Executing preload for key: ${preloadKey}`);
 
@@ -155,7 +157,7 @@ class PreloadManager {
             const imagePaths = await fetchImagesFromAPI(gameId, locale, gameIdsIcon, bannerId, preloadKey);
 
             // Progressive loading with priority
-            await loadImagesProgressive(imagePaths, gameId, preloadKey);
+            await loadImagesProgressive(imagePaths, gameId, preloadKey, onProgress);
 
             console.log(`[PreloadManager] Preload completed for key: ${preloadKey}`);
         } catch (error) {
@@ -377,7 +379,8 @@ const fetchImagesFromAPI = async (
 const loadImagesProgressive = async (
     imagePaths: string[],
     gameId: number,
-    preloadKey: string
+    preloadKey: string,
+    onProgress?: (progress: number) => void
 ): Promise<void> => {
     console.log(`[loadImagesProgressive] Starting progressive load of ${imagePaths.length} images for game ${gameId}`);
 
@@ -397,17 +400,43 @@ const loadImagesProgressive = async (
         low: prioritizedImages.filter(img => img.priority === ImagePriority.LOW).length
     });
 
+    // Calculate total images for progress tracking
+    const totalImages = prioritizedImages.length;
+    let loadedImages = 0;
+
+    // Progress callback wrapper
+    const updateProgress = () => {
+        const progress = Math.min((loadedImages / totalImages) * 100, 100);
+        onProgress?.(progress);
+        updateProgressBar(progress, DEFAULT_PROGRESS_BAR_ID);
+    };
+
+    // Initial progress (API call completed)
+    updateProgress();
+
     // Load critical images first
-    await loadImagesByPriority(prioritizedImages, ImagePriority.CRITICAL, analytics);
+    await loadImagesByPriority(prioritizedImages, ImagePriority.CRITICAL, analytics, () => {
+        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.CRITICAL).length;
+        updateProgress();
+    });
 
     // Load high priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.HIGH, analytics);
+    await loadImagesByPriority(prioritizedImages, ImagePriority.HIGH, analytics, () => {
+        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.HIGH).length;
+        updateProgress();
+    });
 
     // Load medium priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.MEDIUM, analytics);
+    await loadImagesByPriority(prioritizedImages, ImagePriority.MEDIUM, analytics, () => {
+        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.MEDIUM).length;
+        updateProgress();
+    });
 
     // Load low priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.LOW, analytics);
+    await loadImagesByPriority(prioritizedImages, ImagePriority.LOW, analytics, () => {
+        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.LOW).length;
+        updateProgress();
+    });
 
     // Mark game as loaded in cache
     loadedGamesCache[gameId] = true;
@@ -425,7 +454,8 @@ const loadImagesProgressive = async (
 const loadImagesByPriority = async (
     prioritizedImages: ImageWithPriority[],
     priority: ImagePriority,
-    analytics?: PreloadAnalytics
+    analytics?: PreloadAnalytics,
+    onBatchComplete?: () => void
 ): Promise<void> => {
     const imagesToLoad = prioritizedImages.filter(img => img.priority === priority);
 
@@ -470,6 +500,9 @@ const loadImagesByPriority = async (
     }
 
     console.log(`[loadImagesByPriority] Completed loading ${priorityName} priority images`);
+    
+    // Call progress callback when batch is complete
+    onBatchComplete?.();
 };
 
 // Optimized image loading with caching and analytics
@@ -538,6 +571,7 @@ interface PreloadResourcesProps {
     cancelPreload?: boolean;
     durationDelayDonePreload?: number;
     progressBarId?: string;
+    onProgressUpdate?: (progress: number) => void;
 }
 
 const PreloadResources: React.FC<PreloadResourcesProps> = ({
@@ -547,7 +581,8 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     gameIdsIcon,
     locale = "en",
     cancelPreload,
-    progressBarId = DEFAULT_PROGRESS_BAR_ID
+    progressBarId = DEFAULT_PROGRESS_BAR_ID,
+    onProgressUpdate
 }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -611,6 +646,12 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                             console.log(`[PreloadResources:${componentId.current}] Preload completed via manager`);
                             updateProgressBar(100, progressBarId);
                             setIsDonePreload();
+                        }
+                    },
+                    (progress) => {
+                        if (isMounted && onProgressUpdate) {
+                            console.log(`[PreloadResources:${componentId.current}] Progress update: ${progress}%`);
+                            onProgressUpdate(progress);
                         }
                     }
                 );

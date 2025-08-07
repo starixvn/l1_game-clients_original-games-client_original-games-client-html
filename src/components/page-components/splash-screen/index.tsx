@@ -137,12 +137,14 @@ const SplashScreen: React.FC = () => {
     const [lobbyConfigs, setLobbyConfigs] = useState<ILobbyConfigs>(null);
     const [isRenderDashboard, setIsRenderDashboard] = useState<boolean>(false);
     const [isDoneLoadConfig, setIsDoneLoadConfig] = useState<boolean>(false);
+    const [preloadProgress, setPreloadProgress] = useState<number>(0);
 
     console.log("[SplashScreen] state:", {
         isUm,
         currentGameId,
         isRenderDashboard,
         isDoneLoadConfig,
+        preloadProgress,
         authorizeResponse: !!authorizeResponse,
         lobbyConfigs: !!lobbyConfigs
     });
@@ -150,6 +152,11 @@ const SplashScreen: React.FC = () => {
     const signOut = () => {
         console.log("[SplashScreen] signOut called");
         router.push("timeout");
+    };
+
+    const handlePreloadProgress = (progress: number) => {
+        console.log("[SplashScreen] Preload progress update:", progress);
+        setPreloadProgress(progress);
     };
 
     const handleUM = (session: SSOResponse) => {
@@ -183,6 +190,11 @@ const SplashScreen: React.FC = () => {
         }
         return lobby?.lobbyConfigs;
     };
+
+    // Initialize progress bar when component mounts
+    useEffect(() => {
+        setPreloadProgress(0);
+    }, []);
 
     useEffect(() => {
         let authorizeInfo;
@@ -312,9 +324,22 @@ const SplashScreen: React.FC = () => {
 
                 <div className={"loading"}>
                     <div className={"progress"}>
-                        <div className={"progress-bar"} id="progress-bar" data-testid="progress-bar"></div>
+                        <div 
+                            className={"progress-bar"} 
+                            id="progress-bar" 
+                            data-testid="progress-bar"
+                            style={{ width: `${preloadProgress}%` }}
+                        ></div>
                     </div>
-                    <p className={"text-first-download"} data-testid="download-message">{locale && t("Common.message_download_first_visit")}</p>
+                    <p className={"text-first-download"} data-testid="download-message">
+                        {locale && t("Common.message_download_first_visit")}
+                        {preloadProgress > 0 && preloadProgress < 100 && (
+                            <span> ({Math.round(preloadProgress)}%)</span>
+                        )}
+                        {preloadProgress === 0 && isDoneLoadConfig && (
+                            <span> (Initializing...)</span>
+                        )}
+                    </p>
                 </div>
             </div>
 
@@ -337,6 +362,7 @@ const SplashScreen: React.FC = () => {
                         gameId={currentGameId}
                         locale={locale}
                         gameIdsIcon={gameOfferIds}
+                        onProgressUpdate={handlePreloadProgress}
                     />
                 </>
             )}
