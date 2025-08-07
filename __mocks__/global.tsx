@@ -49,7 +49,6 @@ jest.mock("next/config", () => () => ({
                     beforePlaceBet: 4,
                     switchRoundAnimation: 0,
                 },
-                totalTurns: 1,
             },
         },
     },
