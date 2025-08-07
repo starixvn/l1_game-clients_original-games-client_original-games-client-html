@@ -62,6 +62,59 @@ describe("RoundStateHandler", () => {
         });
     });
 
+    describe("determineRoundBaseState edge cases", () => {
+        test("returns None when beforePlaceBet is 0 and remainingTime > placingBets", () => {
+            const customDurations = { ...durations, beforePlaceBet: 0 };
+            const state = roundStateHandler.determineRoundBaseState({
+                wholeRound: 35,
+                remainingTime: 26,
+                durations: customDurations,
+                roundRemainingTime: 26,
+            });
+            expect(state).toBe(RoundState.None);
+        });
+
+        test("returns InRound when remainingTime is exactly placingBets", () => {
+            const state = roundStateHandler.determineRoundBaseState({
+                wholeRound: 35,
+                remainingTime: durations.placingBets,
+                durations,
+                roundRemainingTime: durations.placingBets,
+            });
+            expect(state).toBe(RoundState.InRound);
+        });
+
+        test("returns LockingBet when remainingTime is exactly lockingBet", () => {
+            const state = roundStateHandler.determineRoundBaseState({
+                wholeRound: 35,
+                remainingTime: durations.lockingBet,
+                durations,
+                roundRemainingTime: durations.lockingBet,
+            });
+            expect(state).toBe(RoundState.LockingBet);
+        });
+
+        test("returns LockingBet when remainingTime is 0", () => {
+            const state = roundStateHandler.determineRoundBaseState({
+                wholeRound: 35,
+                remainingTime: 0,
+                durations,
+                roundRemainingTime: 0,
+            });
+            expect(state).toBe(RoundState.LockingBet);
+        });
+
+        test("returns DisplayResult when remainingTime is greater than wholeRound", () => {
+            const state = roundStateHandler.determineRoundBaseState({
+                wholeRound: 35,
+                remainingTime: 40,
+                durations,
+                roundRemainingTime: 40,
+            });
+            expect(state).toBe(RoundState.DisplayResult);
+        });
+    });
+
     describe("getRemainingTime", () => {
         test("returns the provided remainingTime", () => {
             const remainingTime = roundStateHandler.getRemainingTime({ remainingTime: 31, durations });
