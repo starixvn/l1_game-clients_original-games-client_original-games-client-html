@@ -29,10 +29,7 @@ const LoadingGameComponent = () => (
     </>
 );
 
-const BacBall = dynamic(() => import("./bac-ball"), { loading: () => <LoadingGameComponent /> });
-const NextBall = dynamic(() => import("./next-ball/page"), { loading: () => <LoadingGameComponent /> });
 const SeBall = dynamic(() => import("./se-ball/page"), { loading: () => <LoadingGameComponent /> });
-const LuckyThree = dynamic(() => import("./lucky-three/page"), { loading: () => <LoadingGameComponent /> });
 const SicBall = dynamic(() => import("./sic-ball/page"), { loading: () => <LoadingGameComponent /> });
 
 export const Games: React.FC<Props> = ({
@@ -83,23 +80,9 @@ export const Games: React.FC<Props> = ({
         console.log("[Games] gameProps:", gameProps);
 
         switch (gameId) {
-            case GameIds.BacBall1:
-            case GameIds.BacBall2:
-                console.log("[Games] rendering BacBall component");
-                return <BacBall key={`game-${gameId}`} {...gameProps} />;
-
-            case GameIds.NextBall1:
-            case GameIds.NextBall2:
-                console.log("[Games] rendering NextBall component");
-                return <NextBall key={`game-${gameId}`} {...gameProps} />;
-
             case GameIds.SeBall1:
                 console.log("[Games] rendering SeBall component");
                 return <SeBall key={`game-${gameId}`} {...gameProps} />;
-
-            case GameIds.LuckyThree:
-                console.log("[Games] rendering LuckyThree component");
-                return <LuckyThree key={`game-${gameId}`} {...gameProps} />;
 
             case GameIds.SicBall:
                 console.log("[Games] rendering SicBall component");

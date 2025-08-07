@@ -41,11 +41,11 @@ describe('URL Context', () => {
     describe('parseContextFromURL', () => {
         it('should parse valid URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&rurl=https://example.com';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1005&rurl=https://example.com';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'en',
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: 'https://example.com'
             };
 
@@ -103,11 +103,11 @@ describe('URL Context', () => {
 
         it('should handle multiple URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1002&rurl=https://example.com&cg=Credit_VN';
+            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1007&rurl=https://example.com&cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'vi-VN',
-                gameId: 1002,
+                gameId: 1007,
                 redirectUrl: 'https://example.com'
             };
 
@@ -120,11 +120,11 @@ describe('URL Context', () => {
 
         it('should handle HTML-encoded ampersands in URL parameters', () => {
             // Arrange
-            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1003&amp;rurl=https://example.com&amp;cg=Credit_VN';
+            globalThis.location.search = '?token=c2ee0ee1-5bd8-409a-944e-42d3f131d8d9&amp;lang=vi-VN&amp;appType=1&amp;gameId=1005&amp;rurl=https://example.com&amp;cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'c2ee0ee1-5bd8-409a-944e-42d3f131d8d9',
                 language: 'vi-VN',
-                gameId: 1003,
+                gameId: 1005,
                 redirectUrl: 'https://example.com'
             };
 
@@ -139,10 +139,10 @@ describe('URL Context', () => {
     describe('loadURLContext', () => {
         it('should return context from URL when available', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001&rurl=https://example.com';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1005&rurl=https://example.com';
             const expectedContext = {
                 language: 'en',
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: 'https://example.com'
             };
 
@@ -170,7 +170,7 @@ describe('URL Context', () => {
             globalThis.location.search = '';
             const localStorageContext = {
                 language: 'en',
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: null
             };
             mockStorageHelper.get.mockReturnValue(localStorageContext);
@@ -184,7 +184,7 @@ describe('URL Context', () => {
 
         it('should not store token in localStorage', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=en&gameId=1001';
+            globalThis.location.search = '?token=abc123&lang=en&gameId=1005';
 
             // Act
             loadURLContext();
@@ -195,7 +195,7 @@ describe('URL Context', () => {
                 expect.objectContaining({
                     token: undefined,
                     language: 'en',
-                    gameId: 1001
+                    gameId: 1005
                 })
             );
         });
@@ -204,8 +204,8 @@ describe('URL Context', () => {
     describe('updateURLContext', () => {
         it('should update context in localStorage', () => {
             // Arrange
-            const existingContext = { language: 'en', gameId: 1001 };
-            const newContext = { gameId: 1002 };
+            const existingContext = { language: 'en', gameId: 1005 };
+            const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue(existingContext);
 
             // Act
@@ -224,7 +224,7 @@ describe('URL Context', () => {
 
         it('should store latestGameId when gameId is provided', () => {
             // Arrange
-            const newContext = { gameId: 1002 };
+            const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue({});
 
             // Act
@@ -234,10 +234,10 @@ describe('URL Context', () => {
             expect(mockStorageHelper.set).toHaveBeenCalledWith(
                 localStorageKeys.url,
                 expect.objectContaining({
-                    gameId: 1002
+                    gameId: 1007
                 })
             );
-            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1002, undefined);
+            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1007, undefined);
         });
 
         it('should not store latestGameId when gameId is not provided', () => {
@@ -259,7 +259,7 @@ describe('URL Context', () => {
     describe('getURLContext', () => {
         it('should return context from localStorage', () => {
             // Arrange
-            const expectedContext = { language: 'en', gameId: 1001 };
+            const expectedContext = { language: 'en', gameId: 1005 };
             mockStorageHelper.get.mockReturnValue(expectedContext);
 
             // Act

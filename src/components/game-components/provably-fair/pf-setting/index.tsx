@@ -42,7 +42,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 title={
                     <div>
                         <ButtonPFGuide />
-                        {translateSNGames("pf_title_bacball_provably_fair_settings")}
+                        {translateSNGames("pf_title_provably_fair_settings")}
                     </div>
                 }
                 isOpen={true}

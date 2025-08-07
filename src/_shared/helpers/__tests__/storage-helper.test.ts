@@ -45,7 +45,7 @@ describe('User-specific latestGameId functionality', () => {
         it('should return user-specific gameId when username provided', () => {
             // Arrange
             const username = 'testuser';
-            const gameId = 1004;
+            const gameId = 1005;
             const userKey = buildUserSpecificLocalStorageKey('latest-game-id', username);
             StorageHelper.set(userKey, gameId);
 
@@ -84,7 +84,7 @@ describe('User-specific latestGameId functionality', () => {
         it('should store user-specific gameId when username provided', () => {
             // Arrange
             const username = 'testuser';
-            const gameId = 1004;
+            const gameId = 1005;
 
             // Act
             setUserLatestGameId(gameId, username);
@@ -111,8 +111,8 @@ describe('User-specific latestGameId functionality', () => {
             // Arrange
             const user1 = 'user1';
             const user2 = 'user2';
-            const gameId1 = 1004;
-            const gameId2 = 1005;
+            const gameId1 = 1005;
+            const gameId2 = 1007;
 
             // Act
             setUserLatestGameId(gameId1, user1);

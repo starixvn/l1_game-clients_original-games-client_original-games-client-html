@@ -51,8 +51,8 @@ jest.mock("../handlers/dash-board-handler", () => ({
     DashboardHandler: jest.fn().mockImplementation(() => ({
         shouldRenderGames: jest.fn().mockReturnValue(false),
         checkIsNotOfferGame: jest.fn().mockReturnValue(false),
-        getLobbyGamesIds: jest.fn().mockReturnValue([1001, 1002, 1003]),
-        getOfferGamesIds: jest.fn().mockReturnValue([1001, 1002, 1003]),
+        getLobbyGamesIds: jest.fn().mockReturnValue([1005, 1007]),
+        getOfferGamesIds: jest.fn().mockReturnValue([1005, 1007]),
         removeGameTransmitter: jest.fn(),
         buildLobbyConnectionContextValue: jest.fn().mockReturnValue({
             socket: null,
@@ -140,7 +140,7 @@ describe("Dashboard Component Tests", () => {
         session: { isAuthenticated: true, username: "testUser" },
         queryGame: 0,
         authorizeResponse: { authorized: true },
-        lobbyConfigs: { game1: { id: 1001, name: "Game 1" } },
+        lobbyConfigs: { game1: { id: 1005, name: "SeBall1" } },
     };
 
     beforeEach(() => {
@@ -317,7 +317,7 @@ describe("Dashboard Component Tests", () => {
             // Arrange
             const props = {
                 ...defaultProps,
-                queryGame: 1003,
+                queryGame: 1005,
                 session: { ...defaultProps.session, isSabaPlay: true },
             };
 
@@ -408,10 +408,10 @@ describe("Dashboard Component Tests", () => {
             // Arrange
             const props = {
                 ...defaultProps,
-                queryGame: 1003,
+                queryGame: 1005,
                 session: { ...defaultProps.session, isSabaPlay: true },
                 authorizeResponse: { authorized: true },
-                lobbyConfigs: { game1: { id: 1003, name: "SabaPlay Game" } },
+                lobbyConfigs: { game1: { id: 1005, name: "SeBall1" } },
             };
 
             // Act
@@ -427,7 +427,7 @@ describe("Dashboard Component Tests", () => {
                 ...defaultProps,
                 queryGame: 0,
                 authorizeResponse: { authorized: true },
-                lobbyConfigs: { game1: { id: 1001, name: "Lobby Game" } },
+                lobbyConfigs: { game1: { id: 1005, name: "SeBall1" } },
             };
 
             // Act

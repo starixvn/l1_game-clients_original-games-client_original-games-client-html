@@ -92,18 +92,13 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
-                            { gameId: 1001, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                            { gameId: 1002, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                            { gameId: 1003, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                            { gameId: 1004, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
                             { gameId: 1005, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                            { gameId: 1006, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
                             { gameId: 1007, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
                         ],
                         balance: 1000,
                         fractionalOddsFormat: false,
                         enableQuickBet: true,
-                        enabledGameIds: [1001, 1002, 1003, 1004, 1005, 1006, 1007],
+                        enabledGameIds: [1005, 1007],
                         availSpins: 0,
                         scoins: 0,
                     },
@@ -114,40 +109,25 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                 lobbyConfigs: {
                     name: "Test Lobby",
                     currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003, 1004, 1005, 1006, 1007],
+                    miniPanelGameIds: [1005, 1007],
                     categories: [
                         {
                             name: "Test Category",
                             gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                                { gameId: 1004, bigSize: false, newTag: false },
                                 { gameId: 1005, bigSize: false, newTag: false },
-                                { gameId: 1006, bigSize: false, newTag: false },
                                 { gameId: 1007, bigSize: false, newTag: false },
                             ],
                         },
                     ],
                     banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                        { gameId: 1004, displayTime: 5000 },
                         { gameId: 1005, displayTime: 5000 },
-                        { gameId: 1006, displayTime: 5000 },
                         { gameId: 1007, displayTime: 5000 },
                     ],
                     gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                        1004: { id: 1004, name: 'Game 4' },
-                        1005: { id: 1005, name: 'Game 5' },
-                        1006: { id: 1006, name: 'Game 6' },
-                        1007: { id: 1007, name: 'Game 7' },
+                        1005: { id: 1005, name: 'SeBall1' },
+                        1007: { id: 1007, name: 'SicBall' },
                     },
-                    roundTimerGame: 1001,
+                    roundTimerGame: 1005,
                 } as ILobbyConfigs
             };
 
@@ -160,7 +140,7 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             const handler = new DashboardHandler(props, jest.fn());
 
             // Act: Call shouldRenderGames with null openGameId (as seen in logs)
-            const result = handler.shouldRenderGames([1001, 1002, 1003, 1004, 1005, 1006, 1007], null);
+            const result = handler.shouldRenderGames([1005, 1007], null);
 
             // Assert: Should return true because the implementation always returns true
             expect(result).toBe(true);
@@ -838,7 +818,7 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     system: 1
                 } as SSOResponse,
                 queryGame: 1001,
-                
+
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: {

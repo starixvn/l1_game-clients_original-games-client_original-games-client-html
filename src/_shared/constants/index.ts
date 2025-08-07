@@ -108,12 +108,7 @@ export const AppTypes = {
 export const confirmBet = "confirmBet";
 
 export const GameIds = {
-    BacBall1: 1001,
-    BacBall2: 1002,
-    NextBall1: 1003,
-    NextBall2: 1004,
     SeBall1: 1005,
-    LuckyThree: 1006,
     SicBall: 1007,
 };
 

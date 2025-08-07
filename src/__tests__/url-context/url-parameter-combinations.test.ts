@@ -71,11 +71,11 @@ describe("Simplified URL Parameter Combinations Tests", () => {
     describe("Basic Parameter Parsing", () => {
         it("should parse all basic parameters correctly", () => {
             // Arrange
-            globalThis.location.search = "?token=abc123&lang=en&gameId=1001&rurl=https://example.com";
+            globalThis.location.search = "?token=abc123&lang=en&gameId=1005&rurl=https://example.com";
             const expected: URLContextModel = {
                 token: "abc123",
                 language: "en",
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: "https://example.com",
             };
 
@@ -105,11 +105,11 @@ describe("Simplified URL Parameter Combinations Tests", () => {
 
         it("should handle HTML-encoded ampersands", () => {
             // Arrange
-            globalThis.location.search = "?token=abc123&amp;lang=en&amp;gameId=1001&amp;rurl=https://example.com";
+            globalThis.location.search = "?token=abc123&amp;lang=en&amp;gameId=1005&amp;rurl=https://example.com";
             const expected: URLContextModel = {
                 token: "abc123",
                 language: "en",
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: "https://example.com",
             };
 
@@ -124,10 +124,10 @@ describe("Simplified URL Parameter Combinations Tests", () => {
     describe("loadURLContext", () => {
         it("should return context from URL when available", () => {
             // Arrange
-            globalThis.location.search = "?token=abc123&lang=en&gameId=1001&rurl=https://example.com";
+            globalThis.location.search = "?token=abc123&lang=en&gameId=1005&rurl=https://example.com";
             const expectedContext = {
                 language: "en",
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: "https://example.com",
             };
 
@@ -150,7 +150,7 @@ describe("Simplified URL Parameter Combinations Tests", () => {
             globalThis.location.search = "";
             const localStorageContext = {
                 language: "en",
-                gameId: 1001,
+                gameId: 1005,
                 redirectUrl: null,
             };
             mockStorageHelper.get.mockReturnValue(localStorageContext);
@@ -166,8 +166,8 @@ describe("Simplified URL Parameter Combinations Tests", () => {
     describe("updateURLContext", () => {
         it("should update context in localStorage", () => {
             // Arrange
-            const existingContext = { language: "en", gameId: 1001 };
-            const newContext = { gameId: 1002 };
+            const existingContext = { language: "en", gameId: 1005 };
+            const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue(existingContext);
 
             // Act
@@ -185,21 +185,21 @@ describe("Simplified URL Parameter Combinations Tests", () => {
 
         it("should call setUserLatestGameId when gameId is provided", () => {
             // Arrange
-            const newContext = { gameId: 1002 };
+            const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue({});
 
             // Act
             updateURLContext(newContext);
 
             // Assert
-            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1002, undefined);
+            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1007, undefined);
         });
     });
 
     describe("getURLContext", () => {
         it("should return context from localStorage", () => {
             // Arrange
-            const expectedContext = { language: "en", gameId: 1001 };
+            const expectedContext = { language: "en", gameId: 1005 };
             mockStorageHelper.get.mockReturnValue(expectedContext);
 
             // Act

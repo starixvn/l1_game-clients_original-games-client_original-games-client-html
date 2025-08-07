@@ -106,11 +106,11 @@ const mockAuthorizeResponse = {
         settings: { theme: "light" },
         isSignedInSM: true,
         isDisplayPlayerCurrency: true,
-        offerGames: [1001, 1002],
+        offerGames: [1005, 1007],
         balance: 1000,
         fractionalOddsFormat: false,
         enableQuickBet: true,
-        enabledGameIds: [1001, 1002],
+        enabledGameIds: [1005, 1007],
         availSpins: 0,
         scoins: 0,
     },
@@ -123,25 +123,25 @@ const mockLobbyConfigs = {
     lobbyConfigs: {
         name: "Test Lobby",
         currencyGroupIds: ["USD"],
-        miniPanelGameIds: [1001, 1002],
+        miniPanelGameIds: [1005, 1007],
         categories: [
             {
                 name: "Test Category",
                 gameSettings: [
-                    { gameId: 1001, bigSize: false, newTag: false },
-                    { gameId: 1002, bigSize: false, newTag: false },
+                    { gameId: 1005, bigSize: false, newTag: false },
+                    { gameId: 1007, bigSize: false, newTag: false },
                 ],
             },
         ],
         banners: [
-            { gameId: 1001, displayTime: 5000 },
-            { gameId: 1002, displayTime: 5000 },
+            { gameId: 1005, displayTime: 5000 },
+            { gameId: 1007, displayTime: 5000 },
         ],
         gameSettings: {
-            1001: { id: 1001, name: "Game 1" },
-            1002: { id: 1002, name: "Game 2" },
+            1005: { id: 1005, name: "SeBall1" },
+            1007: { id: 1007, name: "SicBall" },
         },
-        roundTimerGame: 1001,
+        roundTimerGame: 1005,
     },
 } as any;
 
@@ -149,13 +149,13 @@ describe("SplashScreen Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockGetEnabledRenderGameSettings.mockReturnValue([
-            { 
-                id: 123, 
+            {
+                id: 123,
                 gameName: "Test Game",
                 gameResourceConfigs: { path: "/test" }
             },
-            { 
-                id: 1005, 
+            {
+                id: 1005,
                 gameName: "Default Game",
                 gameResourceConfigs: { path: "/default" }
             }

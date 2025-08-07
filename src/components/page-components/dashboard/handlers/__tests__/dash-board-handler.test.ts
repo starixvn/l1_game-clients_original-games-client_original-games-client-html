@@ -11,15 +11,14 @@ jest.mock('../../../../../_shared/app-settings', () => ({
     getAppSettings: jest.fn().mockReturnValue({
         appType: 'test',
         gameSettings: {
-            1001: { id: 1001, name: 'Game 1' },
-            1002: { id: 1002, name: 'Game 2' },
-            1003: { id: 1003, name: 'Game 3' }
+            1005: { id: 1005, name: 'SeBall1' },
+            1007: { id: 1007, name: 'SicBall' }
         }
     })
 }));
 jest.mock('../../../../../_shared/helpers', () => ({
-    getLobbyGameIds: jest.fn().mockReturnValue([1001, 1002]),
-    getOfferGamesIds: jest.fn().mockReturnValue([1001, 1002]),
+    getLobbyGameIds: jest.fn().mockReturnValue([1005, 1007]),
+    getOfferGamesIds: jest.fn().mockReturnValue([1005, 1007]),
     StorageHelper: {
         get: jest.fn(),
         set: jest.fn()
@@ -50,9 +49,8 @@ mockGetAppSettings.mockReturnValue({
         environment: 'test'
     },
     gameSettings: {
-        1001: { id: 1001, gameName: 'Game 1', gameResourceConfigs: { path: 'test' } },
-        1002: { id: 1002, gameName: 'Game 2', gameResourceConfigs: { path: 'test' } },
-        1003: { id: 1003, gameName: 'Game 3', gameResourceConfigs: { path: 'test' } }
+        1005: { id: 1005, gameName: 'SeBall1', gameResourceConfigs: { path: 'test' } },
+        1007: { id: 1007, gameName: 'SicBall', gameResourceConfigs: { path: 'test' } }
     },
     subGuideDomain: '',
     googleAnalyticId: '',
@@ -105,7 +103,7 @@ describe('DashboardHandler', () => {
             umInfo: null,
             system: 1
         } as SSOResponse,
-        queryGame: 1001,
+        queryGame: 1005,
         setIsUm: jest.fn(),
         tolgee: {} as TolgeeInstance,
         authorizeResponse: {
@@ -122,13 +120,13 @@ describe('DashboardHandler', () => {
                 isSignedInSM: true,
                 isDisplayPlayerCurrency: true,
                 offerGames: [
-                    { gameId: 1001, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                    { gameId: 1002, minBet: 1, maxBet: 1000, maxBetPerChoices: {} }
+                    { gameId: 1005, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
+                    { gameId: 1007, minBet: 1, maxBet: 1000, maxBetPerChoices: {} }
                 ],
                 balance: 1000,
                 fractionalOddsFormat: false,
                 enableQuickBet: true,
-                enabledGameIds: [1001, 1002],
+                enabledGameIds: [1005, 1007],
                 availSpins: 0,
                 scoins: 0,
             },
@@ -139,25 +137,25 @@ describe('DashboardHandler', () => {
         lobbyConfigs: {
             name: "Test Lobby",
             currencyGroupIds: ["USD"],
-            miniPanelGameIds: [1001, 1002],
+            miniPanelGameIds: [1005, 1007],
             categories: [
                 {
                     name: "Test Category",
                     gameSettings: [
-                        { gameId: 1001, bigSize: false, newTag: false },
-                        { gameId: 1002, bigSize: false, newTag: false },
+                        { gameId: 1005, bigSize: false, newTag: false },
+                        { gameId: 1007, bigSize: false, newTag: false },
                     ],
                 },
             ],
             banners: [
-                { gameId: 1001, displayTime: 5000 },
-                { gameId: 1002, displayTime: 5000 },
+                { gameId: 1005, displayTime: 5000 },
+                { gameId: 1007, displayTime: 5000 },
             ],
             gameSettings: {
-                1001: { id: 1001, name: "Game 1" },
-                1002: { id: 1002, name: "Game 2" },
+                1005: { id: 1005, name: "SeBall1" },
+                1007: { id: 1007, name: "SicBall" },
             },
-            roundTimerGame: 1001,
+            roundTimerGame: 1005,
         } as ILobbyConfigs
     };
 
@@ -185,10 +183,10 @@ describe('DashboardHandler', () => {
             enableDebugLogs: false,
             gamePath: ''
         });
-        mockGetLobbyGameIds.mockReturnValue([1001, 1002]);
-        mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
+        mockGetLobbyGameIds.mockReturnValue([1005, 1007]);
+        mockGetOfferGamesIds.mockReturnValue([1005, 1007]);
         mockLoadURLContext.mockReturnValue({
-            gameId: 1001,
+            gameId: 1005,
             token: 'test-token',
             language: 'en',
         });
