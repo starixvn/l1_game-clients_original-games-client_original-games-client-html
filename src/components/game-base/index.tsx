@@ -33,7 +33,7 @@ import { Settings } from "../game-components/settings";
 import BackgroundGalaxy from "../page-components/background";
 import BetSettings from "../page-components/bet-settings";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
-import { GameSoundHandler, IGameSoundHandler } from "../turn-base/game-sound-handler";
+import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
     GameDisableHandler,
     GameErrorHandler,
@@ -153,7 +153,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         this.gameSoundHandler =
             gameSoundHandler ??
-            new GameSoundHandler({
+            new RoundGameSoundHandler({
                 gameSound: this.getGameSound.bind(this),
             });
 
@@ -384,7 +384,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             remainingTime,
             roundState: RoundState[gameStateContextModel.roundState],
             roundTimeCounter: this.roundTimeCounter,
-            turnCounter: gameStateContextModel.turnCounter,
         });
 
         this.broadcastClientRemainingTime(remainingTime);
@@ -486,7 +485,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderGameStatus() {
-        return GameStatusMap.TurnBaseStatus;
+        return GameStatusMap.RoundBaseStatus;
     }
 
     renderHeaderBlock() {

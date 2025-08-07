@@ -5,7 +5,7 @@ import { SystemContextModel, SystemEventAction } from "../../_shared/react-conte
 import { GameEventAction } from "../../_shared/react-contexts/game-state-context/game-event-action";
 import { GameStateContextModel } from "../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
-import { GameSoundHandler } from "../turn-base/game-sound-handler";
+import { IGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
     GameDisableHandler,
     GameErrorHandler,
@@ -45,7 +45,6 @@ export interface GameSettings {
     gameName: string;
     socketInfo?: SocketInfo;
     durations?: GameDurations;
-    totalTurns?: number;
     numberOfRoundHistory?: number;
     gamePath?: string;
     isComingSoon?: boolean;
@@ -62,7 +61,6 @@ export type GamePropsContext = {
     gameName?: string;
     socketInfo?: SocketInfo;
     durations?: GameDurations;
-    totalTurns?: number;
     notifyWinStreak?: Function;
     setApiErrorMessage?: Function;
     userStakeLevel?: UserStakeLevel;
@@ -121,7 +119,6 @@ export interface SocketInfo {
 
 export interface GameDurations {
     wholeRound: number;
-    wholeTurn?: number;
     placingBets: number;
     lockingBet: number;
     showResult: number;
@@ -256,5 +253,5 @@ export type GameBaseHandlers = {
     gameFinishHandler?: GameFinishHandler;
     gameDisabledHandler?: GameDisableHandler;
     gameRoundHistoryHandler?: GameRoundHistoryHandler;
-    gameSoundHandler?: GameSoundHandler;
+    gameSoundHandler?: IGameSoundHandler;
 };

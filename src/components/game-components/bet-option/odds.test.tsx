@@ -19,7 +19,7 @@ describe(Odds.name, () => {
 
         // act
         const { container } = render(
-            <Odds choice={choice} className="custom-class" turnCounter={4} animationDuration={1} tolgeeNamespace="gameA" />
+            <Odds choice={choice} className="custom-class" animationDuration={1} tolgeeNamespace="gameA" />
         );
 
         // assert
@@ -36,7 +36,7 @@ describe(Odds.name, () => {
 
         // act
         const { container } = render(
-            <Odds choice={choice} className="custom-class" turnCounter={4} animationDuration={1} tolgeeNamespace="gameA" />
+            <Odds choice={choice} className="custom-class" animationDuration={1} tolgeeNamespace="gameA" />
         );
 
         // assert
@@ -53,7 +53,7 @@ describe(Odds.name, () => {
             return gameState;
         });
         const { container } = render(
-            <Odds choice={choice} className="custom-class" turnCounter={4} animationDuration={1} tolgeeNamespace="gameA" />
+            <Odds choice={choice} className="custom-class" animationDuration={1} tolgeeNamespace="gameA" />
         );
 
         // act

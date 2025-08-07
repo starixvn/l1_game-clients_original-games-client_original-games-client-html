@@ -15,14 +15,13 @@ export type IResultSlotContainer = {
     delayClassName?: string;
 } & Partial<GameStateContextModel>;
 
-export const TurnBaseResultSlotContainer: React.FC<IResultSlotContainer> = (props) => {
+export const RoundBaseResultSlotContainer: React.FC<IResultSlotContainer> = (props) => {
     const {
         delayTime,
         betChoice,
         className,
         roundState,
         roundData,
-        turnCounter,
         defaultRoundData,
         betChoiceBalls,
         playResultAnimation,
@@ -54,10 +53,7 @@ export const TurnBaseResultSlotContainer: React.FC<IResultSlotContainer> = (prop
                     if (number) {
                         clonedData[i].number = number;
 
-                        if (
-                            playResultAnimation &&
-                            ((!groupType && i === turnCounter - 1) || (groupType && Math.floor(i / groupType) + 1 === turnCounter))
-                        ) {
+                        if (playResultAnimation) {
                             clonedData[i].status = BallStatus.LOADING;
                             clonedData[i].delayTime = playResultAnimation ? delayTime : 0;
                         } else {

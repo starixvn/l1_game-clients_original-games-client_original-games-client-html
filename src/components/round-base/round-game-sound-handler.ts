@@ -1,12 +1,22 @@
 import { RoundState } from "../game-base/type";
-import { GameSoundHandler, GameSoundHandlerProps } from "../turn-base/game-sound-handler";
 
-export class RoundGameSoundHandler extends GameSoundHandler {
-    constructor(protected readonly props: GameSoundHandlerProps) {
-        super(props);
-    }
+export type GameSoundHandlerProps = {
+    gameSound: () => {
+        startPlaceBetSound: Function;
+        startRoundSound: Function;
+        blockBetSound: Function;
+        playPlaceBetSound: Function;
+    };
+};
 
-    override playSound(newRoundState: RoundState) {
+export interface IGameSoundHandler {
+    handleSound(newRoundState: RoundState): void;
+}
+
+export class RoundGameSoundHandler implements IGameSoundHandler {
+    constructor(protected readonly props: GameSoundHandlerProps) {}
+
+    handleSound(newRoundState: RoundState) {
         const { startPlaceBetSound, startRoundSound } = this.props.gameSound();
         const soundByState = {
             [RoundState.BeforePlaceBet]: startRoundSound,

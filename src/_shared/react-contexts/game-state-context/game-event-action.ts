@@ -16,7 +16,6 @@ export enum GameEventActionType {
     USER_STAKE_LEVEL = "USER_STAKE_LEVEL",
     ODDS = "ODDS",
     DRAW_ID = "DRAW_ID",
-    TURN_COUNTER = "TURN_COUNTER",
     ROUND_REMAINING_TIME = "ROUND_REMAINING_TIME",
     SET_NEW_GAME_STATE = "SET_NEW_GAME_STATE",
     SHOW_WINNING_ANIMATION = "SHOW_WINNING_ANIMATION",
@@ -70,7 +69,6 @@ export interface GameEventPayload {
     isShowBlink?: boolean;
     prevRoundState?: RoundState;
     roundState?: RoundState;
-    turnCounter?: number;
     isUMInFirstLoad?: boolean;
     isShowBetHistory?: boolean;
     isShowGameGuide?: boolean;

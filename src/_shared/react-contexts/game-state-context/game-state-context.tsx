@@ -56,7 +56,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
         newGameState,
         showResultInfo,
         isShowBlink,
-        turnCounter,
         isUMInFirstLoad,
         isShowBetHistory,
         isShowGameGuide,
@@ -72,7 +71,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
                 ...state,
                 isConnect: true,
                 roundData: {},
-                turnCounter: 0,
                 drawId: 0,
             };
         }
@@ -198,12 +196,7 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             };
         }
 
-        case GameEventActionType.TURN_COUNTER: {
-            return {
-                ...state,
-                turnCounter,
-            };
-        }
+
 
         case GameEventActionType.SET_NEW_GAME_STATE: {
             return {

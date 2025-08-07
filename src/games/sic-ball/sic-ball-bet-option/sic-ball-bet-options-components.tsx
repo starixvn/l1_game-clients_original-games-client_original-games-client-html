@@ -117,7 +117,7 @@ export const HighlightWinningResult = ({ choice }) => {
 };
 
 export const SicBallMainOption = ({ choice }) => {
-    const { roundState, roundHistory, turnCounter } = useGameStateContext();
+    const { roundState, roundHistory } = useGameStateContext();
     const { tolgeeNamespace } = useGameContext();
     const [loadingComplete, setLoadingComplete] = useState(false);
 
@@ -152,7 +152,6 @@ export const SicBallMainOption = ({ choice }) => {
                 <BetChoice choice={choice} className={Style[`bet-name-${choice}`]} tolgeeNamespace={tolgeeNamespace} />
                 <SicBallBetInfo choice={choice} />
                 <Odds
-                    turnCounter={turnCounter}
                     choice={choice}
                     tolgeeNamespace={tolgeeNamespace}
                     animationDuration={6}

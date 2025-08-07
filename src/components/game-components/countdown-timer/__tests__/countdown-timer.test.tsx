@@ -4,7 +4,7 @@ import React from "react";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
 import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { RoundState } from "../../../game-base/type";
-import CountdownTimer, { TurnBaseStatus, SimpleTimer } from "../countdown-timer";
+import CountdownTimer, { RoundBaseStatus, SimpleTimer } from "../countdown-timer";
 
 const mockUseGameStateContext = useGameStateContext as jest.Mock;
 
@@ -124,35 +124,9 @@ describe("CountdownTimer File", () => {
 
     describe("GameStatus Component", () => {
         const MockGameStatusChildren = () => <div>test</div>;
-        test("displays the turn counter text when turnCounter is greater than 0", () => {
-            mockUseGameStateContext.mockReturnValue({ turnCounter: 1 } as GameStateContextModel);
-
-            const screen = render(
-                <TurnBaseStatus>
-                    <MockGameStatusChildren />
-                </TurnBaseStatus>
-            );
-
-            expect(screen.getByText("draw_1")).toBeInTheDocument();
-        });
-
-        test("does not display the turn counter text when turnCounter is 0", () => {
-            mockUseGameStateContext.mockReturnValue({ turnCounter: 0 } as GameStateContextModel);
-
-            const screen = render(
-                <TurnBaseStatus>
-                    <MockGameStatusChildren />
-                </TurnBaseStatus>
-            );
-
-            expect(screen.queryByText(/draw_/)).not.toBeInTheDocument();
-        });
-
         test("renders children content", () => {
-            mockUseGameStateContext.mockReturnValue({ turnCounter: 1 } as GameStateContextModel);
-
             const childContent = "Test Child Content";
-            const screen = render(<TurnBaseStatus>{childContent}</TurnBaseStatus>);
+            const screen = render(<RoundBaseStatus>{childContent}</RoundBaseStatus>);
             expect(screen.getByText(childContent)).toBeInTheDocument();
         });
     });

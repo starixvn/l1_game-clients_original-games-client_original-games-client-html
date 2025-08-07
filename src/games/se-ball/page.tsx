@@ -50,7 +50,6 @@ class SeBall extends GameBase<GameBaseProps, SeBallState> {
             dispatch: props.dispatch,
             gameStateContextModel: this.getGameStateContext.bind(this),
             gameMessageHandler,
-            totalTurns: props.totalTurns,
             durations: props.durations,
         });
     }
@@ -66,7 +65,7 @@ class SeBall extends GameBase<GameBaseProps, SeBallState> {
     }
 
     renderResultBlock() {
-        const { roundHistory, result, roundState, roundData, turnCounter, drawId, playResultAnimation, isPlayStartRoundAnimation } =
+        const { roundHistory, result, roundState, roundData, drawId, playResultAnimation, isPlayStartRoundAnimation } =
             this.props.gameStateContextModel;
 
         return (
@@ -75,7 +74,6 @@ class SeBall extends GameBase<GameBaseProps, SeBallState> {
                 result={result}
                 roundState={roundState}
                 roundData={roundData}
-                turnCounter={turnCounter}
                 drawId={drawId}
                 playResultAnimation={playResultAnimation}
                 isPlayStartRoundAnimation={isPlayStartRoundAnimation}

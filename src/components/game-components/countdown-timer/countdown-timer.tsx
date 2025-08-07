@@ -10,7 +10,7 @@ import { BgCachedImage } from "../cached-image/bg-cached-image";
 
 export type Rotation = "clockwise" | "counterclockwise";
 
-export const CountdownTimer = ({ SimpleTimerProp = SimpleTimer, GameStatusProp = GameStatusMap.TurnBaseStatus }) => {
+export const CountdownTimer = ({ SimpleTimerProp = SimpleTimer, GameStatusProp = GameStatusMap.RoundBaseStatus }) => {
     const { roundState } = useGameStateContext();
     const { t } = useSNTranslate();
     const { gameMessageHandler } = useGameContext();
@@ -92,28 +92,13 @@ export const SimpleTimer = ({ clientRemainingTime }) => {
     );
 };
 
-export const TurnBaseStatus = ({ children }) => {
-    const { turnCounter } = useGameStateContext();
-    const { t } = useSNTranslate();
 
-    if (turnCounter <= 0) {
-        return <></>;
-    }
-
-    return (
-        <div className={`${styles["game-status"]}`}>
-            <span>{t(`draw_${turnCounter}`)}</span>
-            {children}
-        </div>
-    );
-};
 
 export const RoundBaseStatus = ({ children }) => {
     return <div className={`${styles["game-status"]}`}>{children}</div>;
 };
 
 export const GameStatusMap = {
-    TurnBaseStatus: TurnBaseStatus,
     RoundBaseStatus: RoundBaseStatus,
 };
 

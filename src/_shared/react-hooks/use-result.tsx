@@ -21,7 +21,7 @@ const useResult = <R,>(props: UseResultProps<R>) => {
 
     useEffect(() => {
         const handlerId = gameMessageHandler?.register(messageEventType.CLIENT_REMAINING_TIME, ({ clientRemainingTime }) => {
-            if (clientRemainingTime > 0 && clientRemainingTime !== (durations?.wholeTurn || wholeRound)) {
+            if (clientRemainingTime > 0 && clientRemainingTime !== wholeRound) {
                 setIsFirstStartDisplayResultJoinGame(false);
             }
         });
