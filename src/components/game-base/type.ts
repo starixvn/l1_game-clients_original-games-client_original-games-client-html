@@ -45,7 +45,6 @@ export interface GameSettings {
     gameName: string;
     socketInfo?: SocketInfo;
     durations?: GameDurations;
-    totalTurns?: number;
     numberOfRoundHistory?: number;
     gamePath?: string;
     isComingSoon?: boolean;
@@ -62,7 +61,6 @@ export type GamePropsContext = {
     gameName?: string;
     socketInfo?: SocketInfo;
     durations?: GameDurations;
-    totalTurns?: number;
     notifyWinStreak?: Function;
     setApiErrorMessage?: Function;
     userStakeLevel?: UserStakeLevel;
@@ -121,7 +119,6 @@ export interface SocketInfo {
 
 export interface GameDurations {
     wholeRound: number;
-    wholeTurn?: number;
     placingBets: number;
     lockingBet: number;
     showResult: number;
