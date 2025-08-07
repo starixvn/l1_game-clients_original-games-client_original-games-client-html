@@ -19,7 +19,7 @@ const TotalBet = dynamic(() => import("../../components/game-components/bet-opti
 const SeBallWinningAnimation = dynamic(() => import("./se-ball-winning-animation"));
 
 const SeBallBetOptionsComponent = () => {
-    const { roundState, settlementResult, showResultInfo, roundHistory } = useGameStateContext();
+    const { roundState, settlementResult, showResultInfo, roundHistory, turnCounter } = useGameStateContext();
     const { tolgeeNamespace } = useGameContext();
 
     const isShowDisabledLayer = roundState === RoundState.LockingBet;
@@ -65,6 +65,7 @@ const SeBallBetOptionsComponent = () => {
                 choice={choice}
                 tolgeeNamespace={tolgeeNamespace}
                 animationDuration={6}
+                turnCounter={turnCounter}
                 isFormatOddsAuto={true}
             />
         );

@@ -10,10 +10,11 @@ import { BaseProps } from "./types";
 type Props = {
     animationClass?: string;
     animationDuration?: number;
+    turnCounter: number;
     isFormatOddsAuto?: boolean;
 } & BaseProps;
 
-export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, animationDuration, isFormatOddsAuto }) => {
+export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, animationDuration, turnCounter, isFormatOddsAuto }) => {
     const [showOddsIcon, setShowOddsIcon] = useState("");
     const [classOddsIcon, setClassOddsIcon] = useState("");
     const [oddsValue, setOddsValue] = useState(0);
@@ -25,8 +26,11 @@ export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, anim
         const currentOdds = gameConfigs?.odds?.[choice] ?? 0;
         oddsValue === 0 && setOddsValue(currentOdds);
         if (roundState === RoundState.InRound) {
-            oddsValue > 0 && oddsValue !== +currentOdds && showIcon();
-            setClassOddsIcon(currentOdds > oddsValue ? "up" : "down");
+            if (turnCounter !== 1) {
+                oddsValue > 0 && oddsValue !== +currentOdds && showIcon();
+                setClassOddsIcon(currentOdds > oddsValue ? "up" : "down");
+            }
+
             setOddsValue(currentOdds);
         }
     }, [gameConfigs?.odds?.[choice], roundState]);

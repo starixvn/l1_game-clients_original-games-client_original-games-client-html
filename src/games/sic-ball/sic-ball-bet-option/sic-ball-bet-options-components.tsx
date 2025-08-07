@@ -117,7 +117,7 @@ export const HighlightWinningResult = ({ choice }) => {
 };
 
 export const SicBallMainOption = ({ choice }) => {
-    const { roundState, roundHistory } = useGameStateContext();
+    const { roundState, roundHistory, turnCounter } = useGameStateContext();
     const { tolgeeNamespace } = useGameContext();
     const [loadingComplete, setLoadingComplete] = useState(false);
 
@@ -155,6 +155,7 @@ export const SicBallMainOption = ({ choice }) => {
                     choice={choice}
                     tolgeeNamespace={tolgeeNamespace}
                     animationDuration={6}
+                    turnCounter={turnCounter}
                     isFormatOddsAuto={true}
                     className={className}
                 />
