@@ -323,13 +323,11 @@ const SplashScreen: React.FC = () => {
                     data-testid="preload-resources"
                     bannerId={bannerId}
                     setIsDonePreload={() => {
-                        console.log("[SplashScreen] preload completed, setting isRenderDashboard to true");
                         setIsRenderDashboard(true);
                     }}
                     gameId={currentGameId}
                     locale={locale}
                     gameIdsIcon={gameOfferIds}
-                    durationDelayDonePreload={2000}
                 />
             )}
         </>

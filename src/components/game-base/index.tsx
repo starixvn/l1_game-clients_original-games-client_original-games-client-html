@@ -225,7 +225,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     preloadResource = () => {
-        return <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} />;
+        const playerContext = this.context as PlayerContextModel;
+        return (
+            <PreloadResources 
+                setIsDonePreload={this.onPreloadResourceDone} 
+                gameId={this.props.id}
+                locale={playerContext?.locale || "en"}
+            />
+        );
     };
 
     protected async connectToGameService() {

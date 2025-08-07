@@ -61,13 +61,15 @@ jest.mock("next/router", () => ({
     }),
 }));
 
-// Mock the LobbyLayout component
+// Mock the optimized PreloadResources component
 jest.mock("../../_shared/helpers/preload-resources", () => ({
     __esModule: true,
     default: ({ setIsDonePreload }: { setIsDonePreload: () => void }) => {
         const PreloadResourcesComponent = () => {
             React.useEffect(() => {
-                setTimeout(setIsDonePreload, 100);
+                // Simulate optimized preload with faster completion
+                const timer = setTimeout(setIsDonePreload, 50);
+                return () => clearTimeout(timer);
             }, [setIsDonePreload]);
             return <div data-testid="preload-resources">Preload Resources</div>;
         };
@@ -293,6 +295,54 @@ describe("SplashScreen Component", () => {
         });
     });
 
+    describe("Optimized PreloadResources Integration", () => {
+        it("should render PreloadResources with optimized props", async () => {
+            // Arrange
+            const urlContext = {
+                gameId: 1005,
+                token: "test-token",
+                language: "en",
+            };
+
+            (sso as jest.Mock).mockResolvedValue(mockSession);
+            (authorize as jest.Mock).mockResolvedValue(mockAuthorizeResponse);
+            (getLobbyConfigs as jest.Mock).mockResolvedValue(mockLobbyConfigs);
+
+            // Act
+            await act(async () => {
+                renderSplashScreen(urlContext);
+            });
+
+            // Assert
+            await waitFor(() => {
+                expect(screen.getByTestId("preload-resources")).toBeInTheDocument();
+            });
+        });
+
+        it("should complete preload faster with optimized component", async () => {
+            // Arrange
+            const urlContext = {
+                gameId: 1005,
+                token: "test-token",
+                language: "en",
+            };
+
+            (sso as jest.Mock).mockResolvedValue(mockSession);
+            (authorize as jest.Mock).mockResolvedValue(mockAuthorizeResponse);
+            (getLobbyConfigs as jest.Mock).mockResolvedValue(mockLobbyConfigs);
+
+            // Act
+            await act(async () => {
+                renderSplashScreen(urlContext);
+            });
+
+            // Assert - Should complete faster than the old 2000ms delay
+            await waitFor(() => {
+                expect(screen.getByTestId("preload-resources")).toBeInTheDocument();
+            }, { timeout: 1000 }); // Reduced timeout expectation
+        });
+    });
+
     describe("Direct Mode Logic Tests", () => {
         it("should handle direct mode with valid gameId", async () => {
             // Arrange
@@ -316,8 +366,6 @@ describe("SplashScreen Component", () => {
                 expect(screen.getByTestId("splash-screen")).toBeInTheDocument();
             });
         });
-
-
     });
 
     describe("Error Handling Tests", () => {

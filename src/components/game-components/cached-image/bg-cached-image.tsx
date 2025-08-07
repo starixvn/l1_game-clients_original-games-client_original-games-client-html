@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const BgCachedImage: React.FC<Props> = ({ pathImage, className, backgroundSize, backgroundRepeat, backgroundPosition }) => {
-    const [source, setSource] = useState(imageCache[pathImage]);
+    const [source, setSource] = useState<string | null>(imageCache[pathImage]?.data || null);
     const props = { backgroundSize, backgroundRepeat, backgroundPosition };
     Object.keys(props).forEach((key) => props[key] === undefined && delete props[key]);
 
@@ -22,7 +22,7 @@ export const BgCachedImage: React.FC<Props> = ({ pathImage, className, backgroun
         if (!imageCache[pathImage]) {
             loadImage();
         } else {
-            setSource(imageCache[pathImage]);
+            setSource(imageCache[pathImage].data);
         }
     }, [pathImage]);
 

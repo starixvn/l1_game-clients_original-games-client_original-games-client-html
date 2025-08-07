@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const CachedImage: React.FC<Props> = ({ src, blurSrc, alt, width, height, priority, className, onLoad }) => {
-    const [source, setSource] = useState(imageCache[src]);
+    const [source, setSource] = useState<string | null>(imageCache[src]?.data || null);
     const props = { width, height, priority, className, onLoad };
     Object.keys(props).forEach((key) => props[key] === undefined && delete props[key]);
     useEffect(() => {
@@ -26,7 +26,7 @@ export const CachedImage: React.FC<Props> = ({ src, blurSrc, alt, width, height,
         if (!imageCache[src]) {
             loadImage();
         } else {
-            setSource(imageCache[src]);
+            setSource(imageCache[src].data);
         }
     }, [src]);
     return (source || blurSrc) && <Image className={className} src={source || blurSrc} alt={alt} {...props} />;
