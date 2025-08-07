@@ -7,15 +7,68 @@ import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings, getGameSettings } from "../app-settings";
 import { downloadAndCacheImage } from "./image-cache-controller";
+import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
+import { serviceWorkerHelper } from "./service-worker-helper";
 
 const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
 export const DURATION_HOLD_SPLASH_SCREEN = 1000;
+
+// Analytics tracking
+interface PreloadAnalytics {
+    gameId: number;
+    startTime: number;
+    endTime?: number;
+    totalImages: number;
+    criticalImages: number;
+    loadedImages: number;
+    failedImages: number;
+    apiResponseTime: number;
+    totalLoadTime: number;
+    cacheHits: number;
+    cdnUsage: number;
+    compressionRatio: number;
+}
+
+// Extend Window interface for gtag
+declare global {
+    interface Window {
+        gtag?: (command: string, eventName: string, parameters: any) => void;
+    }
+}
+
+const analyticsData: PreloadAnalytics[] = [];
+
+// Critical image paths that should be loaded first
+const CRITICAL_IMAGE_PATHS = [
+    "/cage/",
+    "/countdown-timer/",
+    "/chips/gn/",
+    "/ball/",
+    "/anim/ball-middle/"
+];
+
+// Progressive loading priorities
+enum ImagePriority {
+    CRITICAL = 1,
+    HIGH = 2,
+    MEDIUM = 3,
+    LOW = 4
+}
+
+interface ImageWithPriority {
+    path: string;
+    priority: ImagePriority;
+    size?: number;
+    isCompressed?: boolean;
+    cdnUrl?: string;
+}
 
 // Global preload manager to prevent multiple simultaneous preloads
 class PreloadManager {
     private static instance: PreloadManager;
     private activePreloads: Map<string, Promise<void>> = new Map();
     private preloadCallbacks: Map<string, Set<() => void>> = new Map();
+    private analytics: Map<string, PreloadAnalytics> = new Map();
 
     static getInstance(): PreloadManager {
         if (!PreloadManager.instance) {
@@ -34,6 +87,22 @@ class PreloadManager {
         const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
 
         console.log(`[PreloadManager] Starting preload for key: ${preloadKey}`);
+
+        // Initialize analytics
+        const analytics: PreloadAnalytics = {
+            gameId,
+            startTime: Date.now(),
+            totalImages: 0,
+            criticalImages: 0,
+            loadedImages: 0,
+            failedImages: 0,
+            apiResponseTime: 0,
+            totalLoadTime: 0,
+            cacheHits: 0,
+            cdnUsage: 0,
+            compressionRatio: 0
+        };
+        this.analytics.set(preloadKey, analytics);
 
         // Register callback for this preload
         if (!this.preloadCallbacks.has(preloadKey)) {
@@ -55,8 +124,18 @@ class PreloadManager {
         try {
             await preloadPromise;
         } finally {
+            // Finalize analytics
+            const finalAnalytics = this.analytics.get(preloadKey);
+            if (finalAnalytics) {
+                finalAnalytics.endTime = Date.now();
+                finalAnalytics.totalLoadTime = finalAnalytics.endTime - finalAnalytics.startTime;
+                this.logAnalytics(finalAnalytics);
+                analyticsData.push(finalAnalytics);
+            }
+
             // Clean up
             this.activePreloads.delete(preloadKey);
+            this.analytics.delete(preloadKey);
             const callbacks = this.preloadCallbacks.get(preloadKey);
             if (callbacks) {
                 callbacks.forEach(callback => callback());
@@ -75,11 +154,11 @@ class PreloadManager {
         console.log(`[PreloadManager] Executing preload for key: ${preloadKey}`);
 
         try {
-            // Fetch image paths
-            const imagePaths = await fetchImagesFromAPI(gameId, locale, gameIdsIcon, bannerId);
+            // Fetch image paths with analytics
+            const imagePaths = await fetchImagesFromAPI(gameId, locale, gameIdsIcon, bannerId, preloadKey);
 
-            // Load images
-            await loadAllImagesOptimized(imagePaths, gameId);
+            // Progressive loading with priority
+            await loadImagesProgressive(imagePaths, gameId, preloadKey);
 
             console.log(`[PreloadManager] Preload completed for key: ${preloadKey}`);
         } catch (error) {
@@ -88,14 +167,60 @@ class PreloadManager {
         }
     }
 
+    private logAnalytics(analytics: PreloadAnalytics): void {
+        console.log(`[PreloadAnalytics] Game ${analytics.gameId} preload completed:`, {
+            totalTime: `${analytics.totalLoadTime}ms`,
+            apiTime: `${analytics.apiResponseTime}ms`,
+            images: `${analytics.loadedImages}/${analytics.totalImages}`,
+            critical: analytics.criticalImages,
+            failed: analytics.failedImages,
+            cacheHits: analytics.cacheHits,
+            cdnUsage: `${analytics.cdnUsage}%`,
+            compression: `${analytics.compressionRatio}%`
+        });
+
+        // Send analytics to monitoring service
+        this.sendAnalyticsToService(analytics);
+    }
+
+    private sendAnalyticsToService(analytics: PreloadAnalytics): void {
+        // Send to analytics service (e.g., Google Analytics, custom endpoint)
+        if (typeof window !== 'undefined' && window.gtag) {
+            window.gtag('event', 'preload_completed', {
+                game_id: analytics.gameId,
+                total_time: analytics.totalLoadTime,
+                api_time: analytics.apiResponseTime,
+                images_loaded: analytics.loadedImages,
+                images_total: analytics.totalImages,
+                cache_hits: analytics.cacheHits,
+                cdn_usage: analytics.cdnUsage,
+                compression_ratio: analytics.compressionRatio
+            });
+        }
+
+        // Send to custom analytics endpoint
+        fetch('/api/analytics/preload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(analytics)
+        }).catch(error => {
+            console.warn('[PreloadManager] Failed to send analytics:', error);
+        });
+    }
+
     cancelPreload(gameId: number, locale: string, gameIdsIcon: number[], bannerId: number): void {
         const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
         console.log(`[PreloadManager] Cancelling preload for key: ${preloadKey}`);
 
         // Remove callbacks
         this.preloadCallbacks.delete(preloadKey);
+        this.analytics.delete(preloadKey);
 
         // Note: We can't easily cancel the actual preload promise, but we can prevent new callbacks
+    }
+
+    getAnalytics(): PreloadAnalytics[] {
+        return [...analyticsData];
     }
 }
 
@@ -124,8 +249,65 @@ const cleanupOldRequests = () => {
     });
 };
 
-// Fetch images from API with request deduplication
-const fetchImagesFromAPI = async (gameId: number, locale: string, gameIdsIcon: number[], bannerId: number): Promise<string[]> => {
+// CDN URL generation
+const getCDNUrl = (path: string): string => {
+    const cdnBase = getAppSettings().cdnBaseUrl || '';
+    if (cdnBase && path.startsWith('/static/images/')) {
+        return `${cdnBase}${path}`;
+    }
+    return path;
+};
+
+// Image compression detection
+const isCompressedImage = (path: string): boolean => {
+    return path.includes('.webp') || path.includes('compressed') || path.includes('optimized');
+};
+
+// Progressive image prioritization with optimization
+const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
+    const optimalFormat = imageOptimizationHelper.getOptimalFormat();
+
+    return imagePaths.map(path => {
+        let priority = ImagePriority.LOW;
+        let isCompressed = isCompressedImage(path);
+        let cdnUrl = getCDNUrl(path);
+
+        // Optimize the URL with the best format
+        const optimizedUrl = optimizeImageUrl(cdnUrl, {
+            format: optimalFormat as any,
+            quality: 85
+        });
+
+        // Critical images (UI elements, game mechanics)
+        if (CRITICAL_IMAGE_PATHS.some(criticalPath => path.includes(criticalPath))) {
+            priority = ImagePriority.CRITICAL;
+        }
+        // High priority (frequently used)
+        else if (path.includes('/chips/') || path.includes('/ball/')) {
+            priority = ImagePriority.HIGH;
+        }
+        // Medium priority (game-specific assets)
+        else if (path.includes('/number/') || path.includes('/cage/')) {
+            priority = ImagePriority.MEDIUM;
+        }
+
+        return {
+            path: optimizedUrl,
+            priority,
+            isCompressed: isCompressed || optimizedUrl !== cdnUrl,
+            cdnUrl: cdnUrl !== path ? cdnUrl : undefined
+        };
+    }).sort((a, b) => a.priority - b.priority);
+};
+
+// Fetch images from API with request deduplication and analytics
+const fetchImagesFromAPI = async (
+    gameId: number,
+    locale: string,
+    gameIdsIcon: number[],
+    bannerId: number,
+    preloadKey: string
+): Promise<string[]> => {
     const requestKey = getRequestKey(gameId, locale, gameIdsIcon || [], bannerId || 0);
 
     console.log(`[fetchImagesFromAPI] Fetching images with key: ${requestKey}`);
@@ -169,8 +351,20 @@ const fetchImagesFromAPI = async (gameId: number, locale: string, gameIdsIcon: n
 
             const endTime = Date.now();
             const imagePaths = (response?.data as string[]) || [];
+            const apiResponseTime = endTime - startTime;
 
-            console.log(`[fetchImagesFromAPI] API call completed in ${endTime - startTime}ms, received ${imagePaths.length} image paths`);
+            // Update analytics
+            const preloadManager = PreloadManager.getInstance();
+            const analytics = preloadManager['analytics'].get(preloadKey);
+            if (analytics) {
+                analytics.apiResponseTime = apiResponseTime;
+                analytics.totalImages = imagePaths.length;
+                analytics.criticalImages = imagePaths.filter(path =>
+                    CRITICAL_IMAGE_PATHS.some(criticalPath => path.includes(criticalPath))
+                ).length;
+            }
+
+            console.log(`[fetchImagesFromAPI] API call completed in ${apiResponseTime}ms, received ${imagePaths.length} image paths`);
 
             return imagePaths;
         } catch (error) {
@@ -190,62 +384,110 @@ const fetchImagesFromAPI = async (gameId: number, locale: string, gameIdsIcon: n
     return requestPromise;
 };
 
-// Optimized image loading function
-const loadAllImagesOptimized = async (imagePaths: string[], gameId: number): Promise<void> => {
-    console.log(`[loadAllImagesOptimized] Starting to load ${imagePaths.length} images for game ${gameId}`);
+// Progressive image loading with priority
+const loadImagesProgressive = async (
+    imagePaths: string[],
+    gameId: number,
+    preloadKey: string
+): Promise<void> => {
+    console.log(`[loadImagesProgressive] Starting progressive load of ${imagePaths.length} images for game ${gameId}`);
 
     if (imagePaths.length === 0) {
-        console.log(`[loadAllImagesOptimized] No images to load, completing preload`);
+        console.log(`[loadImagesProgressive] No images to load, completing preload`);
         return;
     }
 
-    let loadedCount = 0;
-    const totalCount = imagePaths.length;
-    const startTime = Date.now();
+    const prioritizedImages = prioritizeImages(imagePaths);
+    const preloadManager = PreloadManager.getInstance();
+    const analytics = preloadManager['analytics'].get(preloadKey);
 
-    try {
-        // Load images in batches to avoid overwhelming the browser
-        const batchSize = 15; // Increased batch size for better performance
-        const batches = [];
+    console.log(`[loadImagesProgressive] Prioritized images:`, {
+        critical: prioritizedImages.filter(img => img.priority === ImagePriority.CRITICAL).length,
+        high: prioritizedImages.filter(img => img.priority === ImagePriority.HIGH).length,
+        medium: prioritizedImages.filter(img => img.priority === ImagePriority.MEDIUM).length,
+        low: prioritizedImages.filter(img => img.priority === ImagePriority.LOW).length
+    });
 
-        for (let i = 0; i < imagePaths.length; i += batchSize) {
-            batches.push(imagePaths.slice(i, i + batchSize));
-        }
+    // Load critical images first
+    await loadImagesByPriority(prioritizedImages, ImagePriority.CRITICAL, analytics);
 
-        console.log(`[loadAllImagesOptimized] Created ${batches.length} batches of ${batchSize} images each`);
+    // Load high priority images
+    await loadImagesByPriority(prioritizedImages, ImagePriority.HIGH, analytics);
 
-        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-            const batch = batches[batchIndex];
+    // Load medium priority images
+    await loadImagesByPriority(prioritizedImages, ImagePriority.MEDIUM, analytics);
 
-            console.log(`[loadAllImagesOptimized] Loading batch ${batchIndex + 1}/${batches.length} with ${batch.length} images`);
+    // Load low priority images
+    await loadImagesByPriority(prioritizedImages, ImagePriority.LOW, analytics);
 
-            // Load batch in parallel
-            await Promise.all(
-                batch.map(async (path) => {
-                    await loadAndCacheImageOptimized(path);
-                    loadedCount++;
+    // Mark game as loaded in cache
+    loadedGamesCache[gameId] = true;
+    console.log(`[loadImagesProgressive] Game ${gameId} marked as cached`);
 
-                    if (loadedCount % 10 === 0) {
-                        console.log(`[loadAllImagesOptimized] Progress: ${loadedCount}/${totalCount} (${(loadedCount / totalCount * 100).toFixed(1)}%)`);
-                    }
-                })
-            );
-        }
-
-        const endTime = Date.now();
-        console.log(`[loadAllImagesOptimized] All images loaded in ${endTime - startTime}ms`);
-
-        // Mark game as loaded in cache
-        loadedGamesCache[gameId] = true;
-        console.log(`[loadAllImagesOptimized] Game ${gameId} marked as cached`);
-
-    } catch (error) {
-        console.error(`[loadAllImagesOptimized] Error loading images:`, error);
-        throw error;
+    // Calculate final analytics
+    if (analytics) {
+        analytics.compressionRatio = Math.round(
+            (prioritizedImages.filter(img => img.isCompressed).length / prioritizedImages.length) * 100
+        );
+        analytics.cdnUsage = Math.round(
+            (prioritizedImages.filter(img => img.cdnUrl).length / prioritizedImages.length) * 100
+        );
     }
 };
 
-// Optimized image loading with caching
+// Load images by priority level
+const loadImagesByPriority = async (
+    prioritizedImages: ImageWithPriority[],
+    priority: ImagePriority,
+    analytics?: PreloadAnalytics
+): Promise<void> => {
+    const imagesToLoad = prioritizedImages.filter(img => img.priority === priority);
+
+    if (imagesToLoad.length === 0) return;
+
+    const priorityName = ImagePriority[priority];
+    console.log(`[loadImagesByPriority] Loading ${priorityName} priority images: ${imagesToLoad.length}`);
+
+    const batchSize = priority === ImagePriority.CRITICAL ? 5 : 15; // Smaller batches for critical images
+    const batches = [];
+
+    for (let i = 0; i < imagesToLoad.length; i += batchSize) {
+        batches.push(imagesToLoad.slice(i, i + batchSize));
+    }
+
+    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+        const batch = batches[batchIndex];
+
+        console.log(`[loadImagesByPriority] Loading ${priorityName} batch ${batchIndex + 1}/${batches.length} with ${batch.length} images`);
+
+        // Load batch in parallel
+        await Promise.all(
+            batch.map(async (imageData) => {
+                try {
+                    await loadAndCacheImageOptimized(imageData.path);
+                    if (analytics) {
+                        analytics.loadedImages++;
+                        if (imageData.cdnUrl) analytics.cdnUsage++;
+                        if (imageData.isCompressed) analytics.compressionRatio++;
+                    }
+                } catch (error) {
+                    console.warn(`[loadImagesByPriority] Failed to load image: ${imageData.path}`, error);
+                    if (analytics) analytics.failedImages++;
+                }
+            })
+        );
+
+        // Progress update for critical images
+        if (priority === ImagePriority.CRITICAL) {
+            const progress = ((batchIndex + 1) * batch.length / imagesToLoad.length) * 100;
+            console.log(`[loadImagesByPriority] Critical images progress: ${progress.toFixed(1)}%`);
+        }
+    }
+
+    console.log(`[loadImagesByPriority] Completed loading ${priorityName} priority images`);
+};
+
+// Optimized image loading with caching and analytics
 const loadAndCacheImageOptimized = async (path: string): Promise<void> => {
     try {
         // Check if already cached
@@ -274,6 +516,7 @@ const loadAndCacheImageOptimized = async (path: string): Promise<void> => {
         await loadingPromise;
     } catch (error) {
         console.warn(`[loadAndCacheImageOptimized] Failed to load image: ${path}`, error);
+        throw error;
     }
 };
 
