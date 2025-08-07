@@ -14,7 +14,7 @@ export interface IGameSoundHandler {
 }
 
 export class RoundGameSoundHandler implements IGameSoundHandler {
-    constructor(protected readonly props: GameSoundHandlerProps) {}
+    constructor(protected readonly props: GameSoundHandlerProps) { }
 
     handleSound(newRoundState: RoundState) {
         const { startPlaceBetSound, startRoundSound } = this.props.gameSound();

@@ -8,8 +8,8 @@ export interface IRoundStateHandler {
 }
 
 export class RoundStateHandler implements IRoundStateHandler {
-    constructor() {}
-    
+    constructor() { }
+
     determineRoundBaseState({
         roundRemainingTime,
         wholeRound,

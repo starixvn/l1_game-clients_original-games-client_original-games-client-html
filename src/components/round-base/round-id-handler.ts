@@ -18,7 +18,7 @@ export class RoundIdHandler {
     private drawId = 0;
     protected roundId = 0;
 
-    constructor(protected readonly props: RoundIdHandlerProps) {}
+    constructor(protected readonly props: RoundIdHandlerProps) { }
 
     registerEvents() {
         this.shouldRunWhenFirstLoad = true;
