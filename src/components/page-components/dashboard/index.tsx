@@ -261,7 +261,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 setApiErrorMessage={this.notificationHandler.handleShowApiErrorMessage}
                 userStakeLevel={userStakeLevel}
                 updateUserStakeLevel={this.handleUpdateUserStakeLevel}
-                openGameId={urlContext.gameId}
+                openGameId={urlContext?.gameId}
                 openGameName={openGameName}
             />
         );

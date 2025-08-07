@@ -90,18 +90,18 @@ export class AnalyticsHelper {
         console.log("[AnalyticsHelper] login called with urlContext:", urlContext);
         try {
             let ssoMethod = "SSO_To_Lobby";
-            if (urlContext.gameId) {
+            if (urlContext?.gameId) {
                 ssoMethod = `SSO_To_Game`;
             }
 
             AnalyticsHelper.ssoContext = {
                 ssoMethod,
-                gameId: urlContext.gameId,
+                gameId: urlContext?.gameId,
                 language: urlContext.language,
             };
 
-            if (urlContext.gameId > 0) {
-                AnalyticsHelper.ssoContext.gameName = getGameSettings(urlContext.gameId)?.gameName;
+            if (urlContext?.gameId > 0) {
+                AnalyticsHelper.ssoContext.gameName = getGameSettings(urlContext?.gameId)?.gameName;
             }
         } catch (e) {
             console.error("[AnalyticsHelper] login error:", e);
