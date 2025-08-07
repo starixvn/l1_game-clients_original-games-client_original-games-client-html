@@ -11,7 +11,6 @@ interface PreloadAnalyticsData {
     apiResponseTime: number;
     totalLoadTime: number;
     cacheHits: number;
-    cdnUsage: number;
     compressionRatio: number;
     userAgent?: string;
     timestamp: number;
@@ -27,7 +26,6 @@ interface AnalyticsSummary {
     averageApiResponseTime: number;
     totalImagesLoaded: number;
     averageCacheHits: number;
-    averageCdnUsage: number;
     averageCompressionRatio: number;
     successRate: number;
     gameBreakdown: { [gameId: number]: number };
@@ -60,7 +58,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                 totalTime: analyticsData.totalLoadTime,
                 images: `${analyticsData.loadedImages}/${analyticsData.totalImages}`,
                 cacheHits: analyticsData.cacheHits,
-                cdnUsage: analyticsData.cdnUsage,
                 compression: analyticsData.compressionRatio
             });
 
@@ -92,7 +89,6 @@ function generateAnalyticsSummary(): AnalyticsSummary {
             averageApiResponseTime: 0,
             totalImagesLoaded: 0,
             averageCacheHits: 0,
-            averageCdnUsage: 0,
             averageCompressionRatio: 0,
             successRate: 0,
             gameBreakdown: {}
@@ -104,10 +100,9 @@ function generateAnalyticsSummary(): AnalyticsSummary {
     const totalApiResponseTime = analyticsStorage.reduce((sum, data) => sum + (data.apiResponseTime || 0), 0);
     const totalImagesLoaded = analyticsStorage.reduce((sum, data) => sum + (data.loadedImages || 0), 0);
     const totalCacheHits = analyticsStorage.reduce((sum, data) => sum + (data.cacheHits || 0), 0);
-    const totalCdnUsage = analyticsStorage.reduce((sum, data) => sum + (data.cdnUsage || 0), 0);
     const totalCompressionRatio = analyticsStorage.reduce((sum, data) => sum + (data.compressionRatio || 0), 0);
-    
-    const successfulPreloads = analyticsStorage.filter(data => 
+
+    const successfulPreloads = analyticsStorage.filter(data =>
         data.loadedImages > 0 && data.failedImages === 0
     ).length;
 
@@ -123,7 +118,6 @@ function generateAnalyticsSummary(): AnalyticsSummary {
         averageApiResponseTime: Math.round(totalApiResponseTime / totalPreloads),
         totalImagesLoaded,
         averageCacheHits: Math.round(totalCacheHits / totalPreloads),
-        averageCdnUsage: Math.round(totalCdnUsage / totalPreloads),
         averageCompressionRatio: Math.round(totalCompressionRatio / totalPreloads),
         successRate: Math.round((successfulPreloads / totalPreloads) * 100),
         gameBreakdown

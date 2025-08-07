@@ -25,7 +25,6 @@ interface PreloadAnalytics {
     apiResponseTime: number;
     totalLoadTime: number;
     cacheHits: number;
-    cdnUsage: number;
     compressionRatio: number;
 }
 
@@ -60,7 +59,6 @@ interface ImageWithPriority {
     priority: ImagePriority;
     size?: number;
     isCompressed?: boolean;
-    cdnUrl?: string;
 }
 
 // Global preload manager to prevent multiple simultaneous preloads
@@ -99,7 +97,6 @@ class PreloadManager {
             apiResponseTime: 0,
             totalLoadTime: 0,
             cacheHits: 0,
-            cdnUsage: 0,
             compressionRatio: 0
         };
         this.analytics.set(preloadKey, analytics);
@@ -175,7 +172,6 @@ class PreloadManager {
             critical: analytics.criticalImages,
             failed: analytics.failedImages,
             cacheHits: analytics.cacheHits,
-            cdnUsage: `${analytics.cdnUsage}%`,
             compression: `${analytics.compressionRatio}%`
         });
 
@@ -193,7 +189,6 @@ class PreloadManager {
                 images_loaded: analytics.loadedImages,
                 images_total: analytics.totalImages,
                 cache_hits: analytics.cacheHits,
-                cdn_usage: analytics.cdnUsage,
                 compression_ratio: analytics.compressionRatio
             });
         }
@@ -249,14 +244,10 @@ const cleanupOldRequests = () => {
     });
 };
 
-// CDN URL generation
-const getCDNUrl = (path: string): string => {
-    const cdnBase = getAppSettings().cdnBaseUrl || '';
-    if (cdnBase && path.startsWith('/static/images/')) {
-        return `${cdnBase}${path}`;
-    }
-    return path;
-};
+// CDN URL generation - removed for future implementation
+// const getCDNUrl = (path: string): string => {
+//     return path;
+// };
 
 // Image compression detection
 const isCompressedImage = (path: string): boolean => {
@@ -270,10 +261,9 @@ const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
     return imagePaths.map(path => {
         let priority = ImagePriority.LOW;
         let isCompressed = isCompressedImage(path);
-        let cdnUrl = getCDNUrl(path);
 
         // Optimize the URL with the best format
-        const optimizedUrl = optimizeImageUrl(cdnUrl, {
+        const optimizedUrl = optimizeImageUrl(path, {
             format: optimalFormat as any,
             quality: 85
         });
@@ -294,8 +284,7 @@ const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
         return {
             path: optimizedUrl,
             priority,
-            isCompressed: isCompressed || optimizedUrl !== cdnUrl,
-            cdnUrl: cdnUrl !== path ? cdnUrl : undefined
+            isCompressed: isCompressed || optimizedUrl !== path
         };
     }).sort((a, b) => a.priority - b.priority);
 };
@@ -429,9 +418,6 @@ const loadImagesProgressive = async (
         analytics.compressionRatio = Math.round(
             (prioritizedImages.filter(img => img.isCompressed).length / prioritizedImages.length) * 100
         );
-        analytics.cdnUsage = Math.round(
-            (prioritizedImages.filter(img => img.cdnUrl).length / prioritizedImages.length) * 100
-        );
     }
 };
 
@@ -467,7 +453,6 @@ const loadImagesByPriority = async (
                     await loadAndCacheImageOptimized(imageData.path);
                     if (analytics) {
                         analytics.loadedImages++;
-                        if (imageData.cdnUrl) analytics.cdnUsage++;
                         if (imageData.isCompressed) analytics.compressionRatio++;
                     }
                 } catch (error) {

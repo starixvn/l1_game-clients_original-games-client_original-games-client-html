@@ -156,7 +156,7 @@ class ServiceWorkerHelper {
 
         try {
             console.log('[ServiceWorkerHelper] Requesting background sync...');
-            await this.registration.sync.register('background-sync');
+            await (this.registration as any).sync.register('background-sync');
         } catch (error) {
             console.error('[ServiceWorkerHelper] Failed to request background sync:', error);
         }
@@ -185,7 +185,7 @@ class ServiceWorkerHelper {
         return this.registration;
     }
 
-    isSupported(): boolean {
+    isServiceWorkerSupported(): boolean {
         return this.isSupported;
     }
 }

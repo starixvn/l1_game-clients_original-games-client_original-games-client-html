@@ -65,19 +65,6 @@ class ImageOptimizationHelper {
     optimizeImageUrl(url: string, options: ImageOptimizationOptions = {}): string {
         const { quality = 85, format, width, height } = options;
         
-        // If CDN is being used, append optimization parameters
-        if (url.includes('cdn') || url.includes('cloudfront') || url.includes('akamai')) {
-            const params = new URLSearchParams();
-            
-            if (format) params.append('fm', format);
-            if (quality) params.append('q', quality.toString());
-            if (width) params.append('w', width.toString());
-            if (height) params.append('h', height.toString());
-            
-            const separator = url.includes('?') ? '&' : '?';
-            return `${url}${separator}${params.toString()}`;
-        }
-        
         // For local images, return as-is (server-side optimization would be needed)
         return url;
     }
@@ -140,7 +127,7 @@ class ImageOptimizationHelper {
     ): Promise<void> {
         const optimalFormat = this.getOptimalFormat();
         const optimizedUrls = imageUrls.map(url => 
-            this.optimizeImageUrl(url, { ...options, format: optimalFormat })
+            this.optimizeImageUrl(url, { ...options, format: optimalFormat as 'webp' | 'avif' | 'jpeg' | 'png' })
         );
 
         console.log(`[ImageOptimization] Preloading ${optimizedUrls.length} optimized images with format: ${optimalFormat}`);
@@ -188,7 +175,7 @@ class ImageOptimizationHelper {
             .map(size => {
                 const optimizedUrl = this.optimizeImageUrl(baseUrl, { 
                     width: size, 
-                    format: optimalFormat 
+                    format: optimalFormat as 'webp' | 'avif' | 'jpeg' | 'png' 
                 });
                 return `${optimizedUrl} ${size}w`;
             })
