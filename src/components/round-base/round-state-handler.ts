@@ -4,7 +4,6 @@ export interface IRoundStateHandler {
     determineRoundBaseState({ roundRemainingTime, wholeRound, remainingTime, durations }): RoundState;
     getRemainingTime({ remainingTime, durations }): number;
     getWholeRoundDuration({ durations }): number;
-    shouldCountDownTimer({ newRoundState }): boolean;
 }
 
 export class RoundStateHandler implements IRoundStateHandler {
@@ -48,9 +47,5 @@ export class RoundStateHandler implements IRoundStateHandler {
 
     getWholeRoundDuration({ durations }): number {
         return durations.wholeRound;
-    }
-
-    shouldCountDownTimer({ newRoundState }): boolean {
-        return true;
     }
 }

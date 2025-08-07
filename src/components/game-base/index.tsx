@@ -346,7 +346,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             });
 
             this.roundTimeCounter = this.roundTimeCounter - 1;
-            if (this.timeCounter > 0 && this.roundStateHandler.shouldCountDownTimer({ newRoundState })) {
+            if (this.timeCounter > 0) {
                 this.timeCounter = this.timeCounter - 1;
             }
 

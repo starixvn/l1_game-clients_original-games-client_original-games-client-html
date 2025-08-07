@@ -75,16 +75,4 @@ describe("RoundStateHandler", () => {
             expect(wholeRoundDuration).toBe(35);
         });
     });
-
-
-    describe("shouldCountDownTimer", () => {
-        it.each([
-            RoundState.InRound,
-            RoundState.BeforePlaceBet,
-            RoundState.LockingBet,
-            RoundState.DisplayResult])("always returns true", (newRoundState) => {
-                const shouldCount = roundStateHandler.shouldCountDownTimer({ newRoundState });
-                expect(shouldCount).toBe(true);
-            });
-    });
 });
