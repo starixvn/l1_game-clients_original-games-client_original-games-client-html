@@ -221,11 +221,17 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onPreloadResourceDone = () => {
+        console.log(`[GameBase:${this.props.id}] PreloadResources completed, setting isLoaded to true`);
         this.setState({ isLoaded: true });
     };
 
     preloadResource = () => {
         const playerContext = this.context as PlayerContextModel;
+        console.log(`[GameBase:${this.props.id}] Rendering PreloadResources:`, {
+            gameId: this.props.id,
+            locale: playerContext?.locale || "en",
+            isLoaded: this.state.isLoaded
+        });
         return (
             <PreloadResources 
                 setIsDonePreload={this.onPreloadResourceDone} 

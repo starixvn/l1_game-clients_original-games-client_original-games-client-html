@@ -319,16 +319,26 @@ const SplashScreen: React.FC = () => {
             </div>
 
             {isDoneLoadConfig && currentGameId >= 0 && (
-                <PreloadResources
-                    data-testid="preload-resources"
-                    bannerId={bannerId}
-                    setIsDonePreload={() => {
-                        setIsRenderDashboard(true);
-                    }}
-                    gameId={currentGameId}
-                    locale={locale}
-                    gameIdsIcon={gameOfferIds}
-                />
+                <>
+                    {console.log("[SplashScreen] Rendering PreloadResources with:", {
+                        currentGameId,
+                        bannerId,
+                        locale,
+                        gameOfferIds: gameOfferIds?.length || 0,
+                        isDoneLoadConfig
+                    })}
+                    <PreloadResources
+                        data-testid="preload-resources"
+                        bannerId={bannerId}
+                        setIsDonePreload={() => {
+                            console.log("[SplashScreen] PreloadResources completed, setting isRenderDashboard to true");
+                            setIsRenderDashboard(true);
+                        }}
+                        gameId={currentGameId}
+                        locale={locale}
+                        gameIdsIcon={gameOfferIds}
+                    />
+                </>
             )}
         </>
     );
