@@ -19,6 +19,7 @@ import { RoundGameSoundHandler } from "../../components/round-base/round-game-so
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
 import { SeDieBettingBlock, SeDieResultBlock } from ".";
+import ScoreboardSeDie from "./scoreboard";
 import { SeDieBetOptions } from "./sedie-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-game-round-data-handler";
 import Styles from "./sedie-multi-player.module.scss";
@@ -83,17 +84,8 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     }
 
     renderBetHistoryModal() {
-        return (
-            <div className={Styles["bet-history-modal"]}>
-                <div className={Styles["bet-history-header"]}>
-                    <h3>Bet History</h3>
-                    <button className={Styles["close-button"]}>×</button>
-                </div>
-                <div className={Styles["bet-history-content"]}>
-                    <p>Bet history functionality will be implemented here.</p>
-                </div>
-            </div>
-        );
+        const SeDieBetHistoryModal = dynamic(() => import("./history"));
+        return <SeDieBetHistoryModal />;
     }
 
     renderStatistic() {
@@ -133,26 +125,15 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     }
 
     renderScoreboards() {
+        const { roundHistory, isShowBlink } = this.props.gameStateContextModel;
+        const { statisticGroup } = this.state;
+
         return (
-            <div className={Styles["scoreboards-container"]}>
-                <div className={Styles["scoreboard-header"]}>
-                    <h3>Game Statistics</h3>
-                </div>
-                <div className={Styles["scoreboard-content"]}>
-                    <div className={Styles["scoreboard-item"]}>
-                        <span className={Styles["scoreboard-label"]}>Total Rounds:</span>
-                        <span className={Styles["scoreboard-value"]}>
-                            {this.props.gameStateContextModel.roundHistory?.length || 0}
-                        </span>
-                    </div>
-                    <div className={Styles["scoreboard-item"]}>
-                        <span className={Styles["scoreboard-label"]}>Current Round:</span>
-                        <span className={Styles["scoreboard-value"]}>
-                            {this.props.gameStateContextModel.roundData?.drawId || 'N/A'}
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <ScoreboardSeDie
+                isShowBlink={isShowBlink}
+                roundHistory={roundHistory as Round<SeDieResult, SeDieSettlementResult>[]}
+                isOddEven={statisticGroup === 1}
+            />
         );
     }
 
