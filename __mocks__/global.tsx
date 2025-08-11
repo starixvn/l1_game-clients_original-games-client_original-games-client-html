@@ -16,7 +16,7 @@ jest.mock("next/config", () => () => ({
     publicRuntimeConfig: {
         proxy: {
             ssl: true,
-            subDomain: "gn-proxy",
+            subDomain: "gn-proxy1",
             path: "",
         },
         sentry: {

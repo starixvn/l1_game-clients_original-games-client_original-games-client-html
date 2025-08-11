@@ -66,5 +66,48 @@
                 "sic-ball/winning-effect-specific1.png"
             ]
         }
+    },
+    "2": {
+        "id": 2,
+        "gameName": "SeDie",
+        "tolgeeNamespace": "SeDie",
+        "socketInfo": {
+            "namespace": "sedie",
+            "path": "sedie"
+        },
+        "durations": {
+            "wholeRound": 39,
+            "wholeTurn": 39,
+            "placingBets": 30,
+            "lockingBet": 5,
+            "showResult": 8,
+            "resultAnimation": 4,
+            "beforePlaceBet": 0,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 100,
+        "gamePath": "sedie-multi-player",
+        "gameResourceConfigs": {
+            "path": "sedie-multi-player",
+            "optionalPaths": [
+                "sedie-multi-player/highlight-winning-odd",
+                "sedie-multi-player/highlight-winning-even",
+                "sedie-multi-player/highlight-winning-red2",
+                "sedie-multi-player/highlight-winning-red3",
+                "sedie-multi-player/highlight-winning-red4",
+                "sedie-multi-player/highlight-winning-white3",
+                "sedie-multi-player/highlight-winning-white4"
+            ],
+            "cachePaths": [
+                "sedie-multi-player/highlight-winning-odd.png",
+                "sedie-multi-player/highlight-winning-even.png",
+                "sedie-multi-player/highlight-winning-red2.png",
+                "sedie-multi-player/highlight-winning-red3.png",
+                "sedie-multi-player/highlight-winning-red4.png",
+                "sedie-multi-player/highlight-winning-white3.png",
+                "sedie-multi-player/highlight-winning-white4.png"
+            ]
+        }
     }
 }

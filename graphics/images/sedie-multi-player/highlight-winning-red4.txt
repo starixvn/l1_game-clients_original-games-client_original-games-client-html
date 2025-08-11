@@ -1,0 +1,7 @@
+# Placeholder for highlight-winning-red4.png
+# This file should contain the actual graphic for highlight-winning-red4
+# Replace this file with the actual PNG image when available
+
+Dimensions: 200x200 pixels
+Format: PNG
+Purpose: Highlight winning choice animation

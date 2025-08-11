@@ -1,0 +1,411 @@
+.sedie-game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-header {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+    h1 {
+        margin: 0 0 1rem 0;
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-info {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+}
+
+.game-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.game-footer {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+
+    .round-info {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+}
+
+// Betting Zone Styles
+.betting-zone {
+    position: relative;
+    width: 35.8rem;
+    margin: 1rem auto auto;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.betting-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1.5rem;
+        color: #ffd700;
+    }
+
+    .betting-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .bet-amount-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            input[type="number"] {
+                width: 100px;
+                padding: 0.5rem;
+                border: none;
+                border-radius: 0.5rem;
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+            }
+        }
+    }
+}
+
+.bet-summary {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    text-align: center;
+
+    .selected-choice {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+
+        .free-bet-badge {
+            background: #ffd700;
+            color: #333;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    }
+
+    .place-bet-button {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// Bet Options Container
+.bet-options-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+.main-betting-zone {
+    margin-bottom: 2rem;
+
+    .main-options {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+    }
+}
+
+.sub-betting-zone {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+
+    .top-options,
+    .bottom-options {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+// Bet Choice Styles
+.bet-choice {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.main-option {
+        width: 17.8rem;
+        height: 9.4rem;
+    }
+
+    &.sub-option {
+        width: 13.6rem;
+        height: 6.6rem;
+        padding: 1rem;
+    }
+
+    &.selected {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.bg-bet-option {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-ripple {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.choice-content {
+    text-align: center;
+    color: white;
+    z-index: 3;
+}
+
+.choice-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.choice-odds {
+    font-size: 1rem;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.dots-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+
+    &.red-dot {
+        background: #ff6b6b;
+    }
+
+    &.white-dot {
+        background: #ffffff;
+    }
+}
+
+.disable-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    animation: show-disabled-layer 0.3s ease-in forwards;
+}
+
+@keyframes show-disabled-layer {
+    to {
+        opacity: 1;
+    }
+}
+
+// Result Container Styles
+.result-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-gap: 2rem;
+    margin-top: 0.5rem;
+    height: 13.5rem;
+    --move-up: -6.5rem;
+
+    @media screen and (min-width: 1600px) {
+        --move-up: -5.5rem;
+    }
+
+    @media (min-aspect-ratio: 3/4) {
+        --move-up: -5.5rem;
+    }
+
+    @media screen and (min-width: 500px) and (orientation: portrait) {
+        --move-up: -5.5rem;
+    }
+
+    &.zoom-in {
+        transform: scale(1);
+    }
+
+    &.zoom-out {
+        animation: zoom-out 1s cubic-bezier(0.47, 0, 0.745, 0.715) forwards;
+    }
+
+    &.zoom-out-no-animation {
+        transform: scale(0.5) translateY(var(--move-up));
+    }
+}
+
+@keyframes zoom-out {
+    0% {
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        transform: scale(0.5) translateY(var(--move-up));
+    }
+}
+
+.result-info {
+    margin-top: 1rem;
+    text-align: center;
+
+    .result-details {
+        display: flex;
+        gap: 2rem;
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+}
+
+// Winning Animation Styles
+.winning-light-anim {
+    position: relative;
+    z-index: 10;
+}
+
+.highlight-winning-bg-anim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .betting-zone {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .main-options {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sub-betting-zone {
+        grid-template-columns: 1fr;
+    }
+
+    .bet-choice {
+        &.main-option {
+            width: 15rem;
+            height: 8rem;
+        }
+
+        &.sub-option {
+            width: 12rem;
+            height: 5.5rem;
+        }
+    }
+
+    .game-header h1 {
+        font-size: 2rem;
+    }
+
+    .betting-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

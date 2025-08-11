@@ -324,9 +324,9 @@ const SplashScreen: React.FC = () => {
 
                 <div className={"loading"}>
                     <div className={"progress"}>
-                        <div 
-                            className={"progress-bar"} 
-                            id="progress-bar" 
+                        <div
+                            className={"progress-bar"}
+                            id="progress-bar"
                             data-testid="progress-bar"
                             style={{ width: `${preloadProgress}%` }}
                         ></div>

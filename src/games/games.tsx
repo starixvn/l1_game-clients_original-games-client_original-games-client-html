@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import React, { useContext, useEffect } from "react";
 import { isIOS, isMobileOnly } from "react-device-detect";
 
-import { getAppSettings } from "../_shared/app-settings";
+import { getAppSettings, getAppSettingsForGame } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../_shared/helpers";
 import {
@@ -31,6 +31,7 @@ const LoadingGameComponent = () => (
 
 const SeBall = dynamic(() => import("./se-ball/page"), { loading: () => <LoadingGameComponent /> });
 const SicBall = dynamic(() => import("./sic-ball/page"), { loading: () => <LoadingGameComponent /> });
+const SeDieMultiPlayer = dynamic(() => import("./sedie-multi-player/page"), { loading: () => <LoadingGameComponent /> });
 
 export const Games: React.FC<Props> = ({
     setApiErrorMessage,
@@ -66,7 +67,8 @@ export const Games: React.FC<Props> = ({
 
     const getGameComponentById = (gameId: number) => {
         console.log("[Games] getGameComponentById called with gameId:", gameId);
-        const { gameSettings } = getAppSettings();
+        const appSettings = getAppSettingsForGame(gameId);
+        const { gameSettings } = appSettings;
 
         const gameProps = {
             ...gameSettings[gameId],
@@ -87,6 +89,11 @@ export const Games: React.FC<Props> = ({
             case GameIds.SicBall:
                 console.log("[Games] rendering SicBall component");
                 return <SicBall key={`game-${gameId}`} {...gameProps} />;
+
+            case GameIds.SeDie:
+                console.log("[Games] rendering SeDieMultiPlayer component");
+                return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
+
             default:
                 console.log("[Games] no matching game component found for gameId:", gameId);
                 return null;
