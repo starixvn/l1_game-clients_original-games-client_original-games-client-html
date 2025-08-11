@@ -1,3 +1,4 @@
+/* eslint-disable */
 window.envConfig = {
     serverDomainMapper: {
         localhost: "lumigame.com",
