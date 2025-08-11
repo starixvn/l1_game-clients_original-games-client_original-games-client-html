@@ -33,8 +33,6 @@ const SeDieBetOptionsComponent = () => {
         [SeDieBetOptions.WHITE4]: false,
     });
 
-    const [hoveredChoice, setHoveredChoice] = useState<string | null>(null);
-
     const renderTotalBet = (choice: string, className?: string) => {
         return <TotalBet choice={choice} className={className} tolgeeNamespace={tolgeeNamespace} />;
     };
@@ -93,10 +91,10 @@ const SeDieBetOptionsComponent = () => {
                 className = `${Style["highlight-prev-result-red4"]} fade-in`;
                 break;
             case SeDieBetOptions.WHITE3:
-                className = `${Style["highlight-prev-result-white3"]} fade-in`;
+                className = `${Style["highlight-prev-result-blue3"]} fade-in`;
                 break;
             case SeDieBetOptions.WHITE4:
-                className = `${Style["highlight-prev-result-white4"]} fade-in`;
+                className = `${Style["highlight-prev-result-blue4"]} fade-in`;
                 break;
         }
 
@@ -106,7 +104,15 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const renderHighlightWinningResult = (choice: string) => {
-        const resourceName = choice; // sedie resources map 1:1 to choice keys
+        // Map to SeBall resources: odd/even -> even, white3/white4 -> blue3/blue4
+        const resourceName =
+            choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN
+                ? "even"
+                : choice === SeDieBetOptions.WHITE3 || choice === SeDieBetOptions.RED3
+                    ? "blue3"
+                    : choice === SeDieBetOptions.WHITE4 || choice === SeDieBetOptions.RED4
+                        ? "blue4"
+                        : choice;
         return (
             <SeDieWinningAnimation
                 showResultInfo={showResultInfo}
@@ -119,71 +125,61 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const renderMainOption = (choice: string) => {
-        const isHovered = hoveredChoice === choice;
-        const isDisabled = isShowDisabledLayer;
-
+        const reverse = choice === SeDieBetOptions.ODD; // mirror like se-ball odd/even
         return (
-            <div
-                key={choice}
-                className={`${Style[`main-option-${choice}`]} ${isHovered ? Style.hovered : ''} ${isDisabled ? Style.disabled : ''}`}
-                onMouseEnter={() => setHoveredChoice(choice)}
-                onMouseLeave={() => setHoveredChoice(null)}
-            >
-                <RippleButton
-                    choice={choice}
-                    className={Style[`ripple-button-${choice}`]}
-                    id={`sedie-${choice}`}
-                />
-                {renderBetChoice(choice)}
-                {renderOdds(choice)}
+            <div className={`${Style[choice]} text-white relative`}>
+                <div className={`${Style["choice-info"]} ${reverse ? Style["choice-odd"] : ""}`}>
+                    <div className={Style.stake}>
+                        {renderTotalBet(choice, reverse ? "justify-end" : "")}
+                        {renderPlayerBetCount(choice, reverse ? "justify-end" : "")}
+                    </div>
+                    {renderBetPercentage(choice)}
+                </div>
+                <div className={`${Style["choice-odds-area"]}`}>
+                    {renderBetChoice(choice)}
+                    {renderOdds(choice)}
+                </div>
+
                 {renderOwnBet(choice)}
-                {renderTotalBet(choice)}
-                {renderPlayerBetCount(choice)}
-                {renderBetPercentage(choice)}
-                {renderHighlightWinningPrevResult(choice)}
                 <div className={Style["winning-effect"]}>{renderHighlightWinningResult(choice)}</div>
 
-                {isHovered && !isDisabled && (
-                    <div className={Style["hover-overlay"]}>
-                        <div className={Style["hover-content"]}>
-                            <span className={Style["hover-text"]}>Click to bet on {choice}</span>
-                        </div>
-                    </div>
-                )}
+                <RippleButton className={`${Style["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
+                {isShowDisabledLayer && <div className={Style["disable-layer"]}></div>}
+                {isShowHighlightPrevResult({ betChoice: choice, roundState, roundHistory }) && renderHighlightWinningPrevResult(choice)}
+            </div>
+        );
+    };
 
-                {isDisabled && (
-                    <div className={Style["disabled-overlay"]}>
-                        <span className={Style["disabled-text"]}>Betting Closed</span>
-                    </div>
-                )}
+    const renderSubOption = (choice: string) => {
+        return (
+            <div className={`${Style[choice]} ${Style["bet-choice"]}`}>
+                <div className={`${Style["dot-wrapper"]} ${choice === SeDieBetOptions.RED2 ? Style["two-lines"] : ""}`}></div>
+                {renderOdds(choice)}
+                <div className={Style["own-bet-container"]}>{renderOwnBet(choice)}</div>
+                <div className={Style["winning-effect"]}>{renderHighlightWinningResult(choice)}</div>
+
+                <RippleButton className={`${Style["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
+                {isShowDisabledLayer && <div className={Style["disable-layer"]}></div>}
+                {isShowHighlightPrevResult({ betChoice: choice, roundState, roundHistory }) && renderHighlightWinningPrevResult(choice)}
             </div>
         );
     };
 
     return (
-        <div className={Style["bet-options-container"]}>
-            <div className={Style["main-options"]}>
-                {renderMainOption(SeDieBetOptions.ODD)}
-                {renderMainOption(SeDieBetOptions.EVEN)}
+        <>
+            <div className="flex justify-between">
+                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.ODD)}</div>
+                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.EVEN)}</div>
             </div>
-            <div className={Style["sub-options"]}>
-                <div className={Style["sub-option"]}>
-                    {renderMainOption(SeDieBetOptions.RED2)}
-                </div>
-                <div className={Style["sub-option"]}>
-                    {renderMainOption(SeDieBetOptions.RED3)}
-                </div>
-                <div className={Style["sub-option"]}>
-                    {renderMainOption(SeDieBetOptions.RED4)}
-                </div>
-                <div className={Style["sub-option"]}>
-                    {renderMainOption(SeDieBetOptions.WHITE3)}
-                </div>
-                <div className={Style["sub-option"]}>
-                    {renderMainOption(SeDieBetOptions.WHITE4)}
-                </div>
+
+            <div className={Style["sub-betting-zone"]}>
+                {renderSubOption(SeDieBetOptions.WHITE3)}
+                {renderSubOption(SeDieBetOptions.WHITE4)}
+                {renderSubOption(SeDieBetOptions.RED2)}
+                {renderSubOption(SeDieBetOptions.RED3)}
+                {renderSubOption(SeDieBetOptions.RED4)}
             </div>
-        </div>
+        </>
     );
 };
 

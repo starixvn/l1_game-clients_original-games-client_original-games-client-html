@@ -62,7 +62,7 @@ const SeDieResultBlock: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlo
                 isSmall={true}
                 listResult={resultBalls}
                 playResultAnimation={playResultAnimation}
-                gameFolder="sedie-multi-player"
+                gameFolder="se-ball"
                 highlightBallSize={{ width: 624, height: 216 }}
                 roundState={roundState}
             />

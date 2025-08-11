@@ -35,8 +35,8 @@ const SeDieWinningAnimation: React.FC<Props> = ({
     const winningHighLightResult = isHighLightWinningResult;
     const [width, height] = ChoiceWinningSize[choice] || [146, 74];
 
-    // Use a default image if the specific choice image doesn't exist
-    const imagePath = `/static/images/sedie-multi-player/highlight-winning-${resourceName}.svg`;
+    // Use SeBall assets to keep UI consistent across games
+    const imagePath = `/static/images/se-ball/highlight-winning-${resourceName}.png`;
     const { data } = useMemoriedImage(imagePath);
 
     if (!data) {
