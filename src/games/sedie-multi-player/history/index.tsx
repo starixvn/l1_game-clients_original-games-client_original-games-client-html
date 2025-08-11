@@ -4,6 +4,10 @@ import BetDetailBase from "../../../components/game-components/bet-history/bet-d
 import BetDetailModal from "../../../components/game-components/bet-history/bet-detail-modal";
 import BetHistoryBase from "../../../components/game-components/bet-history/bet-history-base";
 import BetHistoryModalBase from "../../../components/game-components/bet-history/bet-history-modal-base";
+import { PFVerifyModal } from "../../../components/game-components/provably-fair";
+import PFClientSeedInfoModal from "../../../components/game-components/provably-fair/pf-verify/pf-client-seed-info-modal";
+import PFVerificationModal from "../../../components/game-components/provably-fair/pf-verify/pf-verification-modal";
+import { PFVerification, makeFileNameExport, renderPFVerifyResultBlock } from "../provably-fair";
 import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "./sedie-bet-detail-result-block";
 import BetLogResultCell from "./sedie-bet-log-result-cell";
 
@@ -21,6 +25,9 @@ const SeDieBetHistoryModal: FC = () => {
                     renderBetChoice={(choice) => <BetChoice choice={choice} />}
                 />
             </BetDetailModal>
+            <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
+            <PFClientSeedInfoModal fileNameExport={makeFileNameExport} />
+            <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
         </>
     );
 };
