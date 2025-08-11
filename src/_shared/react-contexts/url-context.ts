@@ -50,8 +50,13 @@ export function loadURLContext(): URLContextModel {
 
     if (!!contextFromURL) {
         const contextString = { ...contextFromURL, token: undefined };
-
-        globalThis.history.pushState(null, "", globalThis.location?.href.split("?")[0]);
+        // Keep URL params during development to make debugging easier
+        const isLocalhost = typeof window !== "undefined"
+            && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
+        const isNonProductionEnv = (typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production");
+        if (!isLocalhost && !isNonProductionEnv) {
+            globalThis.history.pushState(null, "", globalThis.location?.href.split("?")[0]);
+        }
         StorageHelper?.set(localStorageKeys.url, contextString);
         AnalyticsHelper?.login(contextFromURL);
         console.log("[URLContext] using contextFromURL");

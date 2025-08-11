@@ -273,8 +273,13 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     renderDashBoard() {
         console.log("[Dashboard] renderDashBoard called");
-
-        window.history.pushState(null, null, "/");
+        // Keep query params in development/local to aid debugging
+        const isLocalhost = typeof window !== "undefined"
+            && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
+        const isNonProductionEnv = (typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production");
+        if (!isLocalhost && !isNonProductionEnv) {
+            window.history.pushState(null, null, "/");
+        }
 
         const { isShowErrorModal, authorizeInfo, isBlockUI, openGameId } = this.state;
         const offerGames = this.dashboardHandler.getOfferGamesIds();
