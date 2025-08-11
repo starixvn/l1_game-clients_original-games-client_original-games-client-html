@@ -18,9 +18,9 @@ function resolveGameIdOrOp(): { gameId?: number; op?: string } {
 export const buildUrl = (subDomain?: string, path = "/") => {
     const domain = getRootDomain();
 
-    // Resolve proxy config: prefer per-game when URL indicates VG or gameId=2
+    // Resolve proxy config: prefer per-game when URL indicates VG or gameId=148
     const { gameId, op } = resolveGameIdOrOp();
-    const shouldUseVG = gameId === 2 || op === "VG";
+    const shouldUseVG = gameId === 148 || op === "VG";
 
     const defaultProxy = getAppSettings().proxy;
     const vgProxy = shouldUseVG && gameId ? getAppSettingsForGame(gameId)?.proxy : undefined;

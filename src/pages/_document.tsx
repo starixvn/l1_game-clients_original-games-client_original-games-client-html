@@ -16,7 +16,7 @@ export default class extends Document<{ headScript?: string }> {
             const url = new URL(reqUrl, base);
             const gameIdParam = Number(url.searchParams.get("gameId") || 0);
             const opParam = (url.searchParams.get("op") || "").toUpperCase();
-            if (gameIdParam === 2 || opParam === "VG") {
+            if (gameIdParam === 148 || opParam === "VG") {
                 headScript = "./c-original.js";
             }
         } catch {

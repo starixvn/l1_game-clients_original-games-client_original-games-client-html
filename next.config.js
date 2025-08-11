@@ -11,8 +11,8 @@ const basePath = "";
 
 // Function to determine which config to use based on game
 const getConfigForGame = (gameId) => {
-    // SeDie game (ID 2) uses L2 configuration
-    if (gameId === 2) {
+    // SeDie game (ID 148) uses L2 configuration
+    if (gameId === 148) {
         return configsOriginal;
     }
     // Other games use GN configuration

@@ -110,7 +110,7 @@ export const confirmBet = "confirmBet";
 export const GameIds = {
     SeBall1: 1005,
     SicBall: 1007,
-    SeDie: 2,
+    SeDie: 148,
 };
 
 export const LobbyGameId = 0;
