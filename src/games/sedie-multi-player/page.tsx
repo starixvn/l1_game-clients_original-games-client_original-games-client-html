@@ -11,19 +11,20 @@ import {
 import { useTranslator } from "../../_shared/react-hooks";
 import { tolgee } from "../../_shared/tolgee";
 import GameBase from "../../components/game-base/";
-import { GameMessageHandler, messageEventType } from "../../components/game-base/handlers";
+import { GameMessageHandler } from "../../components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, Round } from "../../components/game-base/type";
 import { GameStatusMap } from "../../components/game-components/countdown-timer/countdown-timer";
 import RedAndBlueStatistic from "../../components/game-components/statistic/red-blue-statistic";
 import { RoundGameSoundHandler } from "../../components/round-base/round-game-sound-handler";
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
-import SeDieBettingBlock from "./sedie-betting-block";
+import { SeDieBettingBlock, SeDieResultBlock } from ".";
 import { SeDieBetOptions } from "./sedie-constants";
-import SeDieResultBlock from "./sedie-result-block";
-import SeDieWinningAnimation from "./sedie-winning-animation";
+import { SeDieGameRoundDataHandler } from "./sedie-game-round-data-handler";
 import Styles from "./sedie-multi-player.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "./sedie-constants";
+
+const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 
 export type SeDieState = {
     statisticGroup?: number;
@@ -60,25 +61,6 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         super.componentDidMount();
     }
 
-    handlePlaceBet(betChoice: string, amount: number, freeBet: boolean = false) {
-        // Handle bet placement logic
-        console.log(`Placing bet: ${betChoice}, amount: ${amount}, freeBet: ${freeBet}`);
-
-        // Here you would typically:
-        // 1. Validate the bet
-        // 2. Send bet to the game service
-        // 3. Update local state
-        // 4. Handle any errors
-
-        // Send bet message through the game message handler
-        this.props.gameMessageHandler?.broadcastGameEvent?.({
-            [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
-                event: "bet",
-                data: { betChoices: { [betChoice.toLowerCase()]: amount } }
-            }
-        });
-    }
-
     renderResultBlock() {
         const { roundHistory, result, roundState, roundData, drawId, playResultAnimation, isPlayStartRoundAnimation } =
             this.props.gameStateContextModel;
@@ -97,18 +79,21 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     }
 
     renderBettingBlock() {
-        const { roundState } = this.props.gameStateContextModel;
-        return (
-            <SeDieBettingBlock
-                onBet={this.handlePlaceBet.bind(this)}
-                roundState={roundState}
-                userStakeLevel={this.props.userStakeLevel}
-            />
-        );
+        return <SeDieBettingBlock />;
     }
 
     renderBetHistoryModal() {
-        return null; // SeDie doesn't have bet history modal yet
+        return (
+            <div className={Styles["bet-history-modal"]}>
+                <div className={Styles["bet-history-header"]}>
+                    <h3>Bet History</h3>
+                    <button className={Styles["close-button"]}>×</button>
+                </div>
+                <div className={Styles["bet-history-content"]}>
+                    <p>Bet history functionality will be implemented here.</p>
+                </div>
+            </div>
+        );
     }
 
     renderStatistic() {
@@ -116,120 +101,92 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         const locale = tolgee.getLanguage() ?? "en";
         const classNameIndo = locale === "id" ? Styles["statistic-indo"] : "";
 
+        const subChoicesClass = {
+            [SeDieBetOptions.RED2]: Styles[`statistic-${SeDieBetOptions.RED2}`],
+            [SeDieBetOptions.RED3]: Styles[`statistic-${SeDieBetOptions.RED3}`],
+            [SeDieBetOptions.RED4]: Styles[`statistic-${SeDieBetOptions.RED4}`],
+            [SeDieBetOptions.WHITE3]: Styles[`statistic-${SeDieBetOptions.WHITE3}`],
+            [SeDieBetOptions.WHITE4]: Styles[`statistic-${SeDieBetOptions.WHITE4}`],
+        };
+
         return (
             <div className={`${Styles.statistic} ${classNameIndo}`}>
                 <RedAndBlueStatistic
                     roundHistory={roundHistory}
-                    statisticGroup={this.state.statisticGroup}
-                    onStatisticGroupChange={(group) => this.setState({ statisticGroup: group })}
+                    mainChoices={[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]}
+                    className={classNameIndo}
+                    subChoices={[
+                        SeDieBetOptions.RED2,
+                        SeDieBetOptions.RED3,
+                        SeDieBetOptions.RED4,
+                        SeDieBetOptions.WHITE3,
+                        SeDieBetOptions.WHITE4,
+                    ]}
+                    subChoicesClass={subChoicesClass}
                 />
             </div>
         );
     }
 
     renderGameStatus() {
-        return null; // SeDie doesn't have game status yet
+        return GameStatusMap.RoundBaseStatus;
     }
 
     renderScoreboards() {
-        return null; // SeDie doesn't have scoreboards yet
-    }
-
-    renderRoundIdSection(): JSX.Element {
-        return <></>; // SeDie doesn't have round ID section yet
-    }
-
-    render() {
-        const { gameStateContextModel } = this.props;
-        const { roundState, result, settlementResult, playResultAnimation, isPlayStartRoundAnimation } = gameStateContextModel;
-
         return (
-            <div className={Styles["sedie-game-container"]}>
-                <div className={Styles["game-header"]}>
-                    <h1>SeDie Multi-Player</h1>
-                    <div className={Styles["game-info"]}>
-                        <span>Game ID: {this.props.id}</span>
-                        <span>Namespace: {this.props.socketInfo?.namespace}</span>
+            <div className={Styles["scoreboards-container"]}>
+                <div className={Styles["scoreboard-header"]}>
+                    <h3>Game Statistics</h3>
+                </div>
+                <div className={Styles["scoreboard-content"]}>
+                    <div className={Styles["scoreboard-item"]}>
+                        <span className={Styles["scoreboard-label"]}>Total Rounds:</span>
+                        <span className={Styles["scoreboard-value"]}>
+                            {this.props.gameStateContextModel.roundHistory?.length || 0}
+                        </span>
                     </div>
-                </div>
-
-                <div className={Styles["game-content"]}>
-                    {this.renderBettingBlock()}
-                    {this.renderResultBlock()}
-
-                    {result && (
-                        <SeDieWinningAnimation
-                            choice={result.winningChoice || ""}
-                            resourceName={result.winningChoice || ""}
-                            roundState={roundState}
-                            settlementResult={settlementResult}
-                            showResultInfo={true}
-                        />
-                    )}
-                </div>
-
-                <div className={Styles["game-footer"]}>
-                    <div className={Styles["round-info"]}>
-                        <span>Round State: {roundState}</span>
-                        {result && (
-                            <span>Draw ID: {result.drawId}</span>
-                        )}
+                    <div className={Styles["scoreboard-item"]}>
+                        <span className={Styles["scoreboard-label"]}>Current Round:</span>
+                        <span className={Styles["scoreboard-value"]}>
+                            {this.props.gameStateContextModel.roundData?.drawId || 'N/A'}
+                        </span>
                     </div>
                 </div>
             </div>
         );
     }
-}
 
-// Proper game round data handler for SeDie
-class SeDieGameRoundDataHandler {
-    constructor() {
-        // Initialize any necessary data structures
-    }
-
-    // Handle game round data updates
-    handleRoundDataUpdate(roundData: any) {
-        // Process round data updates
-        return roundData;
-    }
-
-    // Handle bet placement
-    handleBetPlacement(betData: any) {
-        // Process bet placement
-        return betData;
-    }
-
-    // Handle round settlement
-    handleRoundSettlement(settlementData: any) {
-        // Process round settlement
-        return settlementData;
+    renderRoundIdSection(): JSX.Element {
+        return <DrawIdBlock showRoundId={true} />;
     }
 }
 
 const SeDieWrapper = (props) => {
-    const systemContext = useSystemContext();
-    const systemDispatch = useSystemDispatch();
-
     return (
         <GameStateProvider>
-            <SeDieMultiPlayer {...props} systemContextModel={systemContext} systemDispatch={systemDispatch} />
+            <SeDieFC {...props} />
         </GameStateProvider>
     );
 };
 
 const SeDieFC = (props) => {
-    const gameStateContext = useGameStateContext();
-    const gameStatesDispatch = useGameStatesDispatch();
-    const translate = useTranslator();
+    const tolgeeNamespace = props["tolgeeNamespace"];
+    const { t } = useTranslator([tolgeeNamespace]);
 
     return (
-        <SeDieWrapper
+        <SeDieMultiPlayer
             {...props}
-            dispatch={gameStatesDispatch}
-            gameStateContextModel={gameStateContext}
-            translate={translate}
+            {...{
+                dispatch: useGameStatesDispatch(),
+                gameStateContextModel: useGameStateContext(),
+                systemContextModel: useSystemContext(),
+                systemDispatch: useSystemDispatch(),
+                translate: t,
+                tolgeeNamespace,
+                hedgeBetGroups: [[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]],
+            }}
         />
     );
 };
 
-export default withRouter(SeDieFC);
+export default withRouter(SeDieWrapper);

@@ -1,10 +1,18 @@
-import { getAppSettings } from "../app-settings";
+import { getAppSettings, getAppSettingsForGame } from "../app-settings";
+import { loadURLContext } from "../react-contexts";
 
-export const buildUrl = (subDomain = getAppSettings().proxy?.subDomain, path = "/") => {
-    const { proxy } = getAppSettings();
+export const buildUrl = (subDomain?: string, path = "/") => {
     const domain = getRootDomain();
-    const subDomainText = `${subDomain}.`;
-    return `${proxy.ssl ? "https" : "http"}://${subDomain === "" ? "" : subDomainText}${domain}${path}`;
+
+    // Resolve proxy config: prefer per-game when URL has gameId, fallback to global
+    const { gameId } = loadURLContext() || {};
+    const gameAppSettings = gameId ? getAppSettingsForGame(gameId) : null;
+    const proxy = gameAppSettings?.proxy || getAppSettings().proxy;
+
+    const finalSubDomain = subDomain ?? proxy?.subDomain;
+    const subDomainText = `${finalSubDomain}.`;
+
+    return `${proxy?.ssl ? "https" : "http"}://${finalSubDomain === "" ? "" : subDomainText}${domain}${path}`;
 };
 
 export const getRootDomain = () => {
@@ -33,5 +41,5 @@ export const buildServerUrl = (path: string) => {
 };
 
 export const buildUrlWithPath = (path: string) => {
-    return buildUrl(getAppSettings().proxy?.subDomain, path);
+    return buildUrl(undefined, path);
 };
