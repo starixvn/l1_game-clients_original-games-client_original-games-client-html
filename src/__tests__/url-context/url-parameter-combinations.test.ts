@@ -163,7 +163,7 @@ describe("Simplified URL Parameter Combinations Tests", () => {
         it("should update context in localStorage", () => {
             // Arrange
             const existingContext = { language: "en", gameId: 1005 };
-            const newContext = { gameId: 1007 };
+            const newContext = { gameId: 148 };
             mockStorageHelper.get.mockReturnValue(existingContext);
 
             // Act
@@ -181,7 +181,7 @@ describe("Simplified URL Parameter Combinations Tests", () => {
 
         it("should update url context when gameId is provided", () => {
             // Arrange
-            const newContext = { gameId: 1007 };
+            const newContext = { gameId: 148 };
             mockStorageHelper.get.mockReturnValue({});
 
             // Act
@@ -190,7 +190,7 @@ describe("Simplified URL Parameter Combinations Tests", () => {
             // Assert
             expect(mockStorageHelper.set).toHaveBeenCalledWith(
                 localStorageKeys.url,
-                expect.objectContaining({ gameId: 1007 })
+                expect.objectContaining({ gameId: 148 })
             );
         });
     });

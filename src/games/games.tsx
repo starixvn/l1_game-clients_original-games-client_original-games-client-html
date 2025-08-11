@@ -30,7 +30,7 @@ const LoadingGameComponent = () => (
 );
 
 const SeBall = dynamic(() => import("./se-ball/page"), { loading: () => <LoadingGameComponent /> });
-const SicBall = dynamic(() => import("./sic-ball/page"), { loading: () => <LoadingGameComponent /> });
+// SicBall removed
 const SeDieMultiPlayer = dynamic(() => import("./sedie-multi-player/page"), { loading: () => <LoadingGameComponent /> });
 
 export const Games: React.FC<Props> = ({
@@ -86,9 +86,7 @@ export const Games: React.FC<Props> = ({
                 console.log("[Games] rendering SeBall component");
                 return <SeBall key={`game-${gameId}`} {...gameProps} />;
 
-            case GameIds.SicBall:
-                console.log("[Games] rendering SicBall component");
-                return <SicBall key={`game-${gameId}`} {...gameProps} />;
+            // case GameIds.SicBall: removed
 
             case GameIds.SeDie:
                 console.log("[Games] rendering SeDieMultiPlayer component");

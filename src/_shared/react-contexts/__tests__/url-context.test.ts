@@ -102,11 +102,11 @@ describe('URL Context', () => {
 
         it('should handle multiple URL parameters correctly', () => {
             // Arrange
-            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=1007&rurl=https://example.com&cg=Credit_VN';
+            globalThis.location.search = '?token=abc123&lang=vi-VN&gameId=148&rurl=https://example.com&cg=Credit_VN';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'vi-VN',
-                gameId: 1007,
+                gameId: 148,
                 redirectUrl: 'https://example.com'
             };
 
@@ -201,7 +201,7 @@ describe('URL Context', () => {
         it('should update context in localStorage', () => {
             // Arrange
             const existingContext = { language: 'en', gameId: 1005 };
-            const newContext = { gameId: 1007 };
+            const newContext = { gameId: 148 };
             mockStorageHelper.get.mockReturnValue(existingContext);
 
             // Act
@@ -220,7 +220,7 @@ describe('URL Context', () => {
 
         it('should merge and store context when gameId is provided', () => {
             // Arrange
-            const newContext = { gameId: 1007 };
+            const newContext = { gameId: 148 };
             mockStorageHelper.get.mockReturnValue({});
 
             // Act
@@ -230,7 +230,7 @@ describe('URL Context', () => {
             expect(mockStorageHelper.set).toHaveBeenCalledWith(
                 localStorageKeys.url,
                 expect.objectContaining({
-                    gameId: 1007
+                    gameId: 148
                 })
             );
         });

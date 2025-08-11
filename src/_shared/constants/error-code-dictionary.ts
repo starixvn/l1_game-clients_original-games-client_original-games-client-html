@@ -6,7 +6,6 @@ const ErrorCodeDictionary = {
     "1000": errorOccurredKey,
     "1001": sessionTimeoutKey,
     "1002": sessionTimeoutKey,
-    "1007": errorOccurredKey,
     "2001": "Common.splash_login_failed",
     "2002": "Common.message_close_account",
     "2003": "Common.message_account_not_exist",

@@ -93,12 +93,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                         isDisplayPlayerCurrency: true,
                         offerGames: [
                             { gameId: 1005, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                            { gameId: 1007, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
+                            { gameId: 148, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
                         ],
                         balance: 1000,
                         fractionalOddsFormat: false,
                         enableQuickBet: true,
-                        enabledGameIds: [1005, 1007],
+                        enabledGameIds: [1005, 148],
                         availSpins: 0,
                         scoins: 0,
                     },
@@ -109,23 +109,23 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                 lobbyConfigs: {
                     name: "Test Lobby",
                     currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1005, 1007],
+                    miniPanelGameIds: [1005, 148],
                     categories: [
                         {
                             name: "Test Category",
                             gameSettings: [
                                 { gameId: 1005, bigSize: false, newTag: false },
-                                { gameId: 1007, bigSize: false, newTag: false },
+                                { gameId: 148, bigSize: false, newTag: false },
                             ],
                         },
                     ],
                     banners: [
                         { gameId: 1005, displayTime: 5000 },
-                        { gameId: 1007, displayTime: 5000 },
+                        { gameId: 148, displayTime: 5000 },
                     ],
                     gameSettings: {
                         1005: { id: 1005, name: 'SeBall1' },
-                        1007: { id: 1007, name: 'SicBall' },
+                        148: { id: 148, name: 'SeDie' },
                     },
                     roundTimerGame: 1005,
                 } as ILobbyConfigs
@@ -140,7 +140,7 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             const handler = new DashboardHandler(props, jest.fn());
 
             // Act: Call shouldRenderGames with null openGameId (as seen in logs)
-            const result = handler.shouldRenderGames([1005, 1007], null);
+            const result = handler.shouldRenderGames([1005, 148], null);
 
             // Assert: Should return true because the implementation always returns true
             expect(result).toBe(true);

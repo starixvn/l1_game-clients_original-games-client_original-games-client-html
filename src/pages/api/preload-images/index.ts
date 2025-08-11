@@ -134,11 +134,6 @@ const getPathsImg = (gameId: number, currentLocale: string, bannerId: number, ga
     }
 
     if (gameId > 0) {
-        if (gameId === GameIds.SicBall) {
-            const paths = [...getPathImageGameId(gameId), ...pathImageMapping[GameIds.SicBall]];
-            console.log(`[API:preload-images] SicBall game paths: ${paths.length} total`);
-            return paths;
-        }
         const paths = [...getPathImageGameId(gameId), ...pathImageMapping.game];
         console.log(`[API:preload-images] Regular game paths: ${paths.length} total`);
         return paths;

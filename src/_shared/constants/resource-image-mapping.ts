@@ -46,11 +46,5 @@ export const pathImageMapping = {
         `chips/${resolvedChipsSystem}`,
         "countdown-timer",
     ],
-    [GameIds.SicBall]: [
-        "anim/ball-middle",
-        "cage/number",
-        "ball",
-        `chips/${resolvedChipsSystem}`,
-        "countdown-timer",
-    ],
+    // SicBall removed
 };

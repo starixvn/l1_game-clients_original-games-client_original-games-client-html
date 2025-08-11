@@ -34,39 +34,6 @@
             ]
         }
     },
-    "1007": {
-        "id": 1007,
-        "gameName": "SicBall",
-        "tolgeeNamespace": "SicBall",
-        "socketInfo": {
-            "namespace": "sicball",
-            "path": "sicball"
-        },
-        "durations": {
-            "wholeRound": 30,
-            "wholeTurn": 30,
-            "placingBets": 20,
-            "lockingBet": 3,
-            "showResult": 6,
-            "resultAnimation": 3,
-            "beforePlaceBet": 4,
-            "switchRoundAnimation": 0,
-            "startNewRoundAnim": 21
-        },
-        "numberOfRoundHistory": 100,
-        "gamePath": "sic-ball",
-        "gameResourceConfigs": {
-            "path": "sic-ball",
-            "cachePaths": [
-                "sic-ball/hub-interface.webp",
-                "sic-ball/six-balls-loop.webp",
-                "sic-ball/1x/cage.png",
-                "sic-ball/2x/cage.png",
-                "sic-ball/winning-effect-small.png",
-                "sic-ball/winning-effect-specific1.png"
-            ]
-        }
-    },
     "148": {
         "id": 148,
         "gameName": "SeDie",

@@ -12,13 +12,13 @@ jest.mock('../../../../../_shared/app-settings', () => ({
         appType: 'test',
         gameSettings: {
             1005: { id: 1005, name: 'SeBall1' },
-            1007: { id: 1007, name: 'SicBall' }
+            148: { id: 148, name: 'SeDie' }
         }
     })
 }));
 jest.mock('../../../../../_shared/helpers', () => ({
-    getLobbyGameIds: jest.fn().mockReturnValue([1005, 1007]),
-    getOfferGamesIds: jest.fn().mockReturnValue([1005, 1007]),
+    getLobbyGameIds: jest.fn().mockReturnValue([1005, 148]),
+    getOfferGamesIds: jest.fn().mockReturnValue([1005, 148]),
     StorageHelper: {
         get: jest.fn(),
         set: jest.fn()
@@ -50,7 +50,7 @@ mockGetAppSettings.mockReturnValue({
     },
     gameSettings: {
         1005: { id: 1005, gameName: 'SeBall1', gameResourceConfigs: { path: 'test' } },
-        1007: { id: 1007, gameName: 'SicBall', gameResourceConfigs: { path: 'test' } }
+        148: { id: 148, gameName: 'SeDie', gameResourceConfigs: { path: 'test' } }
     },
     subGuideDomain: '',
     googleAnalyticId: '',
@@ -121,12 +121,12 @@ describe('DashboardHandler', () => {
                 isDisplayPlayerCurrency: true,
                 offerGames: [
                     { gameId: 1005, minBet: 1, maxBet: 1000, maxBetPerChoices: {} },
-                    { gameId: 1007, minBet: 1, maxBet: 1000, maxBetPerChoices: {} }
+                    { gameId: 148, minBet: 1, maxBet: 1000, maxBetPerChoices: {} }
                 ],
                 balance: 1000,
                 fractionalOddsFormat: false,
                 enableQuickBet: true,
-                enabledGameIds: [1005, 1007],
+                enabledGameIds: [1005, 148],
                 availSpins: 0,
                 scoins: 0,
             },
@@ -137,23 +137,23 @@ describe('DashboardHandler', () => {
         lobbyConfigs: {
             name: "Test Lobby",
             currencyGroupIds: ["USD"],
-            miniPanelGameIds: [1005, 1007],
+            miniPanelGameIds: [1005, 148],
             categories: [
                 {
                     name: "Test Category",
                     gameSettings: [
                         { gameId: 1005, bigSize: false, newTag: false },
-                        { gameId: 1007, bigSize: false, newTag: false },
+                        { gameId: 148, bigSize: false, newTag: false },
                     ],
                 },
             ],
             banners: [
                 { gameId: 1005, displayTime: 5000 },
-                { gameId: 1007, displayTime: 5000 },
+                { gameId: 148, displayTime: 5000 },
             ],
             gameSettings: {
                 1005: { id: 1005, name: "SeBall1" },
-                1007: { id: 1007, name: "SicBall" },
+                148: { id: 148, name: "SeDie" },
             },
             roundTimerGame: 1005,
         } as ILobbyConfigs
@@ -183,8 +183,8 @@ describe('DashboardHandler', () => {
             enableDebugLogs: false,
             gamePath: ''
         });
-        mockGetLobbyGameIds.mockReturnValue([1005, 1007]);
-        mockGetOfferGamesIds.mockReturnValue([1005, 1007]);
+        mockGetLobbyGameIds.mockReturnValue([1005, 148]);
+        mockGetOfferGamesIds.mockReturnValue([1005, 148]);
         mockLoadURLContext.mockReturnValue({
             gameId: 1005,
             token: 'test-token',

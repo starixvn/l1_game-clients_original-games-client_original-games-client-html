@@ -51,8 +51,8 @@ jest.mock("../handlers/dash-board-handler", () => ({
     DashboardHandler: jest.fn().mockImplementation(() => ({
         shouldRenderGames: jest.fn().mockReturnValue(false),
         checkIsNotOfferGame: jest.fn().mockReturnValue(false),
-        getLobbyGamesIds: jest.fn().mockReturnValue([1005, 1007]),
-        getOfferGamesIds: jest.fn().mockReturnValue([1005, 1007]),
+        getLobbyGamesIds: jest.fn().mockReturnValue([1005, 148]),
+        getOfferGamesIds: jest.fn().mockReturnValue([1005, 148]),
         removeGameTransmitter: jest.fn(),
         buildLobbyConnectionContextValue: jest.fn().mockReturnValue({
             socket: null,

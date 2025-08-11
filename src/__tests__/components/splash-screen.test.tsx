@@ -108,11 +108,11 @@ const mockAuthorizeResponse = {
         settings: { theme: "light" },
         isSignedInSM: true,
         isDisplayPlayerCurrency: true,
-        offerGames: [1005, 1007],
+        offerGames: [1005, 148],
         balance: 1000,
         fractionalOddsFormat: false,
         enableQuickBet: true,
-        enabledGameIds: [1005, 1007],
+        enabledGameIds: [1005, 148],
         availSpins: 0,
         scoins: 0,
     },
@@ -125,23 +125,23 @@ const mockLobbyConfigs = {
     lobbyConfigs: {
         name: "Test Lobby",
         currencyGroupIds: ["USD"],
-        miniPanelGameIds: [1005, 1007],
+        miniPanelGameIds: [1005, 148],
         categories: [
             {
                 name: "Test Category",
                 gameSettings: [
                     { gameId: 1005, bigSize: false, newTag: false },
-                    { gameId: 1007, bigSize: false, newTag: false },
+                    { gameId: 148, bigSize: false, newTag: false },
                 ],
             },
         ],
         banners: [
             { gameId: 1005, displayTime: 5000 },
-            { gameId: 1007, displayTime: 5000 },
+            { gameId: 148, displayTime: 5000 },
         ],
         gameSettings: {
             1005: { id: 1005, name: "SeBall1" },
-            1007: { id: 1007, name: "SicBall" },
+            148: { id: 148, name: "SeDie" },
         },
         roundTimerGame: 1005,
     },

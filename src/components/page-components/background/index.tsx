@@ -17,7 +17,7 @@ const getGameName = (gameId) => {
     return null;
 };
 
-const GamesNotPlayStarsAnimation = [GameIds.SicBall];
+const GamesNotPlayStarsAnimation: number[] = [];
 
 const StarField: FC<{ gameId: number }> = ({ gameId }) => {
     const isLowPerformanceDevice = useLowPerformanceDevice();
