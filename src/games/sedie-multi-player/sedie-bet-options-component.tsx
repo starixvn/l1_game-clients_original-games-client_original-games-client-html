@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useState } from "react";
 
 import { useGameContext } from "../../_shared/react-contexts";
@@ -6,7 +7,8 @@ import { useGameStateContext } from "../../_shared/react-contexts/game-state-con
 import { isShowHighlightPrevResult } from "../../_shared/react-hooks/use-high-light";
 import { RoundState } from "../../components/game-base/type";
 import { SeDieBetOptions } from "./sedie-constants";
-import Style from "./sedie-multi-player.module.scss";
+import Style from "../se-ball/se-ball.module.scss";
+import { BetChoiceImagesData, DotColorMapper } from "../se-ball/se-ball-constants";
 
 const BetChoice = dynamic(() => import("../../components/game-components/bet-option/bet-choice"));
 const RippleButton = dynamic(() => import("../../components/game-components/bet-option/ripple-button"));
@@ -54,7 +56,8 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const renderBetChoice = (choice: string) => {
-        return <BetChoice choice={choice} className={Style[`bet-name-${choice}`]} tolgeeNamespace={tolgeeNamespace} />;
+        const mapped = mapToSeBallResource(choice);
+        return <BetChoice choice={choice} className={Style[`bet-name-${mapped}`]} tolgeeNamespace={tolgeeNamespace} />;
     };
 
     const renderOdds = (choice: string) => {
@@ -74,26 +77,27 @@ const SeDieBetOptionsComponent = () => {
 
     const renderHighlightWinningPrevResult = (choice: string) => {
         let className = "";
-        switch (choice) {
-            case SeDieBetOptions.ODD:
+        const mapped = mapToSeBallResource(choice);
+        switch (mapped) {
+            case "odd":
                 className = `${Style["highlight-prev-result-odd"]} fade-in`;
                 break;
-            case SeDieBetOptions.EVEN:
+            case "even":
                 className = `${Style["highlight-prev-result-even"]} fade-in`;
                 break;
-            case SeDieBetOptions.RED2:
+            case "red2":
                 className = `${Style["highlight-prev-result-red2"]} fade-in`;
                 break;
-            case SeDieBetOptions.RED3:
+            case "red3":
                 className = `${Style["highlight-prev-result-red3"]} fade-in`;
                 break;
-            case SeDieBetOptions.RED4:
+            case "red4":
                 className = `${Style["highlight-prev-result-red4"]} fade-in`;
                 break;
-            case SeDieBetOptions.WHITE3:
+            case "blue3":
                 className = `${Style["highlight-prev-result-blue3"]} fade-in`;
                 break;
-            case SeDieBetOptions.WHITE4:
+            case "blue4":
                 className = `${Style["highlight-prev-result-blue4"]} fade-in`;
                 break;
         }
@@ -105,14 +109,7 @@ const SeDieBetOptionsComponent = () => {
 
     const renderHighlightWinningResult = (choice: string) => {
         // Map to SeBall resources: odd/even -> even, white3/white4 -> blue3/blue4
-        const resourceName =
-            choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN
-                ? "even"
-                : choice === SeDieBetOptions.WHITE3 || choice === SeDieBetOptions.RED3
-                    ? "blue3"
-                    : choice === SeDieBetOptions.WHITE4 || choice === SeDieBetOptions.RED4
-                        ? "blue4"
-                        : choice;
+        const resourceName = mapToSeBallHighlightResource(choice);
         return (
             <SeDieWinningAnimation
                 showResultInfo={showResultInfo}
@@ -124,10 +121,32 @@ const SeDieBetOptionsComponent = () => {
         );
     };
 
+    const mapToSeBallResource = (choice: string) => {
+        if (choice === SeDieBetOptions.WHITE3) return "blue3";
+        if (choice === SeDieBetOptions.WHITE4) return "blue4";
+        return choice;
+    };
+
+    const mapToSeBallHighlightResource = (choice: string) => {
+        if (choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN) return "even";
+        return mapToSeBallResource(choice);
+    };
+
     const renderMainOption = (choice: string) => {
         const reverse = choice === SeDieBetOptions.ODD; // mirror like se-ball odd/even
+        const bgKey = mapToSeBallResource(choice);
         return (
-            <div className={`${Style[choice]} text-white relative`}>
+            <div className={`${Style[bgKey]} text-white relative`}>
+                <Image
+                    className={Style["bg-bet-option"]}
+                    width={178}
+                    height={94}
+                    src={loadingComplete[choice] ? BetChoiceImagesData[bgKey]?.src : BetChoiceImagesData[bgKey]?.blur}
+                    onLoad={() => setLoadingComplete((prevState) => ({ ...prevState, [choice]: true }))}
+                    alt={choice}
+                    priority={true}
+                />
+
                 <div className={`${Style["choice-info"]} ${reverse ? Style["choice-odd"] : ""}`}>
                     <div className={Style.stake}>
                         {renderTotalBet(choice, reverse ? "justify-end" : "")}
@@ -151,9 +170,20 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const renderSubOption = (choice: string) => {
+        const bgKey = getSubOptionBackgroundName(choice);
         return (
-            <div className={`${Style[choice]} ${Style["bet-choice"]}`}>
-                <div className={`${Style["dot-wrapper"]} ${choice === SeDieBetOptions.RED2 ? Style["two-lines"] : ""}`}></div>
+            <div className={`${Style[bgKey]} ${Style["bet-choice"]}`}>
+                <Image
+                    className={Style["bg-bet-option"]}
+                    width={choice === SeDieBetOptions.RED2 ? 77 : 136}
+                    height={choice === SeDieBetOptions.RED2 ? 149 : 66}
+                    src={loadingComplete[choice] ? BetChoiceImagesData[bgKey]?.src : BetChoiceImagesData[bgKey]?.blur}
+                    onLoad={() => setLoadingComplete((prevState) => ({ ...prevState, [choice]: true }))}
+                    alt={choice}
+                    priority={true}
+                />
+
+                <div className={`${Style["dot-wrapper"]} ${choice === SeDieBetOptions.RED2 ? Style["two-lines"] : ""}`}>{renderDot(choice)}</div>
                 {renderOdds(choice)}
                 <div className={Style["own-bet-container"]}>{renderOwnBet(choice)}</div>
                 <div className={Style["winning-effect"]}>{renderHighlightWinningResult(choice)}</div>
@@ -163,6 +193,30 @@ const SeDieBetOptionsComponent = () => {
                 {isShowHighlightPrevResult({ betChoice: choice, roundState, roundHistory }) && renderHighlightWinningPrevResult(choice)}
             </div>
         );
+    };
+
+    const renderDot = (choice: string) => {
+        const mapped = mapToSeBallResource(choice);
+        const dots = DotColorMapper[mapped as keyof typeof DotColorMapper];
+        if (dots) {
+            return dots.map((dot, index) => <div key={index} className={`${dot ? Style["dot-red"] : Style["dot-blue"]}`}></div>);
+        }
+        return null;
+    };
+
+    const getSubOptionBackgroundName = (choice: string) => {
+        switch (choice) {
+            case SeDieBetOptions.WHITE3:
+            case SeDieBetOptions.RED3:
+                return "blue3";
+            case SeDieBetOptions.WHITE4:
+            case SeDieBetOptions.RED4:
+                return "red4";
+            case SeDieBetOptions.RED2:
+                return "red2";
+            default:
+                return choice;
+        }
     };
 
     return (

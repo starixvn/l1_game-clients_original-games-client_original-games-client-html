@@ -4,7 +4,7 @@ import { isHighLightWinningResult } from "../../_shared/react-hooks/use-high-lig
 import { RoundState } from "../../components/game-base/type";
 import { Spritesheet } from "../../components/game-components/sprites-sheet";
 import { SeDieBetOptions } from "./sedie-constants";
-import Styles from "./sedie-multi-player.module.scss";
+import Styles from "../se-ball/se-ball.module.scss";
 
 type Props = {
     choice: string;
