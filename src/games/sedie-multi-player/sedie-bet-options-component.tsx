@@ -6,7 +6,7 @@ import { useGameContext } from "../../_shared/react-contexts";
 import { useGameStateContext } from "../../_shared/react-contexts/game-state-context/game-state-context";
 import { isShowHighlightPrevResult } from "../../_shared/react-hooks/use-high-light";
 import { RoundState } from "../../components/game-base/type";
-import { SeDieBetOptions } from "./sedie-constants";
+import { SeDieBetOptions, SeDieBetOptionsPercentageColor } from "./sedie-constants";
 import Style from "../se-ball/se-ball.module.scss";
 import { BetChoiceImagesData, DotColorMapper } from "../se-ball/se-ball-constants";
 
@@ -45,6 +45,7 @@ const SeDieBetOptionsComponent = () => {
                 choice={choice}
                 className={Style.percent}
                 tolgeeNamespace={tolgeeNamespace}
+                percentageColor={SeDieBetOptionsPercentageColor[choice]}
             />
         );
     };
@@ -128,8 +129,11 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const mapToSeBallHighlightResource = (choice: string) => {
+        // SeDie uses SeBall highlight sprite sheets. Map to existing SeBall assets
         if (choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN) return "even";
-        return mapToSeBallResource(choice);
+        if (choice === SeDieBetOptions.RED3 || choice === SeDieBetOptions.WHITE3) return "blue3";
+        if (choice === SeDieBetOptions.RED4 || choice === SeDieBetOptions.WHITE4) return "blue4";
+        return choice; // includes red2 as-is
     };
 
     const renderMainOption = (choice: string) => {
@@ -172,7 +176,7 @@ const SeDieBetOptionsComponent = () => {
     const renderSubOption = (choice: string) => {
         const bgKey = getSubOptionBackgroundName(choice);
         return (
-            <div className={`${Style[bgKey]} ${Style["bet-choice"]}`}>
+            <div className={`${Style[choice]} ${Style["bet-choice"]}`}>
                 <Image
                     className={Style["bg-bet-option"]}
                     width={choice === SeDieBetOptions.RED2 ? 77 : 136}

@@ -60,7 +60,7 @@ const SeDieWinningAnimation: React.FC<Props> = ({
                     endAt={29}
                 />
 
-                <div className={`highlight-winning-bg-anim ${Styles["highlight-winning-bg-" + choice]}`}></div>
+                <div className={`highlight-winning-bg-anim ${Styles["highlight-winning-bg-" + resourceName]}`}></div>
             </div>
         )
     );

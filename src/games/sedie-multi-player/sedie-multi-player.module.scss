@@ -673,6 +673,15 @@
     }
 }
 
+// Statistic icon placeholders to mirror se-ball blue assets
+.statistic-white3 {
+    @extend .statistic;
+}
+
+.statistic-white4 {
+    @extend .statistic;
+}
+
 // Enhanced Winning Animation Styling
 .winning-light-anim {
     position: relative;

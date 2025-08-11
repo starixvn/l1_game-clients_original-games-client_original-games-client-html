@@ -23,6 +23,7 @@ import ScoreboardSeDie from "./scoreboard";
 import { SeDieBetOptions } from "./sedie-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-game-round-data-handler";
 import Styles from "./sedie-multi-player.module.scss";
+import SeBallStyle from "../se-ball/se-ball.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "./sedie-constants";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
@@ -91,32 +92,30 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     renderStatistic() {
         const { roundHistory } = this.props.gameStateContextModel;
         const locale = tolgee.getLanguage() ?? "en";
-        const classNameIndo = locale === "id" ? Styles["statistic-indo"] : "";
+        const classNameIndo = locale === "id" ? SeBallStyle["statistic-indo"] : "";
 
         const subChoicesClass = {
             [SeDieBetOptions.RED2]: Styles[`statistic-${SeDieBetOptions.RED2}`],
             [SeDieBetOptions.RED3]: Styles[`statistic-${SeDieBetOptions.RED3}`],
             [SeDieBetOptions.RED4]: Styles[`statistic-${SeDieBetOptions.RED4}`],
-            [SeDieBetOptions.WHITE3]: Styles[`statistic-${SeDieBetOptions.WHITE3}`],
-            [SeDieBetOptions.WHITE4]: Styles[`statistic-${SeDieBetOptions.WHITE4}`],
+            [SeDieBetOptions.WHITE3]: Styles[`statistic-${SeDieBetOptions.WHITE3}`] ?? Styles[`statistic-blue3`],
+            [SeDieBetOptions.WHITE4]: Styles[`statistic-${SeDieBetOptions.WHITE4}`] ?? Styles[`statistic-blue4`],
         };
 
         return (
-            <div className={`${Styles.statistic} ${classNameIndo}`}>
-                <RedAndBlueStatistic
-                    roundHistory={roundHistory}
-                    mainChoices={[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]}
-                    className={classNameIndo}
-                    subChoices={[
-                        SeDieBetOptions.RED2,
-                        SeDieBetOptions.RED3,
-                        SeDieBetOptions.RED4,
-                        SeDieBetOptions.WHITE3,
-                        SeDieBetOptions.WHITE4,
-                    ]}
-                    subChoicesClass={subChoicesClass}
-                />
-            </div>
+            <RedAndBlueStatistic
+                roundHistory={roundHistory}
+                mainChoices={[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]}
+                className={classNameIndo}
+                subChoices={[
+                    SeDieBetOptions.RED2,
+                    SeDieBetOptions.RED3,
+                    SeDieBetOptions.RED4,
+                    SeDieBetOptions.WHITE3,
+                    SeDieBetOptions.WHITE4,
+                ]}
+                subChoicesClass={subChoicesClass}
+            />
         );
     }
 

@@ -22,6 +22,12 @@ export const mainChoices = [SeDieChoices.odd, SeDieChoices.even];
 export const topChoices = [SeDieChoices.red4, SeDieChoices.red3, SeDieChoices.red2];
 export const bottomChoices = [SeDieChoices.white4, SeDieChoices.white3];
 
+// Keep percentage ring colors consistent with se-ball
+export const SeDieBetOptionsPercentageColor = {
+    odd: "#84C6FF",
+    even: "#FF9090",
+};
+
 export const ChoiceSeDieIconMapper: Record<string, boolean[]> = {
     red4: [true, true, true, true],
     red2: [true, true, false, false],

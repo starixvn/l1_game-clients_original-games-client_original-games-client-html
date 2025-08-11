@@ -41,7 +41,14 @@ const StarField: FC<{ gameId: number }> = ({ gameId }) => {
 
 export const BackgroundGalaxy: React.FC<Props> = ({ gameId }) => {
     const gameName = getGameName(gameId);
-    const imageUrls = `/static/images/bg-galaxy/bg-${gameName.toLowerCase()}.webp?v=${buildVersion}`;
+    // Map non-existing backgrounds to closest existing ones in assets
+    const backgroundKeyMapper: Record<string, string> = {
+        sedie: "seball1",
+    };
+
+    const gameKey = (gameName || "").toLowerCase();
+    const mappedKey = backgroundKeyMapper[gameKey] || gameKey;
+    const imageUrls = `/static/images/bg-galaxy/bg-${mappedKey}.webp?v=${buildVersion}`;
 
     return (
         <>

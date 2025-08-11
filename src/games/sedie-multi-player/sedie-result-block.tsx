@@ -3,7 +3,7 @@ import { GameStateContextModel } from "../../_shared/react-contexts/game-state-c
 import { RoundState } from "../../components/game-base/type";
 import { CageColor, CagePosition } from "../../components/game-components/cage";
 import CageResultList from "../../components/game-components/cage-result-list";
-import Style from "./sedie-multi-player.module.scss";
+import Style from "../se-ball/se-ball.module.scss";
 import { SeDieResult } from "./sedie-constants";
 
 export type SeDieResultBlockProps = Partial<GameStateContextModel>;
