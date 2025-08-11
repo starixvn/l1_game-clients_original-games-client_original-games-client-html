@@ -1,5 +1,5 @@
 import { URLContextModel, parseContextFromURL, loadURLContext, updateURLContext, getURLContext } from '../url-context';
-import { StorageHelper, localStorageKeys, setUserLatestGameId } from '../../helpers';
+import { StorageHelper, localStorageKeys } from '../../helpers';
 
 // Mock dependencies
 jest.mock('../../helpers', () => ({
@@ -10,12 +10,11 @@ jest.mock('../../helpers', () => ({
     localStorageKeys: {
         url: 'url',
         latestGameId: 'latestGameId'
-    },
-    setUserLatestGameId: jest.fn()
+    }
 }));
 
 const mockStorageHelper = StorageHelper as jest.Mocked<typeof StorageHelper>;
-const mockSetUserLatestGameId = setUserLatestGameId as jest.MockedFunction<typeof setUserLatestGameId>;
+// no setUserLatestGameId anymore
 
 describe('URL Context', () => {
     beforeEach(() => {
@@ -219,7 +218,7 @@ describe('URL Context', () => {
             );
         });
 
-        it('should store latestGameId when gameId is provided', () => {
+        it('should merge and store context when gameId is provided', () => {
             // Arrange
             const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue({});
@@ -234,10 +233,9 @@ describe('URL Context', () => {
                     gameId: 1007
                 })
             );
-            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1007, undefined);
         });
 
-        it('should not store latestGameId when gameId is not provided', () => {
+        it('should not touch latestGameId key when gameId is not provided', () => {
             // Arrange
             const newContext = { language: 'en' };
             mockStorageHelper.get.mockReturnValue({});

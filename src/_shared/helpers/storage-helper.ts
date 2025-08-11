@@ -78,6 +78,12 @@ export class StorageHelper {
         if (!StorageHelper.supportStorage) {
             const allStorage = [new LocalStorage(), new Memory()];
             StorageHelper.supportStorage = allStorage.filter((storage) => storage.isAvailable())[0];
+            // Cleanup deprecated latest-game-id key (global key only)
+            try {
+                StorageHelper.supportStorage.remove(buildLocalStorageKey("latest-game-id"));
+            } catch (_) {
+                // ignore
+            }
         }
     }
 
@@ -126,9 +132,10 @@ export const localStorageKeys = {
     isSleepMode: buildLocalStorageKey("is-sleep-mode"),
     volumeMusic: buildLocalStorageKey("volume-music"),
     volumeSFX: buildLocalStorageKey("volume-SFX"),
+    // latestGameId is deprecated due to one-game-per-session behavior
     latestGameId: buildLocalStorageKey("latest-game-id"),
-    // User-specific latestGameId - will be built dynamically with username
-    userLatestGameId: "latest-game-id", // Base key, will be prefixed with username
+    // User-specific latestGameId is deprecated and kept only for backward-compat mocks
+    userLatestGameId: "latest-game-id",
 };
 
 export function buildLocalStorageKey(key: string) {
@@ -147,19 +154,11 @@ export function buildUserSpecificLocalStorageKey(key: string, username?: string)
     return baseKey;
 }
 
-export function getUserLatestGameId(username?: string): number {
-    if (!username) {
-        return StorageHelper.get<number>(localStorageKeys.latestGameId) || 0;
-    }
-    const userKey = buildUserSpecificLocalStorageKey(localStorageKeys.userLatestGameId, username);
-    return StorageHelper.get<number>(userKey) || 0;
+export function getUserLatestGameId(_username?: string): number {
+    // Disabled: do not persist or read latest-game-id anymore
+    return 0;
 }
 
-export function setUserLatestGameId(gameId: number, username?: string): void {
-    if (!username) {
-        StorageHelper.set(localStorageKeys.latestGameId, gameId);
-        return;
-    }
-    const userKey = buildUserSpecificLocalStorageKey(localStorageKeys.userLatestGameId, username);
-    StorageHelper.set(userKey, gameId);
+export function setUserLatestGameId(_gameId: number, _username?: string): void {
+    // Disabled: no-op per one-game-per-session behavior
 }

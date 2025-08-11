@@ -1,5 +1,5 @@
 import { parseContextFromURL, loadURLContext, updateURLContext, getURLContext, URLContextModel } from "../../_shared/react-contexts/url-context";
-import { StorageHelper, localStorageKeys, getUserLatestGameId, setUserLatestGameId } from "../../_shared/helpers";
+import { StorageHelper, localStorageKeys } from "../../_shared/helpers";
 import { AnalyticsHelper } from "../../_shared/helpers";
 import { GameUtils } from "../../_shared/helpers/base-64-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../_shared/helpers/message-transmitter/global-transmitter";
@@ -16,8 +16,6 @@ jest.mock("../../_shared/helpers", () => ({
         latestGameId: "test.latest-game-id",
         userLatestGameId: "latest-game-id",
     },
-    getUserLatestGameId: jest.fn(),
-    setUserLatestGameId: jest.fn(),
 }));
 
 jest.mock("../../_shared/helpers/base-64-helper", () => ({
@@ -36,8 +34,6 @@ jest.mock("../../_shared/helpers/message-transmitter/global-transmitter", () => 
 }));
 
 const mockStorageHelper = StorageHelper as jest.Mocked<typeof StorageHelper>;
-const mockGetUserLatestGameId = getUserLatestGameId as jest.MockedFunction<typeof getUserLatestGameId>;
-const mockSetUserLatestGameId = setUserLatestGameId as jest.MockedFunction<typeof setUserLatestGameId>;
 const mockGameUtils = GameUtils as jest.Mocked<typeof GameUtils>;
 const mockGlobalMessageTransmitter = GlobalMessageTransmitter as jest.Mocked<typeof GlobalMessageTransmitter>;
 
@@ -183,7 +179,7 @@ describe("Simplified URL Parameter Combinations Tests", () => {
             );
         });
 
-        it("should call setUserLatestGameId when gameId is provided", () => {
+        it("should update url context when gameId is provided", () => {
             // Arrange
             const newContext = { gameId: 1007 };
             mockStorageHelper.get.mockReturnValue({});
@@ -192,7 +188,10 @@ describe("Simplified URL Parameter Combinations Tests", () => {
             updateURLContext(newContext);
 
             // Assert
-            expect(mockSetUserLatestGameId).toHaveBeenCalledWith(1007, undefined);
+            expect(mockStorageHelper.set).toHaveBeenCalledWith(
+                localStorageKeys.url,
+                expect.objectContaining({ gameId: 1007 })
+            );
         });
     });
 

@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { createContext, useContext } from "react";
-import { AnalyticsHelper, StorageHelper, localStorageKeys, setUserLatestGameId } from "../helpers";
+import { AnalyticsHelper, StorageHelper, localStorageKeys } from "../helpers";
 import { GameUtils } from "../helpers/base-64-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../helpers/message-transmitter/global-transmitter";
 
@@ -91,13 +91,7 @@ export function updateURLContext(context: Partial<URLContextModel>) {
     console.log("[URLContext] updateURLContext called with:", context);
     const contextFromLocalStorage = StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
 
-    if (context.gameId !== undefined) {
-        // Use user-specific latestGameId if username is available in the session
-        const session = StorageHelper.get<any>(localStorageKeys.session);
-        const username = session?.username;
-        console.log("[URLContext] setting user latest game ID:", context.gameId, "for user:", username);
-        setUserLatestGameId(context.gameId, username);
-    }
+    // latestGameId persistence removed due to one-game-per-session behavior
 
     const updatedContext = { ...contextFromLocalStorage, ...context };
     console.log("[URLContext] updated context:", updatedContext);

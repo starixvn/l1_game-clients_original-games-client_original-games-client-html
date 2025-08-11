@@ -15,7 +15,6 @@ import {
     getServiceStatusIsAvailable,
     localStorageKeys,
     randomInteger,
-    getUserLatestGameId,
 } from "../../../_shared/helpers";
 import PreloadResources, {
     DURATION_HOLD_SPLASH_SCREEN,
@@ -122,8 +121,8 @@ const SplashScreen: React.FC = () => {
     const player = usePlayerContext();
     const { t } = useTranslator();
 
-    // Use user-specific latestGameId instead of global one
-    const latestGameId = getUserLatestGameId(player?.session?.username) || 0;
+    // latestGameId deprecated; keep variable for logs/backward compatibility always 0
+    const latestGameId = 0;
 
     console.log("[SplashScreen] initial context:", { gameId, token: !!token, language, latestGameId });
 
