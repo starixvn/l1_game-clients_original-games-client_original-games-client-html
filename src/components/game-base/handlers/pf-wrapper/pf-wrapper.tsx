@@ -32,9 +32,26 @@ export const PFWrapper = (props: PFWrapperProps) => {
         const sendSocketMessageWithClientSeed = (message) => {
             const { event, data } = message[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
             const { pfClientSeedSetting } = pfContext;
-            const clientSeed = pfClientSeedSetting?.useManualClientSeed
+            let clientSeed = pfClientSeedSetting?.useManualClientSeed
                 ? pfClientSeedSetting?.manualClientSeed
                 : pfClientSeedSetting?.randomClientSeed;
+            if (!clientSeed || String(clientSeed).length === 0) {
+                clientSeed = pfClientSeedSetting?.randomClientSeed || "0000";
+            }
+
+            // Support minimal payload for games that expect only amount, betChoice, clientSeed
+            if (data?.__pfMode === "clientSeedOnly") {
+                const { __pfMode, ...rest } = data;
+                props.socket.emit(event, { ...rest, clientSeed });
+                return;
+            }
+
+            // Force attach clientSeed for Sedie Multiplayer (gameId 148) bet event
+            if (props.gameId === 148 && event === "bet") {
+                props.socket.emit(event, { ...data, clientSeed });
+                return;
+            }
+
             const clientSeedDetail = {
                 randomClientSeed: pfClientSeedSetting?.randomClientSeed,
                 manualClientSeed: pfClientSeedSetting?.manualClientSeed,

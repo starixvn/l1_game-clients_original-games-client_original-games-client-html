@@ -40,10 +40,52 @@ export function sortedCollectionByTime(elements: any[], decrease = true) {
     return newElements;
 }
 
-export function separateDateTime(rawTime: Date, dateFormatLocale = "id", timeFormatLocale = "en-US") {
-    const dateFormat = new Intl.DateTimeFormat(dateFormatLocale, { day: "2-digit", month: "2-digit", year: "numeric", hour12: false });
-    const timeFormat = new Intl.DateTimeFormat(timeFormatLocale, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-    const date = dateFormat.format(rawTime);
-    const time = timeFormat.format(rawTime);
+export function separateDateTime(
+    rawTime: Date | string | number,
+    dateFormatLocale = "id",
+    timeFormatLocale = "en-US"
+) {
+    // Normalize input to a valid Date instance
+    let dateObject: Date | null = null;
+
+    if (rawTime instanceof Date) {
+        dateObject = rawTime;
+    } else if (typeof rawTime === "number") {
+        // Heuristic: treat 13+ digit numbers as ms, 10-digit as seconds
+        const asMs = rawTime > 1e12 ? rawTime : rawTime * 1000;
+        dateObject = new Date(asMs);
+    } else if (typeof rawTime === "string") {
+        const parsedFromString = new Date(rawTime);
+        if (!Number.isNaN(parsedFromString.getTime())) {
+            dateObject = parsedFromString;
+        } else {
+            // Try numeric string fallback (seconds or milliseconds)
+            const numeric = Number(rawTime);
+            if (!Number.isNaN(numeric)) {
+                const asMs = numeric > 1e12 ? numeric : numeric * 1000;
+                dateObject = new Date(asMs);
+            }
+        }
+    }
+
+    if (!dateObject || Number.isNaN(dateObject.getTime())) {
+        return { date: "-", time: "-" };
+    }
+
+    const dateFormat = new Intl.DateTimeFormat(dateFormatLocale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour12: false,
+    });
+    const timeFormat = new Intl.DateTimeFormat(timeFormatLocale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    });
+
+    const date = dateFormat.format(dateObject);
+    const time = timeFormat.format(dateObject);
     return { date, time };
 }

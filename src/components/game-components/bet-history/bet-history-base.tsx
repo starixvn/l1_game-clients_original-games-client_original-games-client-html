@@ -111,7 +111,12 @@ const BetHistoryBase: FC<BetHistoryProps> = ({ renderBetLogResult, isTurnBase })
     ];
 
     const betLogsWithSettleTime = betLogs.map((item) => {
-        return { ...item, time: item?.result?.time };
+        const mappedDrawId = item?.drawId ?? item?.roundId ?? item?.phien;
+        return {
+            ...item,
+            drawId: mappedDrawId,
+            time: item?.time,
+        };
     });
 
     const preprocessedBetLogs = sortedCollectionByTime(betLogsWithSettleTime);

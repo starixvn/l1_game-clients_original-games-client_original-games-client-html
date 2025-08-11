@@ -122,6 +122,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     this.props.gameSound.playPlaceBetSound();
                 },
                 gameId: this.props.id,
+                betPayloadFormat: this.props.id === 148 ? "single" : "map",
             });
 
         this.gameFinishHandler =
@@ -233,8 +234,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             isLoaded: this.state.isLoaded
         });
         return (
-            <PreloadResources 
-                setIsDonePreload={this.onPreloadResourceDone} 
+            <PreloadResources
+                setIsDonePreload={this.onPreloadResourceDone}
                 gameId={this.props.id}
                 locale={playerContext?.locale || "en"}
             />

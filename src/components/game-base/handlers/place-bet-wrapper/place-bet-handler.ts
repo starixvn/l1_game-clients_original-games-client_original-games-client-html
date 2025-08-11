@@ -34,6 +34,8 @@ export type PlaceBetHandlerProps = {
     getPlayerBalance: Function;
     gameId: number;
     signOut?: Function;
+    // Controls how bet payloads are sent to the service
+    betPayloadFormat?: "map" | "single"; // default: map
 };
 
 export class PlaceBetHandler {
@@ -284,14 +286,27 @@ export class PlaceBetHandler {
     };
 
     sendConfirmBet(notConfirmOwnBets: object) {
-        const betChoices = {};
-        Object.entries(notConfirmOwnBets).forEach(([key, value]) => {
-            betChoices[key] = value;
-        });
+        const entries = Object.entries(notConfirmOwnBets);
+        if ((this.props.betPayloadFormat ?? "map") === "single") {
+            // Send one bet message per choice with amount
+            entries.forEach(([choice, amount]) => {
+                this.props.gameMessageHandler.broadcastGameEvent({
+                    [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
+                        event: "bet",
+                        data: { amount, betChoice: String(choice).toLowerCase(), __pfMode: "clientSeedOnly" },
+                    },
+                });
+            });
+        } else {
+            const betChoices = {} as Record<string, number>;
+            entries.forEach(([key, value]) => {
+                betChoices[key] = value as number;
+            });
 
-        this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: { event: "bet", data: { betChoices } },
-        });
+            this.props.gameMessageHandler.broadcastGameEvent({
+                [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: { event: "bet", data: { betChoices } },
+            });
+        }
     }
 
     updateNotConfirmedBetState(notConfirmOwnBets: object, betChoice: string, systemContext: SystemContextModel) {
@@ -362,12 +377,21 @@ export class PlaceBetHandler {
 
     protected sendBetMessage(betChoice: string, amount: number) {
         this.isProcessingBet = true;
-        this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
-                event: "bet",
-                data: { betChoices: { [betChoice.toLowerCase()]: amount } },
-            },
-        });
+        if ((this.props.betPayloadFormat ?? "map") === "single") {
+            this.props.gameMessageHandler.broadcastGameEvent({
+                [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
+                    event: "bet",
+                    data: { amount, betChoice: betChoice.toLowerCase(), __pfMode: "clientSeedOnly" },
+                },
+            });
+        } else {
+            this.props.gameMessageHandler.broadcastGameEvent({
+                [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
+                    event: "bet",
+                    data: { betChoices: { [betChoice.toLowerCase()]: amount } },
+                },
+            });
+        }
     }
 
     setRetryInterval = () => {

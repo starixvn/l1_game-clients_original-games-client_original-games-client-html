@@ -10,8 +10,8 @@ import { SeDieBetOptions } from "../sedie-constants";
 export interface RoundInfoSeDie extends DrawInfo {
     drawId: number;
     result: {
-        balls: Array<number>;
-    };
+        balls?: Array<number>;
+    } | Record<string, boolean>;
     odds: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
@@ -19,6 +19,11 @@ export interface RoundInfoSeDie extends DrawInfo {
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { drawId, result } = drawInfo;
+    const balls: number[] = Array.isArray((result as any)?.balls) ? ((result as any).balls as number[]) : [];
+    const activeKeys: string[] = !balls.length && result && typeof result === "object"
+        ? Object.keys(result).filter((k) => (result as Record<string, boolean>)[k])
+        : [];
+
     let totalPoint = 0;
 
     return (
@@ -27,11 +32,21 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{drawId}</span>
             </div>
             <div className={Styles["info-item"]}>
-                {result.balls.map((ball, index) => {
-                    totalPoint += ball;
-                    return <SmallBall key={index} number={ball} />;
-                })}
-                <div className={Styles["bet-detail-total"]}> - {totalPoint}</div>
+                {balls.length > 0 ? (
+                    <>
+                        {balls.map((ball, index) => {
+                            totalPoint += ball;
+                            return <SmallBall key={index} number={ball} />;
+                        })}
+                        <div className={Styles["bet-detail-total"]}> - {totalPoint}</div>
+                    </>
+                ) : activeKeys.length > 0 ? (
+                    activeKeys.map((key, index) => (
+                        <span key={index} className="font-text">{key}</span>
+                    ))
+                ) : (
+                    <span aria-label="no result">—</span>
+                )}
             </div>
         </div>
     );

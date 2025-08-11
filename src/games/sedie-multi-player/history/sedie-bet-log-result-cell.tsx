@@ -3,12 +3,27 @@ import { FC } from "react";
 import SmallBall from "../../../components/game-components/small-ball";
 import Styles from "../../se-ball/history/history.module.scss";
 
-const BetLogResultCell: FC<{ result: { balls: number[] } }> = ({ result: { balls } }) => {
+const BetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, boolean> | null }> = ({ result }) => {
+    const balls = Array.isArray((result as any)?.balls) ? (result as any).balls : [];
+
+    // Fallback: when result is of shape { red1: boolean, red2: boolean, ... }
+    const activeKeys: string[] = !balls.length && result && typeof result === "object"
+        ? Object.keys(result).filter((k) => (result as Record<string, boolean>)[k])
+        : [];
+
+    if (balls.length === 0 && activeKeys.length === 0) {
+        return (
+            <div className={Styles["result-container"]}>
+                <span aria-label="no result">—</span>
+            </div>
+        );
+    }
+
     return (
         <div className={Styles["result-container"]}>
-            {balls.map((ball, index) => {
-                return <SmallBall number={ball} key={index} />;
-            })}
+            {balls.length > 0
+                ? balls.map((ball, index) => <SmallBall number={ball} key={index} />)
+                : activeKeys.map((key, index) => <span key={index} className="font-text">{key}</span>)}
         </div>
     );
 };
