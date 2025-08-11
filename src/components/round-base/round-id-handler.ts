@@ -9,6 +9,7 @@ export type RoundIdHandlerProps = {
     gameStateContextModel(): GameStateContextModel;
     gameMessageHandler: GameMessageHandler;
     durations: GameDurations;
+    pfSeedBy?: "drawId" | "roundId";
 };
 
 export class RoundIdHandler {
@@ -17,8 +18,11 @@ export class RoundIdHandler {
     private roundRemainingTime = 0;
     private drawId = 0;
     protected roundId = 0;
+    private pfSeedBy: "drawId" | "roundId" = "drawId";
 
-    constructor(protected readonly props: RoundIdHandlerProps) { }
+    constructor(protected readonly props: RoundIdHandlerProps) {
+        this.pfSeedBy = props.pfSeedBy ?? "drawId";
+    }
 
     registerEvents() {
         this.shouldRunWhenFirstLoad = true;
@@ -45,18 +49,34 @@ export class RoundIdHandler {
                 payload: { roundId },
             });
         }
+
+        // For games where PF seed should be triggered by roundId instead of drawId
+        if (this.pfSeedBy === "roundId") {
+            if (this.shouldRunWhenFirstLoad) {
+                this.shouldRunWhenFirstLoad = false;
+                this.dispatchClientSeed(this.roundId);
+                this.dispatchDrawId(this.drawId);
+            } else if (!this.isInDisplayResultState()) {
+                this.dispatchClientSeed(this.roundId);
+                this.dispatchDrawId(this.drawId);
+            }
+        }
     };
 
     handleDrawId = ({ drawId }) => {
         this.drawId = drawId;
 
-        if (this.shouldRunWhenFirstLoad) {
-            this.shouldRunWhenFirstLoad = false;
-            this.dispatchClientSeed(this.drawId);
-            this.dispatchDrawId(this.drawId);
-        } else if (!this.isInDisplayResultState()) {
-            this.dispatchClientSeed(this.drawId);
-            this.dispatchDrawId(this.drawId);
+        // Always update game state's drawId
+        this.dispatchDrawId(this.drawId);
+
+        // Default behavior: trigger PF seed on drawId changes
+        if (this.pfSeedBy === "drawId") {
+            if (this.shouldRunWhenFirstLoad) {
+                this.shouldRunWhenFirstLoad = false;
+                this.dispatchClientSeed(this.drawId);
+            } else if (!this.isInDisplayResultState()) {
+                this.dispatchClientSeed(this.drawId);
+            }
         }
 
         writeDebugLog({
@@ -68,7 +88,8 @@ export class RoundIdHandler {
 
     handleRoundState = ({ roundState }) => {
         if (roundState === RoundState.InRound && this.isInDisplayResultState()) {
-            this.dispatchClientSeed(this.drawId);
+            const idForSeed = this.pfSeedBy === "roundId" ? this.roundId : this.drawId;
+            this.dispatchClientSeed(idForSeed);
             this.dispatchDrawId(this.drawId);
         }
 
@@ -82,9 +103,11 @@ export class RoundIdHandler {
         });
     };
 
-    dispatchClientSeed = (drawId) => {
+    dispatchClientSeed = (idForSeed: number) => {
         this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER]: { drawId },
+            // Reuse 'drawId' payload key for PF wrapper compatibility.
+            // In roundId mode we intentionally send roundId value here.
+            [messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER]: { drawId: idForSeed },
         });
     };
 

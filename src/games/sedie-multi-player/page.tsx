@@ -51,6 +51,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
             gameStateContextModel: this.getGameStateContext.bind(this),
             gameMessageHandler,
             durations: props.durations,
+            pfSeedBy: "roundId",
         });
     }
 
