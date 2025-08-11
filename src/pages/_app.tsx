@@ -16,7 +16,7 @@ const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
     console.log("[SabaNumberApp] SabaNumberApp rendering with Component:", Component.name);
 
     return (
-        <ThemeProvider defaultTheme={Themes.light} forcedTheme={Themes.light}>
+        <ThemeProvider defaultTheme={Themes.dark} forcedTheme={Themes.dark}>
             <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
                 <AppTittle />
                 <Component {...pageProps} />
@@ -43,7 +43,7 @@ SabaNumberApp.getInitialProps = async (context: AppContext) => {
     const initialProps = await App.getInitialProps(context);
     console.log("[SabaNumberApp] initialProps:", initialProps);
     return {
-        ...initialProps
+        ...initialProps,
     };
 };
 

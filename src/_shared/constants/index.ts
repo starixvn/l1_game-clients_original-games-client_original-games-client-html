@@ -121,7 +121,15 @@ export const ChipValuesBySystem = ChipValues[systemName];
 
 export const locales = { en: "en", vi: "vi", th: "th", id: "id", zh_cn: "zh_cn", zh_tw: "zh_tw", ja: "ja" };
 
-export const languageMapper = { "en-US": "en", "vi-VN": "vi", "th-TH": "th", "id-ID": "id", "zh-CN": "zh_cn", "zh-TW": "zh_tw", "ja-JP": "ja" };
+export const languageMapper = {
+    "en-US": "en",
+    "vi-VN": "vi",
+    "th-TH": "th",
+    "id-ID": "id",
+    "zh-CN": "zh_cn",
+    "zh-TW": "zh_tw",
+    "ja-JP": "ja",
+};
 
 export const LanguageLocaleMapper = {
     en: "en-US",
@@ -136,6 +144,7 @@ export const LanguageLocaleMapper = {
 export const languageNameMapper = { en: "English", vi: "Tiếng Việt" };
 
 export const Themes = {
+    dark: "dark",
     light: "light",
     numberGame: "number-game",
 };
@@ -161,8 +170,8 @@ export const SwiperNoSwiping = "swiper-no-swiping";
 
 export const TimeOutConstants = {
     LoadingSpinner: 3000,
-    OverlayMask: 3000
-}
+    OverlayMask: 3000,
+};
 
 // Available GN chip color assets (hex without '#'), used as fallback for VG
 export const GN_CHIP_COLOR_HEXES = [

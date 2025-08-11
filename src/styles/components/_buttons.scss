@@ -31,6 +31,20 @@
     }
 }
 
+.btn {
+    border: none;
+    padding: var(--spacing-size-3);
+    text-align: center;
+
+    &:disabled {
+        opacity: 0.6;
+    }
+
+    &:hover:enabled {
+        cursor: pointer;
+    }
+}
+
 .btn-green {
     --pulse-duration: 2s;
     @extend %btn;

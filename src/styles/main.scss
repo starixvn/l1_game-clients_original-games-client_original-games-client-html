@@ -70,6 +70,18 @@ html {
 
     // footer
     --color-copyright: rgba(161, 161, 161, 0.6);
+
+    // color
+    --color-primary: #182130;
+    --color-primary-dark: #101721;
+    --color-primary-semi-dark: #141c2a;
+    --color-table-title: #ffffff;
+    --color-table-content: #b3bec1;
+    --color-table-text-clickable: #0990ff;
+    --text-color: #ffffff;
+
+    // border
+    --border-radius-1: 0.75rem;
 }
 
 [data-theme="light"] {

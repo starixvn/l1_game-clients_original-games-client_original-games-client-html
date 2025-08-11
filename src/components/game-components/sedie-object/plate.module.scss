@@ -1,0 +1,336 @@
+// Plate and buttons component styles
+.plate-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-size-3);
+    transition: all 0.3s ease;
+    transform-origin: center bottom;
+}
+
+.plate-buttons-idle {
+    transform: translateX(0) translateY(0) rotate(0deg) scaleX(1) scaleY(1);
+}
+
+.plate-buttons-shake {
+    animation: shake3 calc(var(--shake-duration) / 2) ease-in-out 2;
+}
+
+.plate {
+    width: var(--plate-size);
+    height: var(--plate-size);
+    background-image: url("/static/images/test/plate.png?v=#{$version-image}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+}
+
+// Buttons container and positioning
+.buttons-container {
+    position: relative;
+    width: var(--boundary-size);
+    height: var(--boundary-size);
+    margin: calc((var(--plate-size) - var(--boundary-size)) / 2) auto 0;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 50%; // Changed to circle
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    position: absolute;
+    width: var(--button-size);
+    height: var(--button-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+}
+
+// Bowl styles and animations
+.bowl {
+    width: calc(var(--plate-size) * 0.8);
+    height: calc(var(--plate-size) * 0.8);
+    background-image: url("/static/images/test/bowl.png?v=#{$version-image}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: calc(var(--plate-size) * 0.1);
+    left: calc(var(--plate-size) * 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+// Bowl animation states
+// .bowl-idle {
+//     // Default state - bowl overlays plate exactly
+//     transform: translateY(0);
+//     opacity: 1;
+// }
+// .bowl-shake {
+//     // Shake animation - both bowl and plate shake togeth
+//     animation: shake2 calc(var(--shake-duration) / 3) ease-in-out 3;
+// }
+
+.bowl-open {
+    // Open animation - bowl moves up and fades out
+    animation: open var(--open-duration) ease-in-out forwards;
+}
+
+.bowl-close {
+    // Close animation - bowl appears and moves down
+    animation: close var(--close-duration) ease-in-out forwards;
+}
+
+// Shake animation keyframes (same for both bowl and plate)
+@keyframes shake2 {
+    0%,
+    100% {
+        transform: scaleX(1) scaleY(1);
+    }
+    15% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    30% {
+        transform: scaleX(1.1) scaleY(1.1);
+    }
+    45% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    60% {
+        transform: scaleX(1.1) scaleY(1.1);
+    }
+    75% {
+        transform: scaleX(1.1) scaleY(1.1);
+    }
+    90% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+}
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+    10% {
+        transform: translateX(-8px) translateY(-4px) rotate(-3deg);
+    }
+    20% {
+        transform: translateX(8px) translateY(-4px) rotate(3deg);
+    }
+    30% {
+        transform: translateX(-8px) translateY(4px) rotate(-3deg);
+    }
+    40% {
+        transform: translateX(8px) translateY(4px) rotate(3deg);
+    }
+    50% {
+        transform: translateX(-4px) translateY(-8px) rotate(-2deg);
+    }
+    60% {
+        transform: translateX(4px) translateY(-8px) rotate(2deg);
+    }
+    70% {
+        transform: translateX(-4px) translateY(8px) rotate(-2deg);
+    }
+    80% {
+        transform: translateX(4px) translateY(8px) rotate(2deg);
+    }
+    90% {
+        transform: translateX(-2px) translateY(-2px) rotate(-1deg);
+    }
+}
+
+@keyframes shake3 {
+    0%,
+    100% {
+        transform: translateX(0) translateY(0) rotate(0deg) scaleX(1) scaleY(1);
+    }
+    10% {
+        transform: translateX(-8px) translateY(-4px) rotate(-3deg);
+    }
+    15% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    20% {
+        transform: translateX(8px) translateY(-4px) rotate(3deg);
+    }
+    30% {
+        transform: translateX(-8px) translateY(4px) rotate(-3deg) scaleX(1.1) scaleY(1.1);
+    }
+    40% {
+        transform: translateX(8px) translateY(4px) rotate(3deg);
+    }
+    45% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    50% {
+        transform: translateX(-4px) translateY(-8px) rotate(-2deg);
+    }
+    60% {
+        transform: translateX(4px) translateY(-8px) rotate(2deg) scaleX(1.1) scaleY(1.1);
+    }
+    70% {
+        transform: translateX(-4px) translateY(8px) rotate(-2deg);
+    }
+    75% {
+        transform: scaleX(1.1) scaleY(1.1);
+    }
+    80% {
+        transform: translateX(4px) translateY(8px) rotate(2deg);
+    }
+    90% {
+        transform: translateX(-2px) translateY(-2px) rotate(-1deg) scaleX(0.8) scaleY(0.8);
+    }
+}
+
+// Open animation keyframes
+@keyframes open {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(50px) translateY(-50px) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100px) translateY(-100px) scale(0.8);
+        opacity: 0;
+    }
+}
+
+// Close animation keyframes
+@keyframes close {
+    0% {
+        transform: translateX(100px) translateY(-100px) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+// Control section
+.control-section {
+    margin-top: var(--spacing-size-3);
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-size-2);
+    flex-wrap: wrap;
+}
+
+.control-button {
+    background: linear-gradient(135deg, var(--btn-grey-background), var(--btn-grey-background-hover));
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: var(--spacing-size-2) var(--spacing-size-3);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 80px;
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--btn-grey-background-hover), var(--btn-grey-background));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(57, 77, 102, 0.5);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+.shake-button {
+    background: linear-gradient(135deg, var(--btn-orange-background), var(--btn-orange-background-hover));
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--btn-orange-background-hover), var(--btn-orange-background));
+    }
+}
+
+.open-button {
+    background: linear-gradient(135deg, var(--btn-green-background), var(--btn-green-background-hover));
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--btn-green-background-hover), var(--btn-green-background));
+    }
+}
+
+.close-button {
+    background: linear-gradient(135deg, var(--btn-red-background), var(--btn-red-background-hover));
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--btn-red-background-hover), var(--btn-red-background));
+    }
+}
+
+// Regenerate button section
+.regenerate-section {
+    margin-top: var(--spacing-size-3);
+    display: flex;
+    justify-content: center;
+}
+
+.regenerate-button {
+    background: linear-gradient(135deg, var(--btn-green-background), var(--btn-green-background-hover));
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: var(--spacing-size-2) var(--spacing-size-3);
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--btn-green-background-hover), var(--btn-green-background));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(21, 150, 57, 0.5);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
