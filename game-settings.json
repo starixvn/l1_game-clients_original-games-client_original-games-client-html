@@ -36,22 +36,22 @@
     },
     "148": {
         "id": 148,
-        "gameName": "SeDie",
+        "gameName": "SeDieMultiplayer",
         "tolgeeNamespace": "SeDie",
         "socketInfo": {
-            "namespace": "sedie",
-            "path": "sedie"
+            "namespace": "sediemultiplayer",
+            "path": "sediemultiplayer"
         },
         "durations": {
-            "wholeRound": 39,
-            "wholeTurn": 39,
-            "placingBets": 30,
-            "lockingBet": 5,
-            "showResult": 8,
-            "resultAnimation": 4,
+            "wholeRound": 23,
+            "wholeTurn": 23,
+            "placingBets": 18,
+            "lockingBet": 3,
+            "showResult": 7,
+            "resultAnimation": 2,
             "beforePlaceBet": 0,
-            "switchRoundAnimation": 0,
-            "startNewRoundAnim": 0
+            "switchRoundAnimation": 1,
+            "startNewRoundAnim": 1
         },
         "numberOfRoundHistory": 100,
         "gamePath": "sedie-multi-player",
