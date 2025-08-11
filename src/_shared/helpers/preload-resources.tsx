@@ -6,6 +6,7 @@ import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
 import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings, getGameSettings } from "../app-settings";
+import { systemName } from "../constants";
 import { downloadAndCacheImage } from "./image-cache-controller";
 import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
 import { serviceWorkerHelper } from "./service-worker-helper";
@@ -500,7 +501,7 @@ const loadImagesByPriority = async (
     }
 
     console.log(`[loadImagesByPriority] Completed loading ${priorityName} priority images`);
-    
+
     // Call progress callback when batch is complete
     onBatchComplete?.();
 };
@@ -560,7 +561,13 @@ export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PR
 };
 
 // Core image paths that are always needed
-const CORE_IMAGE_PATHS = ["/chips/gn/", "/countdown-timer/", "/cage/", "/anim/ball-middle/", "/ball/"];
+const CORE_IMAGE_PATHS = [
+    `/chips/${systemName}/`,
+    "/countdown-timer/",
+    "/cage/",
+    "/anim/ball-middle/",
+    "/ball/",
+];
 
 interface PreloadResourcesProps {
     setIsDonePreload: () => void;

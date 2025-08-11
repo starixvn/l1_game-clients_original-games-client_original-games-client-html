@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGameActionContext, useSettingContext, useSystemContext } from "../../../_shared/react-contexts";
+import { resolveChipColorHex } from "../../../_shared/constants";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "../../game-base/type";
 
@@ -39,9 +40,9 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
     };
 
     useEffect(() => {
-        setCursorImage(
-            `${DEFAULT_CHIP_CURSOR_PATH}/${findChipSetting(systemContext.selectedChip)?.color?.replace("#", "")}.svg`.appendBuildVersion()
-        );
+        const color = findChipSetting(systemContext.selectedChip)?.color;
+        const hex = resolveChipColorHex(color);
+        setCursorImage(`${DEFAULT_CHIP_CURSOR_PATH}/${hex}.svg`.appendBuildVersion());
     }, [systemContext.selectedChip]);
 
     useEffect(() => {

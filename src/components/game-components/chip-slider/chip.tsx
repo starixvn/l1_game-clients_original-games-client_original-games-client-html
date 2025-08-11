@@ -1,6 +1,6 @@
 import React from "react";
 
-import { systemName } from "../../../_shared/constants";
+import { resolveChipColorHex, systemName } from "../../../_shared/constants";
 import { useSystemContext } from "../../../_shared/react-contexts";
 import Styles from "./chip-slider.module.scss";
 import { CachedImage } from "../cached-image";
@@ -27,7 +27,8 @@ export const Chip: React.FC<{ value: number; onClickChip: Function; text: string
         <div id={`chip-${value}`} key={value} className={getChipClassName()} onClick={() => onClickChip(value)}>
             {image && (
                 <CachedImage
-                    src={`/static/images/chips/${systemName}/${image.replace("#", "")}.svg`}
+                    src={`/static/images/chips/${systemName === "vg" ? "gn" : systemName}/${resolveChipColorHex(image)}.svg`}
+                    fallbackSrcs={[`/static/images/chips/gn/${resolveChipColorHex(image)}.svg`]}
                     className={`img-fluid ${Styles["chip"]}`}
                     width={65}
                     height={66}

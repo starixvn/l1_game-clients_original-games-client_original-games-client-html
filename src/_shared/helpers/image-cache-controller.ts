@@ -62,7 +62,7 @@ const fetchImageBase64 = async (imageUrl: string, retries = 2): Promise<string> 
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
-        imageUrl = imageUrl.appendBuildVersion();
+        imageUrl = imageUrl.removeBuildVersion().appendBuildVersion();
         const response = await axios.get(imageUrl, {
             responseType: "arraybuffer",
             signal: controller.signal,
