@@ -236,13 +236,13 @@ const SplashScreen: React.FC = () => {
 
             const lobbyConfigs = await loadLobbyConfigs(session, authorizeInfo);
 
-            // Custom version: Always direct to specific game, default to 1005 if no valid gameId
+            // Custom version: Always direct to specific game, default to 148 if no valid gameId
             let toLoadGameId = gameId;
 
-            // If no gameId provided or gameId is 0, use default game 1005
+            // If no gameId provided or gameId is 0, use default game 148
             if (!toLoadGameId || toLoadGameId === 0) {
-                console.log("[SplashScreen] no gameId provided, using default 1005");
-                toLoadGameId = 1005;
+                console.log("[SplashScreen] no gameId provided, using default 148");
+                toLoadGameId = 148;
             }
 
             // Validate if the gameId is available in the enabled games
@@ -260,10 +260,10 @@ const SplashScreen: React.FC = () => {
                 isGameAvailable
             });
 
-            // If game is not available, use default game 1005
+            // If game is not available, use default game 148
             if (!isGameAvailable) {
-                console.log("[SplashScreen] game not available, using default 1005");
-                toLoadGameId = 1005;
+                console.log("[SplashScreen] game not available, using default 148");
+                toLoadGameId = 148;
             }
 
             console.log("[SplashScreen] final gameId to load:", toLoadGameId);

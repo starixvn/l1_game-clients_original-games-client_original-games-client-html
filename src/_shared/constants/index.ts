@@ -160,7 +160,6 @@ export const AppTypes = {
 export const confirmBet = "confirmBet";
 
 export const GameIds = {
-    SeBall1: 1005,
     SeDie: 148,
 };
 

@@ -2,7 +2,7 @@ import { FC, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { PFResult } from "../../../components/game-base/type";
-import Styles from "./pf-sedie.module.scss";
+import Styles from "./pf-sedie-multiplayer.module.scss";
 import SmallBall from "../../../components/game-components/small-ball";
 import { ResourceTypes } from "../../../_shared/resources";
 

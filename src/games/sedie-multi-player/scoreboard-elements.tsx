@@ -5,8 +5,8 @@ import { Round } from "../../components/game-base/type";
 import { BeadRoadElement, BigRoadElement, BigRoadRound } from "../../components/game-components/round-history/scoreboard/elements";
 import { registerBigRoadElement } from "../../_shared/helpers/scoreboard-registry";
 import { withTranslator } from "../../components/page-components/translator";
-import styles from "../se-ball/scoreboard-elements.module.scss";
-import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-constants";
+import styles from "./scoreboard-elements.module.scss";
+import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 import BeadBoardIcon from "../../components/game-components/statistic/beadboard-icon";
 
 export const ODD_EVEN_AS_DEFAULT_SCOREBOARD = true;
@@ -83,6 +83,7 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
     }
 }
 
-registerBigRoadElement(SeDieBigRoadElement, SeDieBigRoadConverter as any, 2005);
+// Register for SeDie (148) only
+registerBigRoadElement(SeDieBigRoadElement, SeDieBigRoadConverter as any, 148);
 
 

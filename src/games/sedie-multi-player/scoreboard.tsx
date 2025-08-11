@@ -4,8 +4,8 @@ import { Round } from "../../components/game-base/type";
 import { SlidableScoreboard, SwitchableScoreboard } from "../../components/game-components/round-history/scoreboard";
 import { BeadRoadElement, BigRoadElement } from "../../components/game-components/round-history/scoreboard/elements";
 import { createBeadRoadElement, SeDieBigRoadConverter, SeDieBigRoadElement } from "./scoreboard-elements";
-import Styles from "../se-ball/scoreboard.module.scss";
-import { SeDieResult, SeDieSettlementResult } from "./sedie-constants";
+import Styles from "./scoreboard.module.scss";
+import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 import { tolgee } from "../../_shared/tolgee";
 
 export type ScoreboardComponentProps = {
@@ -28,7 +28,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
                     type="switch"
                     scoreboards={[
                         {
-                            element: SeDieBigRoadElement as unknown as typeof BigRoadElement<any>,
+                            element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
                             arrange: BigRoadElement.arrange(SeDieBigRoadConverter.instance as any),
                             column: 18,
                             row: 6,
@@ -52,7 +52,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
                     type="switch"
                     scoreboards={[
                         {
-                            element: createBeadRoadElement(this.props.isOddEven) as unknown as typeof BeadRoadElement<any>,
+                            element: createBeadRoadElement(this.props.isOddEven) as unknown as React.ComponentType<any>,
                             arrange: BeadRoadElement.arrange,
                             column: 18,
                             row: 6,

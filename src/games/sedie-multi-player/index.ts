@@ -1,2 +1,2 @@
-export { default as SeDieBettingBlock } from "./sedie-betting-block";
-export { default as SeDieResultBlock } from "./sedie-result-block";
+export { default as SeDieBettingBlock } from "./sedie-multiplayer-betting-block";
+export { default as SeDieResultBlock } from "./sedie-multiplayer-result-block";

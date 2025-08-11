@@ -1,39 +1,4 @@
 {
-    "1005": {
-        "id": 1005,
-        "gameName": "SeBall1",
-        "tolgeeNamespace": "SeBall",
-        "socketInfo": {
-            "namespace": "seball1",
-            "path": "seball1"
-        },
-        "durations": {
-            "wholeRound": 31,
-            "wholeTurn": 31,
-            "placingBets": 20,
-            "lockingBet": 3,
-            "showResult": 7,
-            "resultAnimation": 4,
-            "beforePlaceBet": 4,
-            "switchRoundAnimation": 0,
-            "startNewRoundAnim": 21
-        },
-        "numberOfRoundHistory": 100,
-        "gamePath": "se-ball",
-        "gameResourceConfigs": {
-            "path": "se-ball",
-            "optionalPaths": [
-                "se-ball/result-ball"
-            ],
-            "cachePaths": [
-                "se-ball/highlight-winning-even.png",
-                "se-ball/highlight-winning-blue3.png",
-                "se-ball/highlight-winning-blue4.png",
-                "se-ball/highlight-winning-red2.png",
-                "se-ball/result-ball/ball-highlight.webp"
-            ]
-        }
-    },
     "148": {
         "id": 148,
         "gameName": "SeDieMultiplayer",

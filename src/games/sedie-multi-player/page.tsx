@@ -20,11 +20,11 @@ import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
 import { SeDieBettingBlock, SeDieResultBlock } from ".";
 import ScoreboardSeDie from "./scoreboard";
-import { SeDieBetOptions } from "./sedie-constants";
-import { SeDieGameRoundDataHandler } from "./sedie-game-round-data-handler";
-import Styles from "./sedie-multi-player.module.scss";
-import SeBallStyle from "../se-ball/se-ball.module.scss";
-import { SeDieResult, SeDieSettlementResult } from "./sedie-constants";
+import { SeDieBetOptions } from "./sedie-multiplayer-constants";
+import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
+import Styles from "./sedie-multiplayer.module.scss";
+import SeBallStyle from "./se-ball.module.scss";
+import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 

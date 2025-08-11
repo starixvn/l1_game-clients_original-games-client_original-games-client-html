@@ -8,8 +8,8 @@ import { PFVerifyModal } from "../../../components/game-components/provably-fair
 import PFClientSeedInfoModal from "../../../components/game-components/provably-fair/pf-verify/pf-client-seed-info-modal";
 import PFVerificationModal from "../../../components/game-components/provably-fair/pf-verify/pf-verification-modal";
 import { PFVerification, makeFileNameExport, renderPFVerifyResultBlock } from "../provably-fair";
-import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "./sedie-bet-detail-result-block";
-import BetLogResultCell from "./sedie-bet-log-result-cell";
+import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "./sedie-multiplayer-bet-detail-result-block";
+import BetLogResultCell from "./sedie-multiplayer-bet-log-result-cell";
 
 const SeDieBetHistoryModal: FC = () => {
     return (

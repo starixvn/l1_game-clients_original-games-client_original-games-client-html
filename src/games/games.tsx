@@ -29,9 +29,8 @@ const LoadingGameComponent = () => (
     </>
 );
 
-const SeBall = dynamic(() => import("./se-ball/page"), { loading: () => <LoadingGameComponent /> });
-// SicBall removed
-const SeDieMultiPlayer = dynamic(() => import("./sedie-multi-player/page"), { loading: () => <LoadingGameComponent /> });
+// SeBall removed
+const SeDieMultiPlayer = dynamic(() => import("./sedie-multiplayer/page"), { loading: () => <LoadingGameComponent /> });
 
 export const Games: React.FC<Props> = ({
     setApiErrorMessage,
@@ -82,12 +81,6 @@ export const Games: React.FC<Props> = ({
         console.log("[Games] gameProps:", gameProps);
 
         switch (gameId) {
-            case GameIds.SeBall1:
-                console.log("[Games] rendering SeBall component");
-                return <SeBall key={`game-${gameId}`} {...gameProps} />;
-
-            // case GameIds.SicBall: removed
-
             case GameIds.SeDie:
                 console.log("[Games] rendering SeDieMultiPlayer component");
                 return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
