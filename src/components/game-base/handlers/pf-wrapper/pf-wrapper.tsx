@@ -27,6 +27,8 @@ export const PFWrapper = (props: PFWrapperProps) => {
             props.gameMessageHandler.removeHandler(loadPFSettingId);
             StorageHelper.set(localStorageKeys.isSleepMode, document.hidden);
         }
+        // Intentional: register once on mount and cleanup on unmount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -92,6 +94,8 @@ export const PFWrapper = (props: PFWrapperProps) => {
             props.gameMessageHandler.removeHandler(sendSocketId);
             props.gameMessageHandler.removeHandler(savePFSettingFromTurnId);
         }
+        // Dependencies controlled at registration time; avoid re-register loops
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pfContext.pfClientSeedSetting])
 
     return (<> {props.children} </>)

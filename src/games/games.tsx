@@ -55,6 +55,8 @@ export const Games: React.FC<Props> = ({
                 },
             });
         })();
+        // Dependencies stable for session init
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const gameSound: GameSound = {

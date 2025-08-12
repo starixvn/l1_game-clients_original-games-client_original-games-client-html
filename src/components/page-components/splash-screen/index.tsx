@@ -285,6 +285,8 @@ const SplashScreen: React.FC = () => {
         };
 
         handleInitialization();
+        // Intentional: run once on mount; values used are stable for the session
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (player?.session?.isUM || isUm) {
