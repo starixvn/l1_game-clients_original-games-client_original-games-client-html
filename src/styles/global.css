@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import theme files */
-@import './themes/dark-theme.css';
-@import './themes/light-theme.css';
 
 /* Default theme (dark) */
 :root {
@@ -22,3 +19,7 @@
     --container-border-color: #2c2f3e;
     --icon-favorite-game-guide: #fff;
 }
+
+/* Import theme files */
+@import './themes/dark-theme.css';
+@import './themes/light-theme.css';

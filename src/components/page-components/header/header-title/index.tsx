@@ -35,7 +35,7 @@ const HeaderTitle: React.FC<Props> = (props) => {
     );
 
     const headerTitle = isRenderGames ? (
-        <div className="text-animation text-red-500 light:text-blue-600 font-bold transition-colors duration-300">
+        <div className="text-animation bg-primary-bg text-primary-text border border-primary-border rounded-lg px-4 py-2 transition-all duration-300 hover:bg-opacity-grey">
             {t(`${tolgeeNamespace}.game_name_${openingGameId}`).toUpperCase()}
         </div>
     ) : (

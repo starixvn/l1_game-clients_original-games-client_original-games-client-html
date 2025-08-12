@@ -1,7 +1,10 @@
-[data-theme="light"] {
-    --page-background-color: #000;
-    --text-color: #2c2f3e;
-    --border-color: #c5cbdb;
+html[data-theme="light"] {
+    --page-background-color: #fff;
+    --text-color: #000;
+    --border-color: #E4E4E4;
+    --secondary-background-color: #F9F9F9;
+    --secondary-text-color: #5574A7;
+
     --opacity-background: rgba(12, 12, 12, 0.36);
     --opacity-background-grey: rgba(221, 221, 221, 0.6);
 
@@ -14,4 +17,6 @@
     --container-color-bg: #fff;
     --container-border-color: #cbcbcb;
     --icon-favorite-game-guide: #2c2f3e;
+    
+    --color-table-text-clickable: #0990ff;
 }
