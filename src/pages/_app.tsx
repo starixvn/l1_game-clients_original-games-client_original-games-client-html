@@ -8,21 +8,25 @@ import { ThemeProvider } from "next-themes";
 import App, { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import { buildVersion, Themes } from "../_shared/constants";
-import { useURLContext } from "../_shared/react-contexts";
 import { tolgee } from "../_shared/tolgee";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "../components/page-components/google-analytics";
+import { ThemeContextProvider } from "../_shared/react-contexts/theme-context";
+import ThemeToggle from "../components/page-components/theme-toggle";
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
     console.log("[SabaNumberApp] SabaNumberApp rendering with Component:", Component.name);
 
     return (
-        <ThemeProvider defaultTheme={Themes.dark} forcedTheme={Themes.dark}>
-            <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
-                <AppTittle />
-                <Component {...pageProps} />
-                <GoogleAnalytic />
-            </TolgeeProvider>
+        <ThemeProvider defaultTheme={Themes.dark} attribute="class">
+            <ThemeContextProvider>
+                <ThemeToggle />
+                <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
+                    <AppTittle />
+                    <Component {...pageProps} />
+                    <GoogleAnalytic />
+                </TolgeeProvider>
+            </ThemeContextProvider>
         </ThemeProvider>
     );
 };
