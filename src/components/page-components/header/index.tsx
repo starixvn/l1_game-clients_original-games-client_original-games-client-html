@@ -24,7 +24,7 @@ const Header = () => {
     const isRenderGames = openingGameId > 0;
     return (
         <header className={`${Styles.header}`} data-testid="header">
-            <div className="game-container d-flex">
+            <div className="game-container flex">
                 <div className={Styles["header-container"]}>
                     <HeaderTitle isRenderGames={isRenderGames} openingGameId={openingGameId} />
                     <div className={Styles["header-right"]}>

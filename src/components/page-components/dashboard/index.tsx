@@ -13,12 +13,7 @@ import {
     registerGlobalMessageEvent,
     unsubscribeGlobalMessageEvent,
 } from "../../../_shared/helpers/message-transmitter/global-transmitter";
-import {
-    loadURLContext,
-    PlayerContextProvider,
-    SettingContextProvider,
-    updateURLContext,
-} from "../../../_shared/react-contexts";
+import { loadURLContext, PlayerContextProvider, SettingContextProvider, updateURLContext } from "../../../_shared/react-contexts";
 import { UserStakeLevel } from "../../game-base/type";
 import { ModalType } from "../../game-components/base-dialog/type";
 import { ErrorApiText } from "../../game-components/error-api-text";
@@ -54,7 +49,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         console.log("[Dashboard] constructor called with props:", {
             authorizeResponse: !!props.authorizeResponse,
             queryGame: props.queryGame,
-            session: !!props.session
+            session: !!props.session,
         });
 
         this.state = {
@@ -93,14 +88,13 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             buildVersion && location.reload();
         }
 
-        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => { });
+        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => {});
 
         this.notificationHandler =
             notificationHandler ??
             new NotificationHandler(this.props.session, this.props.setIsUm, this.updateUserBalance, this.showApiErrorMessage, this.signOut);
 
         GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.USER_INFO_RED]: this.props.authorizeResponse.user.red });
-
     }
 
     updateUserBalance = (balance: number, setBalanceByPlaceBet = true) => {
@@ -274,12 +268,11 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     renderDashBoard() {
         console.log("[Dashboard] renderDashBoard called");
         // Keep query params in development/local to aid debugging
-        const isLocalhost = typeof window !== "undefined"
-            && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
-        const isNonProductionEnv = (typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production");
-        if (!isLocalhost && !isNonProductionEnv) {
-            window.history.pushState(null, null, "/");
-        }
+        const isLocalhost = typeof window !== "undefined" && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
+        const isNonProductionEnv = typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production";
+        // if (!isLocalhost && !isNonProductionEnv) {
+        // }
+        window.history.pushState(null, null, "/");
 
         const { isShowErrorModal, authorizeInfo, isBlockUI, openGameId } = this.state;
         const offerGames = this.dashboardHandler.getOfferGamesIds();
@@ -305,12 +298,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <SettingContextProvider>
-                    <div
-                        className={`${Styles["dashboard"]} ${!isRenderGames ? "no-scroll" : ""} ${isMobileOnly ? Styles["hidden-scrollbar"] : ""
-                            }`}
-                        id={"dashboard"}
-                        style={this.setDashBoardStyle(isRenderGames)}
-                    >
+                    <div id={"dashboard"}>
                         <Header />
                         <SoundSettings />
 

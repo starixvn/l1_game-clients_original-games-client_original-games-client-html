@@ -50,6 +50,12 @@ import { PFWrapper } from "./handlers/pf-wrapper/pf-wrapper";
 import { PlaceBetHandlerWrapper } from "./handlers/place-bet-wrapper/place-bet-handler-wrapper";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./type";
 import PreloadResources from "../../_shared/helpers/preload-resources";
+import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
+import { PlayerResultBoard } from "../game-components/player-result-board/player-result-board";
+import { MenuIcon } from "../game-components/menu/menu-icon";
+import { Menu } from "../game-components/menu/menu";
+import { RoundHistory } from "../game-components/round-history/demo";
+import { IconStatistic } from "../game-components/statistic/icon-statistic";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -231,14 +237,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         console.log(`[GameBase:${this.props.id}] Rendering PreloadResources:`, {
             gameId: this.props.id,
             locale: playerContext?.locale || "en",
-            isLoaded: this.state.isLoaded
+            isLoaded: this.state.isLoaded,
         });
         return (
-            <PreloadResources
-                setIsDonePreload={this.onPreloadResourceDone}
-                gameId={this.props.id}
-                locale={playerContext?.locale || "en"}
-            />
+            <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} locale={playerContext?.locale || "en"} />
         );
     };
 
@@ -531,10 +533,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
-    renderResultBlock() {
-        return <></>;
-    }
-
     renderBettingBlock() {
         return <></>;
     }
@@ -568,6 +566,96 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <NewRoundTransitionWithoutExtraSeconds />;
     }
 
+    renderRoundHistoryItem(props: any) {
+        return <div>I</div>;
+    }
+
+    renderRoundHistory() {
+        return <RoundHistory renderItem={this.renderRoundHistoryItem} numberOfItems={15} sideButton={<IconStatistic />} />;
+    }
+
+    renderCountdownTimer() {
+        return <CountdownTimer GameStatusProp={this.renderGameStatus()} />;
+    }
+
+    renderResultBlock() {
+        return <></>;
+    }
+
+    renderBetOptions() {
+        return (
+            <PlaceBetProvider>
+                <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
+                    {this.renderBettingBlock()}
+                    {this.renderConfirmDialog()}
+                    {this.renderConfirmBet()}
+                </PlaceBetHandlerWrapper>
+            </PlaceBetProvider>
+        );
+    }
+
+    renderBetControlLeftSide() {
+        return <div className="col-12 col-md-6">{this.renderSlidingChips()}</div>;
+    }
+
+    renderBetControlRightSide() {
+        return <div className="col-12 col-md-6">Round Info Frame</div>;
+    }
+
+    renderBetControl() {
+        return (
+            <div className="bg-md-primary md:rounded-t-xl">
+                <div className="flex flex-wrap">
+                    {this.renderBetControlLeftSide()}
+                    {this.renderBetControlRightSide()}
+                </div>
+            </div>
+        );
+    }
+
+    renderMenu() {
+        return (
+            <Menu
+                rightSide={
+                    <>
+                        <MenuIcon name="sound" />
+                        <MenuIcon name="guide" />
+                        <MenuIcon name="security" />
+                    </>
+                }
+            />
+        );
+    }
+
+    renderLeftSide() {
+        const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
+        const { availableInGameData } = this.props.gameStateContextModel;
+        return (
+            <div className="col-12 col-lg-8 mb-3 px-3">
+                <div className="flex flex-col items-center justify-center">
+                    {this.renderRoundHistory()}
+                    {this.renderCountdownTimer()}
+                    <div>{availableInGameData && this.renderResultBlock()}</div>
+                    {this.renderBetOptions()}
+                </div>
+                {this.renderBetControl()}
+                {this.renderMenu()}
+            </div>
+        );
+    }
+
+    renderRightSide() {
+        return (
+            <div className="col-12 col-lg-4 mb-3 px-3">
+                <PlayerResultBoard />
+            </div>
+        );
+    }
+
+    renderBetHistoryTable() {
+        return <BetHistoryTable />;
+    }
+
     getRenderTemplate() {
         const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
         const { availableInGameData, isScoreboardTab, roundState } = this.props.gameStateContextModel;
@@ -575,17 +663,22 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         return (
             <>
-                <BackgroundGalaxy gameId={this.props.id} />
+                {/* <BackgroundGalaxy gameId={this.props.id} /> */}
                 <>
-                    <div className={`game-area game-${this.props.id}`}>
-                        <PFProvider gameId={this.props.id} uid={uid}>
+                    <div className={`game-${this.props.id}`}>
+                        <div className="flex flex-wrap">
+                            {this.renderLeftSide()}
+                            {this.renderRightSide()}
+                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                        </div>
+                        {/* <PFProvider gameId={this.props.id} uid={uid}>
                             <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={uid}>
                                 {this.renderHeaderBlock()}
                                 {this.renderPFSettingModal()}
                                 {this.renderBetHistoryModal()}
                             </PFWrapper>
-                        </PFProvider>
-                        <div>{availableInGameData && this.renderResultBlock()}</div>
+                        </PFProvider> */}
+                        {/* <div>{availableInGameData && this.renderResultBlock()}</div>
                         <PlaceBetProvider>
                             <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
                                 {this.renderBettingBlock()}
@@ -602,7 +695,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                                 <SideBetScoreboard>{this.renderStatisticContent()}</SideBetScoreboard>
                             )}
                         </div>
-                        <Footer />
+                        <Footer /> */}
                     </div>
                     {!availableInGameData && <OverlayMask removeOverlay={isDisabledGame} />}
                     {this.renderGameGuideModal()}

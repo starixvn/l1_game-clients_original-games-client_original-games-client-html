@@ -4,17 +4,7 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
-    font-family: 'Arial', sans-serif;
-}
-
-// ----------------- merged from se-ball.module.scss -----------------
-
-.betting-zone {
-    position: relative;
-    width: 35.8rem;
-
-    margin: 1rem auto auto;
-    z-index: 2;
+    font-family: "Arial", sans-serif;
 }
 
 .result-container {
@@ -128,18 +118,6 @@
 }
 
 //-------------- CHOICE BLUE3 BLUE4 RED2 RED3 RED4 -----------------//
-
-.sub-betting-zone {
-    width: 35.8rem;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0.5rem;
-    display: grid;
-    grid-template-columns: 13.6rem 7.7rem 13.6rem;
-    grid-template-rows: 6.6rem 6.6rem;
-    justify-content: space-between;
-    row-gap: 0.5rem;
-}
 
 .bet-choice {
     position: relative;
@@ -518,5 +496,3 @@
 .statistic-indo {
     font-size: 0.9rem !important;
 }
-
-

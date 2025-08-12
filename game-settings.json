@@ -12,11 +12,11 @@
             "wholeTurn": 23,
             "placingBets": 18,
             "lockingBet": 3,
-            "showResult": 7,
+            "showResult": 3,
             "resultAnimation": 2,
             "beforePlaceBet": 0,
-            "switchRoundAnimation": 1,
-            "startNewRoundAnim": 1
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
         },
         "numberOfRoundHistory": 100,
         "gamePath": "sedie-multi-player",

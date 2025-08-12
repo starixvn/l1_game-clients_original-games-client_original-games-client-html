@@ -1,0 +1,17 @@
+.dot-white {
+    width: var(--dot-size);
+    height: var(--dot-size);
+    background: linear-gradient(#ffffff, #d0cece);
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+    box-shadow: 0px 0px 4px 0px #ffffff80;
+}
+
+.dot-red {
+    width: var(--dot-size);
+    height: var(--dot-size);
+    background: linear-gradient(#d70835, #be0a31);
+    border-radius: 50%;
+    border: 1px solid #f01544;
+    box-shadow: 0px 0px 4px 0px #ff898980;
+}

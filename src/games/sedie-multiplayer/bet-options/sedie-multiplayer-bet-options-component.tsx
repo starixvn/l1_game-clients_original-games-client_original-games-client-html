@@ -2,22 +2,23 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
 
-import { useGameContext } from "../../_shared/react-contexts";
-import { useGameStateContext } from "../../_shared/react-contexts/game-state-context/game-state-context";
-import { isShowHighlightPrevResult } from "../../_shared/react-hooks/use-high-light";
-import { RoundState } from "../../components/game-base/type";
-import { SeDieBetOptions, SeDieBetOptionsPercentageColor } from "./sedie-multiplayer-constants";
-import Style from "./sedie-multiplayer.module.scss";
-import { BetChoiceImagesData, DotColorMapper } from "./sedie-multiplayer-constants";
+import { useGameContext } from "../../../_shared/react-contexts";
+import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
+import { isShowHighlightPrevResult } from "../../../_shared/react-hooks/use-high-light";
+import { RoundState } from "../../../components/game-base/type";
+import { SeDieBetOptions, SeDieBetOptionsPercentageColor } from "../sedie-multiplayer-constants";
+import Style from "../sedie-multiplayer.module.scss";
+import { BetChoiceImagesData, DotColorMapper } from "../sedie-multiplayer-constants";
+import { SedieMultiplayerSubBetOption } from "./sedie-subbet-option";
 
-const BetChoice = dynamic(() => import("../../components/game-components/bet-option/bet-choice"));
-const RippleButton = dynamic(() => import("../../components/game-components/bet-option/ripple-button"));
-const BetPercentage = dynamic(() => import("../../components/game-components/bet-option/bet-percentage"));
-const Odds = dynamic(() => import("../../components/game-components/bet-option/odds"));
-const OwnBet = dynamic(() => import("../../components/game-components/bet-option/own-bet"));
-const PlayerBetCount = dynamic(() => import("../../components/game-components/bet-option/player-bet-count"));
-const TotalBet = dynamic(() => import("../../components/game-components/bet-option/total-bet"));
-const SeDieWinningAnimation = dynamic(() => import("./sedie-multiplayer-winning-animation"));
+const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
+const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
+const BetPercentage = dynamic(() => import("../../../components/game-components/bet-option/bet-percentage"));
+const Odds = dynamic(() => import("../../../components/game-components/bet-option/odds"));
+const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"));
+const PlayerBetCount = dynamic(() => import("../../../components/game-components/bet-option/player-bet-count"));
+const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
+const SeDieWinningAnimation = dynamic(() => import("../sedie-multiplayer-winning-animation"));
 
 const SeDieBetOptionsComponent = () => {
     const { roundState, settlementResult, showResultInfo, roundHistory } = useGameStateContext();
@@ -62,14 +63,7 @@ const SeDieBetOptionsComponent = () => {
     };
 
     const renderOdds = (choice: string) => {
-        return (
-            <Odds
-                choice={choice}
-                tolgeeNamespace={tolgeeNamespace}
-                animationDuration={6}
-                isFormatOddsAuto={true}
-            />
-        );
+        return <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} animationDuration={6} isFormatOddsAuto={true} />;
     };
 
     const renderOwnBet = (choice: string) => {
@@ -103,9 +97,7 @@ const SeDieBetOptionsComponent = () => {
                 break;
         }
 
-        return isShowHighlightPrevResult({ betChoice: choice, roundState, roundHistory }) ? (
-            <div className={className} />
-        ) : null;
+        return isShowHighlightPrevResult({ betChoice: choice, roundState, roundHistory }) ? <div className={className} /> : null;
     };
 
     const renderHighlightWinningResult = (choice: string) => {
@@ -185,7 +177,9 @@ const SeDieBetOptionsComponent = () => {
                     priority={true}
                 />
 
-                <div className={`${Style["dot-wrapper"]} ${choice === SeDieBetOptions.RED2 ? Style["two-lines"] : ""}`}>{renderDot(choice)}</div>
+                <div className={`${Style["dot-wrapper"]} ${choice === SeDieBetOptions.RED2 ? Style["two-lines"] : ""}`}>
+                    {renderDot(choice)}
+                </div>
                 {renderOdds(choice)}
                 <div className={Style["own-bet-container"]}>{renderOwnBet(choice)}</div>
                 <div className={Style["winning-effect"]}>{renderHighlightWinningResult(choice)}</div>
@@ -223,22 +217,24 @@ const SeDieBetOptionsComponent = () => {
 
     return (
         <>
-            <div className="flex justify-between">
-                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.ODD)}</div>
-                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.EVEN)}</div>
-            </div>
-
-            <div className={Style["sub-betting-zone"]}>
-                {renderSubOption(SeDieBetOptions.WHITE3)}
+            <div className={"flex flex-wrap"}>
+                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE3} />
+                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE4} />
+                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED2} />
+                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED3} />
+                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED4} />
+                {/* {renderSubOption(SeDieBetOptions.WHITE3)}
                 {renderSubOption(SeDieBetOptions.WHITE4)}
                 {renderSubOption(SeDieBetOptions.RED2)}
                 {renderSubOption(SeDieBetOptions.RED3)}
-                {renderSubOption(SeDieBetOptions.RED4)}
+                {renderSubOption(SeDieBetOptions.RED4)} */}
+            </div>
+            <div className="flex justify-between">
+                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.ODD)}</div>
+                <div className={Style["bet-option-row"]}>{renderMainOption(SeDieBetOptions.EVEN)}</div>
             </div>
         </>
     );
 };
 
 export default SeDieBetOptionsComponent;
-
-

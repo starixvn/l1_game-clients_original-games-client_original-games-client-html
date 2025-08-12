@@ -1,8 +1,6 @@
-@import "./border";
 @import "./col";
 @import "./color";
 @import "./table";
-@import "./spacing";
 
 *,
 *::before,
@@ -28,18 +26,6 @@
     width: 100% !important;
 }
 
-.w-full {
-    width: 100%;
-}
-
-.w-fit {
-    width: fit-content;
-}
-
-.h-full {
-    height: 100%;
-}
-
 h1,
 h2,
 h3,
@@ -53,18 +39,6 @@ h6 {
 p {
     margin-top: 0;
     margin-bottom: 1rem;
-}
-
-.d-flex {
-    display: flex !important;
-}
-
-.justify-content-center {
-    justify-content: center !important;
-}
-
-.align-items-center {
-    align-items: center !important;
 }
 
 .d-grid {
@@ -93,14 +67,6 @@ img {
     height: auto;
 }
 
-.relative {
-    position: relative;
-}
-
-.absolute {
-    position: absolute;
-}
-
 .font-weight-500 {
     font-weight: 500;
 }
@@ -117,36 +83,12 @@ img {
     font-weight: 700 !important;
 }
 
-.text-center {
-    text-align: center !important;
-}
-
-.text-left {
-    text-align: left !important;
-}
-
-.text-right {
-    text-align: right !important;
-}
-
 .text-white {
     color: #fff !important;
 }
 
 .text {
     color: var(--text-color);
-}
-
-.text-uppercase {
-    text-transform: uppercase;
-}
-
-.text-wrap {
-    text-wrap: wrap;
-}
-
-.nowrap {
-    white-space: nowrap;
 }
 
 .overlay-mask-no-bg {
@@ -188,79 +130,10 @@ img {
     background-color: var(--scrollbar-thumb-background);
 }
 
-// Flex Utils
-
-.flex {
-    display: flex;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-.flex-1 {
-    flex: 1 1 0%;
-}
-
-.flex-col {
-    flex-direction: column;
-}
-
-.items-center {
-    align-items: center;
-}
-
-.items-baseline {
-    align-items: baseline;
-}
-
-.justify-between {
-    justify-content: space-between;
-}
-
-.justify-end {
-    justify-content: flex-end;
-}
-
-.justify-center {
-    justify-content: center;
-}
-
-.justify-around {
-    justify-content: space-around;
-}
-.align-items-start {
-    align-items: flex-start;
-}
-
-.align-items-end {
-    align-items: flex-end;
-}
-
-.justify-content-start {
-    justify-content: flex-start;
-}
-
-.justify-content-end {
-    justify-content: flex-end;
-}
-
-.justify-content-between {
-    justify-content: space-between;
-}
-
-.justify-content-around {
-    justify-content: space-around;
-}
-
 /* Animation */
 .fade-in {
     opacity: 0;
     animation: fade-in 0.3s ease-in forwards;
-}
-
-.cursor-pointer {
-    cursor: pointer;
 }
 
 @keyframes fade-in {

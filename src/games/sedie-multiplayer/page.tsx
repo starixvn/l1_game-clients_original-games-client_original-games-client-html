@@ -25,6 +25,7 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import Styles from "./sedie-multiplayer.module.scss";
 import SeBallStyle from "./sedie-multiplayer.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
+import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 
@@ -139,6 +140,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
 
     renderRoundIdSection(): JSX.Element {
         return <DrawIdBlock showRoundId={true} />;
+    }
+
+    renderRoundHistoryItem(props: any) {
+        return <SedieMultiplayerRoundHistoryItem />;
     }
 }
 

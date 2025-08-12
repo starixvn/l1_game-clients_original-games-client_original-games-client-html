@@ -29,12 +29,11 @@ export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, classNa
     const totalBet = totalBets?.[choice] ?? 0;
 
     if (totalBet <= 0 || rate === 0 || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
-        return <></>;
+        return <div className={className}></div>;
     }
 
     return (
-        <div className={`flex items-center gap-1 ${Styles["total-stakes"]} ${className}`}>
-            <span className={`icon-coin ${Styles["icon-coin"]}`}></span>
+        <div className={`flex items-center gap-1  ${className}`}>
             <span id={`${tolgeeNamespace}-${choice}-total-stakes`} className={Styles["stakes-value"]}>
                 {convertStakeToString(totalBet, rate)}
             </span>

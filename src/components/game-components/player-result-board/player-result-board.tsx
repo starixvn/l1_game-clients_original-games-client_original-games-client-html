@@ -11,8 +11,8 @@ export const PlayerResultBoard = () => {
         );
     };
     return (
-        <div className="h-full rounded bg-primary p-3 mb-3">
-            <div className="flex justify-between bg-primary-dark rounded p-3">
+        <div className="h-full rounded-xl bg-primary p-3 pb-1 mb-3">
+            <div className="flex justify-between bg-primary-dark rounded-xl p-2 mb-2">
                 <div className="flex items-center">
                     <span className={styles["icon-online-user"]}></span>
                     <span>10 players</span>
@@ -23,7 +23,7 @@ export const PlayerResultBoard = () => {
                 <table className="table table-border-bottom">
                     <thead>
                         <tr>
-                            <th className="mb-2">Player</th>
+                            <th>Player</th>
                             <th>Bet Amount</th>
                             <th>Win</th>
                         </tr>

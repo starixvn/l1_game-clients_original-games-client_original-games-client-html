@@ -38,7 +38,7 @@ export const ConnectFailedMessage: React.FC<{
     const renderLostConnectionButtons = () => {
         console.log("[ConnectFailedMessage] rendering lost connection buttons");
         return (
-            <div className="d-flex">
+            <div className="flex">
                 <button onClick={handleBackToLobby} className={`btn-grey`}>
                     {t(`${ResourceTypes.COMMON}.back`)}
                 </button>
