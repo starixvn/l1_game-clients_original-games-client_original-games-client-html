@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import theme files */
+@import './themes/dark-theme.css';
+@import './themes/light-theme.css';
 
 /* Default theme (dark) */
 :root {
@@ -18,8 +21,23 @@
     --container-color-bg: #182130;
     --container-border-color: #2c2f3e;
     --icon-favorite-game-guide: #fff;
+    --secondary-background-color: #1a1a1a;
+    --secondary-text-color: #e0e0e0;
+    --color-table-text-clickable: #0990ff;
 }
 
-/* Import theme files */
-@import './themes/dark-theme.css';
-@import './themes/light-theme.css';
+/* Ensure Tailwind has highest priority */
+@layer utilities {
+    .text-primary-text {
+        color: var(--text-color) !important;
+    }
+    .bg-primary-bg {
+        background-color: var(--page-background-color) !important;
+    }
+    .text-secondary-text {
+        color: var(--secondary-text-color) !important;
+    }
+    .bg-secondary-bg {
+        background-color: var(--secondary-background-color) !important;
+    }
+}
