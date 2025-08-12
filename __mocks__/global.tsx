@@ -28,7 +28,7 @@ jest.mock("next/config", () => () => ({
         subGuideDomain: "gn-guide",
         enableMsgpackParser: false,
         system: "GN",
-        appType: 1,
+        appType: 10,
         useTolgeeStatic: false,
         socketGatewayPath: "gateway",
         gameSettings: {

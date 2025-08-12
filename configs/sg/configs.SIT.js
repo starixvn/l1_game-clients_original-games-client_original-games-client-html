@@ -12,7 +12,7 @@ window.envConfig = {
     subGuideDomain: "sit-guide",
     enableMsgpackParser: true,
     system: "SG",
-    appType: 1,
+    appType: 10,
     enableDebugLogs: true,
     socketGatewayPath: "gateway",
     useTolgeeStatic: true,

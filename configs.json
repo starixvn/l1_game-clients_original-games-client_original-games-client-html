@@ -16,7 +16,7 @@
     "subGuideDomain": "l2-guide",
     "enableMsgpackParser": false,
     "system": "VG",
-    "appType": 1,
+    "appType": 10,
     "useTolgeeStatic": false,
     "enableDebugLogs": true,
     "socketGatewayPath": "gateway"

@@ -40,7 +40,7 @@ const mockGetOfferGamesIds = getOfferGamesIds as jest.MockedFunction<typeof getO
 
 // Set up the mock implementation
 mockGetAppSettings.mockReturnValue({
-    appType: 1,
+    appType: 10,
     serverDomainMapper: [],
     socketGatewayPath: '',
     proxy: { ssl: '', subDomain: '', path: '' },
@@ -162,7 +162,7 @@ describe('DashboardHandler', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockGetAppSettings.mockReturnValue({
-            appType: 1,
+            appType: 10,
             serverDomainMapper: [],
             socketGatewayPath: '',
             proxy: { ssl: '', subDomain: '', path: '' },
