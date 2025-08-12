@@ -1,6 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import { createContext, useContext } from "react";
-import { AnalyticsHelper, StorageHelper, localStorageKeys } from "../helpers";
+import { StorageHelper, localStorageKeys } from "../helpers/storage-helper";
+import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../helpers/message-transmitter/global-transmitter";
 
