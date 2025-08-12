@@ -82,13 +82,13 @@ describe("Simplified URL Parameter Combinations Tests", () => {
             expect(result).toEqual(expected);
         });
 
-        it("should handle missing optional parameters", () => {
+        it("should handle missing optional parameters (default gameId=148)", () => {
             // Arrange
             globalThis.location.search = "?token=abc123&lang=en";
             const expected: URLContextModel = {
                 token: "abc123",
                 language: "en",
-                gameId: 0,
+                gameId: 148,
                 redirectUrl: null,
             };
 

@@ -66,13 +66,13 @@ describe('URL Context', () => {
             expect(result).toBeUndefined();
         });
 
-        it('should handle missing optional parameters', () => {
+        it('should handle missing optional parameters (default gameId=148)', () => {
             // Arrange
             globalThis.location.search = '?token=abc123&lang=en';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: 'en',
-                gameId: 0,
+                gameId: 148,
                 redirectUrl: null
             };
 
@@ -83,13 +83,13 @@ describe('URL Context', () => {
             expect(result).toEqual(expected);
         });
 
-        it('should handle invalid gameId parameter', () => {
+        it('should default to 148 for invalid gameId parameter', () => {
             // Arrange
             globalThis.location.search = '?token=abc123&gameId=invalid';
             const expected: URLContextModel = {
                 token: 'abc123',
                 language: null,
-                gameId: NaN,
+                gameId: 148,
                 redirectUrl: null
             };
 

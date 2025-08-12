@@ -33,7 +33,11 @@ export function parseContextFromURL(): URLContextModel | undefined {
 
     const token = params.get("token");
     const language = params.get("lang");
-    const gameId = Number(params.get("gameId") || 0);
+    const gameIdParam = params.get("gameId");
+    let gameId = Number(gameIdParam);
+    if (!gameIdParam || Number.isNaN(gameId) || gameId <= 0) {
+        gameId = 148;
+    }
     const redirectUrl = params.get("rurl");
 
     const context = { token, language, gameId, redirectUrl };

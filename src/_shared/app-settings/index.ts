@@ -5,21 +5,12 @@ import AppSettings from "./type";
 const defaultAppSettings: AppSettings = getConfig().publicRuntimeConfig;
 let mergedAppSettings: AppSettings;
 
-// Import configurations for different game types
+// Import configurations
 const gnConfigs = require("../../../configs.json");
-const l2Configs = require("../../../configs-original.json");
 const gameSettings = require("../../../game-settings.json");
 
-// Function to get configuration based on game ID
-const getConfigForGame = (gameId: number) => {
-    // SeDie game (ID 148) uses L2 configuration
-    if (gameId === 148) {
-        return {
-            ...l2Configs,
-            gameSettings,
-        };
-    }
-    // Other games use GN configuration
+// Function to get configuration (single config now)
+const getConfigForGame = (_gameId: number) => {
     return {
         ...gnConfigs,
         gameSettings,

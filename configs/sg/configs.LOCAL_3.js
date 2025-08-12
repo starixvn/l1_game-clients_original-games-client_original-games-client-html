@@ -1,19 +1,19 @@
 window.envConfig = {
     proxy: {
         ssl: true,
-        subDomain: "gn-proxy",
+        subDomain: "l3-proxy1",
         path: "",
     },
     sentry: {
-        dsn: "https://c65e9ef4f6c64d928f7b31ba355a44c2@sentry.lumigame.com/84",
-        environment: "LOCAL",
+        dsn: "https://2af29bdacdbf4d9ba2db6600b450541f@sentry.lumigame.com/28",
+        environment: "LOCAL3",
     },
     enableSourceMap: true,
-    subGuideDomain: "gn-guide",
+    subGuideDomain: "l3-guide",
     enableMsgpackParser: false,
-    system: "GN",
+    system: "SG",
     appType: 1,
     enableDebugLogs: true,
     socketGatewayPath: "gateway",
-    useTolgeeStatic: false,
+    useTolgeeStatic: true,
 };

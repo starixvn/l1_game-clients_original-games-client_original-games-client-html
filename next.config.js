@@ -1,6 +1,5 @@
 const gameSettings = require("./game-settings.json");
 const configs = require("./configs.json");
-const configsOriginal = require("./configs-original.json");
 const { v4: uuidv4 } = require("uuid");
 const { withSentryConfig } = require("@sentry/nextjs");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
@@ -8,16 +7,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 
 const basePath = "";
-
-// Function to determine which config to use based on game
-const getConfigForGame = (gameId) => {
-    // SeDie game (ID 148) uses L2 configuration
-    if (gameId === 148) {
-        return configsOriginal;
-    }
-    // Other games use GN configuration
-    return configs;
-};
 
 // Create a configuration that can be dynamically updated
 const createAppSettings = (config) => ({

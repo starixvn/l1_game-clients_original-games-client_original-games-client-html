@@ -8,21 +8,8 @@ export default class extends Document<{ headScript?: string }> {
     static async getInitialProps(ctx: DocumentContext) {
         const initialProps = await Document.getInitialProps(ctx);
 
-        // Determine which env config to load based on gameId/op in the URL
-        let headScript = "./c.js";
-        try {
-            const reqUrl = ctx?.req?.url || "";
-            const base = "http://localhost";
-            const url = new URL(reqUrl, base);
-            const gameIdParam = Number(url.searchParams.get("gameId") || 0);
-            const opParam = (url.searchParams.get("op") || "").toUpperCase();
-            if (gameIdParam === 148 || opParam === "VG") {
-                headScript = "./c-original.js";
-            }
-        } catch {
-            // fallback to default script
-        }
-
+        // Always use single env config script now
+        const headScript = "./c.js";
         return { ...initialProps, headScript } as any;
     }
 
