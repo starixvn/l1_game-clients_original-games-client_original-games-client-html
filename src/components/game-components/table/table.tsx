@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import classNames from "classnames";
 
 export interface TableColumn<T = any> {
   key: keyof T | string;
@@ -30,7 +31,9 @@ export const Table = <T,>({
   );
 
   return (
-    <div className={`rounded bg-primary-bg p-2 ${className || ""}`}>
+    <div
+      className={classNames("rounded bg-primary-bg p-2", className)}
+    >
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -58,20 +61,26 @@ export const Table = <T,>({
             data.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className={`text-center border-b border-primary-border ${
-                  onRowClick
-                    ? "cursor-pointer hover:bg-opacity-grey transition-colors duration-200"
-                    : ""
-                }`}
+                className={classNames(
+                  "text-center border-b border-primary-border",
+                  {
+                    "cursor-pointer hover:bg-opacity-grey transition-colors duration-200":
+                      !!onRowClick,
+                  }
+                )}
                 onClick={() => handleRowClick(row, rowIndex)}
               >
                 {columns.map(({ key, render, isClickable }) => {
                   const cellValue = (row as any)[key];
-                  const clickableClasses = isClickable ? 'text-table-text-clickable cursor-pointer' : 'text-secondary-text';
                   return (
                     <td
                       key={String(key)}
-                      className={`py-3 text-wrap ${clickableClasses}`}
+                      className={classNames(
+                        "py-3 text-wrap",
+                        isClickable
+                          ? "text-table-text-clickable cursor-pointer"
+                          : "text-secondary-text"
+                      )}
                     >
                       {render ? render(cellValue, row, rowIndex) : cellValue}
                     </td>
