@@ -4,6 +4,7 @@ import { Converter } from "sc-scoreboards";
 import { Round } from "../../components/game-base/type";
 import { BeadRoadElement, BigRoadElement, BigRoadRound } from "../../components/game-components/round-history/scoreboard/elements";
 import { registerBigRoadElement } from "../../_shared/helpers/scoreboard-registry";
+import { GameIds } from "../../_shared/constants";
 import { withTranslator } from "../../components/page-components/translator";
 import styles from "./scoreboard-elements.module.scss";
 import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
@@ -83,7 +84,7 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
     }
 }
 
-// Register for SeDie (148) only
-registerBigRoadElement(SeDieBigRoadElement, SeDieBigRoadConverter as any, 148);
+// Register for SeDieMultiplayer only
+registerBigRoadElement(SeDieBigRoadElement, SeDieBigRoadConverter as any, GameIds.SeDieMultiplayer);
 
 

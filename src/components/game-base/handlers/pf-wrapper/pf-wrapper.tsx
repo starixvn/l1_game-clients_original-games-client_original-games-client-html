@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { localStorageKeys, randomNumberSeries, StorageHelper } from "../../../../_shared/helpers";
+import { GameIds } from "../../../../_shared/constants";
 import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
 import { GameMessageHandler, messageEventType } from "../game-message-handler";
 import { Socket } from "socket.io-client";
@@ -46,8 +47,8 @@ export const PFWrapper = (props: PFWrapperProps) => {
                 return;
             }
 
-            // Force attach clientSeed for Sedie Multiplayer (gameId 148) bet event
-            if (props.gameId === 148 && event === "bet") {
+            // Force attach clientSeed for Sedie Multiplayer bet event
+            if (props.gameId === GameIds.SeDieMultiplayer && event === "bet") {
                 props.socket.emit(event, { ...data, clientSeed });
                 return;
             }

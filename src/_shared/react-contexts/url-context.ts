@@ -1,6 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import { createContext, useContext } from "react";
 import { StorageHelper, localStorageKeys } from "../helpers/storage-helper";
+import { GameIds } from "../constants";
 import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../helpers/message-transmitter/global-transmitter";
@@ -36,7 +37,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const gameIdParam = params.get("gameId");
     let gameId = Number(gameIdParam);
     if (!gameIdParam || Number.isNaN(gameId) || gameId <= 0) {
-        gameId = 148;
+        gameId = GameIds.SeDieMultiplayer;
     }
     const redirectUrl = params.get("rurl");
 

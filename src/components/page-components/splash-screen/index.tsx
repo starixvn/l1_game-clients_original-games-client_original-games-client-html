@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from "../../../_shared/app-settings";
-import { Themes, buildVersion, languageMapper, locales } from "../../../_shared/constants";
+import { Themes, buildVersion, languageMapper, locales, GameIds } from "../../../_shared/constants";
 import {
     AnalyticsHelper,
     StorageHelper,
@@ -236,20 +236,20 @@ const SplashScreen: React.FC = () => {
 
             const lobbyConfigs = await loadLobbyConfigs(session, authorizeInfo);
 
-            // Custom version: Always direct to specific game, default to 148 if no valid gameId
+            // Custom version: Always direct to specific game, default to SeDie if no valid gameId
             let toLoadGameId = gameId;
 
-            // If no gameId provided or gameId is 0, use default game 148
+            // If no gameId provided or gameId is 0, use default SeDie game
             if (!toLoadGameId || toLoadGameId === 0) {
-                console.log("[SplashScreen] no gameId provided, using default 148");
-                toLoadGameId = 148;
+                console.log("[SplashScreen] no gameId provided, using default SeDie");
+                toLoadGameId = GameIds.SeDieMultiplayer;
             }
 
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
 
-            // Bypass validation for SeDie (VG) gameId 148 so we can deep-link even if not in lobby/offer
-            let isGameAvailable = toLoadGameId === 148;
+            // Bypass validation for SeDie so we can deep-link even if not in lobby/offer
+            let isGameAvailable = toLoadGameId === GameIds.SeDieMultiplayer;
             if (!isGameAvailable) {
                 isGameAvailable = enabledRenderGameSettings.some(game => game.id === toLoadGameId);
             }
@@ -260,10 +260,10 @@ const SplashScreen: React.FC = () => {
                 isGameAvailable
             });
 
-            // If game is not available, use default game 148
+            // If game is not available, use default SeDie game
             if (!isGameAvailable) {
-                console.log("[SplashScreen] game not available, using default 148");
-                toLoadGameId = 148;
+                console.log("[SplashScreen] game not available, using default SeDie");
+                toLoadGameId = GameIds.SeDieMultiplayer;
             }
 
             console.log("[SplashScreen] final gameId to load:", toLoadGameId);

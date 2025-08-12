@@ -160,7 +160,7 @@ export const AppTypes = {
 export const confirmBet = "confirmBet";
 
 export const GameIds = {
-    SeDie: 148,
+    SeDieMultiplayer: 148,
 };
 
 export const LobbyGameId = 0;

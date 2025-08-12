@@ -132,6 +132,49 @@ UI-->>D: balance update setBalanceByPlaceBet=true
 
 ---
 
+### Hard-coded `gameId = 148` touchpoints that enable this workflow
+
+-   `src/_shared/react-contexts/url-context.ts`
+
+    -   Default `gameId` to 148 when query param is missing/invalid, ensuring the app always has a valid target game.
+    -   Snippet:
+        -   `if (!gameIdParam || Number.isNaN(gameId) || gameId <= 0) { gameId = 148; }`
+
+-   `src/components/page-components/splash-screen/index.tsx`
+
+    -   Uses 148 as a fallback game when none provided or invalid; bypasses availability validation for SeDie (148); and falls back to 148 if game is not available, guaranteeing the flow continues to SeDie.
+    -   Snippets:
+        -   Fallback when missing: `if (!toLoadGameId || toLoadGameId === 0) { toLoadGameId = 148; }`
+        -   Bypass validation: `let isGameAvailable = toLoadGameId === 148;`
+        -   Fallback when unavailable: `if (!isGameAvailable) { toLoadGameId = 148; }`
+
+-   `src/_shared/constants/index.ts`
+
+    -   Declares the canonical constant: `GameIds.SeDie = 148`.
+
+-   `game-settings.json`
+
+    -   Static mapping: `"148": { id: 148, gameName: "SeDieMultiplayer", ... }` used to resolve the component and resources.
+
+-   `src/components/game-base/index.tsx`
+
+    -   Special-cases payload format for SeDie: `betPayloadFormat` is `"single"` when `id === 148`, otherwise `"map"`.
+
+-   `src/components/game-base/handlers/pf-wrapper/pf-wrapper.tsx`
+
+    -   Forces `clientSeed` on bet events for SeDie: `if (props.gameId === 148 && event === "bet") { ... }`.
+
+-   `src/games/sedie-multiplayer/scoreboard-elements.tsx`
+
+    -   Registers scoreboard element strictly for 148: `registerBigRoadElement(..., 148);`.
+
+-   `src/styles/main.scss`
+    -   Layout rules scoped to `.game-148` (cosmetic, but still an ID-based special case).
+
+Note: Tests also reference `148` extensively to verify defaulting and behavior; they are not runtime gates but confirm the above logic.
+
+---
+
 ### Related Docs
 
 -   `docs/URL_Context_and_SplashScreen_Flow.md`

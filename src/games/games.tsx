@@ -81,7 +81,7 @@ export const Games: React.FC<Props> = ({
         console.log("[Games] gameProps:", gameProps);
 
         switch (gameId) {
-            case GameIds.SeDie:
+            case GameIds.SeDieMultiplayer:
                 console.log("[Games] rendering SeDieMultiPlayer component");
                 return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
 

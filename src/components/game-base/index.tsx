@@ -2,7 +2,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
 
-import { SwiperNoSwiping } from "../../_shared/constants";
+import { SwiperNoSwiping, GameIds } from "../../_shared/constants";
 import { InitSocketIO, writeDebugLog } from "../../_shared/helpers";
 import { AnalyticsHelper } from "../../_shared/helpers/analytic-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../_shared/helpers/message-transmitter/global-transmitter";
@@ -128,7 +128,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     this.props.gameSound.playPlaceBetSound();
                 },
                 gameId: this.props.id,
-                betPayloadFormat: this.props.id === 148 ? "single" : "map",
+                betPayloadFormat: this.props.id === GameIds.SeDieMultiplayer ? "single" : "map",
             });
 
         this.gameFinishHandler =
