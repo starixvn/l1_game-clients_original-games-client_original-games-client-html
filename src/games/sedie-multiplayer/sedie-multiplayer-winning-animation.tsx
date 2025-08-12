@@ -4,7 +4,7 @@ import { isHighLightWinningResult } from "../../_shared/react-hooks/use-high-lig
 import { RoundState } from "../../components/game-base/type";
 import { Spritesheet } from "../../components/game-components/sprites-sheet";
 import { SeDieBetOptions } from "./sedie-multiplayer-constants";
-import Styles from "./se-ball.module.scss";
+import Styles from "./sedie-multiplayer.module.scss";
 
 type Props = {
     choice: string;
@@ -35,8 +35,7 @@ const SeDieWinningAnimation: React.FC<Props> = ({
     const winningHighLightResult = isHighLightWinningResult;
     const [width, height] = ChoiceWinningSize[choice] || [146, 74];
 
-    // Use SeBall assets to keep UI consistent across games
-    const imagePath = `/static/images/sedie-multi-player/highlight-winning-${resourceName}.png`;
+    const imagePath = `/static/images/sedie-multiplayer/highlight-winning-${resourceName}.png`;
     const { data } = useMemoriedImage(imagePath);
 
     if (!data) {

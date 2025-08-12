@@ -4,7 +4,7 @@ import useResult from "../../_shared/react-hooks/use-result";
 import { RoundState } from "../../components/game-base/type";
 import { CageColor, CagePosition } from "../../components/game-components/cage";
 import CageResultList from "../../components/game-components/cage-result-list";
-import Style from "./se-ball.module.scss";
+import Style from "./sedie-multiplayer.module.scss";
 import { SeDieResult } from "./sedie-multiplayer-constants";
 
 export type SeDieResultBlockProps = Partial<GameStateContextModel>;
@@ -45,7 +45,7 @@ const SeDieResultBlock: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlo
                 isSmall={true}
                 listResult={resultBalls}
                 playResultAnimation={playResultAnimation}
-                gameFolder="sedie-multi-player"
+                gameFolder="sedie-multiplayer"
                 highlightBallSize={{ width: 624, height: 216 }}
                 roundState={roundState}
             />

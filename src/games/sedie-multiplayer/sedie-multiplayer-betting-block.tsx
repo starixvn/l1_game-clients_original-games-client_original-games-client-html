@@ -3,7 +3,7 @@ import { FC } from "react";
 
 import BettingBlock from "../../components/game-components/bet-option/betting-block";
 import SeDieBetOptionsComponent from "./sedie-multiplayer-bet-options-component";
-import SeBallStyle from "./se-ball.module.scss";
+import SeBallStyle from "./sedie-multiplayer.module.scss";
 
 const WinningResultEffect = dynamic(() => import("../../components/game-components/winning-result-effect"));
 

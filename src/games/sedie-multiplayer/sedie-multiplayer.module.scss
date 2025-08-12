@@ -1,3 +1,14 @@
+.sedie-game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+// ----------------- merged from se-ball.module.scss -----------------
+
 .betting-zone {
     position: relative;
     width: 35.8rem;
@@ -83,7 +94,7 @@
     .disable-layer {
         position: absolute;
         top: 0;
-        background: url("/static/images/sedie-multi-player/disabled-layer-odd.png?v=#{$version-image}") no-repeat;
+        background: url("/static/images/sedie-multiplayer/disabled-layer-odd.png?v=#{$version-image}") no-repeat;
         width: 17.8rem;
         height: 9.4rem;
         background-size: cover;
@@ -158,7 +169,7 @@
 .blue3 {
     --border-radius: 1.2rem;
 
-    --bg-disable-layer: url("/static/images/sedie-multi-player/disabled-layer-blue3.png?v=#{$version-image}") no-repeat;
+    --bg-disable-layer: url("/static/images/sedie-multiplayer/disabled-layer-blue3.png?v=#{$version-image}") no-repeat;
     --disable-layer-width: 13.6rem;
     --disable-layer-height: 6.6rem;
 
@@ -169,7 +180,7 @@
 .blue4 {
     --border-radius: 1.2rem 1.2rem 1.2rem 3rem;
 
-    --bg-disable-layer: url("/static/images/sedie-multi-player/disabled-layer-blue4.png?v=#{$version-image}") no-repeat;
+    --bg-disable-layer: url("/static/images/sedie-multiplayer/disabled-layer-blue4.png?v=#{$version-image}") no-repeat;
     --disable-layer-width: 13.6rem;
     --disable-layer-height: 6.6rem;
 
@@ -184,7 +195,7 @@
 .red2 {
     --height: 149px;
 
-    --bg-disable-layer: url("/static/images/sedie-multi-player/disabled-layer-red2.png?v=#{$version-image}") no-repeat;
+    --bg-disable-layer: url("/static/images/sedie-multiplayer/disabled-layer-red2.png?v=#{$version-image}") no-repeat;
     --disable-layer-width: 7.7rem;
     --disable-layer-height: 14.8rem;
 
@@ -202,7 +213,7 @@
 .red3 {
     --border-radius: 1.2rem;
 
-    --bg-disable-layer: url("/static/images/sedie-multi-player/disabled-layer-blue3.png?v=#{$version-image}") no-repeat;
+    --bg-disable-layer: url("/static/images/sedie-multiplayer/disabled-layer-blue3.png?v=#{$version-image}") no-repeat;
     --disable-layer-width: 13.6rem;
     --disable-layer-height: 6.6rem;
 
@@ -213,7 +224,7 @@
 .red4 {
     --border-radius: 1.2rem 1.2rem 3rem 1.2rem;
 
-    --bg-disable-layer: url("/static/images/sedie-multi-player/disabled-layer-blue4.png?v=#{$version-image}") no-repeat;
+    --bg-disable-layer: url("/static/images/sedie-multiplayer/disabled-layer-blue4.png?v=#{$version-image}") no-repeat;
     --disable-layer-width: 13.6rem;
     --disable-layer-height: 6.6rem;
 
@@ -251,14 +262,14 @@
 
 .dot-red {
     @extend %dot;
-    --bg: url("/static/images/sedie-multi-player/1x/dot-red.png?v=#{$version-image}");
-    --bg-2x: url("/static/images/sedie-multi-player/2x/dot-red.png?v=#{$version-image}");
+    --bg: url("/static/images/sedie-multiplayer/1x/dot-red.png?v=#{$version-image}");
+    --bg-2x: url("/static/images/sedie-multiplayer/2x/dot-red.png?v=#{$version-image}");
 }
 
 .dot-blue {
     @extend %dot;
-    --bg: url("/static/images/sedie-multi-player/1x/dot-blue.png?v=#{$version-image}");
-    --bg-2x: url("/static/images/sedie-multi-player/2x/dot-blue.png?v=#{$version-image}");
+    --bg: url("/static/images/sedie-multiplayer/1x/dot-blue.png?v=#{$version-image}");
+    --bg-2x: url("/static/images/sedie-multiplayer/2x/dot-blue.png?v=#{$version-image}");
 }
 
 .bet-option-row {
@@ -329,7 +340,7 @@
 .highlight-winning-bg-even {
     width: 17.8rem;
     height: 9.4rem;
-    background: url("/static/images/sedie-multi-player/highlight-winning-bg-even.png?v=#{$version-image}") no-repeat;
+    background: url("/static/images/sedie-multiplayer/highlight-winning-bg-even.png?v=#{$version-image}") no-repeat;
     //background-size: 17.8rem 9.4rem;
 }
 
@@ -340,7 +351,7 @@
 .highlight-winning-bg-red2 {
     width: 7.7rem;
     height: 14.8rem;
-    background: url("/static/images/sedie-multi-player/highlight-winning-bg-red2.png?v=#{$version-image}") no-repeat;
+    background: url("/static/images/sedie-multiplayer/highlight-winning-bg-red2.png?v=#{$version-image}") no-repeat;
     left: 0.5rem;
     top: 0.1rem;
 }
@@ -349,7 +360,7 @@
 .highlight-winning-bg-red3 {
     width: 14.6rem;
     height: 7.4rem;
-    background: url("/static/images/sedie-multi-player/highlight-winning-bg-blue3.png?v=#{$version-image}") no-repeat;
+    background: url("/static/images/sedie-multiplayer/highlight-winning-bg-blue3.png?v=#{$version-image}") no-repeat;
     left: 0.5rem;
     top: 0rem;
 }
@@ -358,7 +369,7 @@
 .highlight-winning-bg-red4 {
     width: 14.6rem;
     height: 7.4rem;
-    background: url("/static/images/sedie-multi-player/highlight-winning-bg-blue4.png?v=#{$version-image}") no-repeat;
+    background: url("/static/images/sedie-multiplayer/highlight-winning-bg-blue4.png?v=#{$version-image}") no-repeat;
     left: 0.5rem;
 }
 
@@ -375,10 +386,10 @@
     width: 17.8rem;
     position: absolute;
 
-    background-image: url("/static/images/sedie-multi-player/odd-even-winning-prev.png?v=#{$version-image}");
+    background-image: url("/static/images/sedie-multiplayer/odd-even-winning-prev.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/sedie-multi-player/1x/odd-even-winning-prev.png?v=#{$version-image}") 1x,
-        url("/static/images/sedie-multi-player/2x/odd-even-winning-prev.png?v=#{$version-image}") 2x
+        url("/static/images/sedie-multiplayer/1x/odd-even-winning-prev.png?v=#{$version-image}") 1x,
+        url("/static/images/sedie-multiplayer/2x/odd-even-winning-prev.png?v=#{$version-image}") 2x
     );
     background-repeat: no-repeat;
 }
@@ -405,10 +416,10 @@
     position: absolute;
     left: -0.1rem;
     top: -0.1rem;
-    background-image: url("/static/images/sedie-multi-player/blue3-red3-winning-prev.png?v=#{$version-image}");
+    background-image: url("/static/images/sedie-multiplayer/blue3-red3-winning-prev.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/sedie-multi-player/1x/blue3-red3-winning-prev.png?v=#{$version-image}") 1x,
-        url("/static/images/sedie-multi-player/2x/blue3-red3-winning-prev.png?v=#{$version-image}") 2x
+        url("/static/images/sedie-multiplayer/1x/blue3-red3-winning-prev.png?v=#{$version-image}") 1x,
+        url("/static/images/sedie-multiplayer/2x/blue3-red3-winning-prev.png?v=#{$version-image}") 2x
     );
 }
 
@@ -419,10 +430,10 @@
     position: absolute;
     left: -0.1rem;
     top: -0.1rem;
-    background-image: url("/static/images/sedie-multi-player/blue4-red4-winning-prev.png?v=#{$version-image}");
+    background-image: url("/static/images/sedie-multiplayer/blue4-red4-winning-prev.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/sedie-multi-player/1x/blue4-red4-winning-prev.png?v=#{$version-image}") 1x,
-        url("/static/images/sedie-multi-player/2x/blue4-red4-winning-prev.png?v=#{$version-image}") 2x
+        url("/static/images/sedie-multiplayer/1x/blue4-red4-winning-prev.png?v=#{$version-image}") 1x,
+        url("/static/images/sedie-multiplayer/2x/blue4-red4-winning-prev.png?v=#{$version-image}") 2x
     );
 }
 
@@ -436,10 +447,10 @@
     position: absolute;
     left: 0;
     top: 0.1rem;
-    background-image: url("/static/images/sedie-multi-player/red2-winning-prev.png?v=#{$version-image}");
+    background-image: url("/static/images/sedie-multiplayer/red2-winning-prev.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/sedie-multi-player/1x/red2-winning-prev.png?v=#{$version-image}") 1x,
-        url("/static/images/sedie-multi-player/2x/red2-winning-prev.png?v=#{$version-image}") 2x
+        url("/static/images/sedie-multiplayer/1x/red2-winning-prev.png?v=#{$version-image}") 1x,
+        url("/static/images/sedie-multiplayer/2x/red2-winning-prev.png?v=#{$version-image}") 2x
     );
 }
 
@@ -466,27 +477,27 @@
 
 .statistic-red2 {
     @extend %statistic-icon;
-    background: url("/static/images/sedie-multi-player/statistic-icon-red2.svg") no-repeat;
+    background: url("/static/images/sedie-multiplayer/statistic-icon-red2.svg") no-repeat;
 }
 
 .statistic-red3 {
     @extend %statistic-icon;
-    background: url("/static/images/sedie-multi-player/statistic-icon-red3.svg") no-repeat;
+    background: url("/static/images/sedie-multiplayer/statistic-icon-red3.svg") no-repeat;
 }
 
 .statistic-red4 {
     @extend %statistic-icon;
-    background: url("/static/images/sedie-multi-player/statistic-icon-red4.svg") no-repeat;
+    background: url("/static/images/sedie-multiplayer/statistic-icon-red4.svg") no-repeat;
 }
 
 .statistic-blue3 {
     @extend %statistic-icon;
-    background: url("/static/images/sedie-multi-player/statistic-icon-blue3.svg") no-repeat;
+    background: url("/static/images/sedie-multiplayer/statistic-icon-blue3.svg") no-repeat;
 }
 
 .statistic-blue4 {
     @extend %statistic-icon;
-    background: url("/static/images/sedie-multi-player/statistic-icon-blue4.svg") no-repeat;
+    background: url("/static/images/sedie-multiplayer/statistic-icon-blue4.svg") no-repeat;
 }
 
 .choice-odds-area {

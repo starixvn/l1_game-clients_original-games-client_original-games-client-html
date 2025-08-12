@@ -1,3 +1,5 @@
+import { buildVersion } from "../../_shared/constants";
+
 export const SeDieBetOptions = {
     ODD: "odd",
     EVEN: "even",
@@ -22,14 +24,43 @@ export const mainChoices = [SeDieChoices.odd, SeDieChoices.even];
 export const topChoices = [SeDieChoices.red4, SeDieChoices.red3, SeDieChoices.red2];
 export const bottomChoices = [SeDieChoices.white4, SeDieChoices.white3];
 
-// Keep percentage ring colors consistent with se-ball
+// Percentage ring colors
 export const SeDieBetOptionsPercentageColor = {
     odd: "#84C6FF",
     even: "#FF9090",
 };
 
-// Re-export mappings reused from SeBall assets
-export { DotColorMapper, BetChoiceImagesData } from "./se-ball-constants";
+// Dot and background mapping for sedie-multiplayer
+export const DotColorMapper: Record<string, boolean[]> = {
+    red3: [true, true, true, false],
+    red4: [true, true, true, true],
+    blue3: [true, false, false, false],
+    blue4: [false, false, false, false],
+    red2: [true, true, false, false],
+};
+
+export const BetChoiceImagesData: Record<string, { src: string; blur: string }> = {
+    odd: {
+        src: `/static/images/sedie-multiplayer/2x/bg-odd.webp?v=${buildVersion}`,
+        blur: ``,
+    },
+    even: {
+        src: `/static/images/sedie-multiplayer/2x/bg-even.webp?v=${buildVersion}`,
+        blur: ``,
+    },
+    blue3: {
+        src: `/static/images/sedie-multiplayer/2x/bg-blue3.webp?v=${buildVersion}`,
+        blur: "",
+    },
+    red2: {
+        src: `/static/images/sedie-multiplayer/2x/bg-red2.webp?v=${buildVersion}`,
+        blur: "",
+    },
+    red4: {
+        src: `/static/images/sedie-multiplayer/2x/bg-red4.webp?v=${buildVersion}`,
+        blur: "",
+    },
+};
 
 export const ChoiceSeDieIconMapper: Record<string, boolean[]> = {
     red4: [true, true, true, true],

@@ -7,8 +7,8 @@ import { useGameStateContext } from "../../_shared/react-contexts/game-state-con
 import { isShowHighlightPrevResult } from "../../_shared/react-hooks/use-high-light";
 import { RoundState } from "../../components/game-base/type";
 import { SeDieBetOptions, SeDieBetOptionsPercentageColor } from "./sedie-multiplayer-constants";
-import Style from "./se-ball.module.scss";
-import { BetChoiceImagesData, DotColorMapper } from "./se-ball-constants";
+import Style from "./sedie-multiplayer.module.scss";
+import { BetChoiceImagesData, DotColorMapper } from "./sedie-multiplayer-constants";
 
 const BetChoice = dynamic(() => import("../../components/game-components/bet-option/bet-choice"));
 const RippleButton = dynamic(() => import("../../components/game-components/bet-option/ripple-button"));
