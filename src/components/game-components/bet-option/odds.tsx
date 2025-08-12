@@ -40,7 +40,7 @@ export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, anim
 
     return useMemo(() => {
         if (oddsValue <= 0) {
-            return null;
+            return <div className={className}></div>;
         }
 
         return (

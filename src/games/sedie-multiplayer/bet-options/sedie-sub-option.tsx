@@ -1,0 +1,42 @@
+import dynamic from "next/dynamic";
+import styles from "./style.module.scss";
+const Odds = dynamic(() => import("../../../components/game-components/bet-option/odds"));
+const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"));
+const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
+const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
+import { SeDieBetOptions } from "../sedie-multiplayer-constants";
+
+const subChoiceImages = {
+    [SeDieBetOptions.WHITE4]: [false, false, false, false],
+    [SeDieBetOptions.WHITE3]: [true, false, false, false],
+    [SeDieBetOptions.RED2]: [true, true, false, false],
+    [SeDieBetOptions.RED3]: [true, true, true, false],
+    [SeDieBetOptions.RED4]: [true, true, true, true],
+};
+
+export const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+    const className = `sub-bet-${choice}`;
+    const renderImages = (choice: string) => {
+        return (
+            <div
+                className={`flex flex-wrap items-center justify-center p-2 w-[74px] gap-1`}
+                style={{ "--dot-size": "20px" } as React.CSSProperties}
+            >
+                {subChoiceImages[choice].map((isRed, index) => (
+                    <div key={index} className={`${isRed ? styles["dot-red"] : styles["dot-white"]}`}></div>
+                ))}
+            </div>
+        );
+    };
+    return (
+        <div className={`flex-1 text-white relative ${styles[className]}`}>
+            <TotalBet choice={choice} className={"h-[2.4rem] pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
+            {renderImages(choice)}
+            <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"mb-0.5"} />
+            <div className="h-2xl">
+                <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
+            </div>
+            <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
+        </div>
+    );
+};

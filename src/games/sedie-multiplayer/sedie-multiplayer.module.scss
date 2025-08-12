@@ -97,11 +97,6 @@
     @extend %main-option;
     --color: #ff9090;
 
-    .btn-ripple {
-        z-index: 2;
-        clip-path: polygon(87% 0, 93% 7%, 98% 19%, 100% 28%, 100% 89%, 99% 96%, 95% 100%, 21% 100%, 3% 91%, 0 82%, 0 12%, 2% 5%, 6% 0);
-    }
-
     .disable-layer {
         transform: scaleX(-1);
     }
@@ -110,11 +105,6 @@
 .odd {
     @extend %main-option;
     --color: #84c6ff;
-
-    .btn-ripple {
-        z-index: 2;
-        clip-path: polygon(16% 0%, 94% 0%, 98% 3%, 100% 10%, 100% 83%, 97% 92%, 78% 100%, 10% 100%, 2% 97%, 0 84%, 0% 23%, 4% 13%, 8% 5%);
-    }
 }
 
 //-------------- CHOICE BLUE3 BLUE4 RED2 RED3 RED4 -----------------//
@@ -126,11 +116,6 @@
     align-items: center;
     row-gap: 0.3rem;
     padding-top: 1.2rem;
-
-    .btn-ripple {
-        border-radius: var(--border-radius);
-        z-index: 1;
-    }
 
     .disable-layer {
         position: absolute;
@@ -181,11 +166,6 @@
     grid-row: 1 / span 2;
     margin-top: -12px;
     justify-content: center;
-
-    .btn-ripple {
-        z-index: 2;
-        clip-path: polygon(95% 8%, 97% 11%, 97% 94%, 96% 96%, 88% 100%, 14% 100%, 2% 97%, 0 92%, 0 12%, 3% 8%, 50% 0);
-    }
 }
 
 .red3 {

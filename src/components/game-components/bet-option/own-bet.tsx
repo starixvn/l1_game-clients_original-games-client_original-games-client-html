@@ -34,10 +34,8 @@ export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className
 
     const ownBetUI = (value: string, animClass = "") => {
         return (
-            <div className={`${Styles["own-bet"]} ${className} ${animClass}`}>
-                <span id={`${tolgeeNamespace}-${choice}-own-bet`} className={Styles["bet-value"]}>
-                    {value}
-                </span>
+            <div className={`${Styles["own-bet"]} text-center ${className} ${animClass}`}>
+                <span id={`${tolgeeNamespace}-${choice}-own-bet`}>{value}</span>
             </div>
         );
     };
@@ -45,6 +43,7 @@ export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className
     const ownBetValue = ownBet + (enableQuickBet ? 0 : notConfirmOwnBets?.[choice] ?? 0);
     return (
         <>
+            {ownBetUI(numberWithCommas(100, 1))}
             {ownBetValue > 0 && ownBetUI(numberWithCommas(ownBetValue, 1))}
             {isShowBetAnim && acceptedBets > 0 && ownBetUI(numberWithCommas(acceptedBets, 1), Styles["own-bet-anim"])}
         </>
