@@ -23,8 +23,8 @@ export const PlayerResultBoard = () => {
     }));
 
     return (
-        <div className="h-full rounded-xl bg-primary p-3 pb-1 mb-3 bg-primary-bg">
-            <div className="flex justify-between bg-[#ebebeb] dark:bg-[#101721] rounded-xl p-2 mb-2">
+        <div className="h-full rounded-xl p-3 pb-1 mb-3 bg-white dark:bg-primary-bg border border-primary-border">
+            <div className="flex justify-between bg-secondary-bg rounded-xl p-2 mb-2">
                 <div className="flex items-center">
                     <div className="inline-flex items-center justify-center mr-2 bg-[#24d67c33] rounded-full">
                         <div className="inline-block w-2 h-2 m-1 bg-[#24d67c] rounded-full"></div>

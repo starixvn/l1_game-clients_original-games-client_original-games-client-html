@@ -29,7 +29,7 @@ export const BetHistoryTable = () => {
     }));
 
     return (
-        <div className="rounded bg-primary-bg p-2">
+        <div className="rounded bg-white dark:bg-primary-bg p-2">
             <Table
                 columns={columns}
                 data={data}

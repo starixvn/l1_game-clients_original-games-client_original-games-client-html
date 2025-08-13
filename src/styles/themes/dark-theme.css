@@ -1,8 +1,8 @@
 html[data-theme="dark"] {
-    --page-background-color: #000;
+    --page-background-color: #182130;
     --text-color: #fff;
-    --border-color: #e4e4e4;
-    --secondary-background-color: #182130;
+    --border-color: #2B3648;
+    --secondary-background-color: #101721;
     --secondary-text-color: #b3bec1;
 
     --opacity-background: rgba(12, 12, 12, 0.8);

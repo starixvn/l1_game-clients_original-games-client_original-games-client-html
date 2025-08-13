@@ -604,7 +604,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     renderBetControl() {
         return (
-            <div className="bg-secondary-bg md:rounded-t-xl">
+            <div className="bg-[#F1F3F4] dark:bg-primary-bg md:rounded-t-xl">
                 <div className="flex flex-wrap">
                     {this.renderBetControlLeftSide()}
                     {this.renderBetControlRightSide()}

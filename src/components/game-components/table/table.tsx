@@ -32,7 +32,7 @@ export const Table = <T,>({
 
   return (
     <div
-      className={classNames("rounded bg-primary-bg p-2", className)}
+      className={classNames("rounded", className)}
     >
       <table className="w-full border-collapse">
         <thead>
@@ -47,7 +47,7 @@ export const Table = <T,>({
             ))}
           </tr>
         </thead>
-        <tbody className="">
+        <tbody>
           {data.length === 0 ? (
             <tr>
               <td
