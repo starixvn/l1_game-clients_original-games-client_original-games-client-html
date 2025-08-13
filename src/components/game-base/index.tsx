@@ -31,7 +31,6 @@ import { PFSettingModal } from "../game-components/provably-fair";
 import SideBetScoreboard from "../game-components/round-history/side-bet-scoreboard";
 import { Settings } from "../game-components/settings";
 import BackgroundGalaxy from "../page-components/background";
-import BetSettings from "../page-components/bet-settings";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
@@ -56,6 +55,7 @@ import { MenuIcon } from "../game-components/menu/menu-icon";
 import { Menu } from "../game-components/menu/menu";
 import { RoundHistory } from "../game-components/round-history/demo";
 import { IconStatistic } from "../game-components/statistic/icon-statistic";
+import ChipControlPanel from "../game-components/chip-slider";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -541,9 +541,26 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
-    renderSlidingChips() {
+    renderChipControlPanel() {
         const { gameConfigs, userStakeLevel } = this.props.gameStateContextModel;
-        return <BetSettings gameConfigs={gameConfigs} userStakeLevel={userStakeLevel} />;
+        return <ChipControlPanel gameConfigs={gameConfigs} userStakeLevel={userStakeLevel} />;
+    }
+
+    renderLeftSideBetSettings() {
+        return <></>;
+    }
+    renderRightSideBetSettings() {
+        return <></>;
+    }
+
+    renderBetSettings() {
+        return (
+            <div className="flex gap-2 justify-center items-center">
+                {this.renderLeftSideBetSettings()}
+                {this.renderChipControlPanel()}
+                {this.renderRightSideBetSettings()}
+            </div>
+        );
     }
 
     renderConfirmBet() {
@@ -595,7 +612,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetControlLeftSide() {
-        return <div className="col-12 col-md-6">{this.renderSlidingChips()}</div>;
+        return <div className="col-12 col-md-6">{this.renderBetSettings()}</div>;
     }
 
     renderBetControlRightSide() {
@@ -635,8 +652,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 <div className="flex flex-col items-center justify-center">
                     {this.renderRoundHistory()}
                     {this.renderCountdownTimer()}
-                    <div>{availableInGameData && this.renderResultBlock()}</div>
-                    {this.renderBetOptions()}
+                    <div className="flex flex-col">
+                        {availableInGameData && this.renderResultBlock()}
+                        {this.renderBetOptions()}
+                    </div>
                 </div>
                 {this.renderBetControl()}
                 {this.renderMenu()}

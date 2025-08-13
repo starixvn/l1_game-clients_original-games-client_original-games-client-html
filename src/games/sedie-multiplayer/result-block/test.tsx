@@ -3,20 +3,22 @@ import Image from "next/image";
 import styles from "./plate.module.scss";
 
 // Constants for button positioning
-const BUTTON_SIZE = 25; // Button size in pixels
+const BUTTON_SIZE = 38; // Button size in pixels
 const PLATE_SIZE = 200; // Plate size in pixels
+const BOWL_SIZE = 140; // Bowl size in pixels
 const BOUNDARY_SIZE = 130; // Boundary size in pixels
 const CIRCLE_RADIUS = BOUNDARY_SIZE / 2; // Half of boundary diameter
 const CIRCLE_DIAMETER = BOUNDARY_SIZE; // Boundary diameter
-const MAX_ATTEMPTS = 1000;
+const MAX_ATTEMPTS = 10000;
 const BUTTON_BUFFER = 2; // Buffer between buttons
 const SHAKE_DURATION = 2000; // Shake duration in milliseconds
 const OPEN_DURATION = 1000; // Open duration in milliseconds
 const CLOSE_DURATION = 1000; // Close duration in milliseconds
 
+let interval: NodeJS.Timeout | null = null;
 // Animation states
 type AnimationState = "idle" | "shake" | "open" | "close";
-
+let count = 29473;
 const PlateButtons: React.FC = () => {
     const [buttons, setButtons] = useState<Array<{ id: number; x: number; y: number; isRed: boolean }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
@@ -25,7 +27,7 @@ const PlateButtons: React.FC = () => {
     const [seed, setSeed] = useState<number>(0);
 
     // Generate random positions for buttons within circular boundary
-    const generateButtonPositions = (seedValue: number) => {
+    const generateButtonPositions = (seedValue: number, time = 1) => {
         // Create a seeded random number generator
         const seededRandom = (min: number, max: number) => {
             const x = Math.sin(seedValue++) * 10000;
@@ -61,6 +63,15 @@ const PlateButtons: React.FC = () => {
                 }
                 attempts++;
             }
+            if (attempts >= MAX_ATTEMPTS) {
+                if (time > 5) {
+                    interval && clearInterval(interval);
+                    interval = null;
+                    return;
+                }
+                generateButtonPositions(seedValue + 100, time + 1);
+                return;
+            }
 
             if (!position) {
                 const angle = seededRandom(0, 2 * Math.PI);
@@ -84,8 +95,21 @@ const PlateButtons: React.FC = () => {
     };
 
     useEffect(() => {
-        generateButtonPositions(seed);
-    }, [seed]);
+        intervalUpdate();
+        return () => {
+            interval && clearInterval(interval);
+            interval = null;
+        };
+    }, []);
+
+    const intervalUpdate = () => {
+        interval && clearInterval(interval);
+
+        interval = setInterval(() => {
+            count = count + 1;
+            generateButtonPositions(count);
+        }, 0);
+    };
 
     // Animation handlers
     const handleShake = () => {
@@ -148,58 +172,63 @@ const PlateButtons: React.FC = () => {
     };
 
     return (
-        <div
-            className={styles["object"]}
-            style={
-                {
-                    "--button-size": `${BUTTON_SIZE}px`,
-                    "--plate-size": `${PLATE_SIZE}px`,
-                    "--boundary-size": `${BOUNDARY_SIZE}px`,
-                    "--circle-radius": `${CIRCLE_RADIUS}px`,
-                    "--circle-diameter": `${CIRCLE_DIAMETER}px`,
-                    "--shake-duration": `${SHAKE_DURATION}ms`,
-                    "--open-duration": `${OPEN_DURATION}ms`,
-                    "--close-duration": `${CLOSE_DURATION}ms`,
-                } as React.CSSProperties
-            }
-        >
-            <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
-                <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
-                    {renderButtons()}
-                    <div
-                        className={`${styles["bowl"]} ${styles[`bowl-${animationState}`]}`}
-                        style={{ display: showBowl ? "block" : "none" }}
-                    ></div>
+        <div className="relative w-full">
+            <div
+                className={`${styles["object"]} absolute p-2 h-[296px] left-[50%] -translate-x-1/2 z-[10] content-center`}
+                style={
+                    {
+                        "--button-size": `${BUTTON_SIZE}px`,
+                        "--plate-size": `${PLATE_SIZE}px`,
+                        "--bowl-size": `${BOWL_SIZE}px`,
+                        "--boundary-size": `${BOUNDARY_SIZE}px`,
+                        "--circle-radius": `${CIRCLE_RADIUS}px`,
+                        "--circle-diameter": `${CIRCLE_DIAMETER}px`,
+                        "--shake-duration": `${SHAKE_DURATION}ms`,
+                        "--open-duration": `${OPEN_DURATION}ms`,
+                        "--close-duration": `${CLOSE_DURATION}ms`,
+                    } as React.CSSProperties
+                }
+            >
+                <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
+                    <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
+                        {renderButtons()}
+                        {/* <div
+                            className={`${styles["bowl"]} ${styles[`bowl-${animationState}`]}`}
+                            style={{ display: showBowl ? "block" : "none" }}
+                        ></div> */}
+                    </div>
                 </div>
             </div>
-
-            {/* Bowl with animation states */}
-
-            {/* Control buttons */}
-            <div className={styles["control-section"]}>
-                <div className={styles["seed-control"]}>
-                    <label htmlFor="seed-input">Seed:</label>
-                    <input
-                        id="seed-input"
-                        type="number"
-                        value={seed}
-                        onChange={(e) => handleSeedChange(Number(e.target.value))}
-                        className={styles["seed-input"]}
-                    />
-                </div>
-                <button className={`${styles["control-button"]} ${styles["shake-button"]}`} onClick={handleShake}>
-                    Shake
-                </button>
-                <button className={`${styles["control-button"]} ${styles["open-button"]}`} onClick={handleOpen}>
-                    Open
-                </button>
-                <button className={`${styles["control-button"]} ${styles["close-button"]}`} onClick={handleClose}>
-                    Close
-                </button>
-                <button className={styles["regenerate-button"]} onClick={handleRegenerate}>
-                    Regenerate
-                </button>
-            </div>
+            <span className="absolute bottom-[-520px] left-[50%] -translate-x-1/2 ">{count}</span>
+            <button
+                className="absolute bottom-[-500px] left-[50%] -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                    intervalUpdate();
+                }}
+            >
+                Regenerate {count}
+            </button>
+            <button
+                className="absolute bottom-[-440px] left-[50%] -translate-x-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                    setAnimationState((prevState) => {
+                        switch (prevState) {
+                            case "idle":
+                                return "shake";
+                            case "shake":
+                                return "open";
+                            case "open":
+                                return "close";
+                            case "close":
+                                return "idle";
+                            default:
+                                return "idle";
+                        }
+                    });
+                }}
+            >
+                Change State
+            </button>
         </div>
     );
 };

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useThemeContext } from '../../../_shared/react-contexts/theme-context';
+import React, { useEffect, useState } from "react";
+import { useThemeContext } from "../../../_shared/react-contexts/theme-context";
 
 const ThemeToggle: React.FC = () => {
     const { toggleTheme, isDark } = useThemeContext();
@@ -16,9 +16,9 @@ const ThemeToggle: React.FC = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="fixed top-2 right-2 z-50 w-12 h-12 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white cursor-pointer flex items-center justify-center transition-all duration-300 ease-in-out shadow-lg hover:scale-110 hover:shadow-xl active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-700"
-            aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
-            title={`Switch to ${isDark ? 'light' : 'dark'} theme`}
+            className="fixed top-2 right-2 z-5000 w-12 h-12 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white cursor-pointer flex items-center justify-center transition-all duration-300 ease-in-out shadow-lg hover:scale-110 hover:shadow-xl active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-700"
+            aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+            title={`Switch to ${isDark ? "light" : "dark"} theme`}
         >
             {isDark ? (
                 // Sun icon for dark theme

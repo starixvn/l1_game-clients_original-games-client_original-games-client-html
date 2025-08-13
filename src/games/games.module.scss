@@ -31,6 +31,10 @@
 
 .game-wrapper {
     position: absolute;
-    top: 30px;
+    top: 50px;
     overflow: hidden;
+
+    @media (min-width: 1024px) {
+        top: 0;
+    }
 }

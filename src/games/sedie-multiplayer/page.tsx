@@ -18,7 +18,6 @@ import RedAndBlueStatistic from "../../components/game-components/statistic/red-
 import { RoundGameSoundHandler } from "../../components/round-base/round-game-sound-handler";
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
-import { SeDieBettingBlock, SeDieResultBlock } from ".";
 import ScoreboardSeDie from "./scoreboard";
 import { SeDieBetOptions } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
@@ -26,6 +25,8 @@ import Styles from "./sedie-multiplayer.module.scss";
 import SeBallStyle from "./sedie-multiplayer.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
+import { Plate } from "./result-block";
+import SeDieBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options-component";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 
@@ -65,25 +66,24 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         super.componentDidMount();
     }
 
+    renderLeftSideBetSettings() {
+        return <div>x2</div>;
+    }
+    renderRightSideBetSettings() {
+        return <div>A</div>;
+    }
+
     renderResultBlock() {
-        const { roundHistory, result, roundState, roundData, drawId, playResultAnimation, isPlayStartRoundAnimation } =
+        const { roundHistory, result, roundState, roundData, drawId, playResultAnimation, isPlayStartRoundAnimation, roundId } =
             this.props.gameStateContextModel;
 
         return (
-            <SeDieResultBlock
-                roundHistory={roundHistory as Round<SeDieResult, SeDieSettlementResult>[]}
-                result={result}
-                roundState={roundState}
-                roundData={roundData}
-                drawId={drawId}
-                playResultAnimation={playResultAnimation}
-                isPlayStartRoundAnimation={isPlayStartRoundAnimation}
-            />
+            <Plate {...{ roundHistory, result, roundState, roundData, drawId, playResultAnimation, isPlayStartRoundAnimation, roundId }} />
         );
     }
 
     renderBettingBlock() {
-        return <SeDieBettingBlock />;
+        return <SeDieBetOptionsComponent />;
     }
 
     renderBetHistoryModal() {

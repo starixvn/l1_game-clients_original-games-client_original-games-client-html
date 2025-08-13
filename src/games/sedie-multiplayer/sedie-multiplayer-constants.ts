@@ -81,12 +81,10 @@ export type SeDieSettlementResult = {
 };
 
 export type SeDieResult = {
-    balls: number[];
-    drawId: number;
-    time: string;
-    winningChoice?: string;
+    red1: boolean;
+    red2: boolean;
+    red3: boolean;
+    red4: boolean;
 };
 
 export type Odd = {};
-
-

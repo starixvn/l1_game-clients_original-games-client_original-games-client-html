@@ -3,14 +3,13 @@ import { FC } from "react";
 
 import BettingBlock from "../../components/game-components/bet-option/betting-block";
 import SeDieBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options-component";
-import SeBallStyle from "./sedie-multiplayer.module.scss";
 
 const WinningResultEffect = dynamic(() => import("../../components/game-components/winning-result-effect"));
 
 const SeDieBettingBlock: FC = () => {
     return (
         <BettingBlock>
-            <div className={`${SeBallStyle["betting-zone"]}`}>
+            <div>
                 <SeDieBetOptionsComponent />
                 <WinningResultEffect />
             </div>
