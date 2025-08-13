@@ -18,7 +18,6 @@
 @import "./components/loading";
 
 html {
-    font-size: 10px !important;
     overscroll-behavior: none;
     -ms-overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;
@@ -59,12 +58,12 @@ html {
     --setting-index: 200;
 
     // spacing size
-    --spacing-size-1: 0.4rem;
-    --spacing-size-2: 0.8rem;
-    --spacing-size-3: 1.2rem;
-    --spacing-size-4: 1.6rem;
-    --spacing-size-5: 2rem;
-    --spacing-size-6: 2.4rem;
+    --spacing-size-1: 4px;
+    --spacing-size-2: 8px;
+    --spacing-size-3: 12px;
+    --spacing-size-4: 16px;
+    --spacing-size-5: 20px;
+    --spacing-size-6: 24px;
 
     --zoom-game: 1.25;
 
@@ -100,7 +99,7 @@ html {
     // popup
     --popup-background: #fff;
     --popup-color: #2c2f3e;
-    --popup-bet-form-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     --container-color-bg: #fff;
     --container-border-color: #cbcbcb;
     --icon-favorite-game-guide: #2c2f3e;
@@ -136,7 +135,7 @@ body {
     padding: 0;
     margin: 0;
     background-color: var(--page-background-color);
-    font: 1.4rem/1.5 var(--font-family);
+    font: 14px/1.5 var(--font-family);
     color: var(--text-color);
     overscroll-behavior: contain;
     touch-action: pan-y;
@@ -151,7 +150,7 @@ body {
 }
 
 .game-header {
-    height: 5rem;
+    height: 50px;
     position: relative;
 }
 
@@ -162,20 +161,20 @@ body {
 
 .countdown-timer {
     position: absolute;
-    top: 1.5rem;
+    top: 15px;
     left: 0;
     width: 100%;
-    height: 7rem;
+    height: 70px;
     display: flex;
     justify-content: center;
-    font-size: 1.7rem;
+    font-size: 17px;
     color: white;
 }
 
 .round-id {
-    padding-left: 0.8rem;
-    line-height: 3.2rem;
-    font-size: 1.2rem;
+    padding-left: 8px;
+    line-height: 32px;
+    font-size: 12px;
     color: #fff;
     opacity: 0;
 }
@@ -189,7 +188,7 @@ body {
 
 .copyright {
     position: relative;
-    font-size: 0.9rem;
+    font-size: 9px;
     font-weight: 500;
     color: var(--color-copyright);
 }
@@ -216,17 +215,17 @@ body {
 
 .game-area {
     display: grid;
-    grid-template-rows: 5rem 18.5rem 20.4rem 7.8rem 3.8rem 11.3rem;
-    grid-template-columns: 37.5rem;
+    grid-template-rows: 50px 185px 204px 78px 38px 113px;
+    grid-template-columns: 375px;
     justify-content: center;
-    padding-top: 1rem;
+    padding-top: 10px;
 
     &.game-1005 {
-        grid-template-rows: 5rem 13.5rem 25.4rem 7.8rem 3.8rem 11.3rem;
+        grid-template-rows: 50px 135px 254px 78px 38px 113px;
     }
 
     &.game-148 {
-        grid-template-rows: 5rem 13.5rem 25.4rem 7.8rem 3.8rem 11.3rem;
+        grid-template-rows: 50px 135px 254px 78px 38px 113px;
     }
 
     // SicBall (1007) removed

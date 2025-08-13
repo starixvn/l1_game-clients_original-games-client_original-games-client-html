@@ -17,8 +17,8 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
                     tolgeeNamespace={tolgeeNamespace}
                 />
                 <div>
-                    <div className="text-center text-[20px] uppercase font-bold tracking-[4%]">{choice}</div>
-                    <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"text-[18px]"} />
+                    <div className="text-center text-xl uppercase font-bold">{choice}</div>
+                    <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"text-lg"} />
                 </div>
                 <div className="h-2xl">
                     <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />

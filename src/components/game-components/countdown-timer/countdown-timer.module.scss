@@ -75,24 +75,24 @@
 //     }
 // }
 .countdown-timer-container {
-    height: 3.8rem;
+    height: 38px;
     .text {
-        font-size: 1.4rem;
+        font-size: 14px;
         font-weight: 400;
         color: #8eff77;
         text-align: center;
     }
     .progress-bar-container-wrapper {
         position: absolute;
-        width: 10rem;
-        height: 1rem;
+        width: 100px;
+        height: 10px;
         justify-self: center;
         align-content: flex-end;
 
         .progress-bar-container {
             position: relative;
             bottom: 0;
-            height: 0.5rem;
+            height: 5px;
             background-color: black;
             border-radius: calc(infinity * 1px);
             overflow: hidden;

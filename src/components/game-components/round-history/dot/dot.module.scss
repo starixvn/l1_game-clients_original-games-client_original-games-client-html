@@ -3,17 +3,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    font: 1.1rem var(--font-number);
+    font: 11px var(--font-number);
     pointer-events: none;
     color: #fff;
     z-index: 1;
 
     @media (min-width: 1150px) {
-        width: 1.6rem;
-        height: 1.6rem;
+        width: 16px;
+        height: 16px;
     }
 
     &:before {
@@ -28,19 +28,19 @@
     }
 
     &.large {
-        height: 2rem;
-        width: 2rem;
-        margin: 0 0.2rem;
+        height: 20px;
+        width: 20px;
+        margin: 0 2px;
     }
 
     &.super-large {
-        height: 2.6rem;
-        width: 2.6rem;
+        height: 26px;
+        width: 26px;
     }
 
     &.medium {
-        height: 1.8rem;
-        width: 1.8rem;
+        height: 18px;
+        width: 18px;
     }
 }
 
@@ -78,7 +78,7 @@
     &:before {
         background: var(--dot-even-background);
     }
-          
+
     &.kenopromax,
     &.kenomatch1,
     &.kenomatch2,
@@ -104,14 +104,13 @@
 
 .dot-grid-even {
     @extend %dot;
-    background: linear-gradient(180deg, #F7F7F7 0%, #B5B5B5 100%);
-    
-        
+    background: linear-gradient(180deg, #f7f7f7 0%, #b5b5b5 100%);
+
     color: var(--dot-even-text-color);
     font-weight: 500;
 
     &:before {
-        background: linear-gradient(180deg, #EEEEEE 0%, #CCCCCC 100%);
+        background: linear-gradient(180deg, #eeeeee 0%, #cccccc 100%);
     }
     &.kenopromax,
     &.kenomatch1,
@@ -127,10 +126,10 @@
     &.kenowest,
     &.kenonorth {
         color: #fff;
-        background: linear-gradient(180deg, #569CE9 -6.58%, #1F5E9F 100%);
+        background: linear-gradient(180deg, #569ce9 -6.58%, #1f5e9f 100%);
 
         &:before {
-            background: linear-gradient(180deg, #4C91E2 0%, #306CA6 100%);
+            background: linear-gradient(180deg, #4c91e2 0%, #306ca6 100%);
         }
     }
 }
@@ -158,18 +157,16 @@
             background: var(--bigSmall-dot-small-background);
         }
     }
-
-
 }
 
 .dot-grid-odd {
     @extend %dot;
-    background: linear-gradient(180deg, rgba(255,86,97,1) 0%, rgba(190,28,40,1) 100%);    
+    background: linear-gradient(180deg, rgba(255, 86, 97, 1) 0%, rgba(190, 28, 40, 1) 100%);
     color: var(--dot-odd-text-color);
 
     &:before {
-        background: linear-gradient(180deg, rgba(250,55,68,1) 6.04%, rgba(205,13,27,1) 100%);
-    }    
+        background: linear-gradient(180deg, rgba(250, 55, 68, 1) 6.04%, rgba(205, 13, 27, 1) 100%);
+    }
 }
 
 // dragon-tiger
@@ -185,7 +182,7 @@
 
 .dot-grid-dragon {
     @extend %dot;
-    background: var(--dragonTiger-dot-dragon-border);   
+    background: var(--dragonTiger-dot-dragon-border);
 
     &:before {
         background: var(--dragonTiger-dot-dragon-background);
@@ -204,7 +201,7 @@
 
 .dot-grid-tiger {
     @extend %dot;
-    background: var(--dragonTiger-dot-tiger-border);    
+    background: var(--dragonTiger-dot-tiger-border);
 
     &:before {
         background: var(--dragonTiger-dot-tiger-background);
@@ -231,13 +228,13 @@
 
 .dot-grid-tie {
     @extend %dot;
-    background: var(--baccarat-dot-tie-border);    
+    background: var(--baccarat-dot-tie-border);
 
     &:before {
         background: var(--baccarat-dot-tie-background);
     }
     &.dragontiger {
-        background: var(--dragonTiger-dot-tie-border);       
+        background: var(--dragonTiger-dot-tie-border);
 
         &:before {
             background: var(--dragonTiger-dot-tie-background);
@@ -258,10 +255,10 @@
 
 .dot-grid-big {
     @extend %dot;
-    background: linear-gradient(180deg, #569CE9 -6.58%, #1F5E9F 100%);
+    background: linear-gradient(180deg, #569ce9 -6.58%, #1f5e9f 100%);
 
     &:before {
-        background: linear-gradient(180deg, #4C91E2 0%, #306CA6 100%);
+        background: linear-gradient(180deg, #4c91e2 0%, #306ca6 100%);
     }
 }
 
@@ -277,10 +274,10 @@
 
 .dot-grid-small {
     @extend %dot;
-    background: linear-gradient(180deg, #FF5661 0%, #BE1C28 100%);
+    background: linear-gradient(180deg, #ff5661 0%, #be1c28 100%);
 
     &:before {
-        background: linear-gradient(180deg, #FA3744 6.04%, #CD0D1B 100%);
+        background: linear-gradient(180deg, #fa3744 6.04%, #cd0d1b 100%);
     }
 }
 
@@ -297,7 +294,7 @@
 
 .dot-grid-banker {
     @extend %dot;
-    background: var(--baccarat-dot-banker-border);    
+    background: var(--baccarat-dot-banker-border);
 
     &:before {
         background: var(--baccarat-dot-banker-background);
@@ -328,10 +325,10 @@
 %icon-keno-promax {
     content: "";
     display: inline-block;
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 12px;
+    height: 12px;
     background-repeat: no-repeat;
-    background-size: 1.2rem 1.2rem;
+    background-size: 12px 12px;
 }
 
 .dot-gold {
@@ -350,7 +347,7 @@
 
 .dot-grid-gold {
     @extend %dot;
-    background: var(--keno-pro-dot-gold-border);    
+    background: var(--keno-pro-dot-gold-border);
     &:before {
         background: var(--keno-pro-dot-gold-background);
     }
@@ -377,7 +374,7 @@
 .dot-grid-wood {
     @extend %dot;
     background: var(--keno-pro-dot-wood-border);
-    
+
     &:before {
         background: var(--keno-pro-dot-wood-background);
     }
@@ -429,7 +426,7 @@
 .dot-grid-fire {
     @extend %dot;
     background: var(--keno-pro-dot-fire-border);
-   
+
     &:before {
         background: var(--keno-pro-dot-fire-background);
     }
@@ -499,7 +496,7 @@
 
 .dot-grid-black {
     @extend %dot;
-    background: var(--threeCards-dot-black-border);    
+    background: var(--threeCards-dot-black-border);
     color: var(--threeCards-black-text-color);
 
     &:before {

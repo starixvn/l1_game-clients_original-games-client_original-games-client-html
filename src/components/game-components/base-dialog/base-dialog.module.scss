@@ -1,19 +1,19 @@
 .overlay {
-    top: -0.8rem !important;
+    top: -8px !important;
     z-index: var(--popup-guide-history-index);
 }
 
 .popup {
     cursor: auto;
     position: absolute;
-    padding: 1.6rem;
-    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 16px;
+    border-radius: 5px 5px 0 0;
     color: var(--popup-color);
     z-index: var(--popup-index);
 
     &.modal-full {
         position: fixed;
-        top: 1.6rem;
+        top: 16px;
         bottom: 0;
         left: 0;
         right: 0;
@@ -45,9 +45,9 @@
     }
 
     &.modal-rebet {
-        top: 4.7rem;
-        left: 4rem;
-        right: 4rem;
+        top: 47px;
+        left: 40px;
+        right: 40px;
     }
 
     &.modal-center {
@@ -60,7 +60,7 @@
     }
 
     &.modal-message {
-        border-radius: 0.5rem !important;
+        border-radius: 5px !important;
         padding: 0 !important;
         left: 5px;
         right: 5px;
@@ -69,5 +69,5 @@
 }
 
 .ipad {
-    padding-bottom: 6.9rem;
+    padding-bottom: 69px;
 }

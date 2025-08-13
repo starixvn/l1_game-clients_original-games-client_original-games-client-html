@@ -2,7 +2,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    height: 26.6rem;
+    height: 266px;
     width: 100%;
     z-index: 1;
 
@@ -30,7 +30,7 @@
         &:before,
         &:after {
             content: "";
-            height: 16.6rem;
+            height: 166px;
             width: 100%;
             position: absolute;
             left: 0;
@@ -40,13 +40,13 @@
         }
 
         &:before {
-            top: -3.1rem;
+            top: -31px;
             background-size: cover;
             animation: top-part-slide-down var(--anim-part-1-duration) forwards;
         }
 
         &:after {
-            bottom: -3.4rem;
+            bottom: -34px;
             background-size: cover;
             transform: scaleY(-1);
             animation: bottom-part-slide-up var(--anim-part-1-duration) forwards;
@@ -55,9 +55,9 @@
 
     .light {
         position: absolute;
-        top: 10.1rem;
-        width: 35.9rem;
-        height: 6.9rem;
+        top: 101px;
+        width: 359px;
+        height: 69px;
         opacity: 0;
         z-index: 3;
         background: url("/static/images/new-round-transition-light.png?v=#{$version-image}") no-repeat;
@@ -82,48 +82,48 @@
 
 @keyframes top-part-slide-down {
     from {
-        top: -17.4rem;
+        top: -174px;
         opacity: 0;
     }
 
     to {
-        top: -3.1rem;
+        top: -31px;
         opacity: 1;
     }
 }
 
 @keyframes top-part-slide-up {
     from {
-        top: -3.1rem;
+        top: -31px;
         opacity: 1;
     }
 
     to {
-        top: -17.4rem;
+        top: -174px;
         opacity: 0;
     }
 }
 
 @keyframes bottom-part-slide-up {
     from {
-        bottom: -14rem;
+        bottom: -140px;
         opacity: 0;
     }
 
     to {
-        bottom: -3.4rem;
+        bottom: -34px;
         opacity: 1;
     }
 }
 
 @keyframes bottom-part-slide-down {
     0% {
-        bottom: -3.4rem;
+        bottom: -34px;
         opacity: 1;
     }
 
     100% {
-        bottom: -14rem;
+        bottom: -140px;
         opacity: 0;
     }
 }

@@ -24,13 +24,13 @@
 }
 
 .game-container {
-    border-bottom: 0.1rem solid var(--game-category-border);
+    border-bottom: 1px solid var(--game-category-border);
     background: var(--game-category-background);
     z-index: calc(var(--header-index) - 1);
 }
 
 .game-wrapper {
     position: absolute;
-    top: 3rem;
+    top: 30px;
     overflow: hidden;
 }

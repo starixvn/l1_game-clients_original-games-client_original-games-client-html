@@ -4,12 +4,12 @@
     @extend .modal;
     top: 20%;
     z-index: var(--popup-guide-history-index);
-    padding: 2rem;
+    padding: 20px;
 
     .icon-close {
         position: absolute;
-        top: 0.8rem;
-        right: 0.6rem;
+        top: 8px;
+        right: 6px;
         background: none;
 
         &:before {

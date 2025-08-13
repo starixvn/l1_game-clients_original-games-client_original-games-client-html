@@ -45,8 +45,8 @@
 }
 
 .player-count {
-    height: 1.8rem;
-    font-size: 1.2rem;
+    height: 18px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--color);
     position: relative;
@@ -59,15 +59,15 @@
 
 .stakes-value,
 .player-count-value {
-    height: 1.8rem;
+    height: 18px;
     line-height: 1.7;
-    font-size: var(--text-total-stake, 1.2rem);
+    font-size: var(--text-total-stake, 12px);
     font-variant-numeric: tabular-nums;
 }
 
 @keyframes odd-move-up {
     0% {
-        transform: translateY(2rem);
+        transform: translateY(20px);
         opacity: 0;
     }
     100% {
@@ -78,7 +78,7 @@
 
 @keyframes own-bet-move-up {
     0% {
-        transform: translateY(-3rem);
+        transform: translateY(-30px);
         opacity: 0.8;
     }
 

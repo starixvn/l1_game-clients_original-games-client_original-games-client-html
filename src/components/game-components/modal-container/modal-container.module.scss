@@ -1,11 +1,11 @@
 .modal-full {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 5.4rem calc(100% - 5.4rem);
+    grid-template-rows: 54px calc(100% - 54px);
     height: 100%;
     width: 100%;
     background-color: #191a1e;
-    border-radius: 1.6rem 1.6rem 0 0;
+    border-radius: 16px 16px 0 0;
 
     &.open {
         display: grid;
@@ -18,26 +18,26 @@
 
 .title {
     position: relative;
-    font-size: 1.6rem;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
     text-align: center;
-    line-height: 5.4rem;
+    line-height: 54px;
 }
 
 .content {
     height: 100%;
 
     &.mobile {
-        height: calc(var(--modal-container-height) - 8.6rem);
+        height: calc(var(--modal-container-height) - 86px);
     }
 }
 
 .icon-close {
     position: absolute;
-    right: 1rem;
-    top: 1.2rem;
-    font-size: 2.8rem;
+    right: 10px;
+    top: 12px;
+    font-size: 28px;
 
     &:hover {
         cursor: pointer;

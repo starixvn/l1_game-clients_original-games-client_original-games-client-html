@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* Import theme files */
-@import './themes/dark-theme.css';
-@import './themes/light-theme.css';
+@import "./themes/dark-theme.css";
+@import "./themes/light-theme.css";
 
 /* Default theme (dark) */
 :root {
@@ -17,7 +17,7 @@
     --scrollbar-thumb-background: #444;
     --popup-background: #182130;
     --popup-color: #fff;
-    --popup-bet-form-shadow: 0 0 2rem rgba(0, 0, 0, 0.6);
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
     --container-border-color: #2c2f3e;
     --icon-favorite-game-guide: #fff;

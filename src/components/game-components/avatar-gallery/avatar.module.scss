@@ -1,6 +1,6 @@
 .avatar {
-    width: 6rem;
-    height: 6rem;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     cursor: pointer;
     border: 2px solid transparent;
@@ -19,6 +19,6 @@
 
     &.selected {
         border-color: #577af9;
-        box-shadow: 0 0 0.8rem rgba(87, 122, 249, 0.5);
+        box-shadow: 0 0 8px rgba(87, 122, 249, 0.5);
     }
 }

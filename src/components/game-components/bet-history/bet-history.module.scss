@@ -1,15 +1,15 @@
 .history-loading {
     position: absolute;
-    top: 10rem;
+    top: 100px;
     left: 50%;
 }
 .provably-fair {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0 0.8rem 0.8rem;
+    gap: 4px;
+    padding: 0 8px 8px;
     color: #20e500;
-    font-size: 1.2rem;
+    font-size: 12px;
     font-weight: 600;
 }
 
@@ -18,15 +18,15 @@
     justify-content: center;
     align-items: center;
     background-color: #159500;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
 }
 
 .bet-detail {
-    --more-info-height: 6.8rem;
+    --more-info-height: 68px;
 }
 
 .history {
-    --more-info-height: 0rem;
+    --more-info-height: 0px;
 }

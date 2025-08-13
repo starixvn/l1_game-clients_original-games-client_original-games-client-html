@@ -1,9 +1,9 @@
 html[data-theme="dark"] {
     --page-background-color: #000;
     --text-color: #fff;
-    --border-color: #E4E4E4;
+    --border-color: #e4e4e4;
     --secondary-background-color: #182130;
-    --secondary-text-color: #B3BEC1;
+    --secondary-text-color: #b3bec1;
 
     --opacity-background: rgba(12, 12, 12, 0.8);
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
@@ -13,7 +13,7 @@ html[data-theme="dark"] {
 
     --popup-background: #182130;
     --popup-color: #fff;
-    --popup-bet-form-shadow: 0 0 2rem rgba(0, 0, 0, 0.6);
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
     --container-border-color: #2c2f3e;
     --icon-favorite-game-guide: #fff;
