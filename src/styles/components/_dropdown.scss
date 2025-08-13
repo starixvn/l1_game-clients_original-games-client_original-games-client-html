@@ -6,10 +6,10 @@
 .dropdown-menu {
     float: left;
     position: absolute;
-    top: 3.6rem;
+    top: 36px;
     display: none;
     background: #16191d;
-    border-radius: 1.6rem;
+    border-radius: 16px;
     z-index: 1000;
     -webkit-tap-highlight-color: transparent;
 
@@ -22,7 +22,7 @@
     }
 
     &.right {
-        right: -0.8rem;
+        right: -8px;
     }
 }
 
@@ -31,8 +31,8 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.8rem;
+    padding: 8px;
     white-space: nowrap;
     color: #fff;
-    font-size: 1.4rem;
+    font-size: 14px;
 }

@@ -8,9 +8,9 @@
     justify-content: center;
     color: #ffc909;
     opacity: 0;
-    font-size: 2rem;
+    font-size: 20px;
     font-weight: 600;
-    text-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.8);
+    text-shadow: 2px 0 10px rgba(0, 0, 0, 0.8);
     transform-origin: center bottom;
     animation: move-up 2s ease-in-out forwards;
 }
@@ -30,7 +30,7 @@
     }
 
     50% {
-        transform: scale(1.4) translateY(-0.5rem);
+        transform: scale(1.4) translateY(-5px);
         opacity: 1;
     }
 
@@ -40,6 +40,6 @@
 
     100% {
         opacity: 1;
-        transform: scale(1.3) translateY(-6rem);
+        transform: scale(1.3) translateY(-60px);
     }
 }

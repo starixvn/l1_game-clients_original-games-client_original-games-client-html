@@ -7,7 +7,7 @@
 .user {
     display: flex;
     align-items: center;
-    margin-left: 1.5rem;
+    margin-left: 15px;
 
     .avatar {
         --colorBorderTop: #0394c5;
@@ -15,36 +15,36 @@
         --colorBackground: #092b2d80;
 
         position: relative;
-        width: 3rem;
-        height: 3rem;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
-        border: 0.1rem solid transparent;
+        border: 1px solid transparent;
         background: linear-gradient(var(--colorBackground), var(--colorBackground)) padding-box,
             linear-gradient(to bottom, var(--colorBorderTop), var(--colorBorderBottom)) border-box;
     }
 
     .icon-edit {
         position: absolute;
-        right: -0.5rem;
-        bottom: -0.1rem;
+        right: -5px;
+        bottom: -1px;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #577af9;
-        width: 1.4rem;
-        height: 1.4rem;
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
-        border: 0.1rem solid #000;
+        border: 1px solid #000;
 
         &:before {
-            font-size: 0.5rem;
-            line-height: 1.4rem;
+            font-size: 5px;
+            line-height: 14px;
             text-align: center;
         }
     }
 
     .info {
-        margin-right: 0.8rem;
+        margin-right: 8px;
         font-weight: 600;
         text-align: right;
         white-space: nowrap;
@@ -52,38 +52,38 @@
 
     .icon-user {
         position: relative;
-        top: 0.5rem;
-        left: 0.6rem;
-        font-size: 1.5rem;
+        top: 5px;
+        left: 6px;
+        font-size: 15px;
     }
 
     &.footer {
-        margin-left: 0.8rem;
+        margin-left: 8px;
         flex-direction: row-reverse;
         width: fit-content;
 
         &.ios-device {
             @media (min-device-width: 375px) and (min-device-height: 667px) {
                 position: relative;
-                top: -0.3rem;
+                top: -3px;
             }
         }
         .avatar {
-            border: 0.15rem solid #fff;
-            height: 3.4rem;
-            width: 3.435rem;
+            border: 2px solid #fff;
+            height: 34px;
+            width: 34px;
         }
         .user-name {
-            font-size: 1.2rem;
+            font-size: 12px;
             font-weight: normal;
             color: #fff;
             letter-spacing: 0.5px;
         }
         .info {
-            margin-left: 0.8rem;
+            margin-left: 8px;
             text-align: left;
-            line-height: 1.3rem;
-            margin-top: 0.2rem;
+            line-height: 13px;
+            margin-top: 2px;
         }
     }
 
@@ -94,13 +94,13 @@
 
 .user-name {
     color: var(--username-color);
-    font: 500 1.1rem/1rem var(--font-family);
+    font: 500 11px/10px var(--font-family);
 }
 
 .balance {
     color: var(--header-balance-color);
-    font-size: 1.1rem;
+    font-size: 11px;
     display: flex;
-    gap: 0.2rem;
+    gap: 2px;
     justify-content: flex-end;
 }

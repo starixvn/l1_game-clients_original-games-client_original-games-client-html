@@ -8,9 +8,9 @@
 
 .profile-picture {
     position: relative;
-    width: 9.7rem;
-    height: 9.7rem;
-    margin: 3rem auto 2.2rem;
+    width: 97px;
+    height: 97px;
+    margin: 30px auto 22px;
     border-radius: 50%;
 
     .avatar {
@@ -20,15 +20,15 @@
 
     .icon-user {
         position: relative;
-        top: 4.6rem;
-        left: -0.1rem;
-        font-size: 8.9rem;
+        top: 46px;
+        left: -1px;
+        font-size: 89px;
         line-height: 0;
 
         @media (min-width: 768px) {
             left: 0;
-            top: 6.4rem;
-            font-size: 12.3rem;
+            top: 64px;
+            font-size: 123px;
         }
     }
 
@@ -37,16 +37,16 @@
         align-items: center;
         justify-content: center;
         position: absolute;
-        right: -0.6rem;
+        right: -6px;
         bottom: 0;
-        width: 3.2rem;
-        height: 3.2rem;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background: var(--icon-edit-background);
         border: 1px solid var(--icon-edit-border);
 
         @media (min-width: 768px) {
-            right: -0.2rem;
+            right: -2px;
         }
 
         &:hover {
@@ -56,10 +56,10 @@
 }
 
 .default-avatar {
-    width: 9.7rem;
-    height: 9.7rem;
+    width: 97px;
+    height: 97px;
     border-radius: 50%;
     background: url("/static/images/avatar/default-avatar.png?v=#{$version-image}") center no-repeat;
-    background-size: 3.1rem 4.3rem;
+    background-size: 31px 43px;
     background-color: #c7c7c7;
 }

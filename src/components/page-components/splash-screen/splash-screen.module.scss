@@ -24,7 +24,7 @@
         margin: auto;
         display: flex;
         flex-direction: column;
-        gap: 4.8rem;
+        gap: 48px;
         position: relative;
         top: -15%;
 
@@ -51,11 +51,11 @@
             content: "";
             position: absolute;
             left: 50%;
-            bottom: -7.8rem;
+            bottom: -78px;
             transform: translateX(-50%);
             display: flex;
-            height: 9.4rem;
-            width: 37.4rem;
+            height: 94px;
+            width: 374px;
             background-image: url("/static/images/splash-screen/1x/light.png?v=#{$version-image}");
             background-image: image-set(
                 url("/static/images/splash-screen/1x/light.png?v=#{$version-image}") 1x,
@@ -66,17 +66,17 @@
         &::after {
             content: "";
             position: absolute;
-            left: 4.5rem;
-            bottom: -5.5rem;
-            width: 9.4rem;
-            height: 7rem;
+            left: 45px;
+            bottom: -55px;
+            width: 94px;
+            height: 70px;
             background-image: url("/static/images/splash-screen/light-effect.png?v=#{$version-image}");
             animation: blink 1.2s ease-in-out infinite forwards;
         }
     }
 
     .slogan {
-        font-size: 1.4rem;
+        font-size: 14px;
         font-weight: 600;
         text-transform: uppercase;
         text-align: center;
@@ -87,14 +87,14 @@
     .slogan-image {
         position: absolute;
         left: 50%;
-        bottom: -4rem;
+        bottom: -40px;
         transform: translateX(-50%);
     }
 
     .loading-bar-sabaplay {
         position: absolute;
         left: 50%;
-        bottom: -9rem;
+        bottom: -90px;
         transform: translateX(-50%);
     }
 

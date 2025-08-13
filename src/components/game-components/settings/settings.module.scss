@@ -11,18 +11,18 @@
 .setting-right {
     display: flex;
     justify-content: end;
-    gap: 1rem;
+    gap: 10px;
     flex: 1 1;
 }
 
 .setting-button {
-    height: 3.2rem;
-    width: 3.2rem;
+    height: 32px;
+    width: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(33, 45, 61, 0.4);
-    border-radius: 1rem;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
 }

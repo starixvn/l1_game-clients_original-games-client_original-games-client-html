@@ -13,8 +13,8 @@
     background-size: cover;
 
     @media screen and (min-width: 500px) {
-        max-width: 37.5rem;
-        background-size: 37.5rem;
+        max-width: 375px;
+        background-size: 375px;
     }
 
     @media (min-aspect-ratio: 3/4) and (max-height: 800px) {
@@ -80,7 +80,7 @@
 
 @keyframes slide-right {
     0% {
-        transform: translateX(-1rem) scale(var(--zoom-game));
+        transform: translateX(-10px) scale(var(--zoom-game));
     }
 
     100% {
@@ -90,7 +90,7 @@
 
 @keyframes slide-left {
     0% {
-        transform: translateX(1rem) scale(var(--zoom-game));
+        transform: translateX(10px) scale(var(--zoom-game));
     }
 
     100% {
