@@ -255,3 +255,17 @@ export type GameBaseHandlers = {
     gameRoundHistoryHandler?: GameRoundHistoryHandler;
     gameSoundHandler?: IGameSoundHandler;
 };
+
+export interface PlayerInPlayerResultBoard {
+    uid: string;
+    name: string;
+    betAmount: number;
+    winAmount: number | null;
+}
+
+export interface PlayerResultBoard {
+    roundId: number;
+    totalPlayers: number;
+    isSettled: boolean;
+    players: PlayerInPlayerResultBoard[];
+}

@@ -1,4 +1,4 @@
-import { DrawInfo, GameConfigs, IUserStakeLevel, Round, RoundState } from "../../../components/game-base/type";
+import { DrawInfo, GameConfigs, IUserStakeLevel, PlayerResultBoard, Round, RoundState } from "../../../components/game-base/type";
 
 export interface GameStateContextModel {
     isConnect: boolean;
@@ -35,7 +35,8 @@ export interface GameStateContextModel {
     };
     isPlayStartRoundAnimation?: boolean;
     isScoreboardTab?: boolean;
-    availableInGameData?: boolean
+    availableInGameData?: boolean;
+    playerResultBoard?: PlayerResultBoard;
 }
 
 export const initialGameStateContextModel = () => {
@@ -77,6 +78,12 @@ export const initialGameStateContextModel = () => {
         isShowGameGuide: false,
         isPlayStartRoundAnimation: false,
         isScoreboardTab: true,
-        availableInGameData: false
+        availableInGameData: false,
+        playerResultBoard: {
+            players: [],
+            roundId: 0,
+            totalPlayers: 0,
+            isSettled: false,
+        }
     };
 };

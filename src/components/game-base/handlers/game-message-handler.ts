@@ -1,6 +1,7 @@
 import MessageTransmitter from "../../../_shared/helpers/message-transmitter";
 import { MessageTransmitterType } from "../../../_shared/helpers/message-transmitter/type";
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
+import { PlayerResultBoard } from "../type";
 
 export const messageEventType = {
     GAME_CONFIG: "gameConfigs",
@@ -41,6 +42,7 @@ export const messageEventType = {
     SAVE_PF_SETTING_FROM_TURN_ID_HANLDER: "savePFSettingFromTurnIdHandler",
     SYNC_OWN_BETS_TO_PF: "syncOwnBetsToPF",
     START_PLACE_BET: "spb",
+    PLAYER_RESULT_BOARD: "playerResultBoard",
 };
 
 export class GameMessageHandler {
@@ -54,6 +56,7 @@ export class GameMessageHandler {
         this.register(messageEventType.ROUND_DATA, this.handleRoundData);
         this.register(messageEventType.SIGNED_IN, this.handleSignedIn);
         this.register(messageEventType.CLIENT_SEED_DETAIL, this.handleClientSeedDetail);
+        this.register(messageEventType.PLAYER_RESULT_BOARD, this.handlePlayerResultBoard);
     };
 
     getMessageTransmitter() {
@@ -121,6 +124,13 @@ export class GameMessageHandler {
                     ...clientSeedDetail,
                 },
             },
+        });
+    };
+
+    handlePlayerResultBoard = (playerResultBoard: PlayerResultBoard) => {
+        this.dispatch({
+            type: GameEventActionType.PLAYER_RESULT_BOARD_UPDATE,
+            payload: playerResultBoard,
         });
     };
 

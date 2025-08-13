@@ -14,34 +14,54 @@ export interface TableProps<T = any> {
   className?: string;
   emptyMessage?: string;
   onRowClick?: (row: T, index: number) => void;
+  getCellClassName?: (
+    columnKey: string,
+    value: any,
+    row: T,
+    index: number
+  ) => string;
 }
 
 export const Table = <T,>({
   columns,
   data,
   className,
-  emptyMessage = "No data available",
+  emptyMessage = "No data available...",
   onRowClick,
+  getCellClassName,
 }: TableProps<T>) => {
   const handleRowClick = useCallback(
-    (row: T, index: number) => {
-      onRowClick?.(row, index);
-    },
+    (row: T, index: number) => onRowClick?.(row, index),
     [onRowClick]
   );
 
+  const getCellClasses = useCallback(
+    (column: TableColumn<T>, cellValue: any, row: T, rowIndex: number) => {
+      const base = "py-3 text-wrap";
+      const clickable = column.isClickable
+        ? "text-table-text-clickable cursor-pointer"
+        : "";
+      const custom = getCellClassName?.(
+        String(column.key),
+        cellValue,
+        row,
+        rowIndex
+      );
+      const defaultText =
+        !column.isClickable && !custom ? "text-secondary-text" : "";
+
+      return classNames(base, clickable, custom, defaultText);
+    },
+    [getCellClassName]
+  );
+
   return (
-    <div
-      className={classNames("rounded", className)}
-    >
+    <div className={classNames("rounded", className)}>
       <table className="w-full border-collapse">
         <thead>
           <tr>
             {columns.map(({ key, header }) => (
-              <th
-                key={String(key)}
-                className="text-primary-text p-2"
-              >
+              <th key={String(key)} className="text-primary-text p-2">
                 {header}
               </th>
             ))}
@@ -70,19 +90,21 @@ export const Table = <T,>({
                 )}
                 onClick={() => handleRowClick(row, rowIndex)}
               >
-                {columns.map(({ key, render, isClickable }) => {
-                  const cellValue = (row as any)[key];
+                {columns.map((column) => {
+                  const cellValue = (row as any)[column.key];
                   return (
                     <td
-                      key={String(key)}
-                      className={classNames(
-                        "py-3 text-wrap",
-                        isClickable
-                          ? "text-table-text-clickable cursor-pointer"
-                          : "text-secondary-text"
+                      key={String(column.key)}
+                      className={getCellClasses(
+                        column,
+                        cellValue,
+                        row,
+                        rowIndex
                       )}
                     >
-                      {render ? render(cellValue, row, rowIndex) : cellValue}
+                      {column.render
+                        ? column.render(cellValue, row, rowIndex)
+                        : cellValue}
                     </td>
                   );
                 })}

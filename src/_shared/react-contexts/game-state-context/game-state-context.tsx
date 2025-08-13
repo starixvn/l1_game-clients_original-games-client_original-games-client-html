@@ -62,7 +62,8 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
         isShowBetDetail,
         betDetailModalData,
         isPlayStartRoundAnimation,
-        isScoreboardTab
+        isScoreboardTab,
+        playerResultBoard
     } = payload;
 
     switch (type) {
@@ -296,6 +297,13 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             return {
                 ...state,
                 isScoreboardTab,
+            };
+        }
+
+        case GameEventActionType.PLAYER_RESULT_BOARD_UPDATE: {
+            return {
+                ...state,
+                playerResultBoard,
             };
         }
 
