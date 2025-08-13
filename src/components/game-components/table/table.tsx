@@ -47,7 +47,7 @@ export const Table = <T,>({
             ))}
           </tr>
         </thead>
-        <tbody className="bg-secondary-bg">
+        <tbody className="">
           {data.length === 0 ? (
             <tr>
               <td
