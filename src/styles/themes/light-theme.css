@@ -19,4 +19,5 @@ html[data-theme="light"] {
     --icon-favorite-game-guide: #2c2f3e;
 
     --color-table-text-clickable: #0990ff;
+    --color-winning-highlight: #FFF600;
 }

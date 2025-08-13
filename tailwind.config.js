@@ -21,6 +21,7 @@ module.exports = {
                 "scrollbar-thumb": "var(--scrollbar-thumb-background)",
                 "icon-guide": "var(--icon-favorite-game-guide)",
                 "table-text-clickable": "var(--color-table-text-clickable)",
+                "winning-highlight": "var(--color-winning-highlight)",
             },
         },
     },
