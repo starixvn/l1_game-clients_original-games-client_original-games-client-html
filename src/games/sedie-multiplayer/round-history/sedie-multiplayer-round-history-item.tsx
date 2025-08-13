@@ -1,5 +1,18 @@
-export const SedieMultiplayerRoundHistoryItem = () => {
-    return <OddItem />;
+import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";
+
+export const SedieMultiplayerRoundHistoryItem = ({
+    result,
+    isShowBlink,
+}: {
+    result: { result: SeDieResult; settlementResult: SeDieSettlementResult; roundId: number };
+    isShowBlink: boolean;
+}) => {
+    if (!result?.roundId) {
+        return null;
+    }
+    const roundId = result.roundId;
+    const isOdd = result.settlementResult.odd;
+    return <div>{isOdd ? <OddItem /> : <EvenItem />}</div>;
 };
 
 const OddItem = () => {

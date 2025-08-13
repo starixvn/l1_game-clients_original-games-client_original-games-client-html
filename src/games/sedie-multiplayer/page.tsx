@@ -24,10 +24,10 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import Styles from "./sedie-multiplayer.module.scss";
 import SeBallStyle from "./sedie-multiplayer.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
-import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
+import { SedieMultiplayerRoundHistoryItem } from "./round-history/sedie-multiplayer-round-history-item";
 import { Plate } from "./result-block";
-import SeDieBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options-component";
 import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
+import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 
@@ -65,6 +65,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
 
     componentDidMount() {
         super.componentDidMount();
+    }
+
+    renderRoundHistory(): JSX.Element {
+        return <SedieMultiplayerRoundHistory />;
     }
 
     renderLeftSideBetSettings() {
@@ -141,10 +145,6 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
 
     renderRoundIdSection(): JSX.Element {
         return <DrawIdBlock showRoundId={true} />;
-    }
-
-    renderRoundHistoryItem(props: any) {
-        return <SedieMultiplayerRoundHistoryItem />;
     }
 }
 

@@ -53,8 +53,6 @@ import { BetHistoryTable } from "../game-components/bet-history/bet-history-tabl
 import { PlayerResultBoard } from "../game-components/player-result-board/player-result-board";
 import { MenuIcon } from "../game-components/menu/menu-icon";
 import { Menu } from "../game-components/menu/menu";
-import { RoundHistory } from "../game-components/round-history/demo";
-import { IconStatistic } from "../game-components/statistic/icon-statistic";
 import ChipControlPanel from "../game-components/chip-slider";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
@@ -583,12 +581,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <NewRoundTransitionWithoutExtraSeconds />;
     }
 
-    renderRoundHistoryItem(props: any) {
-        return <div>I</div>;
-    }
-
     renderRoundHistory() {
-        return <RoundHistory renderItem={this.renderRoundHistoryItem} numberOfItems={15} sideButton={<IconStatistic />} />;
+        return <></>;
     }
 
     renderCountdownTimer() {

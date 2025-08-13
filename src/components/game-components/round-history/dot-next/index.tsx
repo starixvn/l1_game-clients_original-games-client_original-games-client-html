@@ -3,10 +3,10 @@ import React from "react";
 import Styles from "./../dot/dot.module.scss";
 import { Props } from "./types";
 
-export const MiniItemNext = () => {
+export const MiniItemNext = ({ className = "" }: { className?: string }) => {
     return (
         <div>
-            <div className={`${Styles["dot-next"]} ${Styles.blink}`}></div>
+            <div className={`${Styles["dot-next"]} ${Styles.blink} ${Styles[className]}`}></div>
         </div>
     );
 };
