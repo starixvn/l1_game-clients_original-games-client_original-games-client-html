@@ -12,8 +12,8 @@ const OddItem = () => {
             />
             <defs>
                 <linearGradient id="paint0_linear_542_14302" x1="9.5" y1="0" x2="9.5" y2="18" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#A10325" />
-                    <stop offset="1" stop-color="#FB2956" />
+                    <stop stopColor="#A10325" />
+                    <stop offset="1" stopColor="#FB2956" />
                 </linearGradient>
             </defs>
         </svg>
@@ -27,8 +27,8 @@ const EvenItem = () => {
             <path d="M6.82764 13V5H12.2183V6.39453H8.51904V8.30078H11.9409V9.69531H8.51904V11.6055H12.2339V13H6.82764Z" fill="white" />
             <defs>
                 <linearGradient id="paint0_linear_542_14306" x1="9.5" y1="0" x2="9.5" y2="18" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#274DC2" />
-                    <stop offset="1" stop-color="#3D81FF" />
+                    <stop stopColor="#274DC2" />
+                    <stop offset="1" stopColor="#3D81FF" />
                 </linearGradient>
             </defs>
         </svg>

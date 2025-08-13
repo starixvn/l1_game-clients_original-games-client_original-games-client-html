@@ -27,6 +27,7 @@ import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constant
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 import { Plate } from "./result-block";
 import SeDieBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options-component";
+import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 
@@ -83,7 +84,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     }
 
     renderBettingBlock() {
-        return <SeDieBetOptionsComponent />;
+        return <SeDieBettingBlock />;
     }
 
     renderBetHistoryModal() {

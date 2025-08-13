@@ -23,13 +23,13 @@ export const ChipControlPanel: React.FC<{ gameConfigs: GameConfigs; userStakeLev
     }, [gameConfigs?.maxBet, gameConfigs?.minBet, gameConfigs?.chips, userStakeLevel]);
 
     useEffect(() => {
-        const index = chipValues.findIndex((chip) => chip === selectedChip) || 0;
+        let index = chipValues.findIndex((chip) => chip === selectedChip);
+        if (index === -1) {
+            index = 0;
+        }
         setCurrentIndex(index);
         const chip = chipValues?.[index];
         chip > 0 && onSelectChip(chip);
-        console.log("chipValues", chipValues);
-        console.log("selectedChip", selectedChip);
-        console.log("chip", chip);
     }, [chipValues, selectedChip]);
 
     const onSelectChip = (chipValue: number) => {
@@ -75,7 +75,7 @@ export const ChipControlPanel: React.FC<{ gameConfigs: GameConfigs; userStakeLev
             <IconNext isEnabled={currentIndex < chipValues.length - 1} onClick={onClickNext} />
 
             {isShowSlider && (
-                <div className="absolute -top-full w-full h-full bg-black/50 z-[var(--chip-slider-index)]">
+                <div className="absolute -top-full w-[175%] h-full bg-black/50 z-[var(--chip-slider-index)]">
                     <ChipSlider
                         chipSettings={chipSettings}
                         chipValues={chipValues}
@@ -100,12 +100,12 @@ const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onCl
                 <path
                     d="M43.5585 44.4482C46.5452 42.2943 48.0385 41.2174 48.5804 39.8911C49.0756 38.679 49.0756 37.321 48.5804 36.1089C48.0385 34.7826 46.5452 33.7057 43.5585 31.5518L13.1001 9.58662C9.0756 6.68432 7.06333 5.23317 5.38544 5.27162C3.85968 5.30659 2.43343 6.03648 1.51262 7.25356C0.5 8.59198 0.5 11.0729 0.5 16.0348L0.5 59.9652C0.5 64.9271 0.5 67.408 1.51262 68.7464C2.43343 69.9635 3.85968 70.6934 5.38544 70.7284C7.06333 70.7668 9.07559 69.3157 13.1001 66.4134L43.5585 44.4482Z"
                     fill="url(#paint0_linear_679_10580)"
-                    fill-opacity="0.15"
+                    fillOpacity="0.15"
                 />
                 <path
                     d="M48.1172 39.7021C48.5629 38.6113 48.5629 37.3887 48.1172 36.2979C47.8902 35.7424 47.451 35.2032 46.6592 34.5186C45.8654 33.8322 44.7663 33.0393 43.2656 31.957L12.8076 9.99219C10.7874 8.53532 9.29933 7.4634 8.10742 6.75684C6.90983 6.04692 6.08913 5.75561 5.39648 5.77148C4.02345 5.80308 2.73978 6.4604 1.91113 7.55566C1.49329 8.10819 1.24966 8.94378 1.125 10.3301C1.00092 11.7101 1 13.5444 1 16.0352L1 59.9648C1 62.4556 1.00092 64.2899 1.125 65.6699C1.24966 67.0562 1.49329 67.8918 1.91113 68.4443C2.73978 69.5396 4.02345 70.1969 5.39648 70.2285C6.08913 70.2444 6.90983 69.9531 8.10742 69.2432C9.29933 68.5366 10.7874 67.4647 12.8076 66.0078L43.2656 44.043C44.7663 42.9607 45.8654 42.1678 46.6592 41.4814C47.451 40.7968 47.8902 40.2576 48.1172 39.7021Z"
                     stroke="url(#paint1_linear_679_10580)"
-                    stroke-opacity="0.6"
+                    strokeOpacity="0.6"
                     style={{ mixBlendMode: "overlay" }}
                 />
                 <path
@@ -114,12 +114,12 @@ const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onCl
                 />
                 <defs>
                     <linearGradient id="paint0_linear_679_10580" x1="52.5" y1="38" x2="0.5" y2="38" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="#1F2346" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="1" stopColor="#1F2346" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="paint1_linear_679_10580" x1="52.5" y1="38" x2="0.5" y2="38" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="white" />
-                        <stop offset="0.900442" stop-color="white" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="0.900442" stopColor="white" stopOpacity="0" />
                     </linearGradient>
                 </defs>
             </svg>
@@ -139,12 +139,12 @@ const IconNext = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick:
                 <path
                     d="M9.44146 44.4482C6.45479 42.2943 4.96146 41.2174 4.41957 39.8911C3.92436 38.679 3.92436 37.321 4.41957 36.1089C4.96146 34.7826 6.45479 33.7057 9.44146 31.5518L39.8999 9.58662C43.9244 6.68432 45.9367 5.23317 47.6146 5.27162C49.1403 5.30659 50.5666 6.03648 51.4874 7.25356C52.5 8.59198 52.5 11.0729 52.5 16.0348L52.5 59.9652C52.5 64.9271 52.5 67.408 51.4874 68.7464C50.5666 69.9635 49.1403 70.6934 47.6146 70.7284C45.9367 70.7668 43.9244 69.3157 39.8999 66.4134L9.44146 44.4482Z"
                     fill="url(#paint0_linear_679_10664)"
-                    fill-opacity="0.15"
+                    fillOpacity="0.15"
                 />
                 <path
                     d="M4.88281 39.7021C4.43712 38.6113 4.43712 37.3887 4.88281 36.2979C5.10983 35.7424 5.54905 35.2032 6.34082 34.5186C7.13455 33.8322 8.23367 33.0393 9.73438 31.957L40.1924 9.99219C42.2126 8.53532 43.7007 7.4634 44.8926 6.75684C46.0902 6.04692 46.9109 5.75561 47.6035 5.77148C48.9765 5.80308 50.2602 6.4604 51.0889 7.55566C51.5067 8.10819 51.7503 8.94378 51.875 10.3301C51.9991 11.7101 52 13.5444 52 16.0352L52 59.9648C52 62.4556 51.9991 64.2899 51.875 65.6699C51.7503 67.0562 51.5067 67.8918 51.0889 68.4443C50.2602 69.5396 48.9765 70.1969 47.6035 70.2285C46.9109 70.2444 46.0902 69.9531 44.8926 69.2432C43.7007 68.5366 42.2126 67.4647 40.1924 66.0078L9.73438 44.043C8.23367 42.9607 7.13455 42.1678 6.34082 41.4814C5.54905 40.7968 5.10983 40.2576 4.88281 39.7021Z"
                     stroke="url(#paint1_linear_679_10664)"
-                    stroke-opacity="0.6"
+                    strokeOpacity="0.6"
                     style={{ mixBlendMode: "overlay" }}
                 />
                 <path
@@ -153,12 +153,12 @@ const IconNext = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick:
                 />
                 <defs>
                     <linearGradient id="paint0_linear_679_10664" x1="0.5" y1="38" x2="52.5" y2="38" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="#1F2346" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="1" stopColor="#1F2346" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="paint1_linear_679_10664" x1="0.5" y1="38" x2="52.5" y2="38" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="white" />
-                        <stop offset="0.900442" stop-color="white" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="0.900442" stopColor="white" stopOpacity="0" />
                     </linearGradient>
                 </defs>
             </svg>

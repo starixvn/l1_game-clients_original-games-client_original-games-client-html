@@ -14,7 +14,19 @@ const subChoiceImages = {
     [SeDieBetOptions.RED4]: [true, true, true, true],
 };
 
-export const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+export const SedieMultiplayerSubBetOptions = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
+    return (
+        <div className={`flex rounded-2xl bg-[#282A30CC] mt-2`}>
+            <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE4} />
+            <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE3} />
+            <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED2} />
+            <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED3} />
+            <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED4} />
+        </div>
+    );
+};
+
+const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     const className = `sub-bet-${choice}`;
     const renderImages = (choice: string) => {
         return (
@@ -30,10 +42,10 @@ export const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolg
     };
     return (
         <div className={`flex-1 text-white relative ${styles[className]}`}>
-            <TotalBet choice={choice} className={"h-[2.4rem] pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
+            <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
             {renderImages(choice)}
             <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"mb-0.5"} />
-            <div className="h-2xl">
+            <div className="h-5">
                 <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
             </div>
             <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />

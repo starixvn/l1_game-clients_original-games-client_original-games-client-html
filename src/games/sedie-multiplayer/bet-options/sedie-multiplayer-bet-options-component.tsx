@@ -9,7 +9,7 @@ import { RoundState } from "../../../components/game-base/type";
 import { SeDieBetOptions, SeDieBetOptionsPercentageColor } from "../sedie-multiplayer-constants";
 import Style from "./style.module.scss";
 import { BetChoiceImagesData, DotColorMapper } from "../sedie-multiplayer-constants";
-import { SedieMultiplayerSubBetOption } from "./sedie-sub-option";
+import { SedieMultiplayerSubBetOptions } from "./sedie-sub-option";
 import { SedieMultiplayerMainOption } from "./sedie-main-option";
 
 // const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
@@ -216,13 +216,7 @@ const SeDieBetOptionsComponent = () => {
     // };
     return (
         <>
-            <div className={`flex rounded-2xl bg-[#282A30CC] mt-2`}>
-                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE4} />
-                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE3} />
-                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED2} />
-                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED3} />
-                <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED4} />
-            </div>
+            <SedieMultiplayerSubBetOptions tolgeeNamespace={tolgeeNamespace} />
             <div className="flex justify-between my-2">
                 <SedieMultiplayerMainOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.EVEN} />
                 <SedieMultiplayerMainOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.ODD} />
