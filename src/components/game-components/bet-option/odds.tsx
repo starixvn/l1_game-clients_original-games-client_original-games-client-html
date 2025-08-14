@@ -6,6 +6,7 @@ import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { useShallow } from "zustand/react/shallow";
 
 type Props = {
     animationClass?: string;
@@ -17,8 +18,9 @@ export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, anim
     const [showOddsIcon, setShowOddsIcon] = useState("");
     const [classOddsIcon, setClassOddsIcon] = useState("");
     const [oddsValue, setOddsValue] = useState(0);
-    const gameConfigs = useGameStore((state) => state.gameConfigs);
-    const roundState = useGameStore((state) => state.roundState);
+    const { gameConfigs, roundState } = useGameStore(
+        useShallow((state) => ({ gameConfigs: state.gameConfigs, roundState: state.roundState }))
+    );
     const { fractionalOddsFormat } = usePlayerContext();
     const odds = isFormatOddsAuto ? formatOdds(oddsValue, fractionalOddsFormat, 1) : formatOdds(oddsValue, fractionalOddsFormat);
 

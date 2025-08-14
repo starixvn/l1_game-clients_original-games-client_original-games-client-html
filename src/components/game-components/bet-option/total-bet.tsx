@@ -2,6 +2,7 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
+import { useShallow } from "zustand/react/shallow";
 
 const convertStakeToString = (amount: number, rate: number) => {
     if (amount) {
@@ -23,9 +24,14 @@ const convertStakeToString = (amount: number, rate: number) => {
 };
 
 export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const totalBets = useGameStore((state) => state.totalBets);
-    const roundState = useGameStore((state) => state.roundState);
-    const rate = useGameStore((state) => state.rate);
+    const { totalBets, roundState, rate } = useGameStore(
+        useShallow((state) => ({
+            totalBets: state.totalBets,
+            roundState: state.roundState,
+            rate: state.rate,
+        }))
+    );
+
     const totalBet = totalBets?.[choice] ?? 0;
 
     if (totalBet <= 0 || rate === 0 || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {

@@ -4,10 +4,12 @@ import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { useShallow } from "zustand/react/shallow";
 
 export const PlayerBetCount: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const playerBetCount = useGameStore((state) => state.playerBetCount);
-    const roundState = useGameStore((state) => state.roundState);
+    const { playerBetCount, roundState } = useGameStore(
+        useShallow((state) => ({ playerBetCount: state.playerBetCount, roundState: state.roundState }))
+    );
 
     if (isEmpty(playerBetCount) || !playerBetCount[choice] || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
         return <></>;
