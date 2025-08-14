@@ -6,7 +6,6 @@ import { tolgee } from "../../tolgee";
 export interface GameConfigSlice {
     isConnect: boolean;
     signedIn: boolean;
-    prevRoundState: RoundState;
     roundState: RoundState;
     gameConfigs: GameConfigs | null;
     roundData: any;
@@ -100,7 +99,6 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     handleDisconnectError: ({ disconnectReason }) => set({ roundState: RoundState.ConnectFailed, signedIn: false, disconnectReason }),
     handleUserStakeLevel: ({ userStakeLevel }) => set({ userStakeLevel }),
     handleOdds: ({ odds }) => set((state) => ({ gameConfigs: { ...state.gameConfigs, odds } })),
-    handleSetNewGameState: ({ newGameState }) => set({ ...newGameState }),
     handleShowWinningAnimation: ({ showWinningAnimation }) => set({ showWinningAnimation }),
     handleActiveScoreboardTab: ({ activeScoreboardTab }) => set({ activeScoreboardTab }),
     handlePlayResultAnimation: ({ playResultAnimation }) => set({ playResultAnimation }),

@@ -13,7 +13,6 @@ import { tolgee } from "../../_shared/tolgee";
 import GameBase from "../../components/game-base/";
 import { GameMessageHandler } from "../../components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, Round } from "../../components/game-base/type";
-import { GameStatusMap } from "../../components/game-components/countdown-timer/countdown-timer";
 import RedAndBlueStatistic from "../../components/game-components/statistic/red-blue-statistic";
 import { RoundGameSoundHandler } from "../../components/round-base/round-game-sound-handler";
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
@@ -124,10 +123,6 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
                 subChoicesClass={subChoicesClass}
             />
         );
-    }
-
-    renderGameStatus() {
-        return GameStatusMap.RoundBaseStatus;
     }
 
     renderScoreboards() {

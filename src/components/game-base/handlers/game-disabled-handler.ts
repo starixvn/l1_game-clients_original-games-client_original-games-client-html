@@ -4,6 +4,7 @@ import { GameStateContextModel } from "../../../_shared/react-contexts/game-stat
 import { IRoundStateHandler } from "../../round-base/round-state-handler";
 import { GameDurations, RoundState } from "../type";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
+import useGameStore, { GameStore } from "../../../_shared/stores/game-store/game-store";
 
 export type GameDisabledHandlerProps = {
     dispatch: Function;
@@ -48,6 +49,7 @@ export class GameDisableHandler {
                     um_message,
                 },
             });
+            useGameStore.getState().setUM(um_message);
 
             console.log("[GameDisableHandler] updating URL context to gameId 0");
             updateURLContext({ gameId: 0 });

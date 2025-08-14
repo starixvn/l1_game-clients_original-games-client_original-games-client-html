@@ -15,7 +15,7 @@ import { GameResourceKeys } from "../../_shared/resources";
 import { getBalance } from "../../services/auth-service";
 import BetConfirmDialog from "../game-components/bet-confirm-dialog";
 import ConfirmBet from "../game-components/confirm-bet";
-import CountdownTimer, { GameStatusMap } from "../game-components/countdown-timer/countdown-timer";
+import CountdownTimer from "../game-components/countdown-timer/countdown-timer";
 import DisabledModal from "../game-components/disabled-modal";
 import { ConnectFailedMessage } from "../game-components/error-message";
 import { ConnectFailedReasonKey } from "../game-components/error-message/type";
@@ -171,7 +171,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         this.placeBet = this.placeBet.bind(this);
         this.updateUserBalance = this.updateUserBalance.bind(this);
-        this.renderHeaderBlock = this.renderHeaderBlock.bind(this);
         this.onPreloadResourceDone = this.onPreloadResourceDone.bind(this);
 
         AnalyticsHelper.trackPage({ page_title: this.props.gameName });
@@ -248,7 +247,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     protected async connectToGameService() {
         const { session } = this.context as PlayerContextModel;
         const { socketInfo, gameName } = this.props;
-        const { socket } = InitSocketIO(socketInfo, session, gameName, this.gameMessageHandler, useGameStore.getState());
+        const { socket } = InitSocketIO(socketInfo, session, gameName, this.gameMessageHandler);
 
         this.socket = socket;
     }
@@ -259,6 +258,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     onConnectFailed() {
         this.onDestroy();
+        useGameStore.getState().setRoundState(RoundState.ConnectFailed);
         this.props.dispatch({
             type: GameEventActionType.DISCONNECT_ERROR,
             payload: { disconnectReason: ConnectFailedReasonKey.lostConnection },
@@ -272,6 +272,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             () => {
                 dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
                 if (!this.props.gameStateContextModel.signedIn) {
+                    useGameStore.getState().setRoundState(RoundState.ConnectFailed);
+
                     dispatch({
                         type: GameEventActionType.DISCONNECT_ERROR,
                         payload: { disconnectReason: ConnectFailedReasonKey.lostConnection },
@@ -505,23 +507,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
-    renderGameStatus() {
-        return GameStatusMap.RoundBaseStatus;
-    }
-
-    renderHeaderBlock() {
-        const { availableInGameData } = this.props.gameStateContextModel;
-        return (
-            <div className="game-header">
-                {this.renderRoundIdSection()}
-                <div id="countdown-timer" className="countdown-timer">
-                    {availableInGameData && <CountdownTimer GameStatusProp={this.renderGameStatus()} />}
-                </div>
-                <Settings />
-            </div>
-        );
-    }
-
     renderPFSettingModal() {
         return createPortal(<PFSettingModal />, document.getElementById("dashboard"));
     }
@@ -593,7 +578,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderCountdownTimer() {
-        return <CountdownTimer GameStatusProp={this.renderGameStatus()} />;
+        return <CountdownTimer />;
     }
 
     renderResultBlock() {
@@ -693,20 +678,20 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             <>
                 {/* <BackgroundGalaxy gameId={this.props.id} /> */}
                 <>
-                    <PFProvider gameId={this.props.id} uid={uid}>
-                        <div className={`game-${this.props.id}`}>
-                            <div className="flex flex-wrap">
-                                {this.renderLeftSide()}
-                                {this.renderRightSide()}
-                                <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
-                            </div>
+                    <div className={`game-${this.props.id}`}>
+                        <div className="flex flex-wrap">
+                            {this.renderLeftSide()}
+                            {this.renderRightSide()}
+                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                        </div>
+                        <PFProvider gameId={this.props.id} uid={uid}>
                             <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={uid}>
-                                {this.renderHeaderBlock()}
                                 {this.renderPFSettingModal()}
                                 {this.renderBetHistoryModal()}
                             </PFWrapper>
+                        </PFProvider>
 
-                            {/* <div>{availableInGameData && this.renderResultBlock()}</div>
+                        {/* <div>{availableInGameData && this.renderResultBlock()}</div>
                         <PlaceBetProvider>
                             <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
                                 {this.renderBettingBlock()}
@@ -724,13 +709,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                             )}
                         </div>
                         <Footer /> */}
-                        </div>
-                    </PFProvider>
-                    {!availableInGameData && <OverlayMask removeOverlay={isDisabledGame} />}
+                    </div>
+                    {/* {!availableInGameData && <OverlayMask removeOverlay={isDisabledGame} />}
                     {this.renderGameGuideModal()}
                     {this.renderMenuButtons()}
                     {this.renderNewRoundTransition()}
-                    {this.renderNotice()}
+                    {this.renderNotice()} */}
                 </>
             </>
         );
