@@ -3,7 +3,11 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { getAppSettings } from "./src/_shared/app-settings";
 
-import configs from "./configs.json";
+const appSettings = getAppSettings();
+const sentryConfig = appSettings.sentry || {};
 
-Sentry.init({ ...configs.sentry });
+if (sentryConfig) {
+    Sentry.init({ ...sentryConfig });
+}

@@ -4,9 +4,7 @@ export const setSentryUser = (user) => {
     if (user) {
         setTimeout(function () {
             try {
-                Sentry.configureScope(function (scope) {
-                    scope.setUser(user);
-                });
+                Sentry.setUser(user);
             } catch (ex) {
                 console.log(ex);
             }
@@ -21,9 +19,7 @@ export const setCharacterName = (name: string) => {
 const setTag = (tag) => {
     if (tag) {
         try {
-            Sentry.configureScope(function (scope) {
-                scope.setTag(tag.id, tag.value);
-            });
+            Sentry.setTag(tag.id, tag.value);
         } catch (ex) {
             console.log(ex);
         }

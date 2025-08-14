@@ -5,7 +5,7 @@ window.envConfig = {
         path: "",
     },
     sentry: {
-        dsn: "https://b015ef787273452c8fce4af733e62d59@sentry.lumigame.com/29",
+        dsn: "https://9c999f9b51e3b4543cb160b946b5bcbe@sentry-k8s.lumigame.com/30",
         environment: "LOCAL1",
     },
     enableSourceMap: true,

@@ -3,7 +3,11 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { getAppSettings } from "./src/_shared/app-settings";
 
-if (window.envConfig) {
-    Sentry.init({ ...window.envConfig.sentry, ignoreErrors: ["Network Error"] });
+const appSettings = getAppSettings();
+const sentryConfig = appSettings.sentry || {};
+
+if (sentryConfig) {
+    Sentry.init({ ...sentryConfig, ignoreErrors: ["Network Error"] });
 }
