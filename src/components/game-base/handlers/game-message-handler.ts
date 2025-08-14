@@ -56,7 +56,7 @@ export class GameMessageHandler {
         this.register(messageEventType.ROUND_DATA, this.handleRoundData);
         this.register(messageEventType.SIGNED_IN, this.handleSignedIn);
         this.register(messageEventType.CLIENT_SEED_DETAIL, this.handleClientSeedDetail);
-        this.register(messageEventType.PLAYER_RESULT_BOARD, this.handlePlayerResultBoard);
+        // this.register(messageEventType.PLAYER_RESULT_BOARD, this.handlePlayerResultBoard);
     };
 
     getMessageTransmitter() {
@@ -127,12 +127,12 @@ export class GameMessageHandler {
         });
     };
 
-    handlePlayerResultBoard = (playerResultBoard: PlayerResultBoard) => {
-        this.dispatch({
-            type: GameEventActionType.PLAYER_RESULT_BOARD_UPDATE,
-            payload: playerResultBoard,
-        });
-    };
+    // handlePlayerResultBoard = (playerResultBoard: PlayerResultBoard) => {
+    //     this.dispatch({
+    //         type: GameEventActionType.PLAYER_RESULT_BOARD_UPDATE,
+    //         payload: playerResultBoard,
+    //     });
+    // };
 
     clearAllHandlers = () => {
         this.messageTransmitter.clearAllListener();

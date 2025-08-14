@@ -4,7 +4,7 @@ import { getAppSettings } from "../app-settings";
 import { buildServerUrl } from "../helpers";
 import { SocketInfo } from "./../../components/game-base/type";
 import { GameMessageHandler, messageEventType } from "../../components/game-base/handlers";
-import { GameStore } from "../stores/game-store/store";
+import { GameStore } from "../stores/game-store/game-store";
 
 export function InitSocketIO(
     socketInfo: SocketInfo,

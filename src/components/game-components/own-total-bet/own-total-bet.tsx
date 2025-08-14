@@ -1,5 +1,5 @@
 import { numberWithCommas } from "../../../_shared/helpers";
-import useGameStore from "../../../_shared/stores/game-store/store";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 export const OwnTotalBet = () => {
     const ownBets = useGameStore((state) => state.ownBets);

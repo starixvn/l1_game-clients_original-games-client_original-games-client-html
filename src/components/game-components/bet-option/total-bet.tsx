@@ -1,5 +1,5 @@
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import useGameStore from "../../../_shared/stores/game-store/store";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
