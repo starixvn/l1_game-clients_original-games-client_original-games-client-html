@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { PlayerInPlayerResultBoard } from "../../components/game-base/type";
 import useGameStore from "../stores/game-store/game-store";
+import { numberWithCommas } from "../helpers";
 
 export const usePlayerResultBoard = () => {
     const { playerResultBoard } = useGameStore();
@@ -10,9 +11,8 @@ export const usePlayerResultBoard = () => {
 
         return playerResultBoard.players.map((player: PlayerInPlayerResultBoard) => ({
             playerName: player.name,
-            betAmount: player.betAmount.toString(),
-            win: player.winAmount?.toString() || "-",
-            winAmount: player.winAmount,
+            betAmount: numberWithCommas(player.betAmount, 2).toString(),
+            win: numberWithCommas(player.winAmount || 0, 2).toString() || "-",
         }));
     }, [playerResultBoard]);
 
