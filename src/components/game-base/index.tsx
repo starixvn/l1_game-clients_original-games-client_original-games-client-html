@@ -54,6 +54,7 @@ import { PlayerResultBoard } from "../game-components/player-result-board/player
 import { MenuIcon } from "../game-components/menu/menu-icon";
 import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
+import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -610,12 +611,16 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetControlRightSide() {
-        return <div className="col-12 col-md-6">Round Info Frame</div>;
+        return (
+            <div className="col-12 col-md-6">
+                <OwnTotalBet />
+            </div>
+        );
     }
 
     renderBetControl() {
         return (
-            <div className="bg-[#F1F3F4] dark:bg-primary-bg md:rounded-t-xl">
+            <div className="md:bg-primary-bg md:rounded-t-xl">
                 <div className="flex flex-wrap">
                     {this.renderBetControlLeftSide()}
                     {this.renderBetControlRightSide()}

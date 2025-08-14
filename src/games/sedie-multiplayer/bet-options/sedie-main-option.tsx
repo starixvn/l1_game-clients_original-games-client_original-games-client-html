@@ -9,7 +9,7 @@ const RippleButton = dynamic(() => import("../../../components/game-components/b
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     return (
         <>
-            <div className={` text-white relative w-[180px] h-[136px] flex flex-col justify-around ${styles[`${choice}`]}`}>
+            <div className={` text-white relative w-[180px] h-[138px] flex flex-col justify-around ${styles[`${choice}`]}`}>
                 <div className="absolute top-0 left-0 w-full h-full z-[-1]">{choice === SeDieBetOptions.ODD ? <BgOdd /> : <BgEven />}</div>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
