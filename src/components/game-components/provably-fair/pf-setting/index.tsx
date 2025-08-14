@@ -8,7 +8,7 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { ButtonPFGuide } from "../pf-guide";
+import { ButtonPFGuide, PFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
@@ -30,26 +30,78 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
     const { isShowPFSetting } = usePFContext();
     const { t: translateSNGames } = useSNTranslate();
     const dispatch = usePFDispatch();
-
     const handleCloseModal = () => {
         dispatch({ type: PFEventActionType.TOGGLE_PF_SETTING, payload: { isShowPFSetting: false } });
     };
 
+    const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(true);
+    const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(false);
+    
+    const toggleSettingsSection = () => {
+        setIsSettingsExpanded(!isSettingsExpanded);
+        if (isGuidesExpanded) {
+            setIsGuidesExpanded(false);
+        }
+    };
+
+    const toggleGuidesSection = () => {
+        setIsGuidesExpanded(!isGuidesExpanded);
+        if (isSettingsExpanded) {
+            setIsSettingsExpanded(false);
+        }
+    };
+
     return (
         isShowPFSetting && (
-            <ModalContainer
-                id="pf-setting"
-                title={
-                    <div>
-                        <ButtonPFGuide />
-                        {translateSNGames("pf_title_provably_fair_settings")}
+            <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74]">
+                <ModalContainer
+                    id="pf-setting"
+                    title={
+                        <div>
+                            <ButtonPFGuide />
+                            {translateSNGames("pf_title_provably_fair_settings")}
+                        </div>
+                    }
+                    isOpen={true}
+                    onCloseModal={handleCloseModal}
+                >
+                    <div >
+                        {/* Provably Fair Settings Section Header */}
+                        <div className={Styles["section-header"]} onClick={toggleSettingsSection}>
+                            <h3 className={Styles["section-title"]}>
+                                {translateSNGames("pf_title_provably_fair_settings")}
+                            </h3>
+                            <span className={`${Styles["chevron-icon"]} ${isSettingsExpanded ? Styles["chevron-down"] : Styles["chevron-right"]}`}>
+                                {isSettingsExpanded ? "▼" : "▶"}
+                            </span>
+                        </div>
+                        
+                        {/* Provably Fair Settings Content */}
+                        {isSettingsExpanded && (
+                            <div className={Styles["section-content"]}>
+                                <PFSetting customClientSeedInfo={customClientSeedInfo} />
+                            </div>
+                        )}
+
+                        {/* Provably Fair Guides Section Header */}
+                        <div className={Styles["section-header"]} onClick={toggleGuidesSection}>
+                            <h3 className={Styles["section-title"]}>
+                                {translateSNGames("pf_pop-up_title_pf_guide")}
+                            </h3>
+                            <span className={`${Styles["chevron-icon"]} ${isGuidesExpanded ? Styles["chevron-down"] : Styles["chevron-right"]}`}>
+                                {isGuidesExpanded ? "▼" : "▶"}
+                            </span>
+                        </div>
+                        
+                        {/* Provably Fair Guides Content */}
+                        {isGuidesExpanded && (
+                            <div className={Styles["section-content"]}>
+                                <PFGuide />
+                            </div>
+                        )}
                     </div>
-                }
-                isOpen={true}
-                onCloseModal={handleCloseModal}
-            >
-                <PFSetting customClientSeedInfo={customClientSeedInfo} />
-            </ModalContainer>
+                </ModalContainer>
+            </div>
         )
     );
 };
@@ -68,6 +120,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const [serverSeedHash, setServerSeedHash] = useState<string>("");
     const [manualClientSeed, setManualClientSeed] = useState<string>(pfClientSeedSetting?.manualClientSeed || "");
     const [randomClientSeed, setRandomClientSeed] = useState<string>(pfClientSeedSetting?.randomClientSeed || "");
+    
     const { t: translateCommon } = useCommonTranslate();
     const { gameMessageHandler } = useGameContext();
     const { t: translateSNGames } = useSNTranslate();

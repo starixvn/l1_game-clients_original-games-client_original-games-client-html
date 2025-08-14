@@ -8,6 +8,7 @@ import { RoundState } from "../../../game-base/type";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
 import { usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
+import { MenuIcon } from "../../menu/menu-icon";
 
 const dropdownItemClassName = "dropdown-item";
 
@@ -42,7 +43,6 @@ export const Menu: React.FC = () => {
         });
         console.log("[Menu] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
     };
-
 
     const openBetHistory = () => {
         if (roundState === RoundState.Disabled) {
@@ -101,31 +101,9 @@ export const Menu: React.FC = () => {
 
     return (
         <div ref={wrapperRef} className={`${Styles["game-menu"]} ${Styles[specialClassByDevice]}`}>
-            <div
-                className={`${Styles["menu-toggle-btn"]}`}
-                id="icon-menu"
-                onClick={() => {
-                    clickSound();
-                    const next = !dropdownOpen;
-                    console.log("[Menu] toggle.dropdown", { from: dropdownOpen, to: next });
-                    setDropdownOpen(next);
-                }}
-            >
-                <span className={`icon-menu ${Styles["menu-icon"]}`}></span>
-            </div>
-            <div className="dropdown">
-                <div className={`dropdown-menu right ${Styles["dropdown-menu"]} ${dropdownOpen ? "show" : ""}`}>
-                    <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={handleClickPFSetting}>
-                        <span id="icon-pf" className={`icon-pf ${Styles["menu-icon"]}`}></span>
-                    </div>
-                    <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={openBetHistory}>
-                        <span id="icon-history" className={`icon-history ${Styles["menu-icon"]}`}></span>
-                    </div>
-                    <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={openGuide}>
-                        <span id="icon-guide" className={`icon-guide ${Styles["menu-icon"]}`}></span>
-                    </div>
-                </div>
-            </div>
+            <MenuIcon name="sound" />
+            <MenuIcon name="guide" onClick={openGuide} />
+            <MenuIcon name="pf-guide" onClick={handleClickPFSetting} />
         </div>
     );
 };

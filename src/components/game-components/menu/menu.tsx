@@ -100,8 +100,10 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
 
     return (
         <div className="p-2 bg-white dark:bg-secondary-bg rounded-b-xl">
-            <div className="flex flex-1 gap-1 items-center">{leftSide}</div>
-            <div className="flex flex-1 gap-1 items-center justify-end">{rightSide}</div>
+            <div className="flex justify-between items-center">
+                <div className="flex gap-1 items-center">{leftSide}</div>
+                <div className="flex gap-1 items-center">{rightSide}</div>
+            </div>
         </div>
     );
 };

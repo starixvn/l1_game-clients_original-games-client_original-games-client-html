@@ -55,6 +55,7 @@ import { MenuIcon } from "../game-components/menu/menu-icon";
 import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
+import { Menu as MenuSettings } from "../game-components/settings/menu";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -633,11 +634,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     renderMenu() {
         return (
             <Menu
+                leftSide={
+                    <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-bold text-sm tracking-wider align-middle">
+                        Nova88 Original
+                    </div>
+                }
                 rightSide={
                     <>
-                        <MenuIcon name="sound" />
-                        <MenuIcon name="guide" />
-                        <MenuIcon name="security" />
+                        <MenuSettings />
                     </>
                 }
             />
