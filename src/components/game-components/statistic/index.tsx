@@ -49,7 +49,7 @@ export const getPercentage = (keys: string[], countResult: object, total: number
 };
 
 export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: PercentageStatisticProps) => {
-    const { roundHistory, onSelectGroup, selectedGroup, mainChoices, choicesInGroups, iconRenderer } = props;
+    const { roundHistory, onSelectGroup, selectedGroup, mainChoices, choicesInGroups, iconRenderer, renderAsBar, barColors, barHeightPx = 12, roundedRadiusPx = 8, barLabelFontSizePx = 12 } = props;
     const counted = countSettlementResult(roundHistory);
     const clickSound = useClickSound();
 
@@ -85,6 +85,36 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
         );
     } else {
         const statisticResult = getPercentage(mainChoices, counted, roundHistory.length);
+
+        if (renderAsBar && mainChoices.length === 2) {
+            const [left, right] = mainChoices;
+            const leftVal = statisticResult[left] ?? 0;
+            const rightVal = statisticResult[right] ?? 0;
+            const leftColor = barColors?.[left] ?? "#1E5AEF";
+            const rightColor = barColors?.[right] ?? "#D5102B";
+            const radius = `${roundedRadiusPx}px`;
+            return (
+                <div className={`${Styles["statistic-container"]}`} style={{ width: "100%" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ color: "#D7DFEA", fontWeight: 700, fontSize: barLabelFontSizePx }}>{leftVal}%</span>
+                        <div style={{ flex: 1, height: barHeightPx, background: rightColor, borderRadius: radius, position: "relative" }}>
+                            <div
+                                style={{
+                                    width: `${leftVal}%`,
+                                    height: barHeightPx,
+                                    background: leftColor,
+                                    borderTopLeftRadius: radius,
+                                    borderBottomLeftRadius: radius,
+                                    borderTopRightRadius: leftVal === 100 ? radius : 0,
+                                    borderBottomRightRadius: leftVal === 100 ? radius : 0,
+                                }}
+                            />
+                        </div>
+                        <span style={{ color: "#D7DFEA", fontWeight: 700, fontSize: barLabelFontSizePx }}>{rightVal}%</span>
+                    </div>
+                </div>
+            );
+        }
 
         return (
             <div className={`${Styles["statistic-container"]} flex`} id="bar-statistic">

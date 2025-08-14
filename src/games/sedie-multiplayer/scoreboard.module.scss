@@ -2,22 +2,22 @@
     display: flex;
     flex-wrap: wrap;
     position: relative;
-    width: 360px;
+    width: 380px;
     height: 113px;
     border: 1px solid #172d41;
     border-radius: 3px;
-    background: #021520;
+    background: rgba(0, 0, 0, 0.3);
     padding-left: 2px;
     padding-top: 1px;
     overflow: hidden;
 }
 
 .scoreboard-full {
-    width: 360px;
+    width:  380px;
     height: 113px;
-    border: 1px solid #172d41;
+    // border: 1px solid #172d41;
     border-radius: 3px;
-    background: #021520;
+    background: rgba(0, 0, 0, 0.3);
     padding: 1px;
     padding-left: 2px;
 }

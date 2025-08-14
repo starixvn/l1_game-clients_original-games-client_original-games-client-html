@@ -17,6 +17,11 @@ export type PercentageStatisticProps = {
     subChoices?: string[];
     subChoicesClass?: {};
     iconRenderer?: (choice: string) => React.ReactNode;
+    renderAsBar?: boolean;
+    barColors?: Record<string, string>;
+    barHeightPx?: number;
+    roundedRadiusPx?: number;
+    barLabelFontSizePx?: number;
 };
 
 export type BeadBoardIconProps = {

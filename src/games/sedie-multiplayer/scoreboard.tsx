@@ -1,5 +1,4 @@
 import { Component, ReactNode, memo } from "react";
-
 import { Round } from "../../components/game-base/type";
 import { SlidableScoreboard, SwitchableScoreboard } from "../../components/game-components/round-history/scoreboard";
 import { BigRoadElement } from "../../components/game-components/round-history/scoreboard/elements";
@@ -39,7 +38,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
     }
 
     render(): ReactNode {
-        return <SlidableScoreboard boards={[this.renderBigRoad()]} />;
+        return this.renderBigRoad();
     }
 }
 

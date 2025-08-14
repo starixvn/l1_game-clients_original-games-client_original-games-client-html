@@ -31,7 +31,7 @@
 
 .statistic-container {
     position: relative;
-    background: linear-gradient(180deg, rgba(19, 47, 81, 1) 0%, rgba(12, 45, 64, 1) 100%);
+    // background: linear-gradient(180deg, rgba(19, 47, 81, 1) 0%, rgba(12, 45, 64, 1) 100%);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     padding: 4px 9px;
@@ -99,7 +99,7 @@
 .red {
     @extend %statistic-icon;
     --colorText: #ff5e5e;
-    background: url("/static/images/dot/dot-red-medium.svg?v=#{$version-image}") no-repeat;
+    background: url("/static/images/dot/scoreboard-red-dot.webp?v=#{$version-image}") no-repeat;
     background-size: contain;
 
     &.big-road-tie {
@@ -110,7 +110,7 @@
 .blue {
     @extend %statistic-icon;
     --colorText: #1c7bdf;
-    background: url("/static/images/dot/dot-blue-medium.svg?v=#{$version-image}") no-repeat;
+    background: url("/static/images/dot/scoreboard-blue-dot.webp?v=#{$version-image}") no-repeat;
     background-size: contain;
 
     &.big-road-tie {
