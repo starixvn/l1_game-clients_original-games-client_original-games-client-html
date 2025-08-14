@@ -26,7 +26,7 @@ export const useSettingDispatch = () => useContext(SettingDispatchContext);
 
 const settingReducer = (state: any, action: SettingEventAction): SettingContextModel => {
     const { type, payload } = action;
-    const { isShowedSetting, enabledMusic, isShowAvatarGallery, chipSettings, volumeMusic, volumeSFX } = payload;
+    const { isShowedSetting, enabledMusic, enabledSound, isShowAvatarGallery, chipSettings, volumeMusic, volumeSFX } = payload;
 
     switch (type) {
         case SettingEventActionType.TOGGLE_SETTING: {
@@ -40,6 +40,13 @@ const settingReducer = (state: any, action: SettingEventAction): SettingContextM
             return {
                 ...state,
                 enabledMusic,
+            };
+        }
+
+        case SettingEventActionType.TOGGLE_SOUND: {
+            return {
+                ...state,
+                enabledSound,
             };
         }
 
@@ -70,7 +77,7 @@ const settingReducer = (state: any, action: SettingEventAction): SettingContextM
                 volumeSFX,
             };
         }
-        
+
         default: {
             throw Error("Unknown action: " + action.type);
         }

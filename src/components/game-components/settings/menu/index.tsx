@@ -21,11 +21,14 @@ export const Menu: React.FC = () => {
     const pfDispatch = usePFDispatch();
 
     const handleClickPFSetting = () => {
+        console.log("[Menu] pf.open", { roundState });
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] pf.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] pf.dispatch.toggle");
         pfDispatch({
             type: PFEventActionType.TOGGLE_PF_SETTING,
             payload: {
@@ -37,15 +40,18 @@ export const Menu: React.FC = () => {
             function: TrackingFunction.PFSetting,
             action: TrackingAction.Open,
         });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
     };
 
 
     const openBetHistory = () => {
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] history.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] history.dispatch.toggle");
         dispatch({
             type: GameEventActionType.TOGGLE_BET_HISTORY,
             payload: {
@@ -55,14 +61,17 @@ export const Menu: React.FC = () => {
         setDropdownOpen(false);
 
         AnalyticsHelper.trackFunction({ function: TrackingFunction.BetHistory, action: TrackingAction.Open });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.BetHistory, action: TrackingAction.Open });
     };
 
     const openGuide = () => {
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] guide.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] guide.dispatch.toggle");
         dispatch({
             type: GameEventActionType.TOGGLE_GAME_GUIDE,
             payload: {
@@ -71,10 +80,14 @@ export const Menu: React.FC = () => {
         });
         setDropdownOpen(false);
         AnalyticsHelper.trackFunction({ function: TrackingFunction.GameGuide, action: TrackingAction.Open });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.GameGuide, action: TrackingAction.Open });
     };
 
     const handleClickOutside = (event) => {
         if (wrapperRef && wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+            if (dropdownOpen) {
+                console.log("[Menu] click.outside: close");
+            }
             setDropdownOpen(false);
         }
     };
@@ -93,7 +106,9 @@ export const Menu: React.FC = () => {
                 id="icon-menu"
                 onClick={() => {
                     clickSound();
-                    setDropdownOpen(!dropdownOpen);
+                    const next = !dropdownOpen;
+                    console.log("[Menu] toggle.dropdown", { from: dropdownOpen, to: next });
+                    setDropdownOpen(next);
                 }}
             >
                 <span className={`icon-menu ${Styles["menu-icon"]}`}></span>

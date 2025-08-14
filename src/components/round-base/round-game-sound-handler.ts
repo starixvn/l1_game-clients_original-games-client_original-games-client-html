@@ -22,6 +22,12 @@ export class RoundGameSoundHandler implements IGameSoundHandler {
             [RoundState.BeforePlaceBet]: startRoundSound,
             [RoundState.InRound]: startPlaceBetSound,
         };
-        soundByState[newRoundState]?.();
+        const fn = soundByState[newRoundState];
+        if (fn) {
+            console.log("[RoundGameSoundHandler] play", { newRoundState });
+            fn();
+        } else {
+            console.log("[RoundGameSoundHandler] no-sound", { newRoundState });
+        }
     }
 }

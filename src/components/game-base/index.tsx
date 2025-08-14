@@ -443,6 +443,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
             const isContinuePlaying = gameStateContextModel.roundState !== RoundState.None;
             if (isContinuePlaying) {
+                console.log(`[GameBase:${this.props.id}] handleSound`, { newRoundState });
                 this.gameSoundHandler.handleSound(newRoundState);
             }
         }

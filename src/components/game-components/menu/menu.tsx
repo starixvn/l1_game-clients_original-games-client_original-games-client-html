@@ -21,11 +21,14 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
     const pfDispatch = usePFDispatch();
 
     const handleClickPFSetting = () => {
+        console.log("[Menu] pf.open", { roundState });
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] pf.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] pf.dispatch.toggle");
         pfDispatch({
             type: PFEventActionType.TOGGLE_PF_SETTING,
             payload: {
@@ -37,14 +40,17 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
             function: TrackingFunction.PFSetting,
             action: TrackingAction.Open,
         });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
     };
 
     const openBetHistory = () => {
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] history.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] history.dispatch.toggle");
         dispatch({
             type: GameEventActionType.TOGGLE_BET_HISTORY,
             payload: {
@@ -54,14 +60,17 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
         setDropdownOpen(false);
 
         AnalyticsHelper.trackFunction({ function: TrackingFunction.BetHistory, action: TrackingAction.Open });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.BetHistory, action: TrackingAction.Open });
     };
 
     const openGuide = () => {
         if (roundState === RoundState.Disabled) {
+            console.log("[Menu] guide.blocked: round disabled");
             return;
         }
 
         clickSound();
+        console.log("[Menu] guide.dispatch.toggle");
         dispatch({
             type: GameEventActionType.TOGGLE_GAME_GUIDE,
             payload: {
@@ -70,10 +79,14 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
         });
         setDropdownOpen(false);
         AnalyticsHelper.trackFunction({ function: TrackingFunction.GameGuide, action: TrackingAction.Open });
+        console.log("[Menu] analytics.track", { function: TrackingFunction.GameGuide, action: TrackingAction.Open });
     };
 
     const handleClickOutside = (event) => {
         if (wrapperRef && wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+            if (dropdownOpen) {
+                console.log("[Menu] click.outside: close");
+            }
             setDropdownOpen(false);
         }
     };
@@ -88,34 +101,7 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
     return (
         <div className="p-2 bg-white dark:bg-secondary-bg rounded-b-xl">
             <div className="flex flex-1 gap-1 items-center">{leftSide}</div>
-            <div className="flex flex-1 gap-1 items-center justify-end">
-                {rightSide}
-                <div ref={wrapperRef} className={`${Styles["game-menu"]} ${Styles[specialClassByDevice]}`}>
-                    <div
-                        className={`${Styles["menu-toggle-btn"]}`}
-                        id="icon-menu"
-                        onClick={() => {
-                            clickSound();
-                            setDropdownOpen(!dropdownOpen);
-                        }}
-                    >
-                        <span className={`icon-menu ${Styles["menu-icon"]}`}></span>
-                    </div>
-                    <div className="dropdown">
-                        <div className={`dropdown-menu right ${Styles["dropdown-menu"]} ${dropdownOpen ? "show" : ""}`}>
-                            <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={handleClickPFSetting}>
-                                <span id="icon-pf" className={`icon-pf ${Styles["menu-icon"]}`}></span>
-                            </div>
-                            <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={openBetHistory}>
-                                <span id="icon-history" className={`icon-history ${Styles["menu-icon"]}`}></span>
-                            </div>
-                            <div className={`${dropdownItemClassName} ${Styles[dropdownItemClassName]}`} onClick={openGuide}>
-                                <span id="icon-guide" className={`icon-guide ${Styles["menu-icon"]}`}></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div className="flex flex-1 gap-1 items-center justify-end">{rightSide}</div>
         </div>
     );
 };

@@ -7,8 +7,10 @@ const Setting = () => {
 
     const settingDispatch = useSettingDispatch();
     const openSetting = () => {
+        console.log("[Header.Setting] open.click");
         document.body.classList.add("no-scroll");
         clickSound();
+        console.log("[Header.Setting] dispatch.toggle", { isShowedSetting: true });
         settingDispatch({
             type: SettingEventActionType.TOGGLE_SETTING,
             payload: {

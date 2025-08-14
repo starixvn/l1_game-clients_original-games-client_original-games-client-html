@@ -1,12 +1,14 @@
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
 import { usePFDispatch } from "../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { PFEventActionType } from "../../../_shared/react-contexts/game-state-context/pf/pf-action";
 import { useClickSound } from "../../../_shared/react-hooks";
 import { StorageHelper, localStorageKeys, AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../_shared/helpers";
+import { SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
 import { RoundState } from "../../game-base/type";
+import { useSettingContext } from "../../../_shared/react-contexts";
 
 type Props = { name: string; onClick?: () => void };
 
@@ -14,11 +16,14 @@ export const MenuIcon = ({ name, onClick }: Props) => {
     const { roundState } = useGameStateContext();
     const dispatch = useGameStatesDispatch();
     const pfDispatch = usePFDispatch();
+    const settingDispatch = useSettingDispatch();
     const clickSound = useClickSound();
-    const [enabledSound, setEnabledSound] = useState<boolean>(StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true);
+    const settingContext = useSettingContext();
 
     const handleClick = useCallback(() => {
+        console.log("[MenuIcon] click", { name, roundState });
         if (onClick) {
+            console.log("[MenuIcon] delegated onClick", { name });
             onClick();
             return;
         }
@@ -29,40 +34,46 @@ export const MenuIcon = ({ name, onClick }: Props) => {
 
         if (name === "sound") {
             clickSound();
-            const next = !enabledSound;
-            StorageHelper.set(localStorageKeys.enableSound, next);
-            setEnabledSound(next);
-            AnalyticsHelper.trackFunction({ function: TrackingFunction.Sound, action: next ? TrackingAction.ToggleOn : TrackingAction.ToggleOff });
+            console.log("[MenuIcon] sound.open.settings");
+            settingDispatch({
+                type: SettingEventActionType.TOGGLE_SETTING,
+                payload: { isShowedSetting: true },
+            });
             return;
         }
 
         if (name === "guide") {
             clickSound();
+            console.log("[MenuIcon] guide.open.dispatch");
             dispatch({
                 type: GameEventActionType.TOGGLE_GAME_GUIDE,
                 payload: { isShowGameGuide: true },
             });
             AnalyticsHelper.trackFunction({ function: TrackingFunction.GameGuide, action: TrackingAction.Open });
+            console.log("[MenuIcon] analytics.track", { function: TrackingFunction.GameGuide, action: TrackingAction.Open });
             return;
         }
 
         if (name === "security") {
             clickSound();
+            console.log("[MenuIcon] pf.open.dispatch");
             pfDispatch({
                 type: PFEventActionType.TOGGLE_PF_SETTING,
                 payload: { isShowPFSetting: true },
             });
             AnalyticsHelper.trackFunction({ function: TrackingFunction.PFSetting, action: TrackingAction.Open });
+            console.log("[MenuIcon] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
             return;
         }
-    }, [onClick, roundState, name, clickSound, enabledSound, dispatch, pfDispatch]);
+    }, [onClick, roundState, name, clickSound, dispatch, pfDispatch, settingDispatch]);
 
     const iconSrc = useMemo(() => `/static/images/icons/${name}.svg`, [name]);
+    const computedEnabledSound = ((settingContext?.enabledSound ?? (StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true)) && ((settingContext?.volumeSFX ?? 50) > 0));
 
     return (
         <div className="cursor-pointer p-1" onClick={handleClick}>
             {name === "sound" ? (
-                <span className={`icon-sound-${enabledSound ? "on" : "off"}`}></span>
+                <span className={`icon-sound-${computedEnabledSound ? "on" : "off"}`}></span>
             ) : name === "security" ? (
                 <span className={`icon-pf`}></span>
             ) : name === "guide" ? (
