@@ -684,20 +684,19 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             <>
                 {/* <BackgroundGalaxy gameId={this.props.id} /> */}
                 <>
-                    <div className={`game-${this.props.id}`}>
-                        <div className="flex flex-wrap">
-                            {this.renderLeftSide()}
-                            {this.renderRightSide()}
-                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
-                        </div>
-                        {/* <PFProvider gameId={this.props.id} uid={uid}>
+                    <PFProvider gameId={this.props.id} uid={uid}>
+                        <div className={`game-${this.props.id}`}>
+                            <div className="flex flex-wrap">
+                                {this.renderLeftSide()}
+                                {this.renderRightSide()}
+                                <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                            </div>
                             <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={uid}>
                                 {this.renderHeaderBlock()}
                                 {this.renderPFSettingModal()}
                                 {this.renderBetHistoryModal()}
                             </PFWrapper>
-                        </PFProvider> */}
-                        {/* <div>{availableInGameData && this.renderResultBlock()}</div>
+                            {/* <div>{availableInGameData && this.renderResultBlock()}</div>
                         <PlaceBetProvider>
                             <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
                                 {this.renderBettingBlock()}
@@ -715,7 +714,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                             )}
                         </div>
                         <Footer /> */}
-                    </div>
+                        </div>
+                    </PFProvider>
                     {!availableInGameData && <OverlayMask removeOverlay={isDisabledGame} />}
                     {this.renderGameGuideModal()}
                     {this.renderMenuButtons()}
