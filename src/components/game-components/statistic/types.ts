@@ -16,6 +16,7 @@ export type PercentageStatisticProps = {
     className?: string;
     subChoices?: string[];
     subChoicesClass?: {};
+    iconRenderer?: (choice: string) => React.ReactNode;
 };
 
 export type BeadBoardIconProps = {

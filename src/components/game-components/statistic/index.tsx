@@ -49,7 +49,7 @@ export const getPercentage = (keys: string[], countResult: object, total: number
 };
 
 export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: PercentageStatisticProps) => {
-    const { roundHistory, onSelectGroup, selectedGroup, mainChoices, choicesInGroups } = props;
+    const { roundHistory, onSelectGroup, selectedGroup, mainChoices, choicesInGroups, iconRenderer } = props;
     const counted = countSettlementResult(roundHistory);
     const clickSound = useClickSound();
 
@@ -61,7 +61,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
             groups.push(
                 group.map((choice) => (
                     <StatisticItem key={choice} value={`${statisticResult[choice]}%`}>
-                        <BeadBoardIcon choice={choice} />
+                        {iconRenderer ? iconRenderer(choice) : <BeadBoardIcon choice={choice} />}
                     </StatisticItem>
                 ))
             );
@@ -90,7 +90,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
             <div className={`${Styles["statistic-container"]} flex`} id="bar-statistic">
                 {mainChoices.map((choice) => (
                     <StatisticItem key={choice} value={`${statisticResult[choice]}%`} className={props.className}>
-                        <BeadBoardIcon choice={choice} />
+                        {iconRenderer ? iconRenderer(choice) : <BeadBoardIcon choice={choice} />}
                     </StatisticItem>
                 ))}
             </div>

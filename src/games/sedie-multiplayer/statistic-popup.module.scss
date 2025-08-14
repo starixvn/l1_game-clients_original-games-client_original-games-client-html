@@ -1,0 +1,48 @@
+.statistic-container {
+    position: fixed;
+    top: 50px;
+    right: 8px;
+    z-index: 99999;
+    width: max-content;
+    height: max-content;
+    padding: 8px;
+}
+
+.panel {
+	background: #0b1b29;
+	border: 1px solid #1e3a55;
+	border-radius: 8px;
+	padding: 12px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+    position: relative;
+}
+
+.title {
+	color: #dbe7ff;
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: 0.06em;
+	margin-bottom: 8px;
+}
+
+.close {
+	position: absolute;
+	top: -12px;
+	right: -12px;
+	width: 32px;
+	height: 32px;
+	background: url('/static/images/button-statistic.webp') no-repeat center/cover;
+	border: none;
+	// border-radius: 50%;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+	cursor: pointer;
+	z-index: 9999;
+}
+
+
