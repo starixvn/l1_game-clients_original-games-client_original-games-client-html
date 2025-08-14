@@ -1,5 +1,5 @@
-import { useGameBettingZoneContext } from "../../../_shared/react-contexts";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
+import useGameStore from "../../../_shared/stores/game-store/store";
 import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
@@ -24,7 +24,7 @@ const convertStakeToString = (amount: number, rate: number) => {
 };
 
 export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const { totalBets } = useGameBettingZoneContext();
+    const totalBets = useGameStore((state) => state.totalBets);
     const { rate, roundState } = useGameStateContext();
     const totalBet = totalBets?.[choice] ?? 0;
 

@@ -56,6 +56,7 @@ import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
+import useGameStore from "../../_shared/stores/game-store/store";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -247,7 +248,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     protected async connectToGameService() {
         const { session } = this.context as PlayerContextModel;
         const { socketInfo, gameName } = this.props;
-        const { socket } = InitSocketIO(socketInfo, session, gameName, this.gameMessageHandler);
+        const { socket } = InitSocketIO(socketInfo, session, gameName, this.gameMessageHandler, useGameStore.getState());
 
         this.socket = socket;
     }

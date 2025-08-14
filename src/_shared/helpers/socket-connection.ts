@@ -4,8 +4,15 @@ import { getAppSettings } from "../app-settings";
 import { buildServerUrl } from "../helpers";
 import { SocketInfo } from "./../../components/game-base/type";
 import { GameMessageHandler, messageEventType } from "../../components/game-base/handlers";
+import { GameStore } from "../stores/game-store/store";
 
-export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: string, gameMessageHandler: GameMessageHandler) {
+export function InitSocketIO(
+    socketInfo: SocketInfo,
+    session: any,
+    gameName: string,
+    gameMessageHandler: GameMessageHandler,
+    gameStore: GameStore
+) {
     const { proxy, enableMsgpackParser } = getAppSettings();
     const socketUri = buildServerUrl(socketInfo.namespace);
     const socketOption = {
@@ -21,7 +28,10 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
     if (socket) {
         gameMessageHandler.registerSocketEvents();
 
-        socket.off(gameName).on(gameName, gameMessageHandler.broadcastGameEvent);
+        socket.off(gameName).on(gameName, (message) => {
+            gameMessageHandler.broadcastGameEvent(message);
+            gameStore.registerEvent(message);
+        });
         socket.off("message").on("message", (message) => {
             gameMessageHandler.broadcastGameMessage(message);
         });

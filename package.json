@@ -45,7 +45,8 @@
         "socket.io-msgpack-parser": "^3.0.1",
         "swiper": "^11.1.1",
         "unique-names-generator": "^4.7.1",
-        "use-sound": "^4.0.1"
+        "use-sound": "^4.0.1",
+        "zustand": "^5.0.7"
     },
     "devDependencies": {
         "@babel/core": "^7.23.9",
