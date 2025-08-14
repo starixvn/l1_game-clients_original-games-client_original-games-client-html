@@ -1,5 +1,6 @@
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../_shared/helpers/message-transmitter/global-transmitter";
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { ConnectFailedReasonKey } from "../../game-components/error-message/type";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 
@@ -69,14 +70,16 @@ export class PlayerHandler {
             payload: { userStakeLevel },
         });
 
-        hasNotice &&  GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.NOTICE]: { message: "Common.message_bet_limit_change" }});
+        hasNotice &&
+            GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.NOTICE]: { message: "Common.message_bet_limit_change" } });
     }
 
     handleUserData({ user, gameConfigs }: { user: Player; gameConfigs: any }) {
-        if(gameConfigs){
+        if (gameConfigs) {
+            useGameStore.getState().setRate({ rate: user.rate });
             this.props.dispatch({
                 type: GameEventActionType.USER,
-                payload: {rate: user.rate },
+                payload: { rate: user.rate },
             });
         }
     }

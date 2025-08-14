@@ -1,4 +1,3 @@
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
@@ -25,7 +24,8 @@ const convertStakeToString = (amount: number, rate: number) => {
 
 export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
     const totalBets = useGameStore((state) => state.totalBets);
-    const { rate, roundState } = useGameStateContext();
+    const roundState = useGameStore((state) => state.roundState);
+    const rate = useGameStore((state) => state.rate);
     const totalBet = totalBets?.[choice] ?? 0;
 
     if (totalBet <= 0 || rate === 0 || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {

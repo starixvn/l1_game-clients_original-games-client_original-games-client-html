@@ -10,6 +10,7 @@ export interface BettingInfoSlice {
     setPlayerBetCount: (playerBetCount: Record<string, number>) => void;
     setOwnBets: (ownBets: Record<string, number>) => void;
     registerBettingInfoEvent: (message: any) => void;
+    resetBettingInfo: () => void;
 }
 
 const EVENT_TYPE = {
@@ -19,7 +20,7 @@ const EVENT_TYPE = {
     PLAYER_BET_COUNT: "playerBetCount",
 };
 
-export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set) => ({
+export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set, get, store) => ({
     totalBets: {},
     betPercentage: {},
     playerBetCount: {},
@@ -35,4 +36,5 @@ export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set) => (
             }
         });
     },
+    resetBettingInfo: () => set({ totalBets: {}, betPercentage: {}, playerBetCount: {}, ownBets: {} }),
 });

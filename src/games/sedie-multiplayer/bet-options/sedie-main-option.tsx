@@ -5,6 +5,7 @@ const Odds = dynamic(() => import("../../../components/game-components/bet-optio
 const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"));
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
+const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
 
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     return (
@@ -13,7 +14,7 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
                 <div className="absolute top-0 left-0 w-full h-full z-[-1]">{choice === SeDieBetOptions.ODD ? <BgOdd /> : <BgEven />}</div>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
-                    <div className="text-center text-xl uppercase font-bold">{choice}</div>
+                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xl font-bold" />
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"text-lg"} />
                 </div>
                 <div className="h-5">

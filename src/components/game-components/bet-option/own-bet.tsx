@@ -3,13 +3,10 @@ import { memo, useEffect, useState } from "react";
 import { numberWithCommas } from "../../../_shared/helpers";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
-import { usePlaceBetContext } from "../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
-import { useGameBettingZoneContext, usePlayerContext } from "../../../_shared/react-contexts";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const { enableQuickBet } = usePlayerContext();
-    const { notConfirmOwnBets, ownBets } = usePlaceBetContext();
-    const { acceptedBets } = useGameBettingZoneContext();
+    const ownBets = useGameStore((state) => state.ownBets);
     const [isShowBetAnim, setIsShowBetAnim] = useState(false);
     const [ownBet, setOwnBet] = useState(0);
 
@@ -40,13 +37,7 @@ export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className
         );
     };
 
-    const ownBetValue = ownBet + (enableQuickBet ? 0 : notConfirmOwnBets?.[choice] ?? 0);
-    return (
-        <>
-            {ownBetValue > 0 && ownBetUI(numberWithCommas(ownBetValue, 1))}
-            {isShowBetAnim && acceptedBets > 0 && ownBetUI(numberWithCommas(acceptedBets, 1), Styles["own-bet-anim"])}
-        </>
-    );
+    return <>{ownBet > 0 && ownBetUI(numberWithCommas(ownBet, 1))}</>;
 };
 
 export default memo(OwnBet);

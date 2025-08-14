@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGameActionContext, useSettingContext, useSystemContext } from "../../../_shared/react-contexts";
 import { resolveChipColorHex } from "../../../_shared/constants";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "../../game-base/type";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 interface RippleButtonProps {
     choice: string;
@@ -13,7 +13,7 @@ interface RippleButtonProps {
 export const DEFAULT_CHIP_CURSOR_PATH = "/static/images/chips/cursor";
 const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) => {
     const systemContext = useSystemContext();
-    const { roundState } = useGameStateContext();
+    const roundState = useGameStore((state) => state.roundState);
     const rippleButton = useRef<HTMLButtonElement>();
 
     const [customStyle, setCustomStyle] = useState<object>();

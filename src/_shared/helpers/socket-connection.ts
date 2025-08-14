@@ -11,7 +11,7 @@ export function InitSocketIO(
     session: any,
     gameName: string,
     gameMessageHandler: GameMessageHandler,
-    gameStore: GameStore
+    gameStore?: GameStore
 ) {
     const { proxy, enableMsgpackParser } = getAppSettings();
     const socketUri = buildServerUrl(socketInfo.namespace);
@@ -30,7 +30,7 @@ export function InitSocketIO(
 
         socket.off(gameName).on(gameName, (message) => {
             gameMessageHandler.broadcastGameEvent(message);
-            gameStore.registerEvent(message);
+            gameStore?.registerEvent(message);
         });
         socket.off("message").on("message", (message) => {
             gameMessageHandler.broadcastGameMessage(message);

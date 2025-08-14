@@ -436,6 +436,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 ...newGameState,
             });
 
+            useGameStore.getState().setGameState(newGameState);
             dispatch({
                 type: GameEventActionType.SET_NEW_GAME_STATE,
                 payload: { newGameState },
@@ -455,6 +456,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         }
 
         if (this.roundTimeCounter === durations.startNewRoundAnim) {
+            useGameStore.getState().resetBettingInfo();
             dispatch({
                 type: GameEventActionType.START_NEW_ROUND_ANIM,
                 payload: { isPlayStartRoundAnimation: true },
@@ -462,6 +464,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         }
 
         if (this.roundTimeCounter === durations.startNewRoundAnim - 2) {
+            useGameStore.getState().resetBettingInfo();
             dispatch({
                 type: GameEventActionType.START_NEW_ROUND_ANIM,
                 payload: { isPlayStartRoundAnimation: false },
@@ -652,6 +655,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     renderLeftSide() {
         const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
         const { availableInGameData } = this.props.gameStateContextModel;
+
         return (
             <div className="col-12 col-lg-8 mb-3 px-3">
                 <div className="flex flex-col items-center justify-center">
@@ -701,6 +705,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                                 {this.renderPFSettingModal()}
                                 {this.renderBetHistoryModal()}
                             </PFWrapper>
+
                             {/* <div>{availableInGameData && this.renderResultBlock()}</div>
                         <PlaceBetProvider>
                             <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
@@ -735,7 +740,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         const gameActionsContext = {
             placeBet: this.placeBet,
         };
-
         return (
             <GameContextProvider value={{ ...this.props, gameMessageHandler: this.gameMessageHandler }}>
                 <GameActionsContextProvider value={gameActionsContext}>{this.getRenderTemplate()}</GameActionsContextProvider>

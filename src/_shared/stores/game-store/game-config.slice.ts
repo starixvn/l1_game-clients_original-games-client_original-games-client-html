@@ -38,10 +38,12 @@ export interface GameConfigSlice {
     isScoreboardTab?: boolean;
     availableInGameData?: boolean;
     playerResultBoard?: PlayerResultBoard;
+    setRate: ({ rate }: { rate: number }) => void;
     registerGameConfigEvent: (message: any) => void;
 }
 
 const GameEvents = {
+    GAME_CONFIGS: "gameConfigs",
     PLAYER_RESULT_BOARD: "playerResultBoard",
 };
 
@@ -94,7 +96,7 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     handleFinish: ({ playResultAnimation, result, settlementResult, roundId, roundData }) =>
         set({ playResultAnimation, result, settlementResult, roundId, roundData, showResultInfo: false }),
     handleWinStatus: ({ status }) => set({ betWin: status.bet }),
-    handleUser: ({ rate }) => set({ rate }),
+    setRate: ({ rate }) => set({ rate }),
     handleDisconnectError: ({ disconnectReason }) => set({ roundState: RoundState.ConnectFailed, signedIn: false, disconnectReason }),
     handleUserStakeLevel: ({ userStakeLevel }) => set({ userStakeLevel }),
     handleOdds: ({ odds }) => set((state) => ({ gameConfigs: { ...state.gameConfigs, odds } })),
@@ -116,7 +118,6 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     },
     handleStartNewRoundAnim: ({ isPlayStartRoundAnimation }) => set({ isPlayStartRoundAnimation }),
     handleRoundId: ({ roundId }) => set({ roundId }),
-    setPlayerResultBoard: ({ playerResultBoard }) => set({ playerResultBoard }),
     registerGameConfigEvent: (message) => {
         Object.values(GameEvents).forEach((event) => {
             if (message[event] !== undefined) {

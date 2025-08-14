@@ -11,6 +11,7 @@ import Style from "./style.module.scss";
 import { BetChoiceImagesData, DotColorMapper } from "../sedie-multiplayer-constants";
 import { SedieMultiplayerSubBetOptions } from "./sedie-sub-option";
 import { SedieMultiplayerMainOption } from "./sedie-main-option";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 // const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
 // const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
@@ -22,7 +23,8 @@ import { SedieMultiplayerMainOption } from "./sedie-main-option";
 // const SeDieWinningAnimation = dynamic(() => import("../sedie-multiplayer-winning-animation"));
 
 const SeDieBetOptionsComponent = () => {
-    const { roundState, settlementResult, showResultInfo, roundHistory } = useGameStateContext();
+    const roundState = useGameStore((state) => state.roundState);
+    // const { roundState, settlementResult, showResultInfo, roundHistory } = useGameStateContext();
     const { tolgeeNamespace } = useGameContext();
 
     const isShowDisabledLayer = roundState === RoundState.LockingBet;
