@@ -22,8 +22,11 @@ COPY configs ./configs
 COPY public ./public
 COPY configs/missing-configuration.js ./public/c.js
 COPY src ./src
+COPY scripts ./scripts
 
-RUN yarn build
+# Build standalone version with all assets included
+# This generates Tolgee data, builds the app, and copies static assets to standalone directory
+RUN yarn generate-tolgee-data && yarn build && yarn copy-standalone-assets
 
 FROM base AS runner
 
@@ -33,13 +36,11 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-
-RUN mkdir .next  \
-     && chown nextjs:nodejs .next
-
+# Copy the entire standalone directory which now includes all assets
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Ensure proper permissions for the .next directory
+RUN chown -R nextjs:nodejs .next
 
 USER nextjs
 
