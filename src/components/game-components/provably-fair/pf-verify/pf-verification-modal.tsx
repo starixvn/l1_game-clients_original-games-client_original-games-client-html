@@ -5,26 +5,31 @@ import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
 import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
+import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/shallow";
 
 const PFVerificationModal: FC<{ children: ReactNode }> = ({ children }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { isShowPFVerification, pfVerifyModalData } = usePFContext();
-    const dispatch = usePFDispatch();
+    const { isShowPFVerification, pfVerifyModalData, togglePFVerification, updatePFVerify } = usePFStore(
+        useShallow(
+            (state) => ({
+                isShowPFVerification: state.isShowPFVerification,
+                pfVerifyModalData: state.pfVerifyModalData,
+                togglePFVerification: state.togglePFVerification,
+                updatePFVerify: state.updatePFVerify,
+            })
+        )
+    );
 
     const handleCloseModal = () => {
-        dispatch({ type: PFEventActionType.TOGGLE_PF_VERIFICATION, payload: { isShowPFVerification: false } });
+        togglePFVerification(false);
     };
 
     useEffect(() => {
         if (!isShowPFVerification) {
-            dispatch({
-                type: PFEventActionType.UPDATE_PF_VERIFY,
-                payload: {
-                    pfVerifyModalData: {
-                        ...pfVerifyModalData,
-                        editedMergeClientSeed: null,
-                    },
-                },
+            updatePFVerify({
+                ...pfVerifyModalData,
+                editedMergeClientSeed: null,
             });
         }
     }, [isShowPFVerification]);

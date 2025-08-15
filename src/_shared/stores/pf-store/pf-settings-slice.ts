@@ -1,51 +1,34 @@
-import { create } from "zustand";
-import { PFClientSeedSetting, PFResult } from "../../../components/game-base/type";
+import { StateCreator } from "zustand";
+import { PFClientSeedSetting } from "../../../components/game-base/type";
 import { localStorageKeys, StorageHelper } from "../../helpers";
 
-export interface PFStore {
+export interface PFSettingsSlice {
     // State
     isShowPFSetting: boolean;
-    isShowPFVerify: boolean;
-    isShowPFClientSeedInfo: boolean;
-    isShowPFVerification: boolean;
     pfClientSeedSetting: PFClientSeedSetting;
-    pfVerifyModalData: PFResult | null;
-    ownBets: Record<string, any>;
     gameId: number;
     uid: number;
 
     // Actions
-    togglePFVerify: (isShow: boolean) => void;
     togglePFSetting: (isShow: boolean) => void;
-    togglePFClientSeedInfo: (isShow: boolean) => void;
-    togglePFVerification: (isShow: boolean) => void;
-    updatePFVerify: (data: PFResult) => void;
     updatePFClientSeedSetting: (setting: Partial<PFClientSeedSetting>) => void;
-    setOwnBets: (bets: Record<string, any>) => void;
-    setNewGameState: () => void;
-    initializePF: (gameId: number, uid: number) => void;
+    initializePFSettings: (gameId: number, uid: number) => void;
 }
 
-export const usePFStore = create<PFStore>((set, get) => ({
+export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) => ({
     // Initial state
     isShowPFSetting: false,
-    isShowPFVerify: false,
-    isShowPFClientSeedInfo: false,
-    isShowPFVerification: false,
     pfClientSeedSetting: {
+        roundId: 0,
         drawId: 0,
         randomClientSeed: "0000",
         manualClientSeed: "",
         useManualClientSeed: false,
     },
-    pfVerifyModalData: null,
-    ownBets: {},
     gameId: 0,
     uid: 0,
 
     // Actions
-    togglePFVerify: (isShow) => set({ isShowPFVerify: isShow }),
-
     togglePFSetting: (isShow) => {
         const { gameId, uid } = get();
         if (isShow) {
@@ -55,12 +38,6 @@ export const usePFStore = create<PFStore>((set, get) => ({
         }
         set({ isShowPFSetting: isShow });
     },
-
-    togglePFClientSeedInfo: (isShow) => set({ isShowPFClientSeedInfo: isShow }),
-
-    togglePFVerification: (isShow) => set({ isShowPFVerification: isShow }),
-
-    updatePFVerify: (data) => set({ pfVerifyModalData: data }),
 
     updatePFClientSeedSetting: (setting) => {
         const { gameId, uid, pfClientSeedSetting } = get();
@@ -73,17 +50,12 @@ export const usePFStore = create<PFStore>((set, get) => ({
         set({ pfClientSeedSetting: newSetting });
     },
 
-    setOwnBets: (bets) => set({ ownBets: bets }),
-
-    setNewGameState: () => set({ ownBets: {} }),
-
-    initializePF: (gameId, uid) => {
-        const defaultContext = {
-            pfVerifyModalData: null,
-            ownBets: {},
+    initializePFSettings: (gameId, uid) => {
+        const defaultSettings = {
             gameId,
             uid,
             pfClientSeedSetting: {
+                roundId: 0,
                 drawId: 0,
                 randomClientSeed: "0000",
                 manualClientSeed: "",
@@ -112,14 +84,12 @@ export const usePFStore = create<PFStore>((set, get) => ({
             };
 
             set({
-                ...defaultContext,
+                ...defaultSettings,
                 isShowPFSetting,
                 pfClientSeedSetting: finalSetting,
             });
         } catch (error) {
-            set(defaultContext);
+            set(defaultSettings);
         }
     },
-}));
-
-export default usePFStore; 
+}); 

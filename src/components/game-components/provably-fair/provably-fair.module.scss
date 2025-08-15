@@ -50,14 +50,11 @@
     position: relative;
     color: var(--text-content-color);
     font-size: 12px;
-    padding: 0 12px;
-    padding-bottom: 10px;
     height: 100%;
     overflow-y: auto;
     background-color: #191a1e;
     padding: 12px;
-    margin-left: 12px;
-    margin-right: 12px;
+    
     ul {
         padding: 0;
         margin: 0;
@@ -93,6 +90,17 @@
         font-weight: 600;
         color: var(--text-header-color);
     }
+}
+
+.pf-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background: #2c2f36;
 }
 
 .chevron-icon {

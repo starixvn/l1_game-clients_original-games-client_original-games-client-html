@@ -9,23 +9,24 @@ import CopyableTextInput from "../copyable-text-input";
 import Styles from "../provably-fair.module.scss";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { Section } from "../pf-form-components";
-import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
-import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
+import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/shallow";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
 }> = ({ fileNameExport }) => {
-    const { isShowPFClientSeedInfo } = usePFContext();
+    const { isShowPFClientSeedInfo, togglePFClientSeedInfo } = usePFStore(
+        useShallow(
+            (state) => ({
+                isShowPFClientSeedInfo: state.isShowPFClientSeedInfo,
+                togglePFClientSeedInfo: state.togglePFClientSeedInfo,
+            })
+        )
+    );
     const { t: translateSNGames } = useSNTranslate();
-    const dispatch = usePFDispatch();
 
     const handleCloseModal = () => {
-        dispatch({
-            type: PFEventActionType.TOGGLE_PF_CLIENT_SEED_INFO,
-            payload: {
-                isShowPFClientSeedInfo: false,
-            },
-        });
+        togglePFClientSeedInfo(false);
     };
 
     return (
@@ -62,7 +63,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
     const clickSound = useClickSound();
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
-    const { pfVerifyModalData: clientSeedInfo } = usePFContext();
+    const clientSeedInfo = usePFStore((state) => state.pfVerifyModalData);
     const {
         authorizeInfo: {
             user: { name },

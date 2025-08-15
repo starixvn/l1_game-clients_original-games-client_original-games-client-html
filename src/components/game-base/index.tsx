@@ -684,12 +684,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                             {this.renderRightSide()}
                             <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
                         </div>
-                        <PFProvider gameId={this.props.id} uid={uid}>
                             <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={uid}>
                                 {this.renderPFSettingModal()}
                                 {this.renderBetHistoryModal()}
                             </PFWrapper>
-                        </PFProvider>
 
                         {/* <div>{availableInGameData && this.renderResultBlock()}</div>
                         <PlaceBetProvider>

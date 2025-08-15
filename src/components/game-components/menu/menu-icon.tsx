@@ -9,13 +9,14 @@ import { StorageHelper, localStorageKeys, AnalyticsHelper, TrackingAction, Track
 import { SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
 import { RoundState } from "../../game-base/type";
 import { useSettingContext } from "../../../_shared/react-contexts";
+import usePFStore from "../../../_shared/stores/pf-store/pf-store";
 
 type Props = { name: string; onClick?: () => void };
 
 export const MenuIcon = ({ name, onClick }: Props) => {
     const { roundState } = useGameStateContext();
     const dispatch = useGameStatesDispatch();
-    const pfDispatch = usePFDispatch();
+    const togglePFSetting = usePFStore((state) => state.togglePFSetting);
     const settingDispatch = useSettingDispatch();
     const clickSound = useClickSound();
     const settingContext = useSettingContext();
@@ -57,15 +58,12 @@ export const MenuIcon = ({ name, onClick }: Props) => {
         if (name === "security") {
             clickSound();
             console.log("[MenuIcon] pf.open.dispatch");
-            pfDispatch({
-                type: PFEventActionType.TOGGLE_PF_SETTING,
-                payload: { isShowPFSetting: true },
-            });
+            togglePFSetting(true);
             AnalyticsHelper.trackFunction({ function: TrackingFunction.PFSetting, action: TrackingAction.Open });
             console.log("[MenuIcon] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
             return;
         }
-    }, [onClick, roundState, name, clickSound, dispatch, pfDispatch, settingDispatch]);
+    }, [onClick, roundState, name, clickSound, dispatch, settingDispatch]);
 
     const iconSrc = useMemo(() => `/static/images/icons/${name}.svg`, [name]);
     const computedEnabledSound = ((settingContext?.enabledSound ?? (StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true)) && ((settingContext?.volumeSFX ?? 50) > 0));
