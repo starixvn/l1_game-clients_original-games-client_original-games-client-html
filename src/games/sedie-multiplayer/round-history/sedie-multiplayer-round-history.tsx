@@ -3,13 +3,15 @@ import { RoundHistory } from "../../../components/game-components/round-history/
 import { IconStatistic } from "../../../components/game-components/statistic/icon-statistic";
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
+import ScoreboardSeDie from "../scoreboard";
+import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";
+import { Round } from "../../../components/game-base/type";
 import BaseDialog from "../../../components/game-components/base-dialog";
 import { ModalType } from "../../../components/game-components/base-dialog/type";
-import ScoreboardSeDie from "../scoreboard";
 import Styles from "../statistic-popup.module.scss";
 import PercentageStatistic from "../../../components/game-components/statistic";
 import Image from "next/image";
-import { mainChoices, SeDieChoices } from "../sedie-multiplayer-constants";
+import { mainChoices, SeDieChoices, SeDieStatisticColors } from "../sedie-multiplayer-constants";
 
 export const SedieMultiplayerRoundHistory = () => {
     const { roundHistory, isShowBlink } = useGameStateContext();
@@ -55,7 +57,7 @@ export const SedieMultiplayerRoundHistory = () => {
                                     roundHistory={roundHistory as any}
                                     mainChoices={mainChoices as any}
                                     renderAsBar={true}
-                                    barColors={{ odd: "#1E5AEF", even: "#D5102B" }}
+                                    barColors={SeDieStatisticColors}
                                     barHeightPx={12}
                                     roundedRadiusPx={12}
                                     barLabelFontSizePx={14}

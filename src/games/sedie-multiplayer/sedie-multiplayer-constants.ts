@@ -20,9 +20,15 @@ export const SeDieChoices = {
     white3: "white3",
 };
 
-export const mainChoices = [SeDieChoices.odd, SeDieChoices.even];
+export const mainChoices = [SeDieChoices.even, SeDieChoices.odd];
 export const topChoices = [SeDieChoices.red4, SeDieChoices.red3, SeDieChoices.red2];
 export const bottomChoices = [SeDieChoices.white4, SeDieChoices.white3];
+
+// Statistic bar colors (matches SCSS variables)
+export const SeDieStatisticColors = {
+    even: "#1E5AEF", // Blue for even (left side)
+    odd: "#D5102B", // Red for odd (right side)
+};
 
 // Percentage ring colors
 export const SeDieBetOptionsPercentageColor = {

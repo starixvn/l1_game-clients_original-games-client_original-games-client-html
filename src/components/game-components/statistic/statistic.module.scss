@@ -149,8 +149,12 @@
     }
 }
 
-$red_choices: under, even, banker, small;
-$blue_choices: over, odd, player, big;
+$red_choices: under, odd, banker, small;
+$blue_choices: over, even, player, big;
+
+// Statistic bar colors for Sedie Multiplayer
+$sedie-even-color: #1E5AEF; // Blue for even (left side)
+$sedie-odd-color: #D5102B; // Red for odd (right side)
 $green_choices: tie;
 
 @each $choice in $red_choices {

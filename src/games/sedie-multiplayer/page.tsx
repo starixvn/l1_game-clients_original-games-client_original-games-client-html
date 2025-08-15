@@ -111,7 +111,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         return (
             <RedAndBlueStatistic
                 roundHistory={roundHistory}
-                mainChoices={[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]}
+                mainChoices={[SeDieBetOptions.EVEN, SeDieBetOptions.ODD]}
                 className={classNameIndo}
                 subChoices={[
                     SeDieBetOptions.RED2,

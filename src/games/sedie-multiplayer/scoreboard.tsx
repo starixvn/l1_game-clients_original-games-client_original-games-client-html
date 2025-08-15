@@ -20,7 +20,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlements);
 
         return (
-            <div className={Styles["scoreboard-full"]} id="big-road">
+            <div className={`${Styles["scoreboard-full"]} ${Styles["big-road"]}`} id="big-road">
                 <SwitchableScoreboard
                     rounds={settlements}
                     type="switch"
@@ -28,8 +28,14 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
                         {
                             element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
                             arrange: BigRoadElement.arrange(SeDieBigRoadConverter.instance as any),
-                            column: 18,
+                            column: 22,
                             row: 6,
+
+                            className: Styles["big-road-override"],
+                            blockClassName: Styles["big-road-block"],
+                            elementClassName: Styles["big-road-item"],
+                            style: { gridTemplateColumns: `repeat(22, 16px)` } as any,
+
                         },
                     ]}
                 />
@@ -38,7 +44,9 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
     }
 
     render(): ReactNode {
+
         return this.renderBigRoad();
+
     }
 }
 

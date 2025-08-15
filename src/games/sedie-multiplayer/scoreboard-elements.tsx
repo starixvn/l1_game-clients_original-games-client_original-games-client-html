@@ -7,6 +7,7 @@ import { registerBigRoadElement } from "../../_shared/helpers/scoreboard-registr
 import { GameIds } from "../../_shared/constants";
 import { withTranslator } from "../../components/page-components/translator";
 import styles from "./scoreboard-elements.module.scss";
+import dotStyles from "../../components/game-components/round-history/dot/dot.module.scss";
 import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 import BeadBoardIcon from "../../components/game-components/statistic/beadboard-icon";
 
@@ -20,9 +21,9 @@ export function createBeadRoadElement(isOddEven: boolean = ODD_EVEN_AS_DEFAULT_S
             if (!round.settlementResult) {
                 return <span className={`${styles.blink}`}></span>;
             } else if (round.settlementResult.odd) {
-                return character(SeDieBetOptions.ODD);
-            } else if (round.settlementResult.even) {
                 return character(SeDieBetOptions.EVEN);
+            } else if (round.settlementResult.even) {
+                return character(SeDieBetOptions.ODD);
             }
             return <></>;
         }
@@ -72,14 +73,17 @@ export class SeDieBigRoadConverter extends Converter<SeDieSettlementResult> {
 export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
     renderElement(round: BigRoadRound<SeDieSettlementResult>): ReactNode {
         const odd = round.data.some((result) => result.odd);
+        const even = round.data.some((result) => result.even);
         const isBlinkNode = round.data.some((result) => result.even === undefined || result.odd === undefined);
 
         if (isBlinkNode) {
-            return <span className={styles.blink}></span>;
+            return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
         } else if (odd) {
+            return <span className={styles.red}></span>;
+        } else if (even) {
             return <span className={styles.blue}></span>;
         } else {
-            return <span className={styles.red}></span>;
+            return <></>;
         }
     }
 }

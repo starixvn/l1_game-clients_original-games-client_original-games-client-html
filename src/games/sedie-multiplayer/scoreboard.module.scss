@@ -13,13 +13,45 @@
 }
 
 .scoreboard-full {
-    width:  380px;
-    height: 113px;
-    // border: 1px solid #172d41;
-    border-radius: 3px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 1px;
-    padding-left: 2px;
+    width: 361px;
+    height: 104px;
+    background: transparent;
+    padding: 4px;
+    margin: 4px
+}
+
+// Big Road background image (multi-line, Sonar-friendly)
+$big-road-bg-image: url("data:image/svg+xml;utf8,\
+<svg width='361' height='104' viewBox='0 0 361 104' fill='none' xmlns='http://www.w3.org/2000/svg'>\
+<rect x='0.5' width='360' height='104' rx='8' fill='black' fill-opacity='0.3'/>\
+</svg>");
+
+.big-road {
+    width: 361px;
+    height: 104px;
+    background-image: $big-road-bg-image;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.big-road-block {
+    width: 16px;
+    height: 16px;
+    border-top: 0;
+    border-right: 0;
+}
+
+.big-road-item {
+    width: 12px;
+    height: 12px;
+}
+
+.big-road-override {
+    &::before,
+    &::after {
+        display: none;
+    }
 }
 
 .scoreboard-derived-multiple {
