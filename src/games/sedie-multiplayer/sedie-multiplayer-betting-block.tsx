@@ -1,17 +1,17 @@
 import dynamic from "next/dynamic";
 import { FC } from "react";
 
-import SeDieBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options-component";
+import SeDieMultiplayerBetOptionsComponent from "./bet-options/sedie-multiplayer-bet-options";
 
 const WinningResultEffect = dynamic(() => import("../../components/game-components/winning-result-effect"));
 
-const SeDieBettingBlock: FC = () => {
+const SeDieMultiplayerBettingBlock: FC = () => {
     return (
         <div>
-            <SeDieBetOptionsComponent />
+            <SeDieMultiplayerBetOptionsComponent />
             <WinningResultEffect />
         </div>
     );
 };
 
-export default SeDieBettingBlock;
+export default SeDieMultiplayerBettingBlock;

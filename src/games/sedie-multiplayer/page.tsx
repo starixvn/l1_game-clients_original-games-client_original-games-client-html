@@ -18,7 +18,7 @@ import { RoundStateHandler } from "../../components/round-base/round-state-handl
 import { SeDieBetOptions } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
 import { Plate } from "./result-block";
-import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
+import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 
 export type SeDieState = {
@@ -74,7 +74,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     }
 
     renderBettingBlock() {
-        return <SeDieBettingBlock />;
+        return <SeDieMultiplayerBettingBlock />;
     }
 
     renderBetHistoryModal() {

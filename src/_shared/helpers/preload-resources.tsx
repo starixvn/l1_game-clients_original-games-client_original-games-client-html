@@ -5,7 +5,7 @@ import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
 import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
 import { getLobbyGamesIds } from "./lobby-helper";
-import { getAppSettings, getGameSettings } from "../app-settings";
+import { getAppSettings } from "../app-settings";
 import { systemName } from "../constants";
 import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
 
@@ -441,10 +441,7 @@ const loadImagesByPriority = async (
         batches.push(imagesToLoad.slice(i, i + batchSize));
     }
 
-    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-        const batch = batches[batchIndex];
-
-
+    for (const batch of batches) {
 
         // Load batch in parallel
         await Promise.all(
@@ -570,18 +567,17 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
 
     // Main preload effect using the global manager
     useEffect(() => {
-
         if (!router?.isReady || !enablePreloadResource || gameId < 0) {
             updateProgressBar(100, progressBarId);
             setIsDonePreload();
-            return;
+            return undefined;
         }
 
         // Check if game is already loaded
         if (loadedGamesCache[gameId]) {
             updateProgressBar(100, progressBarId);
             setIsDonePreload();
-            return;
+            return undefined;
         }
 
         let isMounted = true;

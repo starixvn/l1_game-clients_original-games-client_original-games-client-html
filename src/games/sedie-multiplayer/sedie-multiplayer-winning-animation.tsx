@@ -25,7 +25,7 @@ const ChoiceWinningSize = {
     [SeDieBetOptions.WHITE4]: [146, 74],
 };
 
-const SeDieWinningAnimation: React.FC<Props> = ({ choice, resourceName, roundState, settlementResult, showResultInfo }) => {
+const SeDieMultiplayerWinningAnimation: React.FC<Props> = ({ choice, resourceName, roundState, settlementResult, showResultInfo }) => {
     const winningHighLightResult = isHighLightWinningResult;
     const [width, height] = ChoiceWinningSize[choice] || [146, 74];
 
@@ -59,4 +59,4 @@ const SeDieWinningAnimation: React.FC<Props> = ({ choice, resourceName, roundSta
     );
 };
 
-export default SeDieWinningAnimation;
+export default SeDieMultiplayerWinningAnimation;

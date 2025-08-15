@@ -3,7 +3,7 @@ import { FC } from "react";
 import SmallBall from "../../../components/game-components/small-ball";
 import Styles from "../history/history.module.scss";
 
-const BetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, boolean> | null }> = ({ result }) => {
+const SedieMultiplayerBetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, boolean> | null }> = ({ result }) => {
     const balls = Array.isArray(result?.balls) ? result.balls : [];
 
     const activeKeys: string[] = !balls.length && result && typeof result === "object"
@@ -27,6 +27,6 @@ const BetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, bool
     );
 };
 
-export default BetLogResultCell;
+export default SedieMultiplayerBetLogResultCell;
 
 
