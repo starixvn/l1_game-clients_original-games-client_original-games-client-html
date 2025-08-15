@@ -28,6 +28,7 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
         });
         socket.off("message").on("message", (message) => {
             gameMessageHandler.broadcastGameMessage(message);
+            useGameStore.getState().registerEvent(message);
         });
 
         socket.on(messageEventType.SOCKET_CONNECTED, () => {

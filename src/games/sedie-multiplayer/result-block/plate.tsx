@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./plate.module.scss";
-import { GameStateContextModel } from "../../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { RoundState } from "../../../components/game-base/type";
 import useResult from "../../../_shared/react-hooks/use-result";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
@@ -19,16 +18,14 @@ const CLOSE_DURATION = 1000; // Close duration in milliseconds
 const MAX_ATTEMPTS = 10000;
 
 type AnimationState = "idle" | "shake" | "open" | "close";
-type SeDieResultBlockProps = Partial<GameStateContextModel>;
 
-const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockProps) => {
-    const { result, roundState, roundHistory } = props;
+const PlateButtons: React.FC = () => {
+    const { roundHistory, result, roundState, roundId } = useGameStateContext();
     const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showButtons, setShowButtons] = useState(true);
     const [buttonsValue, setButtonsValue] = useState<boolean[]>([]);
     const currentResult = useResult<SeDieResult>({ result, roundState, roundHistory });
-    const { roundId } = useGameStateContext();
 
     useEffect(() => {
         if (currentResult) {
@@ -115,9 +112,7 @@ const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockPr
                 }
             >
                 <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
-                    <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
-                        {renderButtons()}
-                    </div>
+                    <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>{renderButtons()}</div>
                 </div>
             </div>
         </div>

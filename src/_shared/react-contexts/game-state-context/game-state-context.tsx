@@ -262,13 +262,6 @@ function handleActiveScoreBoardTabAction(state: GameStateContextModel, isScorebo
     };
 }
 
-function handlePlayerResultBoardUpdateAction(state: GameStateContextModel, playerResultBoard: any): GameStateContextModel {
-    return {
-        ...state,
-        playerResultBoard,
-    };
-}
-
 function gameStateReducer(state: GameStateContextModel, action: GameEventAction) {
     const { type, payload } = action;
 
@@ -353,9 +346,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
 
         case GameEventActionType.ACTIVE_SCORE_BOARD_TAB:
             return handleActiveScoreBoardTabAction(state, payload.isScoreboardTab);
-
-        case GameEventActionType.PLAYER_RESULT_BOARD_UPDATE:
-            return handlePlayerResultBoardUpdateAction(state, payload.playerResultBoard);
 
         default: {
             console.warn(JSON.stringify(action));

@@ -29,7 +29,6 @@ export enum GameEventActionType {
     START_NEW_ROUND_ANIM = "START_NEW_ROUND_ANIM",
     ROUND_ID = "ROUND_ID",
     ACTIVE_SCORE_BOARD_TAB = "ACTIVE_SCORE_BOARD_TAB",
-    PLAYER_RESULT_BOARD_UPDATE = "PLAYER_RESULT_BOARD_UPDATE",
 }
 
 export interface GameEventPayload {

@@ -5,7 +5,6 @@ const OwnBet = dynamic(() => import("../../../components/game-components/bet-opt
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
-
 const subChoiceImages = {
     [SeDieBetOptions.WHITE4]: [false, false, false, false],
     [SeDieBetOptions.WHITE3]: [true, false, false, false],
@@ -16,7 +15,7 @@ const subChoiceImages = {
 
 export const SedieMultiplayerSubBetOptions = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
     return (
-        <div className={`flex rounded-2xl bg-[#282A30CC] mt-2`}>
+        <div className={`flex rounded-2xl mt-2 h-[120px] w-[370px] ${styles["sub-bet-option"]}`}>
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE4} />
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE3} />
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED2} />
@@ -44,8 +43,8 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
         <div className={`flex-1 text-white relative ${styles[className]}`}>
             <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
             {renderImages(choice)}
-            <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"mb-0.5"} />
-            <div className="h-5">
+            <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />
+            <div className="h-5 mb-0.5">
                 <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
             </div>
             <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />

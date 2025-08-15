@@ -574,8 +574,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderChipControlPanel() {
-        const { gameConfigs, userStakeLevel } = this.props.gameStateContextModel;
-        return <ChipControlPanel gameConfigs={gameConfigs} userStakeLevel={userStakeLevel} />;
+        return <ChipControlPanel />;
     }
 
     renderLeftSideBetSettings() {
@@ -646,7 +645,9 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     renderBetControlRightSide() {
         return (
             <div className="col-12 col-md-6">
-                <OwnTotalBet />
+                <div className="p-3 rounded-t-xl bg-primary-bg">
+                    <OwnTotalBet />
+                </div>
             </div>
         );
     }
@@ -654,7 +655,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     renderBetControl() {
         return (
             <div className="md:bg-primary-bg md:rounded-t-xl">
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap items-center">
                     {this.renderBetControlLeftSide()}
                     {this.renderBetControlRightSide()}
                 </div>

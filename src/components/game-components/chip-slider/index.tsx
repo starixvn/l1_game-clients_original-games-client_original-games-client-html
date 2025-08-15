@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { GameConfigs, UserStakeLevel } from "../../game-base/type";
 import { ChipSlider } from "./slider";
 import { Chip } from "./chip";
 import { SystemEventActionType, useSettingContext, useSystemContext, useSystemDispatch } from "../../../_shared/react-contexts";
+import { useGameStore } from "../../../_shared/stores/game-store/game-store";
+import { useShallow } from "zustand/shallow";
 
-export const ChipControlPanel: React.FC<{ gameConfigs: GameConfigs; userStakeLevel: UserStakeLevel }> = ({
-    gameConfigs,
-    userStakeLevel,
-}) => {
+export const ChipControlPanel: React.FC = () => {
+    const { gameConfigs, userStakeLevel } = useGameStore(
+        useShallow((state) => ({
+            gameConfigs: state.gameConfigs,
+            userStakeLevel: state.userStakeLevel,
+        }))
+    );
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
     const { selectedChip } = useSystemContext();

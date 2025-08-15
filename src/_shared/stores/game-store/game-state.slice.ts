@@ -58,6 +58,7 @@ export interface GameConfigSlice {
 const GameEvents = {
     GAME_CONFIGS: "gameConfigs",
     PLAYER_RESULT_BOARD: "playerResultBoard",
+    USER_STAKE_LEVEL: "userStakeLevel",
 };
 
 export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
