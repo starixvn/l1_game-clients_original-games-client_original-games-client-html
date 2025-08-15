@@ -677,6 +677,8 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                     // setIsLoading(false); // This line was removed
                 }
             }
+
+            return;
         };
 
         startPreload();

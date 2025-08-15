@@ -1,6 +1,6 @@
 import { Component, ReactNode, memo } from "react";
 import { Round } from "../../components/game-base/type";
-import { SlidableScoreboard, SwitchableScoreboard } from "../../components/game-components/round-history/scoreboard";
+import { SwitchableScoreboard } from "../../components/game-components/round-history/scoreboard";
 import { BigRoadElement } from "../../components/game-components/round-history/scoreboard/elements";
 import { SeDieBigRoadConverter, SeDieBigRoadElement } from "./scoreboard-elements";
 import Styles from "./scoreboard.module.scss";

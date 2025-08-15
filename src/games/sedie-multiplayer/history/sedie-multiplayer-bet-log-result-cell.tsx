@@ -4,7 +4,7 @@ import SmallBall from "../../../components/game-components/small-ball";
 import Styles from "../history/history.module.scss";
 
 const BetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, boolean> | null }> = ({ result }) => {
-    const balls = Array.isArray((result as any)?.balls) ? (result as any).balls : [];
+    const balls = Array.isArray(result?.balls) ? result.balls : [];
 
     const activeKeys: string[] = !balls.length && result && typeof result === "object"
         ? Object.keys(result).filter((k) => (result as Record<string, boolean>)[k])

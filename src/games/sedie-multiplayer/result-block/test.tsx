@@ -30,7 +30,8 @@ const PlateButtons: React.FC = () => {
     const generateButtonPositions = (seedValue: number, time = 1) => {
         // Create a seeded random number generator
         const seededRandom = (min: number, max: number) => {
-            const x = Math.sin(seedValue++) * 10000;
+            const x = Math.sin(seedValue) * 10000;
+            seedValue++;
             return min + (x - Math.floor(x)) * (max - min);
         };
 
@@ -106,7 +107,7 @@ const PlateButtons: React.FC = () => {
         interval && clearInterval(interval);
 
         interval = setInterval(() => {
-            count = count + 1;
+            count++;
             generateButtonPositions(count);
         }, 0);
     };
@@ -128,7 +129,6 @@ const PlateButtons: React.FC = () => {
 
     const handleClose = () => {
         setAnimationState("close");
-        setShowBowl(true);
         setTimeout(() => {
             setShowButtons(false);
         }, CLOSE_DURATION);
@@ -194,7 +194,6 @@ const PlateButtons: React.FC = () => {
                 <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
                     <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
                         {renderButtons()}
-
                     </div>
                 </div>
             </div>

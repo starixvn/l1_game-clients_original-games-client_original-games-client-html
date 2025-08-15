@@ -18,15 +18,14 @@ import { RoundGameSoundHandler } from "../../components/round-base/round-game-so
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
 import ScoreboardSeDie from "./scoreboard";
-import { SeDieBetOptions } from "./sedie-multiplayer-constants";
+import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
 import Styles from "./sedie-multiplayer.module.scss";
 import SeBallStyle from "./sedie-multiplayer.module.scss";
-import { SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
-import { SedieMultiplayerRoundHistoryItem } from "./round-history/sedie-multiplayer-round-history-item";
 import { Plate } from "./result-block";
 import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
+import { SedieMultiplayerRoundHistoryItem } from "./round-history/sedie-multiplayer-round-history-item";
 
 const DrawIdBlock = dynamic(() => import("../../components/game-components/draw-id"));
 

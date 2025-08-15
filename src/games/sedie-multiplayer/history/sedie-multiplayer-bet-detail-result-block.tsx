@@ -19,7 +19,7 @@ export interface RoundInfoSeDie extends DrawInfo {
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { drawId, result } = drawInfo;
-    const balls: number[] = Array.isArray((result as any)?.balls) ? ((result as any).balls as number[]) : [];
+    const balls: number[] = Array.isArray(result?.balls) ? result.balls : [];
     const activeKeys: string[] = !balls.length && result && typeof result === "object"
         ? Object.keys(result).filter((k) => (result as Record<string, boolean>)[k])
         : [];

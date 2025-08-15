@@ -22,11 +22,10 @@ type AnimationState = "idle" | "shake" | "open" | "close";
 type SeDieResultBlockProps = Partial<GameStateContextModel>;
 
 const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockProps) => {
-    const { result, roundState, roundHistory, playResultAnimation, isPlayStartRoundAnimation } = props;
+    const { result, roundState, roundHistory } = props;
     const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showButtons, setShowButtons] = useState(true);
-    const [showBowl, setShowBowl] = useState(true);
     const [buttonsValue, setButtonsValue] = useState<boolean[]>([]);
     const currentResult = useResult<SeDieResult>({ result, roundState, roundHistory });
     const { roundId } = useGameStateContext();
@@ -59,7 +58,6 @@ const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockPr
 
     const handleClose = () => {
         setAnimationState("close");
-        setShowBowl(true);
         setTimeout(() => {
             setShowButtons(false);
         }, CLOSE_DURATION);
@@ -119,7 +117,6 @@ const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockPr
                 <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
                     <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
                         {renderButtons()}
-
                     </div>
                 </div>
             </div>
@@ -129,7 +126,8 @@ const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockPr
 
 const generateButtonPositions = (seedValue: number, time = 1) => {
     const seededRandom = (min: number, max: number) => {
-        const x = Math.sin(seedValue++) * 10000;
+        const x = Math.sin(seedValue) * 10000;
+        seedValue++;
         return min + (x - Math.floor(x)) * (max - min);
     };
 

@@ -10,7 +10,7 @@ export default class extends Document<{ headScript?: string }> {
 
         // Always use single env config script now
         const headScript = "./c.js";
-        return { ...initialProps, headScript } as any;
+        return { ...initialProps, headScript };
     }
 
     render() {

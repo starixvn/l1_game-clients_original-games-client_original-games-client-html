@@ -350,7 +350,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         this.gameCronInterval && clearInterval(this.gameCronInterval);
         this.gameCronInterval = setInterval(() => {
-            const newRoundState = this.roundStateHandler.determineRoundBaseState({
+            this.roundStateHandler.determineRoundBaseState({
                 roundRemainingTime: this.roundTimeCounter,
                 wholeRound: wholeRound,
                 remainingTime: this.timeCounter,

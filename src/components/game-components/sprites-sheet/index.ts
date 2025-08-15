@@ -269,17 +269,16 @@ export class Spritesheet extends Component<SpritesheetProps> {
         }, 1000 / this.fps);
     };
 
-    moveImage = (play = true) => {
-        const { onEnterFrame, onEachFrame, loop, onLoopComplete } = this.props;
-        let currentRow = 0;
-        let currentCol = 0;
-
+    private updateSpritePosition() {
         if (this.spriteElMove) {
-            currentRow = parseInt(String(Math.floor(this.frame / (this.cols || 1))));
-            currentCol = parseInt(String(this.frame - (this.cols || 1) * currentRow));
+            const currentRow = parseInt(String(Math.floor(this.frame / (this.cols || 1))));
+            const currentCol = parseInt(String(this.frame - (this.cols || 1) * currentRow));
             this.spriteElMove.style.backgroundPosition = `-${this.props.widthFrame * currentCol}px -${this.props.heightFrame * currentRow}px`;
         }
+    }
 
+    private handleEnterFrame() {
+        const { onEnterFrame } = this.props;
         if (onEnterFrame) {
             onEnterFrame.map((frameAction, i) => {
                 if (frameAction.frame === this.frame && frameAction.callback) {
@@ -287,34 +286,48 @@ export class Spritesheet extends Component<SpritesheetProps> {
                 }
             });
         }
+    }
 
+    private updateFrame(play: boolean) {
         if (play) {
             if (this.direction === "rewind") {
                 this.frame -= 1;
             } else {
                 this.frame += 1;
             }
+            const { onEachFrame } = this.props;
             if (onEachFrame) {
                 onEachFrame(this.setInstance());
             }
-
         }
+    }
 
-        if (this.isPlaying) {
-            if (
-                (this.direction === "forward" && (this.frame === this.allRowsSteps || this.frame === this.endAt)) ||
-                (this.direction === "rewind" && (this.frame === -1 || this.frame === this.endAt))
-            ) {
-                if (loop) {
-                    if (onLoopComplete) {
-                        onLoopComplete(this.setInstance());
-                    }
-                    this.completeLoopCicles += 1;
-                    this.frame = this.startAt ?? (this.direction === "rewind" ? this.steps - 1 : 0);
-                } else {
-                    this.pause();
-                }
+    private handleLoopCompletion() {
+        const { loop, onLoopComplete } = this.props;
+        if (loop) {
+            if (onLoopComplete) {
+                onLoopComplete(this.setInstance());
             }
+            this.completeLoopCicles += 1;
+            this.frame = this.startAt ?? (this.direction === "rewind" ? this.steps - 1 : 0);
+        } else {
+            this.pause();
+        }
+    }
+
+    private checkFrameBoundaries() {
+        const isForwardBoundary = this.direction === "forward" && (this.frame === this.allRowsSteps || this.frame === this.endAt);
+        const isRewindBoundary = this.direction === "rewind" && (this.frame === -1 || this.frame === this.endAt);
+        return isForwardBoundary || isRewindBoundary;
+    }
+
+    moveImage = (play = true) => {
+        this.updateSpritePosition();
+        this.handleEnterFrame();
+        this.updateFrame(play);
+
+        if (this.isPlaying && this.checkFrameBoundaries()) {
+            this.handleLoopCompletion();
         }
     };
 

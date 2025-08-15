@@ -20,7 +20,7 @@ const SeDieBetHistoryModal: FC = () => {
             <BetDetailModal>
                 <BetDetailBase
                     isTurnBase={false}
-                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo as any} />}
+                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
                     produceDataBetDetailRow={produceDataBetDetailRow}
                     renderBetChoice={(choice) => <BetChoice choice={choice} />}
                 />

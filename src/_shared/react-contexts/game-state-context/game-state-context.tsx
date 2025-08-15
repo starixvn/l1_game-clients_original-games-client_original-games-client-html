@@ -68,11 +68,11 @@ function handleSignOutAction(state: GameStateContextModel): GameStateContextMode
     };
 }
 
-function handleUMAction(state: GameStateContextModel, um_message: any): GameStateContextModel {
+function handleUMAction(state: GameStateContextModel, umMessage: any): GameStateContextModel {
     return {
         ...state,
         roundState: RoundState.Disabled,
-        disabledMessage: um_message[LanguageLocaleMapper[tolgee.getLanguage() || "en"]], // TO DO: remove hard code
+        disabledMessage: umMessage[LanguageLocaleMapper[tolgee.getLanguage() || "en"]], // TO DO: remove hard code
         showResultInfo: false,
     };
 }

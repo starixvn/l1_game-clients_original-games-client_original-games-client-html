@@ -8,9 +8,12 @@ const RippleButton = dynamic(() => import("../../../components/game-components/b
 const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
 
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+    const choiceStyle = styles[choice];
+    const buttonId = `${tolgeeNamespace}-choice-${choice}`;
+
     return (
         <>
-            <div className={` text-white relative w-[180px] h-[138px] flex flex-col justify-around ${styles[`${choice}`]}`}>
+            <div className={` text-white relative w-[180px] h-[138px] flex flex-col justify-around ${choiceStyle}`}>
                 <div className="absolute top-0 left-0 w-full h-full z-[-1]">{choice === SeDieBetOptions.ODD ? <BgOdd /> : <BgEven />}</div>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
@@ -20,7 +23,7 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
                 <div className="h-5">
                     <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
                 </div>
-                <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
+                <RippleButton className={`${styles["btn-ripple"]}`} id={buttonId} choice={choice} />
             </div>
         </>
     );
