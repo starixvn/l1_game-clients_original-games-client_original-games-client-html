@@ -77,10 +77,6 @@ export class PlayerHandler {
     handleUserData({ user, gameConfigs }: { user: Player; gameConfigs: any }) {
         if (gameConfigs) {
             useGameStore.getState().setRate({ rate: user.rate });
-            this.props.dispatch({
-                type: GameEventActionType.USER,
-                payload: { rate: user.rate },
-            });
         }
     }
 }

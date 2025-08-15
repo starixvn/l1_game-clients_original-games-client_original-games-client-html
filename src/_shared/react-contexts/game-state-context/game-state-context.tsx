@@ -45,7 +45,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
         result,
         settlementResult,
         status,
-        rate,
         userStakeLevel,
         odds,
         drawId,
@@ -63,7 +62,7 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
         betDetailModalData,
         isPlayStartRoundAnimation,
         isScoreboardTab,
-        playerResultBoard
+        playerResultBoard,
     } = payload;
 
     switch (type) {
@@ -80,7 +79,7 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             return {
                 ...state,
                 isConnect: false,
-                playResultAnimation: false
+                playResultAnimation: false,
             };
         }
 
@@ -88,7 +87,7 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             return {
                 ...state,
                 signedIn: true,
-                availableInGameData: false
+                availableInGameData: false,
             };
         }
 
@@ -113,7 +112,7 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             return {
                 ...state,
                 gameConfigs: gameConfigs,
-                availableInGameData: true
+                availableInGameData: true,
             };
         }
 
@@ -157,13 +156,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
             };
         }
 
-        case GameEventActionType.USER: {
-            return {
-                ...state,
-                rate,
-            };
-        }
-
         case GameEventActionType.DISCONNECT_ERROR: {
             return {
                 ...state,
@@ -196,8 +188,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
                 drawId,
             };
         }
-
-
 
         case GameEventActionType.SET_NEW_GAME_STATE: {
             return {

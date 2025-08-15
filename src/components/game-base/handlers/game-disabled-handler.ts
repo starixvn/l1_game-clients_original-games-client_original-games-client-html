@@ -49,7 +49,9 @@ export class GameDisableHandler {
                     um_message,
                 },
             });
-            useGameStore.getState().setUM(um_message);
+            useGameStore.getState().setRoundState(RoundState.Disabled);
+            useGameStore.getState().setUMMessage(um_message);
+            useGameStore.getState().setShowResultInfo(false);
 
             console.log("[GameDisableHandler] updating URL context to gameId 0");
             updateURLContext({ gameId: 0 });

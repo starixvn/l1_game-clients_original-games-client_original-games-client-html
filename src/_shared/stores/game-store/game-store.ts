@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import { BettingInfoSlice, createBettingInfoSlice } from "./betting-info-slice";
-import { createGameConfigSlice, GameConfigSlice } from "./game-config.slice";
-import { createRoundStateSlice, RoundStateSlice } from "./round-state-slice";
+import { createGameConfigSlice, GameConfigSlice } from "./game-state.slice";
 
 export type GameStore = {
     registerEvent: (message: any) => void;
 } & BettingInfoSlice &
-    GameConfigSlice &
-    RoundStateSlice;
+    GameConfigSlice;
 
 export const useGameStore = create<GameStore>()((set, ...a) => {
     const bettingInfoSlice = createBettingInfoSlice(set, ...a);
@@ -15,7 +13,6 @@ export const useGameStore = create<GameStore>()((set, ...a) => {
     return {
         ...bettingInfoSlice,
         ...gameConfigSlice,
-        ...createRoundStateSlice(set, ...a),
         registerEvent: (message) => {
             bettingInfoSlice.registerBettingInfoEvent(message);
             gameConfigSlice.registerGameConfigEvent(message);
