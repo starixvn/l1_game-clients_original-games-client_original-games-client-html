@@ -19,7 +19,7 @@ const MAX_ATTEMPTS = 10000;
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
-const PlateButtons: React.FC = () => {
+const Plate: React.FC = () => {
     const { roundHistory, result, roundState, roundId } = useGameStateContext();
     const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
     const [animationState] = useState<AnimationState>("idle");
@@ -165,4 +165,4 @@ const generateButtonPositions = (seedValue: number, time = 1) => {
     return newButtons;
 };
 
-export default PlateButtons;
+export default Plate;
