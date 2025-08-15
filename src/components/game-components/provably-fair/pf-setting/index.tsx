@@ -179,10 +179,8 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
             setIsLoading(false);
         }, TIME_OUT);
 
-        const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
-            if (pfServerSeed.drawId >= drawId) {
-                setServerSeedHash(pfServerSeed.serverSeedHash);
-            }
+        const handleServerSeed = (pfServerSeed: PFSeverSeed) => {      
+            setServerSeedHash(pfServerSeed.serverSeedHash);           
         };
 
         const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {

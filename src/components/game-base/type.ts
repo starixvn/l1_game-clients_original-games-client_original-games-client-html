@@ -209,7 +209,6 @@ export interface PFClientSeedSetting {
 }
 
 export interface PFSeverSeed {
-    drawId: number;
     roundId: number;
     serverSeedHash: string;
 }

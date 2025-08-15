@@ -31,7 +31,8 @@ export class RoundIdHandler {
         this.roundState = RoundState.None;
         this.props.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_ID, this.handleRoundId.bind(this));
-        this.props.gameMessageHandler.register(messageEventType.DRAW_ID, this.handleDrawId.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.PF, this.handleRoundId.bind(this));
+        // this.props.gameMessageHandler.register(messageEventType.DRAW_ID, this.handleDrawId.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_STATE, this.handleRoundState.bind(this));
     }
 
@@ -41,17 +42,17 @@ export class RoundIdHandler {
         }
     };
 
-    handleRoundId = ({ roundId }) => {
-        this.roundId = roundId;
+    handleRoundId = ({ pf }) => {
+        this.roundId = pf?.roundId;
         if (!this.shouldRunWhenFirstLoad) {
             this.props.dispatch({
                 type: GameEventActionType.ROUND_ID,
-                payload: { roundId },
+                payload: { roundId: pf.roundId },
             });
         }
 
         // For games where PF seed should be triggered by roundId instead of drawId
-        console.log("droundid", this.pfSeedBy);
+        console.log("droundid", this.pfSeedBy, pf?.roundId);
         if (this.pfSeedBy === "roundId") {
             if (this.shouldRunWhenFirstLoad) {
                 this.shouldRunWhenFirstLoad = false;
@@ -63,6 +64,8 @@ export class RoundIdHandler {
                 this.dispatchDrawId(this.drawId);
             }
         }
+
+        this.handleDrawId({ drawId: this.roundId });
     };
 
     handleDrawId = ({ drawId }) => {

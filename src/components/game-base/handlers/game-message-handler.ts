@@ -43,6 +43,7 @@ export const messageEventType = {
     SYNC_OWN_BETS_TO_PF: "syncOwnBetsToPF",
     START_PLACE_BET: "spb",
     PLAYER_RESULT_BOARD: "playerResultBoard",
+    PF: "pf",
 };
 
 export class GameMessageHandler {
