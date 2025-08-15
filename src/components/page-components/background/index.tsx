@@ -23,7 +23,9 @@ const StarField: FC<{ gameId: number }> = ({ gameId }) => {
     const isLowPerformanceDevice = useLowPerformanceDevice();
 
     const isShouldNotPlayStarsAnimation = () => {
-        return !!GamesNotPlayStarsAnimation.find((id) => id === gameId) && isLowPerformanceDevice;
+        // GamesNotPlayStarsAnimation is always empty, so this will always be false.
+        // We can simplify to just check isLowPerformanceDevice.
+        return isLowPerformanceDevice;
     };
 
     if (isShouldNotPlayStarsAnimation()) {
