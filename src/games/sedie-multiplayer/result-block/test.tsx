@@ -19,7 +19,7 @@ let interval: NodeJS.Timeout | null = null;
 // Animation states
 type AnimationState = "idle" | "shake" | "open" | "close";
 let count = 29473;
-const PlateButtons: React.FC = () => {
+const PlateButtonsProtoypeTest: React.FC = () => {
     const [buttons, setButtons] = useState<Array<{ id: number; x: number; y: number; isRed: boolean }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showButtons] = useState(true);
@@ -203,4 +203,4 @@ const PlateButtons: React.FC = () => {
     );
 };
 
-export default PlateButtons;
+export default PlateButtonsProtoypeTest;
