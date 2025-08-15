@@ -19,8 +19,8 @@ export default class PfDrawBaseHelper {
     static buildVerifyInfo({ pfResult, combinedHash, ballsEachRound }) {
         const rawDigits = combinedHash.match(/.{2}/g);
         const serverSeed = JSON.parse(pfResult?.serverSeed || "{}");
-        const randomNumbers = (serverSeed?.random || "").split(";").map((x: string) => +x) as number[];
-        const remainingBalls = (serverSeed?.remain || "").split(":");
+        const randomNumbers: number[] = (serverSeed?.random || "").split(";").map((x: string) => +x);
+        const remainingBalls: string[] = (serverSeed?.remain || "").split(":");
         const convertNumber = Array.from(Array(ballsEachRound), (_, index) => finalHashToNumbers(combinedHash, index));
         const ballIndexes = randomNumbers.map((x, index) => ((x + convertNumber[index]) % (remainingBalls?.length - index)) + 1);
 

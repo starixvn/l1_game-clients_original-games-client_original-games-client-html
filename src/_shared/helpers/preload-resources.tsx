@@ -107,7 +107,10 @@ class PreloadManager {
         if (!this.preloadCallbacks.has(preloadKey)) {
             this.preloadCallbacks.set(preloadKey, new Set());
         }
-        this.preloadCallbacks.get(preloadKey)!.add(onComplete);
+        const cbSet = this.preloadCallbacks.get(preloadKey);
+        if (cbSet) {
+            cbSet.add(onComplete);
+        }
 
         // If preload is already active, just wait for it
         if (this.activePreloads.has(preloadKey)) {
@@ -460,7 +463,9 @@ const loadImagesByPriority = async (
 ): Promise<void> => {
     const imagesToLoad = prioritizedImages.filter(img => img.priority === priority);
 
-    if (imagesToLoad.length === 0) return;
+    if (imagesToLoad.length === 0) {
+        return;
+    }
 
     const priorityName = ImagePriority[priority];
     console.log(`[loadImagesByPriority] Loading ${priorityName} priority images: ${imagesToLoad.length}`);

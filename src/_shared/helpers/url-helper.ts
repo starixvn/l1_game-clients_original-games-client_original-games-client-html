@@ -7,7 +7,9 @@ function resolveGameIdOrOp(): { gameId?: number; op?: string } {
             const params = new URLSearchParams(window.location.search.replace(/&amp;/g, "&"));
             const gameId = Number(params.get("gameId") || 0) || undefined;
             const op = (params.get("op") || "").toUpperCase() || undefined;
-            if (gameId || op) return { gameId, op };
+            if (gameId || op) {
+                return { gameId, op };
+            }
         }
     } catch { }
 

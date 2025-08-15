@@ -66,7 +66,9 @@ const PlateButtons: React.FC<SeDieResultBlockProps> = (props: SeDieResultBlockPr
     };
 
     const renderButtons = () => {
-        if (!showButtons) return null;
+        if (!showButtons) {
+            return null;
+        }
 
         return (
             <div className={styles["buttons-container"]}>

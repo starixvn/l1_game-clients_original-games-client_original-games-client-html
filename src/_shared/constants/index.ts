@@ -200,7 +200,9 @@ export const GN_CHIP_COLOR_HEXES = [
 ];
 
 function normalizeHex(color?: string): string {
-    if (!color) return "";
+    if (!color) {
+        return "";
+    }
     const hex = color.trim().toLowerCase();
     return hex.startsWith("#") ? hex.substring(1) : hex;
 }
@@ -216,7 +218,9 @@ function hashStringToIndex(input: string, modulo: number): number {
 // Resolve a chip color hex to an existing asset filename (hex without '#')
 export function resolveChipColorHex(requestedColorHex?: string): string {
     const hex = normalizeHex(requestedColorHex);
-    if (GN_CHIP_COLOR_HEXES.includes(hex)) return hex;
+    if (GN_CHIP_COLOR_HEXES.includes(hex)) {
+        return hex;
+    }
     // Stable pseudo-random fallback into GN palette
     return GN_CHIP_COLOR_HEXES[hashStringToIndex(hex || "default", GN_CHIP_COLOR_HEXES.length)] || "b1b1b1";
 }

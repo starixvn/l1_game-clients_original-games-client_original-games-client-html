@@ -1,7 +1,9 @@
 // Image Optimization Helper for compression and format conversion
+type ImageFormat = 'webp' | 'avif' | 'jpeg' | 'png';
+
 interface ImageOptimizationOptions {
     quality?: number;
-    format?: 'webp' | 'avif' | 'jpeg' | 'png';
+    format?: ImageFormat;
     width?: number;
     height?: number;
     compression?: 'lossy' | 'lossless';
@@ -17,8 +19,8 @@ interface OptimizedImageInfo {
 
 class ImageOptimizationHelper {
     private static instance: ImageOptimizationHelper;
-    private canvas: HTMLCanvasElement | null = null;
-    private ctx: CanvasRenderingContext2D | null = null;
+    private readonly canvas: HTMLCanvasElement | null = null;
+    private readonly ctx: CanvasRenderingContext2D | null = null;
 
     private constructor() {
         if (typeof window !== 'undefined') {
@@ -36,8 +38,10 @@ class ImageOptimizationHelper {
 
     // Check if WebP is supported
     isWebPSupported(): boolean {
-        if (typeof window === 'undefined') return false;
-        
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
@@ -46,8 +50,10 @@ class ImageOptimizationHelper {
 
     // Check if AVIF is supported
     isAVIFSupported(): boolean {
-        if (typeof window === 'undefined') return false;
-        
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
@@ -55,7 +61,7 @@ class ImageOptimizationHelper {
     }
 
     // Get optimal format based on browser support
-    getOptimalFormat(): string {
+    getOptimalFormat(): ImageFormat {
         if (this.isAVIFSupported()) return 'avif';
         if (this.isWebPSupported()) return 'webp';
         return 'jpeg';
@@ -64,7 +70,7 @@ class ImageOptimizationHelper {
     // Optimize image URL with format and quality parameters
     optimizeImageUrl(url: string, options: ImageOptimizationOptions = {}): string {
         const { quality = 85, format, width, height } = options;
-        
+
         // For local images, return as-is (server-side optimization would be needed)
         return url;
     }
@@ -76,7 +82,7 @@ class ImageOptimizationHelper {
 
     // Optimize image data using canvas
     async optimizeImageData(
-        imageData: ImageData, 
+        imageData: ImageData,
         options: ImageOptimizationOptions = {}
     ): Promise<OptimizedImageInfo> {
         if (!this.canvas || !this.ctx) {
@@ -96,7 +102,10 @@ class ImageOptimizationHelper {
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = imageData.width;
         tempCanvas.height = imageData.height;
-        const tempCtx = tempCanvas.getContext('2d')!;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (!tempCtx) {
+            throw new Error('Canvas 2D context not available');
+        }
         tempCtx.putImageData(imageData, 0, 0);
 
         // Draw and scale if needed
@@ -122,12 +131,12 @@ class ImageOptimizationHelper {
 
     // Preload optimized images
     async preloadOptimizedImages(
-        imageUrls: string[], 
+        imageUrls: string[],
         options: ImageOptimizationOptions = {}
     ): Promise<void> {
         const optimalFormat = this.getOptimalFormat();
-        const optimizedUrls = imageUrls.map(url => 
-            this.optimizeImageUrl(url, { ...options, format: optimalFormat as 'webp' | 'avif' | 'jpeg' | 'png' })
+        const optimizedUrls = imageUrls.map(url =>
+            this.optimizeImageUrl(url, { ...options, format: optimalFormat })
         );
 
         console.log(`[ImageOptimization] Preloading ${optimizedUrls.length} optimized images with format: ${optimalFormat}`);
@@ -161,21 +170,25 @@ class ImageOptimizationHelper {
     // Calculate optimal quality based on image size
     calculateOptimalQuality(width: number, height: number): number {
         const totalPixels = width * height;
-        
-        if (totalPixels > 2000000) return 75; // Large images
-        if (totalPixels > 500000) return 80;  // Medium images
+
+        if (totalPixels > 2000000) {
+            return 75; // Large images
+        }
+        if (totalPixels > 500000) {
+            return 80;  // Medium images
+        }
         return 85; // Small images
     }
 
     // Generate srcset for responsive images
     generateSrcSet(baseUrl: string, sizes: number[]): string {
         const optimalFormat = this.getOptimalFormat();
-        
+
         return sizes
             .map(size => {
-                const optimizedUrl = this.optimizeImageUrl(baseUrl, { 
-                    width: size, 
-                    format: optimalFormat as 'webp' | 'avif' | 'jpeg' | 'png' 
+                const optimizedUrl = this.optimizeImageUrl(baseUrl, {
+                    width: size,
+                    format: optimalFormat
                 });
                 return `${optimizedUrl} ${size}w`;
             })
@@ -192,8 +205,8 @@ class ImageOptimizationHelper {
         // This is a simplified calculation - in real implementation, 
         // you'd need to actually measure file sizes
         const formatUsed = this.getOptimalFormat();
-        const estimatedCompressionRatio = formatUsed === 'avif' ? 50 : 
-                                        formatUsed === 'webp' ? 30 : 10;
+        const estimatedCompressionRatio = formatUsed === 'avif' ? 50 :
+            formatUsed === 'webp' ? 30 : 10;
 
         return {
             totalOriginalSize: originalUrls.length * 100000, // Estimated

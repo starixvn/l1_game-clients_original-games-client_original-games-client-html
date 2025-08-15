@@ -74,8 +74,12 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
     const { t } = useTranslator([tolgeeNamespace]);
 
     const mapToSeBallAsset = (c: string) => {
-        if (c === SeDieBetOptions.WHITE3) return "blue3";
-        if (c === SeDieBetOptions.WHITE4) return "blue4";
+        if (c === SeDieBetOptions.WHITE3) {
+            return "blue3";
+        }
+        if (c === SeDieBetOptions.WHITE4) {
+            return "blue4";
+        }
         return c;
     };
 

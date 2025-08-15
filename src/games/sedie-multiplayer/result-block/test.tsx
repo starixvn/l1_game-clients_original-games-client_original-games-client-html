@@ -143,7 +143,9 @@ const PlateButtons: React.FC = () => {
     };
 
     const renderButtons = () => {
-        if (!showButtons) return null;
+        if (!showButtons) {
+            return null;
+        }
 
         return (
             <div className={styles["buttons-container"]}>

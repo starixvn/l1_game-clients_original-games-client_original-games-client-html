@@ -58,16 +58,22 @@ export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
     }
 
     private calculateAverage(values: number[]): number {
-        if (values.length === 0) return 0;
+        if (values.length === 0) {
+            return 0;
+        }
         const sum = values.reduce((acc, val) => acc + val, 0);
         return Math.round((sum / values.length) * 100) / 100;
     }
 
     validateGameRoundData(roundData: any): boolean {
-        if (!roundData) return false;
+        if (!roundData) {
+            return false;
+        }
         const requiredFields = ['dice', 'winningChoice', 'drawId'];
         for (const field of requiredFields) {
-            if (!roundData[field]) return false;
+            if (!roundData[field]) {
+                return false;
+            }
         }
         if (roundData.dice) {
             const diceArray = Array.isArray(roundData.dice) ? roundData.dice.flat() : [roundData.dice];

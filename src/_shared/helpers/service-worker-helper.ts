@@ -11,7 +11,7 @@ interface CacheInfo {
 class ServiceWorkerHelper {
     private static instance: ServiceWorkerHelper;
     private registration: ServiceWorkerRegistration | null = null;
-    private isSupported: boolean;
+    private readonly isSupported: boolean;
 
     private constructor() {
         this.isSupported = 'serviceWorker' in navigator;
@@ -33,7 +33,7 @@ class ServiceWorkerHelper {
 
         try {
             console.log('[ServiceWorkerHelper] Registering service worker...');
-            
+
             this.registration = await navigator.serviceWorker.register('/sw.js', {
                 scope: '/'
             });
@@ -43,8 +43,8 @@ class ServiceWorkerHelper {
             // Handle service worker updates
             this.registration.addEventListener('updatefound', () => {
                 console.log('[ServiceWorkerHelper] Service Worker update found');
-                const newWorker = this.registration!.installing;
-                
+                const newWorker = this.registration ? this.registration.installing : null;
+
                 if (newWorker) {
                     newWorker.addEventListener('statechange', () => {
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -117,7 +117,9 @@ class ServiceWorkerHelper {
 
         try {
             console.log('[ServiceWorkerHelper] Clearing cache...');
-            this.registration.active.postMessage({ type: 'CLEAR_CACHE' });
+            if (this.registration.active) {
+                this.registration.active.postMessage({ type: 'CLEAR_CACHE' });
+            }
         } catch (error) {
             console.error('[ServiceWorkerHelper] Failed to clear cache:', error);
         }
@@ -130,17 +132,22 @@ class ServiceWorkerHelper {
 
         return new Promise((resolve) => {
             const messageChannel = new MessageChannel();
-            
+
             messageChannel.port1.onmessage = (event) => {
                 console.log('[ServiceWorkerHelper] Cache info received:', event.data);
                 resolve(event.data);
             };
 
             try {
-                this.registration!.active!.postMessage(
-                    { type: 'GET_CACHE_INFO' },
-                    [messageChannel.port2]
-                );
+                if (this.registration && this.registration.active) {
+                    this.registration.active.postMessage(
+                        { type: 'GET_CACHE_INFO' },
+                        [messageChannel.port2]
+                    );
+                } else {
+                    resolve(null);
+                    return;
+                }
             } catch (error) {
                 console.error('[ServiceWorkerHelper] Failed to get cache info:', error);
                 resolve(null);
