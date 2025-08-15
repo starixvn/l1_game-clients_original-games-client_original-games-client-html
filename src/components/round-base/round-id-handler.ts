@@ -3,6 +3,7 @@ import { GameStateContextModel } from "../../_shared/react-contexts/game-state-c
 import { GameDurations, RoundState } from "../game-base/type";
 import { GameMessageHandler, messageEventType } from "../game-base/handlers/game-message-handler";
 import { writeDebugLog } from "../../_shared/helpers";
+import useGameStore from "../../_shared/stores/game-store/game-store";
 
 export type RoundIdHandlerProps = {
     dispatch: Function;
@@ -43,12 +44,6 @@ export class RoundIdHandler {
 
     handleRoundId = ({ pf }) => {
         this.roundId = pf?.roundId;
-        if (!this.shouldRunWhenFirstLoad) {
-            this.props.dispatch({
-                type: GameEventActionType.ROUND_ID,
-                payload: { roundId: pf.roundId },
-            });
-        }
 
         // For games where PF seed should be triggered by roundId instead of drawId
         if (this.pfSeedBy === "roundId") {
@@ -63,7 +58,6 @@ export class RoundIdHandler {
             }
         }
 
-        this.handleDrawId({ drawId: this.roundId });
     };
 
     handleDrawId = ({ drawId }) => {

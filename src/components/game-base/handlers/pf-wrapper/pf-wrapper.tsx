@@ -76,8 +76,6 @@ export const PFWrapper = (props: PFWrapperProps) => {
         const handleSavePFSettingFromTurnIdHandler = (message) => {
             const { drawId } = message[messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER];
             const oldDrawId = pfClientSeedSetting?.drawId;
-            console.log("oldDrawId", oldDrawId);
-            console.log("drawId", drawId);
             if (oldDrawId !== drawId) {
                 handleSavePFSetting({
                     [messageEventType.SAVE_PF_SETTING]: {

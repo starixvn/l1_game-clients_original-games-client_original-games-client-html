@@ -43,9 +43,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 title={
                     <div>
                         <ButtonPFGuide />
-                        <div>
-                            {translateSNGames("pf_title_bacball_provably_fair_settings")}
-                        </div>
+                        <div>{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>
                     </div>
                 }
                 isOpen={true}
@@ -190,7 +188,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     };
 
     return (
-        <div className={Styles["pf-setting-container"] + " bg-[#191a1e] rounded-md"}>
+        <div className={Styles["pf-setting-container"]}>
             <div>
                 <ul>
                     <li>{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
