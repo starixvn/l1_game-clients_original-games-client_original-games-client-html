@@ -672,10 +672,6 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                     console.error(`[PreloadResources:${componentId.current}] Preload failed:`, error);
                     setIsDonePreload();
                 }
-            } finally {
-                if (isMounted) {
-                    // setIsLoading(false); // This line was removed
-                }
             }
 
             return;

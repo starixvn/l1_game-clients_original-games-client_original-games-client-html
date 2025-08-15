@@ -23,7 +23,6 @@ const PlateButtons: React.FC = () => {
     const [buttons, setButtons] = useState<Array<{ id: number; x: number; y: number; isRed: boolean }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showButtons, setShowButtons] = useState(true);
-    const [showBowl, setShowBowl] = useState(true);
     const [seed, setSeed] = useState<number>(0);
 
     // Generate random positions for buttons within circular boundary
@@ -112,35 +111,8 @@ const PlateButtons: React.FC = () => {
         }, 0);
     };
 
-    // Animation handlers
-    const handleShake = () => {
-        setAnimationState("shake");
-        generateButtonPositions(seed);
-        setShowButtons(false);
-        setTimeout(() => {
-            setAnimationState("idle");
-        }, SHAKE_DURATION);
-    };
-
-    const handleOpen = () => {
-        setAnimationState("open");
-        setShowButtons(true);
-    };
-
-    const handleClose = () => {
-        setAnimationState("close");
-        setTimeout(() => {
-            setShowButtons(false);
-        }, CLOSE_DURATION);
-    };
-
-    const handleSeedChange = (newSeed: number) => {
-        setSeed(newSeed);
-    };
-
-    const handleRegenerate = () => {
-        generateButtonPositions(seed);
-    };
+    // Animation handlers are defined but not used in this component
+    // They are kept for potential future use or reference
 
     const renderButtons = () => {
         if (!showButtons) {

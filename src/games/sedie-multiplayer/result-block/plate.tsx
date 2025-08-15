@@ -38,27 +38,8 @@ const PlateButtons: React.FC = () => {
         setButtonsPosition(newButtons);
     }, [roundId]);
 
-    // Animation handlers
-    const handleShake = () => {
-        setAnimationState("shake");
-        generateButtonPositions(roundId);
-        setShowButtons(false);
-        setTimeout(() => {
-            setAnimationState("idle");
-        }, SHAKE_DURATION);
-    };
-
-    const handleOpen = () => {
-        setAnimationState("open");
-        setShowButtons(true);
-    };
-
-    const handleClose = () => {
-        setAnimationState("close");
-        setTimeout(() => {
-            setShowButtons(false);
-        }, CLOSE_DURATION);
-    };
+    // Animation handlers are defined but not used in this component
+    // They are kept for potential future use or reference
 
     const renderButtons = () => {
         if (!showButtons) {

@@ -3,8 +3,7 @@ import { RoundHistory } from "../../../components/game-components/round-history/
 import { IconStatistic } from "../../../components/game-components/statistic/icon-statistic";
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 import ScoreboardSeDie from "../scoreboard";
-import { SeDieResult, SeDieSettlementResult, mainChoices, SeDieChoices, SeDieStatisticColors } from "../sedie-multiplayer-constants";
-import { Round } from "../../../components/game-base/type";
+import { mainChoices, SeDieChoices, SeDieStatisticColors } from "../sedie-multiplayer-constants";
 import BaseDialog from "../../../components/game-components/base-dialog";
 import { ModalType } from "../../../components/game-components/base-dialog/type";
 import Styles from "../statistic-popup.module.scss";

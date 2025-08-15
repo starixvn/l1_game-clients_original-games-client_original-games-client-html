@@ -9,14 +9,13 @@ import {
     useGameStatesDispatch,
 } from "../../_shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from "../../_shared/react-hooks";
-import { tolgee } from "../../_shared/tolgee";
 import GameBase from "../../components/game-base/";
 import { GameMessageHandler } from "../../components/game-base/handlers";
-import { GameBaseHandlers, GameBaseProps, GameBaseState, Round } from "../../components/game-base/type";
+import { GameBaseHandlers, GameBaseProps, GameBaseState } from "../../components/game-base/type";
 import { RoundGameSoundHandler } from "../../components/round-base/round-game-sound-handler";
 import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
-import { SeDieBetOptions, SeDieResult, SeDieSettlementResult } from "./sedie-multiplayer-constants";
+import { SeDieBetOptions } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
 import { Plate } from "./result-block";
 import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
