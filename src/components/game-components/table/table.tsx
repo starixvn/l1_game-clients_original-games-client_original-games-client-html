@@ -61,7 +61,7 @@ export const Table = <T,>({
         <thead>
           <tr>
             {columns.map(({ key, header }) => (
-              <th key={String(key)} className="text-primary-text p-2">
+              <th key={String(key)} className="text-primary-text p-2 border-b border-primary-border bg-primary-bg sticky top-0 z-10">
                 {header}
               </th>
             ))}
