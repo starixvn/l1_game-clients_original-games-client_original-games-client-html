@@ -58,7 +58,7 @@ export class RoundIdHandler {
                 this.dispatchClientSeed(this.roundId);
                 this.dispatchDrawId(this.drawId);
             } else if (!this.isInDisplayResultState()) {
-               
+
                 this.dispatchClientSeed(this.roundId);
                 this.dispatchDrawId(this.drawId);
             }

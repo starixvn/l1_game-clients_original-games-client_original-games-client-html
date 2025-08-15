@@ -64,7 +64,7 @@ export const Menu: React.FC = () => {
         <div ref={wrapperRef} className={`${Styles["game-menu"]} ${Styles[specialClassByDevice]}`}>
             <MenuIcon name="sound" />
             <MenuIcon name="guide" onClick={openGuide} />
-            <MenuIcon name="pf-guide" onClick={handleClickPFSetting}/>
+            <MenuIcon name="pf-guide" onClick={handleClickPFSetting} />
         </div>
     );
 };

@@ -406,12 +406,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             durations,
         });
 
-        this.gameMessageHandler.broadcastGameEvent({ [messageEventType.ROUND_STATE]: this.roundStateHandler.determineRoundBaseState({
-            roundRemainingTime: this.roundTimeCounter,
-            wholeRound: durations.wholeRound,
-            remainingTime,
-            durations,
-        }) });
+        this.gameMessageHandler.broadcastGameEvent({
+            [messageEventType.ROUND_STATE]: this.roundStateHandler.determineRoundBaseState({
+                roundRemainingTime: this.roundTimeCounter,
+                wholeRound: durations.wholeRound,
+                remainingTime,
+                durations,
+            })
+        });
 
         if (gameStateContextModel.roundState !== this.roundStateHandler.determineRoundBaseState({
             roundRemainingTime: this.roundTimeCounter,
@@ -476,12 +478,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
             const isContinuePlaying = gameStateContextModel.roundState !== RoundState.None;
             if (isContinuePlaying) {
-                console.log(`[GameBase:${this.props.id}] handleSound`, { newRoundState: this.roundStateHandler.determineRoundBaseState({
-                    roundRemainingTime: this.roundTimeCounter,
-                    wholeRound: durations.wholeRound,
-                    remainingTime,
-                    durations,
-                }) });
+                console.log(`[GameBase:${this.props.id}] handleSound`, {
+                    newRoundState: this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    })
+                });
                 this.gameSoundHandler.handleSound(this.roundStateHandler.determineRoundBaseState({
                     roundRemainingTime: this.roundTimeCounter,
                     wholeRound: durations.wholeRound,

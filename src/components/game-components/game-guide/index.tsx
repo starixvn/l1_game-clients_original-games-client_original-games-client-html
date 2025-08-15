@@ -16,7 +16,7 @@ const GameGuideModal: FC = () => {
     const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);
     const toggleGameGuide = usePopupStore((state) => state.toggleGameGuide);
     const { t: translate } = useCommonTranslate();
-    
+
     const handleCloseModal = () => {
         toggleGameGuide(false);
     };

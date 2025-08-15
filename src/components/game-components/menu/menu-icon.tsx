@@ -42,7 +42,7 @@ export const MenuIcon = ({ name, onClick }: Props) => {
         <div className="cursor-pointer p-1" onClick={handleClick}>
             {name === "sound" ? (
                 <span className={`icon-sound-${computedEnabledSound ? "on" : "off"}`}></span>
-            ) :  (
+            ) : (
                 <Image src={iconSrc} height={24} width={24} alt="Logo" />
             )}
         </div>

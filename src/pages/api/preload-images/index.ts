@@ -46,7 +46,7 @@ const cleanupCache = () => {
     if (imageCache.size > MAX_CACHE_SIZE) {
         const sortedEntries = Array.from(imageCache.entries())
             .sort(([, a], [, b]) => a.timestamp - b.timestamp);
-        
+
         const toRemove = sortedEntries.slice(0, imageCache.size - MAX_CACHE_SIZE);
         toRemove.forEach(([key]) => {
             console.log(`[API:preload-images] Removing old cache entry due to size limit: ${key}`);
@@ -79,7 +79,7 @@ const readDirectorySafely = (dirPath: string): string[] => {
             const ext = path.extname(file).toLowerCase();
             return ['.jpg', '.png', '.gif', '.webp', '.svg'].includes(ext);
         });
-        
+
         console.log(`[API:preload-images] Found ${imageFiles.length} image files in ${dirPath}`);
         return imageFiles;
     } catch (error) {
@@ -126,7 +126,7 @@ const readFilesFromPath = (dirPath: string, imagesDir: string, maxDepth = 3, cur
 // Get image paths based on game configuration
 const getPathsImg = (gameId: number, currentLocale: string, bannerId: number, gameIdsIcon: number[]): string[] => {
     console.log(`[API:preload-images] Getting image paths for gameId: ${gameId}, locale: ${currentLocale}`);
-    
+
     if (gameId === LobbyGameId) {
         const paths = [...pathImageMapping.lobby, ...getPathIconGames(gameIdsIcon)];
         console.log(`[API:preload-images] Lobby game paths: ${paths.length} total`);
@@ -146,7 +146,7 @@ const getPathsImg = (gameId: number, currentLocale: string, bannerId: number, ga
 export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>) {
     const requestId = `req-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     const startTime = Date.now();
-    
+
     console.log(`[API:preload-images:${requestId}] Request received:`, {
         method: req.method,
         url: req.url,
@@ -170,7 +170,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>
 
     const { gameId, locale, gameIdsIcon, bannerId } = req.body as RequestBody;
     const cacheKey = `${gameId}-${buildVersion}-${locale}`;
-    
+
     console.log(`[API:preload-images:${requestId}] Processing request:`, {
         gameId,
         locale,
