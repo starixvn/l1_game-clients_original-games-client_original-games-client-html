@@ -1,5 +1,6 @@
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
 import { GameStateContextModel } from "../../../_shared/react-contexts/game-state-context/game-state-context-model";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { RoundState } from "../type";
 
 export type GameRoundHistorydHandlerProps = {
@@ -17,6 +18,13 @@ export class GameRoundHistoryHandler {
         if (verifiedRoundState === RoundState.None) {
             verifiedRoundState = newRoundState;
         }
+
+        useGameStore.getState().setRoundHistory({
+            roundHistory: roundHistory,
+            roundId: [RoundState.DisplayResult].includes(newRoundState) || isUMInFirstLoad ? roundId - 1 : roundId,
+            settlementResult: roundHistory[0]?.settlementResult,
+            isShowBlink: [RoundState.LockingBet].includes(verifiedRoundState),
+        });
 
         this.props.dispatch({
             type: GameEventActionType.ROUND_HISTORY,

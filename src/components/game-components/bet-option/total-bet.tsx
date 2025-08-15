@@ -24,15 +24,13 @@ const convertStakeToString = (amount: number, rate: number) => {
 };
 
 export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const { totalBets, roundState, rate } = useGameStore(
+    const { totalBet, roundState, rate } = useGameStore(
         useShallow((state) => ({
-            totalBets: state.totalBets,
+            totalBet: state.totalBets?.[choice] ?? 0,
             roundState: state.roundState,
             rate: state.rate,
         }))
     );
-
-    const totalBet = totalBets?.[choice] ?? 0;
 
     if (totalBet <= 0 || rate === 0 || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
         return <div className={className}></div>;

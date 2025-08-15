@@ -2,7 +2,6 @@ import { useState } from "react";
 import { RoundHistory } from "../../../components/game-components/round-history/chain";
 import { IconStatistic } from "../../../components/game-components/statistic/icon-statistic";
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import ScoreboardSeDie from "../scoreboard";
 import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";
 import { Round } from "../../../components/game-base/type";
@@ -12,9 +11,13 @@ import Styles from "../statistic-popup.module.scss";
 import PercentageStatistic from "../../../components/game-components/statistic";
 import Image from "next/image";
 import { mainChoices, SeDieChoices, SeDieStatisticColors } from "../sedie-multiplayer-constants";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { useShallow } from "zustand/react/shallow";
 
 export const SedieMultiplayerRoundHistory = () => {
-    const { roundHistory, isShowBlink } = useGameStateContext();
+    const { roundHistory, isShowBlink } = useGameStore(
+        useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
+    );
     const [isShowStatistic, setIsShowStatistic] = useState(false);
     const onClickIconStatistic = () => {
         setIsShowStatistic(!isShowStatistic);

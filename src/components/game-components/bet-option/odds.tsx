@@ -14,47 +14,27 @@ type Props = {
     isFormatOddsAuto?: boolean;
 } & BaseProps;
 
-export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, animationDuration, isFormatOddsAuto }) => {
-    const [showOddsIcon, setShowOddsIcon] = useState("");
-    const [classOddsIcon, setClassOddsIcon] = useState("");
+export const Odds: React.FC<Props> = ({ tolgeeNamespace, choice, className, isFormatOddsAuto }) => {
     const [oddsValue, setOddsValue] = useState(0);
     const { gameConfigs, roundState } = useGameStore(
         useShallow((state) => ({ gameConfigs: state.gameConfigs, roundState: state.roundState }))
     );
     const { fractionalOddsFormat } = usePlayerContext();
     const odds = isFormatOddsAuto ? formatOdds(oddsValue, fractionalOddsFormat, 1) : formatOdds(oddsValue, fractionalOddsFormat);
-
     useEffect(() => {
         const currentOdds = gameConfigs?.odds?.[choice] ?? 0;
-        oddsValue === 0 && setOddsValue(currentOdds);
-        if (roundState === RoundState.InRound) {
-            oddsValue > 0 && oddsValue !== +currentOdds && showIcon();
-            setClassOddsIcon(currentOdds > oddsValue ? "up" : "down");
-            setOddsValue(currentOdds);
-        }
+        setOddsValue(currentOdds);
     }, [gameConfigs?.odds?.[choice], roundState]);
 
-    const showIcon = () => {
-        setShowOddsIcon(Styles["show-odds-icon"]);
-        setTimeout(() => {
-            setShowOddsIcon("");
-        }, animationDuration * 1000);
-    };
+    if (oddsValue <= 0) {
+        return <div className={className}></div>;
+    }
 
-    return useMemo(() => {
-        if (oddsValue <= 0) {
-            return <div className={className}></div>;
-        }
-
-        return (
-            <div
-                id={`${tolgeeNamespace}-${choice}-odds`}
-                className={`text-center ${Styles["bet-odds"]} ${className} ${Styles[classOddsIcon]} ${showOddsIcon}`}
-            >
-                {odds}
-            </div>
-        );
-    }, [odds, showOddsIcon]);
+    return (
+        <div id={`${tolgeeNamespace}-${choice}-odds`} className={`text-center ${Styles["bet-odds"]} ${className}`}>
+            {odds}
+        </div>
+    );
 };
 
 export default Odds;

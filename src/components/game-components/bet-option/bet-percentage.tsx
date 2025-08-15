@@ -6,7 +6,7 @@ import { BaseProps } from "./types";
 
 export const BetPercentage: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className, percentageColor }) => {
     const { betPercentage, roundState } = useGameStore(
-        useShallow((state) => ({ betPercentage: state.betPercentage, roundState: state.roundState }))
+        useShallow((state) => ({ betPercentage: state.betPercentage?.[choice] ?? 0, roundState: state.roundState }))
     );
 
     if ([RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
@@ -15,7 +15,7 @@ export const BetPercentage: React.FC<BaseProps> = ({ tolgeeNamespace, choice, cl
 
     return (
         <div id={`${tolgeeNamespace}-${choice}-percent`} className={className}>
-            <PercentageCircle percentage={betPercentage?.[choice]} color={percentageColor} />
+            <PercentageCircle percentage={betPercentage} color={percentageColor} />
         </div>
     );
 };

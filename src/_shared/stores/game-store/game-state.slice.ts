@@ -43,6 +43,8 @@ export interface GameConfigSlice {
     defaultResult: any;
     defaultSettlementResult: any;
     remainingTime: number;
+    setRoundHistory: ({ roundHistory, roundId, result, settlementResult, isShowBlink }: any) => void;
+    showResultInfoTimeOut: ({ roundHistory, isShowBlink, showResultInfo, playResultAnimation }: any) => void;
     setRate: ({ rate }: { rate: number }) => void;
     setDisconnect: (reason: string) => void;
     registerGameConfigEvent: (message: any) => void;
@@ -95,6 +97,19 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     defaultResult: null,
     defaultSettlementResult: null,
     remainingTime: 0,
+    setRoundHistory: ({ roundHistory, roundId, result, settlementResult, isShowBlink }) =>
+        set({ roundHistory, roundId, result, settlementResult, isShowBlink, playResultAnimation: false, showResultInfo: true }),
+    showResultInfoTimeOut: ({ roundHistory, isShowBlink, showResultInfo, playResultAnimation }) => {
+        const stateUpdate = {
+            showResultInfo,
+            isShowBlink,
+            roundHistory,
+        };
+        if (playResultAnimation) {
+            stateUpdate["playResultAnimation"] = playResultAnimation;
+        }
+        set({ ...stateUpdate });
+    },
     setRate: ({ rate }) => set({ rate }),
     setDisconnect: (reason: string) => set({ disconnectReason: reason, signedIn: false }),
     setGameState: (newGameState) => {

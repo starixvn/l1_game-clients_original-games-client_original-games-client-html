@@ -6,28 +6,7 @@ import { BaseProps } from "./types";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
-    const ownBets = useGameStore((state) => state.ownBets);
-    const [isShowBetAnim, setIsShowBetAnim] = useState(false);
-    const [ownBet, setOwnBet] = useState(0);
-
-    useEffect(() => {
-        let timeOut: NodeJS.Timeout;
-        if (ownBets?.[choice] > 0) {
-            if (!isShowBetAnim) {
-                setIsShowBetAnim(true);
-                timeOut = setTimeout(() => {
-                    setIsShowBetAnim(false);
-                }, 500);
-            } else {
-                setIsShowBetAnim(false);
-            }
-        }
-        setOwnBet(ownBets[choice] ?? 0);
-
-        return () => {
-            clearTimeout(timeOut);
-        };
-    }, [ownBets?.[choice]]);
+    const ownBet = useGameStore((state) => state.ownBets?.[choice] ?? 0);
 
     const ownBetUI = (value: string, animClass = "") => {
         return (

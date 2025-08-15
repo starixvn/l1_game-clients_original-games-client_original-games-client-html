@@ -6,6 +6,7 @@ import { IRoundStateHandler } from "../../round-base/round-state-handler";
 import { GameDurations, Round } from "../type";
 import { GameMessageHandler, messageEventType } from "./";
 import { GameRoundDataHandler } from "./game-round-data-handler";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 export type GameFinishHandlerProps = {
     dispatch: Dispatch<GameEventAction>;
@@ -112,6 +113,7 @@ export class GameFinishHandler {
         }
 
         this._roundHistory = roundHistoryClone;
+        useGameStore.getState().showResultInfoTimeOut({ roundHistory: roundHistoryClone, isShowBlink: false, showResultInfo: true });
         this.props.dispatch({
             type: GameEventActionType.SHOW_RESULT_INFO_TIME_OUT,
             payload: {

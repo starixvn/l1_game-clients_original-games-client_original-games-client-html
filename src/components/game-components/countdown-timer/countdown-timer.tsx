@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 
 import { useGameContext } from "../../../_shared/react-contexts";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useSNTranslate } from "../../../_shared/react-hooks/use-translator";
 import { messageEventType } from "../../game-base/handlers";
 import { RoundState } from "../../game-base/type";
 import styles from "./countdown-timer.module.scss";
 import { BgCachedImage } from "../cached-image/bg-cached-image";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 
 export type Rotation = "clockwise" | "counterclockwise";
 
 export const CountdownTimer = ({ className = "" }) => {
-    const { roundState } = useGameStateContext();
+    const roundState = useGameStore((state) => state.roundState);
     // const { t } = useSNTranslate();
     const [progress, setProgress] = useState(0);
     const { gameMessageHandler, durations } = useGameContext();
