@@ -113,6 +113,9 @@ export class StorageHelper {
     }
 }
 
+// Define a constant for the duplicated literal
+const LATEST_GAME_ID_KEY = "latest-game-id";
+
 export const localStorageKeys = {
     session: buildLocalStorageKey("auth-data"),
     rebet: buildLocalStorageKey("rebet"),
@@ -133,9 +136,9 @@ export const localStorageKeys = {
     volumeMusic: buildLocalStorageKey("volume-music"),
     volumeSFX: buildLocalStorageKey("volume-SFX"),
     // latestGameId is deprecated due to one-game-per-session behavior
-    latestGameId: buildLocalStorageKey("latest-game-id"),
+    latestGameId: buildLocalStorageKey(LATEST_GAME_ID_KEY),
     // User-specific latestGameId is deprecated and kept only for backward-compat mocks
-    userLatestGameId: "latest-game-id",
+    userLatestGameId: LATEST_GAME_ID_KEY,
 };
 
 export function buildLocalStorageKey(key: string) {

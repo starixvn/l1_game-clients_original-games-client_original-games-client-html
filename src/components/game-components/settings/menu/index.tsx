@@ -35,26 +35,6 @@ export const Menu: React.FC = () => {
         });
     };
 
-    const openBetHistory = () => {
-        if (roundState === RoundState.Disabled) {
-            console.log("[Menu] history.blocked: round disabled");
-            return;
-        }
-
-        clickSound();
-        console.log("[Menu] history.dispatch.toggle");
-        dispatch({
-            type: GameEventActionType.TOGGLE_BET_HISTORY,
-            payload: {
-                isShowBetHistory: true,
-            },
-        });
-        setDropdownOpen(false);
-
-        AnalyticsHelper.trackFunction({ function: TrackingFunction.BetHistory, action: TrackingAction.Open });
-        console.log("[Menu] analytics.track", { function: TrackingFunction.BetHistory, action: TrackingAction.Open });
-    };
-
     const openGuide = () => {
         if (roundState === RoundState.Disabled) {
             return;

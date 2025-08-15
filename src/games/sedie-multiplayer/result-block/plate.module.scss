@@ -73,17 +73,6 @@
     z-index: 10;
 }
 
-// Bowl animation states
-// .bowl-idle {
-//     // Default state - bowl overlays plate exactly
-//     transform: translateY(0);
-//     opacity: 1;
-// }
-// .bowl-shake {
-//     // Shake animation - both bowl and plate shake togeth
-//     animation: shake2 calc(var(--shake-duration) / 3) ease-in-out 3;
-// }
-
 .bowl-open {
     // Open animation - bowl moves up and fades out
     animation: open var(--open-duration) ease-in-out forwards;

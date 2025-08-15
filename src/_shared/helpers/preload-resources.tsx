@@ -599,7 +599,6 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     onProgressUpdate
 }) => {
     const router = useRouter();
-    const [, setIsLoading] = useState(false);
     const componentId = useRef(`preload-${gameId}-${Date.now()}-${Math.random()}`);
 
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
@@ -645,7 +644,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
 
         const startPreload = async () => {
             console.log(`[PreloadResources:${componentId.current}] Starting preload process`);
-            setIsLoading(true);
+            // setIsLoading(true); // This line was removed
 
             try {
                 const preloadManager = PreloadManager.getInstance();
@@ -675,7 +674,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                 }
             } finally {
                 if (isMounted) {
-                    setIsLoading(false);
+                    // setIsLoading(false); // This line was removed
                 }
             }
         };

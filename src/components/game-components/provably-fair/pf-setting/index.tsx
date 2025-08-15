@@ -8,10 +8,9 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { ButtonPFGuide, PFGuide } from "../pf-guide";
+import { ButtonPFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
-import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
-import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
+import { usePFContext } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
@@ -40,20 +39,6 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
 
     const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(true);
     const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(false);
-
-    const toggleSettingsSection = () => {
-        setIsSettingsExpanded(!isSettingsExpanded);
-        if (isGuidesExpanded) {
-            setIsGuidesExpanded(false);
-        }
-    };
-
-    const toggleGuidesSection = () => {
-        setIsGuidesExpanded(!isGuidesExpanded);
-        if (isSettingsExpanded) {
-            setIsSettingsExpanded(false);
-        }
-    };
 
     return (
         isShowPFSetting && (

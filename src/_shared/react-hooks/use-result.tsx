@@ -13,7 +13,6 @@ interface UseResultProps<R> {
 
 const useResult = <R,>(props: UseResultProps<R>) => {
     const { result, roundState, roundHistory, wholeRound } = props;
-    const { durations } = useGameContext();
     const { gameMessageHandler } = useGameContext();
     const [currentResult, setCurrentResult] = useState<R | object>(null);
     const [isFirstJoinGame, setIsFirstJoinGame] = useState<boolean>(true);

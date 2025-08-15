@@ -20,11 +20,8 @@
     margin: 4px
 }
 
-// Big Road background image (multi-line, Sonar-friendly)
-$big-road-bg-image: url("data:image/svg+xml;utf8,\
-<svg width='361' height='104' viewBox='0 0 361 104' fill='none' xmlns='http://www.w3.org/2000/svg'>\
-<rect x='0.5' width='360' height='104' rx='8' fill='black' fill-opacity='0.3'/>\
-</svg>");
+// Big Road background image
+$big-road-bg-image: url("data:image/svg+xml;utf8,<svg width='361' height='104' viewBox='0 0 361 104' fill='none' xmlns='http://www.w3.org/2000/svg'><rect x='0.5' width='360' height='104' rx='8' fill='black' fill-opacity='0.3'/></svg>");
 
 .big-road {
     width: 361px;

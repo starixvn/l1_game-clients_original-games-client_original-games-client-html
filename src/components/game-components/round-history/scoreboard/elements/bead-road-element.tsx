@@ -28,5 +28,7 @@ export abstract class BeadRoadElement<Round> extends Component<BeadRoadScoreboar
         if (round) {
             return this.renderElement(round);
         }
+        
+        return null;
     }
 }

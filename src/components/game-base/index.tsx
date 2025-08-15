@@ -2,13 +2,12 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
 
-import { SwiperNoSwiping, GameIds } from "../../_shared/constants";
+import { GameIds } from "../../_shared/constants";
 import { InitSocketIO, writeDebugLog } from "../../_shared/helpers";
 import { AnalyticsHelper } from "../../_shared/helpers/analytic-helper";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../_shared/helpers/message-transmitter/global-transmitter";
 import { GameActionsContextProvider, GameContextProvider, PlayerContext, PlayerContextModel } from "../../_shared/react-contexts";
 import { GameEventActionType } from "../../_shared/react-contexts/game-state-context/game-event-action";
-import { PFProvider } from "../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { PlaceBetEventActionType } from "../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetProvider } from "../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
 import { GameResourceKeys } from "../../_shared/resources";
@@ -19,18 +18,13 @@ import CountdownTimer from "../game-components/countdown-timer/countdown-timer";
 import DisabledModal from "../game-components/disabled-modal";
 import { ConnectFailedMessage } from "../game-components/error-message";
 import { ConnectFailedReasonKey } from "../game-components/error-message/type";
-import Footer from "../game-components/footer";
 import GameContainer from "../game-components/game-container";
 import GameGuideModal from "../game-components/game-guide";
 import GameLoading from "../game-components/game-loading";
 import { LoadingSpinner } from "../game-components/game-loading/loading-spinner";
 import { NewRoundTransitionWithoutExtraSeconds } from "../game-components/new-round-transition";
 import { NoticeDialog } from "../game-components/notice";
-import { OverlayMask } from "../game-components/overlay-mask";
 import { PFSettingModal } from "../game-components/provably-fair";
-import SideBetScoreboard from "../game-components/round-history/side-bet-scoreboard";
-import { Settings } from "../game-components/settings";
-import BackgroundGalaxy from "../page-components/background";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
@@ -51,7 +45,6 @@ import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./ty
 import PreloadResources from "../../_shared/helpers/preload-resources";
 import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
 import { PlayerResultBoard } from "../game-components/player-result-board/player-result-board";
-import { MenuIcon } from "../game-components/menu/menu-icon";
 import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
@@ -671,8 +664,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     getRenderTemplate() {
         const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
-        const { availableInGameData, isScoreboardTab, roundState } = this.props.gameStateContextModel;
-        const isDisabledGame = roundState === RoundState.Disabled;
+        const { availableInGameData } = this.props.gameStateContextModel;
 
         return (
             <>

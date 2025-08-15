@@ -80,5 +80,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         if (type === "scale") {
             return this.renderScaleBoards();
         }
+        
+        return null;
     }
 }

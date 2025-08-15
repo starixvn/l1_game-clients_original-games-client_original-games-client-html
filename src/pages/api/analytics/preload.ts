@@ -43,7 +43,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
             // Validate required fields
             if (!analyticsData.gameId || !analyticsData.startTime) {
-                return res.status(400).json({ error: 'Missing required fields' });
+                res.status(400).json({ error: 'Missing required fields' });
+                return;
             }
 
             // Store the data

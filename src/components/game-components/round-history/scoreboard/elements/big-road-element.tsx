@@ -31,5 +31,7 @@ export abstract class BigRoadElement<Round> extends Component<ScoreboardItemProp
         if (round?.data.length !== 0) {
             return this.renderElement(round);
         }
+        
+        return null;
     }
 }

@@ -1,7 +1,6 @@
 import { DefaultParamType, TFnType, TranslationKey } from "@tolgee/react";
 import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
-import { getAppSettings } from "../../../../_shared/app-settings";
 import { confirmBet } from "../../../../_shared/constants";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys } from "../../../../_shared/helpers";

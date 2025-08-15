@@ -363,7 +363,7 @@ export class Spritesheet extends Component<SpritesheetProps> {
 
     getInfo = (param: string) => {
         if (!this.spriteElContainer) {
-            return;
+            return undefined;
         }
 
         switch (param) {

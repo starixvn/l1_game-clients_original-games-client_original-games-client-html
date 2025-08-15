@@ -25,7 +25,6 @@ export const RoundBaseResultSlotContainer: React.FC<IResultSlotContainer> = (pro
         defaultRoundData,
         betChoiceBalls,
         playResultAnimation,
-        groupType,
         delayClassName,
     } = props;
 

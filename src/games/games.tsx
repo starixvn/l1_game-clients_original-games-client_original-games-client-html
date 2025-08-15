@@ -1,16 +1,13 @@
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { isIOS, isMobileOnly } from "react-device-detect";
 
-import { getAppSettings, getAppSettingsForGame } from "../_shared/app-settings";
+import { getAppSettingsForGame } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
-import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../_shared/helpers";
 import {
     SettingEventActionType,
     SystemContextProvider,
-    URLContext,
-    updateURLContext,
     usePlayerContext,
     useSettingDispatch,
 } from "../_shared/react-contexts";

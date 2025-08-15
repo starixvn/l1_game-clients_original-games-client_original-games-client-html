@@ -77,6 +77,15 @@ export class GameStateHandler implements IGameStateHandler {
                 }
             );
         }
+        
+        // Return default state if gameStateContextModel is not available
+        return {
+            remainingTime: this.getTimeCounter({
+                remainingTime,
+                durations: durations,
+                roundState: nextRoundState,
+            }),
+        };
     }
 
     private getTimeCounter({

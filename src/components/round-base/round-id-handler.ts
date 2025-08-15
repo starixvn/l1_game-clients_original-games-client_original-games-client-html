@@ -32,7 +32,6 @@ export class RoundIdHandler {
         this.props.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_ID, this.handleRoundId.bind(this));
         this.props.gameMessageHandler.register(messageEventType.PF, this.handleRoundId.bind(this));
-        // this.props.gameMessageHandler.register(messageEventType.DRAW_ID, this.handleDrawId.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_STATE, this.handleRoundState.bind(this));
     }
 

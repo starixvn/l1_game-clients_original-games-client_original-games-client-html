@@ -36,5 +36,7 @@ export abstract class DerivedElement extends Component<ScoreboardItemProps<Deriv
         if (round.status !== undefined) {
             return round.status ? this.renderA() : this.renderB();
         }
+        
+        return null;
     }
 }

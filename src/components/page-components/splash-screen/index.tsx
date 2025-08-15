@@ -12,12 +12,10 @@ import {
     AnalyticsHelper,
     StorageHelper,
     getEnabledRenderGameSettings,
-    getServiceStatusIsAvailable,
     localStorageKeys,
     randomInteger,
 } from "../../../_shared/helpers";
 import PreloadResources, {
-    DURATION_HOLD_SPLASH_SCREEN,
     getAndHandleGameOfferIds,
     getAndHandleBannerOffer as handleBannerOffer,
 } from "../../../_shared/helpers/preload-resources";
@@ -27,7 +25,6 @@ import { setSentryUser } from "../../../_shared/sentry";
 import { tolgee } from "../../../_shared/tolgee";
 import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "../../../services/auth-service";
 import { updateSignInSMStatus } from "../../../services/user-setting-service";
-import { GameSettings } from "../../game-base/type";
 import { MAX_AVATAR_ID } from "../../../_shared/helpers/avatar-helper";
 import NameGenerator from "../../../_shared/helpers/name-generator";
 import { ILobbyConfigs } from "../dashboard/type";

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useCallback, useMemo } from "react";
 import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useClickSound } from "../../../_shared/react-hooks";
-import { StorageHelper, localStorageKeys, AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../_shared/helpers";
+import { StorageHelper, localStorageKeys } from "../../../_shared/helpers";
 import { SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
 import { RoundState } from "../../game-base/type";
 import { useSettingContext } from "../../../_shared/react-contexts";
@@ -33,7 +33,6 @@ export const MenuIcon = ({ name, onClick }: Props) => {
                 type: SettingEventActionType.TOGGLE_SETTING,
                 payload: { isShowedSetting: true },
             });
-            return;
         }
     }, [onClick, roundState, name, clickSound, dispatch, settingDispatch]);
 

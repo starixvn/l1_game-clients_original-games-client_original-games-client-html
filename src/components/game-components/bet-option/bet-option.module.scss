@@ -12,36 +12,6 @@
 .bet-odds {
     position: relative;
     line-height: 1;
-
-    // &:after {
-    //     display: inline-block;
-    //     position: absolute;
-    //     top: -6px;
-    //     content: "";
-    //     height: 30px;
-    //     width: 30px;
-    //     margin-left: -8px;
-    //     transform: scale(0);
-    //     background-repeat: no-repeat;
-    //     background-position: center;
-    //     background-size: 30px 30px;
-    // }
-
-    // &.up:after {
-    //     background-image: url("/static/images/arrow-up.png?v=#{$version-image}");
-    // }
-
-    // &.down:after {
-    //     background-image: url("/static/images/arrow-down.png?v=#{$version-image}");
-    // }
-
-    // &.show-odds-icon {
-    //     animation: odd-move-up 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-
-    //     &:after {
-    //         animation: zoom-in 0.3s 0.3s ease-in forwards;
-    //     }
-    // }
 }
 
 .player-count {

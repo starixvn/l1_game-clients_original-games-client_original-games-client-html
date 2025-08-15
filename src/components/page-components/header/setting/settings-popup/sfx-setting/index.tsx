@@ -16,7 +16,6 @@ const SoundSetting = () => {
     const volumeSFX = StorageHelper.get<number>(localStorageKeys.volumeSFX) ?? 50;
 
     const settingDispatch = useSettingDispatch();
-    const settingContext = useSettingContext();
 
     const [volumeSFXVal, setVolumeSFXVal] = useState(volumeSFX);
     const [debounceSFXVal, setDebounceSFXVal] = useState(volumeSFX);

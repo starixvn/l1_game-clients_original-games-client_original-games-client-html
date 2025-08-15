@@ -6,6 +6,9 @@ import StatisticItem from "./statistic-item";
 import Styles from "./statistic.module.scss";
 import { PercentageStatisticProps } from "./types";
 
+// Define constant for duplicated literal
+const BAR_STATISTIC_ID = "bar-statistic";
+
 export const countSettlementResult = (roundHistory: Round<any, any>[]) => {
     return roundHistory.reduce((result, { settlementResult }) => {
         for (const [choice, win] of Object.entries(settlementResult)) {
@@ -68,7 +71,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
         });
 
         return (
-            <div className={`${Styles["statistic-container"]} flex ${Styles["statistic-tab-container"]}`} id="bar-statistic">
+            <div className={`${Styles["statistic-container"]} flex ${Styles["statistic-tab-container"]}`} id={BAR_STATISTIC_ID}>
                 {groups.map((choices, index) => (
                     <div
                         key={index}
@@ -117,7 +120,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
         }
 
         return (
-            <div className={`${Styles["statistic-container"]} flex`} id="bar-statistic">
+            <div className={`${Styles["statistic-container"]} flex`} id={BAR_STATISTIC_ID}>
                 {mainChoices.map((choice) => (
                     <StatisticItem key={choice} value={`${statisticResult[choice]}%`} className={props.className}>
                         {iconRenderer ? iconRenderer(choice) : <BeadBoardIcon choice={choice} />}

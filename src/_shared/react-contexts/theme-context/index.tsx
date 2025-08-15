@@ -15,7 +15,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useThemeContext = () => {
     const context = useContext(ThemeContext);
     if (!context) {
-        return;
+        return undefined;
     }
     return context;
 };

@@ -91,11 +91,11 @@ class ImageOptimizationHelper {
             throw new Error('Canvas not available');
         }
 
-        const { quality = 85, format = 'webp', width, height } = options;
+        const { quality = 85 } = options;
 
         // Set canvas dimensions
-        this.canvas.width = width || imageData.width;
-        this.canvas.height = height || imageData.height;
+        this.canvas.width = imageData.width;
+        this.canvas.height = imageData.height;
 
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -114,7 +114,7 @@ class ImageOptimizationHelper {
         this.ctx.drawImage(tempCanvas, 0, 0, this.canvas.width, this.canvas.height);
 
         // Convert to optimized format
-        const mimeType = `image/${format}`;
+        const mimeType = `image/webp`;
         const optimizedDataUrl = this.canvas.toDataURL(mimeType, quality / 100);
 
         // Calculate sizes
@@ -126,7 +126,7 @@ class ImageOptimizationHelper {
             originalSize,
             optimizedSize,
             compressionRatio: Math.round(compressionRatio),
-            format,
+            format: 'webp',
             url: optimizedDataUrl
         };
     }

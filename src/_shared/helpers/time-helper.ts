@@ -40,38 +40,37 @@ export function sortedCollectionByTime(elements: any[], decrease = true) {
     return newElements;
 }
 
-export function separateDateTime(
-    rawTime: Date | string | number,
-    dateFormatLocale = "id",
-    timeFormatLocale = "en-US"
-) {
-    // Normalize input to a valid Date instance
-    let dateObject: Date | null = null;
-
+// Helper function to normalize input to Date object
+function normalizeToDate(rawTime: Date | string | number): Date | null {
     if (rawTime instanceof Date) {
-        dateObject = rawTime;
-    } else if (typeof rawTime === "number") {
+        return rawTime;
+    }
+    
+    if (typeof rawTime === "number") {
         // Heuristic: treat 13+ digit numbers as ms, 10-digit as seconds
         const asMs = rawTime > 1e12 ? rawTime : rawTime * 1000;
-        dateObject = new Date(asMs);
-    } else if (typeof rawTime === "string") {
+        return new Date(asMs);
+    }
+    
+    if (typeof rawTime === "string") {
         const parsedFromString = new Date(rawTime);
         if (!Number.isNaN(parsedFromString.getTime())) {
-            dateObject = parsedFromString;
-        } else {
-            // Try numeric string fallback (seconds or milliseconds)
-            const numeric = Number(rawTime);
-            if (!Number.isNaN(numeric)) {
-                const asMs = numeric > 1e12 ? numeric : numeric * 1000;
-                dateObject = new Date(asMs);
-            }
+            return parsedFromString;
+        }
+        
+        // Try numeric string fallback (seconds or milliseconds)
+        const numeric = Number(rawTime);
+        if (!Number.isNaN(numeric)) {
+            const asMs = numeric > 1e12 ? numeric : numeric * 1000;
+            return new Date(asMs);
         }
     }
+    
+    return null;
+}
 
-    if (!dateObject || Number.isNaN(dateObject.getTime())) {
-        return { date: "-", time: "-" };
-    }
-
+// Helper function to format date and time
+function formatDateTime(dateObject: Date, dateFormatLocale: string, timeFormatLocale: string) {
     const dateFormat = new Intl.DateTimeFormat(dateFormatLocale, {
         day: "2-digit",
         month: "2-digit",
@@ -88,4 +87,19 @@ export function separateDateTime(
     const date = dateFormat.format(dateObject);
     const time = timeFormat.format(dateObject);
     return { date, time };
+}
+
+export function separateDateTime(
+    rawTime: Date | string | number,
+    dateFormatLocale = "id",
+    timeFormatLocale = "en-US"
+) {
+    // Normalize input to a valid Date instance
+    const dateObject = normalizeToDate(rawTime);
+
+    if (!dateObject || Number.isNaN(dateObject.getTime())) {
+        return { date: "-", time: "-" };
+    }
+
+    return formatDateTime(dateObject, dateFormatLocale, timeFormatLocale);
 }

@@ -2,7 +2,7 @@ import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
-import { buildVersion, GameIds, LobbyGameId } from "../../../_shared/constants";
+import { buildVersion, LobbyGameId } from "../../../_shared/constants";
 import { getPathIconGames, getPathImageGameId, pathImageMapping } from "../../../_shared/constants/resource-image-mapping";
 
 // Enhanced caching with TTL and memory management

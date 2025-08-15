@@ -1,7 +1,6 @@
 import MessageTransmitter from "../../../_shared/helpers/message-transmitter";
 import { MessageTransmitterType } from "../../../_shared/helpers/message-transmitter/type";
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
-import { PlayerResultBoard } from "../type";
 
 export const messageEventType = {
     GAME_CONFIG: "gameConfigs",
