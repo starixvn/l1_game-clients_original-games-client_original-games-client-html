@@ -103,9 +103,8 @@ describe(BetHistoryBase.name, () => {
                             betLogs: [
                                 {
                                     drawId: 1234,
-                                    result: {
-                                        time: new Date(),
-                                    },
+                                    time: new Date(),
+                                    result: {},
                                     totalAmount: 1,
                                     betwin: 1,
                                 },
@@ -173,9 +172,8 @@ describe(BetHistoryBase.name, () => {
                         betLogs: [
                             {
                                 drawId: 1234,
-                                result: {
-                                    time: new Date(),
-                                },
+                                time: new Date(),
+                                result: {},
                                 totalAmount: 1,
                                 betwin: 1,
                             },
@@ -214,9 +212,8 @@ describe(BetHistoryBase.name, () => {
                         betLogs: [
                             {
                                 drawId: 1234,
-                                result: {
-                                    time: new Date(),
-                                },
+                                time: new Date(),
+                                result: {},
                                 totalAmount: 1,
                                 betwin: 1,
                             },

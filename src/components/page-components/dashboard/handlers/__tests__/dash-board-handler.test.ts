@@ -10,6 +10,7 @@ import { ILobbyConfigs } from '../../type';
 jest.mock('../../../../../_shared/app-settings', () => ({
     getAppSettings: jest.fn().mockReturnValue({
         appType: 'test',
+        system: 'gn',
         gameSettings: {
             1005: { id: 1005, name: 'SeBall1' },
             148: { id: 148, name: 'SeDie' }
@@ -235,6 +236,7 @@ describe('DashboardHandler', () => {
 
         it('should return false when queryGame is in offer games in direct mode', () => {
             // Arrange
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001 // Game in offer
@@ -375,6 +377,7 @@ describe('DashboardHandler', () => {
 
         it('should return false when queryGame is not 0 and lobbyConfigs is null (timing issue)', () => {
             // Arrange
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001, // Not lobby
@@ -392,6 +395,7 @@ describe('DashboardHandler', () => {
         it('should return false when queryGame is not 0 and no lobby games are available', () => {
             // Arrange
             mockGetLobbyGameIds.mockReturnValue([]);
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001 // Not lobby
@@ -407,6 +411,7 @@ describe('DashboardHandler', () => {
 
         it('should return false when queryGame is not 0 and user has offer games and lobby games are available', () => {
             // Arrange
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001, // Not lobby
@@ -429,6 +434,7 @@ describe('DashboardHandler', () => {
 
         it('should handle timing issue where queryGame is not 0 and authorizeResponse is incomplete on first load', () => {
             // Arrange - Simulate first load scenario where data is not yet available
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001, // Not lobby
@@ -451,6 +457,7 @@ describe('DashboardHandler', () => {
 
         it('should handle timing issue where queryGame is not 0 and lobbyConfigs is incomplete on first load', () => {
             // Arrange - Simulate first load scenario where lobbyConfigs is not yet loaded
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const props = {
                 ...defaultProps,
                 queryGame: 1001, // Not lobby
@@ -537,6 +544,7 @@ describe('DashboardHandler', () => {
     describe('getOfferGamesIds', () => {
         it('should return offer games IDs from authorize response', () => {
             // Arrange
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const handler = new DashboardHandler(defaultProps, jest.fn());
 
             // Act
@@ -576,6 +584,7 @@ describe('DashboardHandler', () => {
             // Arrange
             const props = { ...defaultProps, lobbyConfigs: undefined };
             mockGetLobbyGameIds.mockReturnValue([]);
+            mockGetOfferGamesIds.mockReturnValue([1001, 1002]);
             const handler = new DashboardHandler(props, jest.fn());
 
             // Act

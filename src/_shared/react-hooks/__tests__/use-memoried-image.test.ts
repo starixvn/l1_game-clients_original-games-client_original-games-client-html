@@ -28,7 +28,7 @@ describe("useMemoriedImage", () => {
 
         // Assert initial state
         expect(result.current.isLoading).toBe(true);
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeNull();
 
         // Wait for the async operation to complete with timeout
@@ -56,7 +56,7 @@ describe("useMemoriedImage", () => {
 
         // Assert initial state
         expect(result.current.isLoading).toBe(true);
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeNull();
 
         // Wait for the async operation to complete with timeout
@@ -65,7 +65,7 @@ describe("useMemoriedImage", () => {
         }, { timeout: 3000 });
 
         // Assert final state
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeInstanceOf(Error);
         expect(result.current.error.message).toBe("Network response was not ok");
     });
@@ -81,7 +81,7 @@ describe("useMemoriedImage", () => {
 
         // Assert initial state
         expect(result.current.isLoading).toBe(true);
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeNull();
 
         // Wait for the async operation to complete with timeout
@@ -90,7 +90,7 @@ describe("useMemoriedImage", () => {
         }, { timeout: 3000 });
 
         // Assert final state
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBe(expectedError);
         expect(mockedDownloadAndCacheImage).toHaveBeenCalledTimes(1);
     });
@@ -99,7 +99,11 @@ describe("useMemoriedImage", () => {
         // Arrange
         const imagePath = "https://example.com/cached-image.jpg";
         const cachedBase64 = "cachedBase64EncodedData";
-        imageCache[imagePath] = cachedBase64;
+        imageCache[imagePath] = {
+            data: cachedBase64,
+            timestamp: Date.now(),
+            size: cachedBase64.length
+        };
 
         // Act
         const { result } = renderHook(() => useMemoriedImage(imagePath));
@@ -117,7 +121,7 @@ describe("useMemoriedImage", () => {
 
         // Assert
         expect(result.current.isLoading).toBe(false);
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeInstanceOf(Error);
         expect(result.current.error?.message).toBe("Invalid image path");
         expect(mockedDownloadAndCacheImage).not.toHaveBeenCalled();
@@ -129,7 +133,7 @@ describe("useMemoriedImage", () => {
 
         // Assert
         expect(result.current.isLoading).toBe(false);
-        expect(result.current.data).toBe(undefined);
+        expect(result.current.data).toBe(null);
         expect(result.current.error).toBeInstanceOf(Error);
         expect(result.current.error?.message).toBe("Invalid image path");
         expect(mockedDownloadAndCacheImage).not.toHaveBeenCalled();

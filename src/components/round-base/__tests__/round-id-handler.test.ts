@@ -6,11 +6,21 @@ describe(RoundIdHandler.name, () => {
         it("should set round id", () => {
             // arrange
             const dispatch = jest.fn();
-            const handler = new RoundIdHandler({ dispatch } as any, {} as any);
-            handler["isFirstRoundId"] = false;
+            const mockProps = {
+                dispatch,
+                gameStateContextModel: jest.fn(),
+                gameMessageHandler: {
+                    broadcastGameEvent: jest.fn(),
+                    register: jest.fn(),
+                    removeHandler: jest.fn()
+                } as any,
+                durations: {} as any
+            };
+            const handler = new RoundIdHandler(mockProps);
+            handler["shouldRunWhenFirstLoad"] = false;
 
             // act
-            handler.handleRoundId({ roundId: 10 });
+            handler.handleRoundId({ pf: { roundId: 10 } });
 
             // assert
             expect(dispatch).toHaveBeenCalledWith({ type: GameEventActionType.ROUND_ID, payload: { roundId: 10 } });

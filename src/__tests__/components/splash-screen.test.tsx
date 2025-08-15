@@ -16,6 +16,21 @@ jest.mock("../../_shared/helpers", () => ({
     getUserLatestGameId: jest.fn(),
 }));
 
+// Mock Sentry
+jest.mock("@sentry/nextjs", () => ({
+    captureException: jest.fn(),
+    captureMessage: jest.fn(),
+    setUser: jest.fn(),
+    setTag: jest.fn(),
+    setExtra: jest.fn(),
+    withProfiler: jest.fn((name, fn) => fn),
+    startTransaction: jest.fn(() => ({
+        setTag: jest.fn(),
+        setData: jest.fn(),
+        finish: jest.fn(),
+    })),
+}));
+
 // Mock Tolgee
 jest.mock("../../_shared/tolgee", () => ({
     tolgee: {
