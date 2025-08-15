@@ -564,9 +564,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     const componentId = useRef(`preload-${gameId}-${Date.now()}-${Math.random()}`);
 
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
-    const gameSettings = getGameSettings(gameId);
-    const cachePaths = gameSettings?.gameResourceConfigs?.cachePaths || [];
-    // Preload game images removed as it's not used
+    // Game settings and cache paths removed as they're not used
 
 
 
@@ -589,8 +587,6 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
         let isMounted = true;
 
         const startPreload = async () => {
-            // setIsLoading(true); // This line was removed
-
             try {
                 const preloadManager = PreloadManager.getInstance();
                 await preloadManager.startPreload(
@@ -616,7 +612,6 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                     setIsDonePreload();
                 }
             }
-
         };
 
         startPreload();

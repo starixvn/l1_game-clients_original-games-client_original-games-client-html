@@ -3,7 +3,7 @@ import React, { memo, useEffect, useState } from "react";
 import { getBallColor } from "../../../_shared/helpers/ball-color-helper";
 import { GameStateContextModel } from "../../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { RoundState } from "../../game-base/type";
-import BallLoops from "./ball-loop";
+import BallLoops from "./ball-loops";
 import Styles from "./cage.module.scss";
 import ResultBall from "./result-ball";
 import ResultNumber from "./result-number";

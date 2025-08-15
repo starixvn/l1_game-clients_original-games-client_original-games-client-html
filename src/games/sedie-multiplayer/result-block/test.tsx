@@ -22,8 +22,8 @@ let count = 29473;
 const PlateButtons: React.FC = () => {
     const [buttons, setButtons] = useState<Array<{ id: number; x: number; y: number; isRed: boolean }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
-    const [showButtons, setShowButtons] = useState(true);
-    const [seed, setSeed] = useState<number>(0);
+    const [showButtons] = useState(true);
+    // seed and setSeed removed as they're not used
 
     // Generate random positions for buttons within circular boundary
     const generateButtonPositions = (seedValue: number, time = 1) => {
@@ -163,8 +163,8 @@ const PlateButtons: React.FC = () => {
                     } as React.CSSProperties
                 }
             >
-                <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
-                    <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
+                <div className={`${styles["plate-buttons"]} ${styles["plate-buttons-" + animationState]}`}>
+                    <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>
                         {renderButtons()}
                     </div>
                 </div>

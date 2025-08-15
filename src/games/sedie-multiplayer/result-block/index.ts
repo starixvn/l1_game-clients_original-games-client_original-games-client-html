@@ -1,1 +1,1 @@
-export { default as Plate } from "./plate";
+export { default as Plate } from "./plate-buttons";

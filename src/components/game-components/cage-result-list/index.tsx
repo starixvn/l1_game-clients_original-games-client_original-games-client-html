@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 
 import { GameStateContextModel } from "../../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { RoundState } from "../../game-base/type";
-import BallLoops from "../cage/ball-loop";
+import BallLoops from "../cage/ball-loops";
 import CageStyles from "../cage/cage.module.scss";
 import { Spritesheet } from "../sprites-sheet";
 import Styles from "./cage-result-list.module.scss";
@@ -87,9 +87,8 @@ const CageResultList: React.FC<CageResultListProps> = ({
 
     return (
         <div
-            className={`${CageStyles["cage-area"]} ${isSmall ? CageStyles["small"] : ""} ${CageStyles[position]} ${
-                Styles[`type-${listResult?.length}`]
-            }`}
+            className={`${CageStyles["cage-area"]} ${isSmall ? CageStyles["small"] : ""} ${CageStyles[position]} ${Styles[`type-${listResult?.length}`]
+                }`}
         >
             <div className={`${Styles["ball"]} ${customCageClass}`}>
                 <BgCachedImage className={CageStyles["cage-bg"]} pathImage={`/static/images/cage/cage.webp`} />

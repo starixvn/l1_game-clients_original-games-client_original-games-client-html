@@ -22,8 +22,8 @@ type AnimationState = "idle" | "shake" | "open" | "close";
 const PlateButtons: React.FC = () => {
     const { roundHistory, result, roundState, roundId } = useGameStateContext();
     const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
-    const [animationState, setAnimationState] = useState<AnimationState>("idle");
-    const [showButtons, setShowButtons] = useState(true);
+    const [animationState] = useState<AnimationState>("idle");
+    const [showButtons] = useState(true);
     const [buttonsValue, setButtonsValue] = useState<boolean[]>([]);
     const currentResult = useResult<SeDieResult>({ result, roundState, roundHistory });
 
@@ -92,8 +92,8 @@ const PlateButtons: React.FC = () => {
                     } as React.CSSProperties
                 }
             >
-                <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
-                    <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>{renderButtons()}</div>
+                <div className={`${styles["plate-buttons"]} ${styles["plate-buttons-" + animationState]}`}>
+                    <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>{renderButtons()}</div>
                 </div>
             </div>
         </div>
