@@ -17,7 +17,7 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json yarn.lock sentry.client.config.js sentry.edge.config.js sentry.server.config.js tsconfig.json configs.json game-settings.json next.config.js ./
+COPY package.json yarn.lock sentry.client.config.js sentry.edge.config.js sentry.server.config.js tsconfig.json tsconfig.node.json configs.json game-settings.json next.config.js ./
 COPY configs ./configs
 COPY public ./public
 COPY configs/missing-configuration.js ./public/c.js
@@ -25,8 +25,8 @@ COPY src ./src
 COPY scripts ./scripts
 
 # Build standalone version with all assets included
-# This generates Tolgee data, builds the app, and copies static assets to standalone directory
-RUN yarn generate-tolgee-data && yarn build && yarn copy-standalone-assets
+# This builds the app and copies static assets to standalone directory
+RUN yarn build && yarn copy-standalone-assets
 
 FROM base AS runner
 
