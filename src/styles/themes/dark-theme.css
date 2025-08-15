@@ -11,7 +11,7 @@ html[data-theme="dark"] {
     --scrollbar-background: #000;
     --scrollbar-thumb-background: #444;
 
-    --popup-background: linear-gradient(#094998 0%, #062B57 50%, #142030 100%);
+    --popup-background: linear-gradient(180deg, #094998 0%, #062B57 35%, #142030 85%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -20,4 +20,6 @@ html[data-theme="dark"] {
 
     --color-table-text-clickable: #0990ff;
     --color-winning-highlight: #FFF600;
+
+    --modal-background: #1B293F;
 }

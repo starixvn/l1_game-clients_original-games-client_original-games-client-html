@@ -90,7 +90,7 @@ const BaseDialog: React.FC<Props> = ({
             <div
                 style={getCustomStyle({ betContainerPosition })}
                 ref={wrapperRef}
-                className={`${Styles.popup} ${Styles[classModal]} ${isMobileOnly ? Styles["isMobile"] : ""} ${getClassFollowDevice()} ${
+                className={`rounded-t-[12px] mt-10 ${Styles.popup} ${Styles[classModal]} ${isMobileOnly ? Styles["isMobile"] : ""} ${getClassFollowDevice()} ${
                     isIpad ? Styles["ipad"] : ""
                 } ${isOpen ? "modal-open" : ""}`}
             >

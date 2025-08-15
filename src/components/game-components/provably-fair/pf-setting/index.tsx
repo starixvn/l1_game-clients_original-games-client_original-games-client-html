@@ -8,11 +8,12 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { ButtonPFGuide } from "../pf-guide";
+import { ButtonPFGuide, PFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
+import { CachedImage } from "../../cached-image";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getPfInfo";
@@ -36,20 +37,89 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
         togglePFSetting(false);
     };
 
+    const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(true);
+    const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(false);
+
+    const toggleSettingsSection = () => {
+        setIsSettingsExpanded(!isSettingsExpanded);
+        if (isGuidesExpanded) {
+            setIsGuidesExpanded(false);
+        }
+    };
+
+    const toggleGuidesSection = () => {
+        setIsGuidesExpanded(!isGuidesExpanded);
+        if (isSettingsExpanded) {
+            setIsSettingsExpanded(false);
+        }
+    };
+
     return (
         isShowPFSetting && (
             <ModalContainer
                 id="pf-setting"
-                title={
-                    <div>
-                        <ButtonPFGuide />
-                        <div>{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>
-                    </div>
-                }
+                title={<div>{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>}
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
-                <PFSetting customClientSeedInfo={customClientSeedInfo} />
+                <div className="ml-4 mr-4 mt-3">
+                    <div className={`flex flex-col gap-5`}>
+                        <div
+                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
+                                isSettingsExpanded ? "max-h-[1000px]" : "max-h-[50px]"
+                            }`}
+                        >
+                            <div
+                                className={`flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]`}
+                                onClick={toggleSettingsSection}
+                            >
+                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_title_provably_fair_settings")}</h3>
+                                <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
+                                    {isSettingsExpanded ? (
+                                        <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
+                                    ) : (
+                                        <img
+                                            src="/static/images/icons/chevron-right.svg"
+                                            className="w-[16px] h-[16px]"
+                                            alt="chevron-right"
+                                        />
+                                    )}
+                                </span>
+                            </div>
+                            {isSettingsExpanded && (
+                                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-md`}>
+                                    <PFSetting customClientSeedInfo={customClientSeedInfo} />
+                                </div>
+                            )}
+                        </div>
+
+                        <div
+                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
+                                isGuidesExpanded ? "max-h-[1000px]" : "max-h-[50px]"
+                            }`}
+                        >
+                            <div className="flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]" onClick={toggleGuidesSection}>
+                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>
+                                <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
+                                    {isGuidesExpanded ? (
+                                        <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
+                                    ) : (
+                                        <img
+                                            src="/static/images/icons/chevron-right.svg"
+                                            className="w-[16px] h-[16px]"
+                                            alt="chevron-right"
+                                        />
+                                    )}
+                                </span>
+                            </div>
+                            {isGuidesExpanded && (
+                                <div className={`${Styles["section-content"]}`}>
+                                    <PFGuide />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </ModalContainer>
         )
     );
@@ -188,7 +258,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     };
 
     return (
-        <div className={Styles["pf-setting-container"]}>
+        <div className={Styles["pf-setting-container"] + " bg-[var(--modal-background)]"}>
             <div>
                 <ul>
                     <li>{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
