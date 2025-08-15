@@ -8,8 +8,8 @@
     padding: 8px;
 }
 
+
 .panel {
-	/* Prototype-like layered background */
 	background-color: #0b1b29;
 	background-image:
 		radial-gradient(120% 120% at 100% 0%, rgba(30, 74, 104, 0.55) 0%, rgba(11, 27, 41, 0) 70%),
@@ -17,14 +17,12 @@
 	background-blend-mode: screen, normal;
 	border: 1px solid #1e3a55;
 	border-radius: 8px;
-	// padding: 12px;
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .grid {
 	display: grid;
 	grid-template-columns: 1fr;
-	// gap: 12px;
     position: relative;
 }
 
@@ -44,8 +42,6 @@
 	height: 32px;
 	background: url('/static/images/button-statistic.webp') no-repeat center/cover;
 	border: none;
-	// border-radius: 50%;
-	// box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 	cursor: pointer;
 	z-index: 9999;
 }

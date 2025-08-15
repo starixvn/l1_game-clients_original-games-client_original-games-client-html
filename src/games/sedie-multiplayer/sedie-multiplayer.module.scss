@@ -1,55 +1,20 @@
-// .sedie-game-container {
-//     display: flex;
-//     flex-direction: column;
-//     min-height: 100vh;
-//     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-//     color: white;
-//     font-family: "Arial", sans-serif;
-// }
+ 
 
-// .result-container {
-//     position: relative;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     grid-gap: 40px;
-//     margin-top: 5px;
-//     height: 135px;
-//     --move-up: -65px;
+ 
 
-//     @media screen and (min-width: 1600px) {
-//         --move-up: -55px;
-//     }
+ 
 
-//     @media (min-aspect-ratio: 3/4) {
-//         --move-up: -55px;
-//     }
+ 
 
-//     @media screen and (min-width: 500px) and (orientation: portrait) {
-//         --move-up: -55px;
-//     }
+ 
 
-//     &.zoom-in {
-//         transform: scale(1);
-//     }
+ 
 
-//     &.zoom-out {
-//         animation: zoom-out 1s cubic-bezier(0.47, 0, 0.745, 0.715) forwards;
-//     }
+ 
 
-//     &.zoom-out-no-animation {
-//         transform: scale(0.5) translateY(var(--move-up));
-//     }
-// }
+ 
 
-// @keyframes zoom-out {
-//     0% {
-//         transform: scale(1) translateY(0);
-//     }
-//     100% {
-//         transform: scale(0.5) translateY(var(--move-up));
-//     }
-// }
+ 
 
 // //-------------- CHOICE ODD EVEN -----------------//
 

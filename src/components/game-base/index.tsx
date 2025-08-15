@@ -677,7 +677,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return (
             <>
 
-                {/* <BackgroundGalaxy gameId={this.props.id} /> */}
+
                 <>
                     <div className={`game-${this.props.id}`}>
                         <div className="flex flex-wrap">
