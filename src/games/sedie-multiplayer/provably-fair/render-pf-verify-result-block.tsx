@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { PFResult } from "../../../components/game-base/type";
 import Styles from "./pf-sedie-multiplayer.module.scss";
-import SmallBall from "../../../components/game-components/small-ball";
 import { ResourceTypes } from "../../../_shared/resources";
 
 const PFVerifyResultBlock: FC<{ pfResult: PFResult }> = ({ pfResult }) => {
@@ -35,7 +34,7 @@ const PFVerifyResultBlock: FC<{ pfResult: PFResult }> = ({ pfResult }) => {
             <div className="flex justify-center">
                 <div className={Styles["balls-container"]}>
                     {ballItems.map((item, _) => (
-                        <SmallBall key={uuidv4()} number={item} />
+                        <span key={uuidv4()} className="ball-number">{item}</span>
                     ))}
                 </div>
             </div>

@@ -38,7 +38,6 @@ const analyticsData: PreloadAnalytics[] = [];
 
 // Critical image paths that should be loaded first
 const CRITICAL_IMAGE_PATHS = [
-    "/cage/",
     "/countdown-timer/",
     "/chips/gn/",
     "/ball/",
@@ -267,7 +266,7 @@ const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
             priority = ImagePriority.HIGH;
         }
         // Medium priority (game-specific assets)
-        else if (path.includes('/number/') || path.includes('/cage/')) {
+        else if (path.includes('/number/')) {
             priority = ImagePriority.MEDIUM;
         }
 
@@ -530,7 +529,6 @@ export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PR
 const CORE_IMAGE_PATHS = [
     `/chips/${systemName}/`,
     "/countdown-timer/",
-    "/cage/",
     "/anim/ball-middle/",
     "/ball/",
 ];

@@ -5,7 +5,6 @@ const DYNAMIC_CACHE_NAME = "dynamic-assets-v1";
 
 // Critical assets to cache immediately
 const CRITICAL_ASSETS = [
-    "/static/images/cage/",
     "/static/images/countdown-timer/",
     // Chips path depends on system; include both to be safe in SW cache list
     "/static/images/chips/gn/",

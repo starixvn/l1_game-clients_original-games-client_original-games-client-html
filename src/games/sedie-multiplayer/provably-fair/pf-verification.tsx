@@ -3,7 +3,6 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from "../../../components/game-components/provably-fair";
-import SmallBall from "../../../components/game-components/small-ball";
 import { Section } from "../../../components/game-components/provably-fair/pf-form-components";
 import { usePFContext, usePFDispatch } from "../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { PFEventActionType } from "../../../_shared/react-contexts/game-state-context/pf/pf-action";
@@ -127,7 +126,7 @@ const PFVerification: FC = () => {
                     >
                         <div className="flex gap-2 items-center">
                             {verifyInfo.results.map((item) => (
-                                <SmallBall key={uuidv4()} number={item} />
+                                <span key={uuidv4()} className="ball-number">{item}</span>
                             ))}
                         </div>
                     </Section>

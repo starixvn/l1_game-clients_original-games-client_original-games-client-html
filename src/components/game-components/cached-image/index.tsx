@@ -25,9 +25,7 @@ export const CachedImage: React.FC<Props> = ({ src, blurSrc, alt, width, height,
             if (!result.valid && Array.isArray(fallbackSrcs) && fallbackSrcs.length > 0) {
                 for (const fallback of fallbackSrcs) {
                     result = await downloadAndCacheImage(fallback);
-                    if (result.valid) {
-                        break;
-                    }
+                    if (result.valid) break;
                 }
             }
             setSource(result.imageBase64 || null);

@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-import SmallBall from "../../../components/game-components/small-ball";
 import Styles from "../history/history.module.scss";
 
 const SedieMultiplayerBetLogResultCell: FC<{ result?: { balls?: number[] } | Record<string, boolean> | null }> = ({ result }) => {
@@ -21,7 +20,7 @@ const SedieMultiplayerBetLogResultCell: FC<{ result?: { balls?: number[] } | Rec
     return (
         <div className={Styles["result-container"]}>
             {balls.length > 0
-                ? balls.map((ball, index) => <SmallBall number={ball} key={index} />)
+                ? balls.map((ball, index) => <span key={index} className="ball-number">{ball}</span>)
                 : activeKeys.map((key, index) => <span key={index} className="font-text">{key}</span>)}
         </div>
     );

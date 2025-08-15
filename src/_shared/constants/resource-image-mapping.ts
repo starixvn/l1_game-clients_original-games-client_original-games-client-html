@@ -39,8 +39,6 @@ const resolvedChipsSystem = systemName === "vg" ? "gn" : systemName;
 export const pathImageMapping = {
     lobby: ["bg-galaxy.webp", "bg.webp", "bg-galaxy-small.webp", "dot", "hide-toolbar-guide"],
     game: [
-        "cage",
-        "cage/number",
         "anim/ball-middle",
         "ball",
         `chips/${resolvedChipsSystem}`,

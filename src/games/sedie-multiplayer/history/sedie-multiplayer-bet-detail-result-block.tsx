@@ -2,7 +2,6 @@ import { FC } from "react";
 
 import { useGameContext } from "../../../_shared/react-contexts";
 import { useCommonTranslate, useTranslator } from "../../../_shared/react-hooks";
-import SmallBall from "../../../components/game-components/small-ball";
 import { DrawInfo } from "../../../components/game-base/type";
 import Styles from "../history/history.module.scss";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
@@ -36,7 +35,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
                     <>
                         {balls.map((ball, index) => {
                             totalPoint += ball;
-                            return <SmallBall key={index} number={ball} />;
+                            return <span key={index} className="ball-number">{ball}</span>;
                         })}
                         <div className={Styles["bet-detail-total"]}> - {totalPoint}</div>
                     </>
