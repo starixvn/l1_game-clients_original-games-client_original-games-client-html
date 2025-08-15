@@ -62,15 +62,17 @@ class ImageOptimizationHelper {
 
     // Get optimal format based on browser support
     getOptimalFormat(): ImageFormat {
-        if (this.isAVIFSupported()) return 'avif';
-        if (this.isWebPSupported()) return 'webp';
+        if (this.isAVIFSupported()) {
+            return 'avif';
+        }
+        if (this.isWebPSupported()) {
+            return 'webp';
+        }
         return 'jpeg';
     }
 
     // Optimize image URL with format and quality parameters
-    optimizeImageUrl(url: string, options: ImageOptimizationOptions = {}): string {
-        const { quality = 85, format, width, height } = options;
-
+    optimizeImageUrl(url: string, _options: ImageOptimizationOptions = {}): string {
         // For local images, return as-is (server-side optimization would be needed)
         return url;
     }

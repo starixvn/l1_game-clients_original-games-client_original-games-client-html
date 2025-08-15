@@ -1,15 +1,13 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
 import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
 import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings, getGameSettings } from "../app-settings";
 import { systemName } from "../constants";
-import { downloadAndCacheImage } from "./image-cache-controller";
 import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
-import { serviceWorkerHelper } from "./service-worker-helper";
 
 const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
 export const DURATION_HOLD_SPLASH_SCREEN = 1000;
@@ -65,9 +63,9 @@ interface ImageWithPriority {
 // Global preload manager to prevent multiple simultaneous preloads
 class PreloadManager {
     private static instance: PreloadManager;
-    private activePreloads: Map<string, Promise<void>> = new Map();
-    private preloadCallbacks: Map<string, Set<() => void>> = new Map();
-    private analytics: Map<string, PreloadAnalytics> = new Map();
+    private readonly activePreloads: Map<string, Promise<void>> = new Map();
+    private readonly preloadCallbacks: Map<string, Set<() => void>> = new Map();
+    private readonly analytics: Map<string, PreloadAnalytics> = new Map();
 
     static getInstance(): PreloadManager {
         if (!PreloadManager.instance) {
@@ -266,7 +264,7 @@ const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
 
     return imagePaths.map(path => {
         let priority = ImagePriority.LOW;
-        let isCompressed = isCompressedImage(path);
+        const isCompressed = isCompressedImage(path);
 
         // Optimize the URL with the best format
         const optimizedUrl = optimizeImageUrl(path, {
@@ -489,11 +487,15 @@ const loadImagesByPriority = async (
                     await loadAndCacheImageOptimized(imageData.path);
                     if (analytics) {
                         analytics.loadedImages++;
-                        if (imageData.isCompressed) analytics.compressionRatio++;
+                        if (imageData.isCompressed) {
+                            analytics.compressionRatio++;
+                        }
                     }
                 } catch (error) {
                     console.warn(`[loadImagesByPriority] Failed to load image: ${imageData.path}`, error);
-                    if (analytics) analytics.failedImages++;
+                    if (analytics) {
+                        analytics.failedImages++;
+                    }
                 }
             })
         );
@@ -597,8 +599,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     onProgressUpdate
 }) => {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [progress, setProgress] = useState(0);
+    const [, setIsLoading] = useState(false);
     const componentId = useRef(`preload-${gameId}-${Date.now()}-${Math.random()}`);
 
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
@@ -703,17 +704,8 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
         }
     }, [cancelPreload, gameId, locale, gameIdsIcon, bannerId, setIsDonePreload]);
 
-    // Render nothing if preload is disabled or gameId is invalid
-    return useMemo(() => {
-        if (!enablePreloadResource || gameId < 0) {
-            console.log(`[PreloadResources:${componentId.current}] Preload disabled or invalid gameId, completing immediately`);
-            updateProgressBar(100, progressBarId);
-            setIsDonePreload();
-            return null;
-        }
-
-        return null;
-    }, [enablePreloadResource, gameId, progressBarId, setIsDonePreload]);
+    // Render nothing
+    return null;
 };
 
 export default PreloadResources;

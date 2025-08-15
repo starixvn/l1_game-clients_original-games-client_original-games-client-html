@@ -8,7 +8,7 @@ interface IActionStorage {
 }
 
 declare global {
-    interface globalThis {
+    interface GlobalThisShim {
         localMemory: object;
     } // NOSONAR
 }
@@ -49,8 +49,8 @@ export class LocalStorage implements IActionStorage {
 export class Memory implements IActionStorage {
     localMemory: any;
     constructor() {
-        globalThis.localMemory = {};
-        this.localMemory = globalThis.localMemory;
+        (globalThis as unknown as GlobalThisShim).localMemory = {};
+        this.localMemory = (globalThis as unknown as GlobalThisShim).localMemory;
     }
 
     remove(name: string) {

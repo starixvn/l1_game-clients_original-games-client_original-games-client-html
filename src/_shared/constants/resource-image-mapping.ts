@@ -1,4 +1,4 @@
-import { GameIds, systemName } from ".";
+import { systemName } from ".";
 import { getGameSettings } from "../app-settings";
 
 export const getDevicePixelRatio = () => {
