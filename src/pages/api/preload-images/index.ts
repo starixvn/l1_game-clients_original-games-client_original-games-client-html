@@ -144,7 +144,7 @@ const getPathsImg = (gameId: number, currentLocale: string, bannerId: number, ga
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>) {
-    const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const requestId = `req-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     const startTime = Date.now();
     
     console.log(`[API:preload-images:${requestId}] Request received:`, {

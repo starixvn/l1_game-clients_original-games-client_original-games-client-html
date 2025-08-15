@@ -1,11 +1,10 @@
 import Image from "next/image";
 import { useCallback, useMemo } from "react";
 import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
+import { useSettingContext, SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
 import { useClickSound } from "../../../_shared/react-hooks";
 import { StorageHelper, localStorageKeys } from "../../../_shared/helpers";
-import { SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
 import { RoundState } from "../../game-base/type";
-import { useSettingContext } from "../../../_shared/react-contexts";
 
 type Props = { name: string; onClick?: () => void };
 

@@ -399,23 +399,48 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         });
 
         this.broadcastClientRemainingTime(remainingTime);
-        const newRoundState = this.roundStateHandler.determineRoundBaseState({
+        this.roundStateHandler.determineRoundBaseState({
             roundRemainingTime: this.roundTimeCounter,
             wholeRound: durations.wholeRound,
             remainingTime,
             durations,
         });
 
-        this.gameMessageHandler.broadcastGameEvent({ [messageEventType.ROUND_STATE]: newRoundState });
+        this.gameMessageHandler.broadcastGameEvent({ [messageEventType.ROUND_STATE]: this.roundStateHandler.determineRoundBaseState({
+            roundRemainingTime: this.roundTimeCounter,
+            wholeRound: durations.wholeRound,
+            remainingTime,
+            durations,
+        }) });
 
-        if (gameStateContextModel.roundState !== newRoundState) {
-            const isStartNewRound = gameStateContextModel.roundState === RoundState.SwitchRound && newRoundState === RoundState.InRound;
+        if (gameStateContextModel.roundState !== this.roundStateHandler.determineRoundBaseState({
+            roundRemainingTime: this.roundTimeCounter,
+            wholeRound: durations.wholeRound,
+            remainingTime,
+            durations,
+        })) {
+            const isStartNewRound = gameStateContextModel.roundState === RoundState.SwitchRound && this.roundStateHandler.determineRoundBaseState({
+                roundRemainingTime: this.roundTimeCounter,
+                wholeRound: durations.wholeRound,
+                remainingTime,
+                durations,
+            }) === RoundState.InRound;
             const newGameState = {
                 prevRoundState: gameStateContextModel.roundState,
-                roundState: newRoundState,
+                roundState: this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                }),
                 isPlayStartRoundAnimation: isStartNewRound,
                 ...this.gameStateHandler.getNextRoundState({
-                    nextRoundState: newRoundState,
+                    nextRoundState: this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    }),
                     gameStateContextModel,
                     durations,
                     defaultResult: this.defaultResult,
@@ -427,7 +452,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             writeDebugLog({
                 name: "change-round-state",
                 prevRoundState: RoundState[gameStateContextModel.roundState],
-                newRoundState: RoundState[newRoundState],
+                newRoundState: RoundState[this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                })],
                 ...newGameState,
             });
 
@@ -437,12 +467,27 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 payload: { newGameState },
             });
 
-            this.updatePlaceBetContext(newRoundState);
+            this.updatePlaceBetContext(this.roundStateHandler.determineRoundBaseState({
+                roundRemainingTime: this.roundTimeCounter,
+                wholeRound: durations.wholeRound,
+                remainingTime,
+                durations,
+            }));
 
             const isContinuePlaying = gameStateContextModel.roundState !== RoundState.None;
             if (isContinuePlaying) {
-                console.log(`[GameBase:${this.props.id}] handleSound`, { newRoundState });
-                this.gameSoundHandler.handleSound(newRoundState);
+                console.log(`[GameBase:${this.props.id}] handleSound`, { newRoundState: this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                }) });
+                this.gameSoundHandler.handleSound(this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                }));
             }
         }
 
@@ -631,16 +676,13 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderLeftSide() {
-        const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
-        const { availableInGameData } = this.props.gameStateContextModel;
-
         return (
             <div className="col-12 col-lg-8 mb-3 px-3">
                 <div className="flex flex-col items-center justify-center">
                     {this.renderRoundHistory()}
                     {this.renderCountdownTimer()}
                     <div className="flex flex-col">
-                        {availableInGameData && this.renderResultBlock()}
+                        {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
                         {this.renderBetOptions()}
                     </div>
                 </div>
@@ -663,13 +705,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     getRenderTemplate() {
-        const uid = (this.context as PlayerContextModel).authorizeInfo?.user?.UID;
-        const { availableInGameData } = this.props.gameStateContextModel;
-
         return (
             <>
-
-
                 <>
                     <div className={`game-${this.props.id}`}>
                         <div className="flex flex-wrap">
@@ -677,15 +714,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                             {this.renderRightSide()}
                             <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
                         </div>
-                        <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={uid}>
+                        <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}>
                             {this.renderPFSettingModal()}
                             {this.renderBetHistoryModal()}
                         </PFWrapper>
                         {this.renderGameGuideModal()}
-
-
                     </div>
-
                 </>
             </>
         );

@@ -34,272 +34,331 @@ export function useGameTranslateContext() {
     return useContext(GameTranslateContext);
 }
 
-function gameStateReducer(state: GameStateContextModel, action: GameEventAction) {
-    const { type, payload } = action;
-    const {
-        um_message,
-        gameConfigs,
-        roundData,
+// Helper functions to handle different action types
+function handleConnectAction(state: GameStateContextModel): GameStateContextModel {
+    return {
+        ...state,
+        isConnect: true,
+        roundData: {},
+        drawId: 0,
+    };
+}
+
+function handleDisconnectAction(state: GameStateContextModel): GameStateContextModel {
+    return {
+        ...state,
+        isConnect: false,
+        playResultAnimation: false,
+    };
+}
+
+function handleSignInAction(state: GameStateContextModel): GameStateContextModel {
+    return {
+        ...state,
+        signedIn: true,
+        availableInGameData: false,
+    };
+}
+
+function handleSignOutAction(state: GameStateContextModel): GameStateContextModel {
+    return {
+        ...state,
+        signedIn: false,
+        showResultInfo: false,
+    };
+}
+
+function handleUMAction(state: GameStateContextModel, um_message: any): GameStateContextModel {
+    return {
+        ...state,
+        roundState: RoundState.Disabled,
+        disabledMessage: um_message[LanguageLocaleMapper[tolgee.getLanguage() || "en"]], // TO DO: remove hard code
+        showResultInfo: false,
+    };
+}
+
+function handleGameConfigsAction(state: GameStateContextModel, gameConfigs: any): GameStateContextModel {
+    return {
+        ...state,
+        gameConfigs: gameConfigs,
+        availableInGameData: true,
+    };
+}
+
+function handleRoundDataAction(state: GameStateContextModel, roundData: any): GameStateContextModel {
+    return {
+        ...state,
+        roundData: state.roundState === RoundState.SwitchRound ? {} : roundData,
+    };
+}
+
+function handleRoundHistoryAction(state: GameStateContextModel, payload: any): GameStateContextModel {
+    const { roundHistory, roundId, result, settlementResult, isShowBlink } = payload;
+    return {
+        ...state,
         roundHistory,
         roundId,
         result,
         settlementResult,
-        status,
-        userStakeLevel,
-        odds,
-        drawId,
-        disconnectReason,
-        showWinningAnimation,
-        activeScoreboardTab,
+        isShowBlink,
+        playResultAnimation: false,
+        showResultInfo: true,
+    };
+}
+
+function handleFinishAction(state: GameStateContextModel, payload: any): GameStateContextModel {
+    const { playResultAnimation, result, settlementResult, roundId, drawId, roundData } = payload;
+    return {
+        ...state,
         playResultAnimation,
-        newGameState,
+        result,
+        settlementResult,
+        roundId,
+        drawId,
+        roundData,
+        showResultInfo: false,
+    };
+}
+
+function handleWinStatusAction(state: GameStateContextModel, status: any): GameStateContextModel {
+    return {
+        ...state,
+        betWin: status.bet,
+    };
+}
+
+function handleDisconnectErrorAction(state: GameStateContextModel, disconnectReason: string): GameStateContextModel {
+    return {
+        ...state,
+        roundState: RoundState.ConnectFailed,
+        signedIn: false,
+        disconnectReason,
+    };
+}
+
+function handleUserStakeLevelAction(state: GameStateContextModel, userStakeLevel: any): GameStateContextModel {
+    return {
+        ...state,
+        userStakeLevel,
+    };
+}
+
+function handleOddsAction(state: GameStateContextModel, odds: any): GameStateContextModel {
+    return {
+        ...state,
+        gameConfigs: {
+            ...state.gameConfigs,
+            odds,
+        },
+    };
+}
+
+function handleDrawIdAction(state: GameStateContextModel, drawId: number): GameStateContextModel {
+    return {
+        ...state,
+        drawId,
+    };
+}
+
+function handleSetNewGameStateAction(state: GameStateContextModel, newGameState: any): GameStateContextModel {
+    return {
+        ...state,
+        ...newGameState,
+    };
+}
+
+function handleShowWinningAnimationAction(state: GameStateContextModel, showWinningAnimation: boolean): GameStateContextModel {
+    return {
+        ...state,
+        showWinningAnimation,
+    };
+}
+
+function handleActiveScoreBoardAction(state: GameStateContextModel, activeScoreboardTab: any): GameStateContextModel {
+    return {
+        ...state,
+        activeScoreboardTab,
+    };
+}
+
+function handlePlayResultAnimationAction(state: GameStateContextModel, playResultAnimation: boolean): GameStateContextModel {
+    return {
+        ...state,
+        playResultAnimation,
+    };
+}
+
+function handleShowResultInfoTimeOutAction(state: GameStateContextModel, payload: any): GameStateContextModel {
+    const { showResultInfo, isShowBlink, roundHistory, playResultAnimation } = payload;
+    const stateUpdate: any = {
         showResultInfo,
         isShowBlink,
+        roundHistory,
+    };
+
+    if (playResultAnimation) {
+        stateUpdate["playResultAnimation"] = playResultAnimation;
+    }
+
+    return {
+        ...state,
+        ...stateUpdate,
+    };
+}
+
+function handleSetUMFirstLoadingAction(state: GameStateContextModel, isUMInFirstLoad: boolean): GameStateContextModel {
+    return {
+        ...state,
         isUMInFirstLoad,
+    };
+}
+
+function handleToggleBetHistoryAction(state: GameStateContextModel, isShowBetHistory: boolean): GameStateContextModel {
+    return {
+        ...state,
         isShowBetHistory,
-        isShowGameGuide,
+    };
+}
+
+function handleToggleBetDetailAction(state: GameStateContextModel, isShowBetDetail: boolean): GameStateContextModel {
+    return {
+        ...state,
         isShowBetDetail,
+    };
+}
+
+function handleToggleGameGuideAction(state: GameStateContextModel, isShowGameGuide: boolean): GameStateContextModel {
+    return {
+        ...state,
+        isShowGameGuide,
+    };
+}
+
+function handleUpdateBetDetailAction(state: GameStateContextModel, betDetailModalData: any): GameStateContextModel {
+    return {
+        ...state,
         betDetailModalData,
+    };
+}
+
+function handleStartNewRoundAnimAction(state: GameStateContextModel, isPlayStartRoundAnimation: boolean): GameStateContextModel {
+    return {
+        ...state,
         isPlayStartRoundAnimation,
+    };
+}
+
+function handleRoundIdAction(state: GameStateContextModel, roundId: number): GameStateContextModel {
+    return {
+        ...state,
+        roundId,
+    };
+}
+
+function handleActiveScoreBoardTabAction(state: GameStateContextModel, isScoreboardTab: boolean): GameStateContextModel {
+    return {
+        ...state,
         isScoreboardTab,
+    };
+}
+
+function handlePlayerResultBoardUpdateAction(state: GameStateContextModel, playerResultBoard: any): GameStateContextModel {
+    return {
+        ...state,
         playerResultBoard,
-    } = payload;
+    };
+}
+
+function gameStateReducer(state: GameStateContextModel, action: GameEventAction) {
+    const { type, payload } = action;
 
     switch (type) {
-        case GameEventActionType.CONNECT: {
-            return {
-                ...state,
-                isConnect: true,
-                roundData: {},
-                drawId: 0,
-            };
-        }
+        case GameEventActionType.CONNECT:
+            return handleConnectAction(state);
 
-        case GameEventActionType.DISCONNECT: {
-            return {
-                ...state,
-                isConnect: false,
-                playResultAnimation: false,
-            };
-        }
+        case GameEventActionType.DISCONNECT:
+            return handleDisconnectAction(state);
 
-        case GameEventActionType.SIGN_IN: {
-            return {
-                ...state,
-                signedIn: true,
-                availableInGameData: false,
-            };
-        }
+        case GameEventActionType.SIGN_IN:
+            return handleSignInAction(state);
 
-        case GameEventActionType.SIGN_OUT: {
-            return {
-                ...state,
-                signedIn: false,
-                showResultInfo: false,
-            };
-        }
+        case GameEventActionType.SIGN_OUT:
+            return handleSignOutAction(state);
 
-        case GameEventActionType.UM: {
-            return {
-                ...state,
-                roundState: RoundState.Disabled,
-                disabledMessage: um_message[LanguageLocaleMapper[tolgee.getLanguage() || "en"]], // TO DO: remove hard code
-                showResultInfo: false,
-            };
-        }
+        case GameEventActionType.UM:
+            return handleUMAction(state, payload.um_message);
 
-        case GameEventActionType.GAME_CONFIGS: {
-            return {
-                ...state,
-                gameConfigs: gameConfigs,
-                availableInGameData: true,
-            };
-        }
+        case GameEventActionType.GAME_CONFIGS:
+            return handleGameConfigsAction(state, payload.gameConfigs);
 
-        case GameEventActionType.ROUND_DATA: {
-            return {
-                ...state,
-                roundData: state.roundState === RoundState.SwitchRound ? {} : roundData,
-            };
-        }
+        case GameEventActionType.ROUND_DATA:
+            return handleRoundDataAction(state, payload.roundData);
 
-        case GameEventActionType.ROUND_HISTORY: {
-            return {
-                ...state,
-                roundHistory,
-                roundId,
-                result,
-                settlementResult,
-                isShowBlink,
-                playResultAnimation: false,
-                showResultInfo: true,
-            };
-        }
+        case GameEventActionType.ROUND_HISTORY:
+            return handleRoundHistoryAction(state, payload);
 
-        case GameEventActionType.FINISH: {
-            return {
-                ...state,
-                playResultAnimation,
-                result,
-                settlementResult,
-                roundId,
-                drawId,
-                roundData,
-                showResultInfo: false,
-            };
-        }
+        case GameEventActionType.FINISH:
+            return handleFinishAction(state, payload);
 
-        case GameEventActionType.WIN_STATUS: {
-            return {
-                ...state,
-                betWin: status.bet,
-            };
-        }
+        case GameEventActionType.WIN_STATUS:
+            return handleWinStatusAction(state, payload.status);
 
-        case GameEventActionType.DISCONNECT_ERROR: {
-            return {
-                ...state,
-                roundState: RoundState.ConnectFailed,
-                signedIn: false,
-                disconnectReason,
-            };
-        }
+        case GameEventActionType.DISCONNECT_ERROR:
+            return handleDisconnectErrorAction(state, payload.disconnectReason);
 
-        case GameEventActionType.USER_STAKE_LEVEL: {
-            return {
-                ...state,
-                userStakeLevel,
-            };
-        }
+        case GameEventActionType.USER_STAKE_LEVEL:
+            return handleUserStakeLevelAction(state, payload.userStakeLevel);
 
-        case GameEventActionType.ODDS: {
-            return {
-                ...state,
-                gameConfigs: {
-                    ...state.gameConfigs,
-                    odds,
-                },
-            };
-        }
+        case GameEventActionType.ODDS:
+            return handleOddsAction(state, payload.odds);
 
-        case GameEventActionType.DRAW_ID: {
-            return {
-                ...state,
-                drawId,
-            };
-        }
+        case GameEventActionType.DRAW_ID:
+            return handleDrawIdAction(state, payload.drawId);
 
-        case GameEventActionType.SET_NEW_GAME_STATE: {
-            return {
-                ...state,
-                ...newGameState,
-            };
-        }
+        case GameEventActionType.SET_NEW_GAME_STATE:
+            return handleSetNewGameStateAction(state, payload.newGameState);
 
-        case GameEventActionType.SHOW_WINNING_ANIMATION: {
-            return {
-                ...state,
-                showWinningAnimation,
-            };
-        }
+        case GameEventActionType.SHOW_WINNING_ANIMATION:
+            return handleShowWinningAnimationAction(state, payload.showWinningAnimation);
 
-        case GameEventActionType.ACTIVE_SCORE_BOARD: {
-            return {
-                ...state,
-                activeScoreboardTab,
-            };
-        }
+        case GameEventActionType.ACTIVE_SCORE_BOARD:
+            return handleActiveScoreBoardAction(state, payload.activeScoreboardTab);
 
-        case GameEventActionType.PLAY_RESULT_ANIMATION: {
-            return {
-                ...state,
-                playResultAnimation,
-            };
-        }
+        case GameEventActionType.PLAY_RESULT_ANIMATION:
+            return handlePlayResultAnimationAction(state, payload.playResultAnimation);
 
-        case GameEventActionType.SHOW_RESULT_INFO_TIME_OUT: {
-            const stateUpdate = {
-                showResultInfo,
-                isShowBlink,
-                roundHistory,
-            };
+        case GameEventActionType.SHOW_RESULT_INFO_TIME_OUT:
+            return handleShowResultInfoTimeOutAction(state, payload);
 
-            if (playResultAnimation) {
-                stateUpdate["playResultAnimation"] = playResultAnimation;
-            }
+        case GameEventActionType.SET_UM_FIRST_LOADING:
+            return handleSetUMFirstLoadingAction(state, payload.isUMInFirstLoad);
 
-            return {
-                ...state,
-                ...stateUpdate,
-            };
-        }
+        case GameEventActionType.TOGGLE_BET_HISTORY:
+            return handleToggleBetHistoryAction(state, payload.isShowBetHistory);
 
-        case GameEventActionType.SET_UM_FIRST_LOADING: {
-            return {
-                ...state,
-                isUMInFirstLoad,
-            };
-        }
+        case GameEventActionType.TOGGLE_BET_DETAIL:
+            return handleToggleBetDetailAction(state, payload.isShowBetDetail);
 
-        case GameEventActionType.TOGGLE_BET_HISTORY: {
-            return {
-                ...state,
-                isShowBetHistory,
-            };
-        }
+        case GameEventActionType.TOGGLE_GAME_GUIDE:
+            return handleToggleGameGuideAction(state, payload.isShowGameGuide);
 
-        case GameEventActionType.TOGGLE_BET_DETAIL: {
-            return {
-                ...state,
-                isShowBetDetail,
-            };
-        }
+        case GameEventActionType.UPDATE_BET_DETAIL:
+            return handleUpdateBetDetailAction(state, payload.betDetailModalData);
 
-        case GameEventActionType.TOGGLE_GAME_GUIDE: {
-            return {
-                ...state,
-                isShowGameGuide,
-            };
-        }
+        case GameEventActionType.START_NEW_ROUND_ANIM:
+            return handleStartNewRoundAnimAction(state, payload.isPlayStartRoundAnimation);
 
-        case GameEventActionType.UPDATE_BET_DETAIL: {
-            return {
-                ...state,
-                betDetailModalData,
-            };
-        }
+        case GameEventActionType.ROUND_ID:
+            return handleRoundIdAction(state, payload.roundId);
 
-        case GameEventActionType.START_NEW_ROUND_ANIM: {
-            return {
-                ...state,
-                isPlayStartRoundAnimation,
-            };
-        }
+        case GameEventActionType.ACTIVE_SCORE_BOARD_TAB:
+            return handleActiveScoreBoardTabAction(state, payload.isScoreboardTab);
 
-        case GameEventActionType.ROUND_ID: {
-            return {
-                ...state,
-                roundId,
-            };
-        }
-
-        case GameEventActionType.ACTIVE_SCORE_BOARD_TAB: {
-            return {
-                ...state,
-                isScoreboardTab,
-            };
-        }
-
-        case GameEventActionType.PLAYER_RESULT_BOARD_UPDATE: {
-            return {
-                ...state,
-                playerResultBoard,
-            };
-        }
+        case GameEventActionType.PLAYER_RESULT_BOARD_UPDATE:
+            return handlePlayerResultBoardUpdateAction(state, payload.playerResultBoard);
 
         default: {
             console.warn(JSON.stringify(action));
-
             throw Error("Unknown action: " + action.type);
         }
     }

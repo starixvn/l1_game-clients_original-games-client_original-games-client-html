@@ -79,15 +79,13 @@ export const Games: React.FC<Props> = ({
 
         console.log("[Games] gameProps:", gameProps);
 
-        switch (gameId) {
-            case GameIds.SeDieMultiplayer:
-                console.log("[Games] rendering SeDieMultiPlayer component");
-                return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
-
-            default:
-                console.log("[Games] no matching game component found for gameId:", gameId);
-                return null;
+        if (gameId === GameIds.SeDieMultiplayer) {
+            console.log("[Games] rendering SeDieMultiPlayer component");
+            return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
         }
+
+        console.log("[Games] no matching game component found for gameId:", gameId);
+        return null;
     };
 
     const gameComponent = getGameComponentById(openGameId);

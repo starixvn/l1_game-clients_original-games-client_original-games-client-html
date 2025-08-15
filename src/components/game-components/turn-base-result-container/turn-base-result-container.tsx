@@ -44,25 +44,33 @@ export const RoundBaseResultSlotContainer: React.FC<IResultSlotContainer> = (pro
             });
         };
 
-        const getBallsDataFromRoundData = () => {
-            const clonedData = cloneDefaultData();
+        const updateBallData = (clonedData: IBall[], number: number, index: number) => {
+            clonedData[index].number = number;
+
+            if (playResultAnimation) {
+                clonedData[index].status = BallStatus.LOADING;
+                clonedData[index].delayTime = playResultAnimation ? delayTime : 0;
+            } else {
+                clonedData[index].status = BallStatus.SHOW;
+                clonedData[index].delayTime = 0;
+            }
+        };
+
+        const processRoundData = (clonedData: IBall[]) => {
             if (roundData?.[betChoiceBalls]?.length > 0) {
                 for (let i = 0; i < clonedData.length; i++) {
                     const number = roundData[betChoiceBalls][i];
                     if (number) {
-                        clonedData[i].number = number;
-
-                        if (playResultAnimation) {
-                            clonedData[i].status = BallStatus.LOADING;
-                            clonedData[i].delayTime = playResultAnimation ? delayTime : 0;
-                        } else {
-                            clonedData[i].status = BallStatus.SHOW;
-                            clonedData[i].delayTime = 0;
-                        }
+                        updateBallData(clonedData, number, i);
                     }
                 }
             }
             return clonedData;
+        };
+
+        const getBallsDataFromRoundData = () => {
+            const clonedData = cloneDefaultData();
+            return processRoundData(clonedData);
         };
 
         const data = getBallsDataFromRoundData();

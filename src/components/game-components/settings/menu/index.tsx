@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { isMobileOnly } from "react-device-detect";
-import { GameEventActionType } from "../../../../_shared/react-contexts/game-state-context/game-event-action";
-import { useGameStateContext, useGameStatesDispatch } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
+import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useClickSound } from "../../../../_shared/react-hooks";
 import Styles from "./menu.module.scss";
 import { RoundState } from "../../../game-base/type";
@@ -16,7 +15,6 @@ export const Menu: React.FC = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const specialClassByDevice = !isMobileOnly ? "desktop-style" : "";
-    const dispatch = useGameStatesDispatch();
     const clickSound = useClickSound();
     const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
     const toggleGameGuide = usePopupStore((state) => state.toggleGameGuide);

@@ -18,7 +18,7 @@ export class RoundIdHandler {
     private roundRemainingTime = 0;
     private drawId = 0;
     protected roundId = 0;
-    private pfSeedBy: "drawId" | "roundId" = "drawId";
+    private readonly pfSeedBy: "drawId" | "roundId" = "drawId";
 
     constructor(protected readonly props: RoundIdHandlerProps) {
         this.pfSeedBy = props.pfSeedBy ?? "drawId";

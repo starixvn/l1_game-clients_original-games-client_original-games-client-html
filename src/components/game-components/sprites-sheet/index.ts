@@ -361,11 +361,7 @@ export class Spritesheet extends Component<SpritesheetProps> {
         return this.direction;
     };
 
-    getInfo = (param: string) => {
-        if (!this.spriteElContainer) {
-            return undefined;
-        }
-
+    private getBasicInfo(param: string): any {
         switch (param) {
             case "direction":
                 return this.direction;
@@ -375,12 +371,6 @@ export class Spritesheet extends Component<SpritesheetProps> {
                 return this.fps;
             case "steps":
                 return this.steps;
-            case "width":
-                return this.spriteElContainer.getBoundingClientRect().width;
-            case "height":
-                return this.spriteElContainer.getBoundingClientRect().height;
-            case "scale":
-                return this.spriteScale;
             case "isPlaying":
                 return this.isPlaying;
             case "isPaused":
@@ -388,10 +378,45 @@ export class Spritesheet extends Component<SpritesheetProps> {
             case "completeLoopCicles":
                 return this.completeLoopCicles;
             default:
-                throw new Error(
-                    `Invalid param \`${param}\` requested by Spritesheet.getinfo(). See the documentation on https://github.com/danilosetra/react-responsive-spritesheet`
-                );
+                return null;
         }
+    }
+
+    private getDimensionInfo(param: string): any {
+        if (!this.spriteElContainer) {
+            return undefined;
+        }
+
+        switch (param) {
+            case "width":
+                return this.spriteElContainer.getBoundingClientRect().width;
+            case "height":
+                return this.spriteElContainer.getBoundingClientRect().height;
+            case "scale":
+                return this.spriteScale;
+            default:
+                return null;
+        }
+    }
+
+    getInfo = (param: string) => {
+        if (!this.spriteElContainer) {
+            return undefined;
+        }
+
+        const basicInfo = this.getBasicInfo(param);
+        if (basicInfo !== null) {
+            return basicInfo;
+        }
+
+        const dimensionInfo = this.getDimensionInfo(param);
+        if (dimensionInfo !== null) {
+            return dimensionInfo;
+        }
+
+        throw new Error(
+            `Invalid param \`${param}\` requested by Spritesheet.getinfo(). See the documentation on https://github.com/danilosetra/react-responsive-spritesheet`
+        );
     };
 
     setInstance = () => this;

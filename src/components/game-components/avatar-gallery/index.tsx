@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { useTranslator } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";

@@ -1,6 +1,4 @@
-import { useURLContext } from "../../../_shared/react-contexts";
 import { useTranslator } from "../../../_shared/react-hooks/use-translator";
-import { ResourceTypes } from "../../../_shared/resources";
 
 const Footer = () => {
     console.log("[Footer] Footer component rendering");

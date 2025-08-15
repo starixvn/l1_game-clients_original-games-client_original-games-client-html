@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 import { numberWithCommas } from "../../../_shared/helpers";
 import Styles from "./bet-option.module.scss";

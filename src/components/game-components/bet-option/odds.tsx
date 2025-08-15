@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { formatOdds } from "../../../_shared/helpers";
 import { usePlayerContext } from "../../../_shared/react-contexts";
-import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
 import useGameStore from "../../../_shared/stores/game-store/game-store";

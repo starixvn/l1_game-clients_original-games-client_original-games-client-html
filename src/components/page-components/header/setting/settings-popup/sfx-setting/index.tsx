@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from "../../../../../../_shared/helpers";
-import { SettingEventActionType, useSettingContext, useSettingDispatch } from "../../../../../../_shared/react-contexts";
+import { SettingEventActionType, useSettingDispatch } from "../../../../../../_shared/react-contexts";
 import { useClickSound, useTranslator } from "../../../../../../_shared/react-hooks";
 import useDebounce from "../../../../../../_shared/react-hooks/use-debounce";
 import Styles from "../settings-popup.module.scss";

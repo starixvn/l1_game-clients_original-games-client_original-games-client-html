@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { buildVersion, Themes } from "../../../_shared/constants";
 import { buildGameGuideUrl } from "../../../_shared/helpers";
 import { usePlayerContext } from "../../../_shared/react-contexts";
-import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
+import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
 import { tolgee } from "../../../_shared/tolgee";
 import { LoadingSpinner } from "../game-loading/loading-spinner";

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
 import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
