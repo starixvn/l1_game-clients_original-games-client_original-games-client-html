@@ -176,7 +176,7 @@ export class Spritesheet extends Component<SpritesheetProps> {
             elMove
         );
 
-        // return elSprite
+
         return React.createElement(
             "div",
             {

@@ -192,10 +192,7 @@ const PlateButtons: React.FC = () => {
                 <div className={`${styles["plate-buttons"]} ${styles[`plate-buttons-${animationState}`]}`}>
                     <div className={`${styles["plate"]} ${styles[`plate-${animationState}`]}`}>
                         {renderButtons()}
-                        {/* <div
-                            className={`${styles["bowl"]} ${styles[`bowl-${animationState}`]}`}
-                            style={{ display: showBowl ? "block" : "none" }}
-                        ></div> */}
+
                     </div>
                 </div>
             </div>

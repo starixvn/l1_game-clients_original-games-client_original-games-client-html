@@ -676,6 +676,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         return (
             <>
+
                 {/* <BackgroundGalaxy gameId={this.props.id} /> */}
                 <>
                     <div className={`game-${this.props.id}`}>
@@ -690,30 +691,9 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                         </PFWrapper>
                         {this.renderGameGuideModal()}
 
-                        {/* <div>{availableInGameData && this.renderResultBlock()}</div>
-                        <PlaceBetProvider>
-                            <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
-                                {this.renderBettingBlock()}
-                                {this.renderConfirmDialog()}
-                                {this.renderConfirmBet()}
-                            </PlaceBetHandlerWrapper>
-                        </PlaceBetProvider>
-                        <div className={SwiperNoSwiping}> {this.renderSlidingChips()}</div>
-                        <div>{this.renderStatistic()}</div>
-                        <div className={SwiperNoSwiping}>
-                            {isScoreboardTab ? (
-                                this.renderScoreboards()
-                            ) : (
-                                <SideBetScoreboard>{this.renderStatisticContent()}</SideBetScoreboard>
-                            )}
-                        </div>
-                        <Footer /> */}
+
                     </div>
-                    {/* {!availableInGameData && <OverlayMask removeOverlay={isDisabledGame} />}
-                    {this.renderGameGuideModal()}
-                    {this.renderMenuButtons()}
-                    {this.renderNewRoundTransition()}
-                    {this.renderNotice()} */}
+
                 </>
             </>
         );
