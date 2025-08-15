@@ -6,9 +6,8 @@ import { useClickSound } from "../../../../_shared/react-hooks";
 import Styles from "./menu.module.scss";
 import { RoundState } from "../../../game-base/type";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
-import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
-import { usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { MenuIcon } from "../../menu/menu-icon";
+import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 
 const dropdownItemClassName = "dropdown-item";
 
@@ -19,29 +18,21 @@ export const Menu: React.FC = () => {
     const specialClassByDevice = !isMobileOnly ? "desktop-style" : "";
     const dispatch = useGameStatesDispatch();
     const clickSound = useClickSound();
-    const pfDispatch = usePFDispatch();
+    const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
+    const toggleGameGuide = usePopupStore((state) => state.toggleGameGuide);
 
     const handleClickPFSetting = () => {
-        console.log("[Menu] pf.open", { roundState });
         if (roundState === RoundState.Disabled) {
-            console.log("[Menu] pf.blocked: round disabled");
             return;
         }
 
         clickSound();
-        console.log("[Menu] pf.dispatch.toggle");
-        pfDispatch({
-            type: PFEventActionType.TOGGLE_PF_SETTING,
-            payload: {
-                isShowPFSetting: true,
-            },
-        });
+        togglePFSetting(true);
 
         AnalyticsHelper.trackFunction({
             function: TrackingFunction.PFSetting,
             action: TrackingAction.Open,
         });
-        console.log("[Menu] analytics.track", { function: TrackingFunction.PFSetting, action: TrackingAction.Open });
     };
 
     const openBetHistory = () => {
@@ -66,21 +57,13 @@ export const Menu: React.FC = () => {
 
     const openGuide = () => {
         if (roundState === RoundState.Disabled) {
-            console.log("[Menu] guide.blocked: round disabled");
             return;
         }
-
+        console.log("GUIDE");
         clickSound();
-        console.log("[Menu] guide.dispatch.toggle");
-        dispatch({
-            type: GameEventActionType.TOGGLE_GAME_GUIDE,
-            payload: {
-                isShowGameGuide: true,
-            },
-        });
+        toggleGameGuide(true);
         setDropdownOpen(false);
         AnalyticsHelper.trackFunction({ function: TrackingFunction.GameGuide, action: TrackingAction.Open });
-        console.log("[Menu] analytics.track", { function: TrackingFunction.GameGuide, action: TrackingAction.Open });
     };
 
     const handleClickOutside = (event) => {
@@ -102,8 +85,8 @@ export const Menu: React.FC = () => {
     return (
         <div ref={wrapperRef} className={`${Styles["game-menu"]} ${Styles[specialClassByDevice]}`}>
             <MenuIcon name="sound" />
-            <MenuIcon name="guide" />
-            <MenuIcon name="security" />
+            <MenuIcon name="guide" onClick={openGuide} />
+            <MenuIcon name="pf-guide" onClick={handleClickPFSetting}/>
         </div>
     );
 };

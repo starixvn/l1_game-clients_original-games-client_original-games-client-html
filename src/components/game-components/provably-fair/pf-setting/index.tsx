@@ -14,6 +14,7 @@ import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/
 import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
+import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getPfInfo";
@@ -29,8 +30,9 @@ const handleOnKeyDown = (event: any) => {
 };
 
 const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const isShowPFSetting = usePFStore((state) => state.isShowPFSetting);
-    const { togglePFSetting } = usePFStore();
+    const isShowPFSetting = usePopupStore((state) => state.isShowPFSetting);
+    const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
+
     const { t: translateSNGames } = useSNTranslate();
     const handleCloseModal = () => {
         togglePFSetting(false);
@@ -59,61 +61,16 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 id="pf-setting"
                 title={
                     <div>
-                        {translateSNGames("pf_title_provably_fair_settings")}
+                        <ButtonPFGuide />
+                        <div>
+                            {translateSNGames("pf_title_bacball_provably_fair_settings")}
+                        </div>
                     </div>
                 }
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
-                <div className="ml-4 mr-4 mt-3">
-                    <div className={`flex flex-col`} >
-                        <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
-                                isSettingsExpanded ? "max-h-[1000px]" : "max-h-[50px]"
-                            }`}
-                        >
-                            <div className={`flex flex-row bg-[#191a1e] p-2 justify-between`} onClick={toggleSettingsSection}>
-                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_title_provably_fair_settings")}</h3>
-                                <span
-                                    className={`${Styles["chevron-icon"]} ${
-                                        isSettingsExpanded ? Styles["chevron-down"] : Styles["chevron-right"]
-                                    }`}
-                                >
-                                    {isSettingsExpanded ? "▼" : "▶"}
-                                </span>
-                            </div>
-                            {isSettingsExpanded && (
-                                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-md`}>
-                                    <PFSetting customClientSeedInfo={customClientSeedInfo} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col" onClick={toggleGuidesSection}>
-                        <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
-                                isGuidesExpanded ? "max-h-[1000px]" : "max-h-[50px]"
-                            }`}
-                        >
-                            <div className="flex flex-row bg-[#191a1e] p-2 justify-between">
-                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>
-                                <span
-                                    className={`${Styles["chevron-icon"]} ${
-                                        isGuidesExpanded ? Styles["chevron-down"] : Styles["chevron-right"]
-                                    }`}
-                                >
-                                    {isGuidesExpanded ? "▼" : "▶"}
-                                </span>
-                            </div>
-                        </div>
-                        {isGuidesExpanded && (
-                            <div className={`${Styles["section-content"]}`}>
-                                <PFGuide />
-                            </div>
-                        )}
-                    </div>
-                </div>
+                <PFSetting customClientSeedInfo={customClientSeedInfo} />
             </ModalContainer>
         )
     );
@@ -125,8 +82,8 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const manualRadio = useRef<HTMLInputElement>();
     const manualSeed = useRef<HTMLInputElement>();
     const { drawId } = useGameStateContext();
-    const { pfClientSeedSetting, ownBets } = usePFStore(useShallow(
-        (state) => ({
+    const { pfClientSeedSetting, ownBets } = usePFStore(
+        useShallow((state) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             ownBets: state.ownBets,
         }))
@@ -179,8 +136,8 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
             setIsLoading(false);
         }, TIME_OUT);
 
-        const handleServerSeed = (pfServerSeed: PFSeverSeed) => {      
-            setServerSeedHash(pfServerSeed.serverSeedHash);           
+        const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
+            setServerSeedHash(pfServerSeed.serverSeedHash);
         };
 
         const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {

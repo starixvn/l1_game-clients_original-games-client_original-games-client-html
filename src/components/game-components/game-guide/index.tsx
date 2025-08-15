@@ -10,14 +10,15 @@ import { tolgee } from "../../../_shared/tolgee";
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
 import Styles from "./game-guide.module.scss";
+import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 
 const GameGuideModal: FC = () => {
-    const { isShowGameGuide } = useGameStateContext();
-    const dispatch = useGameStatesDispatch();
+    const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);
+    const toggleGameGuide = usePopupStore((state) => state.toggleGameGuide);
     const { t: translate } = useCommonTranslate();
-
+    
     const handleCloseModal = () => {
-        dispatch({ type: "TOGGLE_GAME_GUIDE", payload: { isShowGameGuide: false } });
+        toggleGameGuide(false);
     };
 
     return (
