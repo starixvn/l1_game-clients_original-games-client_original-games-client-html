@@ -36,8 +36,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
     }
     const redirectUrl = params.get("rurl");
 
-    const context = { token, language, gameId, redirectUrl };
-    return context;
+    return { token, language, gameId, redirectUrl };
 }
 
 export function loadURLContext(): URLContextModel {
@@ -88,6 +87,5 @@ export function updateURLContext(context: Partial<URLContextModel>) {
 }
 
 export function getURLContext() {
-    const context = StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
-    return context;
+    return StorageHelper.get<URLContextModel>(localStorageKeys.url) || {};
 }

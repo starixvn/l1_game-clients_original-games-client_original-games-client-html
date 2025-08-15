@@ -292,8 +292,7 @@ const fetchImagesFromAPI = async (
     // Check if there's already an active request for this combination
     if (activeRequests[requestKey]) {
         try {
-            const result = await activeRequests[requestKey];
-            return result;
+            return await activeRequests[requestKey];
         } catch (error) {
             console.error(`[fetchImagesFromAPI] Reused request failed:`, error);
             // Remove failed request from cache
@@ -433,7 +432,7 @@ const loadImagesByPriority = async (
         return;
     }
 
-    const priorityName = ImagePriority[priority];
+    // Priority name removed as it's not used
 
     const batchSize = priority === ImagePriority.CRITICAL ? 5 : 15; // Smaller batches for critical images
     const batches = [];
@@ -469,7 +468,7 @@ const loadImagesByPriority = async (
 
         // Progress update for critical images
         if (priority === ImagePriority.CRITICAL) {
-            const progress = ((batchIndex + 1) * batch.length / imagesToLoad.length) * 100;
+            // Progress calculation removed as it's not used
         }
     }
 
@@ -567,7 +566,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
     const gameSettings = getGameSettings(gameId);
     const cachePaths = gameSettings?.gameResourceConfigs?.cachePaths || [];
-    const preloadGameImages = [...CORE_IMAGE_PATHS, ...cachePaths];
+    // Preload game images removed as it's not used
 
 
 
@@ -618,7 +617,6 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                 }
             }
 
-            return;
         };
 
         startPreload();

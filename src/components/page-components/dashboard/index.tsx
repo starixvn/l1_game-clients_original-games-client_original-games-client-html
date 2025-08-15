@@ -243,8 +243,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         window.history.pushState(null, null, "/");
 
-        const { isShowErrorModal, authorizeInfo, isBlockUI, openGameId } = this.state;
-        const offerGames = this.dashboardHandler.getOfferGamesIds();
+        const { isShowErrorModal, authorizeInfo, isBlockUI } = this.state;
         const isRenderGames = true; // Custom version: Always render games
 
         const isNoGameOffer = this.state.apiError?.message === ErrorNoGameOffer;
@@ -300,7 +299,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (this.state.isLandscapeMode && isMobileOnly) {
             return <LandscapeMode />;
         }
-
         return this.renderDashBoard();
     }
 }

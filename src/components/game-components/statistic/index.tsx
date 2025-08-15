@@ -8,6 +8,7 @@ import { PercentageStatisticProps } from "./types";
 
 // Define constant for duplicated literal
 const BAR_STATISTIC_ID = "bar-statistic";
+const STATISTIC_CONTAINER_CLASS = Styles["statistic-container"];
 
 export const countSettlementResult = (roundHistory: Round<any, any>[]) => {
     return roundHistory.reduce((result, { settlementResult }) => {
@@ -71,7 +72,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
         });
 
         return (
-            <div className={`${Styles["statistic-container"]} flex ${Styles["statistic-tab-container"]}`} id={BAR_STATISTIC_ID}>
+            <div className={`${STATISTIC_CONTAINER_CLASS} flex ${Styles["statistic-tab-container"]}`} id={BAR_STATISTIC_ID}>
                 {groups.map((choices, index) => (
                     <div
                         key={index}
@@ -97,7 +98,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
             const rightColor = barColors?.[right] ?? "#D5102B";
             const radius = `${roundedRadiusPx}px`;
             return (
-                <div className={`${Styles["statistic-container"]}`} style={{ width: "100%" }}>
+                <div className={`${STATISTIC_CONTAINER_CLASS}`} style={{ width: "100%" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <span style={{ color: "#D7DFEA", fontWeight: 700, fontSize: barLabelFontSizePx }}>{leftVal}%</span>
                         <div style={{ flex: 1, height: barHeightPx, background: rightColor, borderRadius: radius, position: "relative" }}>
@@ -120,7 +121,7 @@ export const PercentageStatistic: React.FC<PercentageStatisticProps> = (props: P
         }
 
         return (
-            <div className={`${Styles["statistic-container"]} flex`} id={BAR_STATISTIC_ID}>
+            <div className={`${STATISTIC_CONTAINER_CLASS} flex`} id={BAR_STATISTIC_ID}>
                 {mainChoices.map((choice) => (
                     <StatisticItem key={choice} value={`${statisticResult[choice]}%`} className={props.className}>
                         {iconRenderer ? iconRenderer(choice) : <BeadBoardIcon choice={choice} />}

@@ -71,13 +71,11 @@ export function onStartupError(error: Error): void {
 }
 
 const isTimeoutSession = (session: SSOResponse) => {
-    const isTimeout = !session || (!session?.isUM && !session?.isAuthenticated);
-    return isTimeout;
+    return !session || (!session?.isUM && !session?.isAuthenticated);
 };
 
 const getSession = async (token: string) => {
-    const session = token ? sso(token, getAppSettings().appType) : verifySession();
-    return session;
+    return token ? sso(token, getAppSettings().appType) : verifySession();
 };
 
 const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {

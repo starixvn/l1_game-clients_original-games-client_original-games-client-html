@@ -20,7 +20,6 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import { Plate } from "./result-block";
 import SeDieBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
-import { SedieMultiplayerRoundHistoryItem } from "./round-history/sedie-multiplayer-round-history-item";
 
 export type SeDieState = {
     statisticGroup?: number;
