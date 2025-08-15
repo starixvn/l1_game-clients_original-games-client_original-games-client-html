@@ -46,11 +46,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     ) {
         super(props);
 
-        console.log("[Dashboard] constructor called with props:", {
-            authorizeResponse: !!props.authorizeResponse,
-            queryGame: props.queryGame,
-            session: !!props.session,
-        });
+
 
         this.state = {
             userStakeLevel: { minBet: 0, maxBet: 0 },
@@ -66,7 +62,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             dashBoardHeight: 0,
         };
 
-        console.log("[Dashboard] initial state:", this.state);
+
 
         this.closeDialog = this.closeDialog.bind(this);
         this.showApiErrorMessage = this.showApiErrorMessage.bind(this);
@@ -83,7 +79,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         const buildId = process.env.buildVersion;
         const buildVersion = StorageHelper.get(localStorageKeys.buildVersion) ?? 0;
         if (buildId !== buildVersion) {
-            console.log("[Dashboard] build version changed, reloading");
             StorageHelper.set(localStorageKeys.buildVersion, buildId);
             buildVersion && location.reload();
         }
@@ -98,7 +93,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     updateUserBalance = (balance: number, setBalanceByPlaceBet = true) => {
-        console.log("[Dashboard] updateUserBalance called with:", { balance, setBalanceByPlaceBet });
         const authorizeInfo = { ...this.state.authorizeInfo };
         if (authorizeInfo.user.red !== balance) {
             authorizeInfo.user.red = balance;
@@ -109,23 +103,19 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     };
 
     onVisibilityChange() {
-        console.log("[Dashboard] onVisibilityChange called, document.hidden:", document["hidden"]);
         if (!document["hidden"]) {
             this.notificationHandler.handleReCheckIn();
         }
     }
 
     changeOrientation() {
-        console.log("[Dashboard] changeOrientation called");
         setTimeout(() => {
             const isLandscapeMode = window.innerHeight < window.innerWidth;
-            console.log("[Dashboard] isLandscapeMode:", isLandscapeMode);
             this.setState({ isLandscapeMode });
         }, 100);
     }
 
     resetGameIdDashboardEvent() {
-        console.log("[Dashboard] resetGameIdDashboardEvent called");
         this.setState({ openGameId: 0 });
         this.forceUpdate();
     }
@@ -133,16 +123,13 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     shouldComponentUpdate(nextProps: Readonly<DashboardProps>, nextState: Readonly<DashboardState>, nextContext: any): boolean {
         if (this.state.openGameId > 0 && this.isUpdatingBalance) {
             this.isUpdatingBalance = false;
-            console.log("[Dashboard] shouldComponentUpdate: preventing update due to balance update");
             return false;
         }
 
-        console.log("[Dashboard] shouldComponentUpdate: allowing update");
         return true;
     }
 
     async componentDidMount() {
-        console.log("[Dashboard] componentDidMount called");
 
         const { dashBoardHeight } = this.state;
 
@@ -162,9 +149,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         // Fix: Add retry mechanism for timing issues with data availability
         const checkGameOffer = () => {
-            console.log("[Dashboard] checkGameOffer called");
             if (this.dashboardHandler.checkIsNotOfferGame()) {
-                console.log("[Dashboard] game not in offer, showing error modal");
                 this.setState({
                     apiError: {
                         message: ErrorNoGameOffer,
@@ -181,7 +166,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         // If data might not be ready, retry after a short delay
         if (!this.props.authorizeResponse || !this.props.lobbyConfigs) {
-            console.log("[Dashboard] data not ready, retrying after 1 second");
             setTimeout(() => {
                 checkGameOffer();
             }, 1000); // Retry after 1 second
@@ -195,7 +179,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         const { queryGame } = this.props;
         if (queryGame) {
-            console.log("[Dashboard] opening game with queryGame:", queryGame);
             this.openGame(queryGame);
         }
     }
@@ -208,7 +191,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     componentWillUnmount() {
-        console.log("[Dashboard] componentWillUnmount called");
         unsubscribeGlobalMessageEvent(this.backToLobbyEventId);
         document.removeEventListener("visibilitychange", this.onVisibilityChange);
 
@@ -217,38 +199,30 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     signOut() {
-        console.log("[Dashboard] signOut called");
         this.props.router.push("/timeout", "/timeout", { locale: this.props.tolgee.getLanguage() });
     }
 
     handleUpdateUserStakeLevel(userStakeLevel: UserStakeLevel) {
-        console.log("[Dashboard] handleUpdateUserStakeLevel called with:", userStakeLevel);
         this.setState({ userStakeLevel });
     }
 
     showApiErrorMessage(errorCode: string) {
-        console.log("[Dashboard] showApiErrorMessage called with errorCode:", errorCode);
         this.setState({ isShowErrorModal: true, isBlockUI: false, apiError: { errorCode, message: GetLocalizedErrorMessage(errorCode) } });
     }
 
     closeDialog() {
-        console.log("[Dashboard] closeDialog called");
         this.setState({ isShowErrorModal: false });
         this.notificationHandler.isKickOut && this.signOut();
     }
 
     openGame(gameId: number) {
-        console.log("[Dashboard] openGame called with gameId:", gameId);
         this.setState({ queryGame: gameId, openGameId: gameId });
         updateURLContext({ gameId });
     }
 
     renderGames() {
-        console.log("[Dashboard] renderGames called");
         const { userStakeLevel, openGameName } = this.state;
         const urlContext = loadURLContext();
-
-        console.log("[Dashboard] rendering games with:", { userStakeLevel, openGameName, urlContext });
 
         return (
             <Games
@@ -266,15 +240,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderDashBoard() {
-        console.log("[Dashboard] renderDashBoard called");
 
         window.history.pushState(null, null, "/");
 
         const { isShowErrorModal, authorizeInfo, isBlockUI, openGameId } = this.state;
         const offerGames = this.dashboardHandler.getOfferGamesIds();
         const isRenderGames = true; // Custom version: Always render games
-
-        console.log("[Dashboard] renderDashBoard state:", { isShowErrorModal, isBlockUI, openGameId, offerGames, isRenderGames });
 
         const isNoGameOffer = this.state.apiError?.message === ErrorNoGameOffer;
         const renderOfferGameContainer = () => this.renderGames(); // Custom version: Always render games
@@ -288,8 +259,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             enableQuickBet: true,
             locale: this.props.tolgee.getLanguage(),
         };
-
-        console.log("[Dashboard] authContextValue:", authContextValue);
 
         return (
             <PlayerContextProvider value={authContextValue}>
@@ -328,13 +297,10 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     render() {
-        console.log("[Dashboard] render called, isLandscapeMode:", this.state.isLandscapeMode);
         if (this.state.isLandscapeMode && isMobileOnly) {
-            console.log("[Dashboard] rendering LandscapeMode");
             return <LandscapeMode />;
         }
 
-        console.log("[Dashboard] rendering Dashboard");
         return this.renderDashBoard();
     }
 }

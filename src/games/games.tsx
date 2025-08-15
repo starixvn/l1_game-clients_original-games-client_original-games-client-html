@@ -35,16 +35,13 @@ export const Games: React.FC<Props> = ({
     updateUserStakeLevel,
     openGameId,
 }) => {
-    console.log("[Games] Games component rendering with:", { openGameId, userStakeLevel });
     const { theme } = useTheme();
     const { session } = usePlayerContext();
     const settingDispatch = useSettingDispatch();
 
     useEffect(() => {
-        console.log("[Games] useEffect called, getting chip settings");
         (async () => {
             const chipSettings = await getChipSettings(session);
-            console.log("[Games] chip settings received:", chipSettings);
             settingDispatch({
                 type: SettingEventActionType.UPDATE_CHIPS,
                 payload: {
@@ -64,7 +61,6 @@ export const Games: React.FC<Props> = ({
     };
 
     const getGameComponentById = (gameId: number) => {
-        console.log("[Games] getGameComponentById called with gameId:", gameId);
         const appSettings = getAppSettingsForGame(gameId);
         const { gameSettings } = appSettings;
 
@@ -77,19 +73,14 @@ export const Games: React.FC<Props> = ({
             updateUserStakeLevel,
         };
 
-        console.log("[Games] gameProps:", gameProps);
-
         if (gameId === GameIds.SeDieMultiplayer) {
-            console.log("[Games] rendering SeDieMultiPlayer component");
             return <SeDieMultiPlayer key={`game-${gameId}`} {...gameProps} />;
         }
 
-        console.log("[Games] no matching game component found for gameId:", gameId);
         return null;
     };
 
     const gameComponent = getGameComponentById(openGameId);
-    console.log("[Games] gameComponent:", !!gameComponent);
 
     return (
         <div className={`game-container ${styles["game-wrapper"]} ${styles["open-chips"]}`}>

@@ -15,7 +15,6 @@ import { ThemeContextProvider } from "../_shared/react-contexts/theme-context";
 import ThemeToggle from "../components/page-components/theme-toggle";
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
-    console.log("[SabaNumberApp] SabaNumberApp rendering with Component:", Component.name);
 
     return (
         <ThemeProvider defaultTheme={Themes.dark} attribute="class">
@@ -32,7 +31,6 @@ const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
 };
 
 export const AppTittle = () => {
-    console.log("[AppTittle] AppTittle rendering");
     return (
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -44,9 +42,7 @@ export const AppTittle = () => {
     );
 };
 SabaNumberApp.getInitialProps = async (context: AppContext) => {
-    console.log("[SabaNumberApp] getInitialProps called");
     const initialProps = await App.getInitialProps(context);
-    console.log("[SabaNumberApp] initialProps:", initialProps);
     return {
         ...initialProps,
     };

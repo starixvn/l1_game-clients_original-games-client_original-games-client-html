@@ -16,15 +16,11 @@ export type GameDisabledHandlerProps = {
 
 export class GameDisableHandler {
     constructor(private readonly props: GameDisabledHandlerProps) {
-        console.log("[GameDisableHandler] constructor called");
     }
 
     handleUM({ um, um_message, remainingTime }, timeCounter: number) {
-        console.log("[GameDisableHandler] handleUM called with:", { um, um_message, remainingTime, timeCounter });
         const { durations, gameStateContextModel } = this.props;
         const wholeRound = this.props.roundStateHandler.getWholeRoundDuration({ durations });
-
-        console.log("[GameDisableHandler] wholeRound duration:", wholeRound);
 
         this.props.dispatch({
             type: GameEventActionType.SET_UM_FIRST_LOADING,
@@ -38,7 +34,6 @@ export class GameDisableHandler {
                 gameStateContextModel().roundState === RoundState.None ||
                 gameStateContextModel().roundState === RoundState.ConnectFailed)
         ) {
-            console.log("[GameDisableHandler] game disabled condition met, broadcasting clear timeout");
             this.props.gameMessageHandler.broadcastGameEvent({
                 [messageEventType.CLEAR_GAME_TIMEOUT_AND_INTERVAL]: true,
             });
@@ -53,7 +48,6 @@ export class GameDisableHandler {
             useGameStore.getState().setUMMessage(um_message);
             useGameStore.getState().setShowResultInfo(false);
 
-            console.log("[GameDisableHandler] updating URL context to gameId 0");
             updateURLContext({ gameId: 0 });
         }
     }

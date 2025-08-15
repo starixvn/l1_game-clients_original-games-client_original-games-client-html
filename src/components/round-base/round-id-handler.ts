@@ -51,7 +51,6 @@ export class RoundIdHandler {
         }
 
         // For games where PF seed should be triggered by roundId instead of drawId
-        console.log("droundid", this.pfSeedBy, pf?.roundId);
         if (this.pfSeedBy === "roundId") {
             if (this.shouldRunWhenFirstLoad) {
                 this.shouldRunWhenFirstLoad = false;
@@ -72,7 +71,6 @@ export class RoundIdHandler {
 
         // Always update game state's drawId
         this.dispatchDrawId(this.drawId);
-        console.log("drawid", this.pfSeedBy);
         // Default behavior: trigger PF seed on drawId changes
         if (this.pfSeedBy === "drawId") {
             if (this.shouldRunWhenFirstLoad) {
@@ -108,7 +106,6 @@ export class RoundIdHandler {
     };
 
     dispatchClientSeed = (idForSeed: number) => {
-        console.log("dispatchClientSeed", idForSeed);
         this.props.gameMessageHandler.broadcastGameEvent({
             // Reuse 'drawId' payload key for PF wrapper compatibility.
             // In roundId mode we intentionally send roundId value here.
