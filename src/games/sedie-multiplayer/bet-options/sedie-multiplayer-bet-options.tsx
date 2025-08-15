@@ -5,7 +5,7 @@ import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import { SedieMultiplayerSubBetOptions } from "./sedie-sub-option";
 import { SedieMultiplayerMainOption } from "./sedie-main-option";
 
-const SeDieMultiplayerBetOptionsComponent = () => {
+const SeDieMultiplayerBetOptions = () => {
     const { tolgeeNamespace } = useGameContext();
 
     return (
@@ -19,4 +19,4 @@ const SeDieMultiplayerBetOptionsComponent = () => {
     );
 };
 
-export default SeDieMultiplayerBetOptionsComponent;
+export default SeDieMultiplayerBetOptions;
