@@ -9,14 +9,6 @@ let mergedAppSettings: AppSettings;
 const gnConfigs = require("../../../configs.json");
 const gameSettings = require("../../../game-settings.json");
 
-// Function to get configuration (single config now)
-const getConfigForGame = (_gameId: number) => {
-    return {
-        ...gnConfigs,
-        gameSettings,
-    };
-};
-
 export const getAppSettings = () => {
     if (mergedAppSettings) {
         return mergedAppSettings;
@@ -31,11 +23,6 @@ export const getAppSettings = () => {
     }
 
     return mergedAppSettings;
-};
-
-// New function to get app settings for a specific game
-export const getAppSettingsForGame = (gameId: number) => {
-    return getConfigForGame(gameId);
 };
 
 export const getGameSettings = (gameId?: number) => {

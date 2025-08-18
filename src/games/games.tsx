@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import { isIOS, isMobileOnly } from "react-device-detect";
 
-import { getAppSettingsForGame } from "../_shared/app-settings";
+import { getAppSettings } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
 import {
     SettingEventActionType,
@@ -61,7 +61,7 @@ export const Games: React.FC<Props> = ({
     };
 
     const getGameComponentById = (gameId: number) => {
-        const appSettings = getAppSettingsForGame(gameId);
+        const appSettings = getAppSettings();
         const { gameSettings } = appSettings;
 
         const gameProps = {
