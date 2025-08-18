@@ -33,3 +33,5 @@ yarn-error.log*
 # stryker temp files
 stryker-tmp
 /public/i18n
+
+.scannerwork

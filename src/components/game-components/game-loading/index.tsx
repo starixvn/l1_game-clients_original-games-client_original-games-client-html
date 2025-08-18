@@ -2,7 +2,7 @@ import React from "react";
 
 import Styles from "./styles.module.scss";
 
-const GameLoading: React.FC<{}> = () => {
+const GameLoading: React.FC = () => {
     const classBorder = "border-radius-7";
     const classSkeletonItem = "skeleton-item";
 

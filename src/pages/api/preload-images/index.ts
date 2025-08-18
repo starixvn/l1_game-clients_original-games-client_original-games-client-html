@@ -168,7 +168,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>
         return res.status(400).json([]);
     }
 
-    const { gameId, locale, gameIdsIcon, bannerId } = req.body as RequestBody;
+    const { gameId, locale, gameIdsIcon, bannerId } = req.body;
     const cacheKey = `${gameId}-${buildVersion}-${locale}`;
 
     console.log(`[API:preload-images:${requestId}] Processing request:`, {

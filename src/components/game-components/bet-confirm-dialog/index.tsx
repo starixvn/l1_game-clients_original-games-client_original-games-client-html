@@ -1,5 +1,6 @@
+
 import { numberRoundDownWithCommas } from "../../../_shared/helpers";
-import { PlayerContextModel, usePlayerContext } from "../../../_shared/react-contexts";
+import { usePlayerContext } from "../../../_shared/react-contexts";
 import { PlaceBetEventActionType } from "../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { usePlaceBetContext, usePlaceBetDispatch } from "../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
 import { useTranslator } from "../../../_shared/react-hooks";
@@ -8,7 +9,7 @@ import ConfirmDialog from "../confirm-dialog";
 const BetConfirmDialog = () => {
     const dispatch = usePlaceBetDispatch();
     const placeBetContext = usePlaceBetContext();
-    const { authorizeInfo, enableQuickBet } = (usePlayerContext() as PlayerContextModel);
+    const { authorizeInfo, enableQuickBet } = usePlayerContext();
     const enabledQuickBet = authorizeInfo?.user?.settings.quickBet || enableQuickBet;
     const suggestBet = placeBetContext.suggestBet;
     const currentBetChoice = suggestBet.currentBetChoice;

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-
 import { confirmBet } from "../../../_shared/constants";
-import { PlayerContextModel, useGameActionContext, usePlayerContext } from "../../../_shared/react-contexts";
+import { useGameActionContext, usePlayerContext } from "../../../_shared/react-contexts";
 import { useClickSound, useSNTranslate } from "../../../_shared/react-hooks";
 import Styles from "./confirm-bet.module.scss";
 import { usePlaceBetContext, usePlaceBetDispatch } from "../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
@@ -11,7 +10,7 @@ const ConfirmBet: React.FC = () => {
     const dispatch = usePlaceBetDispatch();
     const gameActionContext = useGameActionContext();
     const placeBetContext = usePlaceBetContext();
-    const { authorizeInfo, enableQuickBet } = (usePlayerContext() as PlayerContextModel);
+    const { authorizeInfo, enableQuickBet } = usePlayerContext();
     const enabledQuickBet = authorizeInfo?.user?.settings.quickBet || enableQuickBet;
     const clickSound = useClickSound();
     const { t } = useSNTranslate();

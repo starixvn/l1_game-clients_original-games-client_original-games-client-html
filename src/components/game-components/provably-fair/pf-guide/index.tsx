@@ -36,7 +36,6 @@ const PFGuide: FC = () => {
                     className={`${Styles["guide-iframe"]} min-h-screen`}
                     src={srcPath}
                     referrerPolicy="strict-origin-when-cross-origin"
-                    scrolling="auto"
                     onLoad={() =>
                         setTimeout(() => {
                             hideSpinner();

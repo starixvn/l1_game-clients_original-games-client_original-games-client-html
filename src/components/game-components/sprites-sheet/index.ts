@@ -280,7 +280,7 @@ export class Spritesheet extends Component<SpritesheetProps> {
     private handleEnterFrame() {
         const { onEnterFrame } = this.props;
         if (onEnterFrame) {
-            onEnterFrame.map((frameAction, i) => {
+            onEnterFrame.forEach((frameAction, i) => {
                 if (frameAction.frame === this.frame && frameAction.callback) {
                     frameAction.callback();
                 }

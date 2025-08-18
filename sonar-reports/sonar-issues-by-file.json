@@ -1,0 +1,187 @@
+{
+  "totalIssues": 4,
+  "qualityGate": "ERROR",
+  "exportDate": "2025-08-18T10:12:28.177Z",
+  "files": {
+    "src/components/game-base/handlers/place-bet-wrapper/place-bet-handler.ts": [
+      {
+        "key": "294668aa-a20e-4666-b7c9-b6f2e4b93cae",
+        "rule": "typescript:S1128",
+        "severity": "MINOR",
+        "component": "sedie-multiplayer-client:src/components/game-base/handlers/place-bet-wrapper/place-bet-handler.ts",
+        "project": "sedie-multiplayer-client",
+        "line": 1,
+        "hash": "766e2db99dd72a877ff4e6e5f2a8a693",
+        "textRange": {
+          "startLine": 1,
+          "endLine": 1,
+          "startOffset": 9,
+          "endOffset": 25
+        },
+        "flows": [],
+        "status": "OPEN",
+        "message": "Remove this unused import of 'DefaultParamType'.",
+        "effort": "1min",
+        "debt": "1min",
+        "author": "",
+        "tags": [
+          "es2015",
+          "type-dependent",
+          "unused"
+        ],
+        "creationDate": "2025-08-18T09:16:28+0000",
+        "updateDate": "2025-08-18T09:16:28+0000",
+        "type": "CODE_SMELL",
+        "scope": "MAIN",
+        "quickFixAvailable": true,
+        "messageFormattings": [],
+        "codeVariants": [],
+        "cleanCodeAttribute": "CLEAR",
+        "cleanCodeAttributeCategory": "INTENTIONAL",
+        "impacts": [
+          {
+            "softwareQuality": "MAINTAINABILITY",
+            "severity": "LOW"
+          }
+        ],
+        "issueStatus": "OPEN",
+        "prioritizedRule": false
+      }
+    ],
+    "src/components/game-base/type.ts": [
+      {
+        "key": "1aa7f53d-33c6-4eca-b926-171aef09fc49",
+        "rule": "typescript:S1128",
+        "severity": "MINOR",
+        "component": "sedie-multiplayer-client:src/components/game-base/type.ts",
+        "project": "sedie-multiplayer-client",
+        "line": 1,
+        "hash": "766e2db99dd72a877ff4e6e5f2a8a693",
+        "textRange": {
+          "startLine": 1,
+          "endLine": 1,
+          "startOffset": 9,
+          "endOffset": 25
+        },
+        "flows": [],
+        "status": "OPEN",
+        "message": "Remove this unused import of 'DefaultParamType'.",
+        "effort": "1min",
+        "debt": "1min",
+        "author": "",
+        "tags": [
+          "es2015",
+          "type-dependent",
+          "unused"
+        ],
+        "creationDate": "2025-08-18T09:16:28+0000",
+        "updateDate": "2025-08-18T09:16:28+0000",
+        "type": "CODE_SMELL",
+        "scope": "MAIN",
+        "quickFixAvailable": true,
+        "messageFormattings": [],
+        "codeVariants": [],
+        "cleanCodeAttribute": "CLEAR",
+        "cleanCodeAttributeCategory": "INTENTIONAL",
+        "impacts": [
+          {
+            "softwareQuality": "MAINTAINABILITY",
+            "severity": "LOW"
+          }
+        ],
+        "issueStatus": "OPEN",
+        "prioritizedRule": false
+      }
+    ],
+    "src/components/game-components/bet-confirm-dialog/index.tsx": [
+      {
+        "key": "39f2202e-3ec8-4b77-9c55-644d3920e97d",
+        "rule": "typescript:S1128",
+        "severity": "MINOR",
+        "component": "sedie-multiplayer-client:src/components/game-components/bet-confirm-dialog/index.tsx",
+        "project": "sedie-multiplayer-client",
+        "line": 2,
+        "hash": "b4550c1ad48e31e8bfbde9164d3ca6d4",
+        "textRange": {
+          "startLine": 2,
+          "endLine": 2,
+          "startOffset": 9,
+          "endOffset": 27
+        },
+        "flows": [],
+        "status": "OPEN",
+        "message": "Remove this unused import of 'PlayerContextModel'.",
+        "effort": "1min",
+        "debt": "1min",
+        "author": "",
+        "tags": [
+          "es2015",
+          "type-dependent",
+          "unused"
+        ],
+        "creationDate": "2025-08-18T09:16:28+0000",
+        "updateDate": "2025-08-18T09:16:28+0000",
+        "type": "CODE_SMELL",
+        "scope": "MAIN",
+        "quickFixAvailable": true,
+        "messageFormattings": [],
+        "codeVariants": [],
+        "cleanCodeAttribute": "CLEAR",
+        "cleanCodeAttributeCategory": "INTENTIONAL",
+        "impacts": [
+          {
+            "softwareQuality": "MAINTAINABILITY",
+            "severity": "LOW"
+          }
+        ],
+        "issueStatus": "OPEN",
+        "prioritizedRule": false
+      }
+    ],
+    "src/components/game-components/confirm-bet/index.tsx": [
+      {
+        "key": "bd928c66-1bc4-4a98-ac48-0ab38aa942f2",
+        "rule": "typescript:S1128",
+        "severity": "MINOR",
+        "component": "sedie-multiplayer-client:src/components/game-components/confirm-bet/index.tsx",
+        "project": "sedie-multiplayer-client",
+        "line": 4,
+        "hash": "305364da1f1fa89b0b98ceb4af836857",
+        "textRange": {
+          "startLine": 4,
+          "endLine": 4,
+          "startOffset": 9,
+          "endOffset": 27
+        },
+        "flows": [],
+        "status": "OPEN",
+        "message": "Remove this unused import of 'PlayerContextModel'.",
+        "effort": "1min",
+        "debt": "1min",
+        "author": "",
+        "tags": [
+          "es2015",
+          "type-dependent",
+          "unused"
+        ],
+        "creationDate": "2025-08-18T09:16:28+0000",
+        "updateDate": "2025-08-18T09:16:28+0000",
+        "type": "CODE_SMELL",
+        "scope": "MAIN",
+        "quickFixAvailable": true,
+        "messageFormattings": [],
+        "codeVariants": [],
+        "cleanCodeAttribute": "CLEAR",
+        "cleanCodeAttributeCategory": "INTENTIONAL",
+        "impacts": [
+          {
+            "softwareQuality": "MAINTAINABILITY",
+            "severity": "LOW"
+          }
+        ],
+        "issueStatus": "OPEN",
+        "prioritizedRule": false
+      }
+    ]
+  }
+}

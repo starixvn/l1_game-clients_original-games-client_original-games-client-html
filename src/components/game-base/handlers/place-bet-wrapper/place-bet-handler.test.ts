@@ -872,7 +872,7 @@ describe("placeBet", () => {
 
                 const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
                 const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
                 const availableSuggestBet = {
                     suggestAmount: 50,
                     isInsufficientFunds: false,
@@ -1082,7 +1082,7 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
                 const handleEnabledQuickBetSpy = jest.spyOn(placeBetHandler, "handleEnabledQuickBet");
 
                 // Act
@@ -1106,7 +1106,7 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
                 const handleEnabledQuickBetSpy = jest.spyOn(placeBetHandler, "handleEnabledQuickBet");
 
                 // Act
@@ -1150,7 +1150,7 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
                 const showConfirmBetSpy = jest.spyOn(placeBetHandler, "showConfirmBet");
 
                 // Act
@@ -1175,8 +1175,8 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
-                const sendConfirmBetSpy = jest.spyOn(placeBetHandler, "sendConfirmBet");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
+                const sendConfirmBetSpy = jest.spyOn(placeBetHandler as any, "sendConfirmBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
@@ -1199,8 +1199,8 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler, "updateNotConfirmedBetState");
-                const sendConfirmBetSpy = jest.spyOn(placeBetHandler, "sendConfirmBet");
+                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
+                const sendConfirmBetSpy = jest.spyOn(placeBetHandler as any, "sendConfirmBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);

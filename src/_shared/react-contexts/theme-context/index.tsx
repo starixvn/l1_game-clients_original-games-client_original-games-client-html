@@ -39,7 +39,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (mounted && router.isReady) {
             const { theme: urlTheme } = router.query;
             if (urlTheme && (urlTheme === Themes.light || urlTheme === Themes.dark)) {
-                setTheme(urlTheme as string);
+                setTheme(urlTheme);
             } else if (!theme && !resolvedTheme) {
                 setTheme(Themes.dark);
             }

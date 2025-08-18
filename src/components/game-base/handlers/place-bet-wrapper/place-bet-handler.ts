@@ -1,22 +1,14 @@
-import { DefaultParamType, TFnType, TranslationKey } from "@tolgee/react";
+
+import { TFnType, TranslationKey } from "@tolgee/react";
 import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys } from "../../../../_shared/helpers";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";
-import {
-    findHedgeBetGroup,
-    getAccountBalance,
-    isBalanceUnavailable,
-    isHedgeBet,
-    isInPhasePreventBet,
-} from "../../../../_shared/helpers/validate-bet-helper";
+import { findHedgeBetGroup, getAccountBalance, isBalanceUnavailable, isHedgeBet, isInPhasePreventBet } from "../../../../_shared/helpers/validate-bet-helper";
 import { SystemContextModel } from "../../../../_shared/react-contexts";
 import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";
-import {
-    PlaceBetEventAction,
-    PlaceBetEventActionType,
-} from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
+import { PlaceBetEventAction, PlaceBetEventActionType } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetContextModel } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model";
 import { NoticeModel, RoundState } from "../../type";
 
@@ -24,7 +16,7 @@ export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
     gameName: string;
     gameMessageHandler: GameMessageHandler;
-    translate: TFnType<DefaultParamType, string, TranslationKey>;
+    translate: TFnType<string, TranslationKey>;
     playPlaceBetSound?: Function;
     hedgeBetGroups: string[][];
     getPlayerBalance: Function;
