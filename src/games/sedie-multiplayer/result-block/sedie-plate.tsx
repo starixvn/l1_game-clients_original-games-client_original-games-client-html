@@ -98,6 +98,7 @@ const SediePlate: React.FC = () => {
         return null;
     }
 
+    const classBowlAnimation = styles[`bowl-${animationState}`];
     return (
         <div className="relative w-full">
             <div
@@ -117,7 +118,7 @@ const SediePlate: React.FC = () => {
                 <div className={`${styles["plate-buttons"]} ${styles["plate-buttons-" + animationState]}`}>
                     <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>
                         {renderButtons()}
-                        <div className={`${styles["bowl"]} ${styles[`bowl-${animationState}`]}`}></div>
+                        <div className={`${styles["bowl"]} ${classBowlAnimation}`}></div>
                     </div>
                 </div>
             </div>

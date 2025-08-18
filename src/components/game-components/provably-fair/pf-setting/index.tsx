@@ -21,7 +21,6 @@ const PFResultMessage = "pfResult";
 const PFPublishMessage = "pf";
 const TIME_OUT = 5000;
 
-
 const SECTION_TITLE_CLASS = Styles["section-title"];
 
 const handleOnKeyDown = (event: any) => {
@@ -31,7 +30,7 @@ const handleOnKeyDown = (event: any) => {
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string}> = ({ customClientSeedInfo }) => {
+const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
     const isShowPFSetting = usePopupStore((state) => state.isShowPFSetting);
     const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
 
@@ -154,11 +153,6 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     }, [isFirstFetch]);
 
     useEffect(() => {
-        // setIsLoading(true);
-        // setTimeout(() => {
-        //     setIsLoading(false);
-        // }, TIME_OUT);
-
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
             console.log("handleServerSeed", pfServerSeed);
             setServerSeedHash(pfServerSeed.serverSeedHash);
