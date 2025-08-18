@@ -2,14 +2,16 @@ import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constan
 
 export const SedieMultiplayerRoundHistoryItem = ({
     result,
+    index,
 }: {
     result: { result: SeDieResult; settlementResult: SeDieSettlementResult; roundId: number };
+    index: number;
 }) => {
     if (!result?.settlementResult) {
         return null;
     }
     const isOdd = result.settlementResult.odd;
-    return <div>{isOdd ? <OddItem /> : <EvenItem />}</div>;
+    return <div key={index}>{isOdd ? <OddItem /> : <EvenItem />}</div>;
 };
 
 const OddItem = () => {

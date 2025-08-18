@@ -1,15 +1,12 @@
 import { DefaultParamType, TFnType, TranslationKey } from "@tolgee/react";
 import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
-import { confirmBet } from "../../../../_shared/constants";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys } from "../../../../_shared/helpers";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";
 import {
-    IAvailableSuggestBetAmount,
     findHedgeBetGroup,
     getAccountBalance,
-    getCriteriaValidateBet,
     isBalanceUnavailable,
     isHedgeBet,
     isInPhasePreventBet,
@@ -21,7 +18,7 @@ import {
     PlaceBetEventActionType,
 } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetContextModel } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model";
-import { NoticeModel, RoundState, SuggestBet } from "../../type";
+import { NoticeModel, RoundState } from "../../type";
 
 export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
@@ -155,7 +152,6 @@ export class PlaceBetHandler {
                 payload: { ownBets },
             });
             gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: {} });
-
         }
 
         this.placeBetDispatch({
@@ -204,117 +200,23 @@ export class PlaceBetHandler {
             return;
         }
 
-        this.handleBetValidation(this.placeBetContext, gameStateContext, betChoice, amount, enabledQuickBet, systemContext);
-    };
-
-    protected handleBetValidation = (
-        placeBetContext: PlaceBetContextModel,
-        gameStateContext: GameStateContextModel,
-        betChoice: string,
-        amount: number,
-        enabledQuickBet: boolean,
-        systemContext: SystemContextModel
-    ) => {
-        const criteriaValidateBet = getCriteriaValidateBet(
-            gameStateContext,
-            this.placeBetContext,
-            betChoice,
-            amount,
-            getAccountBalance(this.props.getPlayerBalance()),
-            enabledQuickBet
-        );
-
-        if (criteriaValidateBet?.errorCode === NoticeErrorCode.validBet) {
-            this.handleValidBetChoice(enabledQuickBet, amount, betChoice, placeBetContext, systemContext);
-            return;
-        }
-
-        if (criteriaValidateBet?.errorCode === NoticeErrorCode.suggestBet) {
-            this.suggestBetAmount(betChoice, criteriaValidateBet?.args as IAvailableSuggestBetAmount);
-            return;
-        }
-
-        this.broadcastNotice(this.getNotice(criteriaValidateBet?.errorCode, false, betChoice, criteriaValidateBet?.args));
-    };
-
-    suggestBetAmount = (betChoice: string, availableSuggestBet: IAvailableSuggestBetAmount) => {
-        this.showConfirmDialog();
-        const suggestBet: SuggestBet = {
-            currentBetChoice: betChoice,
-            suggestBetAmount: availableSuggestBet?.suggestAmount,
-            sendOutstandingBet: () => this.sendOutstandingBet(betChoice, availableSuggestBet?.suggestAmount),
-            isInsufficientFunds: availableSuggestBet?.isInsufficientFunds,
-        };
-
-        this.placeBetDispatch({
-            type: PlaceBetEventActionType.SUGGEST_BET,
-            payload: { suggestBet },
-        });
+        this.handleValidBetChoice(amount, betChoice);
     };
 
     sendOutstandingBet(betChoice: string, suggestAmount: number) {
         this.sendBetMessage(betChoice, suggestAmount);
     }
 
-    protected handleValidBetChoice = (
-        enabledQuickBet: boolean,
-        amount: number,
-        betChoice: string,
-        placeBetContext: PlaceBetContextModel,
-        systemContext: SystemContextModel
-    ) => {
-        if (enabledQuickBet) {
-            this.updateNotConfirmedBetState(placeBetContext.notConfirmOwnBets, betChoice, systemContext);
-            this.handleEnabledQuickBet(amount, betChoice);
-        } else {
-            if (betChoice === confirmBet) {
-                this.sendConfirmBet(placeBetContext.notConfirmOwnBets);
-                return;
-            }
-
-            const enableSound = StorageHelper.get(localStorageKeys.enableSound) ?? true;
-            enableSound && this.props.playPlaceBetSound();
-
-            this.showConfirmBet(placeBetContext);
-            this.updateNotConfirmedBetState(placeBetContext.notConfirmOwnBets, betChoice, systemContext);
+    protected handleValidBetChoice = (amount: number, betChoice: string) => {
+        if (amount > 0) {
+            this.setRetryInterval();
+            this.sendBetMessage(betChoice, amount);
         }
     };
 
     handleProcessingBet = () => {
         this.broadcastNotice({ message: "Common.message_processing_action", duration: 2, adjustBetNoticePosition: true });
     };
-
-    sendConfirmBet(notConfirmOwnBets: object) {
-        const entries = Object.entries(notConfirmOwnBets);
-        if ((this.props.betPayloadFormat ?? "map") === "single") {
-            // Send one bet message per choice with amount
-            entries.forEach(([choice, amount]) => {
-                this.props.gameMessageHandler.broadcastGameEvent({
-                    [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
-                        event: "bet",
-                        data: { amount, betChoice: String(choice).toLowerCase(), __pfMode: "clientSeedOnly" },
-                    },
-                });
-            });
-        } else {
-            const betChoices = {} as Record<string, number>;
-            entries.forEach(([key, value]) => {
-                betChoices[key] = value as number;
-            });
-
-            this.props.gameMessageHandler.broadcastGameEvent({
-                [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: { event: "bet", data: { betChoices } },
-            });
-        }
-    }
-
-    updateNotConfirmedBetState(notConfirmOwnBets: object, betChoice: string, systemContext: SystemContextModel) {
-        notConfirmOwnBets[betChoice] = (notConfirmOwnBets[betChoice] ?? 0) + systemContext.selectedChip;
-        this.placeBetDispatch({
-            type: PlaceBetEventActionType.NOT_CONFIRM_OWN_BETS,
-            payload: { notConfirmOwnBets },
-        });
-    }
 
     handlePreventBet = (roundState: RoundState) => {
         const isStartingRound = roundState === RoundState.BeforePlaceBet;
@@ -323,28 +225,6 @@ export class PlaceBetHandler {
 
         this.broadcastNotice(notice);
     };
-
-    showConfirmDialog = () => {
-        this.placeBetDispatch({
-            type: PlaceBetEventActionType.SHOW_CONFIRM_DIALOG,
-            payload: { showConfirmDialog: true },
-        });
-    };
-
-    showConfirmBet(placeBetContextModel: PlaceBetContextModel) {
-        !placeBetContextModel.showConfirmBet &&
-            this.placeBetDispatch({
-                type: PlaceBetEventActionType.SHOW_CONFIRM_BET,
-                payload: { showConfirmBet: true },
-            });
-    }
-
-    handleEnabledQuickBet(amount: number, betChoice: string) {
-        if (amount > 0) {
-            this.setRetryInterval();
-            this.sendBetMessage(betChoice, amount);
-        }
-    }
 
     protected getNotice = (errorCode: string, adjustBetNoticePosition = false, betChoice?: string, args?: object): NoticeModel => {
         let betChoice1 = "";

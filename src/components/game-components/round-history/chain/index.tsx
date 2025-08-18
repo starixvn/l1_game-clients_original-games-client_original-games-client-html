@@ -16,8 +16,8 @@ export const RoundHistory = ({
     sideButton?: React.JSX.Element;
     sizeNextItem?: string;
 }) => {
-    const renderItemComponent = (result: any) => {
-        return renderItem({ result });
+    const renderItemComponent = (result: any, index: number) => {
+        return renderItem({ result, index });
     };
 
     return (
@@ -27,7 +27,7 @@ export const RoundHistory = ({
                 {roundHistory &&
                     [...roundHistory]
                         ?.slice(0, isShowBlink ? numberOfItems - 1 : numberOfItems)
-                        .map((result) => renderItemComponent(result))}
+                        .map((result, index) => renderItemComponent(result, index))}
             </div>
             <div className="ml-2">{sideButton}</div>
         </div>

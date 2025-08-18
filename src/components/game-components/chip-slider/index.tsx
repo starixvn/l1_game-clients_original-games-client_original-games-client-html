@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChipSlider } from "./slider";
 import { Chip } from "./chip";
-import { SystemEventActionType, useSettingContext, useSystemContext, useSystemDispatch } from "../../../_shared/react-contexts";
+import { useSettingContext } from "../../../_shared/react-contexts";
 import { useGameStore } from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
+import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
 export const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -12,10 +13,9 @@ export const ChipControlPanel: React.FC = () => {
             userStakeLevel: state.userStakeLevel,
         }))
     );
+    const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.setSelectedChip]));
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
-    const { selectedChip } = useSystemContext();
-    const dispatch = useSystemDispatch();
     const { chipSettings } = useSettingContext();
     const chipValues = useMemo(() => {
         if (gameConfigs && userStakeLevel) {
@@ -38,12 +38,7 @@ export const ChipControlPanel: React.FC = () => {
 
     const onSelectChip = (chipValue: number) => {
         if (selectedChip !== chipValue) {
-            dispatch({
-                type: SystemEventActionType.SELECT_CHIP,
-                payload: {
-                    selectedChip: chipValue,
-                },
-            });
+            setSelectedChip(chipValue);
         }
     };
 

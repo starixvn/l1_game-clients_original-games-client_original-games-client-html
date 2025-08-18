@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useGameActionContext, useSettingContext, useSystemContext } from "../../../_shared/react-contexts";
+import { useGameActionContext, useSettingContext } from "../../../_shared/react-contexts";
 import { resolveChipColorHex } from "../../../_shared/constants";
 import { RoundState } from "../../game-base/type";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
+import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
 interface RippleButtonProps {
     choice: string;
@@ -12,7 +13,7 @@ interface RippleButtonProps {
 
 export const DEFAULT_CHIP_CURSOR_PATH = "/static/images/chips/cursor";
 const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) => {
-    const systemContext = useSystemContext();
+    const selectedChip = useBettingStore((state) => state.selectedChip);
     const roundState = useGameStore((state) => state.roundState);
     const rippleButton = useRef<HTMLButtonElement>();
 
@@ -30,9 +31,9 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
     const onClickBet = useCallback(
         (event, choice: string) => {
             event.preventDefault();
-            gameActionContext.placeBet(choice, systemContext.selectedChip);
+            gameActionContext.placeBet(choice, selectedChip);
         },
-        [gameActionContext, systemContext.selectedChip]
+        [gameActionContext, selectedChip]
     );
 
     const findChipSetting = (value) => {
@@ -40,10 +41,10 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
     };
 
     useEffect(() => {
-        const color = findChipSetting(systemContext.selectedChip)?.color;
+        const color = findChipSetting(selectedChip)?.color;
         const hex = resolveChipColorHex(color);
         setCursorImage(`${DEFAULT_CHIP_CURSOR_PATH}/${hex}.svg`.appendBuildVersion());
-    }, [systemContext.selectedChip]);
+    }, [selectedChip]);
 
     useEffect(() => {
         if (roundState === RoundState.InRound) {
