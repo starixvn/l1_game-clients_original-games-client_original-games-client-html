@@ -7,12 +7,8 @@ import { isDesktop, isMobile, isMobileOnly } from "react-device-detect";
 
 import { ErrorNoGameOffer } from "../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, localStorageKeys, StorageHelper } from "../../../_shared/helpers";
-import {
-    GlobalMessageTransmitter,
-    GlobalTransmitterEvent,
-    registerGlobalMessageEvent,
-    unsubscribeGlobalMessageEvent,
-} from "../../../_shared/helpers/message-transmitter/global-transmitter";
+import { broadcastUserInfoRed } from "../../../_shared/helpers/global-events-helper";
+import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import { loadURLContext, PlayerContextProvider, SettingContextProvider, updateURLContext } from "../../../_shared/react-contexts";
 import { UserStakeLevel } from "../../game-base/type";
 import { ModalType } from "../../game-components/base-dialog/type";
@@ -89,14 +85,14 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             notificationHandler ??
             new NotificationHandler(this.props.session, this.props.setIsUm, this.updateUserBalance, this.showApiErrorMessage, this.signOut);
 
-        GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.USER_INFO_RED]: this.props.authorizeResponse.user.red });
+        broadcastUserInfoRed(this.props.authorizeResponse.user.red);
     }
 
     updateUserBalance = (balance: number, setBalanceByPlaceBet = true) => {
         const authorizeInfo = { ...this.state.authorizeInfo };
         if (authorizeInfo.user.red !== balance) {
             authorizeInfo.user.red = balance;
-            GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.USER_INFO_RED]: authorizeInfo.user.red });
+            broadcastUserInfoRed(authorizeInfo.user.red);
             this.isUpdatingBalance = setBalanceByPlaceBet;
             this.setState({ authorizeInfo });
         }
@@ -143,9 +139,15 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
 
         document.addEventListener("visibilitychange", this.onVisibilityChange);
-        this.backToLobbyEventId = registerGlobalMessageEvent(GlobalTransmitterEvent.BACK_TO_LOBBY, async () =>
-            this.resetGameIdDashboardEvent()
-        );
+        // Subscribe to back to lobby events from the store
+        const unsubscribe = useGlobalEventsStore.subscribe((state) => {
+            if (state.backToLobby) {
+                this.resetGameIdDashboardEvent();
+                // Reset the flag
+                useGlobalEventsStore.getState().setBackToLobby(false);
+            }
+        });
+        this.backToLobbyEventId = unsubscribe;
 
         // Fix: Add retry mechanism for timing issues with data availability
         const checkGameOffer = () => {
@@ -191,7 +193,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     componentWillUnmount() {
-        unsubscribeGlobalMessageEvent(this.backToLobbyEventId);
+        this.backToLobbyEventId?.();
         document.removeEventListener("visibilitychange", this.onVisibilityChange);
 
         this.notificationHandler.reset();

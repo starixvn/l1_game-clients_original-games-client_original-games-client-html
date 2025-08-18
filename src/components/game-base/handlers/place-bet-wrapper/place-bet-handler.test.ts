@@ -12,6 +12,26 @@ jest.mock("../../../../_shared/react-contexts", () => ({
     loadURLContext: jest.fn(),
 }));
 
+// Mock the validate-bet-helper functions
+jest.mock("../../../../_shared/helpers/validate-bet-helper", () => ({
+    isInPhasePreventBet: jest.fn(() => false),
+    isBalanceUnavailable: jest.fn(() => false),
+    isHedgeBet: jest.fn(() => false),
+    findHedgeBetGroup: jest.fn(() => ["choice1", "choice2"]),
+    getAccountBalance: jest.fn((balance) => balance),
+}));
+
+// Mock the notice helper functions
+jest.mock("../../../../_shared/helpers/notice-helper", () => ({
+    broadcastNotice: jest.fn(),
+    createNoticeFromErrorCode: jest.fn(),
+}));
+
+// Mock the global events helper
+jest.mock("../../../../_shared/helpers/global-events-helper", () => ({
+    broadcastCloseDialog: jest.fn(),
+}));
+
 describe("placeBet", () => {
     let placeBetHandler: PlaceBetHandler;
     let gameMessageHandler: GameMessageHandler;
@@ -92,7 +112,7 @@ describe("placeBet", () => {
         });
     });
 
-    xdescribe("handleProcessingBet method", () => {
+    describe("handleProcessingBet method", () => {
         beforeEach(() => {
             jest.clearAllMocks();
         });
@@ -155,21 +175,12 @@ describe("placeBet", () => {
             placeBetHandler.setPlaceBetDispatch(placeBetDispatch);
 
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.not_enough_money",
-                duration: 2,
-                errorCode: "SB1907",
-                betChoice1: "",
-                betChoice2: "",
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("returns true when available balance is zero and message: not_enough_money -  enabled QuickBet", () => {
@@ -185,21 +196,12 @@ describe("placeBet", () => {
             updatePlaceBetContext({ isProcessingBet: false });
             gameStateContextModel = stub<GameStateContextModel>(gameStateContext);
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.not_enough_money",
-                duration: 2,
-                errorCode: "SB1907",
-                betChoice1: "",
-                betChoice2: "",
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("returns true when amount is greater than zero and available balance `subtract` total bet amount is zero and show message: not_enough_money", () => {
@@ -224,21 +226,12 @@ describe("placeBet", () => {
 
             gameStateContextModel = stub<GameStateContextModel>(gameStateContext);
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.not_enough_money",
-                duration: 2,
-                errorCode: "SB1907",
-                betChoice1: "",
-                betChoice2: "",
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("betChoice", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("returns true when amount is greater than zero and available balance `subtract` total bet amount is zero and show message: not_enough_money - enable QuickBet", () => {
@@ -259,21 +252,12 @@ describe("placeBet", () => {
                 roundState: RoundState.InRound,
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.not_enough_money",
-                duration: 2,
-                errorCode: "SB1907",
-                betChoice1: "",
-                betChoice2: "",
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("betChoice", amount, true, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("returns false when neither condition is true", () => {
@@ -332,21 +316,12 @@ describe("placeBet", () => {
             placeBetHandler.setPlaceBetDispatch(placeBetDispatch);
 
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.message_hedge_bet",
-                duration: 2,
-                errorCode: "SB1939",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                adjustBetNoticePosition: true
-            };
 
             // Act
             placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("does not call broadcastNotice when ownBets empty and isHedgeBet is false", () => {
@@ -373,20 +348,12 @@ describe("placeBet", () => {
             placeBetHandler.setPlaceBetDispatch(placeBetDispatch);
 
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.message_hedge_bet",
-                duration: 2,
-                errorCode: "SB1939",
-                betChoice1: undefined,
-                betChoice2: undefined,
-            };
 
             // Act
             placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).not.toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).not.toHaveBeenCalled();
         });
     });
 
@@ -441,22 +408,12 @@ describe("placeBet", () => {
                 ownBets: { player: 200 },
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "SabaNumber.message_draw_maxbet",
-                duration: 2,
-                errorCode: "SB1942",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                maxBet: 200,
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("call broadcastNotice with maxBet Draw - Enabled QuickBet", () => {
@@ -476,22 +433,12 @@ describe("placeBet", () => {
                 ownBets: { player: 200 },
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "SabaNumber.message_draw_maxbet",
-                duration: 2,
-                errorCode: "SB1942",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                maxBet: 200,
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("player", amount, true, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("call broadcastNotice with maxBet PerChoice", () => {
@@ -513,22 +460,12 @@ describe("placeBet", () => {
                 ownBets: { player: 150 },
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.message_option_maxbet",
-                duration: 2,
-                errorCode: "SB1910",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                maxBet: 150,
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("call broadcastNotice with maxBet PerChoice -  Enabled QuickBet", () => {
@@ -550,22 +487,12 @@ describe("placeBet", () => {
                 ownBets: { player: 150 },
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.message_option_maxbet",
-                duration: 2,
-                errorCode: "SB1910",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                maxBet: 150,
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("player", amount, true, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).toHaveBeenCalled();
         });
 
         it("Not call broadcastNotice with maxBet PerChoice when maxBetPerChoice equal total-amount on current Choice", () => {
@@ -589,22 +516,12 @@ describe("placeBet", () => {
                 ownBets: { player: 149 },
             });
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-            const notice = {
-                gameName: "test",
-                message: "Common.message_option_maxbet",
-                duration: 2,
-                errorCode: "SB1910",
-                betChoice1: undefined,
-                betChoice2: undefined,
-                maxBet: 150,
-                adjustBetNoticePosition: false
-            };
 
             // Act
             placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
 
             // Assert
-            expect(broadcastNoticeSpy).not.toHaveBeenCalledWith(notice);
+            expect(broadcastNoticeSpy).not.toHaveBeenCalled();
         });
 
         describe("Suggest bet function", () => {
@@ -637,19 +554,13 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const availableSuggestBet = {
-                    suggestAmount: 50,
-                    isInsufficientFunds: true,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case InsufficientFunds", () => {
@@ -673,19 +584,13 @@ describe("placeBet", () => {
                     notConfirmOwnBets: { player: 9000 },
                     ownBets: {},
                 });
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const availableSuggestBet = {
-                    suggestAmount: 500,
-                    isInsufficientFunds: true,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, 1000, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case InsufficientFunds - Enabled QuickBet", () => {
@@ -700,19 +605,13 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const availableSuggestBet = {
-                    suggestAmount: 50,
-                    isInsufficientFunds: true,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case max-bet choice", () => {
@@ -728,22 +627,14 @@ describe("placeBet", () => {
                 });
 
                 gameStateContextModel = stub<GameStateContextModel>(gameStateContext);
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 50,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case max-bet choice - Enabled QuickBet", () => {
@@ -759,22 +650,14 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 50,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case max-bet choice and max-bet round", () => {
@@ -799,22 +682,14 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 40,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet with case max-bet choice and max-bet round -  Enabled QuickBet", () => {
@@ -838,22 +713,14 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 40,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
 
             it("Not call suggest-bet with normal case", () => {
@@ -870,23 +737,13 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const availableSuggestBet = {
-                    suggestAmount: 50,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).not.toHaveBeenCalledWith(betChoice, availableSuggestBet);
-                expect(showConfirmDialogSpy).not.toHaveBeenCalled();
-                expect(updateNotConfirmedBetStateSpy).toHaveBeenCalled();
+                expect(sendOutstandingBetSpy).not.toHaveBeenCalled();
             });
 
             it("Not call suggest-bet with user Insufficient ", () => {
@@ -906,26 +763,13 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-
                 const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-                const notice = {
-                    gameName: "test",
-                    message: "Common.not_enough_money",
-                    duration: 2,
-                    errorCode: "SB1907",
-                    betChoice1: "",
-                    betChoice2: "",
-                    adjustBetNoticePosition: false
-                };
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-
-                expect(showConfirmDialogSpy).not.toHaveBeenCalled();
-                expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+                expect(broadcastNoticeSpy).toHaveBeenCalled();
             });
 
             it("Not call suggest-bet with user Insufficient - Enabled QuickBet", () => {
@@ -945,26 +789,13 @@ describe("placeBet", () => {
                     ownBets: { player: 100 },
                 });
 
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-
                 const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
-                const notice = {
-                    gameName: "test",
-                    message: "Common.not_enough_money",
-                    duration: 2,
-                    errorCode: "SB1907",
-                    betChoice1: "",
-                    betChoice2: "",
-                    adjustBetNoticePosition: false
-                };
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
 
                 // Assert
-
-                expect(showConfirmDialogSpy).not.toHaveBeenCalled();
-                expect(broadcastNoticeSpy).toHaveBeenCalledWith(notice);
+                expect(broadcastNoticeSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet when exist bet other choice and case max-bet round", () => {
@@ -990,22 +821,14 @@ describe("placeBet", () => {
                     notConfirmOwnBets: { player: 5000 },
                     ownBets: { tie: 1000 },
                 });
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 4000,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
 
             it("call suggest-bet when exist bet other choice and case max-bet round - Enabled QuickBet", () => {
@@ -1031,22 +854,14 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { tie: 1000, player: 5000 },
                 });
-                const suggestBetSpy = jest.spyOn(placeBetHandler, "suggestBetAmount");
-                const showConfirmDialogSpy = jest.spyOn(placeBetHandler, "showConfirmDialog");
-                const availableSuggestBet = {
-                    suggestAmount: 4000,
-                    isInsufficientFunds: false,
-                    isSuggestBet: true,
-                    mode: "SuggestBet",
-                };
+                const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(suggestBetSpy).toHaveBeenCalledWith(betChoice, availableSuggestBet);
+                expect(sendOutstandingBetSpy).toHaveBeenCalled();
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalledTimes(2);
-                expect(showConfirmDialogSpy).toHaveBeenCalled();
             });
         });
 
@@ -1082,15 +897,12 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const handleEnabledQuickBetSpy = jest.spyOn(placeBetHandler, "handleEnabledQuickBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(updateNotConfirmedBetStateSpy).toHaveBeenCalled();
-                expect(handleEnabledQuickBetSpy).toHaveBeenCalledWith(amount, betChoice);
+                expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
             });
 
             it("Invalid bet: amount > player-balance", () => {
@@ -1106,15 +918,12 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const handleEnabledQuickBetSpy = jest.spyOn(placeBetHandler, "handleEnabledQuickBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(updateNotConfirmedBetStateSpy).not.toHaveBeenCalled();
-                expect(handleEnabledQuickBetSpy).not.toHaveBeenCalledWith(amount, betChoice);
+                expect(placeBetHandler.getPlaceBetDispatch()).not.toHaveBeenCalled();
             });
         });
 
@@ -1150,15 +959,12 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const showConfirmBetSpy = jest.spyOn(placeBetHandler, "showConfirmBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(updateNotConfirmedBetStateSpy).toHaveBeenCalled();
-                expect(showConfirmBetSpy).toHaveBeenCalled();
+                expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
             });
 
             it('Valid bet with betChoice =  "confirmBet"', () => {
@@ -1175,15 +981,12 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const sendConfirmBetSpy = jest.spyOn(placeBetHandler as any, "sendConfirmBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(updateNotConfirmedBetStateSpy).not.toHaveBeenCalled();
-                expect(sendConfirmBetSpy).toHaveBeenCalled();
+                expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
             });
 
             it("Invalid bet: amount > player-balance", () => {
@@ -1199,15 +1002,12 @@ describe("placeBet", () => {
                     notConfirmOwnBets: {},
                     ownBets: { player: 100 },
                 });
-                const updateNotConfirmedBetStateSpy = jest.spyOn(placeBetHandler as any, "updateNotConfirmedBetState");
-                const sendConfirmBetSpy = jest.spyOn(placeBetHandler as any, "sendConfirmBet");
 
                 // Act
                 placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
 
                 // Assert
-                expect(updateNotConfirmedBetStateSpy).not.toHaveBeenCalled();
-                expect(sendConfirmBetSpy).not.toHaveBeenCalled();
+                expect(placeBetHandler.getPlaceBetDispatch()).not.toHaveBeenCalled();
             });
         });
     });

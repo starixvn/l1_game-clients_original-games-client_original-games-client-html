@@ -24,7 +24,7 @@ describe("NoticeStore", () => {
         it("should set notice to the provided value", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test message",
+                message: "test.message",
                 duration: 3,
                 isWarning: false,
             };
@@ -41,7 +41,7 @@ describe("NoticeStore", () => {
         it("should set notice to null when provided null", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test message",
+                message: "test.message",
                 duration: 3,
                 isWarning: false,
             };
@@ -59,40 +59,13 @@ describe("NoticeStore", () => {
             // Assert
             expect(useNoticeStore.getState().notice).toBeNull();
         });
-
-        it("should update notice when called multiple times", () => {
-            // Arrange
-            const notice1: NoticeModel = {
-                message: "first message",
-                duration: 3,
-                isWarning: false,
-            };
-
-            const notice2: NoticeModel = {
-                message: "second message",
-                duration: 5,
-                isWarning: true,
-            };
-
-            // Act
-            act(() => {
-                useNoticeStore.getState().setNotice(notice1);
-            });
-
-            act(() => {
-                useNoticeStore.getState().setNotice(notice2);
-            });
-
-            // Assert
-            expect(useNoticeStore.getState().notice).toEqual(notice2);
-        });
     });
 
     describe("clearNotice", () => {
-        it("should clear notice to null", () => {
+        it("should clear notice and set it to null", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test message",
+                message: "test.message",
                 duration: 3,
                 isWarning: false,
             };
@@ -110,24 +83,25 @@ describe("NoticeStore", () => {
             expect(useNoticeStore.getState().notice).toBeNull();
         });
 
-        it("should do nothing when notice is already null", () => {
-            // Act
-            act(() => {
-                useNoticeStore.getState().clearNotice();
-            });
-
-            // Assert
-            expect(useNoticeStore.getState().notice).toBeNull();
+        it("should not throw error when clearing already null notice", () => {
+            // Act & Assert
+            expect(() => {
+                act(() => {
+                    useNoticeStore.getState().clearNotice();
+                });
+            }).not.toThrow();
         });
     });
 
     describe("showNotice", () => {
-        it("should set notice to the provided value", () => {
+        it("should show notice with provided data", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test message",
-                duration: 3,
-                isWarning: false,
+                message: "show.test.message",
+                duration: 5,
+                isWarning: true,
+                gameName: "Test Game",
+                roundId: 123,
             };
 
             // Act
@@ -139,114 +113,155 @@ describe("NoticeStore", () => {
             expect(useNoticeStore.getState().notice).toEqual(mockNotice);
         });
 
-        it("should update notice when called multiple times", () => {
+        it("should overwrite existing notice when showing new notice", () => {
             // Arrange
-            const notice1: NoticeModel = {
-                message: "first message",
+            const firstNotice: NoticeModel = {
+                message: "first.message",
                 duration: 3,
                 isWarning: false,
             };
 
-            const notice2: NoticeModel = {
-                message: "second message",
+            const secondNotice: NoticeModel = {
+                message: "second.message",
                 duration: 5,
                 isWarning: true,
             };
 
-            // Act
+            // Set first notice
             act(() => {
-                useNoticeStore.getState().showNotice(notice1);
+                useNoticeStore.getState().showNotice(firstNotice);
             });
 
+            // Act - Show second notice
             act(() => {
-                useNoticeStore.getState().showNotice(notice2);
+                useNoticeStore.getState().showNotice(secondNotice);
             });
 
             // Assert
-            expect(useNoticeStore.getState().notice).toEqual(notice2);
+            expect(useNoticeStore.getState().notice).toEqual(secondNotice);
+            expect(useNoticeStore.getState().notice).not.toEqual(firstNotice);
+        });
+    });
+
+    describe("Store State Updates", () => {
+        it("should trigger re-renders when state changes", () => {
+            // Arrange
+            const { result } = renderHook(() => useNoticeStore());
+            const mockNotice: NoticeModel = {
+                message: "update.test.message",
+                duration: 3,
+                isWarning: false,
+            };
+
+            // Act
+            act(() => {
+                useNoticeStore.getState().showNotice(mockNotice);
+            });
+
+            // Assert
+            expect(result.current.notice).toEqual(mockNotice);
+        });
+
+        it("should maintain state consistency across multiple operations", () => {
+            // Arrange
+            const mockNotice1: NoticeModel = {
+                message: "notice1",
+                duration: 3,
+                isWarning: false,
+            };
+
+            const mockNotice2: NoticeModel = {
+                message: "notice2",
+                duration: 5,
+                isWarning: true,
+            };
+
+            // Act & Assert
+            act(() => {
+                useNoticeStore.getState().showNotice(mockNotice1);
+            });
+            expect(useNoticeStore.getState().notice).toEqual(mockNotice1);
+
+            act(() => {
+                useNoticeStore.getState().showNotice(mockNotice2);
+            });
+            expect(useNoticeStore.getState().notice).toEqual(mockNotice2);
+
+            act(() => {
+                useNoticeStore.getState().clearNotice();
+            });
+            expect(useNoticeStore.getState().notice).toBeNull();
         });
     });
 
     describe("Edge Cases", () => {
-        it("should handle notice with undefined values", () => {
+        it("should handle notice with minimal required properties", () => {
             // Arrange
-            const mockNotice: NoticeModel = {
-                message: "test message",
-                duration: undefined,
-                isWarning: undefined,
-                gameName: undefined,
-                roundId: undefined,
-                minBet: undefined,
-                maxBet: undefined,
-                errorCode: undefined,
-            };
-
-            // Act
-            act(() => {
-                useNoticeStore.getState().showNotice(mockNotice);
-            });
-
-            // Assert
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
-        });
-
-        it("should handle notice with empty string values", () => {
-            // Arrange
-            const mockNotice: NoticeModel = {
-                message: "",
+            const minimalNotice: NoticeModel = {
+                message: "minimal",
                 duration: 3,
                 isWarning: false,
             };
 
             // Act
             act(() => {
-                useNoticeStore.getState().showNotice(mockNotice);
+                useNoticeStore.getState().showNotice(minimalNotice);
             });
 
             // Assert
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
+            expect(useNoticeStore.getState().notice).toEqual(minimalNotice);
         });
 
-        it("should handle notice with zero duration", () => {
+        it("should handle notice with all optional properties", () => {
             // Arrange
-            const mockNotice: NoticeModel = {
-                message: "test message",
-                duration: 0,
-                isWarning: false,
+            const fullNotice: NoticeModel = {
+                message: "full.notice",
+                duration: 10,
+                isWarning: true,
+                gameName: "Full Game",
+                roundId: 456,
+                minBet: 10,
+                maxBet: 1000,
+                errorCode: "FULL001",
+                hedgeBetGroup: ["choice1", "choice2"],
+                onClose: jest.fn(),
             };
 
             // Act
             act(() => {
-                useNoticeStore.getState().showNotice(mockNotice);
+                useNoticeStore.getState().showNotice(fullNotice);
             });
 
             // Assert
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
+            expect(useNoticeStore.getState().notice).toEqual(fullNotice);
         });
 
-        it("should handle notice with negative duration", () => {
+        it("should handle rapid state changes", () => {
             // Arrange
-            const mockNotice: NoticeModel = {
-                message: "test message",
-                duration: -1,
-                isWarning: false,
-            };
+            const notices: NoticeModel[] = [
+                { message: "notice1", duration: 1, isWarning: false },
+                { message: "notice2", duration: 2, isWarning: true },
+                { message: "notice3", duration: 3, isWarning: false },
+            ];
 
-            // Act
-            act(() => {
-                useNoticeStore.getState().showNotice(mockNotice);
+            // Act & Assert
+            notices.forEach((notice, index) => {
+                act(() => {
+                    useNoticeStore.getState().showNotice(notice);
+                });
+                expect(useNoticeStore.getState().notice).toEqual(notice);
             });
-
-            // Assert
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
         });
     });
 
-    describe("State Persistence", () => {
-        it("should maintain state between multiple store accesses", () => {
+    describe("Store Isolation", () => {
+        it("should maintain separate state for different store instances", () => {
+            // This test verifies that the store is properly isolated
+            // In Zustand, this should be the case by default
+
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test message",
+                message: "isolated.test",
                 duration: 3,
                 isWarning: false,
             };
@@ -258,56 +273,10 @@ describe("NoticeStore", () => {
 
             // Assert
             expect(useNoticeStore.getState().notice).toEqual(mockNotice);
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
-        });
 
-        it("should maintain state when accessed from different components", () => {
-            // Arrange
-            const mockNotice: NoticeModel = {
-                message: "test message",
-                duration: 3,
-                isWarning: false,
-            };
-
-            // Act
-            act(() => {
-                useNoticeStore.getState().showNotice(mockNotice);
-            });
-
-            // Simulate accessing from different components
-            const { result: result1 } = renderHook(() => useNoticeStore());
-            const { result: result2 } = renderHook(() => useNoticeStore());
-
-            // Assert
-            expect(result1.current.notice).toEqual(mockNotice);
-            expect(result2.current.notice).toEqual(mockNotice);
-        });
-    });
-
-    describe("Action Methods", () => {
-        it("should have setNotice method", () => {
-            // Act
+            // Verify that the store state is consistent
             const { result } = renderHook(() => useNoticeStore());
-
-            // Assert
-            expect(typeof result.current.setNotice).toBe("function");
-        });
-
-        it("should have clearNotice method", () => {
-            // Act
-            const { result } = renderHook(() => useNoticeStore());
-
-            // Assert
-            expect(typeof result.current.clearNotice).toBe("function");
-        });
-
-        it("should have showNotice method", () => {
-            // Act
-            const { result } = renderHook(() => useNoticeStore());
-
-            // Assert
-            expect(typeof result.current.showNotice).toBe("function");
+            expect(result.current.notice).toEqual(mockNotice);
         });
     });
 });

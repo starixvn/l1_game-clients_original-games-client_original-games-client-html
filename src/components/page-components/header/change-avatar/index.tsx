@@ -6,7 +6,7 @@ import { updateUserAvatar } from "../../../../services/user-setting-service";
 import { AvatarGallery } from "../../../game-components/avatar-gallery";
 import Styles from "./index.module.scss";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
-import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";
+import { broadcastAvatarId } from "../../../../_shared/helpers/global-events-helper";
 
 const ChangeAvatar: React.FC = () => {
     console.log("[ChangeAvatar] ChangeAvatar component rendering");
@@ -46,7 +46,7 @@ const ChangeAvatar: React.FC = () => {
 
         if (result["ok"] === 1) { // TO DO: define Result type
             console.log("[ChangeAvatar] avatar update successful");
-            GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.CHANGE_AVATAR_ID]: avatarId });
+            broadcastAvatarId(avatarId);
         }
         else {
             console.error("[ChangeAvatar] avatar update failed:", result);

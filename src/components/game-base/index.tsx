@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import { GameIds } from "../../_shared/constants";
 import { InitSocketIO, writeDebugLog } from "../../_shared/helpers";
 import { AnalyticsHelper } from "../../_shared/helpers/analytic-helper";
-import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../_shared/helpers/message-transmitter/global-transmitter";
+import { broadcastOpeningGameId } from "../../_shared/helpers/global-events-helper";
 import { GameActionsContextProvider, GameContextProvider, PlayerContext, PlayerContextModel } from "../../_shared/react-contexts";
 import { GameEventActionType } from "../../_shared/react-contexts/game-state-context/game-event-action";
 import { PlaceBetEventActionType } from "../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
@@ -167,7 +167,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.onPreloadResourceDone = this.onPreloadResourceDone.bind(this);
 
         AnalyticsHelper.trackPage({ page_title: this.props.gameName });
-        GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.OPEN_GAME_ID]: props.id });
+        broadcastOpeningGameId(props.id);
     }
 
     getGameStateContext = () => {

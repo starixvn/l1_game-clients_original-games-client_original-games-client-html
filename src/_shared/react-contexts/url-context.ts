@@ -4,7 +4,7 @@ import { StorageHelper, localStorageKeys } from "../helpers/storage-helper";
 import { GameIds } from "../constants";
 import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
-import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../helpers/message-transmitter/global-transmitter";
+import { broadcastBackToLobby } from "../helpers/global-events-helper";
 
 export type URLContextModel = {
     token?: string;
@@ -68,7 +68,7 @@ export const initialURLContextData = {
             globalThis.location.href = decodedUrl;
         } else {
             updateURLContext({ backToLobby: true, gameId: 0 });
-            GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.BACK_TO_LOBBY]: {} });
+            broadcastBackToLobby();
         }
     },
 };

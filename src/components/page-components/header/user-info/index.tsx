@@ -1,31 +1,20 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { User } from "sc-user-service-client/dist/auth";
-import {
-    GlobalTransmitterEvent,
-    registerGlobalMessageEvent,
-    unsubscribeGlobalMessageEvent,
-} from "../../../../_shared/helpers/message-transmitter/global-transmitter";
 import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
 import { usePlayerContext } from "../../../../_shared/react-contexts";
+import { useGlobalEventsStore } from "../../../../_shared/stores/global-events-store/global-events-store";
 
 export const UserInfo: React.FC<{
     customizeClass?: string;
 }> = ({ customizeClass }) => {
     const { authorizeInfo } = usePlayerContext();
-    const [userInfo, setUserInfo] = useState<User>(authorizeInfo?.user);
+    const { userInfoRed } = useGlobalEventsStore();
 
-    useEffect(() => {
-        const userInfoRedHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.USER_INFO_RED, ({ userInfoRed }) => {
-            setUserInfo({
-                ...userInfo,
-                red: userInfoRed,
-            });
-        });
-
-        return () => {
-            unsubscribeGlobalMessageEvent(userInfoRedHandlerId as any);
-        };
-    }, []);
+    // Use userInfoRed from store if available, otherwise use from authorizeInfo
+    const userInfo = {
+        ...authorizeInfo?.user,
+        red: userInfoRed !== null ? userInfoRed : authorizeInfo?.user?.red || 0,
+    };
 
     return (
         <div className={`${customizeClass}`} data-testid="balance">

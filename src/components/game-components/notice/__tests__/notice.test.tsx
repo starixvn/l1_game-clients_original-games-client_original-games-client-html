@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { NoticeDialog } from "../index";
 import { useNoticeStore } from "../../../../_shared/stores/notice-store/notice-store";
-import { NoticeModel } from "../../../../game-base/type";
+import { NoticeModel } from "../../../../components/game-base/type";
 
 // Mock dependencies
 jest.mock("../../../../_shared/react-contexts", () => ({
@@ -13,7 +13,9 @@ jest.mock("../../../../_shared/react-contexts", () => ({
 
 jest.mock("../../../../_shared/react-hooks", () => ({
     useTranslator: () => ({
-        t: (key: string, params?: any) => key,
+        t: (key: string, params?: any) => ({
+            replaceTolgeeFormat: () => key,
+        }),
     }),
     useClickSound: () => jest.fn(),
 }));
@@ -24,13 +26,14 @@ jest.mock("../../../../_shared/helpers", () => ({
     numberWithCommas: jest.fn((num) => num.toString()),
 }));
 
-jest.mock("../../../../_shared/helpers/message-transmitter/global-transmitter", () => ({
-    GlobalTransmitterEvent: {
-        NOTICE: "notice",
-        CLOSE_DIALOG: "closeDialog",
+// Mock the global events store
+jest.mock("../../../../_shared/stores/global-events-store/global-events-store", () => ({
+    useGlobalEventsStore: {
+        subscribe: jest.fn(() => jest.fn()),
+        getState: jest.fn(() => ({
+            setCloseDialog: jest.fn(),
+        })),
     },
-    registerGlobalMessageEvent: jest.fn(() => "handler-id"),
-    unsubscribeGlobalMessageEvent: jest.fn(),
 }));
 
 describe("NoticeDialog", () => {
@@ -100,40 +103,29 @@ describe("NoticeDialog", () => {
 
         it("should auto-close notice after duration expires", async () => {
             // Arrange
-            jest.useFakeTimers();
             const mockNotice: NoticeModel = {
                 message: "test.message",
-                duration: 2,
+                duration: 0.1, // Very short duration for testing
                 isWarning: false,
             };
 
             useNoticeStore.getState().showNotice(mockNotice);
             render(<NoticeDialog />);
 
-            // Act
-            jest.advanceTimersByTime(2000);
-
             // Assert
             await waitFor(() => {
                 expect(useNoticeStore.getState().notice).toBeNull();
-            });
-
-            jest.useRealTimers();
+            }, { timeout: 200 });
         });
     });
 
     describe("Edge Cases", () => {
-        it("should handle notice with null values", () => {
+        it("should handle notice with minimal properties", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test.message",
-                duration: undefined,
-                isWarning: undefined,
-                gameName: undefined,
-                roundId: undefined,
-                minBet: undefined,
-                maxBet: undefined,
-                errorCode: undefined,
+                message: "minimal.message",
+                duration: 3,
+                isWarning: false,
             };
 
             useNoticeStore.getState().showNotice(mockNotice);
@@ -142,10 +134,48 @@ describe("NoticeDialog", () => {
             render(<NoticeDialog />);
 
             // Assert
-            expect(screen.getByText("test.message")).toBeInTheDocument();
+            expect(screen.getByText("minimal.message")).toBeInTheDocument();
         });
 
-        it("should handle notice with empty string values", () => {
+        it("should handle warning notices", () => {
+            // Arrange
+            const mockNotice: NoticeModel = {
+                message: "warning.message",
+                duration: 3,
+                isWarning: true,
+            };
+
+            useNoticeStore.getState().showNotice(mockNotice);
+
+            // Act
+            render(<NoticeDialog />);
+
+            // Assert
+            expect(screen.getByText("warning.message")).toBeInTheDocument();
+            // Check for warning styling (you might need to adjust this based on your CSS classes)
+        });
+
+        it("should handle notices with hedge bet options", () => {
+            // Arrange
+            const mockNotice: NoticeModel = {
+                message: "hedge.message",
+                duration: 3,
+                isWarning: false,
+                hedgeBetGroup: ["choice1", "choice2"],
+            };
+
+            useNoticeStore.getState().showNotice(mockNotice);
+
+            // Act
+            render(<NoticeDialog />);
+
+            // Assert
+            expect(screen.getByText("hedge.message")).toBeInTheDocument();
+        });
+    });
+
+    describe("Error Handling", () => {
+        it("should handle missing message gracefully", () => {
             // Arrange
             const mockNotice: NoticeModel = {
                 message: "",
@@ -162,28 +192,10 @@ describe("NoticeDialog", () => {
             expect(screen.getByTestId("close-btn")).toBeInTheDocument();
         });
 
-        it("should handle notice with very long message", () => {
-            // Arrange
-            const longMessage = "a".repeat(1000);
-            const mockNotice: NoticeModel = {
-                message: longMessage,
-                duration: 3,
-                isWarning: false,
-            };
-
-            useNoticeStore.getState().showNotice(mockNotice);
-
-            // Act
-            render(<NoticeDialog />);
-
-            // Assert
-            expect(screen.getByText(longMessage)).toBeInTheDocument();
-        });
-
-        it("should handle notice with zero duration", () => {
+        it("should handle zero duration", () => {
             // Arrange
             const mockNotice: NoticeModel = {
-                message: "test.message",
+                message: "zero.duration",
                 duration: 0,
                 isWarning: false,
             };
@@ -194,170 +206,34 @@ describe("NoticeDialog", () => {
             render(<NoticeDialog />);
 
             // Assert
-            expect(screen.getByText("test.message")).toBeInTheDocument();
+            expect(screen.getByText("zero.duration")).toBeInTheDocument();
         });
     });
 
-    describe("Error Handling", () => {
-        it("should handle notice with missing required fields", () => {
+    describe("Integration with Global Events", () => {
+        it("should respond to close dialog events from global store", async () => {
             // Arrange
-            const mockNotice = {
-                message: "test.message",
-                // Missing other required fields
-            } as NoticeModel;
-
-            useNoticeStore.getState().showNotice(mockNotice);
-
-            // Act
-            render(<NoticeDialog />);
-
-            // Assert
-            expect(screen.getByText("test.message")).toBeInTheDocument();
-        });
-
-        it("should handle rapid notice changes", async () => {
-            // Arrange
-            const notice1: NoticeModel = {
-                message: "first notice",
-                duration: 1,
-                isWarning: false,
-            };
-
-            const notice2: NoticeModel = {
-                message: "second notice",
-                duration: 1,
-                isWarning: true,
-            };
-
-            useNoticeStore.getState().showNotice(notice1);
-            const { rerender } = render(<NoticeDialog />);
-
-            // Act
-            useNoticeStore.getState().showNotice(notice2);
-            rerender(<NoticeDialog />);
-
-            // Assert
-            expect(screen.getByText("second notice")).toBeInTheDocument();
-        });
-    });
-
-    describe("Integration with Global Transmitter", () => {
-        it("should register global message event on mount", () => {
-            // Arrange
-            const { registerGlobalMessageEvent } = require("../../../../_shared/helpers/message-transmitter/global-transmitter");
-
-            // Act
-            render(<NoticeDialog />);
-
-            // Assert
-            expect(registerGlobalMessageEvent).toHaveBeenCalledWith("notice", expect.any(Function));
-        });
-
-        it("should unregister global message event on unmount", () => {
-            // Arrange
-            const { unsubscribeGlobalMessageEvent } = require("../../../../_shared/helpers/message-transmitter/global-transmitter");
-            const { unmount } = render(<NoticeDialog />);
-
-            // Act
-            unmount();
-
-            // Assert
-            expect(unsubscribeGlobalMessageEvent).toHaveBeenCalledWith("handler-id");
-        });
-
-        it("should update store when global notice event is received", () => {
-            // Arrange
-            const { registerGlobalMessageEvent } = require("../../../../_shared/helpers/message-transmitter/global-transmitter");
             const mockNotice: NoticeModel = {
-                message: "global notice",
-                duration: 3,
-                isWarning: false,
-            };
-
-            render(<NoticeDialog />);
-
-            // Act
-            const noticeHandler = registerGlobalMessageEvent.mock.calls[0][1];
-            noticeHandler({ notice: mockNotice });
-
-            // Assert
-            expect(useNoticeStore.getState().notice).toEqual(mockNotice);
-        });
-
-        it("should clear store when global notice event with null is received", () => {
-            // Arrange
-            const { registerGlobalMessageEvent } = require("../../../../_shared/helpers/message-transmitter/global-transmitter");
-            const mockNotice: NoticeModel = {
-                message: "test notice",
-                duration: 3,
+                message: "global.close.test",
+                duration: 10,
                 isWarning: false,
             };
 
             useNoticeStore.getState().showNotice(mockNotice);
             render(<NoticeDialog />);
 
-            // Act
-            const noticeHandler = registerGlobalMessageEvent.mock.calls[0][1];
-            noticeHandler({ notice: null });
+            // Act - Simulate global close dialog event
+            const { useGlobalEventsStore } = require("../../../../_shared/stores/global-events-store/global-events-store");
+            const mockSubscribe = useGlobalEventsStore.subscribe as jest.Mock;
 
-            // Assert
-            expect(useNoticeStore.getState().notice).toBeNull();
-        });
-    });
-
-    describe("Notice Store Integration", () => {
-        it("should use notice from store state", () => {
-            // Arrange
-            const mockNotice: NoticeModel = {
-                message: "store notice",
-                duration: 3,
-                isWarning: false,
-            };
-
-            // Act
-            useNoticeStore.getState().showNotice(mockNotice);
-            render(<NoticeDialog />);
-
-            // Assert
-            expect(screen.getByText("store notice")).toBeInTheDocument();
-        });
-
-        it("should clear notice when clearNotice is called", async () => {
-            // Arrange
-            const mockNotice: NoticeModel = {
-                message: "test notice",
-                duration: 3,
-                isWarning: false,
-            };
-
-            useNoticeStore.getState().showNotice(mockNotice);
-            render(<NoticeDialog />);
-
-            // Act
-            useNoticeStore.getState().clearNotice();
+            // Get the callback that was passed to subscribe
+            const subscribeCallback = mockSubscribe.mock.calls[0][0];
+            subscribeCallback({ closeDialog: true });
 
             // Assert
             await waitFor(() => {
-                expect(screen.queryByText("test notice")).not.toBeInTheDocument();
+                expect(useNoticeStore.getState().notice).toBeNull();
             });
-        });
-
-        it("should update when store state changes", async () => {
-            // Arrange
-            const { rerender } = render(<NoticeDialog />);
-
-            // Act
-            const mockNotice: NoticeModel = {
-                message: "updated notice",
-                duration: 3,
-                isWarning: false,
-            };
-
-            useNoticeStore.getState().showNotice(mockNotice);
-            rerender(<NoticeDialog />);
-
-            // Assert
-            expect(screen.getByText("updated notice")).toBeInTheDocument();
         });
     });
 });

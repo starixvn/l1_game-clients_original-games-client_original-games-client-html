@@ -7,11 +7,7 @@ import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import Styles from "./notice.module.scss";
 import { NoticeModel } from "../../game-base/type";
-import {
-    GlobalTransmitterEvent,
-    registerGlobalMessageEvent,
-    unsubscribeGlobalMessageEvent,
-} from "../../../_shared/helpers/message-transmitter/global-transmitter";
+import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import { useNoticeStore } from "../../../_shared/stores/notice-store/notice-store";
 
 const BaseNotice: React.FC<{
@@ -25,13 +21,18 @@ const BaseNotice: React.FC<{
     useEffect(() => {
         const timer = setTimeout(onClose, duration * 1000);
 
-        const onCloseHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.CLOSE_DIALOG, () => {
-            onClose();
+        // Subscribe to close dialog events from the store
+        const unsubscribe = useGlobalEventsStore.subscribe((state) => {
+            if (state.closeDialog) {
+                onClose();
+                // Reset the flag
+                useGlobalEventsStore.getState().setCloseDialog(false);
+            }
         });
 
         return () => {
             clearTimeout(timer);
-            unsubscribeGlobalMessageEvent(onCloseHandlerId as any);
+            unsubscribe();
         }
     }, []);
 
@@ -61,19 +62,7 @@ export const NoticeDialog = () => {
     const { tolgeeNamespace } = useGameContext();
     const { notice, clearNotice } = useNoticeStore();
 
-    useEffect(() => {
-        const noticeHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.NOTICE, ({ notice }) => {
-            if (notice) {
-                useNoticeStore.getState().showNotice(notice);
-            } else {
-                useNoticeStore.getState().clearNotice();
-            }
-        });
 
-        return () => {
-            unsubscribeGlobalMessageEvent(noticeHandlerId as any);
-        };
-    }, []);
 
     if (notice) {
         const {

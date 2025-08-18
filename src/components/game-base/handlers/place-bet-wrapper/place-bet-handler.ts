@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys, broadcastNotice, createNoticeFromErrorCode } from "../../../../_shared/helpers";
-import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";
+import { broadcastCloseDialog } from "../../../../_shared/helpers/global-events-helper";
 import { findHedgeBetGroup, getAccountBalance, isBalanceUnavailable, isHedgeBet, isInPhasePreventBet } from "../../../../_shared/helpers/validate-bet-helper";
 import { SystemContextModel } from "../../../../_shared/react-contexts";
 import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";
@@ -134,7 +134,7 @@ export class PlaceBetHandler {
         this.clearNotice();
 
         this.clearRetryInterval();
-        GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.CLOSE_DIALOG]: {} });
+        broadcastCloseDialog();
         if (endBet === -1) {
             !apiError && this.handleBetFailed({ notice, kickedOut }, signOut);
         } else {

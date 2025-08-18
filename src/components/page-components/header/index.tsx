@@ -1,24 +1,10 @@
-import { useEffect, useState } from "react";
-import {
-    GlobalTransmitterEvent,
-    registerGlobalMessageEvent,
-    unsubscribeGlobalMessageEvent,
-} from "../../../_shared/helpers/message-transmitter/global-transmitter";
+
 import { IFRAME_MESSAGES, sendMessageToParent } from "../../../_shared/utils/iframe-messages";
 import HeaderTitle from "./header-title";
 import { UserInfo } from "./user-info";
+import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 const Header = () => {
-    const [openingGameId, setOpeningGameId] = useState(0);
-
-    useEffect(() => {
-        const gameScriberId = registerGlobalMessageEvent(GlobalTransmitterEvent.OPEN_GAME_ID, ({ openingGameId }) => {
-            setOpeningGameId(openingGameId);
-        });
-
-        return () => {
-            unsubscribeGlobalMessageEvent(gameScriberId);
-        };
-    }, []);
+    const { openingGameId } = useGlobalEventsStore();
 
     return (
         <header
