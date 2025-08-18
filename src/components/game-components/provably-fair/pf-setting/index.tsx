@@ -22,6 +22,8 @@ const TIME_OUT = 5000;
 const MAX_HEIGHT_EXPANDED = "max-h-[1000px]";
 const MAX_HEIGHT_COLLAPSED = "max-h-[50px]";
 
+const SECTION_TITLE_CLASS = Styles["section-title"];
+
 const handleOnKeyDown = (event: any) => {
     const chr = event.key;
     if ((NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) || (event.target.value.length >= 4 && event.which !== 8)) {
@@ -73,7 +75,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                                 className={`flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]`}
                                 onClick={toggleSettingsSection}
                             >
-                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_title_provably_fair_settings")}</h3>
+                                <h3 className={SECTION_TITLE_CLASS}>{translateSNGames("pf_title_provably_fair_settings")}</h3>
                                 <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
                                     {isSettingsExpanded ? (
                                         <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
@@ -98,7 +100,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                                 }`}
                         >
                             <div className="flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]" onClick={toggleGuidesSection}>
-                                <h3 className={Styles["section-title"]}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>
+                                <h3 className={SECTION_TITLE_CLASS}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>
                                 <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
                                     {isGuidesExpanded ? (
                                         <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
@@ -264,7 +266,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                     <li>{translateCommon("pf_settings_para_2")}</li>
                 </ul>
             </div>
-            <h3 className={Styles["section-title"]}>{translateCommon("pf_header_client_seed")}</h3>
+            <h3 className={SECTION_TITLE_CLASS}>{translateCommon("pf_header_client_seed")}</h3>
             <div className={Styles["client-seed-form"]}>
                 {Object.keys(ownBets).length > 0 && <div className={Styles["form-overlay"]}></div>}
                 {isLoading ? (
@@ -332,7 +334,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                 )}
             </div>
 
-            <h3 className={Styles["section-title"]}>{translateCommon("pf_header_server_seed_sha256")}</h3>
+            <h3 className={SECTION_TITLE_CLASS}>{translateCommon("pf_header_server_seed_sha256")}</h3>
             <div className={Styles["client-seed-form"]}>
                 <div className="input-group width-full">
                     <CopyableTextInput value={serverSeedHash} id="server-seed-hash" />
