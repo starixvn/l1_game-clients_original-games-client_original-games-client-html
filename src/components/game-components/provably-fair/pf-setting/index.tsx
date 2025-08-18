@@ -31,7 +31,7 @@ const handleOnKeyDown = (event: any) => {
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
+const PFSettingModal: FC<{ customClientSeedInfo?: string}> = ({ customClientSeedInfo }) => {
     const isShowPFSetting = usePopupStore((state) => state.isShowPFSetting);
     const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
 
@@ -43,6 +43,13 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
 
     const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(true);
     const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (isShowPFSetting) {
+            setIsSettingsExpanded(true);
+            setIsGuidesExpanded(false);
+        }
+    }, [isShowPFSetting]);
 
     const toggleSettingsSection = () => {
         setIsSettingsExpanded(!isSettingsExpanded);
@@ -80,7 +87,6 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                             title={translateCommon("pf_pop-up_title_pf_guide")}
                             isExpanded={isGuidesExpanded}
                             onToggle={toggleGuidesSection}
-                            className="rounded-md"
                         >
                             <WrapperPFGuide />
                         </ToggleSection>
@@ -124,6 +130,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     };
 
     useEffect(() => {
+        console.log("pfClientSeedSetting", pfClientSeedSetting);
         setRandomClientSeed(pfClientSeedSetting?.randomClientSeed || "");
         setManualClientSeed(pfClientSeedSetting?.manualClientSeed || "");
         setIsManualMode(pfClientSeedSetting?.useManualClientSeed || false);
@@ -138,6 +145,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     }, [drawId]);
 
     useEffect(() => {
+        console.log("isFirstFetch", isFirstFetch);
         if (isFirstFetch) {
             gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { drawId } },
@@ -146,12 +154,13 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     }, [isFirstFetch]);
 
     useEffect(() => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-        }, TIME_OUT);
+        // setIsLoading(true);
+        // setTimeout(() => {
+        //     setIsLoading(false);
+        // }, TIME_OUT);
 
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
+            console.log("handleServerSeed", pfServerSeed);
             setServerSeedHash(pfServerSeed.serverSeedHash);
         };
 
