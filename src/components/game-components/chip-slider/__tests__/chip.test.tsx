@@ -1,12 +1,12 @@
 import { render } from "@testing-library/react";
-import { useSystemContext } from "../../../../_shared/react-contexts";
 import { Chip } from "../chip";
+import useBettingStore from "../../../../_shared/stores/betting-store/betting-store";
 
-jest.mock("../../../../_shared/react-contexts", () => ({ useSystemContext: jest.fn() }));
+jest.mock("../../../../_shared/stores/betting-store/betting-store", () => jest.fn());
 
 describe(Chip.name, () => {
     beforeAll(() => {
-        (useSystemContext as jest.Mock).mockReturnValue({ selectedChip: 100 });
+        (useBettingStore as unknown as jest.Mock).mockReturnValue(100);
     });
 
     it("should render match the snapshot when chip < 1000", () => {
