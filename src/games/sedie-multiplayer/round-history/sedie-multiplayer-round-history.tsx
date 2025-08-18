@@ -24,7 +24,7 @@ export const SedieMultiplayerRoundHistory = () => {
     const sideChoices = [SeDieChoices.white4, SeDieChoices.white3, SeDieChoices.red2, SeDieChoices.red3, SeDieChoices.red4];
 
     return (
-        <div>
+        <div className="my-3">
             <RoundHistory
                 roundHistory={roundHistory}
                 isShowBlink={isShowBlink}

@@ -412,21 +412,26 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 wholeRound: durations.wholeRound,
                 remainingTime,
                 durations,
-            })
+            }),
         });
 
-        if (gameStateContextModel.roundState !== this.roundStateHandler.determineRoundBaseState({
-            roundRemainingTime: this.roundTimeCounter,
-            wholeRound: durations.wholeRound,
-            remainingTime,
-            durations,
-        })) {
-            const isStartNewRound = gameStateContextModel.roundState === RoundState.SwitchRound && this.roundStateHandler.determineRoundBaseState({
+        if (
+            gameStateContextModel.roundState !==
+            this.roundStateHandler.determineRoundBaseState({
                 roundRemainingTime: this.roundTimeCounter,
                 wholeRound: durations.wholeRound,
                 remainingTime,
                 durations,
-            }) === RoundState.InRound;
+            })
+        ) {
+            const isStartNewRound =
+                gameStateContextModel.roundState === RoundState.SwitchRound &&
+                this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                }) === RoundState.InRound;
             const newGameState = {
                 prevRoundState: gameStateContextModel.roundState,
                 roundState: this.roundStateHandler.determineRoundBaseState({
@@ -454,12 +459,15 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             writeDebugLog({
                 name: "change-round-state",
                 prevRoundState: RoundState[gameStateContextModel.roundState],
-                newRoundState: RoundState[this.roundStateHandler.determineRoundBaseState({
-                    roundRemainingTime: this.roundTimeCounter,
-                    wholeRound: durations.wholeRound,
-                    remainingTime,
-                    durations,
-                })],
+                newRoundState:
+                    RoundState[
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
+                    ],
                 ...newGameState,
             });
 
@@ -469,12 +477,17 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 payload: { newGameState },
             });
 
-            this.updatePlaceBetContext(this.roundStateHandler.determineRoundBaseState({
-                roundRemainingTime: this.roundTimeCounter,
-                wholeRound: durations.wholeRound,
-                remainingTime,
-                durations,
-            }));
+            if ([RoundState.None, RoundState.BeforePlaceBet].includes(newGameState.prevRoundState)) {
+                useGameStore.getState().resetBettingInfo();
+            }
+            this.updatePlaceBetContext(
+                this.roundStateHandler.determineRoundBaseState({
+                    roundRemainingTime: this.roundTimeCounter,
+                    wholeRound: durations.wholeRound,
+                    remainingTime,
+                    durations,
+                })
+            );
 
             const isContinuePlaying = gameStateContextModel.roundState !== RoundState.None;
             if (isContinuePlaying) {
@@ -484,14 +497,16 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                         wholeRound: durations.wholeRound,
                         remainingTime,
                         durations,
-                    })
+                    }),
                 });
-                this.gameSoundHandler.handleSound(this.roundStateHandler.determineRoundBaseState({
-                    roundRemainingTime: this.roundTimeCounter,
-                    wholeRound: durations.wholeRound,
-                    remainingTime,
-                    durations,
-                }));
+                this.gameSoundHandler.handleSound(
+                    this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    })
+                );
             }
         }
 
@@ -500,7 +515,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         }
 
         if (this.roundTimeCounter === durations.startNewRoundAnim) {
-            useGameStore.getState().resetBettingInfo();
             dispatch({
                 type: GameEventActionType.START_NEW_ROUND_ANIM,
                 payload: { isPlayStartRoundAnimation: true },
@@ -508,7 +522,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         }
 
         if (this.roundTimeCounter === durations.startNewRoundAnim - 2) {
-            useGameStore.getState().resetBettingInfo();
             dispatch({
                 type: GameEventActionType.START_NEW_ROUND_ANIM,
                 payload: { isPlayStartRoundAnimation: false },
@@ -719,7 +732,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                             {this.renderRightSide()}
                             <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
                         </div>
-                        <PFWrapper socket={this.socket} gameMessageHandler={this.gameMessageHandler} gameId={this.props.id} uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}>
+                        <PFWrapper
+                            socket={this.socket}
+                            gameMessageHandler={this.gameMessageHandler}
+                            gameId={this.props.id}
+                            uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
+                        >
                             {this.renderPFSettingModal()}
                             {this.renderBetHistoryModal()}
                         </PFWrapper>
