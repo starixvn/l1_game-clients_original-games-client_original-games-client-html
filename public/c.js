@@ -9,7 +9,7 @@ window.envConfig = {
     },
     proxy: {
         ssl: true,
-        subDomain: "l2-proxy",
+        subDomain: "l2-proxy1",
         path: "",
     },
     sentry: {
@@ -17,7 +17,7 @@ window.envConfig = {
         environment: "DEV",
     },
     enableSourceMap: true,
-    subGuideDomain: "l2-guide",
+    subGuideDomain: "l2-guide1",
     enableMsgpackParser: false,
     system: "VG",
     appType: 10,

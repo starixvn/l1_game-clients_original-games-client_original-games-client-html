@@ -8,19 +8,19 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { PFGuide } from "../pf-guide";
+import { WrapperPFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
+import ToggleSection from "./toggle-section";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getPfInfo";
 const PFResultMessage = "pfResult";
 const PFPublishMessage = "pf";
 const TIME_OUT = 5000;
-const MAX_HEIGHT_EXPANDED = "max-h-[1000px]";
-const MAX_HEIGHT_COLLAPSED = "max-h-[50px]";
+
 
 const SECTION_TITLE_CLASS = Styles["section-title"];
 
@@ -36,6 +36,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
     const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
 
     const { t: translateSNGames } = useSNTranslate();
+    const { t: translateCommon } = useCommonTranslate();
     const handleCloseModal = () => {
         togglePFSetting(false);
     };
@@ -61,64 +62,28 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
         isShowPFSetting && (
             <ModalContainer
                 id="pf-setting"
-                title={<div>{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>}
+                title={<div className="flex-1 text-center">{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>}
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
                 <div className="ml-4 mr-4 mt-3">
                     <div className={`flex flex-col gap-5`}>
-                        <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${isSettingsExpanded ? MAX_HEIGHT_EXPANDED : MAX_HEIGHT_COLLAPSED
-                                }`}
+                        <ToggleSection
+                            title={translateCommon("pf_title_provably_fair_settings")}
+                            isExpanded={isSettingsExpanded}
+                            onToggle={toggleSettingsSection}
                         >
-                            <div
-                                className={`flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]`}
-                                onClick={toggleSettingsSection}
-                            >
-                                <h3 className={SECTION_TITLE_CLASS}>{translateSNGames("pf_title_provably_fair_settings")}</h3>
-                                <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
-                                    {isSettingsExpanded ? (
-                                        <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
-                                    ) : (
-                                        <img
-                                            src="/static/images/icons/chevron-right.svg"
-                                            className="w-[16px] h-[16px]"
-                                            alt="chevron-right"
-                                        />
-                                    )}
-                                </span>
-                            </div>
-                            {isSettingsExpanded && (
-                                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-md`}>
-                                    <PFSetting customClientSeedInfo={customClientSeedInfo} />
-                                </div>
-                            )}
-                        </div>
+                            <PFSetting customClientSeedInfo={customClientSeedInfo} />
+                        </ToggleSection>
 
-                        <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${isGuidesExpanded ? MAX_HEIGHT_EXPANDED : MAX_HEIGHT_COLLAPSED
-                                }`}
+                        <ToggleSection
+                            title={translateCommon("pf_pop-up_title_pf_guide")}
+                            isExpanded={isGuidesExpanded}
+                            onToggle={toggleGuidesSection}
+                            className="rounded-md"
                         >
-                            <div className="flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]" onClick={toggleGuidesSection}>
-                                <h3 className={SECTION_TITLE_CLASS}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>
-                                <span className="bg-[#3F5F8D] rounded-md p-1 flex justify-center items-center w-[32px] h-[32px]">
-                                    {isGuidesExpanded ? (
-                                        <img src="/static/images/icons/chevron-down.svg" className="w-[16px] h-[16px]" alt="chevron-down" />
-                                    ) : (
-                                        <img
-                                            src="/static/images/icons/chevron-right.svg"
-                                            className="w-[16px] h-[16px]"
-                                            alt="chevron-right"
-                                        />
-                                    )}
-                                </span>
-                            </div>
-                            {isGuidesExpanded && (
-                                <div className={`${Styles["section-content"]}`}>
-                                    <PFGuide />
-                                </div>
-                            )}
-                        </div>
+                            <WrapperPFGuide />
+                        </ToggleSection>
                     </div>
                 </div>
             </ModalContainer>

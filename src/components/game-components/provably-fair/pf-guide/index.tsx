@@ -94,4 +94,4 @@ const ButtonPFGuide: FC = () => {
     );
 };
 
-export { ButtonPFGuide, PFGuideModal, PFGuide };
+export { ButtonPFGuide, PFGuideModal, PFGuide, WrapperPFGuide };

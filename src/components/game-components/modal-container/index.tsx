@@ -22,15 +22,17 @@ const ModalContainer: FC<{
     return (
         <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
             <div id={id} className={`${Styles["modal-full"]} ${isOpen ? Styles["open"] : Styles["close"]}`}>
-                <div className={Styles["title"]}>
+                <div className={`flex items-center px-5 ${Styles["title"]}`}>
                     {title}
                     <span
-                        className={`icon-close ${Styles["icon-close"]}`}
+                        className="cursor-pointer ml-auto"
                         onClick={() => {
                             clickSound();
                             onCloseModal();
                         }}
-                    ></span>
+                    >
+                        <img src="/static/images/icons/close.svg" className="w-[16px] h-[16px]" alt="close" />
+                    </span>
                 </div>
 
                 <div className={`${Styles["content"]} ${isMobileOnly ? Styles["mobile"] : ""}`}>{children}</div>

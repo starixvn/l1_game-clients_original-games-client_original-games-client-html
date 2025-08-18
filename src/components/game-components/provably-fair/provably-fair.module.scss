@@ -40,7 +40,6 @@
 }
 
 .pf-setting-container {
-    --text-content-color: #9ca3ae;
     --text-header-color: #a6c0fc;
     --text-link-color: #2187ff;
     --text-color-highlight: #ffbc11;
@@ -118,7 +117,6 @@
 }
 
 .section-content {
-    margin-bottom: 24px;
     transition: all 0.3s ease-in-out;
     opacity: 1;
     transform: translateY(0);
@@ -258,7 +256,6 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-header-color);
-    margin-bottom: var(--spacing-size-2);
 }
 
 .client-seed-form {
