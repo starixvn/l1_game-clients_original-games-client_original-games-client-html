@@ -35,10 +35,11 @@ export function useBetHistory() {
                 handler.cleanup();
             };
         }
+        return undefined;
     }, [gameMessageHandler]);
 
     // Action functions
-    const requestHistory = (page: number = 1) => {
+    const requestHistory = (page = 1) => {
         betHistoryHandler?.requestHistory(page);
     };
 
@@ -84,7 +85,7 @@ export function useBetHistory() {
 
         // Utilities
         getWinValue,
-        
+
         // Handler reference (for advanced usage)
         betHistoryHandler,
     };

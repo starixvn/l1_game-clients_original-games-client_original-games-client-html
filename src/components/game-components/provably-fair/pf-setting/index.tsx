@@ -8,18 +8,19 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { ButtonPFGuide, PFGuide } from "../pf-guide";
+import { PFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
-import { CachedImage } from "../../cached-image";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getPfInfo";
 const PFResultMessage = "pfResult";
 const PFPublishMessage = "pf";
 const TIME_OUT = 5000;
+const MAX_HEIGHT_EXPANDED = "max-h-[1000px]";
+const MAX_HEIGHT_COLLAPSED = "max-h-[50px]";
 
 const handleOnKeyDown = (event: any) => {
     const chr = event.key;
@@ -65,9 +66,8 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 <div className="ml-4 mr-4 mt-3">
                     <div className={`flex flex-col gap-5`}>
                         <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
-                                isSettingsExpanded ? "max-h-[1000px]" : "max-h-[50px]"
-                            }`}
+                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${isSettingsExpanded ? MAX_HEIGHT_EXPANDED : MAX_HEIGHT_COLLAPSED
+                                }`}
                         >
                             <div
                                 className={`flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]`}
@@ -94,9 +94,8 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                         </div>
 
                         <div
-                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${
-                                isGuidesExpanded ? "max-h-[1000px]" : "max-h-[50px]"
-                            }`}
+                            className={`rounded-md overflow-hidden transition-all duration-300 ease-in-out ${isGuidesExpanded ? MAX_HEIGHT_EXPANDED : MAX_HEIGHT_COLLAPSED
+                                }`}
                         >
                             <div className="flex flex-row bg-[#2A4770] p-2 justify-between rounded-t-[12px]" onClick={toggleGuidesSection}>
                                 <h3 className={Styles["section-title"]}>{translateSNGames("pf_pop-up_title_pf_guide")}</h3>

@@ -5,18 +5,18 @@ import { LoadingSpinner } from '../game-loading/loading-spinner';
 import { useCommonTranslate } from '../../../_shared/react-hooks';
 import useGameStore from '../../../_shared/stores/game-store/game-store';
 import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
-import { 
-    transformBetLogsToDisplayData, 
+import {
+    transformBetLogsToDisplayData,
     getWinValueColorClass,
     scrollBetHistoryToTop,
-    BetHistoryDisplayData 
+    BetHistoryDisplayData
 } from './bet-history-utils';
 import styles from './bet-history.module.scss';
 
 export const BetHistoryTable = () => {
     const { gameMessageHandler } = useGameContext();
     const { t: translateCommon } = useCommonTranslate();
-    
+
     // Store state
     const {
         getDisplayedBetLogs,
@@ -24,7 +24,7 @@ export const BetHistoryTable = () => {
         isExpanded,
         totalPages,
     } = useGameStore();
-    
+
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
     const isInitialized = useRef(false);
@@ -34,15 +34,16 @@ export const BetHistoryTable = () => {
         if (!isInitialized.current) {
             const handler = new BetHistoryHandler({ gameMessageHandler });
             setBetHistoryHandler(handler);
-            
+
             // Load initial data
             handler.requestHistory(1);
             isInitialized.current = true;
-            
+
             return () => {
                 handler.cleanup();
             };
         }
+        return undefined;
     }, [gameMessageHandler]);
 
     // Table column configuration
@@ -54,11 +55,13 @@ export const BetHistoryTable = () => {
 
     // Handle toggle expand/collapse
     const handleToggleExpand = () => {
-        if (!betHistoryHandler) return;
-        
+        if (!betHistoryHandler) {
+            return;
+        }
+
         const wasExpanded = isExpanded;
         betHistoryHandler.toggleExpanded();
-        
+
         // Scroll to top when collapsing
         if (wasExpanded) {
             setTimeout(scrollBetHistoryToTop, 100);
@@ -134,7 +137,9 @@ function renderToggleButton(
     handleToggleExpand: () => void,
     styles: any
 ) {
-    if (totalPages <= 1) return null;
+    if (totalPages <= 1) {
+        return null;
+    }
 
     return (
         <div className={styles['toggle-button-container']}>

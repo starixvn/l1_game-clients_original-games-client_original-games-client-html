@@ -16,7 +16,7 @@ export class BetHistoryHandler {
 
     private registerHistoryEvents() {
         this.handlerId = this.props.gameMessageHandler.register(
-            this.HISTORY_EVENT, 
+            this.HISTORY_EVENT,
             this.handleHistoryResponse.bind(this)
         );
     }
@@ -26,13 +26,13 @@ export class BetHistoryHandler {
         store.registerBetHistoryEvent(data);
     }
 
-    requestHistory(page: number = 1) {
+    requestHistory(page = 1) {
         const store = useGameStore.getState();
-        
+
         // Set loading state
         store.setIsLoading(true);
         store.setCurrentPage(page);
-        
+
         // Send socket message to request history
         this.props.gameMessageHandler.broadcastGameEvent({
             [messageEventType.SEND_SOCKET_MESSAGE]: {
@@ -45,7 +45,7 @@ export class BetHistoryHandler {
     loadNextPage() {
         const store = useGameStore.getState();
         const nextPage = store.currentPage + 1;
-        
+
         if (nextPage <= store.totalPages && store.hasMoreData) {
             this.requestHistory(nextPage);
         }
@@ -54,7 +54,7 @@ export class BetHistoryHandler {
     loadAllRemainingPages() {
         const store = useGameStore.getState();
         const { currentPage, totalPages } = store;
-        
+
         // Load all remaining pages efficiently
         for (let page = currentPage + 1; page <= totalPages; page++) {
             this.requestHistory(page);
@@ -64,9 +64,9 @@ export class BetHistoryHandler {
     toggleExpanded() {
         const store = useGameStore.getState();
         const newExpandedState = !store.isExpanded;
-        
+
         store.setIsExpanded(newExpandedState);
-        
+
         // If expanding and we don't have all data, load remaining pages
         if (newExpandedState && store.hasMoreData && store.currentPage < store.totalPages) {
             this.loadAllRemainingPages();
