@@ -2,5 +2,7 @@
   "totalIssues": 0,
   "severities": {},
   "types": {},
-  "rules": {}
+  "rules": {},
+  "qualityGate": "OK",
+  "exportDate": "2025-08-18T10:49:48.718Z"
 }

@@ -1,5 +1,1 @@
 File,Line,Severity,Type,Rule,Message,Effort
-"src/components/game-base/handlers/place-bet-wrapper/place-bet-handler.ts","1","MINOR","CODE_SMELL","typescript:S1128","Remove this unused import of 'DefaultParamType'.","1min"
-"src/components/game-base/type.ts","1","MINOR","CODE_SMELL","typescript:S1128","Remove this unused import of 'DefaultParamType'.","1min"
-"src/components/game-components/bet-confirm-dialog/index.tsx","2","MINOR","CODE_SMELL","typescript:S1128","Remove this unused import of 'PlayerContextModel'.","1min"
-"src/components/game-components/confirm-bet/index.tsx","4","MINOR","CODE_SMELL","typescript:S1128","Remove this unused import of 'PlayerContextModel'.","1min"
