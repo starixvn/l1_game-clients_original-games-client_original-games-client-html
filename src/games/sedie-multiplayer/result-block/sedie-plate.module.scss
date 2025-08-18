@@ -33,7 +33,6 @@
     width: var(--boundary-size);
     height: var(--boundary-size);
     margin: calc((var(--plate-size) - var(--boundary-size)) / 2) auto 0;
-    // border: 1px dashed rgba(255, 255, 255, 0.3);
     border-radius: 50%; // Changed to circle
     display: flex;
     align-items: center;
