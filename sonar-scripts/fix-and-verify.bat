@@ -12,7 +12,7 @@ echo.
 echo Starting automated fix and verify process...
 echo.
 
-node fix-and-verify.js
+node sonar-scripts/fix-and-verify.js
 
 echo.
 echo Process completed! Check the output above for results.

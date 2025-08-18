@@ -178,7 +178,7 @@ async function runTests() {
 async function runSonarAnalysis() {
     console.log("📊 Running SonarQube analysis...");
     try {
-        execSync("node run-sonar.js", { stdio: "inherit" });
+        execSync("node sonar-scripts/run-sonar.js", { stdio: "inherit" });
         console.log("✅ SonarQube analysis completed");
         return true;
     } catch (error) {

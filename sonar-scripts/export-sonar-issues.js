@@ -54,7 +54,7 @@ async function exportSonarIssues() {
         console.log(`📊 Quality Gate Status: ${qualityGate.status || "Unknown"}`);
 
         // Create reports directory if it doesn't exist
-        const reportsDir = path.join(__dirname, "sonar-reports");
+        const reportsDir = path.join(__dirname, "..", "sonar-reports");
         if (!fs.existsSync(reportsDir)) {
             fs.mkdirSync(reportsDir, { recursive: true });
         }

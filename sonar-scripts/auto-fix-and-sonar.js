@@ -125,7 +125,7 @@ async function run() {
     if (changed > 0) {
         console.log("📦 Running Sonar analysis (push results)...");
         // Ensure SONAR_TOKEN env is available to run-sonar.js
-        execSync("node run-sonar.js", { stdio: "inherit", env: { ...process.env } });
+        execSync("node sonar-scripts/run-sonar.js", { stdio: "inherit", env: { ...process.env } });
     } else {
         console.log("No changes needed; skipping analysis run.");
     }
@@ -135,7 +135,7 @@ async function run() {
     console.log(`Remaining open issues: ${issuesAfter.length}`);
 
     // Write a small summary
-    const reportsDir = path.join(process.cwd(), "sonar-reports");
+    const reportsDir = path.join(__dirname, "..", "sonar-reports");
     if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
     const summaryPath = path.join(reportsDir, "auto-fix-summary.md");
     fs.writeFileSync(

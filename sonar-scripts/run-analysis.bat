@@ -5,7 +5,7 @@ echo ========================================
 echo.
 
 echo Starting analysis...
-node run-code-and-sonar.js
+node sonar-scripts/run-code-and-sonar.js
 
 echo.
 echo Analysis completed! Check the sonar-reports folder for results.

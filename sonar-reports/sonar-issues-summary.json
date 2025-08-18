@@ -1,14 +1,6 @@
 {
-  "totalIssues": 4,
-  "severities": {
-    "MINOR": 4
-  },
-  "types": {
-    "CODE_SMELL": 4
-  },
-  "rules": {
-    "typescript:S1128": 4
-  },
-  "qualityGate": "ERROR",
-  "exportDate": "2025-08-18T10:12:28.175Z"
+  "totalIssues": 0,
+  "severities": {},
+  "types": {},
+  "rules": {}
 }
