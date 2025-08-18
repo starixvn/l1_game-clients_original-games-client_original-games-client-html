@@ -9,7 +9,7 @@ const PROJECT_KEY = process.env.SONAR_PROJECT_KEY || "sedie-multiplayer-client";
 const SONAR_TOKEN = process.env.SONAR_TOKEN || "sqa_1f724aecdc0b76fa05c71e38bf4bcb5d6dadaa6b";
 
 // Custom rules file path
-const CUSTOM_RULES_FILE = path.join(__dirname, "..", "sonar", "AXSuqBv7Mkh2CgVkmwgi.xml");
+const CUSTOM_RULES_FILE = path.join(__dirname, "typescript-rules.xml");
 
 async function runTests() {
     console.log("🧪 Running tests and generating coverage...");
@@ -47,7 +47,7 @@ async function runSonarAnalysis() {
         console.log(`📋 Using custom rules from: ${CUSTOM_RULES_FILE}`);
 
         // Run SonarQube analysis
-        execSync("node sonar-scripts/run-sonar.js", { stdio: "inherit" });
+        execSync("node " + path.join(__dirname, "run-sonar.js"), { stdio: "inherit" });
         console.log("✅ SonarQube analysis completed successfully");
         return true;
     } catch (error) {

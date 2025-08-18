@@ -12,7 +12,8 @@ echo.
 echo Starting automated fix and verify process...
 echo.
 
-node sonar-scripts/fix-and-verify.js
+cd /d "%~dp0"
+node fix-and-verify.js
 
 echo.
 echo Process completed! Check the output above for results.

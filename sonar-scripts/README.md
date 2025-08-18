@@ -1,6 +1,6 @@
 # SonarQube Scripts
 
-This folder contains all SonarQube-related automation scripts for the original-games-client-html project.
+This folder contains the essential SonarQube automation scripts for the original-games-client-html project.
 
 ## 📁 Scripts Overview
 
@@ -10,7 +10,7 @@ This folder contains all SonarQube-related automation scripts for the original-g
 
 -   **Purpose**: Basic SonarQube analysis execution
 -   **Usage**: `node sonar-scripts/run-sonar.js`
--   **Description**: Runs SonarQube analysis with custom rules from `sonar/AXSuqBv7Mkh2CgVkmwgi.xml`
+-   **Description**: Runs SonarQube analysis with custom TypeScript rules
 
 #### `run-code-and-sonar.js`
 
@@ -20,19 +20,9 @@ This folder contains all SonarQube-related automation scripts for the original-g
     -   Runs tests and generates coverage
     -   Runs linting
     -   Executes SonarQube analysis
-    -   Exports issues to multiple formats in `sonar-reports/`
+    -   Exports issues to multiple formats in `../sonar-reports/`
 
 ### 🔄 **Automated Fix Scripts**
-
-#### `auto-fix-and-sonar.js`
-
--   **Purpose**: Pulls issues, auto-fixes, analyzes, and re-checks
--   **Usage**: `node sonar-scripts/auto-fix-and-sonar.js`
--   **Description**:
-    -   Fetches SonarQube issues via API
-    -   Auto-fixes supported issues (currently: typescript:S1128 unused imports)
-    -   Runs analysis and uploads results
-    -   Re-checks issues and prints summary
 
 #### `fix-and-verify.js`
 
@@ -53,15 +43,9 @@ This folder contains all SonarQube-related automation scripts for the original-g
 -   **Description**:
     -   Fetches issues, measures, and quality gate status
     -   Exports to JSON, Markdown, and CSV formats
-    -   Saves to `sonar-reports/` directory
+    -   Saves to `../sonar-reports/` directory
 
 ### 🚀 **Batch Files (Windows)**
-
-#### `run-analysis.bat`
-
--   **Purpose**: Easy execution of comprehensive analysis
--   **Usage**: Double-click or `sonar-scripts/run-analysis.bat`
--   **Description**: Runs `run-code-and-sonar.js` with user-friendly interface
 
 #### `fix-and-verify.bat`
 
@@ -81,7 +65,7 @@ All scripts support these environment variables:
 
 ### Custom Rules
 
--   Uses custom TypeScript rules from `../sonar/AXSuqBv7Mkh2CgVkmwgi.xml`
+-   Uses custom TypeScript rules from `typescript-rules.xml` (in this folder)
 -   Rules are applied during SonarQube analysis
 
 ## 📁 **Output Files**
@@ -118,7 +102,6 @@ node sonar-scripts/export-sonar-issues.js
 
 ```bash
 # Double-click or run:
-sonar-scripts/run-analysis.bat
 sonar-scripts/fix-and-verify.bat
 ```
 
@@ -127,7 +110,7 @@ sonar-scripts/fix-and-verify.bat
 1. **Development**: Use `run-code-and-sonar.js` for regular analysis
 2. **Issue Resolution**: Use `fix-and-verify.js` for automated fixes
 3. **Reporting**: Use `export-sonar-issues.js` for detailed reports
-4. **Monitoring**: Check `sonar-reports/` for all outputs
+4. **Monitoring**: Check `../sonar-reports/` for all outputs
 
 ## 📝 **Notes**
 
@@ -136,3 +119,4 @@ sonar-scripts/fix-and-verify.bat
 -   Failed tests or linting issues don't stop the process
 -   Quality Gate status is checked after each analysis
 -   Maximum 5 attempts for automated fixes to prevent infinite loops
+-   Custom TypeScript rules are loaded from `typescript-rules.xml` in this folder
