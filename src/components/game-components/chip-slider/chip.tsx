@@ -1,9 +1,9 @@
 import React from "react";
 
 import { resolveChipColorHex, systemName } from "../../../_shared/constants";
-import { useSystemContext } from "../../../_shared/react-contexts";
 import Styles from "./chip-slider.module.scss";
 import { CachedImage } from "../cached-image";
+import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
 export const Chip: React.FC<{ value: number; onClickChip: Function; text: string; image: string }> = ({
     value,
@@ -11,9 +11,7 @@ export const Chip: React.FC<{ value: number; onClickChip: Function; text: string
     text,
     image,
 }) => {
-    const systemContext = useSystemContext();
-
-    const { selectedChip } = systemContext;
+    const selectedChip = useBettingStore((state) => state.selectedChip);
 
     const getChipClassName = () => {
         return `${Styles["chip-container"]} ${selectedChip === value ? Styles["selected"] : ""}`;
