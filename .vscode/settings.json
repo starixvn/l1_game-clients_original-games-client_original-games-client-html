@@ -1,7 +1,7 @@
 {
     "sonarlint.connectedMode.project": {
-        "connectionId": "https-sonarqube-lumigame-com-",
-        "projectKey": "gn-game-client"
+        "connectionId": "https-sonarqube-lumigame-com",
+        "projectKey": "sedie-multiplayer-client"
     },
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.expand": false,

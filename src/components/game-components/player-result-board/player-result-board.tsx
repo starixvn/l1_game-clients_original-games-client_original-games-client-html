@@ -8,7 +8,7 @@ const columns: TableColumn[] = [
 ];
 
 const getCellClassName = (columnKey: string, _value: any, row: any) => {
-  if (columnKey === "win" && row.winAmount > 0) {
+  if (columnKey === "win" && +row.win > 0) {
     return "text-winning-highlight font-semibold";
   }
   return "";
