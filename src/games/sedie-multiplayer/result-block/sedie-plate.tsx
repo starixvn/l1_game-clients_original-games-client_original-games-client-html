@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import styles from "./plate.module.scss";
+import styles from "./sedie-plate.module.scss";
 import { RoundState } from "../../../components/game-base/type";
 import useResult from "../../../_shared/react-hooks/use-result";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { SeDieResult } from "../sedie-multiplayer-constants";
+import { SedieButtons } from "./sedie-buttons";
+import { useGameContext } from "../../../_shared/react-contexts";
 
-const BUTTON_SIZE = 38; // Button size in pixels
-const PLATE_SIZE = 200; // Plate size in pixels
-const BOWL_SIZE = 140; // Bowl size in pixels
-const BOUNDARY_SIZE = 130; // Boundary size in pixels
+const BUTTON_SIZE = 30; // Button size in pixels
+const PLATE_SIZE = 228; // Plate size in pixels
+const BOWL_SIZE = 123; // Bowl size in pixels
+const BOUNDARY_SIZE = 115; // Boundary size in pixels
 const CIRCLE_RADIUS = BOUNDARY_SIZE / 2; // Half of boundary diameter
 const BUTTON_BUFFER = 2; // Buffer between buttons
 const SHAKE_DURATION = 2000; // Shake duration in milliseconds
 const OPEN_DURATION = 1000; // Open duration in milliseconds
 const CLOSE_DURATION = 1000; // Close duration in milliseconds
 const MAX_ATTEMPTS = 10000;
+const DELAY = 500;
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
-const PlateButtons: React.FC = () => {
+const SediePlate: React.FC = () => {
+    const { durations } = useGameContext();
     const { roundHistory, result, roundState, roundId } = useGameStateContext();
+    const [isShow, setIsShow] = useState(false);
     const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
-    const [animationState] = useState<AnimationState>("idle");
-    const [showButtons] = useState(true);
+    const [animationState, setAnimationState] = useState<AnimationState>("idle");
+    const [showButtons, setShowButtons] = useState(false);
     const [buttonsValue, setButtonsValue] = useState<boolean[]>([]);
     const currentResult = useResult<SeDieResult>({ result, roundState, roundHistory });
 
@@ -38,41 +42,59 @@ const PlateButtons: React.FC = () => {
         setButtonsPosition(newButtons);
     }, [roundId]);
 
-    // Animation handlers are defined but not used in this component
-    // They are kept for potential future use or reference
+    useEffect(() => {
+        const resetState = () => {
+            setIsShow(false);
+            setShowButtons(false);
+            setAnimationState("idle");
+        };
+        let timeoutShake;
+        let timeoutDisplayResult;
+        let timeout;
+        switch (roundState) {
+            case RoundState.LockingBet:
+                timeoutShake && clearTimeout(timeoutShake);
+                timeoutShake = setTimeout(() => {
+                    setIsShow(true);
+                    setShowButtons(false);
+                    setAnimationState("shake");
+                }, DELAY);
+                break;
+            case RoundState.DisplayResult:
+                timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
+                timeoutDisplayResult = setTimeout(() => {
+                    setIsShow(true);
+                    setAnimationState("idle");
+                    setShowButtons(true);
+                    setAnimationState("open");
+                    timeout = setTimeout(() => {
+                        resetState();
+                    }, durations.showResult * 1000);
+                }, 500);
+                break;
+            case RoundState.BeforePlaceBet:
+            case RoundState.InRound:
+                resetState();
+                break;
+            default:
+                break;
+        }
+        return () => {
+            timeout && clearTimeout(timeout);
+            timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
+            timeoutShake && clearTimeout(timeoutShake);
+        };
+    }, [roundState, durations]);
 
     const renderButtons = () => {
         if (!showButtons) {
             return null;
         }
 
-        return (
-            <div className={styles["buttons-container"]}>
-                {buttonsPosition.map((button, index) => (
-                    <div
-                        key={index}
-                        className={styles["button"]}
-                        style={{
-                            position: "absolute",
-                            left: `${button.x}px`,
-                            top: `${button.y}px`,
-                            cursor: "pointer",
-                            width: `${BUTTON_SIZE}px`,
-                            height: `${BUTTON_SIZE}px`,
-                        }}
-                    >
-                        {buttonsValue[index] ? (
-                            <Image src={"/static/images/test/red.png"} alt="Red" width={BUTTON_SIZE} height={BUTTON_SIZE} />
-                        ) : (
-                            <Image src={"/static/images/test/white.png"} alt="White" width={BUTTON_SIZE} height={BUTTON_SIZE} />
-                        )}
-                    </div>
-                ))}
-            </div>
-        );
+        return <SedieButtons buttonsPosition={buttonsPosition} buttonsValue={buttonsValue} size={BUTTON_SIZE} />;
     };
 
-    if (roundState !== RoundState.DisplayResult) {
+    if (!isShow) {
         return null;
     }
 
@@ -93,7 +115,10 @@ const PlateButtons: React.FC = () => {
                 }
             >
                 <div className={`${styles["plate-buttons"]} ${styles["plate-buttons-" + animationState]}`}>
-                    <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>{renderButtons()}</div>
+                    <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>
+                        {renderButtons()}
+                        <div className={`${styles["bowl"]} ${styles[`bowl-${animationState}`]}`}></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,4 +190,4 @@ const generateButtonPositions = (seedValue: number, time = 1) => {
     return newButtons;
 };
 
-export default PlateButtons;
+export default SediePlate;

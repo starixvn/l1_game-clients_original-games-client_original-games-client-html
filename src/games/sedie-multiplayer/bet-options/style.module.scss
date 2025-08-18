@@ -26,6 +26,14 @@
 .sub-bet-white4,
 .sub-bet-white3,
 .sub-bet-red2,
+.sub-bet-red3,
+.sub-bet-red4 {
+    z-index: 2;
+}
+
+.sub-bet-white4,
+.sub-bet-white3,
+.sub-bet-red2,
 .sub-bet-red3 {
     position: relative;
     &::after {
@@ -48,7 +56,7 @@
     }
 }
 
-.sub-bet-white3 {
+.sub-bet-red4 {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     .btn-ripple {

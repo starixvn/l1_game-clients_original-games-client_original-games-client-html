@@ -5,6 +5,8 @@ const OwnBet = dynamic(() => import("../../../components/game-components/bet-opt
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
+const HighlightBetOption = dynamic(() => import("./highlight-bet-option"));
+
 const subChoiceImages = {
     [SeDieBetOptions.WHITE4]: [false, false, false, false],
     [SeDieBetOptions.WHITE3]: [true, false, false, false],
@@ -40,14 +42,17 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
         );
     };
     return (
-        <div className={`flex-1 text-white relative ${styles[className]}`}>
-            <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
-            {renderImages(choice)}
-            <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />
-            <div className="h-5 mb-0.5">
-                <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
+        <div className="relative">
+            <div className={`flex-1 text-white relative h-[full] w-[74px] ${styles[className]}`}>
+                <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
+                {renderImages(choice)}
+                <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />
+                <div className="h-5 mb-0.5">
+                    <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
+                </div>
+                <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
             </div>
-            <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
+            <HighlightBetOption choice={choice} />
         </div>
     );
 };

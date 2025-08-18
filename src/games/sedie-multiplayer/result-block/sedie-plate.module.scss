@@ -16,9 +16,9 @@
 }
 
 .plate {
-    width: 298px;
-    height: 199px;
-    background-image: url("/static/images/test/plate.png?v=#{$version-image}");
+    width: var(--plate-size);
+    height: var(--plate-size);
+    background-image: url("/static/images/sedie-multiplayer/result/plate.png?v=#{$version-image}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -33,7 +33,7 @@
     width: var(--boundary-size);
     height: var(--boundary-size);
     margin: calc((var(--plate-size) - var(--boundary-size)) / 2) auto 0;
-    border: 1px dashed rgba(255, 255, 255, 0.3);
+    // border: 1px dashed rgba(255, 255, 255, 0.3);
     border-radius: 50%; // Changed to circle
     display: flex;
     align-items: center;
@@ -60,14 +60,14 @@
 .bowl {
     width: var(--bowl-size);
     height: var(--bowl-size);
-    background-image: url("/static/images/test/bowl.png?v=#{$version-image}");
+    background-image: url("/static/images/sedie-multiplayer/result/bowl.png?v=#{$version-image}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, calc(-50% + 2px));
     border-radius: 50%;
     transition: all 0.3s ease;
     z-index: 10;
@@ -75,7 +75,7 @@
 
 .bowl-open {
     // Open animation - bowl moves up and fades out
-    animation: open var(--open-duration) ease-in-out forwards;
+    animation: open 1.5s ease-in-out forwards;
 }
 
 .bowl-close {
@@ -188,11 +188,11 @@
 // Open animation keyframes
 @keyframes open {
     0% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, calc(-50% + 2px)) scale(1);
         opacity: 1;
     }
-    50% {
-        transform: translate(calc(-50% + 50px), calc(-50% - 50px)) scale(1.2);
+    80% {
+        transform: translate(calc(-50% + 35px), calc(-50% - 35px)) scale(1.2);
         opacity: 1;
     }
     100% {
@@ -208,118 +208,7 @@
         opacity: 1;
     }
     100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, calc(-50% + 2px)) scale(1);
         opacity: 1;
-    }
-}
-
-// Control section
-.control-section {
-    margin-top: var(--spacing-size-3);
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-size-2);
-    flex-wrap: wrap;
-}
-
-.control-button {
-    background: linear-gradient(135deg, var(--btn-grey-background), var(--btn-grey-background-hover));
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: var(--spacing-size-2) var(--spacing-size-3);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    min-width: 80px;
-
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--btn-grey-background-hover), var(--btn-grey-background));
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    &:active:not(:disabled) {
-        transform: translateY(0);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(57, 77, 102, 0.5);
-    }
-
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-}
-
-.shake-button {
-    background: linear-gradient(135deg, var(--btn-orange-background), var(--btn-orange-background-hover));
-
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--btn-orange-background-hover), var(--btn-orange-background));
-    }
-}
-
-.open-button {
-    background: linear-gradient(135deg, var(--btn-green-background), var(--btn-green-background-hover));
-
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--btn-green-background-hover), var(--btn-green-background));
-    }
-}
-
-.close-button {
-    background: linear-gradient(135deg, var(--btn-red-background), var(--btn-red-background-hover));
-
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--btn-red-background-hover), var(--btn-red-background));
-    }
-}
-
-// Regenerate button section
-.regenerate-section {
-    margin-top: var(--spacing-size-3);
-    display: flex;
-    justify-content: center;
-}
-
-.regenerate-button {
-    background: linear-gradient(135deg, var(--btn-green-background), var(--btn-green-background-hover));
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: var(--spacing-size-2) var(--spacing-size-3);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, var(--btn-green-background-hover), var(--btn-green-background));
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    &:active:not(:disabled) {
-        transform: translateY(0);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(21, 150, 57, 0.5);
-    }
-
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
     }
 }
