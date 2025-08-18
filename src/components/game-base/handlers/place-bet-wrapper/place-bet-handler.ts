@@ -3,7 +3,7 @@ import { TFnType, TranslationKey } from "@tolgee/react";
 import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
-import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys } from "../../../../_shared/helpers";
+import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys, broadcastNotice, createNoticeFromErrorCode } from "../../../../_shared/helpers";
 import { GlobalMessageTransmitter, GlobalTransmitterEvent } from "../../../../_shared/helpers/message-transmitter/global-transmitter";
 import { findHedgeBetGroup, getAccountBalance, isBalanceUnavailable, isHedgeBet, isInPhasePreventBet } from "../../../../_shared/helpers/validate-bet-helper";
 import { SystemContextModel } from "../../../../_shared/react-contexts";
@@ -81,11 +81,11 @@ export class PlaceBetHandler {
     };
 
     broadcastNotice = (notice: object) => {
-        GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.NOTICE]: notice });
+        broadcastNotice(notice as any);
     };
 
     clearNotice = () => {
-        this.broadcastNotice(null);
+        broadcastNotice(null);
     };
 
     handleOwnBets = ({ ownBets }) => {
@@ -115,7 +115,7 @@ export class PlaceBetHandler {
             noticePayload.roundId = notice?.gameRoundId;
         }
 
-        GlobalMessageTransmitter.broadcast({ [GlobalTransmitterEvent.NOTICE]: noticePayload });
+        broadcastNotice(noticePayload);
     };
 
     getNoticePayloadBetFailed = (notice: NoticeModel, kickedOut: any) => {

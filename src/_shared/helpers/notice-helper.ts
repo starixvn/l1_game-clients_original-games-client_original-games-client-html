@@ -1,4 +1,6 @@
 import ErrorCodeDictionary, { CommonErrorCodeList } from "../constants/error-code-dictionary";
+import { NoticeModel } from "../../components/game-base/type";
+import { useNoticeStore } from "../stores/notice-store/notice-store";
 
 export interface INotice {
     errorCode: string;
@@ -9,19 +11,52 @@ export interface INotice {
     gameTypeId?: number;
     isPlaceBetFailed?: boolean;
 }
+
 export const GetLocalizedErrorMessage = (errorCode: string, isPlaceBet = false) => {
-    if (!ErrorCodeDictionary[errorCode]) {
-        return "Common.message_error_occurred";
+    const errorMessage = ErrorCodeDictionary[errorCode];
+    if (errorMessage) {
+        return errorMessage;
     }
+    return isPlaceBet ? "Common.message_placebet_failed" : "Common.message_error_occurred";
+};
 
-    let key = ErrorCodeDictionary[errorCode];
-
-    const isCommonErrorCode = CommonErrorCodeList.includes(ErrorCodeDictionary[errorCode]);
-    if (isCommonErrorCode && isPlaceBet) {
-        key = `${key}_place_bet`;
+// Helper function to broadcast notices using Zustand store
+export const broadcastNotice = (notice: NoticeModel | null) => {
+    if (notice) {
+        useNoticeStore.getState().showNotice(notice);
+    } else {
+        useNoticeStore.getState().clearNotice();
     }
+};
 
-    return key;
+// Helper function to create notice from error code
+export const createNoticeFromErrorCode = (
+    errorCode: string,
+    gameName?: string,
+    roundId?: number,
+    minBet?: number,
+    maxBet?: number,
+    onClose?: () => void,
+    duration: number = 3,
+    isWarning: boolean = false,
+    hedgeBetGroup?: string[],
+    adjustBetNoticePosition: boolean = false
+): NoticeModel => {
+    const message = GetLocalizedErrorMessage(errorCode);
+
+    return {
+        gameName,
+        roundId,
+        message,
+        duration,
+        minBet,
+        maxBet,
+        errorCode,
+        isWarning,
+        onClose,
+        hedgeBetGroup,
+        adjustBetNoticePosition,
+    };
 };
 
 export const createOptionForHedgeBetGroup = (hedgeBetGroup: string[], tolgeeNamespace) => {

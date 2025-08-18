@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { createOptionForHedgeBetGroup, getExtendMessageByErrorCode } from "../../../_shared/helpers";
 import { numberWithCommas } from "../../../_shared/helpers/number-helper";
 import { useGameContext } from "../../../_shared/react-contexts";
@@ -12,6 +12,7 @@ import {
     registerGlobalMessageEvent,
     unsubscribeGlobalMessageEvent,
 } from "../../../_shared/helpers/message-transmitter/global-transmitter";
+import { useNoticeStore } from "../../../_shared/stores/notice-store/notice-store";
 
 const BaseNotice: React.FC<{
     onClose: () => void;
@@ -58,11 +59,15 @@ const BaseNotice: React.FC<{
 export const NoticeDialog = () => {
     const { t } = useTranslator();
     const { tolgeeNamespace } = useGameContext();
-    const [notice, setNotice] = useState<NoticeModel>(null);
+    const { notice, clearNotice } = useNoticeStore();
 
     useEffect(() => {
         const noticeHandlerId = registerGlobalMessageEvent(GlobalTransmitterEvent.NOTICE, ({ notice }) => {
-            setNotice(notice);
+            if (notice) {
+                useNoticeStore.getState().showNotice(notice);
+            } else {
+                useNoticeStore.getState().clearNotice();
+            }
         });
 
         return () => {
@@ -88,7 +93,7 @@ export const NoticeDialog = () => {
         } = notice;
 
         const closeNotice = () => {
-            setNotice(null);
+            clearNotice();
         };
 
         const onCloseNotice = onClose || (() => closeNotice());
