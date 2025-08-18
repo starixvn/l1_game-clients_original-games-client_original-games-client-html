@@ -17,7 +17,7 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json yarn.lock sentry.client.config.js sentry.edge.config.js sentry.server.config.js tsconfig.json tsconfig.node.json configs.json game-settings.json next.config.js ./
+COPY package.json yarn.lock sentry.client.config.js sentry.edge.config.js sentry.server.config.js tsconfig.json tsconfig.node.json configs.json game-settings.json next.config.js tailwind.config.js postcss.config.js ./
 COPY configs ./configs
 COPY public ./public
 COPY configs/missing-configuration.js ./public/c.js
