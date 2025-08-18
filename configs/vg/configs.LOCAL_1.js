@@ -9,7 +9,7 @@ window.envConfig = {
         environment: "LOCAL1",
     },
     enableSourceMap: true,
-    subGuideDomain: "l2-guide1",
+    subGuideDomain: "l2-guide-1",
     enableMsgpackParser: false,
     system: "VG",
     appType: 10,
