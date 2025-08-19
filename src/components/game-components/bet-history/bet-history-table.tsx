@@ -4,6 +4,7 @@ import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
 import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
 import useGameStore from '../../../_shared/stores/game-store/game-store';
+import usePopupStore from '../../../_shared/stores/popup-store/popup-store';
 import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
 import {
     transformBetLogsToDisplayData,
@@ -24,9 +25,10 @@ export const BetHistoryTable = () => {
         isLoading,
         isExpanded,
         totalPages,
-        toggleBetDetail,
         updateBetDetail,
     } = useGameStore();
+
+    const { toggleBetDetail } = usePopupStore();
 
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
@@ -34,7 +36,7 @@ export const BetHistoryTable = () => {
 
     // Initialize bet history handler
     useEffect(() => {
-        if (!isInitialized.current) {
+        if (!isInitialized.current && gameMessageHandler) {
             const handler = new BetHistoryHandler({ gameMessageHandler });
             setBetHistoryHandler(handler);
 
@@ -65,7 +67,6 @@ export const BetHistoryTable = () => {
                 },
                 betLogDetails: row.originalBetLog?.betLogDetails || [],
             };
-            
             
             updateBetDetail(betDetailData);
             toggleBetDetail(true);

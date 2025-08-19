@@ -25,9 +25,8 @@ export interface GameConfigSlice {
     isUMInFirstLoad: boolean;
     betWin: number;
     kickedOut: any;
-    userStakeLevel: IUserStakeLevel;
+    userStakeLevel?: IUserStakeLevel;
     isShowBetHistory: boolean;
-    isShowBetDetail: boolean;
     isShowGameGuide: boolean;
     betDetailModalData?: {
         drawInfo: any;
@@ -40,7 +39,7 @@ export interface GameConfigSlice {
     prevRoundState: RoundState;
     roundState: RoundState;
     nextRoundState: RoundState;
-    durations: GameDurations;
+    durations?: GameDurations;
     defaultResult: any;
     defaultSettlementResult: any;
     remainingTime: number;
@@ -54,7 +53,6 @@ export interface GameConfigSlice {
     setShowResultInfo: (showResultInfo: boolean) => void;
     setUMMessage: (message: string) => void;
     setIsUMInFirstLoad: (isUMInFirstLoad: boolean) => void;
-    toggleBetDetail: (isShow: boolean) => void;
     updateBetDetail: (betDetailData: any) => void;
 }
 
@@ -88,7 +86,6 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     kickedOut: undefined,
     userStakeLevel: undefined,
     isShowBetHistory: false,
-    isShowBetDetail: false,
     isShowGameGuide: false,
     betDetailModalData: undefined,
     isPlayStartRoundAnimation: false,
@@ -97,7 +94,7 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     prevRoundState: RoundState.None,
     roundState: RoundState.None,
     nextRoundState: RoundState.None,
-    durations: null,
+    durations: undefined,
     defaultResult: null,
     defaultSettlementResult: null,
     remainingTime: 0,
@@ -135,6 +132,5 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
             }
         });
     },
-    toggleBetDetail: (isShow) => set({ isShowBetDetail: isShow }),
     updateBetDetail: (betDetailData) => set({ betDetailModalData: betDetailData }),
 });
