@@ -33,10 +33,12 @@ const ModalContainer: FC<{
                     }
                 )}
             >
-                <div className="flex items-center px-5 text-base font-semibold text-white text-center">
-                    {title}
+                <div className="flex items-center px-5 text-base font-semibold text-white text-center my-2">
+                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">
+                        {title}
+                    </div>
                     <span
-                        className="cursor-pointer ml-auto"
+                        className="cursor-pointer ml-auto relative z-10"
                         onClick={() => {
                             clickSound();
                             onCloseModal();
