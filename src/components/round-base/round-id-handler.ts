@@ -31,7 +31,7 @@ export class RoundIdHandler {
         this.roundState = RoundState.None;
         this.props.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_ID, this.handleRoundId.bind(this));
-        this.props.gameMessageHandler.register(messageEventType.PF, this.handleRoundId.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.PF, this.handlePF.bind(this));
         this.props.gameMessageHandler.register(messageEventType.ROUND_STATE, this.handleRoundState.bind(this));
     }
 
@@ -41,22 +41,31 @@ export class RoundIdHandler {
         }
     };
 
-    handleRoundId = ({ pf }) => {
-        this.roundId = pf?.roundId;
+    handleRoundId = ({ roundId }) => {
+        this.roundId = roundId;
 
         // For games where PF seed should be triggered by roundId instead of drawId
         if (this.pfSeedBy === "roundId") {
             if (this.shouldRunWhenFirstLoad) {
                 this.shouldRunWhenFirstLoad = false;
                 this.dispatchClientSeed(this.roundId);
+                this.dispatchRoundId(this.roundId);
                 this.dispatchDrawId(this.drawId);
             } else if (!this.isInDisplayResultState()) {
-
+                this.dispatchRoundId(this.roundId);
                 this.dispatchClientSeed(this.roundId);
                 this.dispatchDrawId(this.drawId);
             }
         }
+    };
 
+    handlePF = ({ pf }) => {
+        this.roundId = pf?.roundId;
+
+        if (!this.isInDisplayResultState()) {
+            this.dispatchRoundId(this.roundId);
+            this.dispatchClientSeed(this.roundId);
+        }
     };
 
     handleDrawId = ({ drawId }) => {
@@ -95,6 +104,13 @@ export class RoundIdHandler {
         this.props.dispatch({
             type: GameEventActionType.DRAW_ID,
             payload: { drawId },
+        });
+    };
+
+    dispatchRoundId = (roundId) => {
+        this.props.dispatch({
+            type: GameEventActionType.ROUND_ID,
+            payload: { roundId },
         });
     };
 

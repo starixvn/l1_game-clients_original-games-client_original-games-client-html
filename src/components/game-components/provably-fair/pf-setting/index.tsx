@@ -16,8 +16,8 @@ import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import ToggleSection from "./toggle-section";
 
 const NUMBER_VALUES = "0123456789";
-const GetPFInfoMessage = "getPfInfo";
-const PFResultMessage = "pfResult";
+const GetPFInfoMessage = "getRoundPF";
+const PFResultMessage = "roundPFResult";
 const PFPublishMessage = "pf";
 const TIME_OUT = 5000;
 
@@ -101,7 +101,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const randomSeed = useRef<HTMLInputElement>();
     const manualRadio = useRef<HTMLInputElement>();
     const manualSeed = useRef<HTMLInputElement>();
-    const { drawId } = useGameStateContext();
+    const { drawId,roundId } = useGameStateContext();
     const { pfClientSeedSetting, ownBets } = usePFStore(
         useShallow((state) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
@@ -129,41 +129,43 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     };
 
     useEffect(() => {
-        console.log("pfClientSeedSetting", pfClientSeedSetting);
         setRandomClientSeed(pfClientSeedSetting?.randomClientSeed || "");
         setManualClientSeed(pfClientSeedSetting?.manualClientSeed || "");
         setIsManualMode(pfClientSeedSetting?.useManualClientSeed || false);
     }, [pfClientSeedSetting]);
 
     useEffect(() => {
-        if (drawId <= 0) {
+        if (roundId <= 0) {
             setIsFirstFetch(false);
         } else {
             setIsFirstFetch(true);
         }
-    }, [drawId]);
+    }, [roundId]);
 
     useEffect(() => {
-        console.log("isFirstFetch", isFirstFetch);
         if (isFirstFetch) {
             gameMessageHandler.broadcastGameEvent({
-                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { drawId } },
+                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId } },
             });
         }
     }, [isFirstFetch]);
 
     useEffect(() => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, TIME_OUT);
+        
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
-            console.log("handleServerSeed", pfServerSeed);
             setServerSeedHash(pfServerSeed.serverSeedHash);
         };
 
-        const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {
+        const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({pf}) => {
             handleServerSeed(pf);
         });
 
-        const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ pfResult }) => {
-            handleServerSeed(pfResult);
+        const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {
+            handleServerSeed(roundPFResult);
             setIsLoading(false);
         });
 
