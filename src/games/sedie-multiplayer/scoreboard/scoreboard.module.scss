@@ -17,7 +17,8 @@
     height: 104px;
     background: transparent;
     padding: 4px;
-    margin: 4px
+    margin: 4px;
+    overflow: hidden;
 }
 
 // Big Road background image
@@ -30,6 +31,8 @@ $big-road-bg-image: url("data:image/svg+xml;utf8,<svg width='361' height='104' v
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .big-road-block {
@@ -48,6 +51,18 @@ $big-road-bg-image: url("data:image/svg+xml;utf8,<svg width='361' height='104' v
     &::before,
     &::after {
         display: none;
+    }
+    
+    // Custom scrollbar styles for better UX
+    &::-webkit-scrollbar {
+        width: 5px;
+        border-radius: 10px;
+        background-color: #3d3d3d;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: linear-gradient(180deg, #84c0ff 0%, #064f9b 100%);
     }
 }
 

@@ -10,11 +10,18 @@ export type ScoreboardComponentProps = {
     roundHistory: Round<SeDieResult, SeDieSettlementResult>[];
     isShowBlink: boolean;
     isOddEven: boolean;
+    playResultAnimation?: boolean;
 };
 
 class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
+    private scoreboardColumns: number = 22;
+
+    updateScoreboardColumns = (actualColumns: number) => {
+        this.scoreboardColumns = actualColumns;
+    };
+
     renderBigRoad(): ReactNode {
-        const { roundHistory, isShowBlink } = this.props;
+        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const settlements = [...roundHistory].map((round) => round.settlementResult);
 
         isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlements);
@@ -28,14 +35,13 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
                         {
                             element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
                             arrange: BigRoadElement.arrange(SeDieBigRoadConverter.instance as any),
-                            column: 22,
+                            column: this.scoreboardColumns,
                             row: 6,
-
+                            updateScoreboardColumns: this.updateScoreboardColumns,
                             className: Styles["big-road-override"],
                             blockClassName: Styles["big-road-block"],
                             elementClassName: Styles["big-road-item"],
-                            style: { gridTemplateColumns: `repeat(22, 16px)` } as any,
-
+                            scrollToRight: playResultAnimation
                         },
                     ]}
                 />

@@ -4,6 +4,7 @@
     --background-color: #021520;
 
     display: grid;
+    grid-template-rows: repeat(6, 1fr);
     position: relative;
     border-radius: 3px;
     background: var(--background-color);
@@ -32,9 +33,7 @@
 }
 
 .scoreboard-block {
-    display: grid;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 18px;
@@ -46,8 +45,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    padding: 1px;
 
     [class^="icon-"] {
         font-size: 14px;
