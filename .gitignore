@@ -34,5 +34,4 @@ yarn-error.log*
 stryker-tmp
 /public/i18n
 
-sonar-reports
 .scannerwork

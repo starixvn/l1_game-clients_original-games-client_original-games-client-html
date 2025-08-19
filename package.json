@@ -14,6 +14,8 @@
         "run-code-and-sonar": "node sonar-scripts/run-code-and-sonar.js",
         "fix-and-verify-sonar": "node sonar-scripts/fix-and-verify.js",
         "export-sonar-report": "node sonar-scripts/export-sonar-issues.js",
+        "run-code-and-sonar-changed": "node sonar-scripts/run-code-and-sonar-changed.js",
+        "run-code-and-sonar-local": "node sonar-scripts/run-code-and-sonar-local.js",
         "build": "next build",
         "info": "next info",
         "start": "next start -p ${PORT:=5000}",
