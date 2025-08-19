@@ -28,10 +28,6 @@ export interface GameConfigSlice {
     userStakeLevel?: IUserStakeLevel;
     isShowBetHistory: boolean;
     isShowGameGuide: boolean;
-    betDetailModalData?: {
-        drawInfo: any;
-        betLogDetails: any[];
-    };
     isPlayStartRoundAnimation?: boolean;
     isScoreboardTab?: boolean;
     availableInGameData?: boolean;
@@ -53,7 +49,6 @@ export interface GameConfigSlice {
     setShowResultInfo: (showResultInfo: boolean) => void;
     setUMMessage: (message: string) => void;
     setIsUMInFirstLoad: (isUMInFirstLoad: boolean) => void;
-    updateBetDetail: (betDetailData: any) => void;
 }
 
 const GameEvents = {
@@ -87,7 +82,6 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
     userStakeLevel: undefined,
     isShowBetHistory: false,
     isShowGameGuide: false,
-    betDetailModalData: undefined,
     isPlayStartRoundAnimation: false,
     isScoreboardTab: false,
     availableInGameData: false,
@@ -132,5 +126,4 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
             }
         });
     },
-    updateBetDetail: (betDetailData) => set({ betDetailModalData: betDetailData }),
 });

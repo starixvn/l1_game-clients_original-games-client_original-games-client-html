@@ -13,6 +13,7 @@ import {
     BetHistoryDisplayData
 } from './bet-history-utils';
 import styles from './bet-history.module.scss';
+import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
 
 export const BetHistoryTable = () => {
     const { gameMessageHandler } = useGameContext();
@@ -25,10 +26,10 @@ export const BetHistoryTable = () => {
         isLoading,
         isExpanded,
         totalPages,
-        updateBetDetail,
     } = useGameStore();
 
     const { toggleBetDetail } = usePopupStore();
+    const { updateBetDetail } = useBetDetailStore();
 
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);

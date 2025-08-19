@@ -50,7 +50,9 @@ import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
-import { Background } from "../page-components/background";
+import BetDetailModal from "../game-components/bet-history/bet-detail-modal";
+import BetDetailBase from "../game-components/bet-history/bet-detail-base";
+import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -730,26 +732,41 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <BetHistoryTable />;
     }
 
+    renderBetDetailModal() {
+        return (
+            <BetDetailModal>
+                <BetDetailBase
+                    isTurnBase={false}
+                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
+                    produceDataBetDetailRow={produceDataBetDetailRow}
+                    renderBetChoice={(choice) => <BetChoice choice={choice} />}
+                />
+            </BetDetailModal>
+        )
+    }
+
     getRenderTemplate() {
         return (
             <>
-                <div className={`game-${this.props.id}`}>
-                    <div className="flex flex-wrap">
-                        {this.renderLeftSide()}
-                        {this.renderRightSide()}
-                        <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                <>
+                    <div className={`game-${this.props.id}`}>
+                        <div className="flex flex-wrap">
+                            {this.renderLeftSide()}
+                            {this.renderRightSide()}
+                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                        </div>
+                        <PFWrapper
+                            socket={this.socket}
+                            gameMessageHandler={this.gameMessageHandler}
+                            gameId={this.props.id}
+                            uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
+                        >
+                            {this.renderPFSettingModal()}
+                            {this.renderBetDetailModal()}
+                        </PFWrapper>
+                        {this.renderGameGuideModal()}
                     </div>
-                    <PFWrapper
-                        socket={this.socket}
-                        gameMessageHandler={this.gameMessageHandler}
-                        gameId={this.props.id}
-                        uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
-                    >
-                        {this.renderPFSettingModal()}
-                        {this.renderBetHistoryModal()}
-                    </PFWrapper>
-                    {this.renderGameGuideModal()}
-                </div>
+                </>
             </>
         );
     }

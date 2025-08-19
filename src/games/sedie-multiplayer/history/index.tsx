@@ -14,9 +14,9 @@ import SedieMultiplayerBetLogResultCell from "./sedie-multiplayer-bet-log-result
 const SeDieBetHistoryModal: FC = () => {
     return (
         <>
-            <BetHistoryModalBase>
+            {/* <BetHistoryModalBase>
                 <BetHistoryBase isTurnBase={false} renderBetLogResult={(result) => <SedieMultiplayerBetLogResultCell result={result} />} />
-            </BetHistoryModalBase>
+            </BetHistoryModalBase> */}
             <BetDetailModal>
                 <BetDetailBase
                     isTurnBase={false}

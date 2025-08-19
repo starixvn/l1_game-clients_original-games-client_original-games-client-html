@@ -1,14 +1,22 @@
 import { FC, ReactNode, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { numberWithCommas, separateDateTime, sortedCollectionByTime } from "../../../_shared/helpers";
 import { usePlayerContext } from "../../../_shared/react-contexts";
 import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store";
 import { DrawInfo } from "../../game-base/type";
-import { InfiniteTable } from "../infinite-table";
+import { Table, TableColumn } from "../table";
 import Styles from "./bet-history.module.scss";
-import { useShallow } from "zustand/react/shallow";
-import { usePopupStore } from "../../../_shared/stores/popup-store/popup-store";
+
+// Define the data structure for bet detail rows
+interface BetDetailRow {
+    time: ReactNode;
+    betChoice: ReactNode;
+    odds: ReactNode;
+    stake: ReactNode;
+    win: ReactNode;
+}
 
 const BetDetailBase: FC<{
     isTurnBase: boolean;
@@ -27,14 +35,75 @@ const BetDetailBase: FC<{
     };
     renderBetChoice?: (choice: any) => ReactNode;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice }) => {
-    const { betDetailModalData } = useGameStore();
-    const { drawInfo, betLogDetails } = betDetailModalData || {};
+    // Use bet-detail-store instead of game store
+    const { betDetailData } = useBetDetailStore(
+        useShallow((state) => ({
+            betDetailData: state.betDetailData,
+        }))
+    );
+    
+    console.log("Render Bet Detail Base", betDetailData);
+    
+    const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();
     const clickSound = useClickSound();
-    const { togglePFVerify } = usePopupStore(useShallow((state) => ({
-        togglePFVerify: state.togglePFVerify,
-    })));
+
+    // Define table columns - must be before early return
+    const columns: TableColumn<BetDetailRow>[] = useMemo(() => [
+        { key: "time", header: translateCommon("time") },
+        { key: "betChoice", header: translateCommon("bet_choice") },
+        { key: "odds", header: translateCommon("odds") },
+        { key: "stake", header: translateCommon("stake") },
+        { key: "win", header: translateCommon("win") },
+    ], [translateCommon]);
+
+    // Process bet log details and transform to table data - must be before early return
+    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
+
+    const tableData: BetDetailRow[] = useMemo(() => {
+        if (!drawInfo || !betLogDetails) {
+            return [];
+        }
+
+        return preprocessedBetLogDetails.map((betLogDetail) => {
+            const { rawTime, amount, choice, odds, win, hightlight, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
+            const { date, time } = separateDateTime(rawTime);
+
+            const calcOdds = hideOdd ? "-" : numberWithCommas(fractionalOddsFormat ? odds - 1 : odds);
+            const highlightClass = hightlight ? "highlight" : "";
+
+            return {
+                time: (
+                    <>
+                        {time}
+                        <br />
+                        {date}
+                    </>
+                ),
+                betChoice: (
+                    <div className={highlightClass}>
+                        {renderBetChoice ? renderBetChoice(choice) : choice}
+                    </div>
+                ),
+                odds: (
+                    <div className={highlightClass}>
+                        {calcOdds}
+                    </div>
+                ),
+                stake: (
+                    <div className={highlightClass}>
+                        {numberWithCommas(amount) ?? 0}
+                    </div>
+                ),
+                win: (
+                    <div className={highlightClass}>
+                        {numberWithCommas(win)}
+                    </div>
+                ),
+            };
+        });
+    }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, fractionalOddsFormat, renderBetChoice, betLogDetails]);
 
     if (!drawInfo || !betLogDetails) {
         return null;
@@ -42,44 +111,7 @@ const BetDetailBase: FC<{
 
     const handleClickProvablyFair = () => {
         clickSound();
-        togglePFVerify(true);
     };
-
-    const header = [
-        { node: translateCommon("time") },
-        { node: translateCommon("bet_choice") },
-        { node: translateCommon("odds") },
-        { node: translateCommon("stake") },
-        { node: translateCommon("win") },
-    ];
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
-
-    const body = preprocessedBetLogDetails.map((betLogDetail) => {
-        const { rawTime, amount, choice, odds, win, hightlight, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
-        const { date, time } = separateDateTime(rawTime);
-
-        const calcOdds = hideOdd ? "-" : numberWithCommas(fractionalOddsFormat ? odds - 1 : odds);
-
-        return [
-            {
-                node: (
-                    <>
-                        {time}
-                        <br />
-                        {date}
-                    </>
-                ),
-            },
-            ...[renderBetChoice ? renderBetChoice(choice) : choice, calcOdds, numberWithCommas(amount) ?? 0].map((item) => {
-                return { node: <div className={hightlight ? "highlight" : ""}>{item}</div> };
-            }),
-            {
-                node: <div className={hightlight ? "highlight" : ""}>{numberWithCommas(win)}</div>,
-            },
-        ];
-    });
 
     console.log("Render");
 
@@ -92,7 +124,14 @@ const BetDetailBase: FC<{
                 {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
             </button>
 
-            <InfiniteTable header={header} body={body} customTableContainerStyles={Styles["bet-detail"]} />
+            <div className={Styles["bet-detail"]}>
+                <Table
+                    columns={columns}
+                    data={tableData}
+                    emptyMessage={translateCommon("no_data")}
+                    className="bet-detail-table"
+                />
+            </div>
         </>
     );
 };
