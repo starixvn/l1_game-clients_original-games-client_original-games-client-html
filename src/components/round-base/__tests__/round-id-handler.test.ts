@@ -13,21 +13,21 @@ describe(RoundIdHandler.name, () => {
                 gameMessageHandler: {
                     broadcastGameEvent,
                     register: jest.fn(),
-                    removeHandler: jest.fn()
+                    removeHandler: jest.fn(),
                 } as any,
                 durations: {} as any,
-                pfSeedBy: "roundId" as const
+                pfSeedBy: "roundId" as const,
             };
             const handler = new RoundIdHandler(mockProps);
             handler["shouldRunWhenFirstLoad"] = true;
 
             // act
-            handler.handleRoundId({ pf: { roundId: 10 } });
+            handler.handleRoundId({ roundId: 10 });
 
             // assert
             expect(dispatch).toHaveBeenCalledWith({ type: GameEventActionType.DRAW_ID, payload: { drawId: 0 } });
             expect(broadcastGameEvent).toHaveBeenCalledWith({
-                "savePFSettingFromTurnIdHandler": { drawId: 10 }
+                savePFSettingFromTurnIdHandler: { drawId: 10 },
             });
         });
 
@@ -41,16 +41,16 @@ describe(RoundIdHandler.name, () => {
                 gameMessageHandler: {
                     broadcastGameEvent,
                     register: jest.fn(),
-                    removeHandler: jest.fn()
+                    removeHandler: jest.fn(),
                 } as any,
                 durations: {} as any,
-                pfSeedBy: "drawId" as const
+                pfSeedBy: "drawId" as const,
             };
             const handler = new RoundIdHandler(mockProps);
             handler["shouldRunWhenFirstLoad"] = true;
 
             // act
-            handler.handleRoundId({ pf: { roundId: 10 } });
+            handler.handleRoundId({ roundId: 10 });
 
             // assert
             expect(dispatch).not.toHaveBeenCalled();
@@ -67,22 +67,22 @@ describe(RoundIdHandler.name, () => {
                 gameMessageHandler: {
                     broadcastGameEvent,
                     register: jest.fn(),
-                    removeHandler: jest.fn()
+                    removeHandler: jest.fn(),
                 } as any,
                 durations: {} as any,
-                pfSeedBy: "roundId" as const
+                pfSeedBy: "roundId" as const,
             };
             const handler = new RoundIdHandler(mockProps);
             handler["shouldRunWhenFirstLoad"] = false;
             handler["roundState"] = 0; // RoundState.None
 
             // act
-            handler.handleRoundId({ pf: { roundId: 10 } });
+            handler.handleRoundId({ roundId: 10 });
 
             // assert
             expect(dispatch).toHaveBeenCalledWith({ type: GameEventActionType.DRAW_ID, payload: { drawId: 0 } });
             expect(broadcastGameEvent).toHaveBeenCalledWith({
-                "savePFSettingFromTurnIdHandler": { drawId: 10 }
+                savePFSettingFromTurnIdHandler: { drawId: 10 },
             });
         });
 
@@ -96,17 +96,17 @@ describe(RoundIdHandler.name, () => {
                 gameMessageHandler: {
                     broadcastGameEvent,
                     register: jest.fn(),
-                    removeHandler: jest.fn()
+                    removeHandler: jest.fn(),
                 } as any,
                 durations: {} as any,
-                pfSeedBy: "roundId" as const
+                pfSeedBy: "roundId" as const,
             };
             const handler = new RoundIdHandler(mockProps);
             handler["shouldRunWhenFirstLoad"] = false;
             handler["roundState"] = 4; // RoundState.DisplayResult
 
             // act
-            handler.handleRoundId({ pf: { roundId: 10 } });
+            handler.handleRoundId({ roundId: 10 });
 
             // assert
             expect(dispatch).not.toHaveBeenCalled();
