@@ -10,6 +10,7 @@ import { tolgee } from "../../../_shared/tolgee";
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
+import { themeGuide } from "./constants";
 
 const GameGuideModal: FC = () => {
     const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);

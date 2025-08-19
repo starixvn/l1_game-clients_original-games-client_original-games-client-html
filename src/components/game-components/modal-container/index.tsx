@@ -17,7 +17,7 @@ const ModalContainer: FC<{
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
     useEffect(() => {
-        const root: HTMLElement = document.querySelector(":root") as HTMLElement;
+        const root = document.querySelector(":root") as HTMLElement;
         root.style.setProperty("--modal-container-height", `${globalThis.innerHeight}px`);
     }, [globalThis.innerHeight]);
     

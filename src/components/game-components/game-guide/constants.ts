@@ -1,1 +1,1 @@
-const themeGuide = "original";
+export const themeGuide = "original";
