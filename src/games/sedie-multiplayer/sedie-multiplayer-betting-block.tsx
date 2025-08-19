@@ -7,7 +7,7 @@ const WinningResultEffect = dynamic(() => import("../../components/game-componen
 
 const SeDieMultiplayerBettingBlock: FC = () => {
     return (
-        <div>
+        <div className="relative">
             <SeDieMultiplayerBetOptions />
             <WinningResultEffect />
         </div>
