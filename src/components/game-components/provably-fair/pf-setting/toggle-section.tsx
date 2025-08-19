@@ -9,8 +9,6 @@ interface ToggleSectionProps {
     className?: string;
 }
 
-const MAX_HEIGHT_EXPANDED = "max-h-[1000px]";
-const MAX_HEIGHT_COLLAPSED = "max-h-[50px]";
 
 const ToggleSection: FC<ToggleSectionProps> = ({ 
     title, 
@@ -22,9 +20,7 @@ const ToggleSection: FC<ToggleSectionProps> = ({
 
     return (
         <div
-            className={`rounded-[12px] overflow-hidden transition-all duration-300 ease-in-out ${
-                isExpanded ? MAX_HEIGHT_EXPANDED : MAX_HEIGHT_COLLAPSED
-            } ${className}`}
+            className={`rounded-[12px] overflow-hidden transition-all duration-300 ease-in-out max-h-full ${className}`}
         >
             <div
                 className={`flex flex-row bg-[#2A4770] p-2 justify-between items-center rounded-t-[12px] cursor-pointer`}

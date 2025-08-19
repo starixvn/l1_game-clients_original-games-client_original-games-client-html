@@ -5,18 +5,22 @@ import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
+import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 
 const PFVerificationModal: FC<{ children: ReactNode }> = ({ children }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { isShowPFVerification, pfVerifyModalData, togglePFVerification, updatePFVerify } = usePFStore(
-        useShallow(
-            (state) => ({
-                isShowPFVerification: state.isShowPFVerification,
-                pfVerifyModalData: state.pfVerifyModalData,
-                togglePFVerification: state.togglePFVerification,
-                updatePFVerify: state.updatePFVerify,
-            })
-        )
+    const { pfVerifyModalData, updatePFVerify } = usePFStore(
+        useShallow((state) => ({
+            pfVerifyModalData: state.pfVerifyModalData,
+            updatePFVerify: state.updatePFVerify,
+        }))
+    );
+
+    const { isShowPFVerification, togglePFVerification } = usePopupStore(
+        useShallow((state) => ({
+            isShowPFVerification: state.isShowPFVerification,
+            togglePFVerification: state.togglePFVerification,
+        }))
     );
 
     const handleCloseModal = () => {

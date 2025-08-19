@@ -4,8 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from "../../../components/game-components/provably-fair";
 import { Section } from "../../../components/game-components/provably-fair/pf-form-components";
-import { usePFContext, usePFDispatch } from "../../../_shared/react-contexts/game-state-context/pf/pf-context";
-import { PFEventActionType } from "../../../_shared/react-contexts/game-state-context/pf/pf-action";
 import { Markup } from "interweave";
 import PfRoundBaseHelper from "../../../_shared/helpers/pf/pf-round-base-helper";
 import { ResourceTypes } from "../../../_shared/resources";
@@ -15,9 +13,10 @@ import { useShallow } from "zustand/react/shallow";
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
-    const { pfVerifyModalData: pfResult } = usePFContext();
+    const { pfVerifyModalData: pfResult } = usePFStore(useShallow((state) => ({
+        pfVerifyModalData: state.pfVerifyModalData,
+    })));
     const [mergeClientSeed, setMergeClientSeed] = useState(pfResult?.editedMergeClientSeed || pfResult?.mergeClientSeed || "");
-    const dispatch = usePFDispatch();
     const { t } = useTranslator();
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
     const [combinedHash, setCombinedHash] = useState(pfResult.finalHash);
@@ -76,7 +75,7 @@ const PFVerification: FC = () => {
                         {t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
                     </div>
                     <div className={Styles["result-numbers"]}>
-                        {remainingBalls[i].map((item, index) => {
+                        {/* {remainingBalls[i].map((item, index) => {
                             return index + 1 === ballIndexes[i] ? (
                                 <span key={uuidv4()} className={Styles["text-yellow"]}>
                                     {item}{" "}
@@ -84,7 +83,7 @@ const PFVerification: FC = () => {
                             ) : (
                                 `${item} `
                             );
-                        })}
+                        })} */}
                     </div>
                 </div>
             );
