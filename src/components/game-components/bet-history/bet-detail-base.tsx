@@ -7,6 +7,8 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { DrawInfo } from "../../game-base/type";
 import { InfiniteTable } from "../infinite-table";
 import Styles from "./bet-history.module.scss";
+import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/react/shallow";
 
 const BetDetailBase: FC<{
     isTurnBase: boolean;
@@ -30,14 +32,17 @@ const BetDetailBase: FC<{
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();
     const clickSound = useClickSound();
+    const { togglePFVerify } = usePFStore(useShallow((state) => ({
+        togglePFVerify: state.togglePFVerify,
+    })));
 
     if (!drawInfo || !betLogDetails) {
         return null;
     }
 
     const handleClickProvablyFair = () => {
-        console.log("Click provably fair");
         clickSound();
+        togglePFVerify(true);
     };
 
     const header = [

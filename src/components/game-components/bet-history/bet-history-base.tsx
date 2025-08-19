@@ -9,6 +9,8 @@ import { messageEventType } from "../../game-base/handlers";
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import { InfiniteTable } from "../infinite-table";
 import Styles from "./bet-history.module.scss";
+import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/react/shallow";
 
 const GET_HISTORY = "getHistory";
 const HISTORY_EVENT = "history";
@@ -40,6 +42,9 @@ const BetHistoryBase: FC<BetHistoryProps> = ({ renderBetLogResult, isTurnBase })
     const [page, setPage] = useState<number>(1);
 
     const clickSound = useClickSound();
+    const { updatePFVerify } = usePFStore(useShallow((state) => ({
+        updatePFVerify: state.updatePFVerify,
+    })));
 
     const getHistory = (historyPage: number) => {
         gameMessageHandler.broadcastGameEvent({
@@ -96,6 +101,7 @@ const BetHistoryBase: FC<BetHistoryProps> = ({ renderBetLogResult, isTurnBase })
                 isShowBetDetail: true,
             },
         });
+        updatePFVerify(betLogDetail?.pfResult);
     };
 
     const header = [

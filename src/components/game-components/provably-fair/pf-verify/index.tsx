@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useClickSound, useCommonTranslate, useSNTranslate } from "../../../../_shared/react-hooks";
 import ModalContainer from "../../modal-container";
@@ -7,21 +7,28 @@ import Styles from "../provably-fair.module.scss";
 import CopyableTextInput from "../copyable-text-input";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { Section } from "../pf-form-components";
-import { PFEventActionType } from "../../../../_shared/react-contexts/game-state-context/pf/pf-action";
-import { usePFContext, usePFDispatch } from "../../../../_shared/react-contexts/game-state-context/pf/pf-context";
+import { usePFStore } from "../../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/react/shallow";
+import { useGameContext } from "../../../../_shared/react-contexts/game-context/game-context";
+import { messageEventType } from "../../../game-base/handlers/game-message-handler";
+import useGameStore from "../../../../_shared/stores/game-store/game-store";
+
+const GetPFInfoMessage = "getRoundPF";
+const PFResultMessage = "roundPFResult";
 
 const PFVerifyModal: FC<{
     renderResultBlock: Function;
 }> = ({ renderResultBlock }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { isShowPFVerify } = usePFContext();
-    const dispatch = usePFDispatch();
+    const { isShowPFVerify, togglePFVerify } = usePFStore(
+        useShallow((state) => ({
+            isShowPFVerify: state.isShowPFVerify,
+            togglePFVerify: state.togglePFVerify,
+        }))
+    );
 
     const handleCloseModal = () => {
-        dispatch({
-            type: PFEventActionType.TOGGLE_PF_VERIFY,
-            payload: { isShowPFVerify: false },
-        });
+        togglePFVerify(false);
     };
 
     return (
@@ -66,11 +73,29 @@ const useClickOutside = (callback: Function) => {
 };
 
 const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) => {
-    const { pfVerifyModalData: pfResult } = usePFContext();
+    const { pfVerifyModalData: pfResult, updatePFVerify } = usePFStore(useShallow((state) => ({
+        pfVerifyModalData: state.pfVerifyModalData,
+        updatePFVerify: state.updatePFVerify
+    })));
+
+    const {roundId} = useGameStore(useShallow((state) => ({
+        roundId: state.roundId,
+    })))
+
+    const { gameMessageHandler } = useGameContext();
+    
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const clickSound = useClickSound();
-    const dispatch = usePFDispatch();
+    const { togglePFClientSeedInfo, togglePFVerification } = usePFStore(
+        useShallow((state) => ({
+            togglePFClientSeedInfo: state.togglePFClientSeedInfo,
+            togglePFVerification: state.togglePFVerification,
+        }))
+    );
+
+    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
+
     const handleClickOutSide = (target: any, clickedElement: any, except: any) => {
         if (!target.classList.contains(Styles["hide"]) && !except.contains(clickedElement)) {
             target.classList.add(Styles["hide"]);
@@ -96,18 +121,38 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
 
     const handleOnClickClientSeedInfo = () => {
         clickSound();
-        dispatch({ type: PFEventActionType.TOGGLE_PF_CLIENT_SEED_INFO, payload: { isShowPFClientSeedInfo: true } });
+        togglePFClientSeedInfo(true);
         AnalyticsHelper.trackFunction({ function: TrackingFunction.PFClientSeeds, action: TrackingAction.Open });
     };
 
     const handleOnClickVerification = () => {
         clickSound();
-        dispatch({ type: PFEventActionType.TOGGLE_PF_VERIFICATION, payload: { isShowPFVerification: true } });
-        AnalyticsHelper.trackFunction({
-            function: TrackingFunction.PFVerify,
-            action: TrackingAction.Click,
-        });
+        togglePFVerification(true);
+        AnalyticsHelper.trackFunction({function: TrackingFunction.PFVerify,action: TrackingAction.Click,});
     };
+
+    useEffect(() => {
+        if (isFirstFetch) {
+            gameMessageHandler.broadcastGameEvent({
+                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: roundId } },
+            });
+            setIsFirstFetch(false);
+        }
+    }, [isFirstFetch]);
+
+    useEffect(() => {
+        const handlePFResult = (pfResult: any) => {
+            updatePFVerify(pfResult);
+        };
+
+        const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {
+            handlePFResult(roundPFResult);
+        });
+
+        return () => {
+            gameMessageHandler.removeHandler(pfResultHandler);
+        };
+    }, []);
 
     return (
         <div className={Styles["pf-setting-container"]}>

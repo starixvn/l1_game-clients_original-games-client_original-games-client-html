@@ -55,7 +55,6 @@ export const BetHistoryTable = () => {
     const handleCellClick = (columnKey: string, row: BetHistoryDisplayData, index: number) => {
         if (columnKey === 'round') {
             clickSound();
-            
             // Update bet detail data in store
             const betDetailData = {
                 drawInfo: {

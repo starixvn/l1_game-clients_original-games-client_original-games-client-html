@@ -10,6 +10,8 @@ import { Markup } from "interweave";
 import PfRoundBaseHelper from "../../../_shared/helpers/pf/pf-round-base-helper";
 import { ResourceTypes } from "../../../_shared/resources";
 import { useGameContext } from "../../../_shared/react-contexts";
+import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
+import { useShallow } from "zustand/react/shallow";
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
@@ -19,6 +21,9 @@ const PFVerification: FC = () => {
     const { t } = useTranslator();
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
     const [combinedHash, setCombinedHash] = useState(pfResult.finalHash);
+    const { updatePFVerify } = usePFStore(useShallow((state) => ({
+        updatePFVerify: state.updatePFVerify,
+    })));
 
     const BALLS_EACH_ROUND = 6; // Updated for Sedie Multi Player
     const TOTAL_BALLS = 60;
@@ -92,16 +97,12 @@ const PFVerification: FC = () => {
         const mergeSeed = `${pfResult.serverSeed}${mergeClientSeed}`;
         const hash = createHash("sha512").update(mergeSeed).digest("hex");
         setCombinedHash(hash);
+        
 
         return () => {
-            dispatch({
-                type: PFEventActionType.UPDATE_PF_VERIFY,
-                payload: {
-                    pfVerifyModalData: {
-                        ...pfResult,
-                        editedMergeClientSeed: mergeClientSeed,
-                    },
-                },
+            updatePFVerify({
+                ...pfResult,
+                editedMergeClientSeed: mergeClientSeed,
             });
         };
     }, [mergeClientSeed]);
