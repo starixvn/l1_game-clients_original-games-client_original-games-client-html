@@ -17,6 +17,7 @@ export type Props = {
     toggleBtnRef?: React.MutableRefObject<HTMLElement>;
     isBlockUI?: boolean;
     isOverlap?: boolean;
+    extendedClassName?: string;
 };
 
 const getClassFollowDevice = () => {
@@ -48,6 +49,7 @@ const BaseDialog: React.FC<Props> = ({
     toggleBtnRef,
     isBlockUI,
     isOverlap = false,
+    extendedClassName = "rounded-t-[12px] mt-12",
 }: Props) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const classModal = `modal-${ModalType[type].toLocaleLowerCase()}`;
@@ -90,9 +92,8 @@ const BaseDialog: React.FC<Props> = ({
             <div
                 style={getCustomStyle({ betContainerPosition })}
                 ref={wrapperRef}
-                className={`rounded-t-[12px] mt-12 ${Styles.popup} ${Styles[classModal]} ${isMobileOnly ? Styles["isMobile"] : ""} ${getClassFollowDevice()} ${
-                    isIpad ? Styles["ipad"] : ""
-                } ${isOpen ? "modal-open" : ""}`}
+                className={` ${Styles.popup} ${Styles[classModal]} ${isMobileOnly ? Styles["isMobile"] : ""} ${getClassFollowDevice()} ${isIpad ? Styles["ipad"] : ""
+                    } ${isOpen ? "modal-open" : ""} ${extendedClassName}`}
             >
                 {children}
             </div>
