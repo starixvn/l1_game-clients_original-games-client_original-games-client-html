@@ -112,27 +112,42 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         const { rounds, className, elementClassName, blockClassName, block, row: originalRow, arrange, scrollToRight } = this.props;
         const htmlProps = this.getHTMLAttributes();
         const arranged = arrange(rounds, this) as Round[];
+        const groupItems = this.createGroup(arranged);
 
         return (
             <div className={`${styles.scoreboard} ${className}`} {...htmlProps} data-testid="scoreboard">
                 <SwipeScrollGrid scrollRightSignal={scrollToRight}>
-                    {arranged.map((round, index) => {
-                        const column = (index / originalRow + 1) >> 0;
-                        const row = (index % originalRow) + 1;
+                    {groupItems.map((items: Round[], index: number) => {
+                        const rowByGroup = (originalRow / block) >> 0;
+                        const parentColumn = (index / rowByGroup + 1) >> 0;
+                        const row = (index % rowByGroup) + 1;
                         const style: CSSProperties = {
-                            gridColumnStart: column,
+                            gridColumnStart: parentColumn,
                             gridRowStart: row,
                         };
 
-                        if (round && round["data"]?.length > 0) {
-                            this.actualColumns = column;
-                        }
+                        return (
+                            <div className={`${styles["scoreboard-block"]} ${blockClassName}`} key={index} style={style}>
+                                {items.map((round, itemIndex) => {
+                                    const column = (itemIndex / block + 1) >> 0;
+                                    const itemRow = (itemIndex % block) + 1;
+                                    const itemStyle: CSSProperties = {
+                                        gridColumnStart: column,
+                                        gridRowStart: itemRow,
+                                    };
 
-                        return this.renderElement(round, {
-                            className: `${styles["scoreboard-item"]} ${elementClassName}`,
-                            style,
-                            key: index,
-                        });
+                                    if (round && round["data"]?.length > 0) {
+                                        this.actualColumns = parentColumn;
+                                    }
+
+                                    return this.renderElement(round, {
+                                        className: `${styles["scoreboard-item"]} ${elementClassName}`,
+                                        style: itemStyle,
+                                        key: itemIndex,
+                                    });
+                                })}
+                            </div>
+                        );
                     })}
                 </SwipeScrollGrid>
             </div>

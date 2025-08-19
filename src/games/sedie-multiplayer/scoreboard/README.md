@@ -6,11 +6,11 @@ This document describes the enhanced scoreboard implementation for the SeDie Mul
 
 The enhanced scoreboard builds upon the original implementation by adding:
 
-- **Horizontal scrolling** with drag support
-- **Automatic scroll-to-right** on new results
-- **Dynamic column calculation** based on actual data
-- **Custom scrollbar styling** for better UX
-- **Performance optimizations** for large datasets
+-   **Horizontal scrolling** with drag support
+-   **Automatic scroll-to-right** on new results
+-   **Dynamic column calculation** based on actual data
+-   **Custom scrollbar styling** for better UX
+-   **Performance optimizations** for large datasets
 
 ## Key Components
 
@@ -19,17 +19,19 @@ The enhanced scoreboard builds upon the original implementation by adding:
 Located at: `src/components/game-components/swipe-scroll-grid/`
 
 **Features:**
-- Horizontal scrolling with mouse drag support
-- Touch gesture support for mobile devices
-- Automatic scroll-to-right functionality
-- Custom scrollbar styling
-- Smooth scrolling animations
+
+-   Horizontal scrolling with mouse drag support
+-   Touch gesture support for mobile devices
+-   Automatic scroll-to-right functionality
+-   Custom scrollbar styling
+-   Smooth scrolling animations
 
 **Props:**
+
 ```typescript
 interface SwipeScrollGridProps {
     children: React.ReactNode;
-    scrollRightSignal?: boolean;  // Triggers scroll to right
+    scrollRightSignal?: boolean; // Triggers scroll to right
     initialScrollRight?: boolean; // Initial scroll position
 }
 ```
@@ -39,18 +41,20 @@ interface SwipeScrollGridProps {
 Located at: `src/components/game-components/round-history/scoreboard/scoreboard.tsx`
 
 **New Features:**
-- `scrollToRight` prop for automatic scrolling
-- `updateScoreboardColumns` callback for dynamic column calculation
-- Integration with SwipeScrollGrid
-- Performance optimizations for large datasets
+
+-   `scrollToRight` prop for automatic scrolling
+-   `updateScoreboardColumns` callback for dynamic column calculation
+-   Integration with SwipeScrollGrid
+-   Performance optimizations for large datasets
 
 **Props:**
+
 ```typescript
 export type ScoreboardProps<Round> = {
     // ... existing props
     updateScoreboardColumns?: (actualColumns: number) => void;
     scrollToRight?: boolean;
-}
+};
 ```
 
 ### 3. SeDie Scoreboard Implementation
@@ -58,30 +62,24 @@ export type ScoreboardProps<Round> = {
 Located at: `src/games/sedie-multiplayer/scoreboard/scoreboard.tsx`
 
 **Enhancements:**
-- Dynamic column management
-- Scroll-to-right on result animations
-- Support for 100+ round history
-- Optimized rendering performance
+
+-   Dynamic column management
+-   Scroll-to-right on result animations
+-   Support for 100+ round history
+-   Optimized rendering performance
 
 ## Usage
 
 ### Basic Implementation
 
 ```tsx
-import ScoreboardSeDie from './scoreboard';
+import ScoreboardSeDie from "./scoreboard";
 
 const MyComponent = () => {
     const [roundHistory, setRoundHistory] = useState([]);
     const [playResultAnimation, setPlayResultAnimation] = useState(false);
 
-    return (
-        <ScoreboardSeDie
-            roundHistory={roundHistory}
-            isShowBlink={true}
-            isOddEven={true}
-            playResultAnimation={playResultAnimation}
-        />
-    );
+    return <ScoreboardSeDie roundHistory={roundHistory} isShowBlink={true} isOddEven={true} playResultAnimation={playResultAnimation} />;
 };
 ```
 
@@ -92,13 +90,13 @@ class GameComponent extends Component {
     state = {
         roundHistory: [],
         isShowBlink: false,
-        playResultAnimation: false
+        playResultAnimation: false,
     };
 
     handleNewResult = (result) => {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             roundHistory: [...prevState.roundHistory, result],
-            playResultAnimation: true
+            playResultAnimation: true,
         }));
 
         // Reset animation flag after animation completes
@@ -127,6 +125,7 @@ class GameComponent extends Component {
 ### Automatic Scrolling
 
 The scoreboard automatically scrolls to the right when:
+
 1. `playResultAnimation` prop is `true`
 2. New results are added to the round history
 3. The component mounts with `initialScrollRight={true}`
@@ -134,15 +133,16 @@ The scoreboard automatically scrolls to the right when:
 ### Manual Scrolling
 
 Users can manually scroll using:
-- **Mouse drag**: Click and drag horizontally
-- **Scrollbar**: Use the custom-styled scrollbar
-- **Touch gestures**: Swipe left/right on mobile devices
+
+-   **Mouse drag**: Click and drag horizontally
+-   **Scrollbar**: Use the custom-styled scrollbar
+-   **Touch gestures**: Swipe left/right on mobile devices
 
 ### Scroll Direction Logic
 
-- **Drag right**: Scrolls to the beginning (left)
-- **Drag left**: Scrolls to the end (right)
-- **Smooth animations**: All scrolling uses smooth behavior
+-   **Drag right**: Scrolls to the beginning (left)
+-   **Drag left**: Scrolls to the end (right)
+-   **Smooth animations**: All scrolling uses smooth behavior
 
 ## Performance Optimizations
 
@@ -169,17 +169,19 @@ The scoreboard is optimized for datasets with 100+ records:
 ### Custom Scrollbar
 
 The scoreboard features a custom scrollbar with:
-- **Width**: 5px
-- **Background**: Dark gray (#3d3d3d)
-- **Thumb**: Blue gradient (#84c0ff to #064f9b)
-- **Border radius**: 10px for rounded appearance
+
+-   **Width**: 5px
+-   **Background**: Dark gray (#3d3d3d)
+-   **Thumb**: Blue gradient (#84c0ff to #064f9b)
+-   **Border radius**: 10px for rounded appearance
 
 ### Responsive Design
 
 The scoreboard adapts to different screen sizes:
-- **Desktop**: Full horizontal scrolling
-- **Tablet**: Touch-optimized scrolling
-- **Mobile**: Swipe gesture support
+
+-   **Desktop**: Full horizontal scrolling
+-   **Tablet**: Touch-optimized scrolling
+-   **Mobile**: Swipe gesture support
 
 ## Testing
 
@@ -188,29 +190,33 @@ The scoreboard adapts to different screen sizes:
 The scoreboard includes comprehensive tests covering:
 
 1. **Happy Path Tests**
-   - Basic rendering
-   - Correct column/row counts
-   - Proper element structure
+
+    - Basic rendering
+    - Correct column/row counts
+    - Proper element structure
 
 2. **Scrolling Functionality Tests**
-   - Automatic scroll-to-right
-   - Manual scrolling behavior
-   - Column updates
+
+    - Automatic scroll-to-right
+    - Manual scrolling behavior
+    - Column updates
 
 3. **Edge Cases Tests**
-   - Empty round history
-   - Single round
-   - Large datasets (100+ records)
+
+    - Empty round history
+    - Single round
+    - Large datasets (100+ records)
 
 4. **Performance Tests**
-   - Large dataset rendering
-   - Memory usage
-   - Animation performance
+
+    - Large dataset rendering
+    - Memory usage
+    - Animation performance
 
 5. **Integration Tests**
-   - Props combinations
-   - State consistency
-   - Re-render behavior
+    - Props combinations
+    - State consistency
+    - Re-render behavior
 
 ### Running Tests
 
@@ -236,34 +242,44 @@ npm test -- --coverage --testPathPattern=scoreboard
 
 ### Breaking Changes
 
-- `scrollToRight` prop is now required for automatic scrolling
-- Column calculation is now dynamic instead of fixed
-- Scrollbar styling has changed for better UX
+-   `scrollToRight` prop is now required for automatic scrolling
+-   Column calculation is now dynamic instead of fixed
+-   Scrollbar styling has changed for better UX
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Scrolling not working**
-   - Check if `scrollToRight` prop is properly set
-   - Verify SwipeScrollGrid component is imported
-   - Ensure CSS overflow properties are set correctly
+
+    - Check if `scrollToRight` prop is properly set
+    - Verify SwipeScrollGrid component is imported
+    - Ensure CSS overflow properties are set correctly
 
 2. **Performance issues with large datasets**
-   - Implement virtual scrolling for datasets > 1000 records
-   - Use `React.memo` for scoreboard elements
-   - Optimize round history updates
+
+    - Implement virtual scrolling for datasets > 1000 records
+    - Use `React.memo` for scoreboard elements
+    - Optimize round history updates
 
 3. **Scrollbar not visible**
-   - Check browser compatibility
-   - Verify CSS custom scrollbar styles
-   - Ensure container has proper dimensions
+
+    - Check browser compatibility
+    - Verify CSS custom scrollbar styles
+    - Ensure container has proper dimensions
 
 4. **Nested grid structure issues**
-   - **Fixed**: The scoreboard now uses a simplified single-grid layout
-   - **Previous issue**: Double grid nesting caused unnecessary complexity
-   - **Solution**: Removed nested grid containers and simplified the structure
-   - **Result**: Better performance and cleaner HTML structure
+
+    - **Fixed**: The scoreboard now uses a simplified single-grid layout
+    - **Previous issue**: Double grid nesting caused unnecessary complexity
+    - **Solution**: Removed nested grid containers and simplified the structure
+    - **Result**: Better performance and cleaner HTML structure
+
+5. **Scrolling functionality issues**
+    - **Fixed**: Restored proper Big Road grouping logic while maintaining simplified structure
+    - **Previous issue**: Removing grouping logic broke the Big Road algorithm
+    - **Solution**: Kept `createGroup` method for proper data organization
+    - **Result**: Horizontal scrolling works correctly with proper Big Road patterns
 
 ### Debug Mode
 
@@ -274,8 +290,8 @@ const DEBUG_SCOREBOARD = true;
 
 // In component
 if (DEBUG_SCOREBOARD) {
-    console.log('Scoreboard columns:', this.scoreboardColumns);
-    console.log('Scroll to right:', scrollToRight);
+    console.log("Scoreboard columns:", this.scoreboardColumns);
+    console.log("Scroll to right:", scrollToRight);
 }
 ```
 

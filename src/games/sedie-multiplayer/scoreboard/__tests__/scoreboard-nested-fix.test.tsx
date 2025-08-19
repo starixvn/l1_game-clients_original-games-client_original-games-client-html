@@ -62,7 +62,7 @@ describe('ScoreboardSeDie Nested Grid Fix', () => {
             // Assert
             expect(screen.getByTestId('switchable-scoreboard')).toBeInTheDocument();
             expect(screen.getByTestId('scoreboard-0')).toBeInTheDocument();
-            
+
             // Verify no style prop with grid-template-columns is passed
             const scoreboardElement = screen.getByTestId('scoreboard-0');
             expect(scoreboardElement).not.toHaveAttribute('style');
@@ -83,10 +83,10 @@ describe('ScoreboardSeDie Nested Grid Fix', () => {
             // Arrange
             const largeHistory = Array.from({ length: 50 }, (_, index) => ({
                 result: { drawId: index + 1, dice1: 1, dice2: 2, dice3: 3 },
-                settlementResult: { 
-                    odd: index % 2 === 0, 
-                    even: index % 2 === 1, 
-                    drawId: index + 1 
+                settlementResult: {
+                    odd: index % 2 === 0,
+                    even: index % 2 === 1,
+                    drawId: index + 1
                 }
             }));
             const props = { ...defaultProps, roundHistory: largeHistory };
@@ -127,7 +127,7 @@ describe('ScoreboardSeDie Nested Grid Fix', () => {
             // Assert
             const scoreboard = screen.getByTestId('switchable-scoreboard');
             expect(scoreboard).toBeInTheDocument();
-            
+
             // Verify the structure is simplified (no nested grid containers)
             const scoreboardElements = screen.getAllByTestId(/scoreboard-/);
             expect(scoreboardElements.length).toBe(1); // Only one main scoreboard
