@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Table, TableColumn } from '../table';
 import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
-import { useCommonTranslate } from '../../../_shared/react-hooks';
+import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
 import useGameStore from '../../../_shared/stores/game-store/game-store';
 import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
 import {
@@ -16,6 +16,7 @@ import styles from './bet-history.module.scss';
 export const BetHistoryTable = () => {
     const { gameMessageHandler } = useGameContext();
     const { t: translateCommon } = useCommonTranslate();
+    const clickSound = useClickSound();
 
     // Store state
     const {
@@ -23,6 +24,8 @@ export const BetHistoryTable = () => {
         isLoading,
         isExpanded,
         totalPages,
+        toggleBetDetail,
+        updateBetDetail,
     } = useGameStore();
 
     // Local state
@@ -45,6 +48,29 @@ export const BetHistoryTable = () => {
         }
         return undefined;
     }, [gameMessageHandler]);
+
+    // Handle cell click for round column
+    const handleCellClick = (columnKey: string, row: BetHistoryDisplayData, index: number) => {
+        if (columnKey === 'round') {
+            clickSound();
+            
+            // Update bet detail data in store
+            const betDetailData = {
+                drawInfo: {
+                    drawId: row.originalBetLog?.drawId ?? row.originalBetLog?.roundId ?? row.originalBetLog?.phien,
+                    result: row.originalBetLog?.result,
+                    odds: row.originalBetLog?.odds,
+                    settlementResult: row.originalBetLog?.settlementResult,
+                    clientSeed: row.originalBetLog?.clientSeed,
+                },
+                betLogDetails: row.originalBetLog?.betLogDetails || [],
+            };
+            
+            
+            updateBetDetail(betDetailData);
+            toggleBetDetail(true);
+        }
+    };
 
     // Table column configuration
     const columns: TableColumn<BetHistoryDisplayData>[] = createTableColumns(translateCommon);
@@ -83,6 +109,7 @@ export const BetHistoryTable = () => {
                     data={tableData}
                     emptyMessage={translateCommon("no_data")}
                     className="bet-history-table"
+                    onCellClick={handleCellClick}
                 />
             </div>
 

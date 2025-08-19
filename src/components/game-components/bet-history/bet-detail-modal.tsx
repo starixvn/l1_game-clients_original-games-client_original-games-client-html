@@ -1,21 +1,22 @@
 import { FC, ReactNode } from "react";
-import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
 import ModalContainer from "../modal-container";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { createPortal } from "react-dom";
 
 const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
-    const { isShowBetDetail } = useGameStateContext();
     const { t: translateCommon } = useCommonTranslate();
-    const dispatch = useGameStatesDispatch();
+    const { isShowBetDetail, toggleBetDetail } = useGameStore();
 
     const handleCloseModal = () => {
-        dispatch({ type: GameEventActionType.TOGGLE_BET_DETAIL, payload: { isShowBetDetail: false } });
+        toggleBetDetail(false);
     };
+
+    const dashboardElement = document.getElementById("dashboard");
 
     return (
         isShowBetDetail &&
+        dashboardElement &&
         createPortal(
             <ModalContainer
                 id="bet-detail"
@@ -26,7 +27,7 @@ const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
             >
                 {children}
             </ModalContainer>,
-            document.getElementById("dashboard")
+            dashboardElement
         )
     );
 };

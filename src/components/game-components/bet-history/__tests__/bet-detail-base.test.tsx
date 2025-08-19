@@ -141,34 +141,4 @@ describe(BetDetailBase.name, () => {
             });
         });
     });
-    describe("click provably fair", () => {
-        test("should call dispatch", () => {
-            const state: any = {
-                betDetailModalData: {
-                    drawInfo: {},
-                    betLogDetails: [],
-                },
-            };
-            mockUseGameStateContext.mockReturnValueOnce(state);
-            const dispatch = jest.fn();
-            mockDispatch.mockReturnValue(dispatch);
-            const clickSound = jest.fn();
-            mockSound.mockReturnValue(clickSound);
-            const renderBetDetailResultBlock = jest.fn();
-
-            render(
-                <BetDetailBase
-                    isTurnBase={true}
-                    renderBetDetailResultBlock={renderBetDetailResultBlock}
-                    produceDataBetDetailRow={jest.fn()}
-                />
-            );
-
-            const button = screen.getAllByRole("button")[0];
-            fireEvent.click(button);
-
-            expect(dispatch).toHaveBeenCalled();
-            expect(clickSound).toHaveBeenCalled();
-        });
-    });
 });

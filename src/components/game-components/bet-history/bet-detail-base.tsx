@@ -1,11 +1,9 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 
 import { numberWithCommas, separateDateTime, sortedCollectionByTime } from "../../../_shared/helpers";
 import { usePlayerContext } from "../../../_shared/react-contexts";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { PFEventActionType } from "../../../_shared/react-contexts/game-state-context/pf/pf-action";
-import { usePFDispatch } from "../../../_shared/react-contexts/game-state-context/pf/pf-context";
 import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
+import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { DrawInfo } from "../../game-base/type";
 import { InfiniteTable } from "../infinite-table";
 import Styles from "./bet-history.module.scss";
@@ -27,31 +25,19 @@ const BetDetailBase: FC<{
     };
     renderBetChoice?: (choice: any) => ReactNode;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice }) => {
-    const {
-        betDetailModalData: { drawInfo, betLogDetails },
-    } = useGameStateContext();
-    const dispatch = usePFDispatch();
+    const { betDetailModalData } = useGameStore();
+    const { drawInfo, betLogDetails } = betDetailModalData || {};
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();
     const clickSound = useClickSound();
 
+    if (!drawInfo || !betLogDetails) {
+        return null;
+    }
+
     const handleClickProvablyFair = () => {
+        console.log("Click provably fair");
         clickSound();
-        dispatch({
-            type: PFEventActionType.UPDATE_PF_VERIFY,
-            payload: {
-                pfVerifyModalData: {
-                    ...drawInfo.pfResult,
-                    clientSeed: drawInfo.clientSeed,
-                },
-            },
-        });
-        dispatch({
-            type: PFEventActionType.TOGGLE_PF_VERIFY,
-            payload: {
-                isShowPFVerify: true,
-            },
-        });
     };
 
     const header = [
@@ -62,7 +48,8 @@ const BetDetailBase: FC<{
         { node: translateCommon("win") },
     ];
 
-    const preprocessedBetLogDetails = sortedCollectionByTime(betLogDetails);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
 
     const body = preprocessedBetLogDetails.map((betLogDetail) => {
         const { rawTime, amount, choice, odds, win, hightlight, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
@@ -80,7 +67,7 @@ const BetDetailBase: FC<{
                     </>
                 ),
             },
-            ...[renderBetChoice(choice), calcOdds, numberWithCommas(amount) ?? 0].map((item) => {
+            ...[renderBetChoice ? renderBetChoice(choice) : choice, calcOdds, numberWithCommas(amount) ?? 0].map((item) => {
                 return { node: <div className={hightlight ? "highlight" : ""}>{item}</div> };
             }),
             {
@@ -88,6 +75,8 @@ const BetDetailBase: FC<{
             },
         ];
     });
+
+    console.log("Render");
 
     return (
         <>

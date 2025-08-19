@@ -30,6 +30,7 @@ export interface GameConfigSlice {
     isShowBetDetail: boolean;
     isShowGameGuide: boolean;
     betDetailModalData?: {
+        drawInfo: any;
         betLogDetails: any[];
     };
     isPlayStartRoundAnimation?: boolean;
@@ -53,6 +54,8 @@ export interface GameConfigSlice {
     setShowResultInfo: (showResultInfo: boolean) => void;
     setUMMessage: (message: string) => void;
     setIsUMInFirstLoad: (isUMInFirstLoad: boolean) => void;
+    toggleBetDetail: (isShow: boolean) => void;
+    updateBetDetail: (betDetailData: any) => void;
 }
 
 const GameEvents = {
@@ -132,4 +135,6 @@ export const createGameConfigSlice: StateCreator<GameConfigSlice> = (set) => ({
             }
         });
     },
+    toggleBetDetail: (isShow) => set({ isShowBetDetail: isShow }),
+    updateBetDetail: (betDetailData) => set({ betDetailModalData: betDetailData }),
 });

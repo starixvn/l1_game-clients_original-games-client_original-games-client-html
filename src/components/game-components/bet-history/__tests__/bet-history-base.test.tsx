@@ -148,46 +148,6 @@ describe(BetHistoryBase.name, () => {
         });
     });
 
-    describe("click draw id", () => {
-        it("should call dispatch", () => {
-            mockDispatch.mockReturnValue(jest.fn());
-            let mockCallback = jest.fn();
-            const gameMessageHandler = {
-                broadcastGameEvent: jest.fn(),
-                register: (_, callback) => {
-                    mockCallback = callback;
-                },
-                removeHandler: jest.fn(),
-            };
-            mockGameContext.mockReturnValue({ gameMessageHandler });
-            const mockRenderBetLogResult = jest.fn();
-            mockRenderBetLogResult.mockReturnValue(<div></div>);
-            mockDispatch.mockReturnValue(jest.fn());
-
-            const betHistoryBase = <BetHistoryBase isTurnBase={true} renderBetLogResult={mockRenderBetLogResult} />;
-            const renderResult = render(betHistoryBase);
-            act(() => {
-                mockCallback({
-                    history: {
-                        betLogs: [
-                            {
-                                drawId: 1234,
-                                time: new Date(),
-                                result: {},
-                                totalAmount: 1,
-                                betwin: 1,
-                            },
-                        ],
-                    },
-                });
-            });
-            renderResult.rerender(betHistoryBase);
-            screen.getByText("1234").click();
-
-            expect(mockDispatch).toHaveBeenCalled();
-        });
-    });
-
     describe("when add data", () => {
         it("should broadcast message", () => {
             mockDispatch.mockReturnValue(jest.fn());

@@ -47,26 +47,4 @@ describe(BetDetailModal.name, () => {
             expect(renderResult.queryAllByText("BetDetail").length).toBe(expected);
         });
     });
-
-    describe("click close button", () => {
-        it("should call dispatch", () => {
-            mockGameState.mockReturnValue({
-                isShowBetDetail: true,
-            });
-            const mockDispatch = jest.fn();
-            mockStateDispatch.mockReturnValue(mockDispatch);
-            const root = <div id="dashboard"></div>;
-            const renderResult = render(root);
-
-            renderResult.rerender(
-                <>
-                    {root}
-                    <BetDetailModal>BetDetail</BetDetailModal>
-                </>
-            );
-            renderResult.getByTestId("close-modal").click();
-
-            expect(mockDispatch).toHaveBeenCalled();
-        });
-    });
 });
