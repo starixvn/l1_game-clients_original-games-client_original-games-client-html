@@ -101,7 +101,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const randomSeed = useRef<HTMLInputElement>();
     const manualRadio = useRef<HTMLInputElement>();
     const manualSeed = useRef<HTMLInputElement>();
-    const { drawId,roundId } = useGameStateContext();
+    const { roundId } = useGameStateContext();
     const { pfClientSeedSetting, ownBets } = usePFStore(
         useShallow((state) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
@@ -155,12 +155,12 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         setTimeout(() => {
             setIsLoading(false);
         }, TIME_OUT);
-        
+
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
             setServerSeedHash(pfServerSeed.serverSeedHash);
         };
 
-        const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({pf}) => {
+        const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {
             handleServerSeed(pf);
         });
 

@@ -41,7 +41,7 @@
         "metricKey": "new_coverage",
         "comparator": "LT",
         "errorThreshold": "0",
-        "actualValue": "46.9"
+        "actualValue": "52.7"
       },
       {
         "status": "OK",
@@ -117,8 +117,8 @@
     "ignoredConditions": false,
     "period": {
       "mode": "PREVIOUS_VERSION",
-      "date": "2025-08-19T02:58:37+0000",
-      "parameter": "david-local"
+      "date": "2025-08-19T03:54:56+0000",
+      "parameter": "GL-4116-Se-Die-Multiplayer"
     },
     "caycStatus": "over-compliant"
   }
