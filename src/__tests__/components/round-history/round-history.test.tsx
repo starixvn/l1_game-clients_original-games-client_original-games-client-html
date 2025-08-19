@@ -5,12 +5,15 @@ import { IconStatistic } from "../../../components/game-components/statistic/ico
 
 // Mock the BaseDialog component
 jest.mock("../../../components/game-components/base-dialog", () => {
-    return function MockBaseDialog({ children, isOpen, onCloseModal }: any) {
+    return function MockBaseDialog({ children, isOpen, onCloseModal, enableBackdrop }: any) {
         if (!isOpen) return null;
         return (
             <div data-testid="base-dialog">
-                <button onClick={onCloseModal} data-testid="close-dialog">Close</button>
-                {children}
+                {enableBackdrop && <div data-testid="overlay-mask" className="overlay-mask"></div>}
+                <div data-testid="dialog-content">
+                    <button onClick={onCloseModal} data-testid="close-dialog">Close</button>
+                    {children}
+                </div>
             </div>
         );
     };
@@ -21,6 +24,17 @@ jest.mock("../../../components/game-components/round-history/dot-next", () => ({
     MiniItemNext: ({ className }: { className: string }) => (
         <div data-testid="mini-item-next" className={className}>Next</div>
     ),
+}));
+
+// Mock react-device-detect
+jest.mock("react-device-detect", () => ({
+    isIOS: false,
+    isMobileOnly: false,
+}));
+
+// Mock the click sound hook
+jest.mock("../../../_shared/react-hooks", () => ({
+    useClickSound: jest.fn(() => jest.fn()),
 }));
 
 describe("RoundHistory Component", () => {
@@ -43,6 +57,11 @@ describe("RoundHistory Component", () => {
             <div>Statistic Content</div>
         </div>
     );
+
+    beforeEach(() => {
+        // Reset any mocks
+        jest.clearAllMocks();
+    });
 
     describe("Basic Rendering", () => {
         it("should render round history items correctly", () => {
@@ -170,7 +189,6 @@ describe("RoundHistory Component", () => {
 
             // Assert
             await waitFor(() => {
-                expect(screen.getByTestId("base-dialog")).toBeInTheDocument();
                 expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
             });
         });
@@ -193,13 +211,16 @@ describe("RoundHistory Component", () => {
             const sideButton = screen.getByTestId("icon-statistic");
             fireEvent.click(sideButton);
 
-            // Close popup
-            const closeButton = screen.getByTestId("close-dialog");
-            fireEvent.click(closeButton);
+            // Wait for popup to appear
+            await waitFor(() => {
+                expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
+            });
+
+            // Close popup by clicking the side button again
+            fireEvent.click(sideButton);
 
             // Assert
             await waitFor(() => {
-                expect(screen.queryByTestId("base-dialog")).not.toBeInTheDocument();
                 expect(screen.queryByTestId("statistic-popup-content")).not.toBeInTheDocument();
             });
         });
@@ -222,19 +243,19 @@ describe("RoundHistory Component", () => {
             // First click - open popup
             fireEvent.click(sideButton);
             await waitFor(() => {
-                expect(screen.getByTestId("base-dialog")).toBeInTheDocument();
+                expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
             });
 
             // Second click - close popup
             fireEvent.click(sideButton);
             await waitFor(() => {
-                expect(screen.queryByTestId("base-dialog")).not.toBeInTheDocument();
+                expect(screen.queryByTestId("statistic-popup-content")).not.toBeInTheDocument();
             });
 
             // Third click - open popup again
             fireEvent.click(sideButton);
             await waitFor(() => {
-                expect(screen.getByTestId("base-dialog")).toBeInTheDocument();
+                expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
             });
         });
 
@@ -255,7 +276,7 @@ describe("RoundHistory Component", () => {
 
             // Assert
             await waitFor(() => {
-                expect(screen.queryByTestId("base-dialog")).not.toBeInTheDocument();
+                expect(screen.queryByTestId("statistic-popup-content")).not.toBeInTheDocument();
             });
         });
     });
@@ -365,8 +386,46 @@ describe("RoundHistory Component", () => {
 
             // Assert
             await waitFor(() => {
-                expect(screen.getByTestId("base-dialog")).toBeInTheDocument();
                 expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe("Statistic Popup with onClose", () => {
+        it("should call onClose when statistic popup is closed", async () => {
+            // Arrange
+            const mockOnClose = jest.fn();
+            const statisticPopupWithOnClose = React.cloneElement(mockStatisticPopupContent as React.ReactElement, {
+                onClose: mockOnClose
+            });
+
+            const props = {
+                roundHistory: mockRoundHistory,
+                isShowBlink: false,
+                renderItem: mockRenderItem,
+                numberOfItems: 3,
+                sideButton: <IconStatistic />,
+                statisticPopupContent: statisticPopupWithOnClose,
+            };
+
+            // Act
+            render(<RoundHistory {...props} />);
+
+            // Open popup
+            const sideButton = screen.getByTestId("icon-statistic");
+            fireEvent.click(sideButton);
+
+            // Wait for popup to appear
+            await waitFor(() => {
+                expect(screen.getByTestId("statistic-popup-content")).toBeInTheDocument();
+            });
+
+            // Close popup by clicking the side button again
+            fireEvent.click(sideButton);
+
+            // Assert
+            await waitFor(() => {
+                expect(screen.queryByTestId("statistic-popup-content")).not.toBeInTheDocument();
             });
         });
     });

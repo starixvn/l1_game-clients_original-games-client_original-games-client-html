@@ -1,11 +1,10 @@
 .statistic-container {
-    position: fixed;
-    // top: 50px;
-    // right: 14px;
+    position: absolute;
     z-index: 99999;
     width: max-content;
     height: max-content;
-  padding-top: 8px;
+	top:45px;
+	left: -10px;
 }
 
 

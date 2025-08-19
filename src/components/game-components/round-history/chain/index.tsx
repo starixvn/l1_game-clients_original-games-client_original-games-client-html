@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import { MiniItemNext } from "../dot-next";
-import BaseDialog from "../../base-dialog";
-import { ModalType } from "../../base-dialog/type";
-import Styles from "./index.module.scss";
 
 export const RoundHistory = ({
     roundHistory,
@@ -12,6 +9,8 @@ export const RoundHistory = ({
     sideButton,
     sizeNextItem = "",
     statisticPopupContent,
+    dialogStrategy,
+    dialogConfigId,
 }: {
     roundHistory: any;
     isShowBlink: boolean;
@@ -20,47 +19,47 @@ export const RoundHistory = ({
     sideButton?: React.JSX.Element;
     sizeNextItem?: string;
     statisticPopupContent?: React.JSX.Element;
+    dialogStrategy?: any; // Allow custom dialog strategy
+    dialogConfigId?: string; // Allow custom dialog configuration
 }) => {
-    const [isShowStatistic, setIsShowStatistic] = useState(false);
+    const [showStatistic, setShowStatistic] = useState(false);
 
     const renderItemComponent = (result: any, index: number) => {
         return renderItem({ result, index });
     };
 
     const handleStatisticClick = () => {
-        setIsShowStatistic(!isShowStatistic);
+        setShowStatistic(!showStatistic);
     };
 
-    // Clone the sideButton and add onClick handler if it's a statistic button
-    const enhancedSideButton = sideButton ? React.cloneElement(sideButton, {
-        onClick: handleStatisticClick
-    }) : null;
+    const handleCloseStatistic = () => {
+        setShowStatistic(false);
+    };
 
     return (
-        <div className="flex items-center">
-            <div className="flex gap-1 flex-row-reverse items-center">
-                {isShowBlink && <MiniItemNext className={sizeNextItem} />}
-                {roundHistory &&
-                    [...roundHistory]
-                        ?.slice(0, isShowBlink ? numberOfItems - 1 : numberOfItems)
-                        .map((result, index) => renderItemComponent(result, index))}
+        <div className="relative">
+            <div className="flex items-center">
+                <div className="flex gap-1 flex-row-reverse items-center">
+                    {isShowBlink && <MiniItemNext className={sizeNextItem} />}
+                    {roundHistory &&
+                        [...roundHistory]
+                            ?.slice(0, isShowBlink ? numberOfItems - 1 : numberOfItems)
+                            .map((result, index) => renderItemComponent(result, index))}
+                </div>
+                <div className="ml-2">
+                    {sideButton && statisticPopupContent ? (
+                        <div onClick={handleStatisticClick}>
+                            {sideButton}
+                        </div>
+                    ) : (
+                        sideButton
+                    )}
+                </div>
+                {showStatistic && statisticPopupContent && (
+                    React.cloneElement(statisticPopupContent as React.ReactElement, { onClose: handleCloseStatistic })
+                )}
             </div>
-            <div className="ml-2">{enhancedSideButton}</div>
 
-            {/* Statistic Popup */}
-            {isShowStatistic && statisticPopupContent && (
-                <BaseDialog
-                    extendedClassName={Styles.statisticPopup}
-                    type={ModalType.Center}
-                    isOpen={true}
-                    enableBackdrop={false}
-                    onCloseModal={() => setIsShowStatistic(false)}
-                >
-                    {React.cloneElement(statisticPopupContent, {
-                        onClose: () => setIsShowStatistic(false)
-                    })}
-                </BaseDialog>
-            )}
         </div>
     );
 };

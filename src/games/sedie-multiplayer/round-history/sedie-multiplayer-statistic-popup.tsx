@@ -1,12 +1,11 @@
 import React from "react";
-import { IconStatistic } from "../../../components/game-components/statistic/icon-statistic";
 import ScoreboardSeDie from "../scoreboard";
 import { mainChoices, SeDieChoices, SeDieStatisticColors } from "../sedie-multiplayer-constants";
 import PercentageStatistic from "../../../components/game-components/statistic";
 import Image from "next/image";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/react/shallow";
-import Styles from "../statistic-popup.module.scss";
+import Styles from "./statistic-popup.module.scss";
 
 interface SedieMultiplayerStatisticPopupProps {
     onClose?: () => void;
