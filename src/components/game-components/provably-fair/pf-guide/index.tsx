@@ -13,7 +13,7 @@ import Styles from "./pf-guide.module.scss";
 
 const PFGuide: FC = () => {
     const { gameConfigs } = useGameStateContext();
-    const theme = Themes.numberGame ?? "dark";
+    const theme = "pf-original";
     const language = tolgee.getLanguage() ?? "en";
     const wrapperRef = useRef<HTMLIFrameElement>();
     const wrapperIframeRef = useRef<HTMLIFrameElement>();

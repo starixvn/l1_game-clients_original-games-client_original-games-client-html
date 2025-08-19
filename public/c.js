@@ -9,7 +9,7 @@ window.envConfig = {
     },
     proxy: {
         ssl: true,
-        subDomain: "l2-proxy",
+        subDomain: "l2-proxy1",
         path: "",
     },
     sentry: {
