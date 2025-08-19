@@ -12,6 +12,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useGameContext } from "../../../../_shared/react-contexts/game-context/game-context";
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import useGameStore from "../../../../_shared/stores/game-store/game-store";
+import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
@@ -20,7 +21,7 @@ const PFVerifyModal: FC<{
     renderResultBlock: Function;
 }> = ({ renderResultBlock }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { isShowPFVerify, togglePFVerify } = usePFStore(
+    const { isShowPFVerify, togglePFVerify } = usePopupStore(
         useShallow((state) => ({
             isShowPFVerify: state.isShowPFVerify,
             togglePFVerify: state.togglePFVerify,
@@ -87,7 +88,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const clickSound = useClickSound();
-    const { togglePFClientSeedInfo, togglePFVerification } = usePFStore(
+    const { togglePFClientSeedInfo, togglePFVerification } = usePopupStore(
         useShallow((state) => ({
             togglePFClientSeedInfo: state.togglePFClientSeedInfo,
             togglePFVerification: state.togglePFVerification,

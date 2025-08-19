@@ -7,8 +7,8 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { DrawInfo } from "../../game-base/type";
 import { InfiniteTable } from "../infinite-table";
 import Styles from "./bet-history.module.scss";
-import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/react/shallow";
+import { usePopupStore } from "../../../_shared/stores/popup-store/popup-store";
 
 const BetDetailBase: FC<{
     isTurnBase: boolean;
@@ -32,7 +32,7 @@ const BetDetailBase: FC<{
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();
     const clickSound = useClickSound();
-    const { togglePFVerify } = usePFStore(useShallow((state) => ({
+    const { togglePFVerify } = usePopupStore(useShallow((state) => ({
         togglePFVerify: state.togglePFVerify,
     })));
 
