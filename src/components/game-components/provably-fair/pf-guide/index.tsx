@@ -2,7 +2,7 @@ import { FC, memo, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { buildVersion, Themes } from "../../../../_shared/constants";
+import { buildVersion } from "../../../../_shared/constants";
 import { AnalyticsHelper, TrackingAction, TrackingFunction, buildGameGuideUrl } from "../../../../_shared/helpers";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useClickSound, useCommonTranslate } from "../../../../_shared/react-hooks";
