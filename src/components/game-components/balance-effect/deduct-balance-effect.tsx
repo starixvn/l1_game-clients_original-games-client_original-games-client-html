@@ -32,11 +32,14 @@ const DeductBalanceEffect: FC = () => {
     }, [endBet, setEndBet, nextId]);
 
     useEffect(() => {
-        if (data.length === 0) return;
+        if (data.length === 0) {
+            return null;
+        }
 
         const timer = setTimeout(() => {
-            setData([]); // Remove the first item after 1 second
+            setData([]);
         }, 700);
+
         return () => clearTimeout(timer);
     }, [data]);
 
