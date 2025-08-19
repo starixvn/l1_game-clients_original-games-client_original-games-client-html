@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { User } from "sc-user-service-client/dist/auth";
 import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
 import { usePlayerContext } from "../../../../_shared/react-contexts";
 import { useGlobalEventsStore } from "../../../../_shared/stores/global-events-store/global-events-store";

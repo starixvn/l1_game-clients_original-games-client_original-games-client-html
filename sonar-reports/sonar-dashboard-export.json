@@ -1,13 +1,13 @@
 {
   "projectKey": "sedie-multiplayer-client",
   "projectName": "SeDie Multiplayer Client",
-  "exportDate": "2025-08-18T10:32:31.018Z",
+  "exportDate": "2025-08-19T03:12:01.198Z",
   "totalIssues": 0,
   "issues": [],
   "measures": [
     {
       "metric": "coverage",
-      "value": "19.1",
+      "value": "19.8",
       "bestValue": false
     },
     {
@@ -44,7 +44,7 @@
         "metricKey": "new_coverage",
         "comparator": "LT",
         "errorThreshold": "0",
-        "actualValue": "10.8"
+        "actualValue": "12.5"
       },
       {
         "status": "OK",
@@ -120,8 +120,8 @@
     "ignoredConditions": false,
     "period": {
       "mode": "PREVIOUS_VERSION",
-      "date": "2025-08-18T10:18:13+0000",
-      "parameter": "GL-4116-Se-Die-Multiplayer"
+      "date": "2025-08-19T02:58:37+0000",
+      "parameter": "david-local"
     },
     "caycStatus": "over-compliant"
   }

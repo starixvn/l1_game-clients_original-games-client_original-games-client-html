@@ -1,4 +1,5 @@
-import { broadcastNotice, createNoticeFromErrorCode } from "../../../_shared/helpers";
+
+import { broadcastNotice } from "../../../_shared/helpers";
 import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { ConnectFailedReasonKey } from "../../game-components/error-message/type";

@@ -1,4 +1,4 @@
-import ErrorCodeDictionary, { CommonErrorCodeList } from "../constants/error-code-dictionary";
+import ErrorCodeDictionary from "../constants/error-code-dictionary";
 import { NoticeModel } from "../../components/game-base/type";
 import { useNoticeStore } from "../stores/notice-store/notice-store";
 
@@ -29,19 +29,36 @@ export const broadcastNotice = (notice: NoticeModel | null) => {
     }
 };
 
+// Options interface for createNoticeFromErrorCode
+export interface CreateNoticeOptions {
+    gameName?: string;
+    roundId?: number;
+    minBet?: number;
+    maxBet?: number;
+    onClose?: () => void;
+    duration?: number;
+    isWarning?: boolean;
+    hedgeBetGroup?: string[];
+    adjustBetNoticePosition?: boolean;
+}
+
 // Helper function to create notice from error code
 export const createNoticeFromErrorCode = (
     errorCode: string,
-    gameName?: string,
-    roundId?: number,
-    minBet?: number,
-    maxBet?: number,
-    onClose?: () => void,
-    duration: number = 3,
-    isWarning: boolean = false,
-    hedgeBetGroup?: string[],
-    adjustBetNoticePosition: boolean = false
+    options: CreateNoticeOptions = {}
 ): NoticeModel => {
+    const {
+        gameName,
+        roundId,
+        minBet,
+        maxBet,
+        onClose,
+        duration = 3,
+        isWarning = false,
+        hedgeBetGroup,
+        adjustBetNoticePosition = false
+    } = options;
+
     const message = GetLocalizedErrorMessage(errorCode);
 
     return {

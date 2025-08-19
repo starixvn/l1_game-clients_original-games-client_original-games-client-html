@@ -6,7 +6,6 @@ import { useClickSound, useTranslator } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import Styles from "./notice.module.scss";
-import { NoticeModel } from "../../game-base/type";
 import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import { useNoticeStore } from "../../../_shared/stores/notice-store/notice-store";
 

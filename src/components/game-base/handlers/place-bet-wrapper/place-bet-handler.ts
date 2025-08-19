@@ -3,7 +3,7 @@ import { TFnType, TranslationKey } from "@tolgee/react";
 import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
-import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys, broadcastNotice, createNoticeFromErrorCode } from "../../../../_shared/helpers";
+import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys, broadcastNotice } from "../../../../_shared/helpers";
 import { broadcastCloseDialog } from "../../../../_shared/helpers/global-events-helper";
 import { findHedgeBetGroup, getAccountBalance, isBalanceUnavailable, isHedgeBet, isInPhasePreventBet } from "../../../../_shared/helpers/validate-bet-helper";
 import { SystemContextModel } from "../../../../_shared/react-contexts";

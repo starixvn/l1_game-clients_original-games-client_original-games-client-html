@@ -134,7 +134,7 @@ describe("NoticeHelper", () => {
             const roundId = 123;
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId });
 
             // Assert
             expect(result).toEqual({
@@ -160,7 +160,7 @@ describe("NoticeHelper", () => {
             const duration = 5;
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, undefined, undefined, undefined, duration);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, duration });
 
             // Assert
             expect(result.duration).toBe(5);
@@ -175,7 +175,7 @@ describe("NoticeHelper", () => {
             const maxBet = 1000;
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, minBet, maxBet);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, minBet, maxBet });
 
             // Assert
             expect(result.minBet).toBe(10);
@@ -190,7 +190,7 @@ describe("NoticeHelper", () => {
             const onClose = jest.fn();
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, undefined, undefined, onClose);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, onClose });
 
             // Assert
             expect(result.onClose).toBe(onClose);
@@ -204,7 +204,7 @@ describe("NoticeHelper", () => {
             const hedgeBetGroup = ["player", "banker"];
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, undefined, undefined, undefined, 3, false, hedgeBetGroup);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, hedgeBetGroup });
 
             // Assert
             expect(result.hedgeBetGroup).toEqual(["player", "banker"]);
@@ -217,7 +217,7 @@ describe("NoticeHelper", () => {
             const roundId = 303;
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, undefined, undefined, undefined, 3, true);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, isWarning: true });
 
             // Assert
             expect(result.isWarning).toBe(true);
@@ -230,7 +230,7 @@ describe("NoticeHelper", () => {
             const roundId = 404;
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName, roundId, undefined, undefined, undefined, 3, false);
+            const result = createNoticeFromErrorCode(errorCode, { gameName, roundId, isWarning: false });
 
             // Assert
             expect(result.isWarning).toBe(false);
@@ -265,7 +265,7 @@ describe("NoticeHelper", () => {
             const gameName = "";
 
             // Act
-            const result = createNoticeFromErrorCode(errorCode, gameName);
+            const result = createNoticeFromErrorCode(errorCode, { gameName });
 
             // Assert
             expect(result).toEqual({
@@ -292,7 +292,7 @@ describe("NoticeHelper", () => {
             const roundId = 999;
 
             // Act
-            const notice = createNoticeFromErrorCode(errorCode, gameName, roundId);
+            const notice = createNoticeFromErrorCode(errorCode, { gameName, roundId });
             broadcastNotice(notice);
 
             // Assert
@@ -308,7 +308,7 @@ describe("NoticeHelper", () => {
 
             // Act
             const localizedMessage = GetLocalizedErrorMessage(errorCode);
-            const notice = createNoticeFromErrorCode(errorCode, "Test Game", 123);
+            const notice = createNoticeFromErrorCode(errorCode, { gameName: "Test Game", roundId: 123 });
             broadcastNotice(notice);
 
             // Assert

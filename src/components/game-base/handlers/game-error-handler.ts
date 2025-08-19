@@ -1,4 +1,5 @@
-import { GetLocalizedErrorMessage, isKickOutError, broadcastNotice, createNoticeFromErrorCode } from "../../../_shared/helpers";
+
+import { isKickOutError, broadcastNotice, createNoticeFromErrorCode } from "../../../_shared/helpers";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 
 export type GameErrorHandlerProps = {
@@ -27,22 +28,20 @@ export class GameErrorHandler {
     };
 
     handleApiError = (apiError: ApiError, signOut: Function) => {
-        const isPlaceBet = apiError.isPlaceBetFailed ? apiError.isPlaceBetFailed : false;
         const errorCode = apiError.errorCode;
         const isKickOut = isKickOutError(errorCode);
         const onClose = isKickOut ? signOut : null;
         const duration = isKickOut ? 10 : 3;
 
-        const notice = createNoticeFromErrorCode(
-            errorCode,
-            this.props.gamName,
-            apiError?.gameRoundId,
-            apiError?.minBet,
-            apiError?.maxBet,
-            onClose as (() => void) | undefined,
+        const notice = createNoticeFromErrorCode(errorCode, {
+            gameName: this.props.gamName,
+            roundId: apiError?.gameRoundId,
+            minBet: apiError?.minBet,
+            maxBet: apiError?.maxBet,
+            onClose: onClose as (() => void) | undefined,
             duration,
-            false
-        );
+            isWarning: false
+        });
 
         broadcastNotice(notice);
     };
