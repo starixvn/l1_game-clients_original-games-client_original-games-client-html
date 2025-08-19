@@ -32,15 +32,14 @@ const DeductBalanceEffect: FC = () => {
     }, [endBet, setEndBet, nextId]);
 
     useEffect(() => {
-        if (data.length === 0) {
-            return null;
+        let timer: NodeJS.Timeout;
+        if (data.length) {
+            timer = setTimeout(() => {
+                setData([]);
+            }, 700);
         }
 
-        const timer = setTimeout(() => {
-            setData([]);
-        }, 700);
-
-        return () => clearTimeout(timer);
+        return () => timer && clearTimeout(timer);
     }, [data]);
 
     if (data.length === 0) {
