@@ -29,7 +29,7 @@ const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
                 title={translateCommon("bet_detail")}
                 isOpen={true}
                 onCloseModal={handleCloseModal}
-                isOverlap={true}
+                isOverlap={false}
             >
                 {children}
             </ModalContainer>,

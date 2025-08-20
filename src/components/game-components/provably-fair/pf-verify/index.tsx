@@ -13,6 +13,7 @@ import { useGameContext } from "../../../../_shared/react-contexts/game-context/
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
+import { getWinningSubOption } from "../../../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
@@ -166,7 +167,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
                         <CopyableTextInput value={pfResult?.serverSeedHash} id="server-seed-sha256" />
                     </div>
                 </Section>
-                <Section title={translateCommon("pf_header_server_seed")}>
+                <Section title={translateCommon("pf_header_server_seed")} customTitleStyles="mt-3">
                     <div className="input-group width-full">
                         <CopyableTextInput value={pfResult?.serverSeed} id="server-seed" />
                     </div>
@@ -184,7 +185,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
                     </div>
                 </Section>
                 <div className="relative">
-                    <Section title={translateCommon("pf_ header_merge_client_seed")}>
+                    <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-5">
                         <span className={Styles["link-detail"]} onClick={handleOnClickClientSeedInfo}>
                             {translateSNGames("pf_provably_fair_details")}
                         </span>
@@ -209,7 +210,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
                     <CopyableTextInput value={pfResult?.finalHash} id="combined-sha512-hash" />
                 </div>
             </ClientSeedForm>
-            <button className={`btn-green ${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
+            <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
                 {translateCommon("pf_button_verify")}
             </button>
             <p className="text-center mt-2">{translateCommon("pf_provably_fair_para_2")}</p>
@@ -218,7 +219,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
 };
 
 const ClientSeedForm: FC<{ children: ReactNode }> = ({ children }) => {
-    return <div className={Styles["client-seed-form"]}>{children}</div>;
+    return <div className={`${Styles["client-seed-form"]} mt-3`}>{children}</div>;
 };
 
 export default PFVerifyModal;

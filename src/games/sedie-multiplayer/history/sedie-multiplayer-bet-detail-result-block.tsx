@@ -25,7 +25,7 @@ const SUB_OPTIONS = [
 
 const IMAGE_SIZE = 36;
 
-const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
+export const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
     return SUB_OPTIONS.find(option => settlementResult[option]) || '';
 };
 

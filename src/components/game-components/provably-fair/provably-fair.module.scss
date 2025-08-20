@@ -241,6 +241,12 @@
 .btn-verify {
     height: 44px;
     width: 100%;
+    background: linear-gradient(270deg, #22DE57 1.71%, #16A947 98.29%);
+    border-radius: 10px;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .btn-export {
@@ -256,12 +262,13 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-header-color);
+    margin-bottom: 5px;
 }
 
 .client-seed-form {
     position: relative;
     padding: 16px 12px;
-    background: #2c2f36;
+    background: var(--primary-background-color);
     border: 1px solid #3c3e43;
     border-radius: 10px;
     margin-bottom: var(--spacing-size-4);

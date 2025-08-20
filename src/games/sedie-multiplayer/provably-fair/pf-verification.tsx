@@ -10,12 +10,21 @@ import { ResourceTypes } from "../../../_shared/resources";
 import { useGameContext } from "../../../_shared/react-contexts";
 import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/react/shallow";
+import Image from "next/image";
+import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
+import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store/bet-detail-store";
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
     const { pfVerifyModalData: pfResult } = usePFStore(useShallow((state) => ({
         pfVerifyModalData: state.pfVerifyModalData,
     })));
+    const { betDetailData } = useBetDetailStore(
+        useShallow((state) => ({
+            betDetailData: state.betDetailData,
+        }))
+    );
+    
     const [mergeClientSeed, setMergeClientSeed] = useState(pfResult?.editedMergeClientSeed || pfResult?.mergeClientSeed || "");
     const { t } = useTranslator();
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
@@ -24,6 +33,8 @@ const PFVerification: FC = () => {
         updatePFVerify: state.updatePFVerify,
     })));
 
+    const winningSubOption = getWinningSubOption(betDetailData.drawInfo.settlementResult);
+    const IMAGE_SIZE = 36;
     const DICES_EACH_ROUND = 4; // Updated for Sedie Multi Player
 
     const verifyInfo = useMemo(
@@ -95,9 +106,12 @@ const PFVerification: FC = () => {
                         customTitleStyles={`m-0 ${Styles["title-fix-width"]}`}
                     >
                         <div className="flex gap-2 items-center">
-                            {verifyInfo.ballIndexes.map((item) => (
-                                <span key={uuidv4()} className="ball-number">{item}</span>
-                            ))}
+                        <Image 
+                            src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`} 
+                            alt={`${winningSubOption} result`} 
+                            width={IMAGE_SIZE} 
+                            height={IMAGE_SIZE} 
+                        />
                         </div>
                     </Section>
                 </div>

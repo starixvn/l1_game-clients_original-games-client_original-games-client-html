@@ -218,6 +218,7 @@ export interface PFResult {
     finalHash: string;
     clientSeed: string;
     editedMergeClientSeed: string;
+    result: any;
 }
 
 export interface DrawInfo {
