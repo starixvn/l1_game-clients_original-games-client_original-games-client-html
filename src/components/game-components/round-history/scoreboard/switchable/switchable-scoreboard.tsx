@@ -21,27 +21,33 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     };
 
     componentDidMount(): void {
-        console.log("[SwitchableScoreboard] componentDidMount:", {
-            type: this.props.type,
-            scoreboardsCount: this.props.scoreboards.length,
-            roundsCount: this.props.rounds.length,
-            selected: this.state.selected
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwitchableScoreboard] componentDidMount:", {
+                type: this.props.type,
+                scoreboardsCount: this.props.scoreboards.length,
+                roundsCount: this.props.rounds.length,
+                selected: this.state.selected
+            });
+        }
         this.logDimensions();
     }
 
     componentDidUpdate(prevProps: SwitchableScoreboardProps<Round>, prevState: SwitchableScoreboardState): void {
         if (prevState.selected !== this.state.selected) {
-            console.log("[SwitchableScoreboard] componentDidUpdate - selected changed:", {
-                from: prevState.selected,
-                to: this.state.selected,
-                scoreboardName: this.props.scoreboards[this.state.selected]?.name
-            });
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwitchableScoreboard] componentDidUpdate - selected changed:", {
+                    from: prevState.selected,
+                    to: this.state.selected,
+                    scoreboardName: this.props.scoreboards[this.state.selected]?.name
+                });
+            }
             this.logDimensions();
         }
     }
 
     private logDimensions(): void {
+        if (process.env.NODE_ENV !== 'development') return;
+
         setTimeout(() => {
             const containerElement = document.querySelector('[data-testid="switchable-scoreboard"]') as HTMLElement;
             if (containerElement) {
@@ -68,11 +74,13 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     }
 
     selectBoard(index: number) {
-        console.log("[SwitchableScoreboard] selectBoard:", {
-            from: this.state.selected,
-            to: index,
-            scoreboardName: this.props.scoreboards[index]?.name
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwitchableScoreboard] selectBoard:", {
+                from: this.state.selected,
+                to: index,
+                scoreboardName: this.props.scoreboards[index]?.name
+            });
+        }
         this.setState({ selected: index });
     }
 
@@ -96,13 +104,15 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         };
         const props = onSwitch ? onSwitch(defaultProps) : defaultProps;
 
-        console.log("[SwitchableScoreboard] renderSwitchBoards:", {
-            selected,
-            boardName: board?.name,
-            nextBoard,
-            nextBoardName: scoreboards[nextBoard]?.name,
-            propsKeys: Object.keys(props)
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwitchableScoreboard] renderSwitchBoards:", {
+                selected,
+                boardName: board?.name,
+                nextBoard,
+                nextBoardName: scoreboards[nextBoard]?.name,
+                propsKeys: Object.keys(props)
+            });
+        }
 
         return <Scoreboard {...props} />;
     }
@@ -113,11 +123,13 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         const htmlProps = this.getHTMLAttributes();
         const selectBoard = (index: number) => this.selectBoard(index === selected ? 0 : index);
 
-        console.log("[SwitchableScoreboard] renderScaleBoards:", {
-            selected,
-            scoreboardsCount: scoreboards.length,
-            htmlPropsKeys: Object.keys(htmlProps)
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwitchableScoreboard] renderScaleBoards:", {
+                selected,
+                scoreboardsCount: scoreboards.length,
+                htmlPropsKeys: Object.keys(htmlProps)
+            });
+        }
 
         return (
             <div {...htmlProps} data-testid="switchable-scoreboard">
@@ -130,12 +142,14 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
                     };
                     const props = onSwitch && index + 1 === selected ? onSwitch(defaultProps) : defaultProps;
 
-                    console.log("[SwitchableScoreboard] renderScaleBoards - board:", {
-                        index,
-                        boardName: board.name,
-                        isSelected: index + 1 === selected,
-                        propsKeys: Object.keys(props)
-                    });
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log("[SwitchableScoreboard] renderScaleBoards - board:", {
+                            index,
+                            boardName: board.name,
+                            isSelected: index + 1 === selected,
+                            propsKeys: Object.keys(props)
+                        });
+                    }
 
                     return <Scoreboard key={index} {...props} />;
                 })}
@@ -146,7 +160,9 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     render(): ReactNode {
         const { type } = this.props;
 
-        console.log("[SwitchableScoreboard] render:", { type });
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwitchableScoreboard] render:", { type });
+        }
 
         if (type === "switch") {
             return this.renderSwitchBoards();

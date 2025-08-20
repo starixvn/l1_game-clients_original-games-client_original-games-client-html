@@ -18,6 +18,8 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     const [dragging, setDragging] = useState(false);
 
     const logDimensions = () => {
+        if (process.env.NODE_ENV !== 'development') return;
+
         if (containerRef.current) {
             const element = containerRef.current;
             const rect = element.getBoundingClientRect();
@@ -131,19 +133,23 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
         ({ movement: [mx], memo = containerRef.current?.scrollLeft || 0, first, last, direction: [dx] }) => {
             if (first) {
                 setDragging(true);
-                console.log("[SwipeScrollGrid] Drag started:", {
-                    initialScrollLeft: memo,
-                    movement: mx
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] Drag started:", {
+                        initialScrollLeft: memo,
+                        movement: mx
+                    });
+                }
             }
 
             if (containerRef.current) {
                 containerRef.current.scrollLeft = memo - mx;
-                console.log("[SwipeScrollGrid] Drag update:", {
-                    movement: mx,
-                    newScrollLeft: memo - mx,
-                    direction: dx
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] Drag update:", {
+                        movement: mx,
+                        newScrollLeft: memo - mx,
+                        direction: dx
+                    });
+                }
             }
 
             if (last) {
@@ -152,18 +158,24 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 const scrollWidth = containerRef.current?.scrollWidth || 0;
                 const clientWidth = containerRef.current?.clientWidth || 0;
 
-                console.log("[SwipeScrollGrid] Drag ended:", {
-                    direction: dx,
-                    scrollWidth,
-                    clientWidth,
-                    maxScrollLeft: scrollWidth - clientWidth
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] Drag ended:", {
+                        direction: dx,
+                        scrollWidth,
+                        clientWidth,
+                        maxScrollLeft: scrollWidth - clientWidth
+                    });
+                }
 
                 if (dx > 0) {
-                    console.log("[SwipeScrollGrid] Scrolling to left (0)");
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log("[SwipeScrollGrid] Scrolling to left (0)");
+                    }
                     containerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
                 } else if (dx < 0) {
-                    console.log("[SwipeScrollGrid] Scrolling to right (max)");
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log("[SwipeScrollGrid] Scrolling to right (max)");
+                    }
                     containerRef.current?.scrollTo({ left: scrollWidth - clientWidth, behavior: 'smooth' });
                 }
             }
@@ -173,38 +185,50 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     ) as unknown as (...args: any[]) => ReactDOMAttributes;
 
     useEffect(() => {
-        console.log("[SwipeScrollGrid] scrollRightSignal changed:", scrollRightSignal);
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwipeScrollGrid] scrollRightSignal changed:", scrollRightSignal);
+        }
         if (containerRef.current && scrollRightSignal) {
             const scrollWidth = containerRef.current.scrollWidth;
-            console.log("[SwipeScrollGrid] Scrolling to right due to signal:", {
-                scrollWidth,
-                clientWidth: containerRef.current.clientWidth
-            });
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwipeScrollGrid] Scrolling to right due to signal:", {
+                    scrollWidth,
+                    clientWidth: containerRef.current.clientWidth
+                });
+            }
             containerRef.current.scrollTo({ left: scrollWidth, behavior: 'smooth' });
         }
     }, [scrollRightSignal]);
 
     useEffect(() => {
-        console.log("[SwipeScrollGrid] initialScrollRight effect:", initialScrollRight);
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwipeScrollGrid] initialScrollRight effect:", initialScrollRight);
+        }
         if (initialScrollRight && containerRef.current) {
             const scrollWidth = containerRef.current.scrollWidth;
-            console.log("[SwipeScrollGrid] Initial scroll to right:", {
-                scrollWidth,
-                clientWidth: containerRef.current.clientWidth
-            });
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwipeScrollGrid] Initial scroll to right:", {
+                    scrollWidth,
+                    clientWidth: containerRef.current.clientWidth
+                });
+            }
             containerRef.current.scrollTo({ left: scrollWidth });
         }
     }, [initialScrollRight]);
 
     useEffect(() => {
-        console.log("[SwipeScrollGrid] Component mounted");
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwipeScrollGrid] Component mounted");
+        }
 
         // Immediately set the container width
         if (containerRef.current) {
             const parentElement = containerRef.current.parentElement;
             if (parentElement) {
                 const parentWidth = parentElement.offsetWidth;
-                console.log("[SwipeScrollGrid] Immediate width setup:", { parentWidth });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] Immediate width setup:", { parentWidth });
+                }
 
                 // Force immediate width setting
                 containerRef.current.style.setProperty('width', '100%', 'important');
@@ -217,14 +241,18 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
         // Log dimensions after a delay to ensure children are rendered
         const timer = setTimeout(() => {
-            console.log("[SwipeScrollGrid] Delayed dimension check");
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwipeScrollGrid] Delayed dimension check");
+            }
             logDimensions();
             updateContainerWidth();
         }, 100);
 
         // Add window resize listener
         const handleResize = () => {
-            console.log("[SwipeScrollGrid] Window resized, updating container width");
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwipeScrollGrid] Window resized, updating container width");
+            }
             updateContainerWidth();
         };
 
@@ -234,7 +262,9 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
         let resizeObserver: ResizeObserver | null = null;
         if (containerRef.current?.parentElement) {
             resizeObserver = new ResizeObserver((entries) => {
-                console.log("[SwipeScrollGrid] Parent container resized, updating width");
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] Parent container resized, updating width");
+                }
                 updateContainerWidth();
             });
             resizeObserver.observe(containerRef.current.parentElement);
@@ -250,7 +280,9 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     }, []);
 
     useEffect(() => {
-        console.log("[SwipeScrollGrid] Children changed, logging dimensions");
+        if (process.env.NODE_ENV === 'development') {
+            console.log("[SwipeScrollGrid] Children changed, logging dimensions");
+        }
         logDimensions();
 
         // Update container width immediately
@@ -258,7 +290,9 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
         // Update again after a short delay to ensure scoreboard has rendered
         const timer = setTimeout(() => {
-            console.log("[SwipeScrollGrid] Children changed - delayed width update");
+            if (process.env.NODE_ENV === 'development') {
+                console.log("[SwipeScrollGrid] Children changed - delayed width update");
+            }
             updateContainerWidth();
             logDimensions();
         }, 50);
@@ -277,13 +311,15 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 const parentWidth = parentElement.offsetWidth;
                 const parentRect = parentElement.getBoundingClientRect();
 
-                console.log("[SwipeScrollGrid] updateContainerWidth:", {
-                    scoreboardWidth,
-                    containerWidth,
-                    parentWidth,
-                    parentRectWidth: parentRect.width,
-                    needsUpdate: scoreboardWidth > containerWidth || containerWidth < parentWidth
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log("[SwipeScrollGrid] updateContainerWidth:", {
+                        scoreboardWidth,
+                        containerWidth,
+                        parentWidth,
+                        parentRectWidth: parentRect.width,
+                        needsUpdate: scoreboardWidth > containerWidth || containerWidth < parentWidth
+                    });
+                }
 
                 // Force the container to take the full parent width
                 containerRef.current.style.setProperty('width', '100%', 'important');
@@ -293,11 +329,15 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 // If scoreboard is wider than parent, ensure container can accommodate it
                 if (scoreboardWidth > parentWidth) {
                     containerRef.current.style.setProperty('min-width', `${scoreboardWidth}px`, 'important');
-                    console.log("[SwipeScrollGrid] Container width updated to accommodate scoreboard:", scoreboardWidth);
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log("[SwipeScrollGrid] Container width updated to accommodate scoreboard:", scoreboardWidth);
+                    }
                 } else {
                     // Ensure container takes full parent width
                     containerRef.current.style.setProperty('min-width', `${parentWidth}px`, 'important');
-                    console.log("[SwipeScrollGrid] Container width updated to parent width:", parentWidth);
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log("[SwipeScrollGrid] Container width updated to parent width:", parentWidth);
+                    }
                 }
 
                 // Force a reflow to ensure the width changes take effect
@@ -305,13 +345,15 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
                 // Log the final state
                 setTimeout(() => {
-                    const finalWidth = containerRef.current?.offsetWidth;
-                    const finalRect = containerRef.current?.getBoundingClientRect();
-                    console.log("[SwipeScrollGrid] Final container state:", {
-                        finalWidth,
-                        finalRectWidth: finalRect?.width,
-                        finalStyle: containerRef.current?.style.cssText
-                    });
+                    if (process.env.NODE_ENV === 'development') {
+                        const finalWidth = containerRef.current?.offsetWidth;
+                        const finalRect = containerRef.current?.getBoundingClientRect();
+                        console.log("[SwipeScrollGrid] Final container state:", {
+                            finalWidth,
+                            finalRectWidth: finalRect?.width,
+                            finalStyle: containerRef.current?.style.cssText
+                        });
+                    }
                 }, 10);
             }
         }
@@ -324,13 +366,15 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
             $dragging={dragging}
             data-testid="swipe-scroll-grid"
             onScroll={(e) => {
-                const target = e.target as HTMLDivElement;
-                console.log("[SwipeScrollGrid] Scroll event:", {
-                    scrollLeft: target.scrollLeft,
-                    scrollTop: target.scrollTop,
-                    scrollWidth: target.scrollWidth,
-                    clientWidth: target.clientWidth
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    const target = e.target as HTMLDivElement;
+                    console.log("[SwipeScrollGrid] Scroll event:", {
+                        scrollLeft: target.scrollLeft,
+                        scrollTop: target.scrollTop,
+                        scrollWidth: target.scrollWidth,
+                        clientWidth: target.clientWidth
+                    });
+                }
             }}
         >
             {children}
