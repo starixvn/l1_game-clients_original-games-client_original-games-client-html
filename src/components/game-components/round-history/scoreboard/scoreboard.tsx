@@ -27,14 +27,6 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
 
     constructor(props) {
         super(props);
-
-
-        // Log the structure of the first and last round to understand the data format
-        if (props.rounds && props.rounds.length > 0) {
-            const firstRound = props.rounds[0];
-            const lastRound = props.rounds[props.rounds.length - 1];
-
-        }
     }
 
     static defaultProps: Partial<ScoreboardProps<unknown>> = {

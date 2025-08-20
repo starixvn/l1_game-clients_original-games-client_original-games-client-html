@@ -22,7 +22,12 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
         <div id="statistic-popup" data-testid="statistic-popup" className={Styles["statistic-container"]}>
             <div className={Styles["panel"]}>
                 <div className={Styles["grid"]}>
-                    <span className={Styles["close"]} onClick={onClose} />
+                    <button
+                        type="button"
+                        className={Styles["close"]}
+                        onClick={onClose}
+                        aria-label="Close"
+                    />
                     <PercentageStatistic
                         roundHistory={roundHistory as any}
                         mainChoices={sideChoices as any}
