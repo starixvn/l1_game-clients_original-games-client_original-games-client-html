@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import { Table, TableColumn } from "../table";
 import { usePlayerResultBoard, useCommonTranslate } from "../../../_shared/react-hooks";
+import { RoundId } from "../round-id";
 
 interface PlayerData {
   playerName: string;
@@ -9,7 +10,7 @@ interface PlayerData {
 }
 
 export const PlayerResultBoard: FC = () => {
-  const { totalPlayers, roundId, tableData } = usePlayerResultBoard();
+  const { totalPlayers, tableData } = usePlayerResultBoard();
   const { t: translateCommon } = useCommonTranslate();
 
   const columns: TableColumn[] = useMemo(() => [
@@ -34,14 +35,10 @@ export const PlayerResultBoard: FC = () => {
     </div>
   );
 
-  const renderRoundId = () => (
-    <div className="text-primary-text">#{roundId}</div>
-  );
-
   const renderHeader = () => (
     <div className="flex justify-between bg-secondary-bg rounded-xl p-2 mb-2">
       {renderPlayerCount()}
-      {renderRoundId()}
+      <RoundId />
     </div>
   );
 
