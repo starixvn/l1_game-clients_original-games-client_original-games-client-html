@@ -1,7 +1,8 @@
 html[data-theme="dark"] {
-    --page-background-color: #182130;
+    --page-background-color: #15152c;
+    --primary-background-color: #182130;
     --text-color: #fff;
-    --border-color: #2B3648;
+    --border-color: #2b3648;
     --secondary-background-color: #101721;
     --secondary-text-color: #b3bec1;
 
@@ -11,7 +12,7 @@ html[data-theme="dark"] {
     --scrollbar-background: #000;
     --scrollbar-thumb-background: #444;
 
-    --popup-background: linear-gradient(180deg, #094998 0%, #062B57 18.41%, #142030 36.83%);
+    --popup-background: linear-gradient(180deg, #094998 0%, #062b57 18.41%, #142030 36.83%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -19,8 +20,8 @@ html[data-theme="dark"] {
     --icon-favorite-game-guide: #fff;
 
     --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #FFF600;
+    --color-winning-highlight: #fff600;
 
-    --modal-background: #1B293F;
-    --text-content-color: #CED8E6;
+    --modal-background: #1b293f;
+    --text-content-color: #ced8e6;
 }

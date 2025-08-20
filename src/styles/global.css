@@ -32,7 +32,7 @@
         color: var(--text-color) !important;
     }
     .bg-primary-bg {
-        background-color: var(--page-background-color) !important;
+        background-color: var(--primary-background-color) !important;
     }
     .text-secondary-text {
         color: var(--secondary-text-color) !important;

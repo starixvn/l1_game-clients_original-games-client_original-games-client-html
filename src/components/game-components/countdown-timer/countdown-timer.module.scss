@@ -7,11 +7,9 @@
         text-align: center;
     }
     .progress-bar-container-wrapper {
-        position: absolute;
-        width: 100px;
+        width: 152px;
         height: 10px;
-        justify-self: center;
-        align-content: flex-end;
+        margin: 5px auto;
 
         .progress-bar-container {
             position: relative;

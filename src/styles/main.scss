@@ -13,7 +13,6 @@
 @import "./components/tooltip";
 @import "./components/modal";
 @import "./components/swiper";
-@import "./components/animations/star-field";
 @import "./components/ripple-effect";
 @import "./components/loading";
 
@@ -79,31 +78,6 @@ html {
     --color-table-content: #b3bec1;
     --color-table-text-clickable: #0990ff;
     --text-color: #ffffff;
-}
-
-[data-theme="light"] {
-    --page-background-color: #000;
-    --game-background-image: url("/static/images/bg-galaxy.webp?v=#{$version-image}");
-    --game-small-background-image: url("/static/images/bg-galaxy-small.webp?v=#{$version-image}");
-    --background-image: url("/static/images/bg.webp?v=#{$version-image}");
-    --text-color: #2c2f3e;
-
-    --border-color: #c5cbdb;
-
-    --opacity-background: rgba(12, 12, 12, 0.36);
-    --opacity-background-grey: rgba(221, 221, 221, 0.6);
-
-    // scrollbar
-    --scrollbar-background: --black-background;
-    --scrollbar-thumb-background: #3d4247;
-
-    // popup
-    --popup-background: #fff;
-    --popup-color: #2c2f3e;
-    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    --container-color-bg: #fff;
-    --container-border-color: #cbcbcb;
-    --icon-favorite-game-guide: #2c2f3e;
 }
 
 // To dock the footer

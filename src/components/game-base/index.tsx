@@ -50,6 +50,7 @@ import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
+import { Background } from "../page-components/background";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -693,17 +694,24 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         );
     }
 
+    renderGameFrame() {
+        return (
+            <div className="flex flex-col items-center justify-center relative">
+                <Background gameId={this.props.id} />
+                {this.renderRoundHistory()}
+                {this.renderCountdownTimer()}
+                <div className="flex flex-col">
+                    {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
+                    {this.renderBetOptions()}
+                </div>
+            </div>
+        );
+    }
+
     renderLeftSide() {
         return (
             <div className="col-12 col-lg-8 mb-3 px-3">
-                <div className="flex flex-col items-center justify-center">
-                    {this.renderRoundHistory()}
-                    {this.renderCountdownTimer()}
-                    <div className="flex flex-col">
-                        {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
-                        {this.renderBetOptions()}
-                    </div>
-                </div>
+                {this.renderGameFrame()}
                 {this.renderBetControl()}
                 {this.renderMenu()}
             </div>
@@ -725,25 +733,23 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     getRenderTemplate() {
         return (
             <>
-                <>
-                    <div className={`game-${this.props.id}`}>
-                        <div className="flex flex-wrap">
-                            {this.renderLeftSide()}
-                            {this.renderRightSide()}
-                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
-                        </div>
-                        <PFWrapper
-                            socket={this.socket}
-                            gameMessageHandler={this.gameMessageHandler}
-                            gameId={this.props.id}
-                            uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
-                        >
-                            {this.renderPFSettingModal()}
-                            {this.renderBetHistoryModal()}
-                        </PFWrapper>
-                        {this.renderGameGuideModal()}
+                <div className={`game-${this.props.id}`}>
+                    <div className="flex flex-wrap">
+                        {this.renderLeftSide()}
+                        {this.renderRightSide()}
+                        <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
-                </>
+                    <PFWrapper
+                        socket={this.socket}
+                        gameMessageHandler={this.gameMessageHandler}
+                        gameId={this.props.id}
+                        uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
+                    >
+                        {this.renderPFSettingModal()}
+                        {this.renderBetHistoryModal()}
+                    </PFWrapper>
+                    {this.renderGameGuideModal()}
+                </div>
             </>
         );
     }

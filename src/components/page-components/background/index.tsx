@@ -1,67 +1,18 @@
-import Image from "next/image";
-import { FC, memo } from "react";
-
-import { buildVersion, GameIds } from "../../../_shared/constants";
-import { useLowPerformanceDevice } from "../../../_shared/react-hooks";
+import { memo } from "react";
+import { buildVersion } from "../../../_shared/constants";
+import styles from "./style.module.scss";
 
 type Props = {
     gameId: number;
 };
 
-const getGameName = (gameId) => {
-    for (const gameName in GameIds) {
-        if (GameIds[gameName] === gameId) {
-            return gameName;
-        }
-    }
-    return null;
-};
-
-const GamesNotPlayStarsAnimation: number[] = [];
-
-const StarField: FC<{ gameId: number }> = ({ gameId }) => {
-    const isLowPerformanceDevice = useLowPerformanceDevice();
-
-    const isShouldNotPlayStarsAnimation = () => {
-        return isLowPerformanceDevice;
-    };
-
-    if (isShouldNotPlayStarsAnimation()) {
-        return <></>;
-    }
-
+export const Background: React.FC<Props> = ({ gameId }) => {
     return (
-        <div className="star-field">
-            <div className="layer"></div>
-            <div className="layer"></div>
-            <div className="layer"></div>
-        </div>
+        <div
+            className={styles["game-background"]}
+            style={{ backgroundImage: `url(/static/images/background/bg-${gameId}.webp?v=${buildVersion})` }}
+        ></div>
     );
 };
 
-export const BackgroundGalaxy: React.FC<Props> = ({ gameId }) => {
-    const gameName = getGameName(gameId);
-    // Map non-existing backgrounds to closest existing ones in assets
-    const backgroundKeyMapper: Record<string, string> = {
-        sedie: "seball1",
-    };
-
-    const gameKey = (gameName || "").toLowerCase();
-    const mappedKey = backgroundKeyMapper[gameKey] || gameKey;
-    const imageUrls = `/static/images/bg-galaxy/bg-${mappedKey}.webp?v=${buildVersion}`;
-
-    return (
-        <>
-            <div className="background-galaxy">
-                <Image className="galaxy-2" width={580} height={850} src={imageUrls} alt="galaxy" />
-
-                <div className="galaxy-1-container">
-                    <Image className="galaxy-1" width={580} height={850} src={imageUrls} alt="galaxy" />
-                </div>
-            </div>
-            <StarField gameId={gameId} />
-        </>
-    );
-};
-
-export default memo(BackgroundGalaxy);
+export default memo(Background);

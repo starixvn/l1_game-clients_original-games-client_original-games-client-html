@@ -6,7 +6,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                "primary-bg": "var(--page-background-color)",
+                "primary-bg": "var(--primary-background-color)",
                 "primary-text": "var(--text-color)",
                 "primary-border": "var(--border-color)",
                 "secondary-bg": "var(--secondary-background-color)",

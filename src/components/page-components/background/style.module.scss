@@ -1,0 +1,17 @@
+.game-background {
+    position: absolute;
+    top: 0;
+    left: -12px;
+    z-index: -100;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: calc(100% + 24px);
+    height: 100%;
+}
+@media screen and (min-width: 768px) {
+    .game-background {
+        left: 0;
+        width: 100%;
+    }
+}

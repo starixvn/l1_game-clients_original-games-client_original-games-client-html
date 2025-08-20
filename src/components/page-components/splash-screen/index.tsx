@@ -8,13 +8,7 @@ import Image from "next/image";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from "../../../_shared/app-settings";
 import { Themes, buildVersion, languageMapper, locales, GameIds } from "../../../_shared/constants";
-import {
-    AnalyticsHelper,
-    StorageHelper,
-    getEnabledRenderGameSettings,
-    localStorageKeys,
-    randomInteger,
-} from "../../../_shared/helpers";
+import { AnalyticsHelper, StorageHelper, getEnabledRenderGameSettings, localStorageKeys, randomInteger } from "../../../_shared/helpers";
 import PreloadResources, {
     getAndHandleGameOfferIds,
     getAndHandleBannerOffer as handleBannerOffer,
@@ -203,7 +197,7 @@ const SplashScreen: React.FC = () => {
             // Bypass validation for SeDie so we can deep-link even if not in lobby/offer
             let isGameAvailable = toLoadGameId === GameIds.SeDieMultiplayer;
             if (!isGameAvailable) {
-                isGameAvailable = enabledRenderGameSettings.some(game => game.id === toLoadGameId);
+                isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
             }
 
             // If game is not available, use default SeDie game
@@ -236,7 +230,6 @@ const SplashScreen: React.FC = () => {
     }
 
     if (isRenderDashboard) {
-        document.body.classList.add("galaxy-bg");
         return (
             <Dashboard
                 data-testid="dashboard-component"
@@ -264,7 +257,9 @@ const SplashScreen: React.FC = () => {
                         />
                     </div>
 
-                    <div className={Styles["slogan"]} data-testid="splash-screen-slogan">{locale && t("SabaNumber.splashscreen_slogan")}</div>
+                    <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
+                        {locale && t("SabaNumber.splashscreen_slogan")}
+                    </div>
                 </div>
 
                 <div className={"loading"}>
@@ -278,12 +273,8 @@ const SplashScreen: React.FC = () => {
                     </div>
                     <p className={"text-first-download"} data-testid="download-message">
                         {locale && t("Common.message_download_first_visit")}
-                        {preloadProgress > 0 && preloadProgress < 100 && (
-                            <span> ({Math.round(preloadProgress)}%)</span>
-                        )}
-                        {preloadProgress === 0 && isDoneLoadConfig && (
-                            <span> (Initializing...)</span>
-                        )}
+                        {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.round(preloadProgress)}%)</span>}
+                        {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
                     </p>
                 </div>
             </div>
