@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import classNames from "classnames";
+import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import Image from "next/image";
 
 import { useClickSound } from "../../../_shared/react-hooks";
@@ -27,7 +27,7 @@ const ModalContainer: FC<{
         <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
             <div 
                 id={id} 
-                className={classNames(
+                className={cn(
                     "grid grid-cols-1 grid-rows-[30px_calc(100%-30px)] h-full w-full rounded-t-2xl",
                     {
                         "grid": isOpen,
@@ -50,7 +50,7 @@ const ModalContainer: FC<{
                     </span>
                 </div>
 
-                <div className={classNames("h-full", {
+                <div className={cn("h-full", {
                     "h-[calc(var(--modal-container-height)-86px)]": isMobileOnly
                 })}>
                     {children}

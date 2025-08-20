@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import classNames from "classnames";
+import { cn } from "../../../_shared/utils/merge-tailwind-util";
 
 export interface TableColumn<T = any> {
     key: keyof T | string;
@@ -41,13 +41,13 @@ export const Table = <T,>({
             
             const defaultText = !column.isClickable && !custom && !highlight ? "text-secondary-text" : "";
 
-            return classNames(base, clickable, custom, highlight, defaultText);
+            return cn(base, clickable, custom, highlight, defaultText);
         },
         [getCellClassName]
     );
 
     return (
-        <div className={classNames("rounded", className)}>
+        <div className={cn("rounded", className)}>
             <table className="w-full border-collapse">
                 <thead>
                     <tr>
