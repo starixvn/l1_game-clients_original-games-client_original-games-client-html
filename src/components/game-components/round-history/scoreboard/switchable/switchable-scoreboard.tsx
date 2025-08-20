@@ -16,30 +16,6 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         selected: 0,
     };
 
-    componentDidMount(): void {
-
-        this.logDimensions();
-    }
-
-    componentDidUpdate(prevProps: SwitchableScoreboardProps<Round>, prevState: SwitchableScoreboardState): void {
-        if (prevState.selected !== this.state.selected) {
-
-            this.logDimensions();
-        }
-    }
-
-    private logDimensions(): void {
-        setTimeout(() => {
-            const containerElement = document.querySelector('[data-testid="switchable-scoreboard"]') as HTMLElement;
-            if (containerElement) {
-                const rect = containerElement.getBoundingClientRect();
-                const computedStyle = window.getComputedStyle(containerElement);
-
-            } else {
-
-            }
-        }, 100);
-    }
 
     selectBoard(index: number) {
 
