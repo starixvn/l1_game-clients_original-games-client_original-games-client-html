@@ -1,10 +1,9 @@
 import { FC } from "react";
 import { useTranslator } from "../../../_shared/react-hooks";
-import { DrawInfo, PFResult } from "../../../components/game-base/type";
+import { DrawInfo } from "../../../components/game-base/type";
 import { ResourceTypes } from "../../../_shared/resources";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
 import Image from "next/image";
-import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store/bet-detail-store";
 
 const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
     const { t } = useTranslator();
