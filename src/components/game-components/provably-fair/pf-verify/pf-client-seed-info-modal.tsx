@@ -11,11 +11,12 @@ import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_
 import { Section } from "../pf-form-components";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
+import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
 }> = ({ fileNameExport }) => {
-    const { isShowPFClientSeedInfo, togglePFClientSeedInfo } = usePFStore(
+    const { isShowPFClientSeedInfo, togglePFClientSeedInfo } = usePopupStore(
         useShallow(
             (state) => ({
                 isShowPFClientSeedInfo: state.isShowPFClientSeedInfo,
