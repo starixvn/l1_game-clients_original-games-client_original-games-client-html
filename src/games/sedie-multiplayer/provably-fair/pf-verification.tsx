@@ -24,16 +24,14 @@ const PFVerification: FC = () => {
         updatePFVerify: state.updatePFVerify,
     })));
 
-    const BALLS_EACH_ROUND = 6; // Updated for Sedie Multi Player
-    const TOTAL_BALLS = 60;
+    const DICES_EACH_ROUND = 4; // Updated for Sedie Multi Player
 
     const verifyInfo = useMemo(
         () =>
             PfRoundBaseHelper.buildVerifyInfo({
                 pfResult,
                 combinedHash,
-                totalBalls: TOTAL_BALLS,
-                ballsEachRound: BALLS_EACH_ROUND,
+                dicesEachRound: DICES_EACH_ROUND,
             }),
         [combinedHash]
     );
@@ -44,16 +42,19 @@ const PFVerification: FC = () => {
     };
 
     const ballIndexRender = () => {
-        return Array.from(Array(BALLS_EACH_ROUND), (_, index) => {
+        return Array.from(Array(DICES_EACH_ROUND), (_, index) => {
             const { randomNumbers, convertNumber, ballIndexes } = verifyInfo;
-            const ballIndexText = t(`${ResourceTypes.SABA_NUMBER}.pf_verifier_tool_ball`, {
+            const ballIndexText = t(`${ResourceTypes.SEDIE_MULTIPLAYER}.pf_verifier_tool_button`, {
                 value: index + 1,
             });
 
+            const diceResult = ballIndexes[index] % 2 === 0 ? t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_white`) : t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_red`);
+
             const line = `<span style="color: #ffbc11; font-weight: 600">${ballIndexText} - ${t(
-                `${ResourceTypes.SABA_NUMBER}.pf_index`
-            )} (1-${TOTAL_BALLS - index})</span> = ((${randomNumbers[index]}+${convertNumber[index]}) mod ${TOTAL_BALLS - index
-                }) + 1 = <span style="color: #ffbc11; font-weight: 600">${ballIndexes[index]}</span>`;
+                `${ResourceTypes.COMMON}.pf_verification_para_1`
+            )} </span> = ((${randomNumbers[index]}+${
+                convertNumber[index]
+            }) mod 2) = <span style="color: #ffbc11; font-weight: 600">${ballIndexes[index]}</span> <span style="color: #ffbc11; font-weight: 600">-> ${diceResult}</span>`;
 
             return (
                 <p key={index}>
@@ -61,21 +62,6 @@ const PFVerification: FC = () => {
                 </p>
             );
         });
-    };
-
-    const renderFinalResult = () => {
-        const finalResult = [];
-
-        return Array.from({ length: BALLS_EACH_ROUND }, (_, i) => (
-            <div key={`final-result-${i}`} style={{ marginBottom: "1rem" }}>
-                <div className={Styles["section-title"]}>
-                    {t(`${ResourceTypes.SABA_NUMBER}.pf_verifier_tool_ball`, { value: i + 1 })} -{" "}
-                    {t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
-                </div>
-                <div className={Styles["result-numbers"]}>
-                </div>
-            </div>
-        ));
     };
 
     useEffect(() => {
@@ -91,8 +77,6 @@ const PFVerification: FC = () => {
             });
         };
     }, [mergeClientSeed]);
-
-    const hightlightStyle = Styles["text-highlight"];
 
     return (
         <div className={Styles["pf-setting-container"]}>
@@ -111,14 +95,14 @@ const PFVerification: FC = () => {
                         customTitleStyles={`m-0 ${Styles["title-fix-width"]}`}
                     >
                         <div className="flex gap-2 items-center">
-                            {verifyInfo.results.map((item) => (
+                            {verifyInfo.ballIndexes.map((item) => (
                                 <span key={uuidv4()} className="ball-number">{item}</span>
                             ))}
                         </div>
                     </Section>
                 </div>
                 <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-2">
-                    <p className="text-wrap">{combinedHash}</p>
+                    <p className={Styles["pf-word-break"]}>{combinedHash}</p>
                 </Section>
 
                 <Section title={translateInGame("pf_verifier_tool_para_24")}>
@@ -132,19 +116,9 @@ const PFVerification: FC = () => {
                             );
                         })}
                     </p>
-                    <p className="break-word">
-                        <span className={hightlightStyle}>{t(`${ResourceTypes.SABA_NUMBER}.pf_verification_para_4`)}</span>
-                        <span>
-                            {" "}
-                            = (({t(`${ResourceTypes.SABA_NUMBER}.pf_algorithm_random_number`)} + X) mod{" "}
-                            {t(`${ResourceTypes.SABA_NUMBER}.pf_verification_para_5`)}) + 1
-                        </span>
-                    </p>
 
                     {ballIndexRender()}
                 </Section>
-
-                <Section title={t(`${ResourceTypes.SABA_NUMBER}.pf_verification_para_8`)}>{renderFinalResult()}</Section>
             </div>
         </div>
     );

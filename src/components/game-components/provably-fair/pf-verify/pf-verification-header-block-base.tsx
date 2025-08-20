@@ -26,7 +26,7 @@ const PFVerificationHeaderBlockBase: FC<{
                 </div>
             </Section>
             <Section title={translateCommon("pf_header_combined_sha512_hash")}>
-                <p className="text-wrap">{finalHash}</p>
+                <p className={Styles["pf-word-break"]}>{finalHash}</p>
                 {combinedHash === finalHash ? (
                     <p className={Styles["text-successful"]}>{translateSNGames("pf_verification_msg_verify_successful")}</p>
                 ) : (

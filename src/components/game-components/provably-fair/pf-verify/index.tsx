@@ -13,6 +13,7 @@ import { useGameContext } from "../../../../_shared/react-contexts/game-context/
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import useGameStore from "../../../../_shared/stores/game-store/game-store";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
+import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
@@ -79,9 +80,11 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
         updatePFVerify: state.updatePFVerify
     })));
 
-    const {roundId} = useGameStore(useShallow((state) => ({
-        roundId: state.roundId,
-    })))
+    const { betDetailData } = useBetDetailStore(
+        useShallow((state) => ({
+            betDetailData: state.betDetailData,
+        }))
+    );
 
     const { gameMessageHandler } = useGameContext();
     
@@ -135,7 +138,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
     useEffect(() => {
         if (isFirstFetch) {
             gameMessageHandler.broadcastGameEvent({
-                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: roundId } },
+                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: betDetailData.drawInfo.drawId } },
             });
             setIsFirstFetch(false);
         }
