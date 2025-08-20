@@ -31,7 +31,6 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
             <div className={Styles["scoreboard-full-big-road"]} id="big-road">
                 <SwitchableScoreboard
                     rounds={settlements}
-                    type="switch"
                     scoreboards={[
                         {
                             element: SeDieBigRoadElement as unknown as React.ComponentType<any>,

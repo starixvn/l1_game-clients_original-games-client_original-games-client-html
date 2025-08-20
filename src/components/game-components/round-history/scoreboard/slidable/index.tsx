@@ -1,1 +1,1 @@
-export * from "./slidable-scoreboard";
+// Slidable scoreboard no longer used

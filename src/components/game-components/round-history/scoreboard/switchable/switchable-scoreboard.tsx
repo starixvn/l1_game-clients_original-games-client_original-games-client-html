@@ -1,6 +1,3 @@
-import "swiper/css";
-import "swiper/css/pagination";
-
 import { Component, HTMLAttributes, ReactNode } from "react";
 import Scoreboard, { ScoreboardProps } from "..";
 
@@ -10,7 +7,6 @@ const debug = DEBUG_ENABLED ? console.log.bind(console) : (..._args: unknown[]) 
 export type SwitchableScoreboardProps<T> = {
     rounds: T[];
     scoreboards: (Partial<ScoreboardProps<T>> & { name?: string })[];
-    type: "switch" | "scale";
     onSwitch?: (props: Partial<ScoreboardProps<T>>) => Partial<ScoreboardProps<T>>;
 } & HTMLAttributes<unknown>;
 
@@ -25,7 +21,6 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
 
     componentDidMount(): void {
         debug("[SwitchableScoreboard] componentDidMount:", {
-            type: this.props.type,
             scoreboardsCount: this.props.scoreboards.length,
             roundsCount: this.props.rounds.length,
             selected: this.state.selected
@@ -80,8 +75,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     }
 
     getHTMLAttributes() {
-        const { rounds, scoreboards, type, onSwitch, ...props } = this.props;
-
+        const { rounds, scoreboards, onSwitch, ...props } = this.props;
         return props;
     }
 
@@ -110,55 +104,10 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         return <Scoreboard {...props} />;
     }
 
-    renderScaleBoards(): ReactNode {
-        const { scoreboards, rounds, onSwitch } = this.props;
-        const { selected } = this.state;
-        const htmlProps = this.getHTMLAttributes();
-        const selectBoard = (index: number) => this.selectBoard(index === selected ? 0 : index);
-
-        debug("[SwitchableScoreboard] renderScaleBoards:", {
-            selected,
-            scoreboardsCount: scoreboards.length,
-            htmlPropsKeys: Object.keys(htmlProps)
-        });
-
-        return (
-            <div {...htmlProps} data-testid="switchable-scoreboard">
-                {scoreboards.map((board, index) => {
-                    const defaultProps = {
-                        key: index,
-                        onClick: () => selectBoard(index + 1),
-                        rounds: board.rounds ?? rounds,
-                        ...board,
-                    };
-                    const props = onSwitch && index + 1 === selected ? onSwitch(defaultProps) : defaultProps;
-
-                    debug("[SwitchableScoreboard] renderScaleBoards - board:", {
-                        index,
-                        boardName: board.name,
-                        isSelected: index + 1 === selected,
-                        propsKeys: Object.keys(props)
-                    });
-
-                    return <Scoreboard key={index} {...props} />;
-                })}
-            </div>
-        );
-    }
+    // Scale mode removed; only switch mode is supported
 
     render(): ReactNode {
-        const { type } = this.props;
-
-        debug("[SwitchableScoreboard] render:", { type });
-
-        if (type === "switch") {
-            return this.renderSwitchBoards();
-        }
-
-        if (type === "scale") {
-            return this.renderScaleBoards();
-        }
-
-        return null;
+        debug("[SwitchableScoreboard] render");
+        return this.renderSwitchBoards();
     }
 }
