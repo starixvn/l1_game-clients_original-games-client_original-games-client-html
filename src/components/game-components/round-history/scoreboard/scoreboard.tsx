@@ -82,6 +82,15 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         });
 
 
+        // Debug grouping sizes
+        try {
+            const totalItems = (rounds as any[]).length;
+            const blocksCount = groups.length;
+            const avgItemsPerBlock = blocksCount ? (groups.reduce((s, g) => s + g.length, 0) / blocksCount) : 0;
+            // eslint-disable-next-line no-console
+            console.log("[Scoreboard] grouping:", { totalItems, block, row, rowByGroup, horizontalGroups: horizontalGroups.length, columns: columns.length, verticalGroups: verticalGroups.length, blocksCount, avgItemsPerBlock });
+        } catch (_) { }
+
         return groups;
     }
 
@@ -103,8 +112,8 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         const prevRound = prevProps.rounds.at(-1);
         const currentRound = this.props.rounds.at(-1);
 
-        const prevRoundId = prevRound?.["roundId"] || prevRound?.["drawId"] || prevRound?.["id"];
-        const currentRoundId = currentRound?.["roundId"] || currentRound?.["drawId"] || currentRound?.["id"];
+        const prevRoundId = prevRound?.["roundId"] || prevRound?.["id"];
+        const currentRoundId = currentRound?.["roundId"] || currentRound?.["id"];
         const prevRoundsCount = prevProps.rounds?.length || 0;
         const currentRoundsCount = this.props.rounds?.length || 0;
 
@@ -139,7 +148,11 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
     }
 
     private logDimensions(): void {
-        // no-op
+        try {
+            const { column = 17, row } = this.props as any;
+            // eslint-disable-next-line no-console
+            console.log("[Scoreboard] props:", { columnProp: column, rowProp: row, actualColumns: this.actualColumns });
+        } catch (_) { }
     }
 
     getHTMLAttributes() {
@@ -166,11 +179,12 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         const arranged = arrange(rounds, this) as Round[];
         const groupItems = this.createGroup(arranged);
 
-
-
-        // Calculate expected grid columns based on CSS
-        const expectedColumns = this.props.column || 17;
-        const expectedGridWidth = expectedColumns * 18; // 18px per column from CSS
+        // Debug arranged vs grouped
+        try {
+            const nonEmptyArranged = (arranged as any[]).filter((n) => n && n["data"] && n["data"].length > 0).length;
+            // eslint-disable-next-line no-console
+            console.log("[Scoreboard] arranged:", { arrangedTotal: (arranged as any[]).length, nonEmptyArranged, groupBlocks: groupItems.length });
+        } catch (_) { }
 
 
 
@@ -185,8 +199,6 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
                             gridColumnStart: parentColumn,
                             gridRowStart: row,
                         };
-
-
 
                         return (
                             <div className={`${styles["scoreboard-block"]} ${blockClassName}`} key={index} style={style}>
