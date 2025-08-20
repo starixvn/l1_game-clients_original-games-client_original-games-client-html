@@ -1,9 +1,9 @@
 import { FC } from "react";
+import Image from "next/image";
 
 import { useGameContext } from "../../../_shared/react-contexts";
 import { useCommonTranslate, useTranslator } from "../../../_shared/react-hooks";
 import { DrawInfo } from "../../../components/game-base/type";
-import Styles from "../history/history.module.scss";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 
 export interface RoundInfoSeDie extends DrawInfo {
@@ -15,34 +15,46 @@ export interface RoundInfoSeDie extends DrawInfo {
     settlementResult: Record<string, boolean>;
 }
 
+const SUB_OPTIONS = [
+    SeDieBetOptions.RED2,
+    SeDieBetOptions.RED3,
+    SeDieBetOptions.RED4,
+    SeDieBetOptions.WHITE3,
+    SeDieBetOptions.WHITE4
+] as const;
+
+const IMAGE_SIZE = 36;
+
+const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
+    return SUB_OPTIONS.find(option => settlementResult[option]) || '';
+};
+
+const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
+    return isWin ? amount * odds : 0;
+};
+
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { drawId, result } = drawInfo;
-    const balls: number[] = Array.isArray(result?.balls) ? result.balls : [];
-    const activeKeys: string[] = !balls.length && result && typeof result === "object"
-        ? Object.keys(result).filter((k) => (result as Record<string, boolean>)[k])
-        : [];
-
-    let totalPoint = 0;
+    const { drawId, settlementResult } = drawInfo;
+    
+    const winningSubOption = getWinningSubOption(settlementResult);
 
     return (
-        <div className={Styles["draw-info"]}>
-            <div className={`${Styles["info-item"]} font-weight-500`}>
+        <div className="flex justify-between gap-6 px-2 text-secondary-text text-sm">
+            <div className="flex items-center gap-1.5 font-medium">
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{drawId}</span>
             </div>
-            <div className={Styles["info-item"]}>
-                {balls.length > 0 ? (
-                    <>
-                        {balls.map((ball, index) => {
-                            totalPoint += ball;
-                            return <span key={index} className="ball-number">{ball}</span>;
-                        })}
-                        <div className={Styles["bet-detail-total"]}> - {totalPoint}</div>
-                    </>
-                ) : activeKeys.length > 0 ? (
-                    activeKeys.map((key, index) => (
-                        <span key={index} className="font-text">{key}</span>
-                    ))
+            <div className="flex items-center gap-1.5">
+                {winningSubOption ? (
+                    <span className="flex items-center gap-1.5">
+                        <span className="text-secondary-text">Result</span>
+                        <Image 
+                            src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`} 
+                            alt={`${winningSubOption} result`} 
+                            width={IMAGE_SIZE} 
+                            height={IMAGE_SIZE} 
+                        />
+                    </span>
                 ) : (
                     <span aria-label="no result">—</span>
                 )}
@@ -51,43 +63,41 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
     );
 };
 
-const calculateWin = (isWin: boolean, amount: number, odds: number) => {
-    return isWin ? amount * odds : 0;
-};
-
+// Utility functions
 export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => {
-    const win = calculateWin(drawInfo.settlementResult?.[item.choice], item.amount, drawInfo.odds[item.choice]);
+    const win = calculateWin(
+        drawInfo.settlementResult?.[item.choice], 
+        item.amount, 
+        drawInfo.odds[item.choice]
+    );
 
     return {
         rawTime: item.time,
         amount: item.amount,
         choice: item.choice,
         odds: drawInfo.odds[item.choice],
-        win: win,
+        win,
         hightlight: drawInfo.settlementResult?.[item.choice],
     };
 };
 
 export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
     const { tolgeeNamespace } = useGameContext();
-    const { t } = useTranslator([tolgeeNamespace]);
-
-    const mapToSeBallAsset = (c: string) => {
-        if (c === SeDieBetOptions.WHITE3) {
-            return "blue3";
-        }
-        if (c === SeDieBetOptions.WHITE4) {
-            return "blue4";
-        }
-        return c;
-    };
-
+    const { t } = useTranslator([tolgeeNamespace || ""]);
+    
+    const isOddOrEven = choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN;
+    
     return (
-        <span className="font-text">
-            {choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN ? (
+        <span className="font-text flex justify-center items-center">
+            {isOddOrEven ? (
                 t(`glossary_${choice}`)
             ) : (
-                <img src={`/static/images/sedie-multiplayer/bet-detail-${mapToSeBallAsset(choice)}.svg`} alt="" />
+                <Image 
+                    src={`/static/images/sedie-multiplayer/bet-detail-${choice}.svg`} 
+                    alt={`${choice} choice`} 
+                    width={IMAGE_SIZE} 
+                    height={IMAGE_SIZE} 
+                />
             )}
         </span>
     );

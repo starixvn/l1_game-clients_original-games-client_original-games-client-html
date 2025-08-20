@@ -6,6 +6,7 @@ export interface TableColumn<T = any> {
     header: string;
     render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
     isClickable?: boolean;
+    isHighlight?: boolean;
 }
 
 export interface TableProps<T = any> {
@@ -33,9 +34,14 @@ export const Table = <T,>({
             const base = "py-3 text-wrap";
             const clickable = column.isClickable ? "text-table-text-clickable cursor-pointer" : "";
             const custom = getCellClassName?.(String(column.key), cellValue, row, rowIndex);
-            const defaultText = !column.isClickable && !custom ? "text-secondary-text" : "";
+            
+            const isWinningBet = (row as any).isWinningBet;
+            const shouldHighlight = isWinningBet && column.isHighlight;
+            const highlight = shouldHighlight ? "text-winning-highlight font-semibold" : "";
+            
+            const defaultText = !column.isClickable && !custom && !highlight ? "text-secondary-text" : "";
 
-            return classNames(base, clickable, custom, defaultText);
+            return classNames(base, clickable, custom, highlight, defaultText);
         },
         [getCellClassName]
     );

@@ -16,6 +16,7 @@ interface BetDetailRow {
     odds: ReactNode;
     stake: ReactNode;
     win: ReactNode;
+    isWinningBet?: boolean;
 }
 
 const BetDetailBase: FC<{
@@ -55,10 +56,10 @@ const BetDetailBase: FC<{
     const columns: TableColumn<BetDetailRow>[] = useMemo(
         () => [
             { key: "time", header: translateCommon("time") },
-            { key: "betChoice", header: translateCommon("bet_choice") },
+            { key: "betChoice", header: translateCommon("bet_choice"), isHighlight: true }, // Highlight winning bet choices
             { key: "odds", header: translateCommon("odds") },
             { key: "stake", header: translateCommon("stake") },
-            { key: "win", header: translateCommon("win") },
+            { key: "win", header: translateCommon("win"), isHighlight: true }, // Highlight winning amounts
         ],
         [translateCommon]
     );
@@ -71,12 +72,10 @@ const BetDetailBase: FC<{
         }
 
         return preprocessedBetLogDetails.map((betLogDetail) => {
-            const { rawTime, amount, choice, odds, win, hightlight, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
+            const { rawTime, amount, choice, odds, win, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
             const { date, time } = separateDateTime(rawTime);
 
             const calcOdds = hideOdd ? "-" : numberWithCommas(fractionalOddsFormat ? odds - 1 : odds);
-            const highlightClass = hightlight ? "highlight" : "";
-
             return {
                 time: (
                     <>
@@ -85,10 +84,11 @@ const BetDetailBase: FC<{
                         {date}
                     </>
                 ),
-                betChoice: <div className={highlightClass}>{renderBetChoice ? renderBetChoice(choice) : choice}</div>,
-                odds: <div className={highlightClass}>{calcOdds}</div>,
-                stake: <div className={highlightClass}>{numberWithCommas(amount) ?? 0}</div>,
-                win: <div className={highlightClass}>{numberWithCommas(win)}</div>,
+                betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
+                odds: calcOdds,
+                stake: numberWithCommas(amount) ?? 0,
+                win: numberWithCommas(win),
+                isWinningBet: win > 0,
             };
         });
     }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, fractionalOddsFormat, renderBetChoice, betLogDetails]);
@@ -106,12 +106,12 @@ const BetDetailBase: FC<{
 
     return (
         <>
-            <div className="text-center font-inter text-[14px] font-normal leading-5 text-primary-text my-3">
+            <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text my-3">
                 Note: Data are only available within the last 7 days from the current date.
             </div>
             {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
-            <button className={`clickable flex items-center gap-1 px-2 pb-2 text-[#20e500] text-sm font-semibold}`} onClick={handleClickProvablyFair}>
+            <button className="clickable flex items-center gap-1 px-2 pb-2 text-[#20e500] text-sm font-semibold" onClick={handleClickProvablyFair}>
                 <span className={`icon-pf flex justify-center items-center bg-[#159500] w-8 h-8 rounded-xl}`}></span>
                 {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
             </button>
