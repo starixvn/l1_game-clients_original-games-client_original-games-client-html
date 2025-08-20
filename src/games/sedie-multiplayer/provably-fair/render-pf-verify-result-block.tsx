@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { PFResult } from "../../../components/game-base/type";
 import { ResourceTypes } from "../../../_shared/resources";

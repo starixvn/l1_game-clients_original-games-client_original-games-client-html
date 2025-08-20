@@ -13,7 +13,6 @@ import { useGameContext } from "../../../../_shared/react-contexts/game-context/
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
-import { getWinningSubOption } from "../../../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
