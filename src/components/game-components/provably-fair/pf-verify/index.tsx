@@ -11,7 +11,6 @@ import { usePFStore } from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/react/shallow";
 import { useGameContext } from "../../../../_shared/react-contexts/game-context/game-context";
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
-import useGameStore from "../../../../_shared/stores/game-store/game-store";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
 
