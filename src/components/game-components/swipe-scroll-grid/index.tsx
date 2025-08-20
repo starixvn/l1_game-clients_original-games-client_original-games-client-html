@@ -322,6 +322,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
             ref={containerRef}
             {...bind()}
             $dragging={dragging}
+            data-testid="swipe-scroll-grid"
             onScroll={(e) => {
                 const target = e.target as HTMLDivElement;
                 console.log("[SwipeScrollGrid] Scroll event:", {

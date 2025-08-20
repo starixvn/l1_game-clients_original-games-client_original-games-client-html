@@ -20,6 +20,8 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         this.scoreboardColumns = actualColumns;
     };
 
+
+
     renderBigRoad(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const settlements = [...roundHistory].map((round) => round.settlementResult);
@@ -49,10 +51,39 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         );
     }
 
+    // Refactored version without wrapper div
+    renderBigRoadRefactored(): ReactNode {
+        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
+        const settlements = [...roundHistory].map((round) => round.settlementResult);
+
+        isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlements);
+
+        return (
+            <div className={Styles["scoreboard-full-big-road"]} id="big-road">
+                <SwitchableScoreboard
+                    rounds={settlements}
+                    type="switch"
+                    scoreboards={[
+                        {
+                            element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
+                            arrange: BigRoadElement.arrange(SeDieBigRoadConverter.instance as any),
+                            column: this.scoreboardColumns,
+                            row: 6,
+                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            className: Styles["big-road-override"],
+                            blockClassName: Styles["big-road-block"],
+                            elementClassName: Styles["big-road-item"],
+                            scrollToRight: playResultAnimation
+                        },
+                    ]}
+                />
+            </div>
+        );
+    }
+
     render(): ReactNode {
-
-        return this.renderBigRoad();
-
+        // Use refactored version without wrapper div
+        return this.renderBigRoadRefactored();
     }
 }
 
