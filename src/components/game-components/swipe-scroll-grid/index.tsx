@@ -3,9 +3,6 @@ import { useDrag } from '@use-gesture/react';
 import { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/types';
 import { ScrollContainer } from './swipe-scroll-grid-styles';
 
-const DEBUG_ENABLED = false;
-const debug = DEBUG_ENABLED ? console.log.bind(console) : (..._args: unknown[]) => { };
-
 interface SwipeScrollGridProps {
     children: React.ReactNode;
     scrollRightSignal?: boolean;
@@ -20,137 +17,16 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState(false);
 
-    const logDimensions = () => {
-        if (containerRef.current) {
-            const element = containerRef.current;
-            const rect = element.getBoundingClientRect();
-            const computedStyle = window.getComputedStyle(element);
-
-            // Check parent container
-            const parentElement = element.parentElement;
-            let parentInfo = null;
-            if (parentElement) {
-                const parentRect = parentElement.getBoundingClientRect();
-                const parentComputedStyle = window.getComputedStyle(parentElement);
-                parentInfo = {
-                    rectWidth: parentRect.width,
-                    rectHeight: parentRect.height,
-                    display: parentComputedStyle.display,
-                    position: parentComputedStyle.position,
-                    overflow: parentComputedStyle.overflow,
-                    padding: parentComputedStyle.padding,
-                    margin: parentComputedStyle.margin,
-                    flexDirection: parentComputedStyle.flexDirection,
-                    alignItems: parentComputedStyle.alignItems,
-                    justifyContent: parentComputedStyle.justifyContent,
-                    cssWidth: parentComputedStyle.width,
-                    minWidth: parentComputedStyle.minWidth,
-                    maxWidth: parentComputedStyle.maxWidth
-                };
-            }
-
-            // Check grandparent container
-            const grandparentElement = parentElement?.parentElement;
-            let grandparentInfo = null;
-            if (grandparentElement) {
-                const grandparentRect = grandparentElement.getBoundingClientRect();
-                const grandparentComputedStyle = window.getComputedStyle(grandparentElement);
-                grandparentInfo = {
-                    rectWidth: grandparentRect.width,
-                    rectHeight: grandparentRect.height,
-                    display: grandparentComputedStyle.display,
-                    position: grandparentComputedStyle.position,
-                    overflow: grandparentComputedStyle.overflow,
-                    cssWidth: grandparentComputedStyle.width,
-                    minWidth: grandparentComputedStyle.minWidth,
-                    maxWidth: grandparentComputedStyle.maxWidth
-                };
-            }
-
-            // Check children dimensions
-            const children = Array.from(element.children);
-            const childrenInfo = children.map((child, index) => {
-                const childRect = child.getBoundingClientRect();
-                const childComputedStyle = window.getComputedStyle(child as HTMLElement);
-                return {
-                    index,
-                    width: childRect.width,
-                    height: childRect.height,
-                    display: childComputedStyle.display,
-                    position: childComputedStyle.position,
-                    gridTemplateColumns: childComputedStyle.gridTemplateColumns,
-                    gridAutoColumns: childComputedStyle.gridAutoColumns
-                };
-            });
-
-            debug("[SwipeScrollGrid] Dimensions:", {
-                rectWidth: rect.width,
-                rectHeight: rect.height,
-                offsetWidth: element.offsetWidth,
-                offsetHeight: element.offsetHeight,
-                scrollWidth: element.scrollWidth,
-                scrollHeight: element.scrollHeight,
-                clientWidth: element.clientWidth,
-                clientHeight: element.clientHeight,
-                scrollLeft: element.scrollLeft,
-                scrollTop: element.scrollTop,
-                padding: computedStyle.padding,
-                margin: computedStyle.margin,
-                border: computedStyle.border,
-                overflow: computedStyle.overflow,
-                overflowX: computedStyle.overflowX,
-                overflowY: computedStyle.overflowY,
-                display: computedStyle.display,
-                position: computedStyle.position,
-                computedWidth: computedStyle.width,
-                computedHeight: computedStyle.height,
-                minWidth: computedStyle.minWidth,
-                maxWidth: computedStyle.maxWidth,
-                minHeight: computedStyle.minHeight,
-                maxHeight: computedStyle.maxHeight
-            });
-
-            debug("[SwipeScrollGrid] Parent Container:", parentInfo);
-            debug("[SwipeScrollGrid] Grandparent Container:", grandparentInfo);
-            debug("[SwipeScrollGrid] Children:", {
-                count: children.length,
-                children: childrenInfo
-            });
-
-            // Calculate width issues
-            if (element.scrollWidth > element.clientWidth) {
-                debug("[SwipeScrollGrid] WIDTH ISSUE DETECTED:", {
-                    scrollWidth: element.scrollWidth,
-                    clientWidth: element.clientWidth,
-                    widthDifference: element.scrollWidth - element.clientWidth,
-                    containerWidth: rect.width,
-                    overflowX: computedStyle.overflowX
-                });
-            }
-        }
-    };
+    const logDimensions = () => { };
 
     const bind = useDrag(
         ({ movement: [mx], memo = containerRef.current?.scrollLeft || 0, first, last, direction: [dx] }) => {
             if (first) {
                 setDragging(true);
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] Drag started:", {
-                        initialScrollLeft: memo,
-                        movement: mx
-                    });
-                }
             }
 
             if (containerRef.current) {
                 containerRef.current.scrollLeft = memo - mx;
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] Drag update:", {
-                        movement: mx,
-                        newScrollLeft: memo - mx,
-                        direction: dx
-                    });
-                }
             }
 
             if (last) {
@@ -159,24 +35,9 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 const scrollWidth = containerRef.current?.scrollWidth || 0;
                 const clientWidth = containerRef.current?.clientWidth || 0;
 
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] Drag ended:", {
-                        direction: dx,
-                        scrollWidth,
-                        clientWidth,
-                        maxScrollLeft: scrollWidth - clientWidth
-                    });
-                }
-
                 if (dx > 0) {
-                    if (DEBUG_ENABLED) {
-                        debug("[SwipeScrollGrid] Scrolling to left (0)");
-                    }
                     containerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
                 } else if (dx < 0) {
-                    if (DEBUG_ENABLED) {
-                        debug("[SwipeScrollGrid] Scrolling to right (max)");
-                    }
                     containerRef.current?.scrollTo({ left: scrollWidth - clientWidth, behavior: 'smooth' });
                 }
             }
@@ -186,51 +47,26 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     ) as unknown as (...args: any[]) => ReactDOMAttributes;
 
     useEffect(() => {
-        if (DEBUG_ENABLED) {
-            debug("[SwipeScrollGrid] scrollRightSignal changed:", scrollRightSignal);
-        }
         if (containerRef.current && scrollRightSignal) {
             const scrollWidth = containerRef.current.scrollWidth;
-            if (DEBUG_ENABLED) {
-                debug("[SwipeScrollGrid] Scrolling to right due to signal:", {
-                    scrollWidth,
-                    clientWidth: containerRef.current.clientWidth
-                });
-            }
             containerRef.current.scrollTo({ left: scrollWidth, behavior: 'smooth' });
         }
     }, [scrollRightSignal]);
 
     useEffect(() => {
-        if (DEBUG_ENABLED) {
-            debug("[SwipeScrollGrid] initialScrollRight effect:", initialScrollRight);
-        }
         if (initialScrollRight && containerRef.current) {
             const scrollWidth = containerRef.current.scrollWidth;
-            if (DEBUG_ENABLED) {
-                debug("[SwipeScrollGrid] Initial scroll to right:", {
-                    scrollWidth,
-                    clientWidth: containerRef.current.clientWidth
-                });
-            }
             containerRef.current.scrollTo({ left: scrollWidth });
         }
     }, [initialScrollRight]);
 
     useEffect(() => {
-        if (DEBUG_ENABLED) {
-            debug("[SwipeScrollGrid] Component mounted");
-        }
 
         // Immediately set the container width
         if (containerRef.current) {
             const parentElement = containerRef.current.parentElement;
             if (parentElement) {
                 const parentWidth = parentElement.offsetWidth;
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] Immediate width setup:", { parentWidth });
-                }
-
                 // Force immediate width setting
                 containerRef.current.style.setProperty('width', '100%', 'important');
                 containerRef.current.style.setProperty('min-width', `${parentWidth}px`, 'important');
@@ -242,18 +78,12 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
         // Log dimensions after a delay to ensure children are rendered
         const timer = setTimeout(() => {
-            if (DEBUG_ENABLED) {
-                debug("[SwipeScrollGrid] Delayed dimension check");
-            }
             logDimensions();
             updateContainerWidth();
         }, 100);
 
         // Add window resize listener
         const handleResize = () => {
-            if (DEBUG_ENABLED) {
-                debug("[SwipeScrollGrid] Window resized, updating container width");
-            }
             updateContainerWidth();
         };
 
@@ -262,10 +92,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
         // Add ResizeObserver to monitor parent container size changes
         let resizeObserver: ResizeObserver | null = null;
         if (containerRef.current?.parentElement) {
-            resizeObserver = new ResizeObserver((entries) => {
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] Parent container resized, updating width");
-                }
+            resizeObserver = new ResizeObserver(() => {
                 updateContainerWidth();
             });
             resizeObserver.observe(containerRef.current.parentElement);
@@ -281,9 +108,6 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     }, []);
 
     useEffect(() => {
-        if (DEBUG_ENABLED) {
-            debug("[SwipeScrollGrid] Children changed, logging dimensions");
-        }
         logDimensions();
 
         // Update container width immediately
@@ -291,9 +115,6 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
         // Update again after a short delay to ensure scoreboard has rendered
         const timer = setTimeout(() => {
-            if (DEBUG_ENABLED) {
-                debug("[SwipeScrollGrid] Children changed - delayed width update");
-            }
             updateContainerWidth();
             logDimensions();
         }, 50);
@@ -312,15 +133,6 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 const parentWidth = parentElement.offsetWidth;
                 const parentRect = parentElement.getBoundingClientRect();
 
-                if (DEBUG_ENABLED) {
-                    debug("[SwipeScrollGrid] updateContainerWidth:", {
-                        scoreboardWidth,
-                        containerWidth,
-                        parentWidth,
-                        parentRectWidth: parentRect.width,
-                        needsUpdate: scoreboardWidth > containerWidth || containerWidth < parentWidth
-                    });
-                }
 
                 // Force the container to take the full parent width
                 containerRef.current.style.setProperty('width', '100%', 'important');
@@ -330,15 +142,9 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                 // If scoreboard is wider than parent, ensure container can accommodate it
                 if (scoreboardWidth > parentWidth) {
                     containerRef.current.style.setProperty('min-width', `${scoreboardWidth}px`, 'important');
-                    if (DEBUG_ENABLED) {
-                        debug("[SwipeScrollGrid] Container width updated to accommodate scoreboard:", scoreboardWidth);
-                    }
                 } else {
                     // Ensure container takes full parent width
                     containerRef.current.style.setProperty('min-width', `${parentWidth}px`, 'important');
-                    if (DEBUG_ENABLED) {
-                        debug("[SwipeScrollGrid] Container width updated to parent width:", parentWidth);
-                    }
                 }
 
                 // Force a reflow to ensure the width changes take effect
@@ -346,15 +152,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
                 // Log the final state
                 setTimeout(() => {
-                    if (DEBUG_ENABLED) {
-                        const finalWidth = containerRef.current?.offsetWidth;
-                        const finalRect = containerRef.current?.getBoundingClientRect();
-                        debug("[SwipeScrollGrid] Final container state:", {
-                            finalWidth,
-                            finalRectWidth: finalRect?.width,
-                            finalStyle: containerRef.current?.style.cssText
-                        });
-                    }
+                    // final state check no-op
                 }, 10);
             }
         }
@@ -366,17 +164,6 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
             {...bind()}
             $dragging={dragging}
             data-testid="swipe-scroll-grid"
-            onScroll={(e) => {
-                if (DEBUG_ENABLED) {
-                    const target = e.target as HTMLDivElement;
-                    debug("[SwipeScrollGrid] Scroll event:", {
-                        scrollLeft: target.scrollLeft,
-                        scrollTop: target.scrollTop,
-                        scrollWidth: target.scrollWidth,
-                        clientWidth: target.clientWidth
-                    });
-                }
-            }}
         >
             {children}
         </ScrollContainer>

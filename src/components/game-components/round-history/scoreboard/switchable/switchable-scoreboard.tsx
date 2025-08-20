@@ -1,9 +1,6 @@
 import { Component, HTMLAttributes, ReactNode } from "react";
 import Scoreboard, { ScoreboardProps } from "..";
 
-const DEBUG_ENABLED = false;
-const debug = DEBUG_ENABLED ? console.log.bind(console) : (..._args: unknown[]) => { };
-
 export type SwitchableScoreboardProps<T> = {
     rounds: T[];
     scoreboards: (Partial<ScoreboardProps<T>> & { name?: string })[];
@@ -20,21 +17,13 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     };
 
     componentDidMount(): void {
-        debug("[SwitchableScoreboard] componentDidMount:", {
-            scoreboardsCount: this.props.scoreboards.length,
-            roundsCount: this.props.rounds.length,
-            selected: this.state.selected
-        });
+
         this.logDimensions();
     }
 
     componentDidUpdate(prevProps: SwitchableScoreboardProps<Round>, prevState: SwitchableScoreboardState): void {
         if (prevState.selected !== this.state.selected) {
-            debug("[SwitchableScoreboard] componentDidUpdate - selected changed:", {
-                from: prevState.selected,
-                to: this.state.selected,
-                scoreboardName: this.props.scoreboards[this.state.selected]?.name
-            });
+
             this.logDimensions();
         }
     }
@@ -45,32 +34,15 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
             if (containerElement) {
                 const rect = containerElement.getBoundingClientRect();
                 const computedStyle = window.getComputedStyle(containerElement);
-                debug("[SwitchableScoreboard] Dimensions:", {
-                    width: rect.width,
-                    height: rect.height,
-                    offsetWidth: containerElement.offsetWidth,
-                    offsetHeight: containerElement.offsetHeight,
-                    scrollWidth: containerElement.scrollWidth,
-                    scrollHeight: containerElement.scrollHeight,
-                    clientWidth: containerElement.clientWidth,
-                    clientHeight: containerElement.clientHeight,
-                    padding: computedStyle.padding,
-                    margin: computedStyle.margin,
-                    border: computedStyle.border,
-                    display: computedStyle.display
-                });
+
             } else {
-                debug("[SwitchableScoreboard] Container element not found");
+
             }
         }, 100);
     }
 
     selectBoard(index: number) {
-        debug("[SwitchableScoreboard] selectBoard:", {
-            from: this.state.selected,
-            to: index,
-            scoreboardName: this.props.scoreboards[index]?.name
-        });
+
         this.setState({ selected: index });
     }
 
@@ -93,13 +65,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         };
         const props = onSwitch ? onSwitch(defaultProps) : defaultProps;
 
-        debug("[SwitchableScoreboard] renderSwitchBoards:", {
-            selected,
-            boardName: board?.name,
-            nextBoard,
-            nextBoardName: scoreboards[nextBoard]?.name,
-            propsKeys: Object.keys(props)
-        });
+
 
         return <Scoreboard {...props} />;
     }
@@ -107,7 +73,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     // Scale mode removed; only switch mode is supported
 
     render(): ReactNode {
-        debug("[SwitchableScoreboard] render");
+
         return this.renderSwitchBoards();
     }
 }
