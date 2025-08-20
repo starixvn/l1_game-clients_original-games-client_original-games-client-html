@@ -60,6 +60,7 @@ import {
 import { makeFileNameExport, PFVerification, renderPFVerifyResultBlock } from "../../games/sedie-multiplayer/provably-fair";
 import PFVerificationModal from "../game-components/provably-fair/pf-verify/pf-verification-modal";
 import PFClientSeedInfoModal from "../game-components/provably-fair/pf-verify/pf-client-seed-info-modal";
+import Background from "../page-components/background";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -760,25 +761,23 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     getRenderTemplate() {
         return (
             <>
-                <>
-                    <div className={`game-${this.props.id}`}>
-                        <div className="flex flex-wrap">
-                            {this.renderLeftSide()}
-                            {this.renderRightSide()}
-                            <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
-                        </div>
-                        <PFWrapper
-                            socket={this.socket}
-                            gameMessageHandler={this.gameMessageHandler}
-                            gameId={this.props.id}
-                            uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
-                        >
-                            {this.renderPFSettingModal()}
-                            {this.renderBetDetailModal()}
-                        </PFWrapper>
-                        {this.renderGameGuideModal()}
+                <div className={`game-${this.props.id}`}>
+                    <div className="flex flex-wrap">
+                        {this.renderLeftSide()}
+                        {this.renderRightSide()}
+                        <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
-                </>
+                    <PFWrapper
+                        socket={this.socket}
+                        gameMessageHandler={this.gameMessageHandler}
+                        gameId={this.props.id}
+                        uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
+                    >
+                        {this.renderPFSettingModal()}
+                        {this.renderBetDetailModal()}
+                    </PFWrapper>
+                    {this.renderGameGuideModal()}
+                </div>
             </>
         );
     }

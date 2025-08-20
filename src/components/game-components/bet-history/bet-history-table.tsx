@@ -57,12 +57,26 @@ export const BetHistoryTable = () => {
         if (columnKey === 'round') {
             clickSound();
             // Update bet detail data in store
+            const drawId = row.originalBetLog?.drawId ?? row.originalBetLog?.roundId ?? row.originalBetLog?.phien;
             const betDetailData = {
                 drawInfo: {
-                    drawId: row.originalBetLog?.drawId ?? row.originalBetLog?.roundId ?? row.originalBetLog?.phien,
+                    drawId: drawId,
                     result: row.originalBetLog?.result,
                     odds: row.originalBetLog?.odds,
                     settlementResult: row.originalBetLog?.settlementResult,
+                    pfResult: {
+                        drawId: drawId,
+                        roundId: row.originalBetLog?.roundId ?? row.originalBetLog?.phien,
+                        serverSeedHash: "",
+                        serverSeed: "",
+                        clientSeeds: [],
+                        mergeSeed: "",
+                        mergeClientSeed: "",
+                        roundResult: [],
+                        finalHash: "",
+                        clientSeed: row.originalBetLog?.clientSeed || "",
+                        editedMergeClientSeed: "",
+                    },
                     clientSeed: row.originalBetLog?.clientSeed,
                 },
                 betLogDetails: row.originalBetLog?.betLogDetails || [],

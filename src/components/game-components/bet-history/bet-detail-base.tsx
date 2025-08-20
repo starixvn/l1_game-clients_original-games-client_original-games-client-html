@@ -112,12 +112,12 @@ const BetDetailBase: FC<{
             </div>
             {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
-            <button className={`clickable ${Styles["provably-fair"]}`} onClick={handleClickProvablyFair}>
-                <span className={`icon-pf ${Styles["icon-pf"]}`}></span>
+            <button className={`clickable flex items-center gap-1 px-2 pb-2 text-[#20e500] text-sm font-semibold}`} onClick={handleClickProvablyFair}>
+                <span className={`icon-pf flex justify-center items-center bg-[#159500] w-8 h-8 rounded-xl}`}></span>
                 {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
             </button>
 
-            <div className={Styles["bet-detail"]}>
+            <div className="[--more-info-height:68px]">
                 <Table columns={columns} data={tableData} emptyMessage={translateCommon("no_data")} className="bet-detail-table" />
             </div>
         </>
