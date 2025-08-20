@@ -35,7 +35,7 @@ const ModalContainer: FC<{
                     }
                 )}
             >
-                <div className="flex items-center px-5 text-base font-semibold text-white text-center my-2">
+                <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2">
                     <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">
                         {title}
                     </div>

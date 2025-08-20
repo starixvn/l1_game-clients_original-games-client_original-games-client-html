@@ -23,6 +23,12 @@ module.exports = {
                 "table-text-clickable": "var(--color-table-text-clickable)",
                 "winning-highlight": "var(--color-winning-highlight)",
             },
+            backgroundImage: {
+                "popup-gradient": "var(--popup-background)",
+              },
+              boxShadow: {
+                "popup-bet-form": "var(--popup-bet-form-shadow)",
+              },
         },
     },
     plugins: [],
