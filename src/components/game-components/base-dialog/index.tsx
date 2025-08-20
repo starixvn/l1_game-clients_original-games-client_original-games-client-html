@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { isIOS, isMobileOnly } from "react-device-detect";
+import { isMobileOnly } from "react-device-detect";
 
 import { useClickSound } from "../../../_shared/react-hooks";
 import { ModalType } from "./type";
