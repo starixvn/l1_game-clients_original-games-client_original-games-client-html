@@ -17,7 +17,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState(false);
 
-    const logDimensions = () => { };
+
 
     const bind = useDrag(
         ({ movement: [mx], memo = containerRef.current?.scrollLeft || 0, first, last, direction: [dx] }) => {
@@ -74,11 +74,8 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
             }
         }
 
-        logDimensions();
-
         // Log dimensions after a delay to ensure children are rendered
         const timer = setTimeout(() => {
-            logDimensions();
             updateContainerWidth();
         }, 100);
 
@@ -108,15 +105,12 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     }, []);
 
     useEffect(() => {
-        logDimensions();
-
         // Update container width immediately
         updateContainerWidth();
 
         // Update again after a short delay to ensure scoreboard has rendered
         const timer = setTimeout(() => {
             updateContainerWidth();
-            logDimensions();
         }, 50);
 
         return () => clearTimeout(timer);

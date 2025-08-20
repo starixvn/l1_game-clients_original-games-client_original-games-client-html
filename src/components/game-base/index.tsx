@@ -232,17 +232,11 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onPreloadResourceDone = () => {
-        console.log(`[GameBase:${this.props.id}] PreloadResources completed, setting isLoaded to true`);
         this.setState({ isLoaded: true });
     };
 
     preloadResource = () => {
         const playerContext = this.context as PlayerContextModel;
-        console.log(`[GameBase:${this.props.id}] Rendering PreloadResources:`, {
-            gameId: this.props.id,
-            locale: playerContext?.locale || "en",
-            isLoaded: this.state.isLoaded,
-        });
         return (
             <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} locale={playerContext?.locale || "en"} />
         );
@@ -472,12 +466,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                        this.roundStateHandler.determineRoundBaseState({
-                            roundRemainingTime: this.roundTimeCounter,
-                            wholeRound: durations.wholeRound,
-                            remainingTime,
-                            durations,
-                        })
+                    this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    })
                     ],
                 ...newGameState,
             });
@@ -502,14 +496,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
             const isContinuePlaying = gameStateContextModel.roundState !== RoundState.None;
             if (isContinuePlaying) {
-                console.log(`[GameBase:${this.props.id}] handleSound`, {
-                    newRoundState: this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    }),
-                });
                 this.gameSoundHandler.handleSound(
                     this.roundStateHandler.determineRoundBaseState({
                         roundRemainingTime: this.roundTimeCounter,
