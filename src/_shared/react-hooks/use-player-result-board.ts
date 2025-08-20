@@ -4,7 +4,7 @@ import useGameStore from "../stores/game-store/game-store";
 import { numberWithCommas } from "../helpers";
 
 export const usePlayerResultBoard = () => {
-  const { playerResultBoard } = useGameStore();
+  const playerResultBoard = useGameStore(state => state.playerResultBoard);
 
   const tableData = useMemo(() => {
     if (!playerResultBoard?.players?.length) {

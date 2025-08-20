@@ -1,125 +1,79 @@
 import { FC, ReactNode, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
-
 import { numberWithCommas, separateDateTime, sortedCollectionByTime } from "../../../_shared/helpers";
-import { usePlayerContext } from "../../../_shared/react-contexts";
 import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
 import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store";
 import { DrawInfo } from "../../game-base/type";
-import { Table, TableColumn } from "../table";
+import { BetDetailTable } from "./bet-detail-table";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
-
-interface BetDetailRow {
-    time: ReactNode;
-    betChoice: ReactNode;
-    odds: ReactNode;
-    stake: ReactNode;
-    win: ReactNode;
-    isWinningBet?: boolean;
-}
+import { calculateWinAmount, calculateTotalStake, calculateTotalWinFromTable } from "./bet-detail-utils";
 
 const BetDetailBase: FC<{
-    isTurnBase: boolean;
-    renderBetDetailResultBlock: (drawInfo: DrawInfo) => ReactNode;
-    produceDataBetDetailRow: (
-        betLogDetail: any,
-        drawInfo: DrawInfo
-    ) => {
-        rawTime: Date;
-        amount: number;
-        choice: any;
-        odds: number;
-        win: number;
-        hightlight: boolean;
-        hideOdd?: boolean;
-    };
-    renderBetChoice?: (choice: any) => ReactNode;
+  isTurnBase: boolean;
+  renderBetDetailResultBlock: (drawInfo: DrawInfo) => ReactNode;
+  produceDataBetDetailRow: Function;
+  renderBetChoice?: (choice: any) => ReactNode;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice }) => {
-    const { betDetailData } = useBetDetailStore(
-        useShallow((state) => ({
-            betDetailData: state.betDetailData,
-        }))
-    );
+  const betDetailData = useBetDetailStore(state => state.betDetailData);
 
-    const { togglePFVerify } = usePopupStore(
-        useShallow((state) => ({
-            togglePFVerify: state.togglePFVerify,
-        }))
-    );
+  const { togglePFVerify } = usePopupStore(useShallow(state => ({ togglePFVerify: state.togglePFVerify })));
+  const { drawInfo, betLogDetails } = betDetailData || {};
+  const { t: translateCommon } = useCommonTranslate();
+  const clickSound = useClickSound();
 
-    const { drawInfo, betLogDetails } = betDetailData || {};
-    const { t: translateCommon } = useCommonTranslate();
-    const { fractionalOddsFormat } = usePlayerContext();
-    const clickSound = useClickSound();
+  const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
 
-    const columns: TableColumn<BetDetailRow>[] = useMemo(
-        () => [
-            { key: "time", header: translateCommon("time") },
-            { key: "betChoice", header: translateCommon("bet_choice"), isHighlight: true },
-            { key: "odds", header: translateCommon("odds") },
-            { key: "stake", header: translateCommon("stake") },
-            { key: "win", header: translateCommon("win"), isHighlight: true },
-        ],
-        [translateCommon]
-    );
-
-    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
-
-    const tableData: BetDetailRow[] = useMemo(() => {
-        if (!drawInfo || !betLogDetails) {
-            return [];
-        }
-
-        return preprocessedBetLogDetails.map((betLogDetail) => {
-            const { rawTime, amount, choice, odds, win, hideOdd } = produceDataBetDetailRow(betLogDetail, drawInfo);
-            const { date, time } = separateDateTime(rawTime);
-
-            const calcOdds = hideOdd ? "-" : numberWithCommas(fractionalOddsFormat ? odds - 1 : odds);
-            return {
-                time: (
-                    <>
-                        {time}
-                        <br />
-                        {date}
-                    </>
-                ),
-                betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
-                odds: calcOdds,
-                stake: numberWithCommas(amount) ?? 0,
-                win: numberWithCommas(win),
-                isWinningBet: win > 0,
-            };
-        });
-    }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, fractionalOddsFormat, renderBetChoice, betLogDetails]);
-
+  const tableData = useMemo(() => {
     if (!drawInfo || !betLogDetails) {
-        return null;
+        return [];
     }
+    return preprocessedBetLogDetails.map((betLogDetail) => {
+      const { rawTime, amount, choice, odds, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
+      const { date, time } = separateDateTime(rawTime);
 
-    const handleClickProvablyFair = () => {
-        togglePFVerify(true);
-        clickSound();
-    };
+      return {
+        time: <>{time}<br />{date}</>,
+        betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
+        stake: numberWithCommas(amount, 2) ?? 0,
+        win: numberWithCommas(calculateWinAmount(amount, odds, win), 2),
+        isWinningBet: win > 0,
+      };
+    });
+  }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice, betLogDetails]);
 
-    console.log("Render");
+  if (!drawInfo || !betLogDetails) {
+    return null;
+  };
 
-    return (
-        <>
-            <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text m-3">
-                Note: Data are only available within the last 7 days from the current date.
-            </div>
-            {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
+  const handleClickProvablyFair = () => {
+    togglePFVerify(true);
+    clickSound();
+  };
 
-            <button className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium underline" onClick={handleClickProvablyFair}>
-                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
-                {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
-            </button>
+  return (
+    <>
+      <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text m-3">
+        Note: Data are only available within the last 7 days from the current date.
+      </div>
 
-            <div className="[--more-info-height:68px]">
-                <Table columns={columns} data={tableData} emptyMessage={translateCommon("no_data")} className="bet-detail-table" />
-            </div>
-        </>
-    );
+      {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
+
+      <button
+        className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium underline"
+        onClick={handleClickProvablyFair}
+      >
+        <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
+        {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
+      </button>
+
+      <BetDetailTable
+        data={tableData}
+        totalStake={calculateTotalStake(betLogDetails, produceDataBetDetailRow, drawInfo)}
+        netProfit={calculateTotalWinFromTable(tableData) - calculateTotalStake(betLogDetails, produceDataBetDetailRow, drawInfo)}
+        emptyMessage={translateCommon("no_data")}
+      />
+    </>
+  );
 };
 
 export default BetDetailBase;

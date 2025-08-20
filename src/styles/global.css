@@ -24,6 +24,9 @@
     --secondary-background-color: #1a1a1a;
     --secondary-text-color: #e0e0e0;
     --color-table-text-clickable: #0990ff;
+    --bet-detail-header: #182130;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172C47;
 }
 
 /* Ensure Tailwind has highest priority */

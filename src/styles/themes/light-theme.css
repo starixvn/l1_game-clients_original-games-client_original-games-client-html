@@ -19,4 +19,8 @@ html[data-theme="light"] {
   
     --color-table-text-clickable: #0990ff;
     --color-winning-highlight: #fff600;
+
+    --bet-detail-header: #182130;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172C47;
   }

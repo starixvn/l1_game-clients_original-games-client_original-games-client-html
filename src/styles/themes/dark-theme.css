@@ -24,4 +24,8 @@ html[data-theme="dark"] {
 
     --modal-background: #1b293f;
     --text-content-color: #ced8e6;
+
+    --bet-detail-header: #182130;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172C47;
 }
