@@ -36,32 +36,34 @@ const BetDetailBase: FC<{
     };
     renderBetChoice?: (choice: any) => ReactNode;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice }) => {
-    // Use bet-detail-store instead of game store
     const { betDetailData } = useBetDetailStore(
         useShallow((state) => ({
             betDetailData: state.betDetailData,
         }))
     );
 
-    const { togglePFVerify } = usePopupStore(useShallow((state) => ({
-        togglePFVerify: state.togglePFVerify,
-    })));
+    const { togglePFVerify } = usePopupStore(
+        useShallow((state) => ({
+            togglePFVerify: state.togglePFVerify,
+        }))
+    );
 
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();
     const clickSound = useClickSound();
 
-    // Define table columns - must be before early return
-    const columns: TableColumn<BetDetailRow>[] = useMemo(() => [
-        { key: "time", header: translateCommon("time") },
-        { key: "betChoice", header: translateCommon("bet_choice") },
-        { key: "odds", header: translateCommon("odds") },
-        { key: "stake", header: translateCommon("stake") },
-        { key: "win", header: translateCommon("win") },
-    ], [translateCommon]);
+    const columns: TableColumn<BetDetailRow>[] = useMemo(
+        () => [
+            { key: "time", header: translateCommon("time") },
+            { key: "betChoice", header: translateCommon("bet_choice") },
+            { key: "odds", header: translateCommon("odds") },
+            { key: "stake", header: translateCommon("stake") },
+            { key: "win", header: translateCommon("win") },
+        ],
+        [translateCommon]
+    );
 
-    // Process bet log details and transform to table data - must be before early return
     const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
 
     const tableData: BetDetailRow[] = useMemo(() => {
@@ -84,26 +86,10 @@ const BetDetailBase: FC<{
                         {date}
                     </>
                 ),
-                betChoice: (
-                    <div className={highlightClass}>
-                        {renderBetChoice ? renderBetChoice(choice) : choice}
-                    </div>
-                ),
-                odds: (
-                    <div className={highlightClass}>
-                        {calcOdds}
-                    </div>
-                ),
-                stake: (
-                    <div className={highlightClass}>
-                        {numberWithCommas(amount) ?? 0}
-                    </div>
-                ),
-                win: (
-                    <div className={highlightClass}>
-                        {numberWithCommas(win)}
-                    </div>
-                ),
+                betChoice: <div className={highlightClass}>{renderBetChoice ? renderBetChoice(choice) : choice}</div>,
+                odds: <div className={highlightClass}>{calcOdds}</div>,
+                stake: <div className={highlightClass}>{numberWithCommas(amount) ?? 0}</div>,
+                win: <div className={highlightClass}>{numberWithCommas(win)}</div>,
             };
         });
     }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, fractionalOddsFormat, renderBetChoice, betLogDetails]);
@@ -121,6 +107,9 @@ const BetDetailBase: FC<{
 
     return (
         <>
+            <div className="text-center font-inter text-[14px] font-normal leading-5 text-primary-text my-3">
+                Note: Data are only available within the last 7 days from the current date.
+            </div>
             {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
             <button className={`clickable ${Styles["provably-fair"]}`} onClick={handleClickProvablyFair}>
@@ -129,12 +118,7 @@ const BetDetailBase: FC<{
             </button>
 
             <div className={Styles["bet-detail"]}>
-                <Table
-                    columns={columns}
-                    data={tableData}
-                    emptyMessage={translateCommon("no_data")}
-                    className="bet-detail-table"
-                />
+                <Table columns={columns} data={tableData} emptyMessage={translateCommon("no_data")} className="bet-detail-table" />
             </div>
         </>
     );
