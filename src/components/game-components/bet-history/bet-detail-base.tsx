@@ -7,7 +7,6 @@ import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks"
 import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store";
 import { DrawInfo } from "../../game-base/type";
 import { Table, TableColumn } from "../table";
-import Styles from "./bet-history.module.scss";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 
 // Define the data structure for bet detail rows
