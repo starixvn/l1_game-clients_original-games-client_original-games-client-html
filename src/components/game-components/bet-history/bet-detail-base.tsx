@@ -9,7 +9,6 @@ import { DrawInfo } from "../../game-base/type";
 import { Table, TableColumn } from "../table";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 
-// Define the data structure for bet detail rows
 interface BetDetailRow {
     time: ReactNode;
     betChoice: ReactNode;
@@ -56,10 +55,10 @@ const BetDetailBase: FC<{
     const columns: TableColumn<BetDetailRow>[] = useMemo(
         () => [
             { key: "time", header: translateCommon("time") },
-            { key: "betChoice", header: translateCommon("bet_choice"), isHighlight: true }, // Highlight winning bet choices
+            { key: "betChoice", header: translateCommon("bet_choice"), isHighlight: true },
             { key: "odds", header: translateCommon("odds") },
             { key: "stake", header: translateCommon("stake") },
-            { key: "win", header: translateCommon("win"), isHighlight: true }, // Highlight winning amounts
+            { key: "win", header: translateCommon("win"), isHighlight: true },
         ],
         [translateCommon]
     );
@@ -106,13 +105,13 @@ const BetDetailBase: FC<{
 
     return (
         <>
-            <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text my-3">
+            <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text m-3">
                 Note: Data are only available within the last 7 days from the current date.
             </div>
             {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
-            <button className="clickable flex items-center gap-1 px-2 pb-2 text-[#20e500] text-sm font-semibold" onClick={handleClickProvablyFair}>
-                <span className={`icon-pf flex justify-center items-center bg-[#159500] w-8 h-8 rounded-xl}`}></span>
+            <button className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium underline" onClick={handleClickProvablyFair}>
+                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
                 {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
             </button>
 

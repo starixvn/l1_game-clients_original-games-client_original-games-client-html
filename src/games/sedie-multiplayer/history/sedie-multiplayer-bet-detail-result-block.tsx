@@ -40,7 +40,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
     const winningSubOption = getWinningSubOption(settlementResult);
 
     return (
-        <div className="flex justify-between gap-6 px-2 text-secondary-text text-sm">
+        <div className="flex justify-between gap-6 text-secondary-text text-sm m-3">
             <div className="flex items-center gap-1.5 font-medium">
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{drawId}</span>
             </div>
@@ -63,7 +63,6 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
     );
 };
 
-// Utility functions
 export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => {
     const win = calculateWin(
         drawInfo.settlementResult?.[item.choice], 
