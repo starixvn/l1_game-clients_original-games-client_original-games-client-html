@@ -64,7 +64,7 @@ export function getWinValueColorClass(winValue: string): string {
     const numericValue = parseFloat(winValue.replace(/[+,]/g, ''));
     
     if (numericValue > 0) {
-        return "text-yellow-300";
+        return "text-winning-highlight font-semibold";
     }
     return "";
 }

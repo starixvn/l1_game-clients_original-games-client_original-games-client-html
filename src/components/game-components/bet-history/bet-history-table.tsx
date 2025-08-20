@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Table, TableColumn } from '../table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../table/s-table';
 import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
 import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
@@ -14,6 +21,16 @@ import {
 } from './bet-history-utils';
 import styles from './bet-history.module.scss';
 import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
+
+const commonStyles = {
+  headerRow: "border-primary-border bg-primary-bg",
+  headerCell: "text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10",
+  dataRow: "text-center border-b border-primary-border",
+  dataCell: "py-3 text-secondary-text",
+  roundCell: "text-table-text-clickable cursor-pointer py-3",
+  roundSpan: "text-blue-500 hover:text-blue-700",
+  emptyCell: "text-center text-secondary-text py-8"
+};
 
 export const BetHistoryTable = () => {
     const { gameMessageHandler } = useGameContext();
@@ -87,9 +104,6 @@ export const BetHistoryTable = () => {
         }
     };
 
-    // Table column configuration
-    const columns: TableColumn<BetHistoryDisplayData>[] = createTableColumns(translateCommon);
-
     // Get displayed data from store
     const displayedBetLogs = getDisplayedBetLogs();
     const tableData = transformBetLogsToDisplayData(displayedBetLogs);
@@ -119,56 +133,65 @@ export const BetHistoryTable = () => {
             <div
                 className={`bet-history-scroll-wrapper ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
             >
-                <Table
-                    columns={columns}
-                    data={tableData}
-                    emptyMessage={translateCommon("no_data")}
-                    className="bet-history-table"
-                    onCellClick={handleCellClick}
-                />
+                <Table className="bet-history-table">
+                    <TableHeader>
+                        <TableRow className={commonStyles.headerRow}>
+                            <TableHead className={commonStyles.headerCell}>
+                                {translateCommon("time")}
+                            </TableHead>
+                            <TableHead className={commonStyles.headerCell}>
+                                {translateCommon("round").capitalizeFirstLetter()}
+                            </TableHead>
+                            <TableHead className={commonStyles.headerCell}>
+                                {translateCommon("total_stake")}
+                            </TableHead>
+                            <TableHead className={commonStyles.headerCell}>
+                                {translateCommon("win")}
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {tableData.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={4} className={commonStyles.emptyCell}>
+                                    {translateCommon("no_data")}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            tableData.map((row, rowIndex) => (
+                                <TableRow key={rowIndex} className={commonStyles.dataRow}>
+                                    <TableCell className={commonStyles.dataCell}>
+                                        <div style={{ whiteSpace: 'pre-line' }}>
+                                            {row.time}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell 
+                                        className={commonStyles.roundCell}
+                                        onClick={() => handleCellClick('round', row, rowIndex)}
+                                    >
+                                        <span className={commonStyles.roundSpan}>
+                                            {row.round}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className={commonStyles.dataCell}>
+                                        {row.betAmount}
+                                    </TableCell>
+                                    <TableCell className={commonStyles.dataCell}>
+                                        <div className={getWinValueColorClass(row.win)}>
+                                            {row.win}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
             </div>
 
             {renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles)}
         </div>
     );
 };
-
-function createTableColumns(translateCommon: any): TableColumn<BetHistoryDisplayData>[] {
-    return [
-        {
-            key: 'time',
-            header: translateCommon("time"),
-            render: (value: string) => (
-                <div style={{ whiteSpace: 'pre-line' }}>
-                    {value}
-                </div>
-            ),
-        },
-        {
-            key: 'round',
-            header: translateCommon("round").capitalizeFirstLetter(),
-            isClickable: true,
-            render: (value: string) => (
-                <span className="text-blue-500 hover:text-blue-700 cursor-pointer">
-                    {value}
-                </span>
-            ),
-        },
-        {
-            key: 'betAmount',
-            header: translateCommon("total_stake"),
-        },
-        {
-            key: 'win',
-            header: translateCommon("win"),
-            render: (value: string) => (
-                <div className={getWinValueColorClass(value)}>
-                    {value}
-                </div>
-            ),
-        },
-    ];
-}
 
 // Extracted function for rendering toggle button
 function renderToggleButton(
