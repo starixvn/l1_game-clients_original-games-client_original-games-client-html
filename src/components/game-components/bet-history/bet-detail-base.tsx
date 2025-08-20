@@ -8,6 +8,7 @@ import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store";
 import { DrawInfo } from "../../game-base/type";
 import { Table, TableColumn } from "../table";
 import Styles from "./bet-history.module.scss";
+import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 
 // Define the data structure for bet detail rows
 interface BetDetailRow {
@@ -41,7 +42,11 @@ const BetDetailBase: FC<{
             betDetailData: state.betDetailData,
         }))
     );
-    
+
+    const { togglePFVerify } = usePopupStore(useShallow((state) => ({
+        togglePFVerify: state.togglePFVerify,
+    })));
+
     console.log("Render Bet Detail Base", betDetailData);
     
     const { drawInfo, betLogDetails } = betDetailData || {};
@@ -110,6 +115,7 @@ const BetDetailBase: FC<{
     }
 
     const handleClickProvablyFair = () => {
+        togglePFVerify(true);
         clickSound();
     };
 

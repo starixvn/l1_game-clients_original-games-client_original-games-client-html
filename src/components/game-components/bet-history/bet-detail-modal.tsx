@@ -3,10 +3,14 @@ import ModalContainer from "../modal-container";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 import { createPortal } from "react-dom";
+import { useShallow } from "zustand/react/shallow";
 
 const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { isShowBetDetail, toggleBetDetail } = usePopupStore();
+    const { isShowBetDetail, toggleBetDetail } = usePopupStore(useShallow((state) => ({
+        isShowBetDetail: state.isShowBetDetail,
+        toggleBetDetail: state.toggleBetDetail,
+    })));
 
     console.log("isShowBetDetail", isShowBetDetail);
 

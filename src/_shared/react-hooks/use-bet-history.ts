@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useGameContext } from '../react-contexts';
 import useGameStore from '../stores/game-store/game-store';
 import { BetHistoryHandler } from '../../components/game-base/handlers/bet-history-handler';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * Custom hook for managing bet history functionality
@@ -22,7 +23,16 @@ export function useBetHistory() {
         hasMoreData,
         getDisplayedBetLogs,
         getWinValue,
-    } = useGameStore();
+    } = useGameStore(useShallow((state) => ({
+        betLogs: state.betLogs,
+        currentPage: state.currentPage,
+        totalPages: state.totalPages,
+        isLoading: state.isLoading,
+        isExpanded: state.isExpanded,
+        hasMoreData: state.hasMoreData,
+        getDisplayedBetLogs: state.getDisplayedBetLogs,
+        getWinValue: state.getWinValue,
+    })));
 
     // Initialize bet history handler
     useEffect(() => {
@@ -105,7 +115,16 @@ export function useBetHistoryState() {
         hasMoreData,
         getDisplayedBetLogs,
         getWinValue,
-    } = useGameStore();
+    } = useGameStore(useShallow((state) => ({
+        betLogs: state.betLogs,
+        currentPage: state.currentPage,
+        totalPages: state.totalPages,
+        isLoading: state.isLoading,
+        isExpanded: state.isExpanded,
+        hasMoreData: state.hasMoreData,
+        getDisplayedBetLogs: state.getDisplayedBetLogs,
+        getWinValue: state.getWinValue,
+    })));
 
     const displayedBetLogs = getDisplayedBetLogs();
     const hasMultiplePages = totalPages > 1;
