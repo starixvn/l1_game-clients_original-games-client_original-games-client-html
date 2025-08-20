@@ -20,7 +20,59 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         selected: 0,
     };
 
+    componentDidMount(): void {
+        console.log("[SwitchableScoreboard] componentDidMount:", {
+            type: this.props.type,
+            scoreboardsCount: this.props.scoreboards.length,
+            roundsCount: this.props.rounds.length,
+            selected: this.state.selected
+        });
+        this.logDimensions();
+    }
+
+    componentDidUpdate(prevProps: SwitchableScoreboardProps<Round>, prevState: SwitchableScoreboardState): void {
+        if (prevState.selected !== this.state.selected) {
+            console.log("[SwitchableScoreboard] componentDidUpdate - selected changed:", {
+                from: prevState.selected,
+                to: this.state.selected,
+                scoreboardName: this.props.scoreboards[this.state.selected]?.name
+            });
+            this.logDimensions();
+        }
+    }
+
+    private logDimensions(): void {
+        setTimeout(() => {
+            const containerElement = document.querySelector('[data-testid="switchable-scoreboard"]') as HTMLElement;
+            if (containerElement) {
+                const rect = containerElement.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(containerElement);
+                console.log("[SwitchableScoreboard] Dimensions:", {
+                    width: rect.width,
+                    height: rect.height,
+                    offsetWidth: containerElement.offsetWidth,
+                    offsetHeight: containerElement.offsetHeight,
+                    scrollWidth: containerElement.scrollWidth,
+                    scrollHeight: containerElement.scrollHeight,
+                    clientWidth: containerElement.clientWidth,
+                    clientHeight: containerElement.clientHeight,
+                    padding: computedStyle.padding,
+                    margin: computedStyle.margin,
+                    border: computedStyle.border,
+                    display: computedStyle.display
+                });
+            } else {
+                console.log("[SwitchableScoreboard] Container element not found");
+            }
+        }, 100);
+    }
+
     selectBoard(index: number) {
+        console.log("[SwitchableScoreboard] selectBoard:", {
+            from: this.state.selected,
+            to: index,
+            scoreboardName: this.props.scoreboards[index]?.name
+        });
         this.setState({ selected: index });
     }
 
@@ -44,6 +96,14 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         };
         const props = onSwitch ? onSwitch(defaultProps) : defaultProps;
 
+        console.log("[SwitchableScoreboard] renderSwitchBoards:", {
+            selected,
+            boardName: board?.name,
+            nextBoard,
+            nextBoardName: scoreboards[nextBoard]?.name,
+            propsKeys: Object.keys(props)
+        });
+
         return <Scoreboard {...props} />;
     }
 
@@ -53,8 +113,14 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         const htmlProps = this.getHTMLAttributes();
         const selectBoard = (index: number) => this.selectBoard(index === selected ? 0 : index);
 
+        console.log("[SwitchableScoreboard] renderScaleBoards:", {
+            selected,
+            scoreboardsCount: scoreboards.length,
+            htmlPropsKeys: Object.keys(htmlProps)
+        });
+
         return (
-            <div {...htmlProps}>
+            <div {...htmlProps} data-testid="switchable-scoreboard">
                 {scoreboards.map((board, index) => {
                     const defaultProps = {
                         key: index,
@@ -63,6 +129,13 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
                         ...board,
                     };
                     const props = onSwitch && index + 1 === selected ? onSwitch(defaultProps) : defaultProps;
+
+                    console.log("[SwitchableScoreboard] renderScaleBoards - board:", {
+                        index,
+                        boardName: board.name,
+                        isSelected: index + 1 === selected,
+                        propsKeys: Object.keys(props)
+                    });
 
                     return <Scoreboard key={index} {...props} />;
                 })}
@@ -73,6 +146,8 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
     render(): ReactNode {
         const { type } = this.props;
 
+        console.log("[SwitchableScoreboard] render:", { type });
+
         if (type === "switch") {
             return this.renderSwitchBoards();
         }
@@ -80,7 +155,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         if (type === "scale") {
             return this.renderScaleBoards();
         }
-        
+
         return null;
     }
 }

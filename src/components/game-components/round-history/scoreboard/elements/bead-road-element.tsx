@@ -9,6 +9,14 @@ export abstract class BeadRoadElement<Round> extends Component<BeadRoadScoreboar
         const clonedRounds = [...rounds];
         const total = scoreboard.props.column * scoreboard.props.row;
 
+        console.log("[BeadRoadElement] arrange - input:", {
+            roundsCount: rounds.length,
+            clonedRoundsCount: clonedRounds.length,
+            column: scoreboard.props.column,
+            row: scoreboard.props.row,
+            total
+        });
+
         while (clonedRounds.length > total) {
             clonedRounds.pop();
         }
@@ -17,7 +25,16 @@ export abstract class BeadRoadElement<Round> extends Component<BeadRoadScoreboar
             clonedRounds.unshift(null);
         }
 
-        return clonedRounds.reverse();
+        const result = clonedRounds.reverse();
+
+        console.log("[BeadRoadElement] arrange - result:", {
+            originalLength: rounds.length,
+            resultLength: result.length,
+            total,
+            nullCount: result.filter(item => item === null).length
+        });
+
+        return result;
     }
 
     abstract renderElement(round: Round): ReactNode;
@@ -25,10 +42,16 @@ export abstract class BeadRoadElement<Round> extends Component<BeadRoadScoreboar
     render(): ReactNode {
         const { round } = this.props;
 
+        console.log("[BeadRoadElement] render:", {
+            hasRound: !!round,
+            roundType: round ? typeof round : 'null',
+            roundKeys: round ? Object.keys(round) : []
+        });
+
         if (round) {
             return this.renderElement(round);
         }
-        
+
         return null;
     }
 }
