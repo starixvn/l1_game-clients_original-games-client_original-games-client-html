@@ -3,8 +3,6 @@ import { createPortal } from "react-dom";
 import { v4 as uuidv4 } from "uuid";
 import { usePlayerContext } from "../../../../_shared/react-contexts";
 import { useClickSound, useCommonTranslate, useSNTranslate } from "../../../../_shared/react-hooks";
-import ModalContainer from "../../modal-container";
-import { ButtonPFGuide } from "../pf-guide";
 import CopyableTextInput from "../copyable-text-input";
 import Styles from "../provably-fair.module.scss";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
@@ -14,6 +12,7 @@ import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";
 import useBetDetailStore from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
+import PFModalContainer from "../../pf-modal";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
@@ -35,11 +34,10 @@ const PFClientSeedInfoModal: FC<{
     return (
         isShowPFClientSeedInfo &&
         createPortal(
-            <ModalContainer
+            <PFModalContainer
                 id="pf-client-seed-info-modal"
                 title={
                     <div>
-                        <ButtonPFGuide />
                         {translateSNGames("pf_title_client_seed_info")}
                     </div>
                 }
@@ -48,7 +46,7 @@ const PFClientSeedInfoModal: FC<{
                 onCloseModal={handleCloseModal}
             >
                 <PFClientSeedInfo fileNameExport={fileNameExport} />
-            </ModalContainer>,
+            </PFModalContainer>,
             document.getElementById("dashboard")
         )
     );
@@ -66,9 +64,8 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
     const clickSound = useClickSound();
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
-    const pfVerifyModalData = usePFStore((state) => state.pfVerifyModalData);
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
-    
+
     const {
         authorizeInfo: {
             user: { name },
@@ -80,7 +77,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
         const header = `${translateSNGames("pf_export_csv_client_seed_info")},${translateSNGames(
             "pf_export_csv_client_seed_info_nickname"
         )},${translateSNGames("pf_export_csv_client_seed_info_seed")}`;
-        const content = pfVerifyModalData.clientSeeds
+        const content = betDetailData.drawInfo.pfResult.clientSeeds
             .map((item, index) => {
                 return `${index + 1},${item.name === name ? item.name : encryptName(item.name)},${item.clientSeed}`;
             })
@@ -88,7 +85,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
         const data = `${header}\n${content}`;
         const link = document.createElement("a");
         link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(data)}`;
-        link.download = `${fileNameExport(pfVerifyModalData.drawId)}`;
+        link.download = `${fileNameExport(betDetailData.drawInfo.drawId)}`;
         link.click();
         AnalyticsHelper.trackFunction({
             function: TrackingFunction.PFExportClientSeeds,
@@ -111,7 +108,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                     </div>
                     <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
                         <div className="input-group width-full">
-                            <CopyableTextInput value={pfVerifyModalData.mergeClientSeed} id="merge-client-seed" />
+                            <CopyableTextInput value={betDetailData.drawInfo.pfResult.mergeClientSeed} id="merge-client-seed" />
                         </div>
                     </Section>
                 </div>
@@ -121,7 +118,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                             title={
                                 <>
                                     {translateSNGames("pf_client_seed_info_total_players")}{" "}
-                                    <span className={Styles["text-highlight"]}>{pfVerifyModalData.clientSeeds?.length}</span>
+                                    <span className={Styles["text-highlight"]}>{betDetailData.drawInfo.pfResult.clientSeeds?.length}</span>
                                 </>
                             }
                             customTitleStyles="m-0"
@@ -147,7 +144,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                                 </tr>
                             </thead>
                             <tbody>
-                                {pfVerifyModalData.clientSeeds?.map((clientSeed, index) => (
+                                {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
                                     <tr key={uuidv4()}>
                                         <td>{index + 1}</td>
                                         {name === clientSeed.name ? (
@@ -172,7 +169,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
             </div>
             </>
         ),
-        [pfVerifyModalData, name]
+        [betDetailData, name]
     );
 };
 

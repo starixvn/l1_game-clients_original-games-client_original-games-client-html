@@ -1,15 +1,15 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { v4 as uuidv4 } from "uuid";
-
+import Image from "next/image";
 import { buildVersion } from "../../../../_shared/constants";
 import { AnalyticsHelper, TrackingAction, TrackingFunction, buildGameGuideUrl } from "../../../../_shared/helpers";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useClickSound, useCommonTranslate } from "../../../../_shared/react-hooks";
 import { tolgee } from "../../../../_shared/tolgee";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
-import ModalContainer from "../../modal-container";
 import Styles from "./pf-guide.module.scss";
+import PFModalContainer from "../../pf-modal";
 
 const PFGuide: FC = () => {
     const { gameConfigs } = useGameStateContext();
@@ -55,7 +55,7 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
     return (
         isOpen &&
         createPortal(
-            <ModalContainer
+            <PFModalContainer
                 id="pf-verify-detail-modal"
                 title={translateCommon("pf_pop-up_title_pf_guide")}
                 isOpen={isOpen}
@@ -63,7 +63,7 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
                 onCloseModal={handleCloseModal}
             >
                 <WrapperPFGuide />
-            </ModalContainer>,
+            </PFModalContainer>,
             document.getElementById("dashboard")
         )
     );
@@ -74,20 +74,9 @@ const ButtonPFGuide: FC = () => {
     const onCloseModal = () => {
         setIsShowPFGuide(false);
     };
-    const clickSound = useClickSound();
 
     return (
         <>
-            <button
-                className={Styles["btn-pf-guide"]}
-                onClick={() => {
-                    clickSound();
-                    setIsShowPFGuide(true);
-                    AnalyticsHelper.trackFunction({ function: TrackingFunction.PFGuide, action: TrackingAction.Open });
-                }}
-            >
-                <span className="icon-guide" />
-            </button>
             <PFGuideModal isOpen={isShowPFGuide} handleCloseModal={onCloseModal} />
         </>
     );

@@ -16,22 +16,17 @@ import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store/bet-
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
-    const { pfVerifyModalData: pfResult } = usePFStore(useShallow((state) => ({
-        pfVerifyModalData: state.pfVerifyModalData,
-    })));
-    const { betDetailData } = useBetDetailStore(
+    const { betDetailData, updateBetDetail } = useBetDetailStore(
         useShallow((state) => ({
             betDetailData: state.betDetailData,
+            updateBetDetail: state.updateBetDetail,
         }))
     );
     
-    const [mergeClientSeed, setMergeClientSeed] = useState(pfResult?.editedMergeClientSeed || pfResult?.mergeClientSeed || "");
+    const [mergeClientSeed, setMergeClientSeed] = useState(betDetailData.drawInfo.pfResult?.editedMergeClientSeed || betDetailData.drawInfo.pfResult?.mergeClientSeed || "");
     const { t } = useTranslator();
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
-    const [combinedHash, setCombinedHash] = useState(pfResult.finalHash);
-    const { updatePFVerify } = usePFStore(useShallow((state) => ({
-        updatePFVerify: state.updatePFVerify,
-    })));
+    const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
     const winningSubOption = getWinningSubOption(betDetailData.drawInfo.settlementResult);
     const IMAGE_SIZE = 36;
@@ -40,7 +35,7 @@ const PFVerification: FC = () => {
     const verifyInfo = useMemo(
         () =>
             PfRoundBaseHelper.buildVerifyInfo({
-                pfResult,
+                pfResult: betDetailData.drawInfo.pfResult,
                 combinedHash,
                 dicesEachRound: DICES_EACH_ROUND,
             }),
@@ -76,15 +71,21 @@ const PFVerification: FC = () => {
     };
 
     useEffect(() => {
-        const mergeSeed = `${pfResult.serverSeed}${mergeClientSeed}`;
+        const mergeSeed = `${betDetailData.drawInfo.pfResult.serverSeed}${mergeClientSeed}`;
         const hash = createHash("sha512").update(mergeSeed).digest("hex");
         setCombinedHash(hash);
         
 
         return () => {
-            updatePFVerify({
-                ...pfResult,
-                editedMergeClientSeed: mergeClientSeed,
+            updateBetDetail({
+                ...betDetailData,
+                drawInfo: {
+                    ...betDetailData.drawInfo,
+                    pfResult: {
+                        ...betDetailData.drawInfo.pfResult,
+                        editedMergeClientSeed: mergeClientSeed,
+                    },
+                },
             });
         };
     }, [mergeClientSeed]);
@@ -94,9 +95,9 @@ const PFVerification: FC = () => {
             <PFVerificationHeaderBlockBase
                 handleChangeMergeClientSeed={handleChangeMergeClientSeed}
                 mergeClientSeed={mergeClientSeed}
-                severSeed={pfResult?.serverSeed}
+                severSeed={betDetailData.drawInfo.pfResult?.serverSeed}
                 combinedHash={combinedHash}
-                finalHash={pfResult?.finalHash}
+                finalHash={betDetailData.drawInfo.pfResult?.finalHash}
             />
 
             <div className={`${Styles["client-seed-form"]} mt-3`}>

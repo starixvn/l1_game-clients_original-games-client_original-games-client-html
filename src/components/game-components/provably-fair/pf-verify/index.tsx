@@ -1,18 +1,16 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useClickSound, useCommonTranslate, useSNTranslate } from "../../../../_shared/react-hooks";
-import ModalContainer from "../../modal-container";
-import { ButtonPFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import CopyableTextInput from "../copyable-text-input";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { Section } from "../pf-form-components";
-import { usePFStore } from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/react/shallow";
 import { useGameContext } from "../../../../_shared/react-contexts/game-context/game-context";
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
+import PFModalContainer from "../../pf-modal";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
@@ -35,20 +33,15 @@ const PFVerifyModal: FC<{
     return (
         isShowPFVerify &&
         createPortal(
-            <ModalContainer
+            <PFModalContainer
                 id="pf-verify"
-                title={
-                    <div>
-                        <ButtonPFGuide />
-                        {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
-                    </div>
-                }
+                title={<div>{translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}</div>}
                 isOpen={isShowPFVerify}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
             >
                 <PFVerify renderResultBlock={renderResultBlock} />
-            </ModalContainer>,
+            </PFModalContainer>,
             document.getElementById("dashboard")
         )
     );
@@ -74,19 +67,15 @@ const useClickOutside = (callback: Function) => {
 };
 
 const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) => {
-    const { pfVerifyModalData: pfResult, updatePFVerify } = usePFStore(useShallow((state) => ({
-        pfVerifyModalData: state.pfVerifyModalData,
-        updatePFVerify: state.updatePFVerify
-    })));
-
-    const { betDetailData } = useBetDetailStore(
+    const { betDetailData, updateBetDetail } = useBetDetailStore(
         useShallow((state) => ({
             betDetailData: state.betDetailData,
+            updateBetDetail: state.updateBetDetail,
         }))
     );
-
+    console.log("betDetailData", betDetailData);
     const { gameMessageHandler } = useGameContext();
-    
+
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const clickSound = useClickSound();
@@ -131,7 +120,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
     const handleOnClickVerification = () => {
         clickSound();
         togglePFVerification(true);
-        AnalyticsHelper.trackFunction({function: TrackingFunction.PFVerify,action: TrackingAction.Click,});
+        AnalyticsHelper.trackFunction({ function: TrackingFunction.PFVerify, action: TrackingAction.Click });
     };
 
     useEffect(() => {
@@ -145,7 +134,15 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
 
     useEffect(() => {
         const handlePFResult = (pfResult: any) => {
-            updatePFVerify(pfResult);
+            if (pfResult.roundId === betDetailData.drawInfo.drawId) {
+                updateBetDetail({
+                    ...betDetailData,
+                    drawInfo: {
+                        ...betDetailData.drawInfo,
+                        pfResult: pfResult,
+                    },
+                });
+            }
         };
 
         const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {
@@ -163,12 +160,12 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_server_seed_sha256")}>
                     <div className="input-group width-full">
-                        <CopyableTextInput value={pfResult?.serverSeedHash} id="server-seed-sha256" />
+                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.serverSeedHash} id="server-seed-sha256" />
                     </div>
                 </Section>
                 <Section title={translateCommon("pf_header_server_seed")} customTitleStyles="mt-3">
                     <div className="input-group width-full">
-                        <CopyableTextInput value={pfResult?.serverSeed} id="server-seed" />
+                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.serverSeed} id="server-seed" />
                     </div>
                 </Section>
             </ClientSeedForm>
@@ -191,7 +188,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
                     </Section>
                 </div>
                 <div className="input-group width-full">
-                    <CopyableTextInput value={pfResult?.mergeClientSeed} id="merge-client-seed" />
+                    <CopyableTextInput value={betDetailData.drawInfo.pfResult?.mergeClientSeed} id="merge-client-seed" />
                 </div>
             </ClientSeedForm>
             <ClientSeedForm>
@@ -206,7 +203,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
                     </div>
                 </Section>
                 <div className="input-group width-full mt-4">
-                    <CopyableTextInput value={pfResult?.finalHash} id="combined-sha512-hash" />
+                    <CopyableTextInput value={betDetailData.drawInfo.pfResult?.finalHash} id="combined-sha512-hash" />
                 </div>
             </ClientSeedForm>
             <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
