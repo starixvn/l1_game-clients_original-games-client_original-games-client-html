@@ -190,7 +190,7 @@
     border-radius: 10px;
     color: #fff;
     font-size: 13px;
-    background: #159639;
+    background: #00C950;
 
     &.top {
         bottom: 35px;
@@ -207,7 +207,7 @@
     right: -12px;
     bottom: 42px;
     width: 350px;
-    background: linear-gradient(90deg, rgba(94, 54, 242, 1) 0%, rgba(110, 75, 240, 1) 100%);
+    background: #2993F5;
     z-index: 2;
     border-radius: 16px;
     padding: var(--spacing-size-2);
@@ -224,7 +224,7 @@
         height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-top: 10px solid #6c49f0;
+        border-top: 10px solid #2993F5;
     }
 }
 

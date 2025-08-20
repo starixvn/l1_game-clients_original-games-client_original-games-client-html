@@ -65,7 +65,7 @@ const PFVerification: FC = () => {
                 `${ResourceTypes.COMMON}.pf_verification_para_1`
             )} </span> = ((${randomNumbers[index]}+${
                 convertNumber[index]
-            }) mod 2) = <span style="color: #ffbc11; font-weight: 600">${ballIndexes[index]}</span> <span style="color: #ffbc11; font-weight: 600">-> ${diceResult}</span>`;
+            }) mod 2) = <span font-weight: 600">${ballIndexes[index]}</span> <span font-weight: 600">-> ${diceResult}</span>`;
 
             return (
                 <p key={index}>
@@ -99,7 +99,7 @@ const PFVerification: FC = () => {
                 finalHash={pfResult?.finalHash}
             />
 
-            <div className={Styles["client-seed-form"]}>
+            <div className={`${Styles["client-seed-form"]} mt-3`}>
                 <div className="flex items-center gap-4">
                     <Section
                         title={t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}

@@ -159,7 +159,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
 
     return (
         <div className={Styles["pf-setting-container"]}>
-            <div className="result-block">{renderResultBlock(pfResult)}</div>
+            <div className="result-block">{renderResultBlock(betDetailData.drawInfo)}</div>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_server_seed_sha256")}>
                     <div className="input-group width-full">

@@ -75,8 +75,7 @@ export const BetHistoryTable = () => {
                         roundResult: [],
                         finalHash: "",
                         clientSeed: row.originalBetLog?.clientSeed || "",
-                        editedMergeClientSeed: "",
-                        result: row.originalBetLog?.result,
+                        editedMergeClientSeed: ""
                     },
                     clientSeed: row.originalBetLog?.clientSeed,
                 },

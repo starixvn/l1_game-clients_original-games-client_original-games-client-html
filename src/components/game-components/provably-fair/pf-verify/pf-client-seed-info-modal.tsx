@@ -12,6 +12,8 @@ import { Section } from "../pf-form-components";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
+import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";
+import useBetDetailStore from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
@@ -64,7 +66,9 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
     const clickSound = useClickSound();
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
-    const clientSeedInfo = usePFStore((state) => state.pfVerifyModalData);
+    const pfVerifyModalData = usePFStore((state) => state.pfVerifyModalData);
+    const betDetailData = useBetDetailStore((state) => state.betDetailData);
+    
     const {
         authorizeInfo: {
             user: { name },
@@ -76,7 +80,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
         const header = `${translateSNGames("pf_export_csv_client_seed_info")},${translateSNGames(
             "pf_export_csv_client_seed_info_nickname"
         )},${translateSNGames("pf_export_csv_client_seed_info_seed")}`;
-        const content = clientSeedInfo.clientSeeds
+        const content = pfVerifyModalData.clientSeeds
             .map((item, index) => {
                 return `${index + 1},${item.name === name ? item.name : encryptName(item.name)},${item.clientSeed}`;
             })
@@ -84,7 +88,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
         const data = `${header}\n${content}`;
         const link = document.createElement("a");
         link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(data)}`;
-        link.download = `${fileNameExport(clientSeedInfo.drawId)}`;
+        link.download = `${fileNameExport(pfVerifyModalData.drawId)}`;
         link.click();
         AnalyticsHelper.trackFunction({
             function: TrackingFunction.PFExportClientSeeds,
@@ -94,18 +98,20 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
 
     return useMemo(
         () => (
+            <>
+            <div className="result-block">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
             <div className={Styles["pf-setting-container"]}>
                 <div className={Styles["client-seed-form"]}>
                     <div className="flex items-center justify-between">
                         <Section title={translateCommon("pf_new_client_seed_para_1")} customTitleStyles="m-0">
                             <div className="input-group width-small">
-                                <CopyableTextInput value={clientSeedInfo.clientSeed} id="client-seed" position="bottom" />
+                                <CopyableTextInput value={betDetailData.drawInfo.clientSeed} id="client-seed" position="bottom" />
                             </div>
                         </Section>
                     </div>
                     <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
                         <div className="input-group width-full">
-                            <CopyableTextInput value={clientSeedInfo.mergeClientSeed} id="merge-client-seed" />
+                            <CopyableTextInput value={pfVerifyModalData.mergeClientSeed} id="merge-client-seed" />
                         </div>
                     </Section>
                 </div>
@@ -115,7 +121,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                             title={
                                 <>
                                     {translateSNGames("pf_client_seed_info_total_players")}{" "}
-                                    <span className={Styles["text-highlight"]}>{clientSeedInfo.clientSeeds?.length}</span>
+                                    <span className={Styles["text-highlight"]}>{pfVerifyModalData.clientSeeds?.length}</span>
                                 </>
                             }
                             customTitleStyles="m-0"
@@ -141,7 +147,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                                 </tr>
                             </thead>
                             <tbody>
-                                {clientSeedInfo.clientSeeds?.map((clientSeed, index) => (
+                                {pfVerifyModalData.clientSeeds?.map((clientSeed, index) => (
                                     <tr key={uuidv4()}>
                                         <td>{index + 1}</td>
                                         {name === clientSeed.name ? (
@@ -164,8 +170,9 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                     </div>
                 </div>
             </div>
+            </>
         ),
-        [clientSeedInfo, name]
+        [pfVerifyModalData, name]
     );
 };
 
