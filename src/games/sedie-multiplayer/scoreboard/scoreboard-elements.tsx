@@ -34,14 +34,6 @@ export class SeDieBigRoadConverter extends Converter<SeDieSettlementResult> {
 
 export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
     renderElement(round: BigRoadRound<SeDieSettlementResult>): ReactNode {
-        try {
-            const dataLen = Array.isArray(round?.data) ? round.data.length : 0;
-            const oddFlag = round?.data?.some((r: any) => r?.odd);
-            const evenFlag = round?.data?.some((r: any) => r?.even);
-            const blinkFlag = round?.data?.some((r: any) => r?.even === undefined || r?.odd === undefined);
-            // eslint-disable-next-line no-console
-            console.log("[SeDieBigRoadElement] renderElement", { dataLen, oddFlag, evenFlag, blinkFlag });
-        } catch (_) { }
         const odd = round.data.some((result) => result.odd);
         const even = round.data.some((result) => result.even);
         const isBlinkNode = round.data.some((result) => result.even === undefined || result.odd === undefined);

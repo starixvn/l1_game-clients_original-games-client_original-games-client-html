@@ -82,14 +82,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         });
 
 
-        // Debug grouping sizes
-        try {
-            const totalItems = (rounds as any[]).length;
-            const blocksCount = groups.length;
-            const avgItemsPerBlock = blocksCount ? (groups.reduce((s, g) => s + g.length, 0) / blocksCount) : 0;
-            // eslint-disable-next-line no-console
-            console.log("[Scoreboard] grouping:", { totalItems, block, row, rowByGroup, horizontalGroups: horizontalGroups.length, columns: columns.length, verticalGroups: verticalGroups.length, blocksCount, avgItemsPerBlock });
-        } catch (_) { }
+
 
         return groups;
     }
@@ -103,7 +96,6 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
     componentDidMount(): void {
 
         this.focusOnFirstRoundAndCalculateColumns();
-        this.logDimensions();
         this.updateGridTemplateColumns();
     }
 
@@ -123,7 +115,6 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         if (prevRoundId !== currentRoundId || prevRoundsCount !== currentRoundsCount) {
 
             this.focusOnFirstRoundAndCalculateColumns();
-            this.logDimensions();
             this.updateGridTemplateColumns();
         }
     }
@@ -147,13 +138,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         }, 50);
     }
 
-    private logDimensions(): void {
-        try {
-            const { column = 17, row } = this.props as any;
-            // eslint-disable-next-line no-console
-            console.log("[Scoreboard] props:", { columnProp: column, rowProp: row, actualColumns: this.actualColumns });
-        } catch (_) { }
-    }
+    private logDimensions(): void { }
 
     getHTMLAttributes() {
         const {
@@ -179,12 +164,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
         const arranged = arrange(rounds, this) as Round[];
         const groupItems = this.createGroup(arranged);
 
-        // Debug arranged vs grouped
-        try {
-            const nonEmptyArranged = (arranged as any[]).filter((n) => n && n["data"] && n["data"].length > 0).length;
-            // eslint-disable-next-line no-console
-            console.log("[Scoreboard] arranged:", { arrangedTotal: (arranged as any[]).length, nonEmptyArranged, groupBlocks: groupItems.length });
-        } catch (_) { }
+
 
 
 

@@ -46,10 +46,7 @@ export class SwitchableScoreboard<Round> extends Component<SwitchableScoreboardP
         return <Scoreboard {...props} />;
     }
 
-    // Scale mode removed; only switch mode is supported
-
     render(): ReactNode {
-
         return this.renderSwitchBoards();
     }
 }

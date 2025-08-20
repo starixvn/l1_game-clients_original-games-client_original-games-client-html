@@ -50,81 +50,12 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         });
         // Attach index for traceability through arrange
         const settlementsWithIdx = settlements.map((s, idx) => ({ ...s, __idx: idx }));
-        // Debug: input size and distribution before any transformation
-        try {
-            const rawCounts = rawSettlements.reduce(
-                (acc, r: any) => {
-                    const isOdd = !!r?.odd;
-                    const isEven = !!r?.even;
-                    if (isOdd) acc.odd += 1;
-                    if (isEven) acc.even += 1;
-                    if (!isOdd && !isEven) acc.neither += 1;
-                    return acc;
-                },
-                { odd: 0, even: 0, neither: 0 }
-            );
-            const counts = settlements.reduce(
-                (acc, r: any) => {
-                    const isOdd = !!r?.odd;
-                    const isEven = !!r?.even;
-                    if (isOdd) acc.odd += 1;
-                    if (isEven) acc.even += 1;
-                    if (!isOdd && !isEven) acc.neither += 1;
-                    return acc;
-                },
-                { odd: 0, even: 0, neither: 0 }
-            );
-            const bothTrueIdx = settlementsWithIdx.filter((s: any) => s?.odd === true && s?.even === true).map((s: any) => s.__idx);
-            // eslint-disable-next-line no-console
-            console.log(
-                "[ScoreboardSeDie] roundHistory:",
-                {
-                    rounds: roundHistory.length,
-                    settlementsRaw: rawSettlements.length,
-                    settlementsNormalized: settlements.length,
-                    rawDistribution: rawCounts,
-                    distribution: counts,
-                    bothTrueCount: bothTrueIdx.length,
-                    bothTrueSample: bothTrueIdx.slice(0, 10),
-                }
-            );
-        } catch (_) { }
+
 
         isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlementsWithIdx as any);
 
-        // Wrap arrange with logging so we can compare input vs arranged vs rendered nodes
         const arrange = BigRoadElement.arrange(SeDieBigRoadConverter.instance as any);
-        const arrangeWithLogs = (rounds: any[], scoreboard: any) => {
-            try {
-                const input = [...rounds].reverse();
-                const grouped = (SeDieBigRoadConverter.instance as any).group(input);
-                const groupSizes = grouped.map((g: any[]) => g.length);
-                // eslint-disable-next-line no-console
-                console.log("[ScoreboardSeDie] grouped:", { groups: grouped.length, sampleGroupSizes: groupSizes.slice(0, 20) });
-            } catch { }
-
-            const arranged = arrange(rounds, scoreboard) as any[];
-            const nonEmpty = arranged.filter((n) => n && Array.isArray(n.data) && n.data.length > 0);
-            const usedIdx = new Set<number>();
-            for (const node of nonEmpty) {
-                for (const item of node.data) {
-                    if (typeof item?.__idx === "number") usedIdx.add(item.__idx);
-                }
-            }
-            // eslint-disable-next-line no-console
-            console.log(
-                "[ScoreboardSeDie] arrange:",
-                {
-                    inputRounds: rounds.length,
-                    arrangedTotal: arranged.length,
-                    nonEmptyNodes: nonEmpty.length,
-                    configuredColumns: this.scoreboardColumns,
-                    configuredRows: 6,
-                    roundsUsed: usedIdx.size,
-                }
-            );
-            return arranged as any[];
-        };
+        const arrangeWithLogs = (rounds: any[], scoreboard: any) => arrange(rounds, scoreboard) as any[];
 
         return (
             <div className={Styles["scoreboard-full-big-road"]} id="big-road">
