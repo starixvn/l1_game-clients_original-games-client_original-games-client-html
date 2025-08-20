@@ -52,7 +52,11 @@ import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
 import BetDetailModal from "../game-components/bet-history/bet-detail-modal";
 import BetDetailBase from "../game-components/bet-history/bet-detail-base";
-import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
+import {
+    BetChoice,
+    BetDetailResultBlock,
+    produceDataBetDetailRow,
+} from "../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
 import { makeFileNameExport, PFVerification, renderPFVerifyResultBlock } from "../../games/sedie-multiplayer/provably-fair";
 import PFVerificationModal from "../game-components/provably-fair/pf-verify/pf-verification-modal";
 import PFClientSeedInfoModal from "../game-components/provably-fair/pf-verify/pf-client-seed-info-modal";
@@ -738,22 +742,19 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     renderBetDetailModal() {
         return (
             <>
-            {/* <BetHistoryModalBase>
-                <BetHistoryBase isTurnBase={false} renderBetLogResult={(result) => <SedieMultiplayerBetLogResultCell result={result} />} />
-            </BetHistoryModalBase> */}
-            <BetDetailModal>
-                <BetDetailBase
-                    isTurnBase={false}
-                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
-                    produceDataBetDetailRow={produceDataBetDetailRow}
-                    renderBetChoice={(choice) => <BetChoice choice={choice} />}
-                />
-            </BetDetailModal>
-            <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
-            <PFClientSeedInfoModal fileNameExport={makeFileNameExport} />
-            <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
-        </>
-        )
+                <BetDetailModal>
+                    <BetDetailBase
+                        isTurnBase={false}
+                        renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
+                        produceDataBetDetailRow={produceDataBetDetailRow}
+                        renderBetChoice={(choice) => <BetChoice choice={choice} />}
+                    />
+                </BetDetailModal>
+                <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
+                <PFClientSeedInfoModal fileNameExport={makeFileNameExport} />
+                <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
+            </>
+        );
     }
 
     getRenderTemplate() {

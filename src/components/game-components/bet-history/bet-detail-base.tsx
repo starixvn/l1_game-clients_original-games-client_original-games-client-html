@@ -47,8 +47,6 @@ const BetDetailBase: FC<{
         togglePFVerify: state.togglePFVerify,
     })));
 
-    console.log("Render Bet Detail Base", betDetailData);
-    
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const { fractionalOddsFormat } = usePlayerContext();

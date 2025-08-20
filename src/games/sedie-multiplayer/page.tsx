@@ -77,10 +77,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         return <SeDieMultiplayerBettingBlock />;
     }
 
-    renderBetDetailModal() {
-        const SeDieBetHistoryModal = dynamic(() => import("./history"));
-        return <SeDieBetHistoryModal />;
-    }
+    // renderBetDetailModal() {
+    //     const SeDieBetHistoryModal = dynamic(() => import("./history"));
+    //     return <SeDieBetHistoryModal />;
+    // }
 }
 
 const SeDieWrapper = (props) => {
