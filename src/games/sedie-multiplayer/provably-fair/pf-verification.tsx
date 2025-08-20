@@ -64,32 +64,18 @@ const PFVerification: FC = () => {
     };
 
     const renderFinalResult = () => {
-        const { remainingBalls, ballIndexes } = verifyInfo;
         const finalResult = [];
 
-        for (let i = 0; i < BALLS_EACH_ROUND; i++) {
-            finalResult.push(
-                <div key={`final-result-${i}`} style={{ marginBottom: "1rem" }}>
-                    <div className={Styles["section-title"]}>
-                        {t(`${ResourceTypes.SABA_NUMBER}.pf_verifier_tool_ball`, { value: i + 1 })} -{" "}
-                        {t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
-                    </div>
-                    <div className={Styles["result-numbers"]}>
-                        {/* {remainingBalls[i].map((item, index) => {
-                            return index + 1 === ballIndexes[i] ? (
-                                <span key={uuidv4()} className={Styles["text-yellow"]}>
-                                    {item}{" "}
-                                </span>
-                            ) : (
-                                `${item} `
-                            );
-                        })} */}
-                    </div>
+        return Array.from({ length: BALLS_EACH_ROUND }, (_, i) => (
+            <div key={`final-result-${i}`} style={{ marginBottom: "1rem" }}>
+                <div className={Styles["section-title"]}>
+                    {t(`${ResourceTypes.SABA_NUMBER}.pf_verifier_tool_ball`, { value: i + 1 })} -{" "}
+                    {t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
                 </div>
-            );
-        }
-
-        return finalResult;
+                <div className={Styles["result-numbers"]}>
+                </div>
+            </div>
+        ));
     };
 
     useEffect(() => {

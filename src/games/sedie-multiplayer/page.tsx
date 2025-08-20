@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import { JSX } from "react";
 

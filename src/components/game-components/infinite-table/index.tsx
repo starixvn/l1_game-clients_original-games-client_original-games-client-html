@@ -18,12 +18,12 @@ const TableRow: FC<TableRowProps> = ({ children, isHeader }) => {
         <tr>
             {isHeader
                 ? children.map((item, _) => (
-                      <th  {...item.customAttributes}>
+                      <th key={randomBytes(10).toString()} {...item.customAttributes}>
                           {item.node}
                       </th>
                   ))
                 : children.map((item, _) => (
-                      <td  {...item.customAttributes}>
+                      <td key={randomBytes(10).toString()} {...item.customAttributes}>
                           {item.node}
                       </td>
                   ))}
@@ -74,7 +74,7 @@ export const InfiniteTable: FC<{
                 </thead>
                 <tbody>
                     {body.map((row, _) => (
-                        <TableRow >{row}</TableRow>
+                        <TableRow key={randomBytes(10).toString()}>{row}</TableRow>
                     ))}
                 </tbody>
             </table>
