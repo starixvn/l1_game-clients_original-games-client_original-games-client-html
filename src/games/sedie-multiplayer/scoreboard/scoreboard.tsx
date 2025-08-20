@@ -9,7 +9,6 @@ import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constan
 export type ScoreboardComponentProps = {
     roundHistory: Round<SeDieResult, SeDieSettlementResult>[];
     isShowBlink: boolean;
-    isOddEven: boolean;
     playResultAnimation?: boolean;
 };
 
@@ -22,37 +21,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
 
 
 
-    renderBigRoad(): ReactNode {
-        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
-        const settlements = [...roundHistory].map((round) => round.settlementResult);
-
-        isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlements);
-
-        return (
-            <div className={`${Styles["scoreboard-full"]} ${Styles["big-road"]}`} id="big-road">
-                <SwitchableScoreboard
-                    rounds={settlements}
-                    type="switch"
-                    scoreboards={[
-                        {
-                            element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
-                            arrange: BigRoadElement.arrange(SeDieBigRoadConverter.instance as any),
-                            column: this.scoreboardColumns,
-                            row: 6,
-                            updateScoreboardColumns: this.updateScoreboardColumns,
-                            className: Styles["big-road-override"],
-                            blockClassName: Styles["big-road-block"],
-                            elementClassName: Styles["big-road-item"],
-                            scrollToRight: playResultAnimation
-                        },
-                    ]}
-                />
-            </div>
-        );
-    }
-
-    // Refactored version without wrapper div
-    renderBigRoadRefactored(): ReactNode {
+    render(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const settlements = [...roundHistory].map((round) => round.settlementResult);
 
@@ -79,11 +48,6 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
                 />
             </div>
         );
-    }
-
-    render(): ReactNode {
-        // Use refactored version without wrapper div
-        return this.renderBigRoadRefactored();
     }
 }
 

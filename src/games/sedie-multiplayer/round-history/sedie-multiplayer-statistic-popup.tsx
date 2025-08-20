@@ -47,7 +47,7 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
                         roundedRadiusPx={12}
                         barLabelFontSizePx={14}
                     />
-                    <ScoreboardSeDie roundHistory={roundHistory as any} isShowBlink={isShowBlink} isOddEven={false} />
+                    <ScoreboardSeDie roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
                 </div>
             </div>
         </div>
