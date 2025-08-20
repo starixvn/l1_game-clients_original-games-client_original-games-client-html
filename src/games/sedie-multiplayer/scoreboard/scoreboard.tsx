@@ -13,7 +13,7 @@ export type ScoreboardComponentProps = {
 };
 
 class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
-    private scoreboardColumns: number = 22;
+    private scoreboardColumns = 22;
 
     updateScoreboardColumns = (actualColumns: number) => {
         this.scoreboardColumns = actualColumns;
@@ -25,7 +25,9 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const rawSettlements = [...roundHistory].map((round) => round.settlementResult);
         const settlements = rawSettlements.map((s: any) => {
-            if (!s) return s;
+            if (!s) {
+                return s;
+            }
             const hasOddEven = s.odd !== undefined || s.even !== undefined;
             const bothFalse = s.odd === false && s.even === false;
             const bothTrue = s.odd === true && s.even === true;
@@ -52,7 +54,9 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         const settlementsWithIdx = settlements.map((s, idx) => ({ ...s, __idx: idx }));
 
 
-        isShowBlink && SeDieBigRoadConverter.addBlinkNode(settlementsWithIdx as any);
+        if (isShowBlink) {
+            SeDieBigRoadConverter.addBlinkNode(settlementsWithIdx as any);
+        }
 
         const arrange = BigRoadElement.arrange(SeDieBigRoadConverter.instance as any);
         const arrangeWithLogs = (rounds: any[], scoreboard: any) => arrange(rounds, scoreboard) as any[];

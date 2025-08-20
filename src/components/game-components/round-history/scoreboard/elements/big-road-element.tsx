@@ -15,9 +15,6 @@ export abstract class BigRoadElement<Round> extends Component<ScoreboardItemProp
 
             const bigRoad = new BigRoadScoreboard({ converter, height: row });
             const input = [...rounds].reverse();
-            const initialTotal = column * row;
-
-
 
 
 
@@ -28,13 +25,7 @@ export abstract class BigRoadElement<Round> extends Component<ScoreboardItemProp
             const columns = toFlattenColumns(rows);
             // Width-based capacity to keep all nodes (avoid trimming live content)
             const calculatedTotal = Math.max(Math.round((columns.length ?? 0) / row), column) * row;
-            const result = fitContent(columns, calculatedTotal, { data: [] } as BigRoadScoreboardPoint<Round>);
-
-
-
-
-
-            return result;
+            return fitContent(columns, calculatedTotal, { data: [] } as BigRoadScoreboardPoint<Round>);
         };
     }
 

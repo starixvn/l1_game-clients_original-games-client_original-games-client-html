@@ -28,11 +28,7 @@ export abstract class DerivedElement extends Component<ScoreboardItemProps<Deriv
 
 
             const columns = toFlattenColumns(derivedRows);
-            const result = fitContent(columns, total, {} as DerivedScoreboardPoint);
-
-
-
-            return result;
+            return fitContent(columns, total, {} as DerivedScoreboardPoint);
         };
     }
 

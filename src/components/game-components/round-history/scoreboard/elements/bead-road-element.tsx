@@ -19,11 +19,8 @@ export abstract class BeadRoadElement<Round> extends Component<BeadRoadScoreboar
             clonedRounds.unshift(null);
         }
 
-        const result = clonedRounds.reverse();
-
-
-
-        return result;
+        clonedRounds.reverse();
+        return clonedRounds;
     }
 
     abstract renderElement(round: Round): ReactNode;

@@ -118,14 +118,12 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
 
     const updateContainerWidth = () => {
         if (containerRef.current) {
-            const scoreboardElement = containerRef.current.querySelector('[data-testid="scoreboard"]') as HTMLElement;
+            const scoreboardElement = containerRef.current.querySelector<HTMLElement>('[data-testid="scoreboard"]');
             const parentElement = containerRef.current.parentElement;
 
             if (scoreboardElement && parentElement) {
                 const scoreboardWidth = scoreboardElement.offsetWidth;
-                const containerWidth = containerRef.current.offsetWidth;
                 const parentWidth = parentElement.offsetWidth;
-                const parentRect = parentElement.getBoundingClientRect();
 
 
                 // Force the container to take the full parent width
@@ -141,8 +139,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
                     containerRef.current.style.setProperty('min-width', `${parentWidth}px`, 'important');
                 }
 
-                // Force a reflow to ensure the width changes take effect
-                containerRef.current.offsetHeight;
+                // Reflow not required here; styles above are sufficient
 
                 // Log the final state
                 setTimeout(() => {

@@ -13,11 +13,7 @@ export function toFlattenColumns<T>(rows: T[][]): T[] {
         });
     });
 
-    const flattened = Object.values(result).flatMap((data) => Object.values(data));
-
-
-
-    return flattened;
+    return Object.values(result).flatMap((data) => Object.values(data));
 }
 
 export function chunk<T>(array: T[], size: number): T[][] {
@@ -39,15 +35,9 @@ export function fitContent<T>(rounds: T[], capacity: number, addition: T) {
 
 
     if (rounds.length > capacity) {
-        const trimmed = rounds.slice(rounds.length - capacity);
-
-        return trimmed;
+        return rounds.slice(rounds.length - capacity);
     }
 
     const additions = Array.from({ length: capacity - rounds.length }, (_) => addition);
-    const padded = [...rounds, ...additions];
-
-
-
-    return padded;
+    return [...rounds, ...additions];
 }

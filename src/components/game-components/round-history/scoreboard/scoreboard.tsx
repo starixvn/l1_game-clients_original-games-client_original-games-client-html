@@ -57,26 +57,17 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
 
 
 
-        const groups = verticalGroups.flatMap((vertical) => {
+        return verticalGroups.flatMap((vertical) => {
             const blocks = [];
-
-            for (let row = 0; row < rowByGroup; row++) {
-                const block = [];
-
-                for (let horizontal of vertical) {
-                    block.push(...horizontal[row]);
+            for (let rowIndex = 0; rowIndex < rowByGroup; rowIndex++) {
+                const blockItems = [];
+                for (const horizontal of vertical) {
+                    blockItems.push(...horizontal[rowIndex]);
                 }
-
-                blocks.push(block);
+                blocks.push(blockItems);
             }
-
             return blocks;
         });
-
-
-
-
-        return groups;
     }
 
     focusOnFirstRoundAndCalculateColumns(): void {
@@ -113,7 +104,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
 
     private updateGridTemplateColumns(): void {
         setTimeout(() => {
-            const scoreboardElement = document.querySelector('[data-testid="scoreboard"]') as HTMLElement;
+            const scoreboardElement = document.querySelector<HTMLElement>('[data-testid="scoreboard"]');
             if (scoreboardElement && this.actualColumns) {
                 // Calculate the total width needed
                 const columnWidth = 18; // 18px per column from CSS
