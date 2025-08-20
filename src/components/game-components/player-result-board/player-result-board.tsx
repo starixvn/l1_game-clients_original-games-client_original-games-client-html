@@ -1,7 +1,7 @@
-import { FC, useMemo } from "react";
-import { Table, TableColumn } from "../table";
+import { FC } from "react";
 import { usePlayerResultBoard, useCommonTranslate } from "../../../_shared/react-hooks";
 import { RoundId } from "../round-id";
+import { PlayerResultBoardTable } from "./player-result-board-table";
 
 interface PlayerData {
   playerName: string;
@@ -12,19 +12,6 @@ interface PlayerData {
 export const PlayerResultBoard: FC = () => {
   const { totalPlayers, tableData } = usePlayerResultBoard();
   const { t: translateCommon } = useCommonTranslate();
-
-  const columns: TableColumn[] = useMemo(() => [
-    { key: "playerName", header: translateCommon("player") },
-    { key: "betAmount", header: translateCommon("total_stake") },
-    { key: "win", header: translateCommon("win") },
-  ], [translateCommon]);
-
-  const getCellClassName = (columnKey: string, _value: any, row: PlayerData): string => {
-    if (columnKey === "win" && row.win > 0) {
-      return "text-winning-highlight font-semibold";
-    }
-    return "";
-  };
 
   const renderPlayerCount = () => (
     <div className="flex items-center">
@@ -44,10 +31,9 @@ export const PlayerResultBoard: FC = () => {
 
   const renderTable = () => (
     <div className="min-h-[450px]">
-      <Table
-        columns={columns}
+      <PlayerResultBoardTable
         data={tableData}
-        getCellClassName={getCellClassName}
+        emptyMessage={translateCommon("no_data")}
       />
     </div>
   );

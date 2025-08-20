@@ -133,7 +133,6 @@ export const BetHistoryTable = () => {
     );
 };
 
-// Extracted function for creating table columns
 function createTableColumns(translateCommon: any): TableColumn<BetHistoryDisplayData>[] {
     return [
         {
