@@ -19,6 +19,7 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import SediePlate from "./result-block/sedie-plate";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
+import SeDieMultiplayerBetDetailModal from "./history";
 
 export type SeDieState = {
     statisticGroup?: number;
@@ -76,10 +77,9 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         return <SeDieMultiplayerBettingBlock />;
     }
 
-    // renderBetDetailModal() {
-    //     const SeDieBetHistoryModal = dynamic(() => import("./history"));
-    //     return <SeDieBetHistoryModal />;
-    // }
+    renderBetDetailModal() {
+        return <SeDieMultiplayerBetDetailModal />;
+    }
 }
 
 const SeDieWrapper = (props) => {

@@ -24,7 +24,7 @@ import GameLoading from "../game-components/game-loading";
 import { LoadingSpinner } from "../game-components/game-loading/loading-spinner";
 import { NewRoundTransitionWithoutExtraSeconds } from "../game-components/new-round-transition";
 import { NoticeDialog } from "../game-components/notice";
-import { PFSettingModal, PFVerifyModal } from "../game-components/provably-fair";
+import { PFSettingModal } from "../game-components/provably-fair";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
@@ -50,16 +50,6 @@ import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
-import BetDetailModal from "../game-components/bet-history/bet-detail-modal";
-import BetDetailBase from "../game-components/bet-history/bet-detail-base";
-import {
-    BetChoice,
-    BetDetailResultBlock,
-    produceDataBetDetailRow,
-} from "../../games/sedie-multiplayer/history/sedie-multiplayer-bet-detail-result-block";
-import { makeFileNameExport, PFVerification, renderPFVerifyResultBlock } from "../../games/sedie-multiplayer/provably-fair";
-import PFVerificationModal from "../game-components/provably-fair/pf-verify/pf-verification-modal";
-import PFClientSeedInfoModal from "../game-components/provably-fair/pf-verify/pf-client-seed-info-modal";
 import Background from "../page-components/background";
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
@@ -466,12 +456,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                    this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    })
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
                     ],
                 ...newGameState,
             });
@@ -727,21 +717,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetDetailModal() {
-        return (
-            <>
-                <BetDetailModal>
-                    <BetDetailBase
-                        isTurnBase={false}
-                        renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
-                        produceDataBetDetailRow={produceDataBetDetailRow}
-                        renderBetChoice={(choice) => <BetChoice choice={choice} />}
-                    />
-                </BetDetailModal>
-                <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
-                <PFClientSeedInfoModal fileNameExport={makeFileNameExport} />
-                <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
-            </>
-        );
+        return <></>;
     }
 
     getRenderTemplate() {
