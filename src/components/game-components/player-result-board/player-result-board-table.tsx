@@ -30,14 +30,14 @@ const PlayerResultBoardTable = React.forwardRef<
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-center py-8 text-secondary-text">
+      <div className="text-center py-8 text-secondary-text min-h-[465px]">
         {emptyMessage}
       </div>
     );
   }
 
   return (
-    <div ref={ref} className="relative w-full">
+    <div ref={ref} className="min-h-[465px]">
       <Table>
         <TableHeader>
           <TableRow className="border-primary-border bg-primary-bg">
@@ -58,14 +58,14 @@ const PlayerResultBoardTable = React.forwardRef<
               key={index} 
               className="text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors"
             >
-              <TableCell className="py-3 text-secondary-text text-center">
+              <TableCell className="py-[10px] text-secondary-text text-center">
                 {row.playerName}
               </TableCell>
-              <TableCell className="py-3 text-secondary-text text-center">
+              <TableCell className="py-[10px] text-secondary-text text-center">
                 {row.betAmount}
               </TableCell>
               <TableCell className={cn(
-                "py-3 font-semibold",
+                "py-[10px] font-semibold",
                 parseFloat(row.win) > 0 ? "text-winning-highlight" : "text-secondary-text"
               )}>
                 {row.win}

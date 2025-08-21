@@ -24,7 +24,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   const renderTable = () => (
-    <div className="min-h-[450px]">
+    <div className="">
       <PlayerResultBoardTable
         data={tableData}
         emptyMessage={translateCommon("no_data")}
@@ -33,7 +33,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   return (
-    <div className="h-full rounded-xl p-3 pb-1 mb-3 bg-white dark:bg-primary-bg border border-primary-border">
+    <div className="h-full rounded-xl p-3 pb-1 bg-white dark:bg-primary-bg border border-primary-border">
       {renderHeader()}
       {renderTable()}
     </div>
