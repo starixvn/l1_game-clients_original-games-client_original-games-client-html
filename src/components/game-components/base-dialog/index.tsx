@@ -9,7 +9,7 @@ const HeaderHeightInPixel = 55;
 
 export type Props = {
     isOpen?: boolean;
-    onCloseModal?: Function;
+    onCloseModal?: Function | null;
     children?: React.ReactNode;
     type?: ModalType;
     betContainerPosition?: number;
@@ -75,7 +75,7 @@ const BaseDialog: React.FC<Props> = ({
         return () => {
             !isBlockUI && document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [wrapperRef]);
+    }, [wrapperRef, isOpen, onCloseModal, clickSound, isBlockUI, toggleBtnRef]);
 
     return (
         <>
@@ -95,7 +95,9 @@ const BaseDialog: React.FC<Props> = ({
                     extendedClassName
                 )}
             >
-                {children}
+                <div className="h-full flex flex-col">
+                    {children}
+                </div>
             </div>
         </>
     );

@@ -23,7 +23,7 @@ const SUB_OPTIONS = [
     SeDieBetOptions.WHITE4
 ] as const;
 
-const IMAGE_SIZE = 36;
+const IMAGE_SIZE = 30;
 
 export const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
     return SUB_OPTIONS.find(option => settlementResult[option]) || '';
@@ -40,7 +40,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
     const winningSubOption = getWinningSubOption(settlementResult);
 
     return (
-        <div className="flex justify-between gap-6 text-secondary-text text-sm mx-3 mt-2">
+        <div className="flex justify-between text-secondary-text text-[14px] mt-2">
             <div className="flex items-center gap-1.5 font-medium">
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{drawId}</span>
             </div>

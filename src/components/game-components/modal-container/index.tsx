@@ -28,15 +28,16 @@ const ModalContainer: FC<{
             <div 
                 id={id} 
                 className={cn(
-                    "grid grid-cols-1 grid-rows-[30px_calc(100%-30px)] h-full w-full rounded-t-2xl",
+                    "flex flex-col h-full w-full rounded-t-2xl",
                     {
-                        "grid": isOpen,
+                        "flex": isOpen,
                         "hidden": !isOpen
                     }
                 )}
             >
-                <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2">
-                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">
+                {/* Header - Fixed height */}
+                <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2 flex-shrink-0">
+                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-[22px]">
                         {title}
                     </div>
                     <span
@@ -50,8 +51,9 @@ const ModalContainer: FC<{
                     </span>
                 </div>
 
-                <div className={cn("h-full", {
-                    "h-[calc(var(--modal-container-height)-86px)]": isMobileOnly
+                {/* Content - Flexible height */}
+                <div className={cn("flex-1 min-h-0 overflow-hidden", {
+                    "max-h-[calc(var(--modal-container-height)-86px)]": isMobileOnly
                 })}>
                     {children}
                 </div>

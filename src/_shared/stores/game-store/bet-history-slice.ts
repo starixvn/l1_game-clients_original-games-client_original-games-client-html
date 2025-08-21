@@ -163,7 +163,9 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
 // Helpers
 function toNumeric(value: any): number {
-    if (value == null) return 0;
+    if (value == null) {
+        return 0;
+    }
     const num = Number(value);
     return Number.isFinite(num) ? num : 0;
 }

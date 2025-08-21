@@ -54,7 +54,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
                 {headerColumns.map((column, index) => (
                     <TableHead
                         key={column.key}
-                        className="w-1/4 text-center py-3 px-0 text-sm font-medium text-secondary-text rounded-t-lg border-b border-primary-border"
+                        className="w-1/4 text-center py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-[14px] leading-5"
                     >
                         {column.label}
                     </TableHead>
@@ -74,7 +74,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                     <TableCell
                         key={cellIndex}
                         className={cn(
-                            "w-1/4 text-sm text-secondary-text text-center p-3",
+                            "w-1/4 text-sm text-secondary-text text-center p-3 text-[14px] leading-5",
                             cell.isWinningBet && "text-winning-highlight font-semibold"
                         )}
                     >
@@ -89,7 +89,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
 const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: number, data: BetDetailRow[]) => {
     return (
         <>
-            <TableRow className="border-none font-normal text-secondary-text bg-[#0C192B] table w-full table-fixed">
+            <TableRow className="border-none font-normal text-secondary-text text-[14px] leading-5 bg-[#0C192B] table w-full table-fixed">
                 <TableCell className="w-1/4 text-center p-3 px-0">{translateCommon("total")}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0">{formatNumber(totalStake)}</TableCell>
@@ -97,7 +97,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>
-            <TableRow className="border-none font-normal text-secondary-text bg-bet-detail-row-2 table w-full table-fixed rounded-b-lg">
+            <TableRow className="border-none font-normal text-secondary-text text-[14px] leading-5 bg-bet-detail-row-2 table w-full table-fixed rounded-b-lg">
                 <TableCell className="w-1/4 text-center p-3 px-0">{`Net Profit`}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
@@ -112,12 +112,12 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
 
     if (!data || data.length === 0) {
         return (
-            <div ref={ref} className="relative w-full p-3">
-                <div className="bg-table-header rounded-t-lg">
-                    <Table className="rounded-t-lg">{renderBetDetailHeader(translateCommon)}</Table>
+            <div ref={ref} className="flex flex-col h-full min-h-0 w-full">
+                <div className="bg-table-header rounded-t-lg flex-shrink-0">
+                    <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
                 </div>
-                <div className="max-h-[260px] sm:max-h-[500px] overflow-y-auto">
-                    <Table>
+                <div className="flex-1 min-h-0 overflow-y-auto w-full">
+                    <Table className="w-full">
                         <TableRow className="border-none bg-bet-detail-row-1">
                             <TableCell className="w-1/4 text-sm text-secondary-text text-center p-3">{emptyMessage}</TableCell>
                         </TableRow>
@@ -128,20 +128,20 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
     }
 
     return (
-        <div ref={ref} className="relative w-full p-3">
-            <div className="bg-table-header rounded-t-lg">
-                <Table className="rounded-t-lg">{renderBetDetailHeader(translateCommon)}</Table>
+        <div ref={ref} className="flex flex-col h-full w-full">
+            <div className="bg-table-header rounded-t-lg shrink-0">
+                <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
             </div>
 
-            <div className="max-h-[260px] sm:max-h-[500px] overflow-y-auto">
-                <Table>
+            <div className="overflow-y-auto w-full max-h-[calc(100%-92px)]">
+                <Table className="w-full">
                     <TableBody>{renderBetDetailRows(data)}</TableBody>
                 </Table>
             </div>
 
-            <tfoot className=" sticky bottom-0 z-10 w-full">
+            <div className="shrink-0 w-full">
                 {renderSummaryRows(translateCommon, totalStake, netProfit, data)}
-            </tfoot>
+            </div>
         </div>
     );
 });
