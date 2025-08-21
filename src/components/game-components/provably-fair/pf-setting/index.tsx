@@ -300,6 +300,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                 onKeyDown={handleOnKeyDown}
                                 onPaste={handlePaste}
                                 onBlur={handleOnBlur}
+                                onFocus={(e) => e.target.select()}
                                 onChange={handleOnChangeManualClientSeed}
                                 disabled={!isManualMode}
                                 value={isManualMode ? manualClientSeed || "" : ""}
