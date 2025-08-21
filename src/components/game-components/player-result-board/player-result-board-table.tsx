@@ -1,14 +1,15 @@
 import * as React from "react";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../table/s-table";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell 
+} from "../table";
+
 
 interface PlayerData {
   playerName: string;
@@ -27,10 +28,6 @@ const PlayerResultBoardTable = React.forwardRef<
 >(({ data, emptyMessage = "No data available..." }, ref) => {
   const { t: translateCommon } = useCommonTranslate();
 
-  const commonHeaderStyles = "text-primary-text text-center p-2 border-b border-primary-border";
-  const commonRowStyles = "text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors";
-  const commonCellStyles = "py-3 text-secondary-text";
-
   if (!data || data.length === 0) {
     return (
       <div className="text-center py-8 text-secondary-text">
@@ -44,13 +41,13 @@ const PlayerResultBoardTable = React.forwardRef<
       <Table>
         <TableHeader>
           <TableRow className="border-primary-border bg-primary-bg">
-            <TableHead className={commonHeaderStyles}>
+            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border">
               {translateCommon("player")}
             </TableHead>
-            <TableHead className={commonHeaderStyles}>
+            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border">
               {translateCommon("total_stake")}
             </TableHead>
-            <TableHead className={commonHeaderStyles}>
+            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border">
               {translateCommon("win")}
             </TableHead>
           </TableRow>
@@ -59,12 +56,12 @@ const PlayerResultBoardTable = React.forwardRef<
           {data.map((row, index) => (
             <TableRow 
               key={index} 
-              className={commonRowStyles}
+              className="text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors"
             >
-              <TableCell className={commonCellStyles}>
+              <TableCell className="py-3 text-secondary-text text-center">
                 {row.playerName}
               </TableCell>
-              <TableCell className={commonCellStyles}>
+              <TableCell className="py-3 text-secondary-text text-center">
                 {row.betAmount}
               </TableCell>
               <TableCell className={cn(

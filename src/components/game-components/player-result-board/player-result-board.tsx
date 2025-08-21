@@ -3,12 +3,6 @@ import { usePlayerResultBoard, useCommonTranslate } from "../../../_shared/react
 import { RoundId } from "../round-id";
 import { PlayerResultBoardTable } from "./player-result-board-table";
 
-interface PlayerData {
-  playerName: string;
-  betAmount: number;
-  win: number;
-}
-
 export const PlayerResultBoard: FC = () => {
   const { totalPlayers, tableData } = usePlayerResultBoard();
   const { t: translateCommon } = useCommonTranslate();

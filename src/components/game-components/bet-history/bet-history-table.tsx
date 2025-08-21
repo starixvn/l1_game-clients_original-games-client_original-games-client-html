@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../table/s-table';
+} from '../table';
 import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
 import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
@@ -21,15 +21,83 @@ import {
 } from './bet-history-utils';
 import styles from './bet-history.module.scss';
 import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
+import { cn } from '../../../_shared/utils/merge-tailwind-util';
 
-const commonStyles = {
-  headerRow: "border-primary-border bg-primary-bg",
-  headerCell: "text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10",
-  dataRow: "text-center border-b border-primary-border",
-  dataCell: "py-3 text-secondary-text",
-  roundCell: "text-table-text-clickable cursor-pointer py-3",
-  roundSpan: "text-blue-500 hover:text-blue-700",
-  emptyCell: "text-center text-secondary-text py-8"
+
+// Function to create row data for bet history table
+const createBetHistoryRowData = (
+    row: BetHistoryDisplayData, 
+    rowIndex: number, 
+    handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
+    getWinValueColorClass: (win: string) => string
+) => {
+    return [
+        {
+            content: <div style={{ whiteSpace: 'pre-line' }}>{row.time}</div>,
+        },
+        {
+            content: (
+                <span className="text-table-text-clickable cursor-pointer py-3">
+                    {row.round}
+                </span>
+            ),
+            className: "text-table-text-clickable cursor-pointer py-3",
+            onClick: () => handleCellClick('round', row, rowIndex)
+        },
+        {
+            content: row.betAmount,
+        },
+        {
+            content: (
+                <div className={getWinValueColorClass(row.win)}>
+                    {row.win}
+                </div>
+            ),
+        }
+    ];
+};
+
+// Function to render bet history table rows
+const renderBetHistoryRows = (
+    tableData: any[],
+    handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
+    getWinValueColorClass: (win: string) => string
+) => {
+    return tableData.map((row, rowIndex) => {
+        const rowData = createBetHistoryRowData(
+            row,
+            rowIndex,
+            handleCellClick,
+            getWinValueColorClass
+        );
+
+        return (
+            <TableRow key={rowIndex} className="text-center border-b border-primary-border">
+                {rowData.map((cell, cellIndex) => (
+                    <TableCell 
+                        key={cellIndex}
+                        className={cn(cell.className, "py-3 text-secondary-text text-center")}
+                        onClick={cell.onClick}
+                    >
+                        {cell.content}
+                    </TableCell>
+                ))}
+            </TableRow>
+        );
+    });
+};
+
+// Function to render bet history table header
+const renderBetHistoryHeader = (headerColumns: any[]) => {
+    return (
+        <TableRow className="border-primary-border">
+            {headerColumns.map((column) => (
+                <TableHead key={column.key} className="text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10 bg-secondary-bg">
+                    {column.label}
+                </TableHead>
+            ))}
+        </TableRow>
+    );
 };
 
 export const BetHistoryTable = () => {
@@ -123,6 +191,14 @@ export const BetHistoryTable = () => {
         }
     };
 
+    // Define header columns configuration
+    const headerColumns = [
+        { key: "time", label: translateCommon("time") },
+        { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
+        { key: "total_stake", label: translateCommon("total_stake") },
+        { key: "win", label: translateCommon("win") }
+    ];
+
     // Show loading spinner for initial load
     if (isLoading && displayedBetLogs.length === 0) {
         return <LoadingSpinner />;
@@ -135,54 +211,17 @@ export const BetHistoryTable = () => {
             >
                 <Table className="bet-history-table">
                     <TableHeader>
-                        <TableRow className={commonStyles.headerRow}>
-                            <TableHead className={commonStyles.headerCell}>
-                                {translateCommon("time")}
-                            </TableHead>
-                            <TableHead className={commonStyles.headerCell}>
-                                {translateCommon("round").capitalizeFirstLetter()}
-                            </TableHead>
-                            <TableHead className={commonStyles.headerCell}>
-                                {translateCommon("total_stake")}
-                            </TableHead>
-                            <TableHead className={commonStyles.headerCell}>
-                                {translateCommon("win")}
-                            </TableHead>
-                        </TableRow>
+                        {renderBetHistoryHeader(headerColumns)}
                     </TableHeader>
                     <TableBody>
                         {tableData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className={commonStyles.emptyCell}>
+                                <TableCell colSpan={4} className="text-center text-secondary-text py-8">
                                     {translateCommon("no_data")}
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            tableData.map((row, rowIndex) => (
-                                <TableRow key={rowIndex} className={commonStyles.dataRow}>
-                                    <TableCell className={commonStyles.dataCell}>
-                                        <div style={{ whiteSpace: 'pre-line' }}>
-                                            {row.time}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell 
-                                        className={commonStyles.roundCell}
-                                        onClick={() => handleCellClick('round', row, rowIndex)}
-                                    >
-                                        <span className={commonStyles.roundSpan}>
-                                            {row.round}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className={commonStyles.dataCell}>
-                                        {row.betAmount}
-                                    </TableCell>
-                                    <TableCell className={commonStyles.dataCell}>
-                                        <div className={getWinValueColorClass(row.win)}>
-                                            {row.win}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                            renderBetHistoryRows(tableData, handleCellClick, getWinValueColorClass)
                         )}
                     </TableBody>
                 </Table>

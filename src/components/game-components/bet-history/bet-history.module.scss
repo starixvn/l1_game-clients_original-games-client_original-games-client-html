@@ -55,34 +55,6 @@
         overflow-y: auto;
     }
     
-    // Sticky header styles
-    :global(.bet-history-table thead th) {
-        position: sticky;
-        top: 0;
-        // background color handled via Tailwind utility classes
-        z-index: 10;
-        // border handled via Tailwind utility classes
-        padding: 0.75rem 0.5rem;
-        font-weight: 600;
-        text-align: center;
-        height: var(--header-height);
-        box-sizing: border-box;
-    }
-    
-    // Table row styling for consistent height
-    :global(.bet-history-table tbody tr) {
-        height: var(--row-height);
-        box-sizing: border-box;
-        
-        td {
-            padding: 0.75rem 0.5rem;
-            vertical-align: middle;
-            text-align: center;
-            // border handled via Tailwind utility classes
-            box-sizing: border-box;
-        }
-    }
-    
     // Ensure table takes full width
     :global(.bet-history-table) {
         width: 100%;
