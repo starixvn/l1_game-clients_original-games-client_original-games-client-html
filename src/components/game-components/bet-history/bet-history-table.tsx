@@ -113,8 +113,8 @@ export const BetHistoryTable = () => {
         totalPages,
     } = useGameStore();
 
-    const { toggleBetDetail } = usePopupStore();
-    const { updateBetDetail } = useBetDetailStore();
+    const toggleBetDetail = usePopupStore(state => state.toggleBetDetail);
+    const updateBetDetail = useBetDetailStore(state => state.updateBetDetail);
 
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
