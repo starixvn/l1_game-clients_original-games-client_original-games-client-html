@@ -77,8 +77,8 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
-                <div className="ml-4 mr-4 mt-3">
-                    <div className={`flex flex-col gap-5`}>
+                <div className="ml-4 mr-4 mt-3 h-full">
+                    <div className={`flex flex-col gap-5 h-full`}>
                         <ToggleSection
                             title={translateCommon("pf_title_provably_fair_settings")}
                             isExpanded={isSettingsExpanded}
@@ -91,6 +91,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                             title={translateCommon("pf_pop-up_title_pf_guide")}
                             isExpanded={isGuidesExpanded}
                             onToggle={toggleGuidesSection}
+                            className="flex flex-col h-full"
                         >
                             <WrapperPFGuide />
                         </ToggleSection>

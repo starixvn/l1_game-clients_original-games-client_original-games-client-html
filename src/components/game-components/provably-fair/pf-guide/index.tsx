@@ -32,7 +32,7 @@ const PFGuide: FC = () => {
                     style={{ display: isLoading ? "none" : "block" }}
                     ref={wrapperIframeRef}
                     key={uuidv4()}
-                    className={`${Styles["guide-iframe"]} min-h-screen`}
+                    className={`h-full w-full`}
                     src={srcPath}
                     referrerPolicy="strict-origin-when-cross-origin"
                     onLoad={() =>

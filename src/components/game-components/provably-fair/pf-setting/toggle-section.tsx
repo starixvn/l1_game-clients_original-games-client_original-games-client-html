@@ -36,7 +36,7 @@ const ToggleSection: FC<ToggleSectionProps> = ({
                 </span>
             </div>
             {isExpanded && (
-                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-[12px]`}>
+                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-[12px] h-full`}>
                     {children}
                 </div>
             )}
