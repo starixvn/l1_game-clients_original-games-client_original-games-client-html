@@ -76,7 +76,6 @@ const renderBetDetailHeader = (translateSNGames: any) => {
 };
 
 const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ fileNameExport }) => {
-    const clickSound = useClickSound();
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
@@ -86,27 +85,6 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
             user: { name },
         },
     } = usePlayerContext();
-
-    const handleClickExport = () => {
-        clickSound();
-        const header = `${translateSNGames("pf_export_csv_client_seed_info")},${translateSNGames(
-            "pf_export_csv_client_seed_info_nickname"
-        )},${translateSNGames("pf_export_csv_client_seed_info_seed")}`;
-        const content = betDetailData.drawInfo.pfResult.clientSeeds
-            .map((item, index) => {
-                return `${index + 1},${item.name === name ? item.name : encryptName(item.name)},${item.clientSeed}`;
-            })
-            .join("\n");
-        const data = `${header}\n${content}`;
-        const link = document.createElement("a");
-        link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(data)}`;
-        link.download = `${fileNameExport(betDetailData.drawInfo.drawId)}`;
-        link.click();
-        AnalyticsHelper.trackFunction({
-            function: TrackingFunction.PFExportClientSeeds,
-            action: TrackingAction.Click,
-        });
-    };
 
     return useMemo(
         () => (
