@@ -63,7 +63,7 @@ const BetDetailBase: FC<{
       )}
 
       <button
-        className="clickable flex items-center gap-2 text-[#00C950] text-sm font-medium"
+        className="clickable flex items-center gap-2 text-[#00C950] text-sm font-medium w-fit"
         onClick={handleClickProvablyFair}
       >
         <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
