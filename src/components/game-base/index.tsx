@@ -51,8 +51,8 @@ import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
 const Background = lazy(() => import("../game-components/background"));
-const DoubleBetIcon = lazy(() => import("../game-components/double-bet/double-bet-icon"));
-const AutoRebetIcon = lazy(() => import("../game-components/auto-rebet/auto-rebet-icon"));
+const DoubleBetIcon = lazy(() => import("../game-components/rebet/double-bet-icon"));
+const AutoRebetIcon = lazy(() => import("../game-components/rebet/auto-rebet-icon"));
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;

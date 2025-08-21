@@ -1,0 +1,46 @@
+%icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    position: relative;
+}
+%border {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.round-history-item {
+    .text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 11px;
+        text-align: center;
+        font-weight: 600;
+        color: #fff;
+        line-height: 100%;
+    }
+    &.odd-item {
+        @extend %icon;
+        background: #960322;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #a10325 0%, #fb2956 100%);
+        }
+    }
+    &.even-item {
+        @extend %icon;
+        background: #2741c2;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #274dc2 0%, #3d81ff 100%);
+        }
+    }
+}

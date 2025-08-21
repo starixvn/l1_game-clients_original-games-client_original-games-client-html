@@ -4,6 +4,8 @@ import { useGameStore } from "../stores/game-store/game-store";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RoundState } from "../../components/game-base/type";
 import { useClientSeedPF } from "./use-client-seed-pf";
+import { usePlayerContext } from "../react-contexts";
+import { useGlobalEventsStore } from "../stores/global-events-store/global-events-store";
 
 interface UseRebetReturn {
     isEnabled: boolean;
@@ -16,6 +18,8 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
     const [isEnabled, setIsEnabled] = useState(false);
     const [hasPlacedPreviousBet, setHasPlacedPreviousBet] = useState(true);
     const { clientSeed } = useClientSeedPF();
+    const { authorizeInfo } = usePlayerContext();
+    const { userInfoRed } = useGlobalEventsStore();
 
     const { sendSocketEvent, roundState, endBet } = useGameStore(
         useShallow((state) => ({
@@ -42,7 +46,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         }, RETRY_INTERVAL_MS);
     }, [clearRetryInterval, sendSocketEvent]);
 
-    const calculateBetChoices = useCallback(() => {
+    const calculateBetChoices: () => Record<string, number> = useCallback(() => {
         if (!isDoubleBet) {
             return ownBets;
         }
@@ -55,6 +59,12 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         );
     }, [ownBets, isDoubleBet]);
 
+    const isEnoughBalance = useCallback(() => {
+        const balance = userInfoRed !== null ? userInfoRed : authorizeInfo?.user?.red || 0;
+        const totalAmount = Object.values(calculateBetChoices()).reduce((acc, bet) => acc + bet, 0);
+        return balance >= totalAmount;
+    }, [calculateBetChoices, userInfoRed, authorizeInfo]);
+
     const disable = useCallback(() => {
         setHasPlacedPreviousBet(false);
         setIsEnabled(false);
@@ -66,26 +76,23 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         sendSocketEvent("rebet", { betChoices, clientSeed });
     }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed]);
 
-    // Clear retry timer when bets change or component unmounts
     useEffect(() => {
         clearRetryInterval();
         disable();
         return clearRetryInterval;
     }, [endBet, ownBets, clearRetryInterval, disable]);
 
-    // Clear retry timer when not in active round
     useEffect(() => {
         if (roundState !== RoundState.InRound) {
             clearRetryInterval();
         }
     }, [roundState, clearRetryInterval]);
 
-    // Manage rebet enabled state based on round state and previous bets
     useEffect(() => {
         const hasBets = Object.keys(ownBets).length > 0;
 
         if (roundState === RoundState.InRound) {
-            if (hasPlacedPreviousBet && hasBets) {
+            if (hasPlacedPreviousBet && hasBets && isEnoughBalance()) {
                 setIsEnabled(true);
             }
         } else {
@@ -95,7 +102,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         if (roundState === RoundState.DisplayResult) {
             hasBets && setHasPlacedPreviousBet(true);
         }
-    }, [roundState, hasPlacedPreviousBet]);
+    }, [roundState, hasPlacedPreviousBet, isEnoughBalance]);
 
     return { isEnabled, handleClickRebet };
 };
