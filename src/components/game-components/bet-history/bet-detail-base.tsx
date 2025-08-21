@@ -6,7 +6,7 @@ import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store";
 import { DrawInfo } from "../../game-base/type";
 import { BetDetailTable } from "./bet-detail-table";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
-import { calculateWinAmount, calculateTotalStake, calculateTotalWinFromTable } from "./bet-detail-utils";
+import { calculateTotalStake, calculateTotalWinFromTable, displayWinAmount } from "./bet-detail-utils";
 
 const BetDetailBase: FC<{
   isTurnBase: boolean;
@@ -35,7 +35,7 @@ const BetDetailBase: FC<{
         time: <>{time}<br />{date}</>,
         betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
         stake: numberWithCommas(amount, 2) ?? 0,
-        win: numberWithCommas(calculateWinAmount(amount, odds, win), 2),
+        win: displayWinAmount(amount, odds, win),
         isWinningBet: win > 0,
       };
     });

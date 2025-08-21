@@ -4,6 +4,11 @@ export const calculateWinAmount = (amount: number, odds: number, win: number): n
   return win > 0 ? amount * odds : win - amount;
 };
 
+export const displayWinAmount = (amount: number, odds: number, win: number): string => {
+  const winAmount = calculateWinAmount(amount, odds, win);
+  return winAmount > 0 ? `+${numberWithCommas(winAmount, 2)}` : numberWithCommas(winAmount, 2);
+}
+
 export const formatNumber = (value: number): string => numberWithCommas(value, 2);
 
 export const calculateTotalStake = (betLogDetails: any[], produceRow: Function, drawInfo: any): number =>

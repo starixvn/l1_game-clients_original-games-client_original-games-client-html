@@ -106,7 +106,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
         <TableCell className="w-1/4 text-winning-highlight text-center p-4">{formatNumber(calculateTotalWinFromTable(data))}</TableCell>
       </TableRow>
       <TableRow className="border-t border-primary-border font-semibold text-secondary-text bg-bet-detail-row-2">
-        <TableCell className="w-1/4 text-center p-4">{translateCommon("net_profit")}</TableCell>
+        <TableCell className="w-1/4 text-center p-4">{`Net Profit`}</TableCell>
         <TableCell className="w-1/4 text-center p-4"></TableCell>
         <TableCell className="w-1/4 text-center p-4"></TableCell>
         <TableCell className="w-1/4 text-winning-highlight text-center p-4">{formatNumber(netProfit)}</TableCell>
