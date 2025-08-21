@@ -2,7 +2,7 @@ import { memo } from "react";
 import { useRebet } from "../../../_shared/react-hooks/use-rebet";
 
 const AutoRebetIcon = () => {
-    const { isEnabled, handleClickRebet } = useRebet(true);
+    const { isEnabled } = useRebet(true);
 
     return (
         <div
