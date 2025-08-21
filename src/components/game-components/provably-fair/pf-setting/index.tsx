@@ -30,23 +30,28 @@ const handleOnKeyDown = (event: any) => {
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const isShowPFSetting = usePopupStore((state) => state.isShowPFSetting);
-    const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
+const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo}) => {
+    const { isShowPFSetting, togglePFSetting, expandGuideFirst, toggleExpandGuideFirst } = usePopupStore(useShallow((state) => ({
+        isShowPFSetting: state.isShowPFSetting,
+        togglePFSetting: state.togglePFSetting,
+        expandGuideFirst: state.expandGuideFirst,
+        toggleExpandGuideFirst: state.toggleExpandGuideFirst,
+    })));
 
     const { t: translateSNGames } = useSNTranslate();
     const { t: translateCommon } = useCommonTranslate();
     const handleCloseModal = () => {
         togglePFSetting(false);
+        toggleExpandGuideFirst(false);
     };
 
-    const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(true);
-    const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(false);
+    const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(!expandGuideFirst);
+    const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(expandGuideFirst);
 
     useEffect(() => {
         if (isShowPFSetting) {
-            setIsSettingsExpanded(true);
-            setIsGuidesExpanded(false);
+            setIsSettingsExpanded(!expandGuideFirst);
+            setIsGuidesExpanded(expandGuideFirst);
         }
     }, [isShowPFSetting]);
 

@@ -26,11 +26,24 @@ const PFModalContainer: FC<{
         }
     }, [globalThis.innerHeight]);
 
-    const { togglePFSetting } = usePopupStore(
+    const { togglePFSetting, toggleExpandGuideFirst } = usePopupStore(
         useShallow((state) => ({
             togglePFSetting: state.togglePFSetting,
+            toggleExpandGuideFirst: state.toggleExpandGuideFirst,
         }))
     );
+
+    const handleOpenPFSetting = () => {
+        clickSound();
+        togglePFSetting(true);
+        toggleExpandGuideFirst(true);
+        AnalyticsHelper.trackFunction({ function: TrackingFunction.PFGuide, action: TrackingAction.Open });
+    };
+
+    const handleCloseModal = () => {
+        clickSound();
+        onCloseModal();
+    };
 
     return (
         <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
@@ -44,23 +57,12 @@ const PFModalContainer: FC<{
                 <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2">
                     <button
                         className="absolute top-[25px] left-[12px] rotate-90"
-                        onClick={() => {
-                            console.log("click");
-                            clickSound();
-                            onCloseModal();
-                        }}
+                        onClick={handleCloseModal}
                     >
                         <Image src="/static/images/icons/chevron-down.svg" alt="icon-back" width={16} height={16} />
                     </button>
                     <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">{title}</div>
-                    <span
-                        className="cursor-pointer ml-auto relative z-10"
-                        onClick={() => {
-                            clickSound();
-                            togglePFSetting(true);
-                            AnalyticsHelper.trackFunction({ function: TrackingFunction.PFGuide, action: TrackingAction.Open });
-                        }}
-                    >
+                    <span className="cursor-pointer ml-auto relative z-10" onClick={handleOpenPFSetting}>
                         <Image src="/static/images/icons/question-mark.svg" alt="guide" width={32} height={32} />
                     </span>
                 </div>
