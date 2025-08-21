@@ -111,82 +111,86 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
     return useMemo(
         () => (
             <>
-                <div className="result-block">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
-                <div className={Styles["pf-setting-container"]}>
-                    <div className={Styles["client-seed-form"]}>
-                        <div className="flex items-center justify-between">
-                            <Section title={translateCommon("pf_new_client_seed_para_1")} customTitleStyles="m-0">
-                                <div className="input-group width-small">
-                                    <CopyableTextInput value={betDetailData.drawInfo.clientSeed} id="client-seed" position="bottom" />
+                {betDetailData && (
+                    <>
+                        <div className="result-block">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
+                        <div className={Styles["pf-setting-container"]}>
+                            <div className={Styles["client-seed-form"]}>
+                                <div className="flex items-center justify-between">
+                                    <Section title={translateCommon("pf_new_client_seed_para_1")} customTitleStyles="m-0">
+                                        <div className="input-group width-small">
+                                            <CopyableTextInput value={betDetailData.drawInfo.clientSeed} id="client-seed" position="bottom" />
+                                        </div>
+                                    </Section>
                                 </div>
-                            </Section>
-                        </div>
-                        <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
-                            <div className="input-group width-full">
-                                <CopyableTextInput value={betDetailData.drawInfo.pfResult.mergeClientSeed} id="merge-client-seed" />
+                                <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
+                                    <div className="input-group width-full">
+                                        <CopyableTextInput value={betDetailData.drawInfo.pfResult.mergeClientSeed} id="merge-client-seed" />
+                                    </div>
+                                </Section>
                             </div>
-                        </Section>
-                    </div>
-                    <div className="form">
-                        <div className="flex items-center justify-between mb-2">
-                            <Section
-                                title={
-                                    <>
-                                        {translateSNGames("pf_client_seed_info_total_players")}{" "}
-                                        <span className={Styles["text-highlight"]}>
-                                            {betDetailData.drawInfo.pfResult.clientSeeds?.length}
-                                        </span>
-                                    </>
-                                }
-                                customTitleStyles="m-0"
-                            >
-                                <button className={Styles["btn-export"]} onClick={handleClickExport}>
-                                    <span className="icon-file-csv" style={{ cursor: "pointer" }}>
-                                        <span className="path1"></span>
-                                        <span className="path2"></span>
-                                        <span className="path3"></span>
-                                        <span className="path4"></span>
-                                        <span className="path5"></span>
-                                    </span>
-                                </button>
-                            </Section>
+                            <div className="form">
+                                <div className="flex items-center justify-between mb-2">
+                                    <Section
+                                        title={
+                                            <>
+                                                {translateSNGames("pf_client_seed_info_total_players")}{" "}
+                                                <span className={Styles["text-highlight"]}>
+                                                    {betDetailData.drawInfo.pfResult.clientSeeds?.length}
+                                                </span>
+                                            </>
+                                        }
+                                        customTitleStyles="m-0"
+                                    >
+                                        <button className={Styles["btn-export"]} onClick={handleClickExport}>
+                                            <span className="icon-file-csv" style={{ cursor: "pointer" }}>
+                                                <span className="path1"></span>
+                                                <span className="path2"></span>
+                                                <span className="path3"></span>
+                                                <span className="path4"></span>
+                                                <span className="path5"></span>
+                                            </span>
+                                        </button>
+                                    </Section>
+                                </div>
+                                <div className="my-2">
+                                    <div className={`table-container react-infinite-table ${Styles["pf-info"]} rounded-lg overflow-hidden border border-primary-border overflow-y-auto`}>
+                                        <Table className="w-full">
+                                            {renderBetDetailHeader(translateSNGames)}
+                                            <TableBody>
+                                                {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
+                                                    <TableRow
+                                                        key={uuidv4()}
+                                                        className={cn(
+                                                            "border-none last:border-b-0",
+                                                            index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2"
+                                                        )}
+                                                    >
+                                                        <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">{index + 1}</TableCell>
+                                                        <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                            {name === clientSeed.name ? (
+                                                                <span className="font-semibold text-winning-highlight">{clientSeed.name}</span>
+                                                            ) : (
+                                                                <span className="font-text">{encryptName(clientSeed.name)}</span>
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                            {name === clientSeed.name ? (
+                                                                <span className="font-semibold text-winning-highlight">{clientSeed.clientSeed}</span>
+                                                            ) : (
+                                                                <span>{clientSeed.clientSeed}</span>
+                                                            )}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div
-                            className={`table-container react-infinite-table ${Styles["pf-info"]} mb-5 rounded-lg overflow-hidden border border-primary-border`}
-                        >
-                            <Table className="w-full ">
-                                {renderBetDetailHeader(translateSNGames)}
-                                <TableBody>
-                                    {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
-                                        <TableRow
-                                            key={uuidv4()}
-                                            className={cn(
-                                                "border-b border-primary-border last:border-b-0",
-                                                index % 2 === 0 ? "bg-[#102136]" : "bg-[#172C47]"
-                                            )}
-                                        >
-                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">{index + 1}</TableCell>
-                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
-                                                {name === clientSeed.name ? (
-                                                    <span className="font-semibold text-winning-highlight">{clientSeed.name}</span>
-                                                ) : (
-                                                    <span className="font-text">{encryptName(clientSeed.name)}</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
-                                                {name === clientSeed.name ? (
-                                                    <span className="font-semibold text-winning-highlight">{clientSeed.clientSeed}</span>
-                                                ) : (
-                                                    <span>{clientSeed.clientSeed}</span>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </div>
-                </div>
+                    </>
+                )}
             </>
         ),
         [betDetailData, name]

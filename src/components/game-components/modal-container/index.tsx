@@ -1,11 +1,10 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import Image from "next/image";
 
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { isMobileOnly } from "react-device-detect";
 
 const ModalContainer: FC<{
     id?: string;
@@ -16,12 +15,6 @@ const ModalContainer: FC<{
     isOverlap?: boolean;
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
-    useEffect(() => {
-        const root = document.querySelector(":root");
-        if (root && root instanceof HTMLElement) {
-            root.style.setProperty("--modal-container-height", `${globalThis.innerHeight}px`);
-        }
-    }, [globalThis.innerHeight]);
     
     return (
         <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
@@ -52,9 +45,7 @@ const ModalContainer: FC<{
                 </div>
 
                 {/* Content - Flexible height */}
-                <div className={cn("flex-1 min-h-0 overflow-hidden", {
-                    "max-h-[calc(var(--modal-container-height)-86px)]": isMobileOnly
-                })}>
+                <div className="flex-1 min-h-0 overflow-hidden">
                     {children}
                 </div>
             </div>

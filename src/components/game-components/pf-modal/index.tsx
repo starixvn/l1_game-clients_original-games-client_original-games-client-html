@@ -1,11 +1,10 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import Image from "next/image";
 
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { isMobileOnly } from "react-device-detect";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 import { useShallow } from "zustand/react/shallow";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../_shared/helpers";
@@ -19,12 +18,6 @@ const PFModalContainer: FC<{
     isOverlap?: boolean;
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
-    useEffect(() => {
-        const root = document.querySelector(":root");
-        if (root && root instanceof HTMLElement) {
-            root.style.setProperty("--modal-container-height", `${globalThis.innerHeight}px`);
-        }
-    }, [globalThis.innerHeight]);
 
     const { togglePFSetting, toggleExpandGuideFirst } = usePopupStore(
         useShallow((state) => ({
@@ -68,9 +61,7 @@ const PFModalContainer: FC<{
                 </div>
 
                 <div
-                    className={cn("h-full", {
-                        "h-[calc(var(--modal-container-height)-86px)]": isMobileOnly,
-                    })}
+                    className="grid grid-rows-[auto_1fr] h-full min-h-0"
                 >
                     {children}
                 </div>
