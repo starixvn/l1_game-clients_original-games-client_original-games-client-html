@@ -92,7 +92,7 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
     return (
         <TableRow className="border-primary-border">
             {headerColumns.map((column) => (
-                <TableHead key={column.key} className="text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10 bg-secondary-bg">
+                <TableHead key={column.key} className="text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10 bg-table-header">
                     {column.label}
                 </TableHead>
             ))}

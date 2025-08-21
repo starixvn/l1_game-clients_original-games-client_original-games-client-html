@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import theme files */
-@import "./themes/dark-theme.css";
-@import "./themes/light-theme.css";
-
 /* Default theme (dark) */
 :root {
     --page-background-color: #000;
@@ -13,8 +9,8 @@
     --border-color: #2c2f3e;
     --opacity-background: rgba(12, 12, 12, 0.8);
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
-    --scrollbar-background: #000;
-    --scrollbar-thumb-background: #444;
+    --scrollbar-background: #00000080;
+    --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
     --popup-background: #fff;
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
@@ -24,9 +20,68 @@
     --secondary-background-color: #1a1a1a;
     --secondary-text-color: #e0e0e0;
     --color-table-text-clickable: #0990ff;
-    --bet-detail-header: #182130;
+    --table-header: #27374a;
     --bet-detail-row-1: #102136;
-    --bet-detail-row-2: #172C47;
+    --bet-detail-row-2: #172c47;
+}
+
+html[data-theme="light"] {
+    --page-background-color: #f9f9f9;
+    --primary-background-color: #f9f9f9;
+    --text-color: #000;
+    --border-color: #ced5e2;
+    --secondary-background-color: #ebebeb;
+    --secondary-text-color: #5574a7;
+    --opacity-background: rgba(12, 12, 12, 0.36);
+    --opacity-background-grey: rgba(221, 221, 221, 0.6);
+    --scrollbar-background: #00000080;
+    --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
+    --popup-background: linear-gradient(180deg, #fff, #fff);
+    --popup-color: #2c2f3e;
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+
+    --container-color-bg: #fff;
+    --container-border-color: #cbcbcb;
+    --icon-favorite-game-guide: #2c2f3e;
+
+    --color-table-text-clickable: #0990ff;
+    --color-winning-highlight: #fff600;
+
+    --table-header: #e1e1e1;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172c47;
+}
+
+html[data-theme="dark"] {
+    --page-background-color: #15152c;
+    --primary-background-color: #182130;
+    --text-color: #fff;
+    --border-color: #2b3648;
+    --secondary-background-color: #101721;
+    --secondary-text-color: #b3bec1;
+
+    --opacity-background: rgba(12, 12, 12, 0.8);
+    --opacity-background-grey: rgba(50, 50, 50, 0.6);
+
+    --scrollbar-background: #00000080;
+    --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
+
+    --popup-background: linear-gradient(180deg, #094998 0%, #062b57 18.41%, #142030 36.83%);
+    --popup-color: #fff;
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    --container-color-bg: #182130;
+    --container-border-color: #2c2f3e;
+    --icon-favorite-game-guide: #fff;
+
+    --color-table-text-clickable: #0990ff;
+    --color-winning-highlight: #fff600;
+
+    --modal-background: #1b293f;
+    --text-content-color: #ced8e6;
+
+    --table-header: #27374a;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172c47;
 }
 
 /* Ensure Tailwind has highest priority */

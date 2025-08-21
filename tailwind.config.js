@@ -22,7 +22,7 @@ module.exports = {
                 "icon-guide": "var(--icon-favorite-game-guide)",
                 "table-text-clickable": "var(--color-table-text-clickable)",
                 "winning-highlight": "var(--color-winning-highlight)",
-                "bet-detail-header": "var(--bet-detail-header)",
+                "table-header": "var(--table-header)",
                 "bet-detail-row-1": "var(--bet-detail-row-1)",
                 "bet-detail-row-2": "var(--bet-detail-row-2)",
             },

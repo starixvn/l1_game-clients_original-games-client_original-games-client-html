@@ -59,11 +59,13 @@ const BetDetailBase: FC<{
       {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
       <button
-        className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium underline"
+        className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium"
         onClick={handleClickProvablyFair}
       >
         <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
-        {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
+        <span className="underline">
+          {translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}
+        </span>
       </button>
 
       <BetDetailTable
