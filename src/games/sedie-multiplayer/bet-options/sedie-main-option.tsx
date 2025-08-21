@@ -15,7 +15,9 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
     return (
         <div className="relative">
             <div className={` text-white relative w-[180px] h-[138px] flex flex-col justify-around ${choiceStyle}`}>
-                <div className="absolute top-0 left-0 w-full h-full z-[-1]">{choice === SeDieBetOptions.ODD ? <BgOdd /> : <BgEven />}</div>
+                <div className="absolute top-0 left-0 w-full h-full z-[var(--bg-index)]">
+                    {choice === SeDieBetOptions.ODD ? <BgOdd /> : <BgEven />}
+                </div>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
                     <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xl font-bold" />

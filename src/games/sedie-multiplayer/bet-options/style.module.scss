@@ -26,14 +26,6 @@
 .sub-bet-white4,
 .sub-bet-white3,
 .sub-bet-red2,
-.sub-bet-red3,
-.sub-bet-red4 {
-    z-index: 2;
-}
-
-.sub-bet-white4,
-.sub-bet-white3,
-.sub-bet-red2,
 .sub-bet-red3 {
     position: relative;
     &::after {
@@ -68,7 +60,6 @@
 .odd,
 .even {
     .btn-ripple {
-        z-index: 2;
         border-radius: 20px;
         margin-right: 10px;
     }

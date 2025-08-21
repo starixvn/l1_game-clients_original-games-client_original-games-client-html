@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { ChipSlider } from "./slider";
 import { Chip } from "./chip";
 import { useSettingContext } from "../../../_shared/react-contexts";
@@ -6,14 +6,14 @@ import { useGameStore } from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
-export const ChipControlPanel: React.FC = () => {
+const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
             userStakeLevel: state.userStakeLevel,
         }))
     );
-    const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.setSelectedChip]));
+    const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.actions.setSelectedChip]));
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
     const { chipSettings } = useSettingContext();
@@ -90,7 +90,7 @@ export const ChipControlPanel: React.FC = () => {
 const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick: () => void }) => {
     return (
         <div
-            className={`cursor-pointer  transition-all duration-300  ${
+            className={`cursor-pointer transition-all duration-300  ${
                 isEnabled ? "hover:scale-110 opacity-100" : "opacity-50 cursor-auto"
             }`}
             onClick={isEnabled ? onClick : undefined}
@@ -129,7 +129,7 @@ const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onCl
 const IconNext = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick: () => void }) => {
     return (
         <div
-            className={`cursor-pointer  transition-all duration-300  ${
+            className={`cursor-pointer transition-all duration-300  ${
                 isEnabled ? "hover:scale-110 opacity-100" : "opacity-50 cursor-auto"
             }`}
             onClick={isEnabled ? onClick : undefined}
@@ -165,4 +165,4 @@ const IconNext = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick:
     );
 };
 
-export default ChipControlPanel;
+export default memo(ChipControlPanel);

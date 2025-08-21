@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
 
@@ -50,7 +50,9 @@ import ChipControlPanel from "../game-components/chip-slider";
 import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
-import Background from "../page-components/background";
+const Background = lazy(() => import("../game-components/background"));
+const DoubleBetIcon = lazy(() => import("../game-components/double-bet/double-bet-icon"));
+const AutoRebetIcon = lazy(() => import("../game-components/auto-rebet/auto-rebet-icon"));
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -578,10 +580,11 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderLeftSideBetSettings() {
-        return <></>;
+        return <DoubleBetIcon />;
     }
+
     renderRightSideBetSettings() {
-        return <></>;
+        return <AutoRebetIcon />;
     }
 
     renderBetSettings() {

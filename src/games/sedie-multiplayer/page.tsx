@@ -61,14 +61,6 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         return <SedieMultiplayerRoundHistory />;
     }
 
-    renderLeftSideBetSettings() {
-        return <div>x2</div>;
-    }
-
-    renderRightSideBetSettings() {
-        return <div>A</div>;
-    }
-
     renderResultBlock() {
         return <SediePlate />;
     }

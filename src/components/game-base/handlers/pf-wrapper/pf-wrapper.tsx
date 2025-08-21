@@ -5,6 +5,7 @@ import { GameMessageHandler, messageEventType } from "../game-message-handler";
 import { Socket } from "socket.io-client";
 import { usePFStore } from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
+import { useClientSeedPF } from "../../../../_shared/react-hooks/use-client-seed-pf";
 
 export type PFWrapperProps = {
     socket: Socket;
@@ -15,13 +16,14 @@ export type PFWrapperProps = {
 };
 
 export const PFWrapper = (props: PFWrapperProps) => {
-    const { pfClientSeedSetting, updatePFClientSeedSetting, setOwnBets } = usePFStore(useShallow(
-        (state: any) => ({
+    const { pfClientSeedSetting, updatePFClientSeedSetting, setOwnBets } = usePFStore(
+        useShallow((state: any) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             updatePFClientSeedSetting: state.updatePFClientSeedSetting,
             setOwnBets: state.setOwnBets,
-        })
-    ));
+        }))
+    );
+    const { clientSeed } = useClientSeedPF();
 
     useEffect(() => {
         const loadPFSettingId = props.gameMessageHandler.register(messageEventType.SYNC_OWN_BETS_TO_PF, (message) => {
@@ -39,12 +41,6 @@ export const PFWrapper = (props: PFWrapperProps) => {
     useEffect(() => {
         const sendSocketMessageWithClientSeed = (message) => {
             const { event, data } = message[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
-            let clientSeed = pfClientSeedSetting?.useManualClientSeed
-                ? pfClientSeedSetting?.manualClientSeed
-                : pfClientSeedSetting?.randomClientSeed;
-            if (!clientSeed || String(clientSeed).length === 0) {
-                clientSeed = pfClientSeedSetting?.randomClientSeed || "0000";
-            }
 
             // Support minimal payload for games that expect only amount, betChoice, clientSeed
             if (data?.__pfMode === "clientSeedOnly") {
@@ -105,7 +101,7 @@ export const PFWrapper = (props: PFWrapperProps) => {
         };
         // Dependencies controlled at registration time; avoid re-register loops
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pfClientSeedSetting]);
+    }, [pfClientSeedSetting, clientSeed]);
 
     return <> {props.children} </>;
 };
