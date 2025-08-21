@@ -101,9 +101,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell className="w-1/4 text-center p-4">{`Net Profit`}</TableCell>
                 <TableCell className="w-1/4 text-center p-4"></TableCell>
                 <TableCell className="w-1/4 text-center p-4"></TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-4">
-                    {formatNumber(netProfit)}
-                </TableCell>
+                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-4">{formatNumber(netProfit)}</TableCell>
             </TableRow>
         </>
     );
@@ -114,8 +112,17 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
 
     if (!data || data.length === 0) {
         return (
-            <div className="bg-bet-detail-row-1 p-8">
-                <div className="text-center text-secondary-text">{emptyMessage}</div>
+            <div ref={ref} className="relative w-full p-3">
+                <div className="bg-table-header rounded-t-lg">
+                    <Table className="rounded-t-lg">{renderBetDetailHeader(translateCommon)}</Table>
+                </div>
+                <div className="max-h-[260px] sm:max-h-[500px] overflow-y-auto">
+                    <Table>
+                        <TableRow className="border-none bg-bet-detail-row-1">
+                            <TableCell className="w-1/4 text-sm text-secondary-text text-center p-3">{emptyMessage}</TableCell>
+                        </TableRow>
+                    </Table>
+                </div>
             </div>
         );
     }
@@ -126,7 +133,7 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
                 <Table className="rounded-t-lg">{renderBetDetailHeader(translateCommon)}</Table>
             </div>
 
-            <div className="max-h-[500px] overflow-y-auto">
+            <div className="max-h-[260px] sm:max-h-[500px] overflow-y-auto">
                 <Table>
                     <TableBody>{renderBetDetailRows(data)}</TableBody>
                 </Table>
