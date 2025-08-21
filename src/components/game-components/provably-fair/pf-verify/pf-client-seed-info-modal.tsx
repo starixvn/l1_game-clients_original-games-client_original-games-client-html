@@ -7,7 +7,6 @@ import CopyableTextInput from "../copyable-text-input";
 import Styles from "../provably-fair.module.scss";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { Section } from "../pf-form-components";
-import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";

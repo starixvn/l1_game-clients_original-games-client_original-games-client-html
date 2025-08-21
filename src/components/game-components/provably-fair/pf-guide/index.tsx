@@ -1,11 +1,10 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { v4 as uuidv4 } from "uuid";
-import Image from "next/image";
 import { buildVersion } from "../../../../_shared/constants";
-import { AnalyticsHelper, TrackingAction, TrackingFunction, buildGameGuideUrl } from "../../../../_shared/helpers";
+import { buildGameGuideUrl } from "../../../../_shared/helpers";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
-import { useClickSound, useCommonTranslate } from "../../../../_shared/react-hooks";
+import { useCommonTranslate } from "../../../../_shared/react-hooks";
 import { tolgee } from "../../../../_shared/tolgee";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import Styles from "./pf-guide.module.scss";

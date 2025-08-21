@@ -8,7 +8,6 @@ import { Markup } from "interweave";
 import PfRoundBaseHelper from "../../../_shared/helpers/pf/pf-round-base-helper";
 import { ResourceTypes } from "../../../_shared/resources";
 import { useGameContext } from "../../../_shared/react-contexts";
-import { usePFStore } from "../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
