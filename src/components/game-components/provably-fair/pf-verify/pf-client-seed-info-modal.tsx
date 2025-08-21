@@ -12,17 +12,17 @@ import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";
 import useBetDetailStore from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
 import PFModalContainer from "../../pf-modal";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../table";
+import { cn } from "../../../../_shared/utils/merge-tailwind-util";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
 }> = ({ fileNameExport }) => {
     const { isShowPFClientSeedInfo, togglePFClientSeedInfo } = usePopupStore(
-        useShallow(
-            (state) => ({
-                isShowPFClientSeedInfo: state.isShowPFClientSeedInfo,
-                togglePFClientSeedInfo: state.togglePFClientSeedInfo,
-            })
-        )
+        useShallow((state) => ({
+            isShowPFClientSeedInfo: state.isShowPFClientSeedInfo,
+            togglePFClientSeedInfo: state.togglePFClientSeedInfo,
+        }))
     );
     const { t: translateSNGames } = useSNTranslate();
 
@@ -35,11 +35,7 @@ const PFClientSeedInfoModal: FC<{
         createPortal(
             <PFModalContainer
                 id="pf-client-seed-info-modal"
-                title={
-                    <div>
-                        {translateSNGames("pf_title_client_seed_info")}
-                    </div>
-                }
+                title={<div>{translateSNGames("pf_title_client_seed_info")}</div>}
                 isOpen={isShowPFClientSeedInfo}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
@@ -57,6 +53,26 @@ const encryptName = (name: string) => {
     }
 
     return `${name.substring(0, 1)}***${name.substring(name.length - 3, name.length)}`;
+};
+
+const renderBetDetailHeader = (translateSNGames: any) => {
+    const headerColumns = [
+        { key: "player", label: translateSNGames("pf_player") },
+        { key: "nickname", label: translateSNGames("pf_provably_fair_info_nickname") },
+        { key: "seed", label: translateSNGames("pf_client_seed_info_subtitle_seed") },
+    ];
+
+    return (
+        <TableHeader className="bg-[#27374a]">
+            <TableRow>
+                {headerColumns.map((column) => (
+                    <TableHead key={column.key} className="w-1/3  text-center p-3 text-sm font-medium text-secondary-text">
+                        {column.label}
+                    </TableHead>
+                ))}
+            </TableRow>
+        </TableHeader>
+    );
 };
 
 const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ fileNameExport }) => {
@@ -95,77 +111,82 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
     return useMemo(
         () => (
             <>
-            <div className="result-block">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
-            <div className={Styles["pf-setting-container"]}>
-                <div className={Styles["client-seed-form"]}>
-                    <div className="flex items-center justify-between">
-                        <Section title={translateCommon("pf_new_client_seed_para_1")} customTitleStyles="m-0">
-                            <div className="input-group width-small">
-                                <CopyableTextInput value={betDetailData.drawInfo.clientSeed} id="client-seed" position="bottom" />
+                <div className="result-block">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
+                <div className={Styles["pf-setting-container"]}>
+                    <div className={Styles["client-seed-form"]}>
+                        <div className="flex items-center justify-between">
+                            <Section title={translateCommon("pf_new_client_seed_para_1")} customTitleStyles="m-0">
+                                <div className="input-group width-small">
+                                    <CopyableTextInput value={betDetailData.drawInfo.clientSeed} id="client-seed" position="bottom" />
+                                </div>
+                            </Section>
+                        </div>
+                        <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
+                            <div className="input-group width-full">
+                                <CopyableTextInput value={betDetailData.drawInfo.pfResult.mergeClientSeed} id="merge-client-seed" />
                             </div>
                         </Section>
                     </div>
-                    <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-3">
-                        <div className="input-group width-full">
-                            <CopyableTextInput value={betDetailData.drawInfo.pfResult.mergeClientSeed} id="merge-client-seed" />
+                    <div className="form">
+                        <div className="flex items-center justify-between mb-2">
+                            <Section
+                                title={
+                                    <>
+                                        {translateSNGames("pf_client_seed_info_total_players")}{" "}
+                                        <span className={Styles["text-highlight"]}>
+                                            {betDetailData.drawInfo.pfResult.clientSeeds?.length}
+                                        </span>
+                                    </>
+                                }
+                                customTitleStyles="m-0"
+                            >
+                                <button className={Styles["btn-export"]} onClick={handleClickExport}>
+                                    <span className="icon-file-csv" style={{ cursor: "pointer" }}>
+                                        <span className="path1"></span>
+                                        <span className="path2"></span>
+                                        <span className="path3"></span>
+                                        <span className="path4"></span>
+                                        <span className="path5"></span>
+                                    </span>
+                                </button>
+                            </Section>
                         </div>
-                    </Section>
-                </div>
-                <div className="form">
-                    <div className="flex items-center justify-between mb-2">
-                        <Section
-                            title={
-                                <>
-                                    {translateSNGames("pf_client_seed_info_total_players")}{" "}
-                                    <span className={Styles["text-highlight"]}>{betDetailData.drawInfo.pfResult.clientSeeds?.length}</span>
-                                </>
-                            }
-                            customTitleStyles="m-0"
+                        <div
+                            className={`table-container react-infinite-table ${Styles["pf-info"]} mb-5 rounded-lg overflow-hidden border border-primary-border`}
                         >
-                            <button className={Styles["btn-export"]} onClick={handleClickExport}>
-                                <span className="icon-file-csv" style={{ cursor: "pointer" }}>
-                                    <span className="path1"></span>
-                                    <span className="path2"></span>
-                                    <span className="path3"></span>
-                                    <span className="path4"></span>
-                                    <span className="path5"></span>
-                                </span>
-                            </button>
-                        </Section>
-                    </div>
-                    <div className={`table-container react-infinite-table ${Styles["pf-info"]}`}>
-                        <table className={`table text-center ${Styles["table"]}`}>
-                            <thead>
-                                <tr>
-                                    <th style={{ width: "25%" }}>{translateSNGames("pf_player")}</th>
-                                    <th>{translateSNGames("pf_provably_fair_info_nickname")}</th>
-                                    <th>{translateSNGames("pf_client_seed_info_subtitle_seed")}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
-                                    <tr key={uuidv4()}>
-                                        <td>{index + 1}</td>
-                                        {name === clientSeed.name ? (
-                                            <>
-                                                <td className={`${Styles["table-highlight"]} font-text`}>{clientSeed.name}</td>
-                                                <td className={name === clientSeed.name ? Styles["table-highlight"] : ""}>
-                                                    {clientSeed.clientSeed}
-                                                </td>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <td className="font-text">{encryptName(clientSeed.name)}</td>
-                                                <td>{clientSeed.clientSeed}</td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                            <Table className="w-full ">
+                                {renderBetDetailHeader(translateSNGames)}
+                                <TableBody>
+                                    {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
+                                        <TableRow
+                                            key={uuidv4()}
+                                            className={cn(
+                                                "border-b border-primary-border last:border-b-0",
+                                                index % 2 === 0 ? "bg-[#102136]" : "bg-[#172C47]"
+                                            )}
+                                        >
+                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">{index + 1}</TableCell>
+                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                {name === clientSeed.name ? (
+                                                    <span className="font-semibold text-winning-highlight">{clientSeed.name}</span>
+                                                ) : (
+                                                    <span className="font-text">{encryptName(clientSeed.name)}</span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                {name === clientSeed.name ? (
+                                                    <span className="font-semibold text-winning-highlight">{clientSeed.clientSeed}</span>
+                                                ) : (
+                                                    <span>{clientSeed.clientSeed}</span>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </div>
-            </div>
             </>
         ),
         [betDetailData, name]

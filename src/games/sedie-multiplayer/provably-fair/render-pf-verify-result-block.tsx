@@ -12,14 +12,14 @@ const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
 
     return (
         <>
-            <div className="flex justify-between gap-6 px-2 text-secondary-text text-sm">
-                <div className="flex items-center gap-1.5 font-medium">
+            <div className="flex justify-between gap-6 pt-2 px-3 text-sm ">
+                <div className="flex items-center gap-1.5 font-[400] text-[var(--text-content-color)]">
                     {t(`${ResourceTypes.COMMON}.round`).capitalizeFirstLetter()}: {pfResult?.drawId}
                 </div>
                 <div className="flex items-center gap-1.5">
                     {winningSubOption ? (
                         <span className="flex items-center gap-1.5">
-                            <span className="text-secondary-text">Result</span>
+                            <div className="text-[var(--text-content-color)] font-[400]"> {t(`${ResourceTypes.COMMON}.result`)}</div>
                             <Image
                                 src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`}
                                 alt={`${winningSubOption} result`}

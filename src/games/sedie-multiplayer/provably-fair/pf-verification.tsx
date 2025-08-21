@@ -46,20 +46,19 @@ const PFVerification: FC = () => {
         setMergeClientSeed(input.value);
     };
 
-    const ballIndexRender = () => {
+    const diceIndexRender = () => {
         return Array.from(Array(DICES_EACH_ROUND), (_, index) => {
-            const { randomNumbers, convertNumber, ballIndexes } = verifyInfo;
-            const ballIndexText = t(`${ResourceTypes.SEDIE_MULTIPLAYER}.pf_verifier_tool_button`, {
+            const { randomNumbers, convertNumber, diceIndexes } = verifyInfo;
+            const diceIndexText = t(`${ResourceTypes.SEDIE_MULTIPLAYER}.pf_verifier_tool_button`, {
                 value: index + 1,
             });
 
-            const diceResult = ballIndexes[index] % 2 === 0 ? t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_white`) : t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_red`);
+            const diceResult = diceIndexes[index] % 2 === 0 ? t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_white`) : t(`${ResourceTypes.SEDIE_MULTIPLAYER}.glossary_red`);
 
-            const line = `<span style="color: #ffbc11; font-weight: 600">${ballIndexText} - ${t(
-                `${ResourceTypes.COMMON}.pf_verification_para_1`
-            )} </span> = ((${randomNumbers[index]}+${
+            const line = `<span style="color: #ffbc11; font-weight: 600">${diceIndexText}</span>
+            - <span style="font-weight: 600">${t(`${ResourceTypes.COMMON}.pf_verification_para_1`)} </span> = ((${randomNumbers[index]}+${
                 convertNumber[index]
-            }) mod 2) = <span font-weight: 600">${ballIndexes[index]}</span> <span font-weight: 600">-> ${diceResult}</span>`;
+            }) mod 2) = <span font-weight: 600">${diceIndexes[index]}</span> <span style="font-weight: 600">-> ${diceResult}</span>`;
 
             return (
                 <p key={index}>
@@ -130,8 +129,9 @@ const PFVerification: FC = () => {
                             );
                         })}
                     </p>
-
-                    {ballIndexRender()}
+                    <div className="mt-2 flex flex-col gap-1">
+                        {diceIndexRender()}
+                    </div>
                 </Section>
             </div>
         </div>
