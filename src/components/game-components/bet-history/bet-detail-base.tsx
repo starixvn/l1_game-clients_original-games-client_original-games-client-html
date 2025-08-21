@@ -52,14 +52,14 @@ const BetDetailBase: FC<{
 
   return (
     <>
-      <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text m-3">
+      <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text mx-3">
         Note: Data are only available within the last 7 days from the current date.
       </div>
 
       {drawInfo.result && renderBetDetailResultBlock(drawInfo)}
 
       <button
-        className="clickable flex items-center gap-2 m-3 text-[#00C950] text-sm font-medium"
+        className="clickable flex items-center gap-2 mx-3 text-[#00C950] text-sm font-medium"
         onClick={handleClickProvablyFair}
       >
         <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
