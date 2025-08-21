@@ -54,7 +54,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
                 {headerColumns.map((column, index) => (
                     <TableHead
                         key={column.key}
-                        className="w-1/4 text-center p-3 text-sm font-medium text-secondary-text rounded-t-lg border-b border-primary-border"
+                        className="w-1/4 text-center py-3 px-0 text-sm font-medium text-secondary-text rounded-t-lg border-b border-primary-border"
                     >
                         {column.label}
                     </TableHead>
@@ -90,18 +90,18 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
     return (
         <>
             <TableRow className="border-none font-normal text-secondary-text bg-[#0C192B] table w-full table-fixed">
-                <TableCell className="w-1/4 text-center p-4">{translateCommon("total")}</TableCell>
-                <TableCell className="w-1/4 text-center p-4"></TableCell>
-                <TableCell className="w-1/4 text-center p-4">{formatNumber(totalStake)}</TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-4">
+                <TableCell className="w-1/4 text-center p-3 px-0">{translateCommon("total")}</TableCell>
+                <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
+                <TableCell className="w-1/4 text-center p-3 px-0">{formatNumber(totalStake)}</TableCell>
+                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-3 px-0">
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>
             <TableRow className="border-none font-normal text-secondary-text bg-bet-detail-row-2 table w-full table-fixed rounded-b-lg">
-                <TableCell className="w-1/4 text-center p-4">{`Net Profit`}</TableCell>
-                <TableCell className="w-1/4 text-center p-4"></TableCell>
-                <TableCell className="w-1/4 text-center p-4"></TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-4">{formatNumber(netProfit)}</TableCell>
+                <TableCell className="w-1/4 text-center p-3 px-0">{`Net Profit`}</TableCell>
+                <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
+                <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
+                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-3 px-0">{formatNumber(netProfit)}</TableCell>
             </TableRow>
         </>
     );
@@ -139,7 +139,7 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
                 </Table>
             </div>
 
-            <tfoot className=" sticky bottom-0 z-10 bg-bet-detail-row-1 w-full">
+            <tfoot className=" sticky bottom-0 z-10 w-full">
                 {renderSummaryRows(translateCommon, totalStake, netProfit, data)}
             </tfoot>
         </div>
