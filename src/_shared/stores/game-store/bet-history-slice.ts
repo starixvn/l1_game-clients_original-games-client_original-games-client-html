@@ -77,7 +77,7 @@ const INITIAL_STATE = {
 export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) => ({
     ...INITIAL_STATE,
     
-    setBetLogs: (logs) => set({ betLogs: logs }),
+    setBetLogs: (logs) => set({ betLogs: sortByRoundDesc(logs) }),
     
     appendBetLogs: (logs) => {
         const currentState = get();
@@ -90,7 +90,7 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             )
         );
         
-        set({ betLogs: [...existingLogs, ...newLogs] });
+        set({ betLogs: sortByRoundDesc([...existingLogs, ...newLogs]) });
     },
     
     setCurrentPage: (page) => set({ currentPage: page }),
@@ -137,11 +137,21 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             
             if (history.betLogs?.length > 0) {
                 if (history.page === 1) {
-                    // First page - replace data
-                    state.setBetLogs(history.betLogs);
+                    // First page
+                    if (state.isExpanded && state.betLogs.length > 0) {
+                        // Keep expanded view populated: merge page 1 into the top of existing logs
+                        const existingLogs = state.betLogs;
+                        const page1Logs = history.betLogs;
+                        const page1Ids = new Set(page1Logs.map((log: any) => (log.roundId || log.phien)));
+                        const merged = [...page1Logs, ...existingLogs.filter((log: any) => !page1Ids.has(log.roundId || log.phien))];
+                        state.setBetLogs(sortByRoundDesc(merged));
+                    } else {
+                        // Collapsed or initial load: replace with page 1
+                        state.setBetLogs(sortByRoundDesc(history.betLogs));
+                    }
                 } else {
                     // Additional pages - append data
-                    state.appendBetLogs(history.betLogs);
+                    state.appendBetLogs(sortByRoundDesc(history.betLogs));
                 }
                 state.setHasMoreData(state.betLogs.length < total);
             } else {
@@ -150,3 +160,19 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
         }
     },
 });
+
+// Helpers
+function toNumeric(value: any): number {
+    if (value == null) return 0;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+}
+
+function getRoundKey(log: any): number {
+    // Prefer roundId, then phien, then drawId as numeric
+    return toNumeric(log?.roundId ?? log?.phien ?? log?.drawId);
+}
+
+function sortByRoundDesc(logs: any[]): any[] {
+    return [...(logs || [])].sort((a, b) => getRoundKey(b) - getRoundKey(a));
+}

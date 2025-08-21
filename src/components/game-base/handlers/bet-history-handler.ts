@@ -1,5 +1,6 @@
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
+import { RoundState } from "../type";
 
 export type BetHistoryHandlerProps = {
     gameMessageHandler: GameMessageHandler;
@@ -8,22 +9,54 @@ export type BetHistoryHandlerProps = {
 export class BetHistoryHandler {
     private readonly GET_HISTORY = "getHistory";
     private readonly HISTORY_EVENT = "history";
-    private handlerId: string | null = null;
+    private handlerIds: string[] = [];
+    private lastRoundState: RoundState | null = null;
 
     constructor(private readonly props: BetHistoryHandlerProps) {
         this.registerHistoryEvents();
     }
 
     private registerHistoryEvents() {
-        this.handlerId = this.props.gameMessageHandler.register(
+        const historyHandlerId = this.props.gameMessageHandler.register(
             this.HISTORY_EVENT,
             this.handleHistoryResponse.bind(this)
         );
+        this.handlerIds.push(historyHandlerId);
+
+        // Listen to round state changes to refresh history at the start of each round
+        const roundStateHandlerId = this.props.gameMessageHandler.register(
+            messageEventType.ROUND_STATE,
+            this.handleRoundState.bind(this)
+        );
+        this.handlerIds.push(roundStateHandlerId);
     }
 
     private handleHistoryResponse(data: any) {
-        const store = useGameStore.getState();
-        store.registerBetHistoryEvent(data);
+        // First, persist incoming history to the store
+        useGameStore.getState().registerBetHistoryEvent(data);
+
+        // Then, decide whether to auto-load all remaining pages
+        const history = data?.history;
+        if (history?.page === 1) {
+            const state = useGameStore.getState();
+            const isExpanded = state.isExpanded;
+            const hasMore = state.hasMoreData && state.currentPage <= 1 && state.currentPage < state.totalPages;
+
+            // If expanded at round start and more data exists, fetch all remaining pages
+            if (isExpanded && hasMore) {
+                this.loadAllRemainingPages();
+            }
+        }
+    }
+
+    private handleRoundState({ roundState }: { roundState: RoundState }) {
+        // Trigger when transitioning into InRound from any other state
+        const isEnteringInRound = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound;
+        if (isEnteringInRound) {
+            this.requestHistory(1);
+        }
+
+        this.lastRoundState = roundState;
     }
 
     requestHistory(page = 1) {
@@ -87,10 +120,8 @@ export class BetHistoryHandler {
     }
 
     cleanup() {
-        if (this.handlerId) {
-            this.props.gameMessageHandler.removeHandler(this.handlerId);
-            this.handlerId = null;
-        }
+        this.handlerIds.forEach((id) => this.props.gameMessageHandler.removeHandler(id));
+        this.handlerIds = [];
     }
 
     // Utility methods for getting computed values
