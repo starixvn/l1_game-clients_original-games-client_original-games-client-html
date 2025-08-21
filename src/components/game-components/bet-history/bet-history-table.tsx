@@ -37,11 +37,11 @@ const createBetHistoryRowData = (
         },
         {
             content: (
-                <span className="text-table-text-clickable cursor-pointer py-3">
+                <span className="text-table-text-clickable cursor-pointer">
                     {row.round}
                 </span>
             ),
-            className: "text-table-text-clickable cursor-pointer py-3",
+            className: "text-table-text-clickable cursor-pointer",
             onClick: () => handleCellClick('round', row, rowIndex)
         },
         {
@@ -76,7 +76,7 @@ const renderBetHistoryRows = (
                 {rowData.map((cell, cellIndex) => (
                     <TableCell 
                         key={cellIndex}
-                        className={cn(cell.className, "py-3 text-secondary-text text-center")}
+                        className={cn(cell.className, "text-secondary-text text-center h-[60px] py-[7px] sm:p-4")}
                         onClick={cell.onClick}
                     >
                         {cell.content}
@@ -90,9 +90,16 @@ const renderBetHistoryRows = (
 // Function to render bet history table header
 const renderBetHistoryHeader = (headerColumns: any[]) => {
     return (
-        <TableRow className="border-primary-border">
-            {headerColumns.map((column) => (
-                <TableHead key={column.key} className="text-primary-text text-center p-2 border-b border-primary-border sticky top-0 z-10 bg-table-header">
+        <TableRow className="bg-table-header sticky top-0 z-10 border-none h-[36px]">
+            {headerColumns.map((column, index) => (
+                <TableHead
+                    key={column.key}
+                    className={cn(
+                        "text-primary-text text-center p-2",
+                        index === 0 && "rounded-tl-lg rounded-bl-lg",
+                        index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
+                    )}
+                >
                     {column.label}
                 </TableHead>
             ))}
@@ -205,9 +212,9 @@ export const BetHistoryTable = () => {
     }
 
     return (
-        <div className={`${styles['bet-history-container']} rounded bg-white dark:bg-primary-bg p-2`}>
+        <div className={`${styles['bet-history-container']} rounded-xl bg-white dark:bg-primary-bg p-2`}>
             <div
-                className={`bet-history-scroll-wrapper ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
+                className={`bet-history-scroll-wrapper h-[650px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
             >
                 <Table className="bet-history-table">
                     <TableHeader>
@@ -216,7 +223,7 @@ export const BetHistoryTable = () => {
                     <TableBody>
                         {tableData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className="text-center text-secondary-text py-8">
+                                <TableCell colSpan={4} className="text-center text-secondary-text">
                                     {translateCommon("no_data")}
                                 </TableCell>
                             </TableRow>
