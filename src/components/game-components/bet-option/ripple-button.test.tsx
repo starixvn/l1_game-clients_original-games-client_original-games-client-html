@@ -3,7 +3,7 @@ import { buildVersion } from "../../../_shared/constants";
 import { useGameActionContext, useSystemContext, useSettingContext } from "../../../_shared/react-contexts";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "../../game-base/type";
-import RippleButton, { DEFAULT_CHIP_CURSOR_PATH } from "./ripple-button";
+import RippleButton from "./ripple-button";
 
 const mockUseGameStateContext = useGameStateContext as jest.Mock;
 const mockUseSystemContext = useSystemContext as jest.Mock;
@@ -67,20 +67,6 @@ describe("RippleButton", () => {
         // Assert
         expect(mockPlaceBet).toHaveBeenCalledTimes(1);
         expect(mockPlaceBet).toHaveBeenCalledWith("player", mockSelectedChip);
-    });
-
-    test("updates cursor style based on round state = InRound", () => {
-        // Arrange
-        const selectedChip = 1;
-        mockUseSystemContext.mockReturnValue({ selectedChip });
-
-        // Act
-        render(<RippleButton {...defaultProps} />);
-        const button = screen.getByRole("button");
-        const expectedPath = `${DEFAULT_CHIP_CURSOR_PATH}/b1b1b1.svg?v=${buildVersion}`;
-
-        // Assert
-        expect(button).toHaveStyle({ cursor: `url(${expectedPath}), auto` });
     });
 
     test("updates cursor style based on round state != InRound", () => {

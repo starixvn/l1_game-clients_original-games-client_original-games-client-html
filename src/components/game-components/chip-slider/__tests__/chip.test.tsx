@@ -13,10 +13,10 @@ describe(Chip.name, () => {
         // arrange
         const value = 100;
         const text = "100";
-        const image = "#000123";
+        const color = "#000123";
 
         // act
-        const { container } = render(<Chip image={image} onClickChip={null} text={text} value={value} />);
+        const { container } = render(<Chip color={color} onClickChip={null} text={text} value={value} />);
 
         // assert
         expect(container).toMatchSnapshot();
@@ -27,10 +27,10 @@ describe(Chip.name, () => {
         // arrange
         const value = 2000;
         const text = "";
-        const image = "#000123";
+        const color = "#000123";
 
         // act
-        const { container } = render(<Chip image={image} onClickChip={null} text={text} value={value} />);
+        const { container } = render(<Chip color={color} onClickChip={null} text={text} value={value} />);
 
         // assert
         expect(container).toMatchSnapshot();
@@ -41,9 +41,9 @@ describe(Chip.name, () => {
         // arrange
         const value = 100;
         const text = "100";
-        const image = "#000123";
+        const color = "#000123";
         const onClickChip = jest.fn();
-        const { container } = render(<Chip image={image} onClickChip={onClickChip} text={text} value={value} />);
+        const { container } = render(<Chip color={color} onClickChip={onClickChip} text={text} value={value} />);
 
         // act
         (container.children[0] as any).click();

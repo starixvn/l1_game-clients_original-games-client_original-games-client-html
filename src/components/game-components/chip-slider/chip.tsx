@@ -33,19 +33,22 @@ export const Chip: React.FC<ChipProps> = ({
         return value < 1000 ? value.toString() : `${value / 1000}K`;
     };
     const convertColorToBgLinearGradient = (hex: string) => {
+        if (!hex || !hex.startsWith("#")) {
+            hex = "#B3B3B3";
+        }
         hex = hex.replace("#", "");
 
         const r = parseInt(hex.substring(0, 2), 16);
         const g = parseInt(hex.substring(2, 4), 16);
         const b = parseInt(hex.substring(4, 6), 16);
 
-        const darkR = Math.max(Math.round(r * 0.6), 0);
-        const darkG = Math.max(Math.round(g * 0.6), 0);
-        const darkB = Math.max(Math.round(b * 0.6), 0);
+        const darkR = Math.round(r * 0.6);
+        const darkG = Math.round(g * 0.6);
+        const darkB = Math.round(b * 0.6);
 
-        const brightR = Math.min(Math.round(r * 1.3), 255);
-        const brightG = Math.min(Math.round(g * 1.3), 255);
-        const brightB = Math.min(Math.round(b * 1.3), 255);
+        const brightR = Math.round(r * 1.3);
+        const brightG = Math.round(g * 1.3);
+        const brightB = Math.round(b * 1.3);
 
         return `linear-gradient(to top, 
             rgb(${darkR}, ${darkG}, ${darkB}) 0%, 

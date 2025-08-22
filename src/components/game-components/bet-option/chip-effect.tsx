@@ -7,12 +7,12 @@ import styles from "./chip-effect.module.scss";
 export const ChipEffect = ({ choice, className }: { choice: string; className?: string }) => {
     const ownBet = useGameStore((state) => state.ownBets?.[choice] ?? 0);
     const [data, setData] = useState([]);
-    const [oldValue, setOldValue] = useState(0);
+    const [oldValue, setOldValue] = useState(ownBet);
     const { chipSettings } = useSettingContext();
 
     useEffect(() => {
         if (ownBet > 0) {
-            setData((prev) => [...prev, ownBet - oldValue]);
+            ownBet - oldValue > 0 && setData((prev) => [...prev, ownBet - oldValue]);
             setOldValue(ownBet);
         } else {
             setData([]);
@@ -46,7 +46,7 @@ export const ChipEffect = ({ choice, className }: { choice: string; className?: 
                     <Chip
                         value={value}
                         text={findChipSetting(value)?.text}
-                        color={findChipSetting(value)?.color || "#B3B3B3"}
+                        color={findChipSetting(value)?.color}
                         isHideValue={true}
                         size={22}
                     />
