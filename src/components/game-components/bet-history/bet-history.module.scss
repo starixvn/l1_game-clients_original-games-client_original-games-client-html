@@ -84,15 +84,9 @@
     margin-right: auto;
     width: fit-content;
     flex-shrink: 0;
-    background-color: rgba(0, 0, 0, 0.18); // translucent background for frosted-glass effect
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 0.5rem;
 }
 
 .toggle-button {
-    /* Inherit existing btn class styles and add specific overrides */
-    border-radius: 0.375rem;
     color: var(--primary-text);
     font-weight: 700;
     background-color: #000000;

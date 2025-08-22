@@ -214,6 +214,7 @@ export const BetHistoryTable = () => {
     return (
         <div className={`${styles['bet-history-container']} rounded-xl bg-white dark:bg-primary-bg p-2`}>
             <div
+                key={isExpanded ? 'expanded' : 'collapsed'}
                 className={`bet-history-scroll-wrapper h-[650px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
             >
                 <Table className="bet-history-table">
@@ -254,7 +255,7 @@ function renderToggleButton(
     return (
         <div className={styles['toggle-button-container']}>
             <button
-                className={styles['toggle-button']}
+                className={`${styles['toggle-button']} rounded-lg`}
                 onClick={handleToggleExpand}
                 disabled={isLoading}
             >
