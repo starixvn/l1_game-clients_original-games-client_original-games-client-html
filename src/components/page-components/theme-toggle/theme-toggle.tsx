@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useThemeContext } from "../../../_shared/react-contexts/theme-context";
+import { useAppTheme } from "../../../_shared/react-hooks";
 
 const ThemeToggle: React.FC = () => {
-    const { toggleTheme, isDark } = useThemeContext();
+    const { toggleTheme, isDark } = useAppTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
