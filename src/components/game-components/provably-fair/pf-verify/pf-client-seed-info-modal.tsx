@@ -119,15 +119,6 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
                                         }
                                         customTitleStyles="m-0"
                                     >
-                                        <button className={Styles["btn-export"]} onClick={handleClickExport}>
-                                            <span className="icon-file-csv" style={{ cursor: "pointer" }}>
-                                                <span className="path1"></span>
-                                                <span className="path2"></span>
-                                                <span className="path3"></span>
-                                                <span className="path4"></span>
-                                                <span className="path5"></span>
-                                            </span>
-                                        </button>
                                     </Section>
                                 </div>
                                 <div className="my-2">
