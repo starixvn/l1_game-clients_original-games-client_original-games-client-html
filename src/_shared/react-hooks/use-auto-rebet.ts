@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../stores/game-store/game-store";
 import { RoundState } from "../../components/game-base/type";
@@ -55,7 +55,9 @@ export const useAutoRebet = (): UseAutoRebetReturn => {
     }, [remainingRounds, stopAutoRebet, handleClickRebet]);
 
     useEffect(() => {
-        if (!isAutoRebetActive) return;
+        if (!isAutoRebetActive) {
+            return;
+        }
         if (roundState === RoundState.InRound) {
             rebet();
         }
