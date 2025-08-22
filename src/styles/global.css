@@ -11,7 +11,7 @@
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
+    --popup-background: #fff;
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
