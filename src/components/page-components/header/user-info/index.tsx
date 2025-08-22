@@ -7,7 +7,7 @@ export const UserInfo: React.FC<{
     customizeClass?: string;
 }> = ({ customizeClass }) => {
     const { authorizeInfo } = usePlayerContext();
-    const { userInfoRed } = useGlobalEventsStore();
+    const userInfoRed = useGlobalEventsStore((state) => state.userInfoRed);
 
     // Use userInfoRed from store if available, otherwise use from authorizeInfo
     const userInfo = {

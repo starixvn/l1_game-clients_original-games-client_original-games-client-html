@@ -4,14 +4,7 @@ const STATIC_CACHE_NAME = "static-assets-v1";
 const DYNAMIC_CACHE_NAME = "dynamic-assets-v1";
 
 // Critical assets to cache immediately
-const CRITICAL_ASSETS = [
-    "/static/images/countdown-timer/",
-    // Chips path depends on system; include both to be safe in SW cache list
-    "/static/images/chips/gn/",
-    "/static/images/chips/vg/",
-    "/static/images/ball/",
-    "/static/images/anim/ball-middle/",
-];
+const CRITICAL_ASSETS = ["/static/images/countdown-timer/", "/static/images/ball/", "/static/images/anim/ball-middle/"];
 
 // Install event - cache critical assets
 self.addEventListener("install", (event) => {

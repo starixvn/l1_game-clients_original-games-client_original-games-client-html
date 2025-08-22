@@ -37,19 +37,14 @@ declare global {
 const analyticsData: PreloadAnalytics[] = [];
 
 // Critical image paths that should be loaded first
-const CRITICAL_IMAGE_PATHS = [
-    "/countdown-timer/",
-    "/chips/gn/",
-    "/ball/",
-    "/anim/ball-middle/"
-];
+const CRITICAL_IMAGE_PATHS = ["/countdown-timer/", "/ball/", "/anim/ball-middle/"];
 
 // Progressive loading priorities
 enum ImagePriority {
     CRITICAL = 1,
     HIGH = 2,
     MEDIUM = 3,
-    LOW = 4
+    LOW = 4,
 }
 
 interface ImageWithPriority {
@@ -83,8 +78,6 @@ class PreloadManager {
     ): Promise<void> {
         const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
 
-
-
         // Initialize analytics
         const analytics: PreloadAnalytics = {
             gameId,
@@ -96,7 +89,7 @@ class PreloadManager {
             apiResponseTime: 0,
             totalLoadTime: 0,
             cacheHits: 0,
-            compressionRatio: 0
+            compressionRatio: 0,
         };
         this.analytics.set(preloadKey, analytics);
 
@@ -136,7 +129,7 @@ class PreloadManager {
             this.analytics.delete(preloadKey);
             const callbacks = this.preloadCallbacks.get(preloadKey);
             if (callbacks) {
-                callbacks.forEach(callback => callback());
+                callbacks.forEach((callback) => callback());
                 this.preloadCallbacks.delete(preloadKey);
             }
         }
@@ -150,14 +143,12 @@ class PreloadManager {
         preloadKey: string,
         onProgress?: (progress: number) => void
     ): Promise<void> {
-
         try {
             // Fetch image paths with analytics
             const imagePaths = await fetchImagesFromAPI(gameId, locale, gameIdsIcon, bannerId, preloadKey);
 
             // Progressive loading with priority
             await loadImagesProgressive(imagePaths, gameId, preloadKey, onProgress);
-
         } catch (error) {
             console.error(`[PreloadManager] Preload failed for key: ${preloadKey}:`, error);
             throw error;
@@ -172,25 +163,25 @@ class PreloadManager {
 
     private sendAnalyticsToService(analytics: PreloadAnalytics): void {
         // Send to analytics service (e.g., Google Analytics, custom endpoint)
-        if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'preload_completed', {
+        if (typeof window !== "undefined" && window.gtag) {
+            window.gtag("event", "preload_completed", {
                 game_id: analytics.gameId,
                 total_time: analytics.totalLoadTime,
                 api_time: analytics.apiResponseTime,
                 images_loaded: analytics.loadedImages,
                 images_total: analytics.totalImages,
                 cache_hits: analytics.cacheHits,
-                compression_ratio: analytics.compressionRatio
+                compression_ratio: analytics.compressionRatio,
             });
         }
 
         // Send to custom analytics endpoint
-        fetch('/api/analytics/preload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(analytics)
-        }).catch(error => {
-            console.warn('[PreloadManager] Failed to send analytics:', error);
+        fetch("/api/analytics/preload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(analytics),
+        }).catch((error) => {
+            console.warn("[PreloadManager] Failed to send analytics:", error);
         });
     }
 
@@ -225,7 +216,7 @@ const cleanupOldRequests = () => {
     const now = Date.now();
     const thirtySecondsAgo = now - 30000;
 
-    Object.keys(activeRequests).forEach(key => {
+    Object.keys(activeRequests).forEach((key) => {
         if (requestTimestamps[key] && requestTimestamps[key] < thirtySecondsAgo) {
             delete activeRequests[key];
             delete requestTimestamps[key];
@@ -240,42 +231,44 @@ const cleanupOldRequests = () => {
 
 // Image compression detection
 const isCompressedImage = (path: string): boolean => {
-    return path.includes('.webp') || path.includes('compressed') || path.includes('optimized');
+    return path.includes(".webp") || path.includes("compressed") || path.includes("optimized");
 };
 
 // Progressive image prioritization with optimization
 const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
     const optimalFormat = imageOptimizationHelper.getOptimalFormat();
 
-    return imagePaths.map(path => {
-        let priority = ImagePriority.LOW;
-        const isCompressed = isCompressedImage(path);
+    return imagePaths
+        .map((path) => {
+            let priority = ImagePriority.LOW;
+            const isCompressed = isCompressedImage(path);
 
-        // Optimize the URL with the best format
-        const optimizedUrl = optimizeImageUrl(path, {
-            format: optimalFormat as any,
-            quality: 85
-        });
+            // Optimize the URL with the best format
+            const optimizedUrl = optimizeImageUrl(path, {
+                format: optimalFormat as any,
+                quality: 85,
+            });
 
-        // Critical images (UI elements, game mechanics)
-        if (CRITICAL_IMAGE_PATHS.some(criticalPath => path.includes(criticalPath))) {
-            priority = ImagePriority.CRITICAL;
-        }
-        // High priority (frequently used)
-        else if (path.includes('/chips/') || path.includes('/ball/')) {
-            priority = ImagePriority.HIGH;
-        }
-        // Medium priority (game-specific assets)
-        else if (path.includes('/number/')) {
-            priority = ImagePriority.MEDIUM;
-        }
+            // Critical images (UI elements, game mechanics)
+            if (CRITICAL_IMAGE_PATHS.some((criticalPath) => path.includes(criticalPath))) {
+                priority = ImagePriority.CRITICAL;
+            }
+            // High priority (frequently used)
+            else if (path.includes("/ball/")) {
+                priority = ImagePriority.HIGH;
+            }
+            // Medium priority (game-specific assets)
+            else if (path.includes("/number/")) {
+                priority = ImagePriority.MEDIUM;
+            }
 
-        return {
-            path: optimizedUrl,
-            priority,
-            isCompressed: isCompressed || optimizedUrl !== path
-        };
-    }).sort((a, b) => a.priority - b.priority);
+            return {
+                path: optimizedUrl,
+                priority,
+                isCompressed: isCompressed || optimizedUrl !== path,
+            };
+        })
+        .sort((a, b) => a.priority - b.priority);
 };
 
 // Fetch images from API with request deduplication and analytics
@@ -304,21 +297,23 @@ const fetchImagesFromAPI = async (
     // Cleanup old requests periodically
     cleanupOldRequests();
 
-
-
     // Create new request
     const requestPromise = (async () => {
         try {
             const startTime = Date.now();
 
-            const response = await axios.post("/api/preload-images", {
-                gameId,
-                locale,
-                gameIdsIcon,
-                bannerId,
-            }, {
-                timeout: 10000, // 10 second timeout
-            });
+            const response = await axios.post(
+                "/api/preload-images",
+                {
+                    gameId,
+                    locale,
+                    gameIdsIcon,
+                    bannerId,
+                },
+                {
+                    timeout: 10000, // 10 second timeout
+                }
+            );
 
             const endTime = Date.now();
             const imagePaths = (response?.data as string[]) || [];
@@ -326,12 +321,12 @@ const fetchImagesFromAPI = async (
 
             // Update analytics
             const preloadManager = PreloadManager.getInstance();
-            const analytics = preloadManager['analytics'].get(preloadKey);
+            const analytics = preloadManager["analytics"].get(preloadKey);
             if (analytics) {
                 analytics.apiResponseTime = apiResponseTime;
                 analytics.totalImages = imagePaths.length;
-                analytics.criticalImages = imagePaths.filter(path =>
-                    CRITICAL_IMAGE_PATHS.some(criticalPath => path.includes(criticalPath))
+                analytics.criticalImages = imagePaths.filter((path) =>
+                    CRITICAL_IMAGE_PATHS.some((criticalPath) => path.includes(criticalPath))
                 ).length;
             }
 
@@ -360,14 +355,13 @@ const loadImagesProgressive = async (
     preloadKey: string,
     onProgress?: (progress: number) => void
 ): Promise<void> => {
-
     if (imagePaths.length === 0) {
         return;
     }
 
     const prioritizedImages = prioritizeImages(imagePaths);
     const preloadManager = PreloadManager.getInstance();
-    const analytics = preloadManager['analytics'].get(preloadKey);
+    const analytics = preloadManager["analytics"].get(preloadKey);
 
     // Calculate total images for progress tracking
     const totalImages = prioritizedImages.length;
@@ -385,25 +379,25 @@ const loadImagesProgressive = async (
 
     // Load critical images first
     await loadImagesByPriority(prioritizedImages, ImagePriority.CRITICAL, analytics, () => {
-        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.CRITICAL).length;
+        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.CRITICAL).length;
         updateProgress();
     });
 
     // Load high priority images
     await loadImagesByPriority(prioritizedImages, ImagePriority.HIGH, analytics, () => {
-        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.HIGH).length;
+        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.HIGH).length;
         updateProgress();
     });
 
     // Load medium priority images
     await loadImagesByPriority(prioritizedImages, ImagePriority.MEDIUM, analytics, () => {
-        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.MEDIUM).length;
+        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.MEDIUM).length;
         updateProgress();
     });
 
     // Load low priority images
     await loadImagesByPriority(prioritizedImages, ImagePriority.LOW, analytics, () => {
-        loadedImages += prioritizedImages.filter(img => img.priority === ImagePriority.LOW).length;
+        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.LOW).length;
         updateProgress();
     });
 
@@ -413,7 +407,7 @@ const loadImagesProgressive = async (
     // Calculate final analytics
     if (analytics) {
         analytics.compressionRatio = Math.round(
-            (prioritizedImages.filter(img => img.isCompressed).length / prioritizedImages.length) * 100
+            (prioritizedImages.filter((img) => img.isCompressed).length / prioritizedImages.length) * 100
         );
     }
 };
@@ -425,7 +419,7 @@ const loadImagesByPriority = async (
     analytics?: PreloadAnalytics,
     onBatchComplete?: () => void
 ): Promise<void> => {
-    const imagesToLoad = prioritizedImages.filter(img => img.priority === priority);
+    const imagesToLoad = prioritizedImages.filter((img) => img.priority === priority);
 
     if (imagesToLoad.length === 0) {
         return;
@@ -441,7 +435,6 @@ const loadImagesByPriority = async (
     }
 
     for (const batch of batches) {
-
         // Load batch in parallel
         await Promise.all(
             batch.map(async (imageData) => {
@@ -525,14 +518,6 @@ export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PR
     });
 };
 
-// Core image paths that are always needed
-const CORE_IMAGE_PATHS = [
-    `/chips/${systemName}/`,
-    "/countdown-timer/",
-    "/anim/ball-middle/",
-    "/ball/",
-];
-
 interface PreloadResourcesProps {
     setIsDonePreload: () => void;
     gameId: number;
@@ -553,15 +538,13 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     locale = "en",
     cancelPreload,
     progressBarId = DEFAULT_PROGRESS_BAR_ID,
-    onProgressUpdate
+    onProgressUpdate,
 }) => {
     const router = useRouter();
     const componentId = useRef(`preload-${gameId}-${Date.now()}-${Math.random()}`);
 
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
     // Game settings and cache paths removed as they're not used
-
-
 
     // Main preload effect using the global manager
     useEffect(() => {

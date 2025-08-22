@@ -1,11 +1,12 @@
 import dynamic from "next/dynamic";
+import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import styles from "./style.module.scss";
 const Odds = dynamic(() => import("../../../components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"));
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
-import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 const HighlightBetOption = dynamic(() => import("./highlight-bet-option"));
+const ChipEffect = dynamic(() => import("../../../components/game-components/bet-option/chip-effect"));
 
 const subChoiceImages = {
     [SeDieBetOptions.WHITE4]: [false, false, false, false],
@@ -52,6 +53,7 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
                 </div>
                 <RippleButton className={`${styles["btn-ripple"]}`} id={`${tolgeeNamespace}-choice-${choice}`} choice={choice} />
             </div>
+            <ChipEffect choice={choice} />
             <HighlightBetOption choice={choice} />
         </div>
     );

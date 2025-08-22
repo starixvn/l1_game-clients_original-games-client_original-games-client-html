@@ -1,40 +1,78 @@
 import React from "react";
-
-import { resolveChipColorHex, systemName } from "../../../_shared/constants";
 import Styles from "./chip-slider.module.scss";
-import { CachedImage } from "../cached-image";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
-export const Chip: React.FC<{ value: number; onClickChip: Function; text: string; image: string }> = ({
+type ChipProps = {
+    value: number;
+    text: string;
+    color: string;
+    onClickChip?: Function;
+    size?: number;
+    fontSize?: number;
+    isHideValue?: boolean;
+    className?: string;
+};
+
+export const Chip: React.FC<ChipProps> = ({
     value,
-    onClickChip,
     text,
-    image,
+    color,
+    onClickChip = () => {},
+    size = 48,
+    fontSize = 18,
+    isHideValue = false,
+    className = "",
 }) => {
     const selectedChip = useBettingStore((state) => state.selectedChip);
 
     const getChipClassName = () => {
-        return `${Styles["chip-container"]} ${selectedChip === value ? Styles["selected"] : ""}`;
+        return `${Styles["chip-container"]} ${!isHideValue && selectedChip === value ? Styles["selected"] : ""} p-1/2 ${className}`;
     };
 
     const getDefaultChipText = () => {
         return value < 1000 ? value.toString() : `${value / 1000}K`;
     };
+    const convertColorToBgLinearGradient = (hex: string) => {
+        hex = hex.replace("#", "");
+
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+
+        const darkR = Math.max(Math.round(r * 0.6), 0);
+        const darkG = Math.max(Math.round(g * 0.6), 0);
+        const darkB = Math.max(Math.round(b * 0.6), 0);
+
+        const brightR = Math.min(Math.round(r * 1.3), 255);
+        const brightG = Math.min(Math.round(g * 1.3), 255);
+        const brightB = Math.min(Math.round(b * 1.3), 255);
+
+        return `linear-gradient(to top, 
+            rgb(${darkR}, ${darkG}, ${darkB}) 0%, 
+            rgb(${r}, ${g}, ${b}) 30%, 
+            rgb(${r}, ${g}, ${b}) 70%, 
+            rgb(${brightR}, ${brightG}, ${brightB}) 100%)`;
+    };
+    const renderColorChip = () => {
+        const background = convertColorToBgLinearGradient(color);
+
+        return <div className={`absolute w-full h-full rounded-full`} style={{ background: background }}></div>;
+    };
 
     return (
-        <div id={`chip-${value}`} key={value} className={getChipClassName()} onClick={() => onClickChip(value)}>
-            {image && (
-                <CachedImage
-                    src={`/static/images/chips/${systemName === "vg" ? "gn" : systemName}/${resolveChipColorHex(image)}.svg`}
-                    fallbackSrcs={[`/static/images/chips/gn/${resolveChipColorHex(image)}.svg`]}
-                    className={`img-fluid ${Styles["chip"]}`}
-                    width={65}
-                    height={66}
-                    alt="Chip"
-                    priority={true}
-                />
-            )}
-            <span className={Styles["value"]}>{text || getDefaultChipText()}</span>
-        </div>
+        <>
+            <div
+                id={`chip-${value}`}
+                key={value}
+                className={getChipClassName()}
+                onClick={() => onClickChip(value)}
+                style={{ "--chip-size": `${size}px`, "--chip-value-font-size": `${fontSize}px` } as React.CSSProperties}
+            >
+                {renderColorChip()}
+                <div className={`${Styles["border"]}`}></div>
+                <div className={Styles["fill"]}></div>
+                {!isHideValue && <span className={Styles["value"]}>{text || getDefaultChipText()}</span>}
+            </div>
+        </>
     );
 };

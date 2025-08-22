@@ -7,6 +7,7 @@ const TotalBet = dynamic(() => import("../../../components/game-components/bet-o
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
 const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"));
 const HighlightBetOption = dynamic(() => import("./highlight-bet-option"));
+const ChipEffect = dynamic(() => import("../../../components/game-components/bet-option/chip-effect"));
 
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     const choiceStyle = styles[choice];
@@ -28,6 +29,7 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
                 </div>
                 <RippleButton className={`${styles["btn-ripple"]}`} id={buttonId} choice={choice} />
             </div>
+            <ChipEffect choice={choice} />
             <HighlightBetOption choice={choice} />
         </div>
     );

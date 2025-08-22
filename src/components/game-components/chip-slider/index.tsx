@@ -68,20 +68,15 @@ const ChipControlPanel: React.FC = () => {
                 key={+selectedChip}
                 value={+selectedChip}
                 text={findChipSetting(selectedChip)?.text}
-                image={findChipSetting(selectedChip)?.color}
+                color={findChipSetting(selectedChip)?.color}
                 onClickChip={() => setIsShowSlider(!isShowSlider)}
+                size={60}
+                fontSize={20}
             />
             <IconNext isEnabled={currentIndex < chipValues.length - 1} onClick={onClickNext} />
 
             {isShowSlider && (
-                <div className="absolute -top-full w-[175%] h-full bg-black/50 z-[var(--chip-slider-index)]">
-                    <ChipSlider
-                        chipSettings={chipSettings}
-                        chipValues={chipValues}
-                        selectedChip={selectedChip}
-                        onSelectChip={onSelectChip}
-                    />
-                </div>
+                <ChipSlider chipSettings={chipSettings} chipValues={chipValues} selectedChip={selectedChip} onSelectChip={onSelectChip} />
             )}
         </div>
     );

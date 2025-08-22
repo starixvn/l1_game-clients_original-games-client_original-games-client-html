@@ -2,43 +2,33 @@
 
 %icon {
     position: absolute;
-    top: calc(50% - 23px);
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
     height: 50px;
-    width: 30px;
-
-    background: url("/static/images/icons/icon-arrow-back.svg?v=#{$version-image}") no-repeat center;
+    width: 15px;
 
     &:hover:not(.disabled) {
         cursor: pointer;
-        text-shadow: 0 -1px 6px rgb(82 244 40 / 70%), 0px 1px 6px rgb(82 244 40 / 70%);
+        transform: translateY(-50%) scale(1.1);
     }
 
     &.disabled {
         color: #fff;
         opacity: 0.5;
     }
-
-    &.quick-bet {
-        color: #52f428 !important;
-
-        &.disabled {
-            color: #4ee42c;
-        }
-    }
 }
 
 .icon-prev {
     @extend %icon;
-    left: -25px;
+    left: 8px;
 }
 
 .icon-next {
     @extend %icon;
-    right: -25px;
-    transform: scale(-1);
+    right: 8px;
 }
 
 .chip-container {
@@ -52,13 +42,37 @@
         &::after {
             content: "";
             position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 65px;
-            height: 66px;
+            top: -1px;
+            left: -1px;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
             border-radius: 50%;
-            border: 2px solid #c4c4c4;
-            box-shadow: 0px 0px 6px 0px #fff, inset 0px 0px 2px 0px #fff;
+            border: 1px solid #fff;
+            box-shadow: 0px 0px 3px 0px #fff;
+        }
+    }
+
+    .fill {
+        position: absolute;
+        width: 75%;
+        height: 75%;
+        margin: 12.5%;
+        border-radius: 50%;
+        border: 2px solid #ffffff80;
+        background: radial-gradient(136.32% 132.64% at 50% 50%, #5c5c5c66 0%, #d9d6d666 100%);
+    }
+
+    .border {
+        position: absolute;
+        background-image: url("/static/images/chips/chip-border.svg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 100%;
+        height: 100%;
+
+        &.yellow-border {
+            background-image: url("/static/images/chips/chip-yellow-border.svg");
         }
     }
 

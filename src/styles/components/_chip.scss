@@ -1,17 +1,14 @@
 .chip-container {
     --ratio: 1;
-    --chip-width: calc(50px * var(--ratio));
-    --chip-height: calc(51px * var(--ratio));
-    --chip-value-font-size: calc(16px * var(--ratio));
 
     position: relative;
     display: grid !important;
-    grid-template-columns: var(--chip-width);
-    grid-template-rows: var(--chip-height);
+    grid-template-columns: var(--chip-size, 50px);
+    grid-template-rows: var(--chip-size, 50px);
     justify-content: center;
     align-items: center;
-    width: var(--chip-width);
-    height: var(--chip-height);
+    width: var(--chip-size, 50px);
+    height: var(--chip-size, 50px);
     border-radius: 50%;
     outline: none;
 
@@ -26,9 +23,8 @@
         grid-area: 1/1;
         text-align: center;
         font-family: var(--font-money);
-        font-size: var(--chip-value-font-size);
+        font-size: var(--chip-value-font-size, 16px);
         color: #fff;
         z-index: 1;
-        text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
     }
 }

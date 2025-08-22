@@ -1,4 +1,3 @@
-import { systemName } from ".";
 import { getGameSettings } from "../app-settings";
 
 export const getDevicePixelRatio = () => {
@@ -33,16 +32,8 @@ export const getPathIconGames = (gameIds: number[]): string[] => {
     return [...gameIds.map((gameId) => `lobby/game-board-detail/${gameId}`), ...bgIcons];
 };
 
-// Resolve chips system to existing folder; VG reuses GN chip assets for now
-const resolvedChipsSystem = systemName === "vg" ? "gn" : systemName;
-
 export const pathImageMapping = {
     lobby: ["bg-galaxy.webp", "bg.webp", "bg-galaxy-small.webp", "dot", "hide-toolbar-guide"],
-    game: [
-        "anim/ball-middle",
-        "ball",
-        `chips/${resolvedChipsSystem}`,
-        "countdown-timer",
-    ],
+    game: ["anim/ball-middle", "ball", "countdown-timer"],
     // SicBall removed
 };

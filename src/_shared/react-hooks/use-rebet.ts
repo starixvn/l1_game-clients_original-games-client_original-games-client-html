@@ -19,7 +19,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
     const [hasPlacedPreviousBet, setHasPlacedPreviousBet] = useState(true);
     const { clientSeed } = useClientSeedPF();
     const { authorizeInfo } = usePlayerContext();
-    const { userInfoRed } = useGlobalEventsStore();
+    const userInfoRed = useGlobalEventsStore((state) => state.userInfoRed);
 
     const { sendSocketEvent, roundState, endBet } = useGameStore(
         useShallow((state) => ({
