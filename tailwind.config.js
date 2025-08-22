@@ -11,7 +11,6 @@ module.exports = {
                 "primary-border": "var(--border-color)",
                 "secondary-bg": "var(--secondary-background-color)",
                 "secondary-text": "var(--secondary-text-color)",
-                "popup-bg": "var(--popup-background)",
                 "popup-text": "var(--popup-color)",
                 "container-bg": "var(--container-color-bg)",
                 "container-border": "var(--container-border-color)",
@@ -28,10 +27,10 @@ module.exports = {
             },
             backgroundImage: {
                 "popup-gradient": "var(--popup-background)",
-              },
-              boxShadow: {
+            },
+            boxShadow: {
                 "popup-bet-form": "var(--popup-bet-form-shadow)",
-              },
+            },
         },
     },
     plugins: [],

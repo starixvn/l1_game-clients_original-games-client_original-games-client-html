@@ -11,21 +11,19 @@ import { buildVersion, Themes } from "../_shared/constants";
 import { tolgee } from "../_shared/tolgee";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "../components/page-components/google-analytics";
-import { ThemeContextProvider } from "../_shared/react-contexts/theme-context";
+
 import ThemeToggle from "../components/page-components/theme-toggle";
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
 
     return (
         <ThemeProvider defaultTheme={Themes.dark} attribute="class">
-            <ThemeContextProvider>
-                <ThemeToggle />
-                <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
-                    <AppTittle />
-                    <Component {...pageProps} />
-                    <GoogleAnalytic />
-                </TolgeeProvider>
-            </ThemeContextProvider>
+            <ThemeToggle />
+            <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
+                <AppTittle />
+                <Component {...pageProps} />
+                <GoogleAnalytic />
+            </TolgeeProvider>
         </ThemeProvider>
     );
 };

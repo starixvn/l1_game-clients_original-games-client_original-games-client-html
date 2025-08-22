@@ -5,13 +5,12 @@ import { buildVersion } from "../../../_shared/constants";
 import { buildGameGuideUrl } from "../../../_shared/helpers";
 import { usePlayerContext } from "../../../_shared/react-contexts";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { useCommonTranslate } from "../../../_shared/react-hooks";
+import { useCommonTranslate, useAppTheme } from "../../../_shared/react-hooks";
 import { tolgee } from "../../../_shared/tolgee";
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
 import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 import { themeGuide } from "./constants";
-import { useThemeContext } from "../../../_shared/react-contexts/theme-context";
 
 const GameGuideModal: FC = () => {
     const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);
@@ -33,7 +32,7 @@ const GameGuideModal: FC = () => {
 
 const GameGuide: FC = () => {
     const { userStakeLevel, gameConfigs } = useGameStateContext();
-    const { currentTheme } = useThemeContext();
+    const { currentTheme } = useAppTheme();
     const language = tolgee.getLanguage() ?? "en";
     const wrapperRef = useRef<HTMLIFrameElement>();
     const wrapperIframeRef = useRef<HTMLIFrameElement>();
@@ -41,7 +40,7 @@ const GameGuide: FC = () => {
     const { fractionalOddsFormat } = usePlayerContext();
     const minMaxBetParams = `&minBet=${userStakeLevel?.minBet}&maxBet=${userStakeLevel?.maxBet}`;
     const guideUrl = buildGameGuideUrl();
-    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}`;
+    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&theme=${currentTheme}`;
 
     const hideSpinner = () => {
         setIsLoading(false);
@@ -58,7 +57,8 @@ const GameGuide: FC = () => {
                     style={{ display: isLoading ? "none" : "block" }}
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
                     key={uuidv4()}
-                    className="h-full w-full border-none"
+                    className="h-full w-full border-none bg-transparent"
+                    allowTransparency={true}
                     src={srcPath}
                     referrerPolicy="strict-origin-when-cross-origin"
                     onLoad={() =>
