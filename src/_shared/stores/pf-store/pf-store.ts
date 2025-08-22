@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { PFSettingsSlice, createPFSettingsSlice } from "./pf-settings-slice";
 import { PFVerificationSlice, createPFVerificationSlice } from "./pf-verification-slice";
 import { PFBetsSlice, createPFBetsSlice } from "./pf-bets-slice";
+import { localStorageKeys } from "../../helpers";
 
 export type PFStore = {
     registerEvent: (message: any) => void;
@@ -31,7 +32,7 @@ export const usePFStore = create<PFStore>()(
             };
         },
         {
-            name: "pf-store",
+            name: localStorageKeys.pfStore,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 isShowPFSetting: state.isShowPFSetting,

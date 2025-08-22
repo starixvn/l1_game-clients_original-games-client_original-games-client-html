@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { localStorageKeys, randomNumberSeries, StorageHelper } from "../../../../_shared/helpers";
+import { randomNumberSeries, StorageHelper } from "../../../../_shared/helpers";
 import { GameIds } from "../../../../_shared/constants";
 import { GameMessageHandler, messageEventType } from "../game-message-handler";
 import { Socket } from "socket.io-client";
@@ -16,27 +16,14 @@ export type PFWrapperProps = {
 };
 
 export const PFWrapper = (props: PFWrapperProps) => {
-    const { pfClientSeedSetting, updatePFClientSeedSetting, setOwnBets } = usePFStore(
+    const { pfClientSeedSetting, updatePFClientSeedSetting } = usePFStore(
         useShallow((state: any) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             updatePFClientSeedSetting: state.updatePFClientSeedSetting,
-            setOwnBets: state.setOwnBets,
         }))
     );
+
     const { clientSeed } = useClientSeedPF();
-
-    useEffect(() => {
-        const loadPFSettingId = props.gameMessageHandler.register(messageEventType.SYNC_OWN_BETS_TO_PF, (message) => {
-            setOwnBets(message[messageEventType.SYNC_OWN_BETS_TO_PF]);
-        });
-
-        return () => {
-            props.gameMessageHandler.removeHandler(loadPFSettingId);
-            StorageHelper.set(localStorageKeys.isSleepMode, document.hidden);
-        };
-        // Intentional: register once on mount and cleanup on unmount
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     useEffect(() => {
         const sendSocketMessageWithClientSeed = (message) => {
@@ -71,7 +58,7 @@ export const PFWrapper = (props: PFWrapperProps) => {
 
         const handleSavePFSettingFromTurnIdHandler = (message) => {
             const { drawId } = message[messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER];
-            const oldDrawId = pfClientSeedSetting?.drawId;
+            const oldDrawId = pfClientSeedSetting?.roundId;
             if (oldDrawId !== drawId) {
                 handleSavePFSetting({
                     [messageEventType.SAVE_PF_SETTING]: {

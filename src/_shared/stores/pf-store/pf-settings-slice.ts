@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { PFClientSeedSetting } from "../../../components/game-base/type";
-import { localStorageKeys, StorageHelper } from "../../helpers";
+import { localStorageKeys, randomNumberSeries, StorageHelper } from "../../helpers";
 
 export interface PFSettingsSlice {
     // State
@@ -25,7 +25,7 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
     pfClientSeedSetting: {
         roundId: 0,
         drawId: 0,
-        randomClientSeed: "0000",
+        randomClientSeed: randomNumberSeries(4),
         manualClientSeed: "",
         useManualClientSeed: false,
     },

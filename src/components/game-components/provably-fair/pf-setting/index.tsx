@@ -13,6 +13,7 @@ import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import ToggleSection from "./toggle-section";
+import useGameStore from "../../../../_shared/stores/game-store/game-store";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getRoundPF";
@@ -112,14 +113,14 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const manualSeed = useRef<HTMLInputElement>();
     const { roundId } = useGameStateContext();
 
-    const { pfClientSeedSetting, ownBets, serverSeedHash, updateServerSeedHash } = usePFStore(
+    const { pfClientSeedSetting, serverSeedHash, updateServerSeedHash } = usePFStore(
         useShallow((state) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
-            ownBets: state.ownBets,
             serverSeedHash: state.serverSeedHash,
             updateServerSeedHash: state.updateServerSeedHash,
         }))
     );
+    const ownBets = useGameStore((state) => state.ownBets);
     const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
     const [isFirstFetch, setIsFirstFetch] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);

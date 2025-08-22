@@ -135,6 +135,7 @@ export const localStorageKeys = {
     isSleepMode: buildLocalStorageKey("is-sleep-mode"),
     volumeMusic: buildLocalStorageKey("volume-music"),
     volumeSFX: buildLocalStorageKey("volume-SFX"),
+    pfStore: buildLocalStorageKey("pf-store"),
     // latestGameId is deprecated due to one-game-per-session behavior
     latestGameId: buildLocalStorageKey(LATEST_GAME_ID_KEY),
     // User-specific latestGameId is deprecated and kept only for backward-compat mocks
