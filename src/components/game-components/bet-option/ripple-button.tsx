@@ -4,6 +4,7 @@ import { resolveChipColorHex } from "../../../_shared/constants";
 import { RoundState } from "../../game-base/type";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
+import { useShallow } from "zustand/shallow";
 
 interface RippleButtonProps {
     choice: string;
@@ -13,7 +14,12 @@ interface RippleButtonProps {
 
 export const DEFAULT_CHIP_CURSOR_PATH = "/static/images/chips/cursor";
 const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) => {
-    const selectedChip = useBettingStore((state) => state.selectedChip);
+    const { selectedChip, isAutoRebetActive } = useBettingStore(
+        useShallow((state) => ({
+            selectedChip: state.selectedChip,
+            isAutoRebetActive: state.isAutoRebetActive,
+        }))
+    );
     const roundState = useGameStore((state) => state.roundState);
     const rippleButton = useRef<HTMLButtonElement>();
 
@@ -31,9 +37,9 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
     const onClickBet = useCallback(
         (event, choice: string) => {
             event.preventDefault();
-            gameActionContext.placeBet(choice, selectedChip);
+            !isAutoRebetActive && gameActionContext.placeBet(choice, selectedChip);
         },
-        [gameActionContext, selectedChip]
+        [gameActionContext, selectedChip, isAutoRebetActive]
     );
 
     const findChipSetting = (value) => {
@@ -47,12 +53,12 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
     }, [selectedChip]);
 
     useEffect(() => {
-        if (roundState === RoundState.InRound) {
+        if (roundState === RoundState.InRound && !isAutoRebetActive) {
             setCustomStyle({ cursor: `url(${cursorImage}), auto` });
         } else {
             setCustomStyle({ cursor: "not-allowed" });
         }
-    }, [cursorImage, roundState]);
+    }, [cursorImage, roundState, isAutoRebetActive]);
 
     useEffect(() => {
         let timerId: NodeJS.Timeout | undefined;

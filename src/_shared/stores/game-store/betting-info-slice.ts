@@ -41,5 +41,5 @@ export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set, get,
             }
         });
     },
-    resetBettingInfo: () => set({ totalBets: {}, betPercentage: {}, playerBetCount: {}, ownBets: {} }),
+    resetBettingInfo: () => set({ totalBets: {}, betPercentage: {}, playerBetCount: {}, ownBets: {}, endBet: 0 }),
 });

@@ -91,6 +91,11 @@ img {
     color: var(--text-color);
 }
 
+.input {
+    background: var(--input, #101721);
+    border: 1px solid var(--input-border, #2b3648);
+}
+
 .overlay-mask-no-bg {
     position: absolute;
     top: 0;

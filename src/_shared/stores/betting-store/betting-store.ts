@@ -3,8 +3,10 @@ import { create } from "zustand";
 export type BettingStore = {
     selectedChip: number;
     ownBets: Record<string, number>;
+    isAutoRebetActive: boolean;
     actions: {
         setSelectedChip: (selectedChip: number) => void;
+        setIsAutoRebetActive: (isAutoRebetActive: boolean) => void;
         setOwnBets: (ownBets: Record<string, number>) => void;
     };
     registerEvent: (message: any) => void;
@@ -18,8 +20,10 @@ export const useBettingStore = create<BettingStore>()((set, ...a) => {
     return {
         selectedChip: 1,
         ownBets: {},
+        isAutoRebetActive: false,
         actions: {
             setSelectedChip: (selectedChip: number) => set({ selectedChip }),
+            setIsAutoRebetActive: (isAutoRebetActive: boolean) => set({ isAutoRebetActive }),
             setOwnBets: (ownBets: Record<string, number>) => set({ ownBets }),
         },
         registerEvent: (message) => {
