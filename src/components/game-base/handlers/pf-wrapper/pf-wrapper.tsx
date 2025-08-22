@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { randomNumberSeries, StorageHelper } from "../../../../_shared/helpers";
+import { randomNumberSeries } from "../../../../_shared/helpers";
 import { GameIds } from "../../../../_shared/constants";
 import { GameMessageHandler, messageEventType } from "../game-message-handler";
 import { Socket } from "socket.io-client";
