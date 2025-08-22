@@ -7,6 +7,7 @@ import { RoundState } from "../../../game-base/type";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
 import { MenuIcon } from "../../menu/menu-icon";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
+import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 
 const dropdownItemClassName = "dropdown-item";
 
@@ -16,7 +17,7 @@ export const Menu: React.FC = () => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const specialClassByDevice = !isMobileOnly ? "desktop-style" : "";
     const clickSound = useClickSound();
-    const togglePFSetting = usePopupStore((state) => state.togglePFSetting);
+    const togglePFSetting = usePFStore((state) => state.togglePFSetting);
     const toggleGameGuide = usePopupStore((state) => state.toggleGameGuide);
 
     const handleClickPFSetting = () => {
@@ -37,7 +38,6 @@ export const Menu: React.FC = () => {
         if (roundState === RoundState.Disabled) {
             return;
         }
-        console.log("GUIDE");
         clickSound();
         toggleGameGuide(true);
         setDropdownOpen(false);

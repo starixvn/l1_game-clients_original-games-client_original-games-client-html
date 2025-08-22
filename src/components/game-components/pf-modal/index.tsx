@@ -5,9 +5,9 @@ import Image from "next/image";
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
 import { useShallow } from "zustand/react/shallow";
 import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../_shared/helpers";
+import usePFStore from "../../../_shared/stores/pf-store/pf-store";
 
 const PFModalContainer: FC<{
     id?: string;
@@ -19,7 +19,7 @@ const PFModalContainer: FC<{
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
 
-    const { togglePFSetting, toggleExpandGuideFirst } = usePopupStore(
+    const { togglePFSetting, toggleExpandGuideFirst } = usePFStore(
         useShallow((state) => ({
             togglePFSetting: state.togglePFSetting,
             toggleExpandGuideFirst: state.toggleExpandGuideFirst,

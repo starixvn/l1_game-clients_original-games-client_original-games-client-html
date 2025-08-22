@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 
 import { useGameContext } from "../../../../_shared/react-contexts";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
@@ -12,7 +12,6 @@ import { WrapperPFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
-import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import ToggleSection from "./toggle-section";
 
 const NUMBER_VALUES = "0123456789";
@@ -30,13 +29,15 @@ const handleOnKeyDown = (event: any) => {
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo}) => {
-    const { isShowPFSetting, togglePFSetting, expandGuideFirst, toggleExpandGuideFirst } = usePopupStore(useShallow((state) => ({
-        isShowPFSetting: state.isShowPFSetting,
-        togglePFSetting: state.togglePFSetting,
-        expandGuideFirst: state.expandGuideFirst,
-        toggleExpandGuideFirst: state.toggleExpandGuideFirst,
-    })));
+const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
+    const { isShowPFSetting, togglePFSetting, expandGuideFirst, toggleExpandGuideFirst } = usePFStore(
+        useShallow((state) => ({
+            isShowPFSetting: state.isShowPFSetting,
+            togglePFSetting: state.togglePFSetting,
+            expandGuideFirst: state.expandGuideFirst,
+            toggleExpandGuideFirst: state.toggleExpandGuideFirst,
+        }))
+    );
 
     const { t: translateSNGames } = useSNTranslate();
     const { t: translateCommon } = useCommonTranslate();
@@ -77,25 +78,27 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
-                <div className="ml-4 mr-4 mt-3 h-full">
-                    <div className={`flex flex-col gap-5 h-full`}>
+                <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-5">
+                    <div className="flex flex-col">
                         <ToggleSection
                             title={translateCommon("pf_title_provably_fair_settings")}
                             isExpanded={isSettingsExpanded}
                             onToggle={toggleSettingsSection}
+                            contentClassName="h-auto"
                         >
                             <PFSetting customClientSeedInfo={customClientSeedInfo} />
                         </ToggleSection>
-
-                        <ToggleSection
-                            title={translateCommon("pf_pop-up_title_pf_guide")}
-                            isExpanded={isGuidesExpanded}
-                            onToggle={toggleGuidesSection}
-                            className="flex flex-col h-full"
-                        >
-                            <WrapperPFGuide />
-                        </ToggleSection>
                     </div>
+
+                    <ToggleSection
+                        title={translateCommon("pf_pop-up_title_pf_guide")}
+                        isExpanded={isGuidesExpanded}
+                        onToggle={toggleGuidesSection}
+                        className="flex flex-col "
+                        contentClassName="h-full"
+                    >
+                        <WrapperPFGuide />
+                    </ToggleSection>
                 </div>
             </ModalContainer>
         )
@@ -108,17 +111,19 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const manualRadio = useRef<HTMLInputElement>();
     const manualSeed = useRef<HTMLInputElement>();
     const { roundId } = useGameStateContext();
-    const { pfClientSeedSetting, ownBets } = usePFStore(
+
+    const { pfClientSeedSetting, ownBets, serverSeedHash, updateServerSeedHash } = usePFStore(
         useShallow((state) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             ownBets: state.ownBets,
+            serverSeedHash: state.serverSeedHash,
+            updateServerSeedHash: state.updateServerSeedHash,
         }))
     );
     const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
     const [isFirstFetch, setIsFirstFetch] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isManualMode, setIsManualMode] = useState<boolean>(pfClientSeedSetting?.useManualClientSeed || false);
-    const [serverSeedHash, setServerSeedHash] = useState<string>("");
     const [manualClientSeed, setManualClientSeed] = useState<string>(pfClientSeedSetting?.manualClientSeed || "");
     const [randomClientSeed, setRandomClientSeed] = useState<string>(pfClientSeedSetting?.randomClientSeed || "");
 
@@ -141,11 +146,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     }, [pfClientSeedSetting]);
 
     useEffect(() => {
-        if (roundId <= 0) {
-            setIsFirstFetch(false);
-        } else {
-            setIsFirstFetch(true);
-        }
+        setIsFirstFetch(true);
     }, [roundId]);
 
     useEffect(() => {
@@ -153,6 +154,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
             gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId } },
             });
+            setIsFirstFetch(false);
         }
     }, [isFirstFetch]);
 
@@ -163,11 +165,12 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         }, TIME_OUT);
 
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
-            setServerSeedHash(pfServerSeed.serverSeedHash);
+            updateServerSeedHash(pfServerSeed.serverSeedHash);
         };
 
         const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {
             handleServerSeed(pf);
+            setIsLoading(false);
         });
 
         const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {

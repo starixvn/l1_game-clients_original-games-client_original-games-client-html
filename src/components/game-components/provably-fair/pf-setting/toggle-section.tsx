@@ -7,6 +7,7 @@ interface ToggleSectionProps {
     onToggle: () => void;
     children: ReactNode;
     className?: string;
+    contentClassName?: string;
 }
 
 
@@ -15,15 +16,16 @@ const ToggleSection: FC<ToggleSectionProps> = ({
     isExpanded, 
     onToggle, 
     children, 
-    className = "" 
+    className = "",
+    contentClassName = ""
 }) => {
 
     return (
         <div
-            className={`rounded-[12px] overflow-hidden transition-all duration-300 ease-in-out max-h-full ${className}`}
+            className={`rounded-[12px] bg-[#2A4770]  transition-all duration-300 ease-in-out ${className} ${isExpanded ? "h-full" : ""}`}
         >
             <div
-                className={`flex flex-row bg-[#2A4770] p-2 justify-between items-center rounded-t-[12px] cursor-pointer`}
+                className={`flex flex-row  p-2 justify-between items-center rounded-t-[12px] cursor-pointer`}
                 onClick={onToggle}
             >
                 <h3 className={Styles["section-title"]}>{title}</h3>
@@ -36,7 +38,7 @@ const ToggleSection: FC<ToggleSectionProps> = ({
                 </span>
             </div>
             {isExpanded && (
-                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-[12px] h-full`}>
+                <div className={`${Styles["section-content"]} bg-[#191a1e] rounded-b-[12px] ${contentClassName}`}>
                     {children}
                 </div>
             )}

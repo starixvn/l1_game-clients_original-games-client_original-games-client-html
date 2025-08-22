@@ -6,12 +6,16 @@ export interface PFSettingsSlice {
     // State
     isShowPFSetting: boolean;
     pfClientSeedSetting: PFClientSeedSetting;
+    serverSeedHash: string;
+    expandGuideFirst: boolean;
     gameId: number;
     uid: number;
 
     // Actions
     togglePFSetting: (isShow: boolean) => void;
     updatePFClientSeedSetting: (setting: Partial<PFClientSeedSetting>) => void;
+    updateServerSeedHash: (hash: string) => void;
+    toggleExpandGuideFirst: (isExpand: boolean) => void;
     initializePFSettings: (gameId: number, uid: number) => void;
 }
 
@@ -25,6 +29,8 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
         manualClientSeed: "",
         useManualClientSeed: false,
     },
+    serverSeedHash: "",
+    expandGuideFirst: false,
     gameId: 0,
     uid: 0,
 
@@ -50,6 +56,14 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
         set({ pfClientSeedSetting: newSetting });
     },
 
+    updateServerSeedHash: (hash) => {
+        set({ serverSeedHash: hash });
+    },
+
+    toggleExpandGuideFirst: (isExpand) => {
+        set({ expandGuideFirst: isExpand });
+    },
+
     initializePFSettings: (gameId, uid) => {
         const defaultSettings = {
             gameId,
@@ -61,32 +75,38 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
                 manualClientSeed: "",
                 useManualClientSeed: false,
             },
+            serverSeedHash: "",
         };
 
         try {
-            let isShowPFSetting = StorageHelper.get<string>(`${localStorageKeys.showPFSetting}`) === `${uid}-${gameId}`;
-            !isShowPFSetting && StorageHelper.set(`${localStorageKeys.showPFSetting}`, '');
-
-            const pfClientSeedSettingStorage = StorageHelper.get<PFClientSeedSetting>(`${localStorageKeys.pfSetting}-${uid}-${gameId}`);
             const isSleepMode = StorageHelper.get<boolean>(`${localStorageKeys.isSleepMode}`);
-
-            if (!isSleepMode) {
-                isShowPFSetting = false;
+            let isShowPFSetting = false;
+            
+            if (isSleepMode) {
+                const storedShowPFSetting = StorageHelper.get<string>(`${localStorageKeys.showPFSetting}`);
+                isShowPFSetting = storedShowPFSetting === `${uid}-${gameId}`;
             }
+            
+            // Reset sleep mode flag
             StorageHelper.set(localStorageKeys.isSleepMode, false);
 
-            const finalSetting = {
-                ...pfClientSeedSettingStorage,
-                manualClientSeed:
-                    pfClientSeedSettingStorage?.manualClientSeed?.length <= 0 && pfClientSeedSettingStorage?.useManualClientSeed
-                        ? pfClientSeedSettingStorage?.randomClientSeed
-                        : pfClientSeedSettingStorage?.manualClientSeed,
-            };
+            // Get stored PF client seed settings
+            const storedPFSetting = StorageHelper.get<PFClientSeedSetting>(`${localStorageKeys.pfSetting}-${uid}-${gameId}`);
+            
+            let finalPFSetting = defaultSettings.pfClientSeedSetting;
+            if (storedPFSetting) {
+                finalPFSetting = {
+                    ...storedPFSetting,
+                    manualClientSeed: storedPFSetting.manualClientSeed?.length > 0 
+                        ? storedPFSetting.manualClientSeed 
+                        : storedPFSetting.randomClientSeed,
+                };
+            }
 
             set({
                 ...defaultSettings,
                 isShowPFSetting,
-                pfClientSeedSetting: finalSetting,
+                pfClientSeedSetting: finalPFSetting,
             });
         } catch (error) {
             set(defaultSettings);
