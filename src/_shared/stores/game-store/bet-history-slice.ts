@@ -83,12 +83,9 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
         const currentState = get();
         const existingLogs = currentState.betLogs;
         
-        // Filter out duplicates based on roundId/phien
-        const newLogs = logs.filter(
-            newLog => !existingLogs.some(
-                existing => (existing.roundId || existing.phien) === (newLog.roundId || newLog.phien)
-            )
-        );
+        // Build a set of existing round keys (consider roundId, phien, drawId)
+        const existingKeys = new Set(existingLogs.map((log) => getRoundKey(log)));
+        const newLogs = logs.filter((newLog) => !existingKeys.has(getRoundKey(newLog)));
         
         set({ betLogs: sortByRoundDesc([...existingLogs, ...newLogs]) });
     },
@@ -142,8 +139,8 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
                         // Keep expanded view populated: merge page 1 into the top of existing logs
                         const existingLogs = state.betLogs;
                         const page1Logs = history.betLogs;
-                        const page1Ids = new Set(page1Logs.map((log: any) => (log.roundId || log.phien)));
-                        const merged = [...page1Logs, ...existingLogs.filter((log: any) => !page1Ids.has(log.roundId || log.phien))];
+                        const page1Ids = new Set(page1Logs.map((log: any) => getRoundKey(log)));
+                        const merged = [...page1Logs, ...existingLogs.filter((log: any) => !page1Ids.has(getRoundKey(log)))];
                         state.setBetLogs(sortByRoundDesc(merged));
                     } else {
                         // Collapsed or initial load: replace with page 1

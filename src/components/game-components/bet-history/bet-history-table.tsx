@@ -113,12 +113,10 @@ export const BetHistoryTable = () => {
     const clickSound = useClickSound();
 
     // Store state
-    const {
-        getDisplayedBetLogs,
-        isLoading,
-        isExpanded,
-        totalPages,
-    } = useGameStore();
+    const betLogs = useGameStore((state) => state.betLogs);
+    const isLoading = useGameStore((state) => state.isLoading);
+    const isExpanded = useGameStore((state) => state.isExpanded);
+    const totalPages = useGameStore((state) => state.totalPages);
 
     const toggleBetDetail = usePopupStore(state => state.toggleBetDetail);
     const updateBetDetail = useBetDetailStore(state => state.updateBetDetail);
@@ -180,7 +178,7 @@ export const BetHistoryTable = () => {
     };
 
     // Get displayed data from store
-    const displayedBetLogs = getDisplayedBetLogs();
+    const displayedBetLogs = isExpanded ? betLogs : betLogs.slice(0, 10);
     const tableData = transformBetLogsToDisplayData(displayedBetLogs);
 
     // Handle toggle expand/collapse

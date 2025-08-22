@@ -101,7 +101,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell className="w-1/4 text-center p-3 px-0">{`Net Profit`}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-3 px-0">{formatNumber(netProfit)}</TableCell>
+                <TableCell className={cn("w-1/4 text-center p-3 px-0", netProfit > 0 && "text-winning-highlight font-semibold")}>{formatNumber(netProfit)}</TableCell>
             </TableRow>
         </>
     );
