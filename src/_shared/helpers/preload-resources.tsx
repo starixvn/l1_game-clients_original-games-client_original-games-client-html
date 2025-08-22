@@ -6,7 +6,6 @@ import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
 import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings } from "../app-settings";
-import { systemName } from "../constants";
 import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
 
 const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
