@@ -33,7 +33,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   return (
-    <div className="h-full rounded-xl p-3 pb-1 bg-white dark:bg-primary-bg border border-primary-border">
+    <div className="h-full rounded-xl p-3 pb-1 bg-primary-bg border border-primary-border">
       {renderHeader()}
       {renderTable()}
     </div>

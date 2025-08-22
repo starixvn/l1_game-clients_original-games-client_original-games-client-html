@@ -210,7 +210,7 @@ export const BetHistoryTable = () => {
     }
 
     return (
-        <div className={`${styles['bet-history-container']} rounded-xl bg-white dark:bg-primary-bg p-2`}>
+        <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2`}>
             <div
                 key={isExpanded ? 'expanded' : 'collapsed'}
                 className={`bet-history-scroll-wrapper h-[650px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}

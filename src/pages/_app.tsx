@@ -17,7 +17,7 @@ import ThemeToggle from "../components/page-components/theme-toggle";
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
 
     return (
-        <ThemeProvider defaultTheme={Themes.dark} attribute="class">
+        <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="class">
             <ThemeToggle />
             <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
                 <AppTittle />

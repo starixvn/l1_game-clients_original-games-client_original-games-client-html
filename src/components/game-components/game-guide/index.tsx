@@ -40,7 +40,7 @@ const GameGuide: FC = () => {
     const { fractionalOddsFormat } = usePlayerContext();
     const minMaxBetParams = `&minBet=${userStakeLevel?.minBet}&maxBet=${userStakeLevel?.maxBet}`;
     const guideUrl = buildGameGuideUrl();
-    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&theme=${currentTheme}`;
+    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}`;
 
     const hideSpinner = () => {
         setIsLoading(false);
