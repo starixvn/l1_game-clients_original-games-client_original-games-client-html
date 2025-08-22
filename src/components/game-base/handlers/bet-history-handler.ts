@@ -1,4 +1,5 @@
 import useGameStore from "../../../_shared/stores/game-store/game-store";
+import useBetHistoryStore from "../../../_shared/stores/bet-history-store/bet-history-store";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 import { RoundState } from "../type";
 
@@ -11,11 +12,8 @@ export class BetHistoryHandler {
     private readonly HISTORY_EVENT = "history";
     private handlerIds: string[] = [];
     private lastRoundState: RoundState | null = null;
-    private pendingBetLogDetails: Array<{ time: string; amount: number; choice: string }> = [];
-    private firstBetReceivedTime: string | null = null;
     private latestOdds: Record<string, number> = {};
     private latestFinish: { drawId?: number; result?: any; settlementResult?: any } | null = null;
-    private bettingRoundId: number | null = null;
 
     constructor(private readonly props: BetHistoryHandlerProps) {
         this.registerHistoryEvents();
@@ -38,7 +36,7 @@ export class BetHistoryHandler {
     }
 
     private handleHistoryResponse(data: any) {
-        useGameStore.getState().registerBetHistoryEvent(data);
+        useBetHistoryStore.getState().registerBetHistoryEvent(data);
     }
 
     private handleRoundState({ roundState }: { roundState: RoundState }) {
@@ -55,19 +53,21 @@ export class BetHistoryHandler {
 
     private handleOutgoingBet(message: any) {
         const payload = message?.[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
-        if (!payload || payload.event !== "bet") {
-            return;
-        }
+        if (!payload || payload.event !== "bet") return;
+
+        const gameStore = useGameStore.getState() as any;
+        const betHistoryStore = useBetHistoryStore.getState();
+        const nowIso = new Date().toISOString();
 
         // Capture the round ID from the UI when placing first bet
-        if (this.bettingRoundId === null) {
-            const store = useGameStore.getState() as any;
-            this.bettingRoundId = store.playerResultBoard?.roundId ?? 0;
+        if (!betHistoryStore.pendingBetRoundId) {
+            const roundId = gameStore.playerResultBoard?.roundId ?? 0;
+            betHistoryStore.setPendingBetRoundId(roundId);
         }
 
-        const nowIso = new Date().toISOString();
-        if (!this.firstBetReceivedTime) {
-            this.firstBetReceivedTime = nowIso;
+        // Set first bet time if not already set
+        if (!betHistoryStore.pendingFirstBetTime) {
+            betHistoryStore.setPendingFirstBetTime(nowIso);
         }
 
         const data = payload.data || {};
@@ -76,11 +76,11 @@ export class BetHistoryHandler {
         if (data.betChoices && typeof data.betChoices === "object") {
             Object.entries(data.betChoices).forEach(([choice, amount]) => {
                 if (Number(amount) > 0) {
-                    this.pendingBetLogDetails.push({ time: nowIso, amount: Number(amount), choice });
+                    betHistoryStore.addPendingBet({ time: nowIso, amount: Number(amount), choice });
                 }
             });
         } else if (data.betChoice && data.amount > 0) {
-            this.pendingBetLogDetails.push({ 
+            betHistoryStore.addPendingBet({ 
                 time: nowIso, 
                 amount: data.amount, 
                 choice: String(data.betChoice) 
@@ -102,32 +102,39 @@ export class BetHistoryHandler {
     }
 
     private handleFinish({ finish }: any) {
-        if (!finish) {
-            return;
-        }
+        if (!finish) return;
         
         const { drawId, result, settlementResult } = finish;
         this.latestFinish = { drawId, result, settlementResult };
     }
 
     private flushLocalBetLogIfAny() {
-        if (!this.pendingBetLogDetails.length) {
-            this.resetPendingLocalCache();
+        const gameStore = useGameStore.getState() as any;
+        const betHistoryStore = useBetHistoryStore.getState();
+        
+        if (!betHistoryStore.hasPendingBets()) {
             return;
         }
 
-        const store = useGameStore.getState() as any;
-        const totalAmount = this.pendingBetLogDetails.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
-        
-        // Get odds from store if not available locally
-        if (Object.keys(this.latestOdds).length === 0 && store.gameConfigs?.odds) {
-            this.latestOdds = store.gameConfigs.odds;
+        // Important: Only flush if we have settlement data from the previous round
+        // This ensures we wait for the round to finish before calculating wins
+        if (!this.latestFinish?.settlementResult) {
+            // No settlement data yet, wait for finish event
+            return;
         }
 
-        // Calculate total winnings
+        const pendingDetails = betHistoryStore.pendingBetDetails;
+        const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
+        
+        // Get odds from game store if not available locally
+        if (Object.keys(this.latestOdds).length === 0 && gameStore.gameConfigs?.odds) {
+            this.latestOdds = gameStore.gameConfigs.odds;
+        }
+
+        // Calculate total winnings using settlement data
         let betwin = 0;
         if (this.latestFinish?.settlementResult && this.latestOdds) {
-            for (const detail of this.pendingBetLogDetails) {
+            for (const detail of pendingDetails) {
                 const didWin = !!this.latestFinish.settlementResult[detail.choice];
                 const odds = Number(this.latestOdds?.[detail.choice] ?? 0);
                 if (didWin && odds > 0) {
@@ -136,8 +143,7 @@ export class BetHistoryHandler {
             }
         }
 
-        // Use the betting round ID captured when first bet was placed
-        const actualBettingRoundId = this.bettingRoundId || store.playerResultBoard?.roundId || 0;
+        const actualBettingRoundId = betHistoryStore.pendingBetRoundId || 0;
         
         const betLog = {
             freeBet: false,
@@ -153,7 +159,7 @@ export class BetHistoryHandler {
             red2: 0,
             red3: 0,
             red4: 0,
-            time: this.firstBetReceivedTime,
+            time: betHistoryStore.pendingFirstBetTime,
             totalAmount,
             white3: 0,
             white4: 0,
@@ -161,7 +167,7 @@ export class BetHistoryHandler {
             result: this.latestFinish?.result,
             settlementResult: this.latestFinish?.settlementResult,
             odds: this.latestOdds || {},
-            betLogDetails: this.pendingBetLogDetails.map((d) => ({
+            betLogDetails: pendingDetails.map((d: any) => ({
                 freeBet: false,
                 amount: d.amount,
                 appType: 0,
@@ -171,31 +177,27 @@ export class BetHistoryHandler {
         };
 
         // Check if this round already exists to avoid duplicates
-        const existing = (store.betLogs || []) as any[];
-        const exists = existing.some((log) => 
+        const exists = betHistoryStore.betLogs.some((log: any) => 
             (log?.phien || log?.roundId || log?.drawId) === actualBettingRoundId
         );
 
         if (!exists && actualBettingRoundId) {
-            store.appendBetLogs([betLog]);
+            betHistoryStore.appendBetLogs([betLog]);
         }
 
-        // Reset for next round
+        betHistoryStore.clearPendingBets();
         this.resetPendingLocalCache();
     }
 
     private resetPendingLocalCache() {
-        this.pendingBetLogDetails = [];
-        this.firstBetReceivedTime = null;
         this.latestFinish = null;
-        this.bettingRoundId = null;
     }
 
     requestHistory(page = 1) {
-        const store = useGameStore.getState();
+        const betHistoryStore = useBetHistoryStore.getState();
 
-        store.setIsLoading(true);
-        store.setCurrentPage(page);
+        betHistoryStore.setIsLoading(true);
+        betHistoryStore.setCurrentPage(page);
 
         this.props.gameMessageHandler.broadcastGameEvent({
             [messageEventType.SEND_SOCKET_MESSAGE]: {
@@ -206,17 +208,17 @@ export class BetHistoryHandler {
     }
 
     loadNextPage() {
-        const store = useGameStore.getState();
-        const nextPage = store.currentPage + 1;
+        const betHistoryStore = useBetHistoryStore.getState();
+        const nextPage = betHistoryStore.currentPage + 1;
 
-        if (nextPage <= store.totalPages && store.hasMoreData) {
+        if (nextPage <= betHistoryStore.totalPages && betHistoryStore.hasMoreData) {
             this.requestHistory(nextPage);
         }
     }
 
     loadAllRemainingPages() {
-        const store = useGameStore.getState();
-        const { currentPage, totalPages } = store;
+        const betHistoryStore = useBetHistoryStore.getState();
+        const { currentPage, totalPages } = betHistoryStore;
 
         for (let page = currentPage + 1; page <= totalPages; page++) {
             this.requestHistory(page);
@@ -224,12 +226,12 @@ export class BetHistoryHandler {
     }
 
     toggleExpanded() {
-        const store = useGameStore.getState();
-        const newExpandedState = !store.isExpanded;
+        const betHistoryStore = useBetHistoryStore.getState();
+        const newExpandedState = !betHistoryStore.isExpanded;
 
-        store.setIsExpanded(newExpandedState);
+        betHistoryStore.setIsExpanded(newExpandedState);
 
-        if (newExpandedState && store.hasMoreData && store.currentPage < store.totalPages) {
+        if (newExpandedState && betHistoryStore.hasMoreData && betHistoryStore.currentPage < betHistoryStore.totalPages) {
             this.loadAllRemainingPages();
         }
     }
@@ -242,8 +244,8 @@ export class BetHistoryHandler {
     }
 
     resetHistory() {
-        const store = useGameStore.getState();
-        store.resetBetHistory();
+        const betHistoryStore = useBetHistoryStore.getState();
+        betHistoryStore.resetBetHistory();
     }
 
     cleanup() {
@@ -253,22 +255,22 @@ export class BetHistoryHandler {
 
     // Utility methods
     getDisplayedBetLogs() {
-        return useGameStore.getState().getDisplayedBetLogs();
+        return useBetHistoryStore.getState().getDisplayedBetLogs();
     }
 
     getWinValue(betLog: any) {
-        return useGameStore.getState().getWinValue(betLog);
+        return useBetHistoryStore.getState().getWinValue(betLog);
     }
 
     isLoading() {
-        return useGameStore.getState().isLoading;
+        return useBetHistoryStore.getState().isLoading;
     }
 
     isExpanded() {
-        return useGameStore.getState().isExpanded;
+        return useBetHistoryStore.getState().isExpanded;
     }
 
     hasMultiplePages() {
-        return useGameStore.getState().totalPages > 1;
+        return useBetHistoryStore.getState().totalPages > 1;
     }
 }

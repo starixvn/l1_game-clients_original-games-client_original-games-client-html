@@ -47,6 +47,11 @@ export interface BetHistorySlice {
     isExpanded: boolean;
     hasMoreData: boolean;
     
+    // Pending bet tracking (persists across refreshes)
+    pendingBetDetails: Array<{ time: string; amount: number; choice: string }>;
+    pendingBetRoundId: number | null;
+    pendingFirstBetTime: string | null;
+    
     // Actions
     setBetLogs: (logs: BetLog[]) => void;
     appendBetLogs: (logs: BetLog[]) => void;
@@ -56,6 +61,13 @@ export interface BetHistorySlice {
     setIsExpanded: (expanded: boolean) => void;
     setHasMoreData: (hasMore: boolean) => void;
     resetBetHistory: () => void;
+    
+    // Pending bet actions
+    addPendingBet: (bet: { time: string; amount: number; choice: string }) => void;
+    setPendingBetRoundId: (roundId: number) => void;
+    setPendingFirstBetTime: (time: string) => void;
+    clearPendingBets: () => void;
+    hasPendingBets: () => boolean;
     
     // Computed getters
     getDisplayedBetLogs: () => BetLog[];
@@ -72,6 +84,9 @@ const INITIAL_STATE = {
     isLoading: false,
     isExpanded: false,
     hasMoreData: true,
+    pendingBetDetails: [],
+    pendingBetRoundId: null,
+    pendingFirstBetTime: null,
 };
 
 export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) => ({
@@ -101,6 +116,27 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
     setHasMoreData: (hasMore) => set({ hasMoreData: hasMore }),
     
     resetBetHistory: () => set(INITIAL_STATE),
+    
+    // Pending bet actions
+    addPendingBet: (bet) => {
+        const state = get();
+        set({ pendingBetDetails: [...state.pendingBetDetails, bet] });
+    },
+    
+    setPendingBetRoundId: (roundId) => set({ pendingBetRoundId: roundId }),
+    
+    setPendingFirstBetTime: (time) => set({ pendingFirstBetTime: time }),
+    
+    clearPendingBets: () => set({ 
+        pendingBetDetails: [], 
+        pendingBetRoundId: null, 
+        pendingFirstBetTime: null 
+    }),
+    
+    hasPendingBets: () => {
+        const state = get();
+        return state.pendingBetDetails.length > 0 && state.pendingBetRoundId !== null;
+    },
     
     getDisplayedBetLogs: () => {
         const state = get();

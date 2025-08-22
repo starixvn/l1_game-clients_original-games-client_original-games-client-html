@@ -10,7 +10,7 @@ import {
 import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
 import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
-import useGameStore from '../../../_shared/stores/game-store/game-store';
+import useBetHistoryStore from '../../../_shared/stores/bet-history-store/bet-history-store';
 import usePopupStore from '../../../_shared/stores/popup-store/popup-store';
 import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
 import {
@@ -113,10 +113,10 @@ export const BetHistoryTable = () => {
     const clickSound = useClickSound();
 
     // Store state
-    const betLogs = useGameStore((state) => state.betLogs);
-    const isLoading = useGameStore((state) => state.isLoading);
-    const isExpanded = useGameStore((state) => state.isExpanded);
-    const totalPages = useGameStore((state) => state.totalPages);
+    const betLogs = useBetHistoryStore((state) => state.betLogs);
+    const isLoading = useBetHistoryStore((state) => state.isLoading);
+    const isExpanded = useBetHistoryStore((state) => state.isExpanded);
+    const totalPages = useBetHistoryStore((state) => state.totalPages);
 
     const toggleBetDetail = usePopupStore(state => state.toggleBetDetail);
     const updateBetDetail = useBetDetailStore(state => state.updateBetDetail);

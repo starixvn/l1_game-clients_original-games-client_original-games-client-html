@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameContext } from '../react-contexts';
-import useGameStore from '../stores/game-store/game-store';
+import useBetHistoryStore from '../stores/bet-history-store/bet-history-store';
 import { BetHistoryHandler } from '../../components/game-base/handlers/bet-history-handler';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -23,7 +23,7 @@ export function useBetHistory() {
         hasMoreData,
         getDisplayedBetLogs,
         getWinValue,
-    } = useGameStore(useShallow((state) => ({
+    } = useBetHistoryStore(useShallow((state) => ({
         betLogs: state.betLogs,
         currentPage: state.currentPage,
         totalPages: state.totalPages,
@@ -115,7 +115,7 @@ export function useBetHistoryState() {
         hasMoreData,
         getDisplayedBetLogs,
         getWinValue,
-    } = useGameStore(useShallow((state) => ({
+    } = useBetHistoryStore(useShallow((state) => ({
         betLogs: state.betLogs,
         currentPage: state.currentPage,
         totalPages: state.totalPages,

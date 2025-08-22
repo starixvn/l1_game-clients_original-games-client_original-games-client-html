@@ -1,5 +1,5 @@
 import { numberWithCommas, separateDateTime } from "../../../_shared/helpers";
-import { BetLog } from "../../../_shared/stores/game-store/bet-history-slice";
+import { BetLog } from "../../../_shared/stores/bet-history-store/bet-history-slice";
 
 export interface BetHistoryDisplayData {
     time: string;
