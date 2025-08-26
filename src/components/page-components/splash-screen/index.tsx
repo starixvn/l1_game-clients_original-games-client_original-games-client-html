@@ -249,7 +249,7 @@ const SplashScreen: React.FC = () => {
                 <div className={Styles["center"]}>
                     <div className={Styles["logo"]}>
                         <Image
-                            src={`/static/images/splash-screen/2x/logo.png?v=${buildVersion}`}
+                            src={`/static/images/splash-screen/2x/logo-sabaplay.png?v=${buildVersion}`}
                             width={195}
                             height={162}
                             alt="logo"
