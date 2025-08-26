@@ -199,7 +199,7 @@ export const BetHistoryTable = () => {
     const headerColumns = [
         { key: "time", label: translateCommon("time") },
         { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
-        { key: "total_stake", label: translateCommon("total_stake") },
+        { key: "total_stake", label: translateCommon("bet_amount") },
         { key: "win", label: translateCommon("win") }
     ];
 

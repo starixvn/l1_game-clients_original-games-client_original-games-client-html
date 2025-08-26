@@ -10,7 +10,6 @@ import {
   TableCell 
 } from "../table";
 
-
 interface PlayerData {
   playerName: string;
   betAmount: string;
@@ -45,7 +44,7 @@ const PlayerResultBoardTable = React.forwardRef<
               {translateCommon("player")}
             </TableHead>
             <TableHead className="text-primary-text text-center p-2 font-bold">
-              {translateCommon("total_stake")}
+              {translateCommon("bet_amount")}
             </TableHead>
             <TableHead className="text-primary-text text-center p-2 font-bold rounded-tr-lg rounded-br-lg">
               {translateCommon("win")}
