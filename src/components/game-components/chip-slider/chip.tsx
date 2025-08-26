@@ -26,40 +26,19 @@ export const Chip: React.FC<ChipProps> = ({
     const selectedChip = useBettingStore((state) => state.selectedChip);
 
     const getChipClassName = () => {
-        return `${Styles["chip-container"]} ${!isHideValue && selectedChip === value ? Styles["selected"] : ""} p-1/2 ${className}`;
+        return `${Styles["chip-container"]} ${!isHideValue && selectedChip === value} p-1/2 ${className}`;
     };
 
     const getDefaultChipText = () => {
         return value < 1000 ? value.toString() : `${value / 1000}K`;
     };
-    const convertColorToBgLinearGradient = (hex: string) => {
-        if (!hex || !hex.startsWith("#")) {
-            hex = "#B3B3B3";
-        }
-        hex = hex.replace("#", "");
 
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-
-        const darkR = Math.round(r * 0.6);
-        const darkG = Math.round(g * 0.6);
-        const darkB = Math.round(b * 0.6);
-
-        const brightR = Math.round(r * 1.3);
-        const brightG = Math.round(g * 1.3);
-        const brightB = Math.round(b * 1.3);
-
-        return `linear-gradient(to top, 
-            rgb(${darkR}, ${darkG}, ${darkB}) 0%, 
-            rgb(${r}, ${g}, ${b}) 30%, 
-            rgb(${r}, ${g}, ${b}) 70%, 
-            rgb(${brightR}, ${brightG}, ${brightB}) 100%)`;
-    };
     const renderColorChip = () => {
-        const background = convertColorToBgLinearGradient(color);
-
-        return <div className={`absolute w-full h-full rounded-full`} style={{ background: background }}></div>;
+        let bgColor = color;
+        if (!bgColor || !bgColor.startsWith("#")) {
+            bgColor = "#B3B3B3";
+        }
+        return <div className={`absolute w-full h-full rounded-full`} style={{ backgroundColor: bgColor }}></div>;
     };
 
     return (
@@ -72,8 +51,11 @@ export const Chip: React.FC<ChipProps> = ({
                 style={{ "--chip-size": `${size}px`, "--chip-value-font-size": `${fontSize}px` } as React.CSSProperties}
             >
                 {renderColorChip()}
-                <div className={`${Styles["border"]}`}></div>
-                <div className={Styles["fill"]}></div>
+                <div className={Styles["bottom"]}></div>
+                <div className={Styles["top"]}></div>
+                <div className={Styles["inner"]}></div>
+                <div className={`${Styles["border"]} ${value >= 1000 ? Styles["yellow-border"] : ""}`}></div>
+                {selectedChip === value && <div className={`${Styles["selected"]}`}></div>}
                 {!isHideValue && <span className={Styles["value"]}>{text || getDefaultChipText()}</span>}
             </div>
         </>

@@ -28,6 +28,7 @@
 .sub-bet-red2,
 .sub-bet-red3 {
     position: relative;
+    border-radius: 20px;
     &::after {
         content: "";
         position: absolute;
@@ -38,23 +39,12 @@
         background: linear-gradient(180deg, transparent 10%, #ffffff 50%, transparent 90%);
     }
 }
-
-.sub-bet-white4 {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    .btn-ripple {
-        border-top-left-radius: 20px;
-        border-bottom-left-radius: 20px;
-    }
+.btn-ripple {
+    border-radius: 20px;
 }
 
-.sub-bet-red4 {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    .btn-ripple {
-        border-top-right-radius: 20px;
-        border-bottom-right-radius: 20px;
-    }
+.sub-bet-white4 {
+    border-radius: 20px;
 }
 
 .odd,

@@ -67,13 +67,13 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                 </div>
                 <div>
                     <label className="block text-white text-sm font-medium mb-2">Custom number of rounds</label>
-                    <div className="flex gap-3">
+                    <div className="flex justify-between">
                         <input
                             type="number"
                             step={1}
                             value={rounds}
                             onChange={handleCustomInputChange}
-                            className="flex-1 input text-white px-4 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
+                            className="input text-white w-full mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
                             placeholder="Enter rounds"
                         />
 

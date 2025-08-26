@@ -6,6 +6,7 @@ const OwnBet = dynamic(() => import("../../../components/game-components/bet-opt
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"));
 const HighlightBetOption = dynamic(() => import("./highlight-bet-option"));
+const PrevHighlightBetOption = dynamic(() => import("./highight-prev-round-bet-option"));
 const ChipEffect = dynamic(() => import("../../../components/game-components/bet-option/chip-effect"));
 
 const subChoiceImages = {
@@ -55,6 +56,7 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
             </div>
             <ChipEffect choice={choice} />
             <HighlightBetOption choice={choice} />
+            <PrevHighlightBetOption choice={choice} />
         </div>
     );
 };

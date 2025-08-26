@@ -18,18 +18,13 @@
     }
 
     .odd,
-    .even {
+    .even,
+    .white4,
+    .red4,
+    .white3,
+    .red3,
+    .red2 {
         border-radius: var(--border-radius);
-    }
-
-    .white4 {
-        border-top-left-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
-    }
-
-    .red4 {
-        border-top-right-radius: var(--border-radius);
-        border-bottom-right-radius: var(--border-radius);
     }
 }
 .bg {

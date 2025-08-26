@@ -13,7 +13,13 @@ const ChipControlPanel: React.FC = () => {
             userStakeLevel: state.userStakeLevel,
         }))
     );
-    const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.actions.setSelectedChip]));
+    const { selectedChip, setSelectedChip, isAutoRebetActive } = useBettingStore(
+        useShallow((state) => ({
+            selectedChip: state.selectedChip,
+            setSelectedChip: state.actions.setSelectedChip,
+            isAutoRebetActive: state.isAutoRebetActive,
+        }))
+    );
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
     const { chipSettings } = useSettingContext();
@@ -63,18 +69,18 @@ const ChipControlPanel: React.FC = () => {
     };
 
     return (
-        <div className="flex relative justify-center items-center gap-2">
-            <IconPrevious isEnabled={currentIndex > 0} onClick={onClickPrev} />
+        <div className={`flex relative justify-center items-center gap-2 ${isAutoRebetActive ? "opacity-50" : ""}`}>
+            <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
             <Chip
                 key={+selectedChip}
                 value={+selectedChip}
                 text={findChipSetting(selectedChip)?.text}
                 color={findChipSetting(selectedChip)?.color}
-                onClickChip={() => setIsShowSlider(!isShowSlider)}
+                onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
                 size={60}
                 fontSize={20}
             />
-            <IconNext isEnabled={currentIndex < chipValues.length - 1} onClick={onClickNext} />
+            <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />
 
             {isShowSlider && (
                 <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
