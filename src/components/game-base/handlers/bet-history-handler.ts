@@ -40,9 +40,7 @@ export class BetHistoryHandler {
     }
 
     private handleRoundState({ roundState }: { roundState: RoundState }) {
-        const isEnteringNewRoundBetting = 
-            roundState === RoundState.InRound && 
-            this.lastRoundState !== RoundState.InRound;
+        const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound;
 
         if (isEnteringNewRoundBetting) {
             this.flushLocalBetLogIfAny();
@@ -53,7 +51,9 @@ export class BetHistoryHandler {
 
     private handleOutgoingBet(message: any) {
         const payload = message?.[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
-        if (!payload || payload.event !== "bet") return;
+        if (!payload || payload.event !== "bet") {
+            return;
+        }
 
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
@@ -71,7 +71,7 @@ export class BetHistoryHandler {
         }
 
         const data = payload.data || {};
-        
+
         // Handle multiple bet formats
         if (data.betChoices && typeof data.betChoices === "object") {
             Object.entries(data.betChoices).forEach(([choice, amount]) => {
@@ -80,10 +80,10 @@ export class BetHistoryHandler {
                 }
             });
         } else if (data.betChoice && data.amount > 0) {
-            betHistoryStore.addPendingBet({ 
-                time: nowIso, 
-                amount: data.amount, 
-                choice: String(data.betChoice) 
+            betHistoryStore.addPendingBet({
+                time: nowIso,
+                amount: data.amount,
+                choice: String(data.betChoice),
             });
         }
     }
@@ -102,8 +102,10 @@ export class BetHistoryHandler {
     }
 
     private handleFinish({ finish }: any) {
-        if (!finish) return;
-        
+        if (!finish) {
+            return;
+        }
+
         const { drawId, result, settlementResult } = finish;
         this.latestFinish = { drawId, result, settlementResult };
     }
@@ -111,7 +113,7 @@ export class BetHistoryHandler {
     private flushLocalBetLogIfAny() {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
-        
+
         if (!betHistoryStore.hasPendingBets()) {
             return;
         }
@@ -125,7 +127,7 @@ export class BetHistoryHandler {
 
         const pendingDetails = betHistoryStore.pendingBetDetails;
         const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
-        
+
         // Get odds from game store if not available locally
         if (Object.keys(this.latestOdds).length === 0 && gameStore.gameConfigs?.odds) {
             this.latestOdds = gameStore.gameConfigs.odds;
@@ -144,7 +146,7 @@ export class BetHistoryHandler {
         }
 
         const actualBettingRoundId = betHistoryStore.pendingBetRoundId || 0;
-        
+
         const betLog = {
             freeBet: false,
             roundId: actualBettingRoundId,
@@ -177,9 +179,7 @@ export class BetHistoryHandler {
         };
 
         // Check if this round already exists to avoid duplicates
-        const exists = betHistoryStore.betLogs.some((log: any) => 
-            (log?.phien || log?.roundId || log?.drawId) === actualBettingRoundId
-        );
+        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId || log?.drawId) === actualBettingRoundId);
 
         if (!exists && actualBettingRoundId) {
             betHistoryStore.appendBetLogs([betLog]);
@@ -202,8 +202,8 @@ export class BetHistoryHandler {
         this.props.gameMessageHandler.broadcastGameEvent({
             [messageEventType.SEND_SOCKET_MESSAGE]: {
                 event: this.GET_HISTORY,
-                data: { page }
-            }
+                data: { page },
+            },
         });
     }
 
@@ -237,7 +237,7 @@ export class BetHistoryHandler {
     }
 
     scrollToTop() {
-        const scrollWrapper = document.querySelector('.bet-history-scroll-wrapper');
+        const scrollWrapper = document.querySelector(".bet-history-scroll-wrapper");
         if (scrollWrapper) {
             scrollWrapper.scrollTop = 0;
         }
