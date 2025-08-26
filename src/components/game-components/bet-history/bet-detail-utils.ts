@@ -1,12 +1,12 @@
 import { numberWithCommas } from "../../../_shared/helpers";
 
 export const calculateWinAmount = (amount: number, odds: number, win: number): number => {
-  return win > 0 ? amount * odds : win - amount;
+  return win > 0 ? amount * odds : win;
 };
 
 export const displayWinAmount = (amount: number, odds: number, win: number): string => {
   const winAmount = calculateWinAmount(amount, odds, win);
-  return winAmount > 0 ? `+${numberWithCommas(winAmount, 2)}` : numberWithCommas(winAmount, 2);
+  return winAmount > 0 ? `${numberWithCommas(winAmount, 2)}` : numberWithCommas(winAmount, 2);
 }
 
 export const formatNumber = (value: number): string => numberWithCommas(value, 2);

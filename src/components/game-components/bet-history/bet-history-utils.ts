@@ -17,13 +17,12 @@ export function transformBetLogToDisplayData(betLog: BetLog): BetHistoryDisplayD
     const roundId = getRoundId(betLog);
     const betAmount = betLog.totalAmount || 0;
     const winAmount = betLog.betwin || 0;
-    const totalWin = calculateNetWin(betAmount, winAmount);
 
     return {
         time: formatDateTime(date, time),
         round: String(roundId),
         betAmount: numberWithCommas(betAmount),
-        win: formatWinValue(totalWin),
+        win: formatWinValue(winAmount),
         originalBetLog: betLog,
     };
 }
@@ -53,8 +52,7 @@ export function formatDateTime(date: string, time: string): string {
  * Formats win value with proper sign and formatting
  */
 export function formatWinValue(totalWin: number): string {
-    const prefix = totalWin >= 0 ? '+' : '';
-    return prefix + numberWithCommas(totalWin);
+    return numberWithCommas(totalWin);
 }
 
 /**
