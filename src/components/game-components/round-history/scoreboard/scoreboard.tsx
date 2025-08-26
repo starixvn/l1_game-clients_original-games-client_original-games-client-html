@@ -27,6 +27,8 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
 
     constructor(props) {
         super(props);
+        // Ensure a minimum visible width from the start (avoid UI breaking on first rounds)
+        this.actualColumns = props?.column || 17;
     }
 
     static defaultProps: Partial<ScoreboardProps<unknown>> = {
@@ -174,7 +176,8 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
                                     };
 
                                     if (round && round["data"]?.length > 0) {
-                                        this.actualColumns = parentColumn;
+                                        const minColumns = this.props.column || 0;
+                                        this.actualColumns = Math.max(this.actualColumns || 0, parentColumn, minColumns);
                                     }
 
                                     return this.renderElement(round, {

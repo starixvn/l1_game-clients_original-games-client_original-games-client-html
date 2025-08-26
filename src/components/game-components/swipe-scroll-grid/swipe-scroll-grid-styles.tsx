@@ -19,6 +19,7 @@ export const ScrollContainer = styled.div<{ $dragging?: boolean }>`
   flex-basis: 100%; // Ensure full basis
   flex-grow: 1; // Grow to fill available space
   flex-shrink: 0; // Don't shrink
+  padding-bottom: 3px;
 
   &::-webkit-scrollbar {
     width: 5px;

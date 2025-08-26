@@ -13,13 +13,11 @@ export type ScoreboardComponentProps = {
 };
 
 class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
-    private scoreboardColumns = 22;
+    private scoreboardColumns = 20;
 
     updateScoreboardColumns = (actualColumns: number) => {
         this.scoreboardColumns = actualColumns;
     };
-
-
 
     render(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
