@@ -5,10 +5,6 @@ import AppSettings from "./type";
 const defaultAppSettings: AppSettings = getConfig().publicRuntimeConfig;
 let mergedAppSettings: AppSettings;
 
-// Import configurations
-const gnConfigs = require("../../../configs.json");
-const gameSettings = require("../../../game-settings.json");
-
 export const getAppSettings = () => {
     if (mergedAppSettings) {
         return mergedAppSettings;
