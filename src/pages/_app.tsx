@@ -16,7 +16,7 @@ import { GoogleAnalytic } from "../components/page-components/google-analytics";
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
 
     return (
-        <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="class">
+        <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="data-theme">
             {/* <ThemeToggle /> */}
             <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
                 <AppTittle />
