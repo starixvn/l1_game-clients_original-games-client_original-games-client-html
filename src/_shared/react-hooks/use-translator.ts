@@ -30,3 +30,7 @@ export const useCommonTranslate = () => {
 export const useSNTranslate = () => {
     return useTranslate(ResourceTypes.SABA_NUMBER);
 };
+
+export const useSedieMultiplayerTranslate = () => {
+    return useTranslate(ResourceTypes.SEDIE_MULTIPLAYER);
+}
