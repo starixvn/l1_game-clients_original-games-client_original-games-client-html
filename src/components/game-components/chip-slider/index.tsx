@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useState } from "react";
-import { ChipSlider } from "./slider";
+import { ChipSlider } from "./chip-slider";
 import { Chip } from "./chip";
 import { useSettingContext } from "../../../_shared/react-contexts";
 import { useGameStore } from "../../../_shared/stores/game-store/game-store";
@@ -40,6 +40,7 @@ const ChipControlPanel: React.FC = () => {
         if (selectedChip !== chipValue) {
             setSelectedChip(chipValue);
         }
+        setIsShowSlider(false);
     };
 
     const findChipSetting = (value) => {
@@ -76,7 +77,9 @@ const ChipControlPanel: React.FC = () => {
             <IconNext isEnabled={currentIndex < chipValues.length - 1} onClick={onClickNext} />
 
             {isShowSlider && (
-                <ChipSlider chipSettings={chipSettings} chipValues={chipValues} selectedChip={selectedChip} onSelectChip={onSelectChip} />
+                <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
+                    <ChipSlider chipSettings={chipSettings} chipValues={chipValues} onSelectChip={onSelectChip} />
+                </div>
             )}
         </div>
     );

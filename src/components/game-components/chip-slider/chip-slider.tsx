@@ -4,53 +4,33 @@ import { useSelectChipSound } from "../../../_shared/react-hooks";
 import { Chip } from "./chip";
 import Styles from "./chip-slider.module.scss";
 import { ChipInfo } from "sc-user-service-client/dist/setting";
+import { useShallow } from "zustand/shallow";
+import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
 const SlidingTimeInMillisecond = 100;
 const slidesToShow = 5;
-let isSwipe = true;
 
 export const ChipSlider: React.FC<{
     chipValues: number[];
-    selectedChip: number;
     onSelectChip: (chipValue: number) => void;
     chipSettings: ChipInfo[];
-}> = ({ chipValues, selectedChip, onSelectChip, chipSettings }) => {
-    const [enabledPrevBtn, setEnabledPrevBtn] = useState(false);
+}> = ({ chipValues, onSelectChip, chipSettings }) => {
+    const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.actions.setSelectedChip]));
+    const [enabledPrevBtn, setEnabledPrevBtn] = useState(true);
     const [enabledNextBtn, setEnabledNextBtn] = useState(true);
-
     const [isSliding, setIsSliding] = useState(false);
     let sliderRef = null;
     const playClickChip = useSelectChipSound();
 
-    const onClickChip = (chipValue: number) => {
-        const chipIndex = chipValues.indexOf(chipValue);
-        const currentSlide = sliderRef.innerSlider.state.currentSlide;
-
-        if (chipIndex + 1 - slidesToShow >= currentSlide && slidesToShow < chipValues.length) {
-            disableSelectChipWhenSliding();
-            isSwipe = false;
-            sliderRef.slickGoTo(chipIndex + 2 - slidesToShow);
-        }
-
-        if (chipIndex - 1 <= currentSlide && slidesToShow < chipValues.length) {
-            disableSelectChipWhenSliding();
-            isSwipe = false;
-            sliderRef.slickGoTo(chipIndex - 1);
-        }
-
-        handleSelectChip(chipValue);
-    };
-
     const handleSelectChip = (chipValue: number) => {
+        if (isSliding) {
+            return;
+        }
+        if (selectedChip !== chipValue) {
+            setSelectedChip(chipValue);
+        }
         onSelectChip(chipValue);
         playClickChip();
-    };
-
-    const updateArrowsByChipValue = (chipValue: number) => {
-        const chipIndex = chipValues.indexOf(chipValue);
-
-        chipIndex <= 0 ? setEnabledPrevBtn(false) : setEnabledPrevBtn(true);
-        chipIndex === chipValues.length - 1 ? setEnabledNextBtn(false) : setEnabledNextBtn(true);
     };
 
     const disableSelectChipWhenSliding = () => {
@@ -64,39 +44,41 @@ export const ChipSlider: React.FC<{
 
     const onClickNext = () => {
         if (enabledNextBtn && !isSliding) {
-            const chipIndex = chipValues.indexOf(selectedChip);
-            const newSelectedChip = chipValues[chipIndex + 1];
-
-            isSwipe = false;
-            slidesToShow < chipValues.length && sliderRef.slickGoTo(chipIndex + 3 - slidesToShow);
-            handleSelectChip(newSelectedChip);
+            sliderRef.slickNext();
             disableSelectChipWhenSliding();
         }
     };
 
     const onClickPrev = () => {
         if (enabledPrevBtn && !isSliding) {
-            const chipIndex = chipValues.indexOf(selectedChip);
-            const newSelectedChip = chipValues[chipIndex - 1];
-
-            isSwipe = false;
-            slidesToShow < chipValues.length && sliderRef.slickGoTo(chipIndex - 2);
-            handleSelectChip(newSelectedChip);
+            sliderRef.slickPrev();
             disableSelectChipWhenSliding();
         }
     };
 
+    const checkStatusButtons = (index: number) => {
+        setEnabledPrevBtn(index > 0 && chipValues.length > slidesToShow);
+        setEnabledNextBtn(index < chipValues.length - slidesToShow);
+    };
+
     useEffect(() => {
         if (sliderRef) {
-            isSwipe = false;
-            const chipIndex = chipValues.indexOf(selectedChip);
+            let chipIndex = chipValues.indexOf(selectedChip);
+            if (chipValues.length > slidesToShow && chipIndex >= chipValues.length - slidesToShow) {
+                chipIndex = chipValues.length - slidesToShow;
+            }
             sliderRef.slickGoTo(chipIndex);
-            updateArrowsByChipValue(selectedChip);
+            checkStatusButtons(chipIndex);
         }
     }, [selectedChip]);
 
     const findChipSetting = (value) => {
         return chipSettings?.find((c) => c.value === value);
+    };
+
+    const onAfterChange = (current) => {
+        checkStatusButtons(current);
+        setIsSliding(false);
     };
 
     const SliderSetting = {
@@ -105,20 +87,18 @@ export const ChipSlider: React.FC<{
         adaptiveHeight: true,
         swipeToSlide: true,
         slidesToShow: slidesToShow > chipValues.length ? chipValues.length : slidesToShow,
+        slidesToScroll: 1,
         arrows: false,
         onSwipe: () => {
-            isSwipe = true;
+            setIsSliding(true);
         },
-        beforeChange: (oldIndex: number, newIndex: number) => {
-            if (isSwipe) {
-                oldIndex > newIndex && handleSelectChip(chipValues[newIndex + slidesToShow - 1]);
-                oldIndex < newIndex && handleSelectChip(chipValues[newIndex]);
-            }
+        afterChange: (current) => {
+            onAfterChange(current);
         },
     };
 
     return (
-        <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
+        <>
             <div
                 id="icon-chip-slider-pre"
                 className={`${Styles["icon-prev"]} ${!enabledPrevBtn && Styles["disabled"]}`}
@@ -147,7 +127,7 @@ export const ChipSlider: React.FC<{
                                 value={+value}
                                 text={findChipSetting(value)?.text}
                                 color={findChipSetting(value)?.color}
-                                onClickChip={onClickChip}
+                                onClickChip={handleSelectChip}
                                 className="mx-2"
                             />
                         ))}
@@ -168,6 +148,6 @@ export const ChipSlider: React.FC<{
                     </g>
                 </svg>
             </div>
-        </div>
+        </>
     );
 };
