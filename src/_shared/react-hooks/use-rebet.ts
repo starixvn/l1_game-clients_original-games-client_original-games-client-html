@@ -83,12 +83,6 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
     }, [endBet, ownBets, clearRetryInterval, disable]);
 
     useEffect(() => {
-        if (endBet < 0) {
-            setIsEnabled(false);
-        }
-    }, [endBet]);
-
-    useEffect(() => {
         if (roundState !== RoundState.InRound) {
             clearRetryInterval();
         }
