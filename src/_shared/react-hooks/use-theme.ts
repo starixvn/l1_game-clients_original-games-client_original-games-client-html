@@ -10,6 +10,8 @@ export const useAppTheme = () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme && (savedTheme === Themes.light || savedTheme === Themes.dark)) {
                 setTheme(savedTheme);
+            } else {
+                document.documentElement.style.colorScheme = Themes.dark;
             }
         }
     }, [setTheme]);
@@ -17,6 +19,8 @@ export const useAppTheme = () => {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             document.documentElement.setAttribute('data-theme', currentTheme);
+            document.documentElement.style.colorScheme = currentTheme;
+            
             localStorage.setItem('theme', currentTheme);
         }
     }, [currentTheme]);
