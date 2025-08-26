@@ -12,13 +12,12 @@ import { tolgee } from "../_shared/tolgee";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "../components/page-components/google-analytics";
 
-import ThemeToggle from "../components/page-components/theme-toggle";
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
 
     return (
         <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="class">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
                 <AppTittle />
                 <Component {...pageProps} />
