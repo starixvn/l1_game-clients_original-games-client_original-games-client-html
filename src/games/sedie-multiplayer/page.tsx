@@ -66,12 +66,14 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
 
     renderRoundHistory(): JSX.Element {
         const { showStatistic } = this.state;
-        return showStatistic ? (
+        return (
             <div className="my-3">
-                <SedieMultiplayerStatisticPopup inline onClose={this.closeStatistic} />
+                {showStatistic ? (
+                    <SedieMultiplayerStatisticPopup inline onClose={this.closeStatistic} />
+                ) : (
+                    <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
+                )}
             </div>
-        ) : (
-            <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
         );
     }
 

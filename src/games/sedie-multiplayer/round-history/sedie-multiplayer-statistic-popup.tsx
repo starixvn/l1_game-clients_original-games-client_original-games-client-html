@@ -6,6 +6,7 @@ import Image from "next/image";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/react/shallow";
 import Styles from "./statistic-popup.module.scss";
+import AnimatedContent from "../../../components/game-components/animations/animated-content";
 
 interface SedieMultiplayerStatisticPopupProps {
     onClose?: () => void;
@@ -43,36 +44,46 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
 
     return (
         <div id="statistic-popup" data-testid="statistic-popup" className={containerClassName}>
-            <div className={`${Styles["panel"]} ${panelAnimClass}`}>
-                <div className={Styles["grid"]}>
-                    <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
-                    <PercentageStatistic
-                        roundHistory={roundHistory as any}
-                        mainChoices={sideChoices as any}
-                        iconRenderer={(choice) => {
-                            const map = {
-                                red2: "/static/images/sedie-multiplayer/statistic-icon-red2.webp",
-                                red3: "/static/images/sedie-multiplayer/statistic-icon-red3.webp",
-                                red4: "/static/images/sedie-multiplayer/statistic-icon-red4.webp",
-                                white3: "/static/images/sedie-multiplayer/statistic-icon-white3.webp",
-                                white4: "/static/images/sedie-multiplayer/statistic-icon-white4.webp",
-                            } as Record<string, string>;
-                            const src = map[choice];
-                            return src ? <Image src={src} alt={choice} width={16} height={16} /> : null;
-                        }}
-                    />
-                    <PercentageStatistic
-                        roundHistory={roundHistory as any}
-                        mainChoices={mainChoices as any}
-                        renderAsBar={true}
-                        barColors={SeDieStatisticColors}
-                        barHeightPx={12}
-                        roundedRadiusPx={12}
-                        barLabelFontSizePx={14}
-                    />
-                    <ScoreboardSeDie roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
+            <AnimatedContent distance={24} duration={0.8} ease="power3.out" initialOpacity={0} animateOpacity>
+                <div
+                    className={`${Styles["panel"]} ${panelAnimClass}`}
+                    style={{
+                        ["--anim-distance" as any]: "-16px",
+                        ["--anim-duration" as any]: "480ms",
+                        ["--anim-close-duration" as any]: "500ms",
+                        ["--anim-ease" as any]: "cubic-bezier(0.22, 1, 0.36, 1)",
+                    }}
+                >
+                    <div className={Styles["grid"]}>
+                        <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
+                        <PercentageStatistic
+                            roundHistory={roundHistory as any}
+                            mainChoices={sideChoices as any}
+                            iconRenderer={(choice) => {
+                                const map = {
+                                    red2: "/static/images/sedie-multiplayer/statistic-icon-red2.webp",
+                                    red3: "/static/images/sedie-multiplayer/statistic-icon-red3.webp",
+                                    red4: "/static/images/sedie-multiplayer/statistic-icon-red4.webp",
+                                    white3: "/static/images/sedie-multiplayer/statistic-icon-white3.webp",
+                                    white4: "/static/images/sedie-multiplayer/statistic-icon-white4.webp",
+                                } as Record<string, string>;
+                                const src = map[choice];
+                                return src ? <Image src={src} alt={choice} width={16} height={16} /> : null;
+                            }}
+                        />
+                        <PercentageStatistic
+                            roundHistory={roundHistory as any}
+                            mainChoices={mainChoices as any}
+                            renderAsBar={true}
+                            barColors={SeDieStatisticColors}
+                            barHeightPx={12}
+                            roundedRadiusPx={12}
+                            barLabelFontSizePx={14}
+                        />
+                        <ScoreboardSeDie roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
+                    </div>
                 </div>
-            </div>
+            </AnimatedContent>
         </div>
     );
 };

@@ -24,6 +24,10 @@ COPY configs/missing-configuration.js ./public/c.js
 COPY src ./src
 COPY scripts ./scripts
 
+# Allow configuring Next.js basePath/assetPrefix at build time
+ARG NEXT_PUBLIC_BASE_PATH
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
+
 # Build standalone version with all assets included
 # This builds the app and copies static assets to standalone directory
 RUN yarn build && yarn copy-standalone-assets
@@ -32,6 +36,10 @@ FROM base AS runner
 
 WORKDIR /app
 ENV NODE_ENV production
+
+# Optionally expose base path at runtime for any custom logic
+ARG NEXT_PUBLIC_BASE_PATH
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs

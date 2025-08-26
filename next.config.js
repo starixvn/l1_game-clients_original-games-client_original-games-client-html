@@ -6,7 +6,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
     enabled: process.env.ANALYZE === "true",
 });
 
-const basePath = "";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const enableDevGameIdRewrites = !basePath;
 
 // Create a configuration that can be dynamically updated
 const createAppSettings = (config) => ({
@@ -46,18 +47,68 @@ const nextConfig = withSentryConfig({
         return config;
     },
     basePath,
+    assetPrefix: basePath || undefined,
     env: {
         buildVersion,
         REACT_APP_TOLGEE_API_URL: "https://tolgee.sabagame.com/",
         REACT_APP_TOLGEE_API_KEY: "tgpak_gvpw45brha2xg3btoztxeytunvudc5dbn5twqodtonztc",
     },
     async rewrites() {
-        return [
+        const base = [
             {
                 source: "/health",
                 destination: "/api/health",
             },
         ];
+
+        // If a basePath is set, support a dynamic :gameId segment after it
+        if (basePath) {
+            const baseNoSlash = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+            const prodGameIdRewrites = [
+                {
+                    source: `${baseNoSlash}/:gameId/_next/:path*`,
+                    destination: `${baseNoSlash}/_next/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId/static/:path*`,
+                    destination: `${baseNoSlash}/static/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId/:path*`,
+                    destination: `${baseNoSlash}/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId`,
+                    destination: `${baseNoSlash}`,
+                },
+            ];
+            return [...base, ...prodGameIdRewrites];
+        }
+
+        // Allow accessing the app under /:gameId/... on localhost without setting basePath
+        const devGameIdRewrites = [
+            // Assets under _next
+            {
+                source: "/:gameId/_next/:path*",
+                destination: "/_next/:path*",
+            },
+            // Legacy static (if any)
+            {
+                source: "/:gameId/static/:path*",
+                destination: "/static/:path*",
+            },
+            // App routes and public assets
+            {
+                source: "/:gameId/:path*",
+                destination: "/:path*",
+            },
+            {
+                source: "/:gameId",
+                destination: "/",
+            },
+        ];
+
+        return [...base, ...devGameIdRewrites];
     },
     async headers() {
         return [
