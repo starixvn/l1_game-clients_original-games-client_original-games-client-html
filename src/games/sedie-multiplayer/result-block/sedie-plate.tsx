@@ -48,17 +48,13 @@ const SediePlate: React.FC = () => {
             setShowButtons(false);
             setAnimationState("idle");
         };
-        let timeoutShake;
         let timeoutDisplayResult;
         let timeout;
         switch (roundState) {
             case RoundState.LockingBet:
-                timeoutShake && clearTimeout(timeoutShake);
-                timeoutShake = setTimeout(() => {
-                    setIsShow(true);
-                    setShowButtons(false);
-                    setAnimationState("shake");
-                }, DELAY);
+                setIsShow(true);
+                setShowButtons(false);
+                setAnimationState("shake");
                 break;
             case RoundState.DisplayResult:
                 timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
@@ -70,7 +66,7 @@ const SediePlate: React.FC = () => {
                     timeout = setTimeout(() => {
                         resetState();
                     }, durations.showResult * 1000);
-                }, 500);
+                }, DELAY);
                 break;
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
@@ -82,7 +78,6 @@ const SediePlate: React.FC = () => {
         return () => {
             timeout && clearTimeout(timeout);
             timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
-            timeoutShake && clearTimeout(timeoutShake);
         };
     }, [roundState, durations]);
 

@@ -13,19 +13,21 @@ export const CountdownTimer = ({ className = "" }) => {
     const [progress, setProgress] = useState(0);
     const { gameMessageHandler, durations } = useGameContext();
     const [clientRemainingTime, setClientRemainingTime] = useState(0);
+    const [isAnimate, setIsAnimate] = useState(false);
 
     useEffect(() => {
         const { placingBets, lockingBet } = durations;
         const handlerId = gameMessageHandler?.register(messageEventType.CLIENT_REMAINING_TIME, ({ clientRemainingTime }) => {
             setClientRemainingTime(clientRemainingTime - lockingBet);
-            const progress = ((clientRemainingTime - lockingBet) / (placingBets - lockingBet)) * 100;
-            progress >= 0 && progress <= 100 && setProgress(progress);
+            const percentage = ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
+            setIsAnimate(progress !== 0);
+            percentage >= 0 && percentage <= 100 && setProgress(percentage);
         });
 
         return () => {
             gameMessageHandler?.removeHandler(handlerId);
         };
-    }, [gameMessageHandler, durations, roundState]);
+    }, [gameMessageHandler, durations, roundState, progress]);
 
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
@@ -35,7 +37,7 @@ export const CountdownTimer = ({ className = "" }) => {
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
-                        className={`h-full ${styles["progress-bar"]} ${progress < 100 ? styles["transition"] : ""}`}
+                        className={`h-full ${styles["progress-bar"]} ${isAnimate ? styles["transition"] : ""}`}
                         style={{ width: `${progress}%` }}
                     />
                 </div>
