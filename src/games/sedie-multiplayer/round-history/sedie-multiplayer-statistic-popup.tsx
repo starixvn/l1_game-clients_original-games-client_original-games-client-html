@@ -9,9 +9,10 @@ import Styles from "./statistic-popup.module.scss";
 
 interface SedieMultiplayerStatisticPopupProps {
     onClose?: () => void;
+    inline?: boolean;
 }
 
-export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticPopupProps> = ({ onClose }) => {
+export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticPopupProps> = ({ onClose, inline }) => {
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
@@ -19,7 +20,11 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
     const sideChoices = [SeDieChoices.white4, SeDieChoices.white3, SeDieChoices.red2, SeDieChoices.red3, SeDieChoices.red4];
 
     return (
-        <div id="statistic-popup" data-testid="statistic-popup" className={Styles["statistic-container"]}>
+        <div
+            id="statistic-popup"
+            data-testid="statistic-popup"
+            className={inline ? "" : Styles["statistic-container"]}
+        >
             <div className={Styles["panel"]}>
                 <div className={Styles["grid"]}>
                     <button

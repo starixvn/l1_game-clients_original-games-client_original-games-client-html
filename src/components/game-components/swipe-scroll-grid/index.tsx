@@ -17,8 +17,6 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState(false);
 
-
-
     const bind = useDrag(
         ({ movement: [mx], memo = containerRef.current?.scrollLeft || 0, first, last, direction: [dx] }) => {
             if (first) {

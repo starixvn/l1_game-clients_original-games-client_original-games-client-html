@@ -19,14 +19,17 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import SediePlate from "./result-block/sedie-plate";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
+import { SedieMultiplayerStatisticPopup } from "./round-history/sedie-multiplayer-statistic-popup";
+import Anim from "./switch-anim.module.scss";
 import SeDieMultiplayerBetDetailModal from "./history";
 
 export type SeDieState = {
     statisticGroup?: number;
+    showStatistic?: boolean;
 } & GameBaseState;
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
-    state: SeDieState = { statisticGroup: 0, isLoaded: false };
+    state: SeDieState = { statisticGroup: 0, isLoaded: false, showStatistic: false };
     private readonly roundIdHandler?: RoundIdHandler;
 
     constructor(props: GameBaseProps) {
@@ -57,8 +60,21 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         super.componentDidMount();
     }
 
+    private readonly openStatistic = () => this.setState({ showStatistic: true });
+
+    private readonly closeStatistic = () => this.setState({ showStatistic: false });
+
     renderRoundHistory(): JSX.Element {
-        return <SedieMultiplayerRoundHistory />;
+        const { showStatistic } = this.state;
+        return showStatistic ? (
+            <div className={`my-3 ${Anim["fadeInUp"]}`}>
+                <SedieMultiplayerStatisticPopup inline onClose={this.closeStatistic} />
+            </div>
+        ) : (
+            <div className={`${Anim["fadeInUp"]}`}>
+                <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
+            </div>
+        );
     }
 
     renderResultBlock() {

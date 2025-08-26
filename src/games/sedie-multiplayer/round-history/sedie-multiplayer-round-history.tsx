@@ -3,9 +3,9 @@ import { IconStatistic } from "../../../components/game-components/statistic/ico
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/react/shallow";
-import { SedieMultiplayerStatisticPopup } from "./sedie-multiplayer-statistic-popup";
+// Removed inline popup usage; statistics are now rendered at page level
 
-export const SedieMultiplayerRoundHistory = () => {
+export const SedieMultiplayerRoundHistory = ({ onOpenStatistic }: { onOpenStatistic?: () => void }) => {
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
@@ -17,9 +17,8 @@ export const SedieMultiplayerRoundHistory = () => {
                 isShowBlink={isShowBlink}
                 renderItem={SedieMultiplayerRoundHistoryItem}
                 numberOfItems={14}
-                sideButton={<IconStatistic />}
+                sideButton={<IconStatistic onClick={onOpenStatistic} />}
                 sizeNextItem="medium"
-                statisticPopupContent={<SedieMultiplayerStatisticPopup />}
             />
         </div>
     );
