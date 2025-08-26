@@ -14,7 +14,6 @@ export enum GameEventActionType {
     DISCONNECT_ERROR = "DISCONNECT_ERROR",
     USER_STAKE_LEVEL = "USER_STAKE_LEVEL",
     ODDS = "ODDS",
-    DRAW_ID = "DRAW_ID",
     ROUND_REMAINING_TIME = "ROUND_REMAINING_TIME",
     SET_NEW_GAME_STATE = "SET_NEW_GAME_STATE",
     SHOW_WINNING_ANIMATION = "SHOW_WINNING_ANIMATION",
@@ -56,7 +55,6 @@ export interface GameEventPayload {
         maxBet: number;
     };
     odds?: any;
-    drawId?: number;
     kickedOut?: any;
     disconnectReason?: string;
     showWinningAnimation?: boolean;

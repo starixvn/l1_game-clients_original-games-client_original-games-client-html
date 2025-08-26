@@ -19,7 +19,6 @@ export interface BetLog {
     white3: number;
     white4: number;
     phien: number;
-    drawId?: number;
     result: any;
     settlementResult: any;
     betLogDetails: Array<{
@@ -46,12 +45,12 @@ export interface BetHistorySlice {
     isLoading: boolean;
     isExpanded: boolean;
     hasMoreData: boolean;
-    
+
     // Pending bet tracking (persists across refreshes)
     pendingBetDetails: Array<{ time: string; amount: number; choice: string }>;
     pendingBetRoundId: number | null;
     pendingFirstBetTime: string | null;
-    
+
     // Actions
     setBetLogs: (logs: BetLog[]) => void;
     appendBetLogs: (logs: BetLog[]) => void;
@@ -61,18 +60,18 @@ export interface BetHistorySlice {
     setIsExpanded: (expanded: boolean) => void;
     setHasMoreData: (hasMore: boolean) => void;
     resetBetHistory: () => void;
-    
+
     // Pending bet actions
     addPendingBet: (bet: { time: string; amount: number; choice: string }) => void;
     setPendingBetRoundId: (roundId: number) => void;
     setPendingFirstBetTime: (time: string) => void;
     clearPendingBets: () => void;
     hasPendingBets: () => boolean;
-    
+
     // Computed getters
     getDisplayedBetLogs: () => BetLog[];
     getWinValue: (betLog: BetLog) => number;
-    
+
     // Event handlers
     registerBetHistoryEvent: (message: any) => void;
 }
@@ -91,57 +90,57 @@ const INITIAL_STATE = {
 
 export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) => ({
     ...INITIAL_STATE,
-    
+
     setBetLogs: (logs) => set({ betLogs: sortByRoundDesc(logs) }),
-    
+
     appendBetLogs: (logs) => {
         const currentState = get();
         const existingLogs = currentState.betLogs;
-        
-        // Build a set of existing round keys (consider roundId, phien, drawId)
+
+        // Build a set of existing round keys (consider roundId, phien)
         const existingKeys = new Set(existingLogs.map((log) => getRoundKey(log)));
         const newLogs = logs.filter((newLog) => !existingKeys.has(getRoundKey(newLog)));
-        
+
         set({ betLogs: sortByRoundDesc([...existingLogs, ...newLogs]) });
     },
-    
+
     setCurrentPage: (page) => set({ currentPage: page }),
-    
+
     setTotalPages: (totalPages) => set({ totalPages }),
-    
+
     setIsLoading: (loading) => set({ isLoading: loading }),
-    
+
     setIsExpanded: (expanded) => set({ isExpanded: expanded }),
-    
+
     setHasMoreData: (hasMore) => set({ hasMoreData: hasMore }),
-    
+
     resetBetHistory: () => set(INITIAL_STATE),
-    
+
     // Pending bet actions
     addPendingBet: (bet) => {
         const state = get();
         set({ pendingBetDetails: [...state.pendingBetDetails, bet] });
     },
-    
+
     setPendingBetRoundId: (roundId) => set({ pendingBetRoundId: roundId }),
-    
+
     setPendingFirstBetTime: (time) => set({ pendingFirstBetTime: time }),
-    
-    clearPendingBets: () => set({ 
-        pendingBetDetails: [], 
-        pendingBetRoundId: null, 
-        pendingFirstBetTime: null 
+
+    clearPendingBets: () => set({
+        pendingBetDetails: [],
+        pendingBetRoundId: null,
+        pendingFirstBetTime: null
     }),
-    
+
     hasPendingBets: () => {
         const state = get();
         return state.pendingBetDetails.length > 0 && state.pendingBetRoundId !== null;
     },
-    
+
     getDisplayedBetLogs: () => {
         const state = get();
         const { betLogs, isExpanded } = state;
-        
+
         if (isExpanded) {
             return betLogs;
         } else {
@@ -149,25 +148,25 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             return betLogs.slice(0, 10);
         }
     },
-    
+
     getWinValue: (betLog: BetLog) => {
         // Win value = betWin - total bet amount (net profit/loss)
         return betLog.betwin - betLog.totalAmount;
     },
-    
+
     registerBetHistoryEvent: (message) => {
         if (message.history) {
             const { history } = message;
             const state = get();
-            
+
             // Calculate total pages
             const total = history.total || 0;
             const pageSize = history.pageSize || 10;
             const calculatedTotalPages = Math.ceil(total / pageSize);
-            
+
             state.setTotalPages(calculatedTotalPages);
             state.setIsLoading(false);
-            
+
             if (history.betLogs?.length > 0) {
                 if (history.page === 1) {
                     // First page
@@ -204,8 +203,8 @@ function toNumeric(value: any): number {
 }
 
 function getRoundKey(log: any): number {
-    // Prefer roundId, then phien, then drawId as numeric
-    return toNumeric(log?.roundId ?? log?.phien ?? log?.drawId);
+    // Prefer roundId, then phien as numeric
+    return toNumeric(log?.roundId ?? log?.phien);
 }
 
 function sortByRoundDesc(logs: any[]): any[] {

@@ -24,7 +24,7 @@ export interface GameStateContextModel {
     isUMInFirstLoad: boolean;
     betWin: number;
     kickedOut: any;
-    drawId: number;
+    // drawId removed; use roundId everywhere
     userStakeLevel: IUserStakeLevel;
     isShowBetHistory: boolean;
     isShowBetDetail: boolean;
@@ -71,7 +71,6 @@ export const initialGameStateContextModel = () => {
         isUMInFirstLoad: false,
         betWin: 0,
         kickedOut: null,
-        drawId: 0,
         userStakeLevel: {
             minBet: 1,
             maxBet: 200_000,

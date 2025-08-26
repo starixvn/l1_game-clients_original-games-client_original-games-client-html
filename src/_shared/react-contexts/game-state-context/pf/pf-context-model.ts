@@ -23,7 +23,7 @@ export const initialPFContextModel = ({ gameId, uid }) => {
         gameId,
         uid,
         pfClientSeedSetting: {
-            drawId: 0,
+            roundId: 0,
             randomClientSeed: "0000",
             manualClientSeed: "",
             useManualClientSeed: false,

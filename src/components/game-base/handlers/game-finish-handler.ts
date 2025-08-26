@@ -27,7 +27,7 @@ export class GameFinishHandler {
     private _roundHistory: Round<object, object>[];
     private _finish: Round<object, object>;
 
-    constructor(private readonly props: GameFinishHandlerProps) {}
+    constructor(private readonly props: GameFinishHandlerProps) { }
 
     set betWin(betWin: number) {
         this._betWin = betWin;
@@ -67,12 +67,12 @@ export class GameFinishHandler {
             return;
         }
 
-        const { result, settlementResult, roundId, drawId } = finish;
+        const { result, settlementResult, roundId } = finish;
         const { dispatch, gameMessageHandler, gameRoundDataHandler, gameStateContextModel } = this.props;
         const durations = this.props.durations;
         this._finish = finish;
 
-        const roundData = gameRoundDataHandler.buildGameRoundDataAfterReceiveFinishEvent(gameStateContextModel().roundData, result, drawId);
+        const roundData = gameRoundDataHandler.buildGameRoundDataAfterReceiveFinishEvent(gameStateContextModel().roundData, result, roundId);
 
         dispatch({
             type: GameEventActionType.FINISH,
@@ -81,7 +81,6 @@ export class GameFinishHandler {
                 result: result,
                 settlementResult: settlementResult,
                 roundId: roundId,
-                drawId: drawId,
                 roundData,
             },
         });

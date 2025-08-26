@@ -18,7 +18,6 @@ export const messageEventType = {
     TOTAL_BETS: "totalBets",
     ODDS: "odds",
     UNDER_MAINTENANCE: "um",
-    DRAW_ID: "drawId",
     ROUND_STATE: "roundState",
     SOCKET_CONNECT_ERROR: "connect_error",
     SOCKET_CONNECTED: "connect",

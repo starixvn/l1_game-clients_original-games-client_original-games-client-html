@@ -18,7 +18,7 @@ export function transformBetLogToDisplayData(betLog: BetLog): BetHistoryDisplayD
     const betAmount = betLog.totalAmount || 0;
     const winAmount = betLog.betwin || 0;
     const totalWin = calculateNetWin(betAmount, winAmount);
-    
+
     return {
         time: formatDateTime(date, time),
         round: String(roundId),
@@ -32,7 +32,7 @@ export function transformBetLogToDisplayData(betLog: BetLog): BetHistoryDisplayD
  * Gets the round ID from various possible fields
  */
 export function getRoundId(betLog: BetLog): number {
-    return betLog?.drawId ?? betLog?.roundId ?? betLog?.phien ?? 0;
+    return betLog?.roundId ?? betLog?.phien ?? 0;
 }
 
 /**
@@ -62,7 +62,7 @@ export function formatWinValue(totalWin: number): string {
  */
 export function getWinValueColorClass(winValue: string): string {
     const numericValue = parseFloat(winValue.replace(/[+,]/g, ''));
-    
+
     if (numericValue > 0) {
         return "text-winning-highlight font-semibold";
     }
@@ -80,7 +80,7 @@ export function transformBetLogsToDisplayData(betLogs: BetLog[]): BetHistoryDisp
  * Checks if a bet log entry is valid and should be displayed
  */
 export function isValidBetLogEntry(betLog: BetLog): boolean {
-    return !!(betLog && (betLog.roundId || betLog.phien || betLog.drawId) && betLog.time);
+    return !!(betLog && (betLog.roundId || betLog.phien) && betLog.time);
 }
 
 /**
@@ -116,7 +116,7 @@ export function debounce<T extends (...args: any[]) => any>(
     delay: number
 ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout;
-    
+
     return (...args: Parameters<T>) => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => func(...args), delay);

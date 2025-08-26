@@ -1,18 +1,17 @@
 import { GameRoundDataHandler } from "../../components/game-base/handlers/game-round-data-handler";
 
 export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
-    buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, drawId: number) {
+    buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number) {
         const resultRoundData = {
             dice: [result.dice],
             winningChoice: result.winningChoice,
             timestamp: new Date().toISOString(),
-            roundId: drawId,
+            roundId: roundId,
         };
 
         return {
             dice: previousRoundData?.dice?.concat(resultRoundData.dice) || resultRoundData.dice,
             winningChoice: result.winningChoice,
-            drawId,
             timestamp: resultRoundData.timestamp,
             roundId: resultRoundData.roundId,
             gameType: 'sedie-multiplayer',
@@ -69,7 +68,7 @@ export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
         if (!roundData) {
             return false;
         }
-        const requiredFields = ['dice', 'winningChoice', 'drawId'];
+        const requiredFields = ['dice', 'winningChoice', 'roundId'];
         for (const field of requiredFields) {
             if (!roundData[field]) {
                 return false;

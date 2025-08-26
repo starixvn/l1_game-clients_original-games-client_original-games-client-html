@@ -40,7 +40,6 @@ function handleConnectAction(state: GameStateContextModel): GameStateContextMode
         ...state,
         isConnect: true,
         roundData: {},
-        drawId: 0,
     };
 }
 
@@ -107,14 +106,13 @@ function handleRoundHistoryAction(state: GameStateContextModel, payload: any): G
 }
 
 function handleFinishAction(state: GameStateContextModel, payload: any): GameStateContextModel {
-    const { playResultAnimation, result, settlementResult, roundId, drawId, roundData } = payload;
+    const { playResultAnimation, result, settlementResult, roundId, roundData } = payload;
     return {
         ...state,
         playResultAnimation,
         result,
         settlementResult,
         roundId,
-        drawId,
         roundData,
         showResultInfo: false,
     };
@@ -153,12 +151,7 @@ function handleOddsAction(state: GameStateContextModel, odds: any): GameStateCon
     };
 }
 
-function handleDrawIdAction(state: GameStateContextModel, drawId: number): GameStateContextModel {
-    return {
-        ...state,
-        drawId,
-    };
-}
+// drawId removed from state; legacy action intentionally not supported anymore
 
 function handleSetNewGameStateAction(state: GameStateContextModel, newGameState: any): GameStateContextModel {
     return {
@@ -304,9 +297,6 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
 
         case GameEventActionType.ODDS:
             return handleOddsAction(state, payload.odds);
-
-        case GameEventActionType.DRAW_ID:
-            return handleDrawIdAction(state, payload.drawId);
 
         case GameEventActionType.SET_NEW_GAME_STATE:
             return handleSetNewGameStateAction(state, payload.newGameState);

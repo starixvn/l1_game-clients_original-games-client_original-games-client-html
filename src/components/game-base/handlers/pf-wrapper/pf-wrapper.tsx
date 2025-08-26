@@ -57,13 +57,14 @@ export const PFWrapper = (props: PFWrapperProps) => {
         };
 
         const handleSavePFSettingFromTurnIdHandler = (message) => {
-            const { drawId } = message[messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER];
-            const oldDrawId = pfClientSeedSetting?.roundId;
-            if (oldDrawId !== drawId) {
+            const { roundId } = message[messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER];
+            const newRoundId = roundId;
+            const oldRoundId = pfClientSeedSetting?.roundId;
+            if (oldRoundId !== newRoundId) {
                 handleSavePFSetting({
                     [messageEventType.SAVE_PF_SETTING]: {
                         pfClientSeedSetting: {
-                            drawId: drawId,
+                            roundId: newRoundId,
                             randomClientSeed: randomNumberSeries(4),
                         },
                     },

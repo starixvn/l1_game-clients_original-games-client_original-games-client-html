@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '../table';
 import { useGameContext } from '../../../_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
@@ -26,8 +26,8 @@ import { cn } from '../../../_shared/utils/merge-tailwind-util';
 
 // Function to create row data for bet history table
 const createBetHistoryRowData = (
-    row: BetHistoryDisplayData, 
-    rowIndex: number, 
+    row: BetHistoryDisplayData,
+    rowIndex: number,
     handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
     getWinValueColorClass: (win: string) => string
 ) => {
@@ -74,7 +74,7 @@ const renderBetHistoryRows = (
         return (
             <TableRow key={rowIndex} className="text-center border-b border-primary-border">
                 {rowData.map((cell, cellIndex) => (
-                    <TableCell 
+                    <TableCell
                         key={cellIndex}
                         className={cn(cell.className, "text-secondary-text text-center h-[60px] py-[7px] sm:p-4")}
                         onClick={cell.onClick}
@@ -147,16 +147,15 @@ export const BetHistoryTable = () => {
         if (columnKey === 'round') {
             clickSound();
             // Update bet detail data in store
-            const drawId = row.originalBetLog?.drawId ?? row.originalBetLog?.roundId ?? row.originalBetLog?.phien;
+            const roundId = row.originalBetLog?.roundId;
             const betDetailData = {
                 drawInfo: {
-                    drawId: drawId,
+                    roundId: roundId,
                     result: row.originalBetLog?.result,
                     odds: row.originalBetLog?.odds,
                     settlementResult: row.originalBetLog?.settlementResult,
                     pfResult: {
-                        drawId: drawId,
-                        roundId: row.originalBetLog?.roundId ?? row.originalBetLog?.phien,
+                        roundId: row.originalBetLog?.roundId,
                         serverSeedHash: "",
                         serverSeed: "",
                         clientSeeds: [],
@@ -171,7 +170,7 @@ export const BetHistoryTable = () => {
                 },
                 betLogDetails: row.originalBetLog?.betLogDetails || [],
             };
-            
+
             updateBetDetail(betDetailData);
             toggleBetDetail(true);
         }

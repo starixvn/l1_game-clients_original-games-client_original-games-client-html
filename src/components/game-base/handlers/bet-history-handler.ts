@@ -13,7 +13,7 @@ export class BetHistoryHandler {
     private handlerIds: string[] = [];
     private lastRoundState: RoundState | null = null;
     private latestOdds: Record<string, number> = {};
-    private latestFinish: { drawId?: number; result?: any; settlementResult?: any } | null = null;
+    private latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
 
     constructor(private readonly props: BetHistoryHandlerProps) {
         this.registerHistoryEvents();
@@ -106,8 +106,8 @@ export class BetHistoryHandler {
             return;
         }
 
-        const { drawId, result, settlementResult } = finish;
-        this.latestFinish = { drawId, result, settlementResult };
+        const { roundId, result, settlementResult } = finish;
+        this.latestFinish = { roundId, result, settlementResult };
     }
 
     private flushLocalBetLogIfAny() {
@@ -165,7 +165,6 @@ export class BetHistoryHandler {
             totalAmount,
             white3: 0,
             white4: 0,
-            drawId: this.latestFinish?.drawId,
             result: this.latestFinish?.result,
             settlementResult: this.latestFinish?.settlementResult,
             odds: this.latestOdds || {},
@@ -179,7 +178,7 @@ export class BetHistoryHandler {
         };
 
         // Check if this round already exists to avoid duplicates
-        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId || log?.drawId) === actualBettingRoundId);
+        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
 
         if (!exists && actualBettingRoundId) {
             betHistoryStore.appendBetLogs([betLog]);

@@ -14,7 +14,7 @@ const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
         <>
             <div className="flex justify-between gap-6 pt-2 px-3 text-sm ">
                 <div className="flex items-center gap-1.5 font-[400] text-[var(--text-content-color)]">
-                    {t(`${ResourceTypes.COMMON}.round`).capitalizeFirstLetter()}: {pfResult?.drawId}
+                    {t(`${ResourceTypes.COMMON}.round`).capitalizeFirstLetter()}: {pfResult?.roundId}
                 </div>
                 <div className="flex items-center gap-1.5">
                     {winningSubOption ? (

@@ -165,7 +165,6 @@ export interface Round<R, S> {
     roundId: number;
     result: R;
     settlementResult: S;
-    drawId?: number;
     pf?: object;
 }
 
@@ -187,14 +186,13 @@ export type ClientSeed = {
 };
 
 export type ClientSeedInfo = {
-    drawId: number;
+    roundId: number;
     clientSeed: string;
     clientSeeds: ClientSeed[];
     mergeClientSeed: string;
 };
 
 export interface PFClientSeedSetting {
-    drawId: number;
     roundId: number;
     randomClientSeed: string;
     manualClientSeed: string;
@@ -207,7 +205,6 @@ export interface PFSeverSeed {
 }
 
 export interface PFResult {
-    drawId: number;
     roundId: number;
     serverSeedHash: string;
     serverSeed: string;
@@ -221,7 +218,7 @@ export interface PFResult {
 }
 
 export interface DrawInfo {
-    drawId: number;
+    roundId: number;
     result: any;
     settlementResult: any;
     odds: any;

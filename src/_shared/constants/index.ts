@@ -15,7 +15,7 @@ export interface RoundResultData {
 }
 
 export interface Round {
-    drawId: number;
+    roundId: number;
     result: any;
     settlementResult: any;
 }

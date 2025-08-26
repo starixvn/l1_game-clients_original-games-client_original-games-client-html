@@ -24,7 +24,6 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
     isShowPFSetting: false,
     pfClientSeedSetting: {
         roundId: 0,
-        drawId: 0,
         randomClientSeed: randomNumberSeries(4),
         manualClientSeed: "",
         useManualClientSeed: false,
@@ -51,7 +50,7 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
             ...pfClientSeedSetting,
             ...setting,
         };
-        
+
         StorageHelper.set(`${localStorageKeys.pfSetting}-${uid}-${gameId}`, newSetting);
         set({ pfClientSeedSetting: newSetting });
     },
@@ -70,7 +69,6 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
             uid,
             pfClientSeedSetting: {
                 roundId: 0,
-                drawId: 0,
                 randomClientSeed: "0000",
                 manualClientSeed: "",
                 useManualClientSeed: false,
@@ -81,24 +79,24 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
         try {
             const isSleepMode = StorageHelper.get<boolean>(`${localStorageKeys.isSleepMode}`);
             let isShowPFSetting = false;
-            
+
             if (isSleepMode) {
                 const storedShowPFSetting = StorageHelper.get<string>(`${localStorageKeys.showPFSetting}`);
                 isShowPFSetting = storedShowPFSetting === `${uid}-${gameId}`;
             }
-            
+
             // Reset sleep mode flag
             StorageHelper.set(localStorageKeys.isSleepMode, false);
 
             // Get stored PF client seed settings
             const storedPFSetting = StorageHelper.get<PFClientSeedSetting>(`${localStorageKeys.pfSetting}-${uid}-${gameId}`);
-            
+
             let finalPFSetting = defaultSettings.pfClientSeedSetting;
             if (storedPFSetting) {
                 finalPFSetting = {
                     ...storedPFSetting,
-                    manualClientSeed: storedPFSetting.manualClientSeed?.length > 0 
-                        ? storedPFSetting.manualClientSeed 
+                    manualClientSeed: storedPFSetting.manualClientSeed?.length > 0
+                        ? storedPFSetting.manualClientSeed
                         : storedPFSetting.randomClientSeed,
                 };
             }

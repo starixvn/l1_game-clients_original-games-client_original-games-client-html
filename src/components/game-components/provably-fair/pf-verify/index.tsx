@@ -126,7 +126,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
     useEffect(() => {
         if (isFirstFetch) {
             gameMessageHandler.broadcastGameEvent({
-                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: betDetailData.drawInfo.drawId } },
+                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: betDetailData.drawInfo.roundId } },
             });
             setIsFirstFetch(false);
         }
@@ -134,7 +134,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
 
     useEffect(() => {
         const handlePFResult = (pfResult: any) => {
-            if (pfResult.roundId === betDetailData.drawInfo.drawId) {
+            if (pfResult.roundId === betDetailData.drawInfo.roundId) {
                 updateBetDetail({
                     ...betDetailData,
                     drawInfo: {
