@@ -5,6 +5,7 @@ import { useSettingContext, SettingEventActionType, useSettingDispatch } from ".
 import { useClickSound } from "../../../_shared/react-hooks";
 import { StorageHelper, localStorageKeys } from "../../../_shared/helpers";
 import { RoundState } from "../../game-base/type";
+import Styles from "./menu-icon.module.scss";
 
 type Props = { name: string; onClick?: () => void };
 
@@ -38,10 +39,23 @@ export const MenuIcon = ({ name, onClick }: Props) => {
     const iconSrc = useMemo(() => `/static/images/icons/${name}.svg`, [name]);
     const computedEnabledSound = ((settingContext?.enabledSound ?? (StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true)) && ((settingContext?.volumeSFX ?? 50) > 0));
 
+    const iconClassName = useMemo(() => {
+        if (name === "sound") {
+            return computedEnabledSound ? Styles.soundOn : Styles.soundOff;
+        }
+        if (name === "guide") {
+            return Styles.guide;
+        }
+        if (name === "pf-guide") {
+            return Styles.pfGuide;
+        }
+        return "";
+    }, [name, computedEnabledSound]);
+
     return (
         <div className="cursor-pointer p-1" onClick={handleClick}>
-            {name === "sound" ? (
-                <span className={`icon-sound-${computedEnabledSound ? "on" : "off"}`}></span>
+            {iconClassName ? (
+                <span className={`${Styles.menuIcon} ${iconClassName}`}></span>
             ) : (
                 <Image src={iconSrc} height={24} width={24} alt="Logo" />
             )}
