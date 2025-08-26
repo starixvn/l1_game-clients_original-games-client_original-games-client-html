@@ -20,7 +20,7 @@ import SediePlate from "./result-block/sedie-plate";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import { SedieMultiplayerStatisticPopup } from "./round-history/sedie-multiplayer-statistic-popup";
-import Anim from "./switch-anim.module.scss";
+// Animations handled inside statistic popup component
 import SeDieMultiplayerBetDetailModal from "./history";
 
 export type SeDieState = {
@@ -67,13 +67,11 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
     renderRoundHistory(): JSX.Element {
         const { showStatistic } = this.state;
         return showStatistic ? (
-            <div className={`my-3 ${Anim["fadeInUp"]}`}>
+            <div className="my-3">
                 <SedieMultiplayerStatisticPopup inline onClose={this.closeStatistic} />
             </div>
         ) : (
-            <div className={`${Anim["fadeInUp"]}`}>
-                <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
-            </div>
+            <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
         );
     }
 

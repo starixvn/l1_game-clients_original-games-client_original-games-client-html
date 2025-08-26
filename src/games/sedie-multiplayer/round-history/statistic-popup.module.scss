@@ -5,8 +5,52 @@
     height: max-content;
 	top:45px;
 	left: -10px;
+    animation: curtainUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Inline render container for in-place statistics (not absolute) */
+.inlineContainer {
+    overflow: hidden;
+    width: 100%;
+}
+
+.opening {
+    animation: curtainDown 220ms ease-out both;
+    transform-origin: top;
+    will-change: transform, opacity;
+}
+
+.closing {
+    animation: curtainUp 200ms ease-in both;
+    transform-origin: top;
+    will-change: transform, opacity;
+}
+
+@keyframes curtainDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scaleY(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+@keyframes curtainUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: translateY(-4px) scaleY(0.95);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px) scaleY(0.9);
+    }
+}
 
 .panel {
 	background-color: #0b1b29;

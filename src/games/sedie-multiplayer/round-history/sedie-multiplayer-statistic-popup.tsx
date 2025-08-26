@@ -19,20 +19,33 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
 
     const sideChoices = [SeDieChoices.white4, SeDieChoices.white3, SeDieChoices.red2, SeDieChoices.red3, SeDieChoices.red4];
 
+    const [isClosing, setIsClosing] = React.useState(false);
+
+    const handleClose = () => {
+        if (!inline) {
+            onClose?.();
+            return;
+        }
+        setIsClosing(true);
+        // Match closing animation duration (200ms)
+        setTimeout(() => onClose?.(), 200);
+    };
+
+    let containerClassName = Styles["statistic-container"];
+    if (inline) {
+        containerClassName = Styles["inlineContainer"];
+    }
+
+    let panelAnimClass = "";
+    if (inline) {
+        panelAnimClass = isClosing ? Styles["closing"] : Styles["opening"];
+    }
+
     return (
-        <div
-            id="statistic-popup"
-            data-testid="statistic-popup"
-            className={inline ? "" : Styles["statistic-container"]}
-        >
-            <div className={Styles["panel"]}>
+        <div id="statistic-popup" data-testid="statistic-popup" className={containerClassName}>
+            <div className={`${Styles["panel"]} ${panelAnimClass}`}>
                 <div className={Styles["grid"]}>
-                    <button
-                        type="button"
-                        className={Styles["close"]}
-                        onClick={onClose}
-                        aria-label="Close"
-                    />
+                    <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
                     <PercentageStatistic
                         roundHistory={roundHistory as any}
                         mainChoices={sideChoices as any}
