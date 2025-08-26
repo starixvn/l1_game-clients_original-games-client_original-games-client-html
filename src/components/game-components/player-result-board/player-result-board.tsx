@@ -17,7 +17,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   const renderHeader = () => (
-    <div className="flex justify-between bg-table-header rounded-xl p-2 mb-2">
+    <div className="flex justify-between bg-secondary-bg rounded-xl p-2 mb-2">
       {renderPlayerCount()}
       <RoundId />
     </div>

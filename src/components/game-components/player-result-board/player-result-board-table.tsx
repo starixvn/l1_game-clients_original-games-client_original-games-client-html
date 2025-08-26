@@ -40,14 +40,14 @@ const PlayerResultBoardTable = React.forwardRef<
     <div ref={ref} className="min-h-[465px]">
       <Table>
         <TableHeader>
-          <TableRow className="border-primary-border bg-primary-bg">
-            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border font-bold">
+          <TableRow className="bg-table-header border-none">
+            <TableHead className="text-primary-text text-center p-2 font-bold rounded-tl-lg rounded-bl-lg">
               {translateCommon("player")}
             </TableHead>
-            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border font-bold">
+            <TableHead className="text-primary-text text-center p-2 font-bold">
               {translateCommon("total_stake")}
             </TableHead>
-            <TableHead className="text-primary-text text-center p-2 border-b border-primary-border font-bold">
+            <TableHead className="text-primary-text text-center p-2 font-bold rounded-tr-lg rounded-br-lg">
               {translateCommon("win")}
             </TableHead>
           </TableRow>
