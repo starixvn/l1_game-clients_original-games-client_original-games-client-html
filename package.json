@@ -6,7 +6,7 @@
         "node": ">=20.9.0"
     },
     "scripts": {
-        "generate-tolgee-data": "npx ts-node --project tsconfig.node.json ./src/_shared/tolgee-generator-standalone.ts",
+        "generate-tolgee-data": "npx ts-node --project tsconfig.node.json ./src/_shared/tolgee-generator.ts",
         "analyze": "cross-env ANALYZE=true next build",
         "dev": "npm run generate-tolgee-data &&  next dev",
         "dev:standalone": "npm run generate-tolgee-data && next build && npm run copy-standalone-assets && node .next/standalone/server.js",
