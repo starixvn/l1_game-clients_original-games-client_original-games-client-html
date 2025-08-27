@@ -3,9 +3,10 @@ import { useTranslator } from "../../../_shared/react-hooks/use-translator";
 import { ResourceTypes } from "../../../_shared/resources";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import Styles from "./error-message.module.scss";
 import { ConnectFailedReasonKey } from "./type";
 import { URLContext, updateURLContext } from "../../../_shared/react-contexts";
+import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import PopupButton from "../popup-button";
 
 export const ConnectFailedMessage: React.FC<{
     tolgeeNamespace: string;
@@ -21,13 +22,13 @@ export const ConnectFailedMessage: React.FC<{
     const handleBackToLobby = () => {
         console.log("[ConnectFailedMessage] handleBackToLobby called");
         updateURLContext({ gameId: 0 });
-        backToRedirectUrl(redirectUrl);
+        backToRedirectUrl?.(redirectUrl);
     };
 
     const handleBackToLobbyWithReload = () => {
         console.log("[ConnectFailedMessage] handleBackToLobbyWithReload called");
         updateURLContext({ backToLobby: true, gameId: 0 });
-        redirectUrl ? backToRedirectUrl(redirectUrl) : window.location.reload();
+        redirectUrl ? backToRedirectUrl?.(redirectUrl) : window.location.reload();
     };
 
     const handleReconnect = () => {
@@ -38,13 +39,17 @@ export const ConnectFailedMessage: React.FC<{
     const renderLostConnectionButtons = () => {
         console.log("[ConnectFailedMessage] rendering lost connection buttons");
         return (
-            <div className="flex">
-                <button onClick={handleBackToLobby} className={`btn-grey`}>
-                    {t(`${ResourceTypes.COMMON}.back`)}
-                </button>
-                <button onClick={handleReconnect} className={`${Styles["btn-reconnect"]} btn-green`}>
-                    {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
-                </button>
+            <div className="flex justify-between">
+                <PopupButton
+                    onClick={handleBackToLobby}
+                    className="bg-btn-gray hover:enabled:bg-btn-green-hover-bg"
+                    label={t(`${ResourceTypes.COMMON}.back`)}
+                />
+                <PopupButton
+                    onClick={handleReconnect}
+                    className="bg-btn-green hover:enabled:bg-btn-green-hover-bg"
+                    label={t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
+                />
             </div>
         );
     };
@@ -55,13 +60,15 @@ export const ConnectFailedMessage: React.FC<{
             return redirectUrl ? (
                 renderLostConnectionButtons()
             ) : (
-                <button onClick={handleReconnect} className={`btn-green w-100`}>
-                    {t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
-                </button>
+                <PopupButton
+                    onClick={handleReconnect}
+                    className="bg-btn-green hover:enabled:bg-btn-green-hover-bg"
+                    label={t(`${ResourceTypes.SABA_NUMBER}.button_reconnect`)}
+                />
             );
         }
         return redirectUrl ? (
-            <button onClick={handleBackToLobbyWithReload} className={`btn-green w-100`}>
+            <button onClick={handleBackToLobbyWithReload} className="btn-green w-100">
                 {t(`${ResourceTypes.COMMON}.ok`)}
             </button>
         ) : null;
@@ -69,15 +76,23 @@ export const ConnectFailedMessage: React.FC<{
 
     return (
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={enableBackdrop}>
-            <div className={`modal-center yellow-color ${Styles["error-message-container"]}`}>
-                <div className={`${Styles["warning-container"]}`}>
-                    <div className={`icon-warning ${Styles["icon-warning"]}`}></div>
+            <div
+                className={cn(
+                    "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[300px] font-normal",
+                    "top-1/2 z-modal overflow-hidden",
+                    "bg-modal-gradient border border-modal-border-color shadow-modal-new",
+                    "before:content-[''] before:block before:absolute before:-top-[100px] before:-left-[100px] before:w-[240px] before:h-[240px] before:rounded-[240px] before:bg-modal-yellow-bg before:opacity-70",
+                    "p-5"
+                )}
+            >
+                <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center mx-auto mb-[10px]">
+                    <div className="text-[25px] text-[#ffd21e] before:content-['⚠']"></div>
                 </div>
-                <div className={Styles["title"]}>{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
-                <div className={Styles["content"]}>
+                <div className="text-base leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
+                <div className="text-sm font-normal">
                     {t(reason, { gameName: tolgeeNamespace }).replaceTolgeeFormat().replace(tolgeeNamespace, "")}
                 </div>
-                <div className={Styles["list-action"]}>{renderButtons()}</div>
+                <div className="mt-4">{renderButtons()}</div>
             </div>
         </BaseDialog>
     );

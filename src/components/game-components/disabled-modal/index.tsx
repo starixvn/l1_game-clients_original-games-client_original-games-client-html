@@ -6,6 +6,7 @@ import { useCommonTranslate } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import PopupButton from "../popup-button";
 
 const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage }) => {
     const { t } = useCommonTranslate();
@@ -39,17 +40,11 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
                 </div>
                 <div className="mt-4">
                     {showOkButton && (
-                        <button 
+                        <PopupButton 
                             onClick={handleOkClick} 
-                            className={cn(
-                                "font-inherit relative inline-block min-w-[100px] px-9 py-3 border-none shadow-btn bg-center transition-all duration-800 text-center rounded-xl text-white text-xs font-semibold",
-                                "bg-btn-green hover:enabled:bg-btn-green-hover-bg hover:enabled:cursor-pointer",
-                                "active:bg-btn-green-hover active:bg-[length:100%] active:transition-none",
-                                "disabled:opacity-60"
-                            )}
-                        >
-                            {t({ key: "ok" })}
-                        </button>
+                            className="active:bg-btn-green-hover active:bg-[length:100%]"
+                            label={t({ key: "ok" })}
+                        />
                     )}
                 </div>
             </div>
