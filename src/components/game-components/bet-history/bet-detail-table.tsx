@@ -45,7 +45,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
     const headerColumns = [
         { key: "time", label: translateCommon("time") },
         { key: "bet_choice", label: translateCommon("bet_choice") },
-        { key: "stake", label: translateCommon("stake") },
+        { key: "stake", label: translateCommon("bet_amount") },
         { key: "win", label: translateCommon("win"), align: "right" },
     ];
 
@@ -56,7 +56,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
                     <TableHead
                         key={column.key}
                         className={cn(
-                            "w-1/4 py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-[14px] leading-5",
+                            "w-1/4 py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-sm",
                             column.align === "right" ? "text-right" : "text-center"
                         )}
                     >
@@ -78,7 +78,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                     <TableCell
                         key={cellIndex}
                         className={cn(
-                            "w-1/4 text-sm text-secondary-text p-3 text-[14px] leading-5",
+                            "w-1/4 text-sm text-secondary-text p-3 text-sm",
                             cell.className || "text-center",
                             cell.isWinningBet && "text-winning-highlight font-semibold"
                         )}
@@ -94,7 +94,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
 const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: number, data: BetDetailRow[]) => {
     return (
         <>
-            <TableRow className="border-none font-normal text-secondary-text text-[14px] leading-5 bg-[#0C192B] table w-full table-fixed">
+            <TableRow className="border-none font-normal text-secondary-text text-sm bg-[#0C192B] table w-full table-fixed">
                 <TableCell className="w-1/4 text-center p-3 px-0">{translateCommon("total")}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0">{formatNumber(totalStake)}</TableCell>
@@ -102,7 +102,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>
-            <TableRow className="border-none font-normal text-secondary-text text-[14px] leading-5 bg-bet-detail-row-2 table w-full table-fixed rounded-b-lg">
+            <TableRow className="border-none font-normal text-secondary-text text-sm bg-bet-detail-row-2 table w-full table-fixed rounded-b-lg">
                 <TableCell className="w-1/4 text-center p-3 px-0">{`Net Profit`}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>

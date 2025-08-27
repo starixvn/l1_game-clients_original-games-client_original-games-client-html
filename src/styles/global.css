@@ -6,7 +6,7 @@
 :root {
     --page-background-color: #000;
     --text-color: #fff;
-    --border-color: #2c2f3e;
+    --border-color: #27303F;
     --opacity-background: rgba(12, 12, 12, 0.8);
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
     --scrollbar-background: #00000080;
@@ -20,7 +20,40 @@
     --secondary-background-color: #1a1a1a;
     --secondary-text-color: #e0e0e0;
     --color-table-text-clickable: #0990ff;
-    --table-header: #27374a;
+    --table-header: #233046;
+    --bet-detail-row-1: #102136;
+    --bet-detail-row-2: #172c47;
+}
+
+
+html[data-theme="dark"] {
+    --page-background-color: #15152c;
+    --primary-background-color: #182130;
+    --text-color: #fff;
+    --border-color: #27303F;
+    --secondary-background-color: #101721;
+    --secondary-text-color: #b3bec1;
+
+    --opacity-background: rgba(12, 12, 12, 0.8);
+    --opacity-background-grey: rgba(50, 50, 50, 0.6);
+
+    --scrollbar-background: #00000080;
+    --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
+
+    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
+    --popup-color: #fff;
+    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    --container-color-bg: #182130;
+    --container-border-color: #2c2f3e;
+    --icon-favorite-game-guide: #fff;
+
+    --color-table-text-clickable: #0990ff;
+    --color-winning-highlight: #fff600;
+
+    --modal-background: #1b293f;
+    --text-content-color: #ced8e6;
+
+    --table-header: #233046;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
 }
@@ -47,39 +80,7 @@ html[data-theme="light"] {
     --color-table-text-clickable: #0990ff;
     --color-winning-highlight: #fff600;
 
-    --table-header: #e1e1e1;
-    --bet-detail-row-1: #102136;
-    --bet-detail-row-2: #172c47;
-}
-
-html[data-theme="dark"] {
-    --page-background-color: #15152c;
-    --primary-background-color: #182130;
-    --text-color: #fff;
-    --border-color: #2b3648;
-    --secondary-background-color: #101721;
-    --secondary-text-color: #b3bec1;
-
-    --opacity-background: rgba(12, 12, 12, 0.8);
-    --opacity-background-grey: rgba(50, 50, 50, 0.6);
-
-    --scrollbar-background: #00000080;
-    --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-
-    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
-    --popup-color: #fff;
-    --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    --container-color-bg: #182130;
-    --container-border-color: #2c2f3e;
-    --icon-favorite-game-guide: #fff;
-
-    --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #fff600;
-
-    --modal-background: #1b293f;
-    --text-content-color: #ced8e6;
-
-    --table-header: #27374a;
+    --table-header: #EBEBEB;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
 }

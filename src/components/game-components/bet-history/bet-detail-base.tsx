@@ -52,7 +52,7 @@ const BetDetailBase: FC<{
 
   return (
     <div className="mx-3 grid grid-rows-[auto_auto_auto_1fr] h-full min-h-0 gap-3">
-      <div className="text-center font-inter text-[14px] font-normal leading-5 text-secondary-text">
+      <div className="text-center font-inter text-sm font-normal leading-5 text-secondary-text">
         Note: Data are only available within the last 7 days from the current date.
       </div>
 

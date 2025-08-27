@@ -17,3 +17,4 @@ window.envConfig = {
     socketGatewayPath: "gateway",
     useTolgeeStatic: false,
 };
+
