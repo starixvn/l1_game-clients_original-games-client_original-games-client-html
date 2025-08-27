@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import styles from "./style.module.scss";
-import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 const Odds = dynamic(() => import("../../../components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"));
 const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"));
@@ -11,7 +10,7 @@ const PrevHighlightBetOption = dynamic(() => import("./highight-prev-round-bet-o
 const ChipEffect = dynamic(() => import("../../../components/game-components/bet-option/chip-effect"));
 
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
-    const choiceStyle = `${styles[choice]} ${styles[`main-option`]}`;
+    const choiceStyle = `${styles[choice]} ${styles["main-option"]}`;
     const buttonId = `${tolgeeNamespace}-choice-${choice}`;
 
     return (

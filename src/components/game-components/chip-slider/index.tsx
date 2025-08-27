@@ -78,7 +78,7 @@ const ChipControlPanel: React.FC = () => {
                     text={findChipSetting(selectedChip)?.text}
                     color={findChipSetting(selectedChip)?.color}
                     onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
-                    size={60}
+                    size={48}
                     fontSize={20}
                 />
                 <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />

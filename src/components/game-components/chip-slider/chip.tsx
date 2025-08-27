@@ -18,7 +18,7 @@ export const Chip: React.FC<ChipProps> = ({
     text,
     color,
     onClickChip = () => {},
-    size = 48,
+    size = 46,
     fontSize = 18,
     isHideValue = false,
     className = "",
