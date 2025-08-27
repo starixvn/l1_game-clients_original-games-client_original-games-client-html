@@ -23,7 +23,7 @@ export class BetHistoryHandler {
         const events = [
             [this.HISTORY_EVENT, this.handleHistoryResponse],
             [messageEventType.ROUND_STATE, this.handleRoundState],
-            [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED, this.handleOutgoingBet],
+            [messageEventType.OWN_BETS, this.handleOwnBets],
             [messageEventType.ODDS, this.handleOdds],
             [messageEventType.GAME_CONFIG, this.handleGameConfig],
             [messageEventType.FINISH, this.handleFinish],
@@ -49,17 +49,14 @@ export class BetHistoryHandler {
         this.lastRoundState = roundState;
     }
 
-    private handleOutgoingBet(message: any) {
-        const payload = message?.[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
-        if (!payload || payload.event !== "bet") {
-            return;
-        }
 
+
+    private handleOwnBets({ ownBets, betChoice, ownChip }: any) {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
         const nowIso = new Date().toISOString();
 
-        // Capture the round ID from the UI when placing first bet
+        // Capture the round ID from the UI when receiving first ownBets
         if (!betHistoryStore.pendingBetRoundId) {
             const roundId = gameStore.playerResultBoard?.roundId ?? 0;
             betHistoryStore.setPendingBetRoundId(roundId);
@@ -70,20 +67,12 @@ export class BetHistoryHandler {
             betHistoryStore.setPendingFirstBetTime(nowIso);
         }
 
-        const data = payload.data || {};
-
-        // Handle multiple bet formats
-        if (data.betChoices && typeof data.betChoices === "object") {
-            Object.entries(data.betChoices).forEach(([choice, amount]) => {
-                if (Number(amount) > 0) {
-                    betHistoryStore.addPendingBet({ time: nowIso, amount: Number(amount), choice });
-                }
-            });
-        } else if (data.betChoice && data.amount > 0) {
+        // Process the bet from ownChip (this contains the actual bet placed)
+        if (ownChip && ownChip.amount > 0) {
             betHistoryStore.addPendingBet({
                 time: nowIso,
-                amount: data.amount,
-                choice: String(data.betChoice),
+                amount: ownChip.amount,
+                choice: String(ownChip.betChoice),
             });
         }
     }
