@@ -36,6 +36,7 @@ const createBetDetailRowData = (row: BetDetailRow) => {
         {
             content: row.win,
             isWinningBet: row.isWinningBet,
+            className: "text-right",
         },
     ];
 };
@@ -45,7 +46,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
         { key: "time", label: translateCommon("time") },
         { key: "bet_choice", label: translateCommon("bet_choice") },
         { key: "stake", label: translateCommon("stake") },
-        { key: "win", label: translateCommon("win") },
+        { key: "win", label: translateCommon("win"), align: "right" },
     ];
 
     return (
@@ -54,7 +55,10 @@ const renderBetDetailHeader = (translateCommon: any) => {
                 {headerColumns.map((column, index) => (
                     <TableHead
                         key={column.key}
-                        className="w-1/4 text-center py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-[14px] leading-5"
+                        className={cn(
+                            "w-1/4 py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-[14px] leading-5",
+                            column.align === "right" ? "text-right" : "text-center"
+                        )}
                     >
                         {column.label}
                     </TableHead>
@@ -74,7 +78,8 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                     <TableCell
                         key={cellIndex}
                         className={cn(
-                            "w-1/4 text-sm text-secondary-text text-center p-3 text-[14px] leading-5",
+                            "w-1/4 text-sm text-secondary-text p-3 text-[14px] leading-5",
+                            cell.className || "text-center",
                             cell.isWinningBet && "text-winning-highlight font-semibold"
                         )}
                     >
@@ -93,7 +98,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell className="w-1/4 text-center p-3 px-0">{translateCommon("total")}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0">{formatNumber(totalStake)}</TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-center p-3 px-0">
+                <TableCell className="w-1/4 text-winning-highlight font-semibold text-right p-3 px-0 pr-3">
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>
@@ -101,7 +106,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell className="w-1/4 text-center p-3 px-0">{`Net Profit`}</TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
-                <TableCell className={cn("w-1/4 text-center p-3 px-0", netProfit > 0 && "text-winning-highlight font-semibold")}>{formatNumber(netProfit)}</TableCell>
+                <TableCell className={cn("w-1/4 text-right p-3 px-0 pr-3", netProfit > 0 && "text-winning-highlight font-semibold")}>{formatNumber(netProfit)}</TableCell>
             </TableRow>
         </>
     );
@@ -129,12 +134,12 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
 
     return (
         <div ref={ref} className="flex flex-col h-full w-full">
-            <div className="bg-table-header rounded-t-lg shrink-0">
+            <div className="bg-table-header rounded-t-lg shrink-0 pr-3">
                 <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
             </div>
 
             <div className="overflow-y-auto w-full max-h-[calc(100%-92px)]">
-                <Table className="w-full">
+                <Table className="w-full pr-3">
                     <TableBody>{renderBetDetailRows(data)}</TableBody>
                 </Table>
             </div>
