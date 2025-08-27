@@ -3,19 +3,14 @@
 exports[`Chip should render match the snapshot when chip < 1000 1`] = `
 <div>
   <div
-    class="chip-container true p-1/2 "
+    class="chip-container true md:scale-105 p-1/2
+        transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] "
     id="chip-100"
     style="--chip-size: 48px; --chip-value-font-size: 18px;"
   >
     <div
       class="absolute w-full h-full rounded-full"
       style="background-color: rgb(0, 1, 35);"
-    />
-    <div
-      class="bottom"
-    />
-    <div
-      class="top"
     />
     <div
       class="inner"
@@ -38,19 +33,14 @@ exports[`Chip should render match the snapshot when chip < 1000 1`] = `
 exports[`Chip should render match the snapshot when chip > 1000 & text is empty 1`] = `
 <div>
   <div
-    class="chip-container false p-1/2 "
+    class="chip-container false  p-1/2
+        transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] "
     id="chip-2000"
     style="--chip-size: 48px; --chip-value-font-size: 18px;"
   >
     <div
       class="absolute w-full h-full rounded-full"
       style="background-color: rgb(0, 1, 35);"
-    />
-    <div
-      class="bottom"
-    />
-    <div
-      class="top"
     />
     <div
       class="inner"
