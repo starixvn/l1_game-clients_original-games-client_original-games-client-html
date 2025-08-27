@@ -41,40 +41,43 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
 
     useEffect(() => {
         const el = ref.current;
-        if (el) {
-            const axis = direction === "horizontal" ? "x" : "y";
-            const offset = reverse ? -distance : distance;
-            const startPct = (1 - Math.min(Math.max(threshold, 0), 1)) * 100;
-
-            gsap.set(el, {
-                [axis]: offset,
-                scale,
-                opacity: animateOpacity ? initialOpacity : 1,
-            } as any);
-
-            gsap.to(el, {
-                [axis]: 0,
-                scale: 1,
-                opacity: 1,
-                duration,
-                ease,
-                delay,
-                onComplete,
-                scrollTrigger: {
-                    trigger: el,
-                    start: `top ${startPct}%`,
-                    toggleActions: "play none none none",
-                    once: true,
-                },
-            } as any);
-
-            return () => {
-                try {
-                    ScrollTrigger.getAll().forEach((t) => t.kill());
-                    gsap.killTweensOf(el);
-                } catch { }
-            };
+        if (!el) {
+            return;
         }
+        const axis = direction === "horizontal" ? "x" : "y";
+        const offset = reverse ? -distance : distance;
+        const startPct = (1 - Math.min(Math.max(threshold, 0), 1)) * 100;
+
+        gsap.set(el, {
+            [axis]: offset,
+            scale,
+            opacity: animateOpacity ? initialOpacity : 1,
+        } as any);
+
+        gsap.to(el, {
+            [axis]: 0,
+            scale: 1,
+            opacity: 1,
+            duration,
+            ease,
+            delay,
+            onComplete,
+            scrollTrigger: {
+                trigger: el,
+                start: `top ${startPct}%`,
+                toggleActions: "play none none none",
+                once: true,
+            },
+        } as any);
+
+        return () => {
+            try {
+                ScrollTrigger.getAll().forEach((t) => t.kill());
+                gsap.killTweensOf(el);
+            } catch {
+                return;
+            }
+        };
     }, [
         distance,
         direction,
