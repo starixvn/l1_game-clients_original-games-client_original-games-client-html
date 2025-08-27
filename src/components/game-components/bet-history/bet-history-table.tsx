@@ -53,6 +53,7 @@ const createBetHistoryRowData = (
                     {row.win}
                 </div>
             ),
+            className: "text-right",
         }
     ];
 };
@@ -76,7 +77,7 @@ const renderBetHistoryRows = (
                 {rowData.map((cell, cellIndex) => (
                     <TableCell
                         key={cellIndex}
-                        className={cn(cell.className, "text-secondary-text text-center h-[60px] py-[7px] sm:p-4")}
+                        className={cn("text-secondary-text text-center h-[60px] py-[7px] sm:p-4", cell.className)}
                         onClick={cell.onClick}
                     >
                         {cell.content}
@@ -95,7 +96,8 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                 <TableHead
                     key={column.key}
                     className={cn(
-                        "text-primary-text text-center p-2",
+                        "text-primary-text p-2",
+                        column.align === "right" ? "text-right" : "text-center",
                         index === 0 && "rounded-tl-lg rounded-bl-lg",
                         index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
                     )}
@@ -200,7 +202,7 @@ export const BetHistoryTable = () => {
         { key: "time", label: translateCommon("time") },
         { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
         { key: "total_stake", label: translateCommon("bet_amount") },
-        { key: "win", label: translateCommon("win") }
+        { key: "win", label: translateCommon("win"), align: "right" }
     ];
 
     // Show loading spinner for initial load
