@@ -2,7 +2,7 @@ window.envConfig = {
     proxy: {
         ssl: true,
         subDomain: "uat-proxy",
-        path: "",
+        path: "/uat",
     },
     sentry: {
         dsn: "https://19b3909c434341f0b13eb3a8529e5862@sentry.lumigame.com/9",
