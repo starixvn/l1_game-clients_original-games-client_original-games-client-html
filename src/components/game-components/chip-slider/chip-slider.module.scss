@@ -19,6 +19,12 @@
         color: #fff;
         opacity: 0.5;
     }
+    @media (width >= 48rem) {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #ffffff1a;
+    }
 }
 
 .icon-prev {
@@ -48,39 +54,22 @@
 
     .inner {
         position: absolute;
-        width: 75%;
-        height: 75%;
-        margin: 12.5%;
-        border-radius: 50%;
-        border: 2px solid #ffffff80;
-        background: radial-gradient(130.29% 50% at 50% 50%, rgba(0, 0, 0, 0.3) 0%, rgba(102, 102, 102, 0.3) 100%);
-    }
-
-    .top {
-        position: absolute;
         width: 100%;
         height: 100%;
-        border-radius: 50%;
-        background: #ffffff03;
-        box-shadow: 0px 2px 2px 0px #ffffff80 inset;
-    }
-
-    .bottom {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+        background-image: url("/static/images/chips/chip.svg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
     }
 
     .border {
         position: absolute;
+        width: 100%;
+        height: 100%;
         background-image: url("/static/images/chips/chip-border.svg");
         background-size: 100% 100%;
         background-repeat: no-repeat;
         background-position: center;
-        width: 100%;
-        height: 100%;
 
         &.yellow-border {
             background-image: url("/static/images/chips/chip-yellow-border.svg");

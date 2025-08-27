@@ -40,7 +40,7 @@ const SediePlate: React.FC = () => {
     useEffect(() => {
         const newButtons = generateButtonPositions(roundId);
         animationState !== "open" && setButtonsPosition(newButtons);
-    }, [roundId, animationState]);
+    }, [roundId]);
 
     useEffect(() => {
         const resetState = () => {

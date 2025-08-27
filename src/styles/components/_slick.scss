@@ -6,6 +6,12 @@
     width: 54px !important;
 }
 
+@media (width >= 48rem) {
+    .slick-initialized .slick-slide {
+        width: 44px !important;
+    }
+}
+
 .slick-slider {
     display: flex;
     align-items: center;

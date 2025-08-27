@@ -69,24 +69,32 @@ const ChipControlPanel: React.FC = () => {
     };
 
     return (
-        <div className={`flex relative justify-center items-center gap-2 ${isAutoRebetActive ? "opacity-50" : ""}`}>
-            <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
-            <Chip
-                key={+selectedChip}
-                value={+selectedChip}
-                text={findChipSetting(selectedChip)?.text}
-                color={findChipSetting(selectedChip)?.color}
-                onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
-                size={60}
-                fontSize={20}
-            />
-            <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />
+        <div className={`relative gap-2 md:w-full md:mx-4 ${isAutoRebetActive ? "opacity-50" : ""}`}>
+            <div className="flex items-center gap-2 md:hidden">
+                <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
+                <Chip
+                    key={+selectedChip}
+                    value={+selectedChip}
+                    text={findChipSetting(selectedChip)?.text}
+                    color={findChipSetting(selectedChip)?.color}
+                    onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
+                    size={60}
+                    fontSize={20}
+                />
+                <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />
+            </div>
 
-            {isShowSlider && (
-                <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
-                    <ChipSlider chipSettings={chipSettings} chipValues={chipValues} onSelectChip={onSelectChip} />
-                </div>
-            )}
+            <div className="flex justify-center items-center md:hidden">
+                {isShowSlider && (
+                    <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
+                        <ChipSlider chipSettings={chipSettings} chipValues={chipValues} onSelectChip={onSelectChip} />
+                    </div>
+                )}
+            </div>
+            <div className="hidden md:block md:mb-2 font-semibold text-sm">Chip value</div>
+            <div className="hidden relative md:flex justify-center items-center w-full h-[46px] rounded-xl bg-black/60 border border-[#2b3648]">
+                <ChipSlider chipSettings={chipSettings} chipValues={chipValues} />
+            </div>
         </div>
     );
 };

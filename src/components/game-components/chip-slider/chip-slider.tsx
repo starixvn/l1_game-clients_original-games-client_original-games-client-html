@@ -12,7 +12,7 @@ const slidesToShow = 5;
 
 export const ChipSlider: React.FC<{
     chipValues: number[];
-    onSelectChip: (chipValue: number) => void;
+    onSelectChip?: (chipValue: number) => void;
     chipSettings: ChipInfo[];
 }> = ({ chipValues, onSelectChip, chipSettings }) => {
     const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.actions.setSelectedChip]));
@@ -29,7 +29,7 @@ export const ChipSlider: React.FC<{
         if (selectedChip !== chipValue) {
             setSelectedChip(chipValue);
         }
-        onSelectChip(chipValue);
+        onSelectChip?.(chipValue);
         playClickChip();
     };
 
@@ -113,7 +113,7 @@ export const ChipSlider: React.FC<{
                     </g>
                 </svg>
             </div>
-            <div className="absolute w-[270px]">
+            <div className="absolute w-[270px] md:w-[220px]">
                 {chipValues?.length > 0 && (
                     <Slider
                         ref={(c) => {
@@ -128,7 +128,6 @@ export const ChipSlider: React.FC<{
                                 text={findChipSetting(value)?.text}
                                 color={findChipSetting(value)?.color}
                                 onClickChip={handleSelectChip}
-                                className="mx-2"
                             />
                         ))}
                     </Slider>

@@ -1,5 +1,5 @@
 import { withRouter } from "next/router";
-import { JSX } from "react";
+import { JSX, lazy } from "react";
 
 import { useSystemContext, useSystemDispatch } from "../../_shared/react-contexts";
 import {
@@ -20,8 +20,10 @@ import SediePlate from "./result-block/sedie-plate";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import { SedieMultiplayerStatisticPopup } from "./round-history/sedie-multiplayer-statistic-popup";
-// Animations handled inside statistic popup component
 import SeDieMultiplayerBetDetailModal from "./history";
+const OwnTotalBet = lazy(() => import("../../components/game-components/own-total-bet/own-total-bet"));
+const DoubleBetIcon = lazy(() => import("../../components/game-components/rebet/double-bet-icon"));
+const AutoRebetIcon = lazy(() => import("../../components/game-components/rebet/auto-rebet-icon"));
 
 export type SeDieState = {
     statisticGroup?: number;
@@ -83,6 +85,31 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
 
     renderBettingBlock() {
         return <SeDieMultiplayerBettingBlock />;
+    }
+
+    renderBetControl() {
+        return (
+            <div className="relative md:bg-primary-bg md:rounded-t-xl">
+                <div className="flex flex-wrap items-center">
+                    <div className="col-12 col-md-6">
+                        <div className="flex gap-2 justify-center items-center">
+                            <div className="md:absolute md:right-[10px] md:top-[-200px]">
+                                <DoubleBetIcon />
+                            </div>
+                            {this.renderChipControlPanel()}
+                            <div className="md:absolute md:right-[10px] md:top-[-134px]">
+                                <AutoRebetIcon />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-6">
+                        <div className="p-3 rounded-t-xl bg-primary-bg">
+                            <OwnTotalBet />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     renderBetDetailModal() {

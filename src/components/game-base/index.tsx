@@ -47,12 +47,9 @@ import { BetHistoryTable } from "../game-components/bet-history/bet-history-tabl
 import { PlayerResultBoard } from "../game-components/player-result-board/player-result-board";
 import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
-import { OwnTotalBet } from "../game-components/own-total-bet/own-total-bet";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
 const Background = lazy(() => import("../game-components/background"));
-const DoubleBetIcon = lazy(() => import("../game-components/rebet/double-bet-icon"));
-const AutoRebetIcon = lazy(() => import("../game-components/rebet/auto-rebet-icon"));
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -579,24 +576,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <ChipControlPanel />;
     }
 
-    renderLeftSideBetSettings() {
-        return <DoubleBetIcon />;
-    }
-
-    renderRightSideBetSettings() {
-        return <AutoRebetIcon />;
-    }
-
-    renderBetSettings() {
-        return (
-            <div className="flex gap-2 justify-center items-center">
-                {this.renderLeftSideBetSettings()}
-                {this.renderChipControlPanel()}
-                {this.renderRightSideBetSettings()}
-            </div>
-        );
-    }
-
     renderConfirmBet() {
         return <ConfirmBet />;
     }
@@ -641,29 +620,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         );
     }
 
-    renderBetControlLeftSide() {
-        return <div className="col-12 col-md-6">{this.renderBetSettings()}</div>;
-    }
-
-    renderBetControlRightSide() {
-        return (
-            <div className="col-12 col-md-6">
-                <div className="p-3 rounded-t-xl bg-primary-bg">
-                    <OwnTotalBet />
-                </div>
-            </div>
-        );
-    }
-
     renderBetControl() {
-        return (
-            <div className="md:bg-primary-bg md:rounded-t-xl">
-                <div className="flex flex-wrap items-center">
-                    {this.renderBetControlLeftSide()}
-                    {this.renderBetControlRightSide()}
-                </div>
-            </div>
-        );
+        return <></>;
     }
 
     renderMenu() {

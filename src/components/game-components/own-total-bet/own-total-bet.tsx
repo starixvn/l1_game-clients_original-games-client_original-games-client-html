@@ -12,3 +12,4 @@ export const OwnTotalBet = () => {
         </>
     );
 };
+export default OwnTotalBet;

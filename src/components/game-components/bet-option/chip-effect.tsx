@@ -49,6 +49,7 @@ export const ChipEffect = ({ choice, className }: { choice: string; className?: 
                         color={findChipSetting(value)?.color}
                         isHideValue={true}
                         size={22}
+                        className="w-[22px] h-[22px]"
                     />
                 </div>
             ))}
