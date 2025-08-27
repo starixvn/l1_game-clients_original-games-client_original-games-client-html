@@ -12,7 +12,7 @@ window.envConfig = {
     subGuideDomain: "l2guides",
     enableMsgpackParser: true,
     system: "VG",
-    appType: 1,
+    appType: 10,
     enableDebugLogs: true,
     socketGatewayPath: "l2gwsit",
     useTolgeeStatic: true,
