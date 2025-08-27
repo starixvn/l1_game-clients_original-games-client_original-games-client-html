@@ -23,6 +23,8 @@
     --table-header: #233046;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
+
+    --modal-text-color: #e6e6e6;
 }
 
 
@@ -56,6 +58,8 @@ html[data-theme="dark"] {
     --table-header: #233046;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
+
+    --modal-text-color: #e6e6e6;
 }
 
 html[data-theme="light"] {
@@ -83,6 +87,8 @@ html[data-theme="light"] {
     --table-header: #EBEBEB;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
+
+    --modal-text-color: #e6e6e6;
 }
 
 /* Ensure Tailwind has highest priority */

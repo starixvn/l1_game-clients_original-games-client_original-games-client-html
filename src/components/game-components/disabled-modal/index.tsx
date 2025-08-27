@@ -1,43 +1,53 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useContext } from "react";
 import { buildVersion } from "../../../_shared/constants";
 import { URLContext } from "../../../_shared/react-contexts";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import Styles from "./disabled-modal.module.scss";
+import { cn } from "../../../_shared/utils/merge-tailwind-util";
 
 const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage }) => {
-    console.log("[DisabledModal] rendering with disableMessage:", disableMessage);
     const { t } = useCommonTranslate();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
     const showOkButton = !!redirectUrl;
 
-    console.log("[DisabledModal] showOkButton:", showOkButton, "redirectUrl:", redirectUrl);
-
     const handleOkClick = () => {
-        console.log("[DisabledModal] OK button clicked");
-        backToRedirectUrl(redirectUrl);
+        backToRedirectUrl?.(redirectUrl);
     };
 
     return (
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={true}>
-            <div className={`modal-center yellow-color ${Styles["disable-message-container"]}`}>
-                <div className={`${Styles["um-setting-icon"]}`}>
+            <div
+                className={cn(
+                    "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[300px] font-normal",
+                    "top-1/2 z-modal overflow-hidden",
+                    "bg-modal-gradient border border-modal-border-color shadow-modal-new",
+                    "before:content-[''] before:block before:absolute before:-top-[100px] before:-left-[100px] before:w-[240px] before:h-[240px] before:rounded-[240px] before:bg-modal-yellow-bg before:opacity-70"
+                )}
+            >
+                <div className="relative mx-auto mb-5 w-[50px]">
+                    <img className="animate-spin-slow" src={`/static/images/um-setting-big.svg?v=${buildVersion}`} alt="setting-um" />
                     <img
-                        className={`${Styles["um-setting-big"]}`}
-                        src={`/static/images/um-setting-big.svg?v=${buildVersion}`}
-                        alt="setting-um"
-                    />
-                    <img
-                        className={`${Styles["um-setting-small"]}`}
+                        className="absolute top-[26px] right-0 animate-spin-slow-reverse"
                         src={`/static/images/um-setting-small.svg?v=${buildVersion}`}
                         alt="setting-um"
                     />
                 </div>
-                <div className={Styles.message}>{disableMessage || t({ key: "message_disabled_game" })}</div>
-                <div className={Styles["list-action"]}>
+                <div className="font-normal text-[#E6E6E6] text-sm leading-6 tracking-[0.28px] mt-2 ">
+                    {disableMessage || t({ key: "message_disabled_game" })}
+                </div>
+                <div className="mt-4">
                     {showOkButton && (
-                        <button onClick={handleOkClick} className={`btn-yellow ${Styles["ok"]}`}>
+                        <button 
+                            onClick={handleOkClick} 
+                            className={cn(
+                                "font-inherit relative inline-block min-w-[100px] px-9 py-3 border-none shadow-btn bg-center transition-all duration-800 text-center rounded-xl text-white text-xs font-semibold",
+                                "bg-btn-green hover:enabled:bg-btn-green-hover-bg hover:enabled:cursor-pointer",
+                                "active:bg-btn-green-hover active:bg-[length:100%] active:transition-none",
+                                "disabled:opacity-60"
+                            )}
+                        >
                             {t({ key: "ok" })}
                         </button>
                     )}

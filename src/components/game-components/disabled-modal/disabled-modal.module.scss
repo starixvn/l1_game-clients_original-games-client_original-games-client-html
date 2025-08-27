@@ -2,7 +2,7 @@
 
 .disable-message-container {
     @extend .modal;
-    top: 20%;
+    top: 50%;
     z-index: var(--popup-guide-history-index);
     padding: 20px;
 
