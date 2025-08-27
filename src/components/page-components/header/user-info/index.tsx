@@ -29,7 +29,7 @@ const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
     return useMemo(() => {
         return (
             <>
-                <span data-testid="amount">{numberRoundDownWithCommas(amount)}</span>
+                <span data-testid="amount" className="font-semibold text-base leading-[26px]">{numberRoundDownWithCommas(amount)}</span>
                 <span>{` `}</span>
             </>
         );
@@ -42,7 +42,7 @@ const UserCurrency: React.FC<{ currency: string; isDisplayPlayerCurrency: boolea
             return <></>;
         }
 
-        return <span data-testid="currency">{currency}</span>;
+        return <span data-testid="currency" className="font-semibold text-base leading-[26px]">{currency}</span>;
     }, [currency, isDisplayPlayerCurrency]);
 };
 
