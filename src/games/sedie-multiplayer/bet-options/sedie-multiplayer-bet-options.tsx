@@ -11,7 +11,7 @@ const SeDieMultiplayerBetOptions = () => {
     return (
         <>
             <SedieMultiplayerSubBetOptions tolgeeNamespace={tolgeeNamespace} />
-            <div className="flex justify-between my-2">
+            <div className="flex justify-between my-2 md:mb-6">
                 <SedieMultiplayerMainOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.EVEN} />
                 <SedieMultiplayerMainOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.ODD} />
             </div>

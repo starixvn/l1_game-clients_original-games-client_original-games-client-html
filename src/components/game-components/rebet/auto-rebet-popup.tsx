@@ -32,62 +32,63 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     }, [onClose]);
 
     return (
-        <BaseDialog
-            isOpen={true}
-            type={ModalType.Rebet}
-            onCloseModal={handleClose}
-            enableBackdrop={true}
-            extendedClassName="w-full left-0 p-0 -bottom-0"
-        >
-            <div className="p-3 py-6">
-                <div className="relative w-full">
-                    <h2 className="text-white text-lg font-semibold text-center">Auto Rebet</h2>
-                    <button
-                        onClick={handleClose}
-                        className="absolute top-0 right-0 text-white hover:text-gray-300 transition-colors duration-200 text-2xl font-bold leading-none"
-                    >
-                        ×
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-4 gap-3 my-6">
-                    {PRESET_ROUNDS.map((number) => (
+        <div className="md:absolute md:w-full h-full md:top-[50%] md:-translate-y-1/2 md:z-[var(--popup-index)]">
+            <BaseDialog
+                type={ModalType.Rebet}
+                onCloseModal={handleClose}
+                enableBackdrop={true}
+                extendedClassName="w-full left-0 p-0 -bottom-0 md:w-[425px] md:left-[50%] md:-translate-x-1/2"
+            >
+                <div className="p-3 py-6">
+                    <div className="relative w-full">
+                        <h2 className="text-white text-lg font-semibold text-center">Auto Rebet</h2>
                         <button
-                            key={number}
-                            onClick={() => handleConfirm(number)}
-                            className={`${cn(
-                                "flex items-center justify-center gap-1 text-white text-[16px] font-medium py-3 px-2 transition-all duration-200",
-                                "hover:scale-105"
-                            )} ${styles.button}`}
+                            onClick={handleClose}
+                            className="absolute top-0 right-0 text-white hover:text-gray-300 transition-colors duration-200 text-2xl font-bold leading-none"
                         >
-                            <span>{number === Infinity ? "∞" : number}</span>
-                            <Icon />
-                        </button>
-                    ))}
-                </div>
-                <div>
-                    <label className="block text-white text-sm font-medium mb-2">Custom number of rounds</label>
-                    <div className="flex justify-between">
-                        <input
-                            type="number"
-                            step={1}
-                            value={rounds}
-                            onChange={handleCustomInputChange}
-                            className="input text-white w-full mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
-                            placeholder="Enter rounds"
-                        />
-
-                        <button
-                            onClick={() => handleConfirm(rounds)}
-                            className={`${styles["btn-confirm"]} py-2 px-6 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
-                        >
-                            <span>Confirm</span>
-                            <Icon color="#624000" />
+                            ×
                         </button>
                     </div>
+
+                    <div className="grid grid-cols-4 gap-3 my-6 md:gap-2 md:my-4">
+                        {PRESET_ROUNDS.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handleConfirm(number)}
+                                className={`${cn(
+                                    "flex items-center justify-center gap-1 text-white text-[16px] font-medium py-3 px-2 transition-all duration-200 md:py-2",
+                                    "hover:scale-105"
+                                )} ${styles.button}`}
+                            >
+                                <span>{number === Infinity ? "∞" : number}</span>
+                                <Icon />
+                            </button>
+                        ))}
+                    </div>
+                    <div>
+                        <label className="block text-white text-sm font-medium mb-2">Custom number of rounds</label>
+                        <div className="flex justify-between">
+                            <input
+                                type="number"
+                                step={1}
+                                value={rounds}
+                                onChange={handleCustomInputChange}
+                                className="input text-white w-full mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
+                                placeholder="Enter rounds"
+                            />
+
+                            <button
+                                onClick={() => handleConfirm(rounds)}
+                                className={`${styles["btn-confirm"]} py-2 px-6 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
+                            >
+                                <span>Confirm</span>
+                                <Icon color="#624000" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </BaseDialog>
+            </BaseDialog>
+        </div>
     );
 };
 const Icon = ({ color = "#F9FDFF" }: { color?: string }) => {

@@ -97,7 +97,7 @@ const SediePlate: React.FC = () => {
     return (
         <div className="relative w-full">
             <div
-                className={`${styles["object"]} absolute p-2 h-[296px] left-[50%] -translate-x-1/2 z-[10] content-center`}
+                className={`${styles["object"]} absolute p-2 h-[296px] left-[50%] -translate-x-1/2 z-[var(--result-animation-index)] content-center`}
                 style={
                     {
                         "--button-size": `${BUTTON_SIZE}px`,

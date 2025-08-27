@@ -28,7 +28,7 @@
 .sub-bet-red2,
 .sub-bet-red3 {
     position: relative;
-    border-radius: 20px;
+    border-radius: 10px;
     &::after {
         content: "";
         position: absolute;
@@ -40,17 +40,34 @@
     }
 }
 .btn-ripple {
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 .sub-bet-white4 {
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
-.odd,
-.even {
+.main-option {
+    background-image: url("/static/images/sedie-multiplayer/odd-bg.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    &.odd {
+        background-image: url("/static/images/sedie-multiplayer/odd-bg.svg");
+        @media (width >= 48rem) {
+            background-image: url("/static/images/sedie-multiplayer/md-odd-bg.svg");
+        }
+    }
+
+    &.even {
+        background-image: url("/static/images/sedie-multiplayer/even-bg.svg");
+        @media (width >= 48rem) {
+            background-image: url("/static/images/sedie-multiplayer/md-even-bg.svg");
+        }
+    }
     .btn-ripple {
-        border-radius: 20px;
+        border-radius: 10px;
         margin-right: 10px;
     }
 }

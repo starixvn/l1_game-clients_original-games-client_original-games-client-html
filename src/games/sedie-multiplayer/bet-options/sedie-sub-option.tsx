@@ -19,7 +19,7 @@ const subChoiceImages = {
 
 export const SedieMultiplayerSubBetOptions = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
     return (
-        <div className={`flex rounded-2xl mt-2 h-[120px] w-[370px] ${styles["sub-bet-option"]}`}>
+        <div className={`flex rounded-2xl mt-2 h-[120px] w-[370px] md:w-[465px] ${styles["sub-bet-option"]}`}>
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE4} />
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.WHITE3} />
             <SedieMultiplayerSubBetOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.RED2} />
@@ -34,7 +34,7 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
     const renderImages = (choice: string) => {
         return (
             <div
-                className={`flex flex-wrap items-center justify-center p-2 w-[74px] gap-1`}
+                className={`flex flex-wrap items-center justify-center p-2 w-[74px] md:w-[93px] md:px-5 gap-1`}
                 style={{ "--dot-size": "20px" } as React.CSSProperties}
             >
                 {subChoiceImages[choice].map((isRed, index) => (
@@ -45,7 +45,7 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
     };
     return (
         <div className="relative">
-            <div className={`flex-1 text-white relative h-[full] w-[74px] ${styles[className]}`}>
+            <div className={`flex-1 text-white relative h-[full] w-[74px] md:w-[93px] ${styles[className]}`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 {renderImages(choice)}
                 <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />

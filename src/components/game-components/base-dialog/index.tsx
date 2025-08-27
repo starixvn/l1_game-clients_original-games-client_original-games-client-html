@@ -79,7 +79,9 @@ const BaseDialog: React.FC<Props> = ({
 
     return (
         <>
-            {enableBackdrop && <div className="fixed inset-0 top-[-8px] z-[300] bg-black/40" />}
+            {enableBackdrop && (
+                <div className={cn("fixed inset-0 top-[-8px] z-[300] bg-black/40", type === ModalType.Rebet && "md:hidden")} />
+            )}
 
             <div
                 style={getCustomStyle({ betContainerPosition })}
@@ -87,7 +89,7 @@ const BaseDialog: React.FC<Props> = ({
                 className={cn(
                     "absolute cursor-auto p-4 text-popup-text z-[301] rounded-t-md",
                     type === ModalType.Full && "fixed inset-x-0 top-4 bottom-0 pl-0 pr-0 z-[300] bg-popup-gradient",
-                    type === ModalType.Rebet && "fixed bg-popup-gradient",
+                    type === ModalType.Rebet && "fixed bg-popup-gradient md:absolute md:right-[50%] md:bottom-0",
                     type === ModalType.Center && "bg-transparent border-none shadow-none p-0 rounded-none static",
                     type === ModalType.Message && "rounded-md p-0 left-1 right-1 shadow-none",
                     isIpad && "pb-[69px]",
@@ -95,9 +97,7 @@ const BaseDialog: React.FC<Props> = ({
                     extendedClassName
                 )}
             >
-                <div className="h-full flex flex-col">
-                    {children}
-                </div>
+                <div className="h-full flex flex-col">{children}</div>
             </div>
         </>
     );

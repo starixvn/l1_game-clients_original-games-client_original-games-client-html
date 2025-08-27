@@ -97,8 +97,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
                                 <DoubleBetIcon />
                             </div>
                             {this.renderChipControlPanel()}
-                            <div className="md:absolute md:right-[10px] md:top-[-134px]">
-                                <AutoRebetIcon />
+                            <div className="md:absolute md:right-[10px] md:top-[-134px] md:w-full md:h-full">
+                                <div className="md:flex md:justify-end">
+                                    <AutoRebetIcon />
+                                </div>
                             </div>
                         </div>
                     </div>
