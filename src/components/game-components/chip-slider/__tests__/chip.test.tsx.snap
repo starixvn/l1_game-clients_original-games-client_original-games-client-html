@@ -6,7 +6,7 @@ exports[`Chip should render match the snapshot when chip < 1000 1`] = `
     class="chip-container true md:scale-105 p-1/2
         transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] "
     id="chip-100"
-    style="--chip-size: 48px; --chip-value-font-size: 18px;"
+    style="--chip-size: 46px; --chip-value-font-size: 18px;"
   >
     <div
       class="absolute w-full h-full rounded-full"
@@ -36,7 +36,7 @@ exports[`Chip should render match the snapshot when chip > 1000 & text is empty 
     class="chip-container false  p-1/2
         transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] "
     id="chip-2000"
-    style="--chip-size: 48px; --chip-value-font-size: 18px;"
+    style="--chip-size: 46px; --chip-value-font-size: 18px;"
   >
     <div
       class="absolute w-full h-full rounded-full"
