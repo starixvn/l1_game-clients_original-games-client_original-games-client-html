@@ -657,7 +657,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     renderLeftSide() {
         return (
-            <div className="col-12 col-lg-8 mb-3 px-3">
+            <div className="col-span-12 lg:col-span-8 mb-3 px-3">
                 {this.renderGameFrame()}
                 {this.renderBetControl()}
                 {this.renderMenu()}
@@ -667,7 +667,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     renderRightSide() {
         return (
-            <div className="col-12 col-lg-4 mb-3 px-3">
+            <div className="col-span-12 lg:col-span-4 mb-3 px-3">
                 <PlayerResultBoard />
             </div>
         );
@@ -685,10 +685,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return (
             <>
                 <div className={`game-${this.props.id}`}>
-                    <div className="flex flex-wrap">
+                    <div className="grid grid-cols-12 gap-0">
                         {this.renderLeftSide()}
                         {this.renderRightSide()}
-                        <div className="col-12 px-3">{this.renderBetHistoryTable()}</div>
+                        <div className="col-span-12 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
                     <PFWrapper
                         socket={this.socket}
