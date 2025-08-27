@@ -26,10 +26,10 @@ export const usePlayerResultBoard = () => {
 
         return playerResultBoard.players.map((player: PlayerInPlayerResultBoard) => {
             const formattedWinAmount = () => {
-                if (!player.winAmount) {
+                if (player.winAmount === null) {
                     return "-";
                 }
-                return calculateAmountByRate(player.winAmount, rate ?? 1);
+                return calculateAmountByRate(player.winAmount, rate ?? 1) || "0";
             };
 
             return {
