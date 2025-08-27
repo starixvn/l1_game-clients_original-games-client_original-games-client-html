@@ -46,7 +46,7 @@ const PlayerResultBoardTable = React.forwardRef<
             <TableHead className="text-primary-text text-center p-2 font-bold">
               {translateCommon("bet_amount")}
             </TableHead>
-            <TableHead className="text-primary-text text-center p-2 font-bold rounded-tr-lg rounded-br-lg">
+            <TableHead className="text-primary-text text-right p-2 font-bold rounded-tr-lg rounded-br-lg">
               {translateCommon("win")}
             </TableHead>
           </TableRow>
@@ -64,7 +64,7 @@ const PlayerResultBoardTable = React.forwardRef<
                 {row.betAmount}
               </TableCell>
               <TableCell className={cn(
-                "py-[10px] font-semibold",
+                "py-[10px] font-semibold text-right",
                 parseFloat(row.win) > 0 ? "text-winning-highlight" : "text-secondary-text"
               )}>
                 {row.win}
