@@ -43,7 +43,18 @@ export class BetHistoryHandler {
         const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound;
 
         if (isEnteringNewRoundBetting) {
+            const gameStore = useGameStore.getState() as any;
+            const betHistoryStore = useBetHistoryStore.getState();
+            
+            // Flush any pending bets from the previous round first
             this.flushLocalBetLogIfAny();
+            
+            // Clear any stale pending bet data for the new round
+            // This ensures we start fresh for the current betting round
+            const hadPendingData = betHistoryStore.hasPendingBets();
+            if (hadPendingData) {
+                betHistoryStore.clearPendingBets();
+            }
         }
 
         this.lastRoundState = roundState;
@@ -55,11 +66,12 @@ export class BetHistoryHandler {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
         const nowIso = new Date().toISOString();
+        const currentUIRoundId = gameStore.playerResultBoard?.roundId ?? 0;
 
-        // Capture the round ID from the UI when receiving first ownBets
-        if (!betHistoryStore.pendingBetRoundId) {
-            const roundId = gameStore.playerResultBoard?.roundId ?? 0;
-            betHistoryStore.setPendingBetRoundId(roundId);
+        // Always capture/update the round ID from the UI for each bet
+        // This ensures we get the correct current round ID
+        if (!betHistoryStore.pendingBetRoundId || betHistoryStore.pendingBetRoundId !== currentUIRoundId) {
+            betHistoryStore.setPendingBetRoundId(currentUIRoundId);
         }
 
         // Set first bet time if not already set
@@ -110,7 +122,6 @@ export class BetHistoryHandler {
         // Important: Only flush if we have settlement data from the previous round
         // This ensures we wait for the round to finish before calculating wins
         if (!this.latestFinish?.settlementResult) {
-            // No settlement data yet, wait for finish event
             return;
         }
 

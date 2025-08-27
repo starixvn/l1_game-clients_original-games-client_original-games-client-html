@@ -101,7 +101,19 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
         const existingKeys = new Set(existingLogs.map((log) => getRoundKey(log)));
         const newLogs = logs.filter((newLog) => !existingKeys.has(getRoundKey(newLog)));
 
-        set({ betLogs: sortByRoundDesc([...existingLogs, ...newLogs]) });
+        if (newLogs.length > 0) {
+            const updatedLogs = sortByRoundDesc([...existingLogs, ...newLogs]);
+            
+            // Update pagination metadata when logs are added locally
+            const newTotalPages = Math.ceil(updatedLogs.length / 10);
+            const hasMoreData = updatedLogs.length > 10 && currentState.currentPage < newTotalPages;
+            
+            set({ 
+                betLogs: updatedLogs,
+                totalPages: newTotalPages,
+                hasMoreData: hasMoreData
+            });
+        }
     },
 
     setCurrentPage: (page) => set({ currentPage: page }),
