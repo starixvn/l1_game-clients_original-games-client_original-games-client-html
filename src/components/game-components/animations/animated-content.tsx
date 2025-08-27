@@ -42,8 +42,9 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
     useEffect(() => {
         const el = ref.current;
         if (!el) {
-            return;
+            return () => {};
         }
+
         const axis = direction === "horizontal" ? "x" : "y";
         const offset = reverse ? -distance : distance;
         const startPct = (1 - Math.min(Math.max(threshold, 0), 1)) * 100;
@@ -74,9 +75,7 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
             try {
                 ScrollTrigger.getAll().forEach((t) => t.kill());
                 gsap.killTweensOf(el);
-            } catch {
-                return;
-            }
+            } catch { }
         };
     }, [
         distance,
