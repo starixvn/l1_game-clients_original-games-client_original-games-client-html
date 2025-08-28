@@ -3056,6 +3056,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/canvas-confetti@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.lumigame.com/@types/canvas-confetti/-/canvas-confetti-1.6.0.tgz#c525f22f1042e73dec6a7e86c1f5bb0191c09fea"
+  integrity sha512-Yq6rIccwcco0TLD5SMUrIM7Fk7Fe/C0jmNRxJJCLtAF6gebDkPuUjK5EHedxecm69Pi/aA+It39Ux4OHmFhjRw==
+
 "@types/connect@3.4.38":
   version "3.4.38"
   resolved "http://npm.lumigame.com/@types/connect/-/connect-3.4.38.tgz"
@@ -4763,6 +4768,11 @@ caniuse-lite@^1.0.30001702, caniuse-lite@^1.0.30001733:
   resolved "http://npm.lumigame.com/caniuse-lite/-/caniuse-lite-1.0.30001734.tgz"
   integrity sha512-uhE1Ye5vgqju6OI71HTQqcBCZrvHugk0MjLak7Q+HfoBgoq5Bi+5YnwjP4fjDgrtYr/l8MVRBvzz9dPD4KyK0A==
 
+canvas-confetti@1.6.0:
+  version "1.6.0"
+  resolved "http://npm.lumigame.com/canvas-confetti/-/canvas-confetti-1.6.0.tgz#193f71aa8f38fc850a5ba94f59091a7afdb43ead"
+  integrity sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==
+
 capture-exit@^2.0.0:
   version "2.0.0"
   resolved "http://npm.lumigame.com/capture-exit/-/capture-exit-2.0.0.tgz"
@@ -6426,6 +6436,15 @@ fragment-cache@^0.2.1:
   integrity sha1-QpD60n8T6Jvn8zeZxrxaCr//DRk=
   dependencies:
     map-cache "^0.2.2"
+
+framer-motion@^12.23.12:
+  version "12.23.12"
+  resolved "http://npm.lumigame.com/framer-motion/-/framer-motion-12.23.12.tgz#80cf6fd7c111073a0c558e336c85ca36cca80d3d"
+  integrity sha512-6e78rdVtnBvlEVgu6eFEAgG9v3wLnYEboM8I5O5EXvfKC8gxGQB8wXJdhkMy10iVcn05jl6CNw7/HTsTCfwcWg==
+  dependencies:
+    motion-dom "^12.23.12"
+    motion-utils "^12.23.6"
+    tslib "^2.4.0"
 
 fs-extra@11.2.0:
   version "11.2.0"
@@ -9055,6 +9074,26 @@ module-details-from-path@^1.0.3:
   resolved "http://npm.lumigame.com/module-details-from-path/-/module-details-from-path-1.0.4.tgz"
   integrity sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==
 
+motion-dom@^12.23.12:
+  version "12.23.12"
+  resolved "http://npm.lumigame.com/motion-dom/-/motion-dom-12.23.12.tgz#87974046e7e61bc4932f36d35e8eab6bb6f3e434"
+  integrity sha512-RcR4fvMCTESQBD/uKQe49D5RUeDOokkGRmz4ceaJKDBgHYtZtntC/s2vLvY38gqGaytinij/yi3hMcWVcEF5Kw==
+  dependencies:
+    motion-utils "^12.23.6"
+
+motion-utils@^12.23.6:
+  version "12.23.6"
+  resolved "http://npm.lumigame.com/motion-utils/-/motion-utils-12.23.6.tgz#fafef80b4ea85122dd0d6c599a0c63d72881f312"
+  integrity sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==
+
+motion@^12.23.12:
+  version "12.23.12"
+  resolved "http://npm.lumigame.com/motion/-/motion-12.23.12.tgz#9f3552636c1e94911eee42e6f85db8f60db83c19"
+  integrity sha512-8jCD8uW5GD1csOoqh1WhH1A6j5APHVE15nuBkFeRiMzYBdRwyAHmSP/oXSuW0WJPZRXTFdBoG4hY9TFWNhhwng==
+  dependencies:
+    framer-motion "^12.23.12"
+    tslib "^2.4.0"
+
 mrmime@^2.0.0:
   version "2.0.0"
   resolved "http://npm.lumigame.com/mrmime/-/mrmime-2.0.0.tgz"
@@ -9899,6 +9938,14 @@ react-addons-test-utils@^15.6.2:
   version "15.6.2"
   resolved "http://npm.lumigame.com/react-addons-test-utils/-/react-addons-test-utils-15.6.2.tgz"
   integrity sha1-wStu/cIkfBDae4dw0YUICnsEcVY=
+
+react-canvas-confetti@^1.2.1:
+  version "1.4.0"
+  resolved "http://npm.lumigame.com/react-canvas-confetti/-/react-canvas-confetti-1.4.0.tgz#69a759e09024ff2cc8896739b8377182dee3c38d"
+  integrity sha512-ByBdSsNGUxlcJuOqSgbZw1VWNNO3b7njTmnuM1Y36mvwdCkCRs8rLkRAjn6MQK96LgWcfDVhr6ZT5olm2w8Zwg==
+  dependencies:
+    "@types/canvas-confetti" "1.6.0"
+    canvas-confetti "1.6.0"
 
 react-device-detect@^2.2.3:
   version "2.2.3"
