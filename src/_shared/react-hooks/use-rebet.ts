@@ -6,6 +6,8 @@ import { RoundState } from "../../components/game-base/type";
 import { useClientSeedPF } from "./use-client-seed-pf";
 import { usePlayerContext } from "../react-contexts";
 import { useGlobalEventsStore } from "../stores/global-events-store/global-events-store";
+import { NoticeErrorCode } from "../constants/error-code-dictionary";
+import { broadcastNotice, getNotice } from "../helpers";
 
 interface UseRebetReturn {
     isEnabled: boolean;
@@ -75,6 +77,13 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         const betChoices = calculateBetChoices();
         sendSocketEvent("rebet", { betChoices, clientSeed });
     }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed]);
+
+    // const handleClickRebet = useCallback(() => {
+    //     console.log("handleClickRebet");
+
+    //     const notice = getNotice(NoticeErrorCode.insufficientFund, false);
+    //     broadcastNotice(notice);
+    // }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed]);
 
     useEffect(() => {
         clearRetryInterval();

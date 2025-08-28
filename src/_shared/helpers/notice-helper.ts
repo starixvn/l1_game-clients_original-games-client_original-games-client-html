@@ -1,4 +1,4 @@
-import ErrorCodeDictionary from "../constants/error-code-dictionary";
+import ErrorCodeDictionary, { NoticeErrorCode } from "../constants/error-code-dictionary";
 import { NoticeModel } from "../../components/game-base/type";
 import { useNoticeStore } from "../stores/notice-store/notice-store";
 
@@ -95,3 +95,17 @@ export const getExtendMessageByErrorCode = (errorCode: string): string => {
     }
     return extendMessage;
 };
+
+export const getNotice = (errorCode: string, adjustBetNoticePosition = false, gameName?: string, betChoice1?: string, betChoice2?: string, args?: object): NoticeModel => {
+    return {
+        gameName,
+        message: GetLocalizedErrorMessage(errorCode),
+        duration: 2,
+        errorCode: errorCode,
+        betChoice1,
+        betChoice2,
+        adjustBetNoticePosition,
+        ...args,
+    };
+};
+
