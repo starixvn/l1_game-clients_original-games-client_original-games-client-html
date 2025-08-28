@@ -1,13 +1,11 @@
 import { memo, useEffect, useState } from "react";
-import { useRebet } from "../../../_shared/react-hooks/use-rebet";
 import { useAutoRebet } from "../../../_shared/react-hooks/use-auto-rebet";
 import AutoRebetPopup from "./auto-rebet-popup";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 
 const AutoRebetIcon = () => {
-    const { isEnabled: isRebetEnabled } = useRebet(true);
     const isAutoRebetActive = useBettingStore((state) => state.isAutoRebetActive);
-    const { remainingRounds, startAutoRebet, stopAutoRebet } = useAutoRebet();
+    const { remainingRounds, startAutoRebet, stopAutoRebet, isEnabled: isRebetEnabled } = useAutoRebet();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const [isEnabled, setIsEnabled] = useState(false);

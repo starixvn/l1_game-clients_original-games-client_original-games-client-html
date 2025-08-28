@@ -6,6 +6,7 @@ import useBettingStore from "../stores/betting-store/betting-store";
 import { useRebet } from "./use-rebet";
 
 interface UseAutoRebetReturn {
+    isEnabled: boolean;
     isAutoRebetActive: boolean;
     remainingRounds: number;
     startAutoRebet: (rounds: number) => void;
@@ -25,7 +26,7 @@ export const useAutoRebet = (): UseAutoRebetReturn => {
             endBet: state.endBet,
         }))
     );
-    const { handleClickRebet } = useRebet();
+    const { handleClickRebet, isEnabled } = useRebet();
     const [remainingRounds, setRemainingRounds] = useState(0);
 
     const startAutoRebet = useCallback(
@@ -74,6 +75,7 @@ export const useAutoRebet = (): UseAutoRebetReturn => {
     }, [endBet, stopAutoRebet]);
 
     return {
+        isEnabled,
         isAutoRebetActive,
         remainingRounds,
         startAutoRebet,

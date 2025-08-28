@@ -1,10 +1,11 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState, useRef } from "react";
 import { ChipSlider } from "./chip-slider";
 import { Chip } from "./chip";
 import { useSettingContext } from "../../../_shared/react-contexts";
 import { useGameStore } from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
+import { useClickOutside } from "../../../_shared/react-hooks/use-click-outside";
 
 const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -23,6 +24,14 @@ const ChipControlPanel: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
     const { chipSettings } = useSettingContext();
+    const sliderRef = useRef<HTMLDivElement>(null);
+
+    useClickOutside(sliderRef, () => {
+        if (isShowSlider) {
+            setIsShowSlider(false);
+        }
+    });
+
     const chipValues = useMemo(() => {
         if (gameConfigs && userStakeLevel) {
             const maxBet = Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
@@ -87,7 +96,10 @@ const ChipControlPanel: React.FC = () => {
 
             <div className={`flex justify-center items-center md:hidden ${isAutoRebetActive ? "opacity-50" : ""}`}>
                 {isShowSlider && (
-                    <div className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center">
+                    <div
+                        ref={sliderRef}
+                        className="absolute bottom-full w-[328px] h-[58px] rounded-full bg-black/60 z-[var(--chip-slider-index)] flex items-center justify-center"
+                    >
                         <ChipSlider chipSettings={chipSettings} chipValues={chipValues} onSelectChip={onSelectChip} />
                     </div>
                 )}
