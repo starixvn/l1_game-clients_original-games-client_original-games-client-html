@@ -30,11 +30,9 @@ const BaseNotice: React.FC<{
 
     useEffect(() => {
         if (closeDialog) {
-            onClose();
-            // Reset the flag
             useGlobalEventsStore.getState().setCloseDialog(false);
         }
-    }, [closeDialog, onClose]);
+    }, [closeDialog]);
 
     const clickSound = useClickSound();
 
