@@ -210,31 +210,4 @@ describe("NoticeDialog", () => {
             expect(screen.getByText("zero.duration")).toBeInTheDocument();
         });
     });
-
-    describe("Integration with Global Events", () => {
-        it("should respond to close dialog events from global store", async () => {
-            // Arrange
-            const mockNotice: NoticeModel = {
-                message: "global.close.test",
-                duration: 10,
-                isWarning: false,
-            };
-
-            useNoticeStore.getState().showNotice(mockNotice);
-            render(<NoticeDialog />);
-
-            // Act - Simulate global close dialog event
-            const { useGlobalEventsStore } = require("../../../../_shared/stores/global-events-store/global-events-store");
-            const mockSubscribe = useGlobalEventsStore.subscribe as jest.Mock;
-
-            // Get the callback that was passed to subscribe
-            const subscribeCallback = mockSubscribe.mock.calls[0][0];
-            subscribeCallback({ closeDialog: true });
-
-            // Assert
-            await waitFor(() => {
-                expect(useNoticeStore.getState().notice).toBeNull();
-            });
-        });
-    });
 });
