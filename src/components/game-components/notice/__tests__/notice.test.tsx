@@ -26,14 +26,15 @@ jest.mock("../../../../_shared/helpers", () => ({
     numberWithCommas: jest.fn((num) => num.toString()),
 }));
 
-// Mock the global events store
+// Mock the global events store - fix the mock to properly simulate Zustand store
 jest.mock("../../../../_shared/stores/global-events-store/global-events-store", () => ({
-    useGlobalEventsStore: {
-        subscribe: jest.fn(() => jest.fn()),
-        getState: jest.fn(() => ({
+    useGlobalEventsStore: jest.fn((selector) => {
+        const mockState = {
+            closeDialog: false,
             setCloseDialog: jest.fn(),
-        })),
-    },
+        };
+        return selector ? selector(mockState) : mockState;
+    }),
 }));
 
 describe("NoticeDialog", () => {

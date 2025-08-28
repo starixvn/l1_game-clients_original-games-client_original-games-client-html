@@ -4,7 +4,6 @@ import { Dispatch } from "react";
 import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from "../../../../_shared/constants/error-code-dictionary";
 import { GetLocalizedErrorMessage, StorageHelper, getGlossaryTranslate, localStorageKeys, broadcastNotice } from "../../../../_shared/helpers";
-import { broadcastCloseDialog } from "../../../../_shared/helpers/global-events-helper";
 import { findHedgeBetGroup, getAccountBalance, isBalanceUnavailable, isHedgeBet, isInPhasePreventBet } from "../../../../_shared/helpers/validate-bet-helper";
 import { SystemContextModel } from "../../../../_shared/react-contexts";
 import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";

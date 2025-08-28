@@ -153,10 +153,6 @@ export const NoticeDialog = () => {
             betChoice2,
             ...hedgeBet,
         };
-        console.log("params::: ", params);
-
-
-        console.log("t(`${message}`, params, { noWrap: true }).replaceTolgeeFormat()::: ", t(`${message}`, params, { noWrap: true }).replaceTolgeeFormat());
 
         return (
             <BaseNotice
