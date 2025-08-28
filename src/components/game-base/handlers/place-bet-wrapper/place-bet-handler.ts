@@ -10,6 +10,7 @@ import { GameStateContextModel } from "../../../../_shared/react-contexts/game-s
 import { PlaceBetEventAction, PlaceBetEventActionType } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetContextModel } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model";
 import { NoticeModel, RoundState } from "../../type";
+import { broadcastCloseDialog } from "../../../../_shared/helpers/global-events-helper";
 
 export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
@@ -37,6 +38,7 @@ export class PlaceBetHandler {
     private isProcessingBet: boolean;
     private roundState: RoundState = RoundState.None;
     private isFirstOwnBetHandler = false;
+    private endPlaceBetHandlerId: any;
 
     constructor(public readonly props: PlaceBetHandlerProps) {
         this.isProcessingBet = false;
@@ -66,6 +68,8 @@ export class PlaceBetHandler {
         });
 
         this.roundStateHandlerId = this.props.gameMessageHandler.register(messageEventType.ROUND_STATE, this.handleRoundState.bind(this));
+
+        this.endPlaceBetHandlerId = this.props.gameMessageHandler.register(messageEventType.END_PLACE_BET, this.handleEndPlaceBet);
     };
 
     handleRoundState = ({ roundState }) => {
@@ -77,6 +81,7 @@ export class PlaceBetHandler {
         this.props.gameMessageHandler.removeHandler(this.ownBetsHandlerId);
         this.props.gameMessageHandler.removeHandler(this.finishHandlerId);
         this.props.gameMessageHandler.removeHandler(this.roundStateHandlerId);
+        this.props.gameMessageHandler.removeHandler(this.endPlaceBetHandlerId);
     };
 
     broadcastNotice = (notice: object) => {
@@ -85,6 +90,11 @@ export class PlaceBetHandler {
 
     clearNotice = () => {
         broadcastNotice(null);
+    };
+
+    handleEndPlaceBet = () => {
+        this.clearNotice();
+        broadcastCloseDialog();
     };
 
     handleOwnBets = ({ ownBets }) => {
