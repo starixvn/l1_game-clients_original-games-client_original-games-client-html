@@ -78,7 +78,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                     <TableCell
                         key={cellIndex}
                         className={cn(
-                            "w-1/4 text-sm text-secondary-text p-3 text-sm",
+                            "w-1/4 text-sm text-secondary-text p-3",
                             cell.className || "text-center",
                             cell.isWinningBet && "text-winning-highlight font-semibold"
                         )}

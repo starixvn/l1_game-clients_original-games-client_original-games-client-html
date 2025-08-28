@@ -16,7 +16,7 @@ export const PlayerResultBoard: FC = () => {
     </div>
   );
 
-  const renderHeader = () => (
+  const renderHeaderInfo = () => (
     <div className="flex justify-between bg-secondary-bg rounded-lg p-2 mb-2 text-sm">
       {renderPlayerCount()}
       <RoundId />
@@ -27,14 +27,13 @@ export const PlayerResultBoard: FC = () => {
     <div className="">
       <PlayerResultBoardTable
         data={tableData}
-        emptyMessage={translateCommon("no_data")}
       />
     </div>
   );
 
   return (
     <div className="h-full rounded-xl px-2 py-3 bg-primary-bg border border-primary-border">
-      {renderHeader()}
+      {renderHeaderInfo()}
       {renderTable()}
     </div>
   );
