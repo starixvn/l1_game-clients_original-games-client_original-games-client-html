@@ -1,8 +1,6 @@
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
-import { isIOS, isMobileOnly } from "react-device-detect";
-
 import { getAppSettings } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
 import { SettingEventActionType, SystemContextProvider, usePlayerContext, useSettingDispatch } from "../_shared/react-contexts";
@@ -10,7 +8,6 @@ import { useBlockBetSound, usePlaceBetSound, useStartDrawSound, useStartRoundSou
 import { GameSound } from "../components/game-base/type";
 import GameLoading from "../components/game-components/game-loading";
 import { getChipSettings } from "../services/user-setting-service";
-import styles from "./games.module.scss";
 import { Props } from "./type";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 
