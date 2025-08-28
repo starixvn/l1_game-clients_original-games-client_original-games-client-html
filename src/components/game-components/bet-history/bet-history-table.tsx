@@ -96,7 +96,7 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                 <TableHead
                     key={column.key}
                     className={cn(
-                        "text-primary-text p-2 h-full font-bold text-sm",
+                        "text-primary-text p-2 h-full font-semibold text-sm",
                         column.align === "right" ? "text-right" : "text-center",
                         index === 0 && "rounded-tl-lg rounded-bl-lg",
                         index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"

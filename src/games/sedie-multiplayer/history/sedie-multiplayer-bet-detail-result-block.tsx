@@ -47,7 +47,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
             <div className="flex items-center gap-1.5">
                 {winningSubOption ? (
                     <span className="flex items-center gap-1.5">
-                        <span className="text-secondary-text">Result</span>
+                        <span className="text-secondary-text">{translateCommon("result")}</span>
                         <Image
                             src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`}
                             alt={`${winningSubOption} result`}
