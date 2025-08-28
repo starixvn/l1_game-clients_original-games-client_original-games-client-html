@@ -33,7 +33,6 @@ export const getPathIconGames = (gameIds: number[]): string[] => {
 };
 
 export const pathImageMapping = {
-    lobby: ["dot", "hide-toolbar-guide"],
-    game: ["anim/ball-middle", "ball"],
-    // SicBall removed
+    lobby: [],
+    game: [],
 };

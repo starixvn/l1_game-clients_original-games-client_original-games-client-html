@@ -73,7 +73,6 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
             updateBetDetail: state.updateBetDetail,
         }))
     );
-    console.log("betDetailData", betDetailData);
     const { gameMessageHandler } = useGameContext();
 
     const { t: translateCommon } = useCommonTranslate();

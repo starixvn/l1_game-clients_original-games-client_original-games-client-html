@@ -12,8 +12,6 @@ import { PlaceBetEventActionType } from "../../_shared/react-contexts/game-state
 import { PlaceBetProvider } from "../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
 import { GameResourceKeys } from "../../_shared/resources";
 import { getBalance } from "../../services/auth-service";
-import BetConfirmDialog from "../game-components/bet-confirm-dialog";
-import ConfirmBet from "../game-components/confirm-bet";
 import CountdownTimer from "../game-components/countdown-timer/countdown-timer";
 import DisabledModal from "../game-components/disabled-modal";
 import { ConnectFailedMessage } from "../game-components/error-message";
@@ -576,14 +574,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <ChipControlPanel />;
     }
 
-    renderConfirmBet() {
-        return <ConfirmBet />;
-    }
-
-    renderConfirmDialog() {
-        return <BetConfirmDialog />;
-    }
-
     renderStatistic() {
         return <></>;
     }
@@ -613,8 +603,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             <PlaceBetProvider>
                 <PlaceBetHandlerWrapper handler={this.placeBetHandler} signOut={(this.context as PlayerContextModel)?.signOut}>
                     {this.renderBettingBlock()}
-                    {this.renderConfirmDialog()}
-                    {this.renderConfirmBet()}
                 </PlaceBetHandlerWrapper>
             </PlaceBetProvider>
         );
