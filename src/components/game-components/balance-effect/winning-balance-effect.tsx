@@ -22,7 +22,9 @@ const WinningBalanceEffect: FC = () => {
     }, [betWin, totalBetAmount]);
 
     const fireConfetti = useCallback(() => {
-        if (!animationInstance.current) return;
+        if (!animationInstance.current) {
+            return;
+        }
 
         makeShot(0.25, {
             spread: 26,
@@ -71,11 +73,9 @@ const WinningBalanceEffect: FC = () => {
 
     useEffect(() => {
         if (showContent) {
-            const confettiTimer = setTimeout(() => {
+            setTimeout(() => {
                 fireConfetti();
             }, 1200);
-
-            return () => clearTimeout(confettiTimer);
         }
     }, [showContent, fireConfetti]);
 
