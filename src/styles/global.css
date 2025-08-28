@@ -6,12 +6,12 @@
 :root {
     --page-background-color: #000;
     --text-color: #fff;
-    --border-color: #27303F;
+    --border-color: #27303f;
     --opacity-background: rgba(12, 12, 12, 0.8);
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -27,12 +27,11 @@
     --modal-text-color: #e6e6e6;
 }
 
-
 html[data-theme="dark"] {
-    --page-background-color: #15152c;
+    --page-background-color: #0f1520;
     --primary-background-color: #182130;
     --text-color: #fff;
-    --border-color: #27303F;
+    --border-color: #27303f;
     --secondary-background-color: #101721;
     --secondary-text-color: #b3bec1;
 
@@ -42,7 +41,7 @@ html[data-theme="dark"] {
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
 
-    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -73,7 +72,7 @@ html[data-theme="light"] {
     --opacity-background-grey: rgba(221, 221, 221, 0.6);
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-    --popup-background: linear-gradient(180deg, #0854B2 0%, #05264D 9.84%, #060D15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
     --popup-color: #2c2f3e;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 
@@ -84,7 +83,7 @@ html[data-theme="light"] {
     --color-table-text-clickable: #0990ff;
     --color-winning-highlight: #fff600;
 
-    --table-header: #EBEBEB;
+    --table-header: #ebebeb;
     --bet-detail-row-1: #102136;
     --bet-detail-row-2: #172c47;
 

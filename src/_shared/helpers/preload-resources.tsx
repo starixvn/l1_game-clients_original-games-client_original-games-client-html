@@ -36,7 +36,7 @@ declare global {
 const analyticsData: PreloadAnalytics[] = [];
 
 // Critical image paths that should be loaded first
-const CRITICAL_IMAGE_PATHS = ["/countdown-timer/", "/ball/", "/anim/ball-middle/"];
+const CRITICAL_IMAGE_PATHS = ["/ball/", "/anim/ball-middle/"];
 
 // Progressive loading priorities
 enum ImagePriority {

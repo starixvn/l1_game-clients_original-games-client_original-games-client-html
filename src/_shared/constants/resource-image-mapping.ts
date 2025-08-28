@@ -33,7 +33,7 @@ export const getPathIconGames = (gameIds: number[]): string[] => {
 };
 
 export const pathImageMapping = {
-    lobby: ["bg-galaxy.webp", "bg.webp", "bg-galaxy-small.webp", "dot", "hide-toolbar-guide"],
-    game: ["anim/ball-middle", "ball", "countdown-timer"],
+    lobby: ["dot", "hide-toolbar-guide"],
+    game: ["anim/ball-middle", "ball"],
     // SicBall removed
 };

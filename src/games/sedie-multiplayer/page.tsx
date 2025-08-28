@@ -21,6 +21,7 @@ import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import { SedieMultiplayerStatisticPopup } from "./round-history/sedie-multiplayer-statistic-popup";
 import SeDieMultiplayerBetDetailModal from "./history";
+import { PlayerResultBoard } from "../../components/game-components/player-result-board/player-result-board";
 const OwnTotalBet = lazy(() => import("../../components/game-components/own-total-bet/own-total-bet"));
 const DoubleBetIcon = lazy(() => import("../../components/game-components/rebet/double-bet-icon"));
 const AutoRebetIcon = lazy(() => import("../../components/game-components/rebet/auto-rebet-icon"));
@@ -110,6 +111,14 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
                         </div>
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    renderRightSide() {
+        return (
+            <div className="col-span-12 lg:col-span-4 mb-3 px-3">
+                <PlayerResultBoard />
             </div>
         );
     }

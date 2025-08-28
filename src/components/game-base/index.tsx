@@ -44,7 +44,6 @@ import { PlaceBetHandlerWrapper } from "./handlers/place-bet-wrapper/place-bet-h
 import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./type";
 import PreloadResources from "../../_shared/helpers/preload-resources";
 import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
-import { PlayerResultBoard } from "../game-components/player-result-board/player-result-board";
 import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
@@ -666,11 +665,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderRightSide() {
-        return (
-            <div className="col-span-12 lg:col-span-4 mb-3 px-3">
-                <PlayerResultBoard />
-            </div>
-        );
+        return <></>;
     }
 
     renderBetHistoryTable() {

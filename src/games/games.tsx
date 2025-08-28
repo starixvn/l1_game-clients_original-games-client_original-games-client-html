@@ -5,12 +5,7 @@ import { isIOS, isMobileOnly } from "react-device-detect";
 
 import { getAppSettings } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
-import {
-    SettingEventActionType,
-    SystemContextProvider,
-    usePlayerContext,
-    useSettingDispatch,
-} from "../_shared/react-contexts";
+import { SettingEventActionType, SystemContextProvider, usePlayerContext, useSettingDispatch } from "../_shared/react-contexts";
 import { useBlockBetSound, usePlaceBetSound, useStartDrawSound, useStartRoundSound } from "../_shared/react-hooks";
 import { GameSound } from "../components/game-base/type";
 import GameLoading from "../components/game-components/game-loading";
@@ -29,12 +24,7 @@ const LoadingGameComponent = () => (
 // SeBall removed
 const SeDieMultiPlayer = dynamic(() => import("./sedie-multiplayer/page"), { loading: () => <LoadingGameComponent /> });
 
-export const Games: React.FC<Props> = ({
-    setApiErrorMessage,
-    userStakeLevel,
-    updateUserStakeLevel,
-    openGameId,
-}) => {
+export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId }) => {
     const { theme } = useTheme();
     const { session } = usePlayerContext();
     const settingDispatch = useSettingDispatch();
@@ -82,15 +72,7 @@ export const Games: React.FC<Props> = ({
 
     const gameComponent = getGameComponentById(openGameId);
 
-    return (
-        <div className={`game-container ${styles["game-wrapper"]} ${styles["open-chips"]}`}>
-            <SystemContextProvider>
-                <div className={`${styles["game-list"]} ${isMobileOnly ? styles[isIOS ? "ios-device" : "android-device"] : ""}`}>
-                    {gameComponent}
-                </div>
-            </SystemContextProvider>
-        </div>
-    );
+    return <SystemContextProvider>{gameComponent}</SystemContextProvider>;
 };
 
 export default Games;
