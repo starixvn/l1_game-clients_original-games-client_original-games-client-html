@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext } from "react";
-import { buildVersion } from "../../../_shared/constants";
 import { URLContext } from "../../../_shared/react-contexts";
 import { useCommonTranslate } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";

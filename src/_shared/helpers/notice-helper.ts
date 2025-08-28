@@ -1,4 +1,4 @@
-import ErrorCodeDictionary, { NoticeErrorCode } from "../constants/error-code-dictionary";
+import ErrorCodeDictionary from "../constants/error-code-dictionary";
 import { NoticeModel } from "../../components/game-base/type";
 import { useNoticeStore } from "../stores/notice-store/notice-store";
 
