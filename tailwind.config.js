@@ -51,7 +51,8 @@ module.exports = {
                 'spin-slow-reverse': 'spin 6s linear infinite reverse',
             },
             zIndex: {
-                'modal': '300',
+                'toast': '300',
+                'modal': '301',
             },
         },
     },
