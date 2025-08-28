@@ -33,7 +33,7 @@ const tmpGameSettings: { [id: string]: GameSettings } = gameSettings;
 const tolgeeNamespaceByGameSetting = Object.values(tmpGameSettings)
     .map((setting) => setting.tolgeeNamespace)
     .filter((ns) => ns);
-const namespaces = ["Common", ...tolgeeNamespaceByGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
+const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
 
 console.log("[TolgeeGenerator] namespaces:", namespaces);
 
@@ -44,7 +44,7 @@ const tg = Tolgee().use(DevTools()).init({
     apiKey: "tgpak_gvpw45brha2xg3btoztxeytunvudc5dbn5twqodtonztc",
     apiUrl: "https://tolgee.sabagame.com/",
     projectId: "5",
-    defaultNs: "Common",
+    defaultNs: "SabaNumber",
     ns: namespaces,
 });
 

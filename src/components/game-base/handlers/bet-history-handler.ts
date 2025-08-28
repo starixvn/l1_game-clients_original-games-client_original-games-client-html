@@ -43,12 +43,11 @@ export class BetHistoryHandler {
         const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound;
 
         if (isEnteringNewRoundBetting) {
-            const gameStore = useGameStore.getState() as any;
             const betHistoryStore = useBetHistoryStore.getState();
-            
+
             // Flush any pending bets from the previous round first
             this.flushLocalBetLogIfAny();
-            
+
             // Clear any stale pending bet data for the new round
             // This ensures we start fresh for the current betting round
             const hadPendingData = betHistoryStore.hasPendingBets();
