@@ -53,18 +53,28 @@
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 20px;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        background: linear-gradient(0.04deg, #0c8aff -2.89%, #23244b 99.96%);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: xor;
+        mask-composite: exclude;
+        border-radius: 20px;
+    }
     &.odd {
         background-image: url("/static/images/sedie-multiplayer/odd-bg.svg");
-        @media (width >= 48rem) {
-            background-image: url("/static/images/sedie-multiplayer/md-odd-bg.svg");
+        &::before {
+            background: linear-gradient(0.04deg, #ff0921 0.03%, #23244b 99.97%);
         }
     }
 
     &.even {
         background-image: url("/static/images/sedie-multiplayer/even-bg.svg");
-        @media (width >= 48rem) {
-            background-image: url("/static/images/sedie-multiplayer/md-even-bg.svg");
-        }
     }
     .btn-ripple {
         border-radius: 10px;

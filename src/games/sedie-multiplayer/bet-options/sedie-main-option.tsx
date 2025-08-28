@@ -15,7 +15,8 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
 
     return (
         <div className="relative">
-            <div className={` text-white relative w-[180px] h-[138px] flex flex-col justify-around ${choiceStyle} md:w-[229px]`}>
+            <div className={styles.border}></div>
+            <div className={`text-white relative w-[180px] h-[138px] flex flex-col justify-around ${choiceStyle} md:w-[229px]`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
                     <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xl font-bold" />
@@ -24,6 +25,7 @@ export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgee
                 <div className="h-5">
                     <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
                 </div>
+
                 <RippleButton className={`${styles["btn-ripple"]}`} id={buttonId} choice={choice} />
             </div>
             <ChipEffect choice={choice} />

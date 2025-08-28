@@ -11,7 +11,7 @@ import { broadcastNotice, getNotice } from "../helpers";
 
 interface UseRebetReturn {
     isEnabled: boolean;
-    handleClickRebet: () => void;
+    handleClickRebet: () => boolean;
 }
 
 const RETRY_INTERVAL_MS = 3000;
@@ -73,17 +73,16 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
     }, []);
 
     const handleClickRebet = useCallback(() => {
+        if (!isEnoughBalance()) {
+            broadcastNotice(getNotice(NoticeErrorCode.insufficientFund, false));
+            disable();
+            return false;
+        }
         startRetryInterval();
         const betChoices = calculateBetChoices();
         sendSocketEvent("rebet", { betChoices, clientSeed });
-    }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed]);
-
-    // const handleClickRebet = useCallback(() => {
-    //     console.log("handleClickRebet");
-
-    //     const notice = getNotice(NoticeErrorCode.insufficientFund, false);
-    //     broadcastNotice(notice);
-    // }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed]);
+        return true;
+    }, [startRetryInterval, calculateBetChoices, sendSocketEvent, clientSeed, isEnoughBalance, disable]);
 
     useEffect(() => {
         clearRetryInterval();
@@ -101,7 +100,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         const hasBets = Object.keys(ownBets).length > 0;
 
         if (roundState === RoundState.InRound) {
-            if (hasPlacedPreviousBet && hasBets && isEnoughBalance()) {
+            if (hasPlacedPreviousBet && hasBets) {
                 setIsEnabled(true);
             }
         } else {
@@ -111,7 +110,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
         if (roundState === RoundState.DisplayResult) {
             hasBets && setHasPlacedPreviousBet(true);
         }
-    }, [roundState, hasPlacedPreviousBet, isEnoughBalance]);
+    }, [roundState, hasPlacedPreviousBet]);
 
     return { isEnabled, handleClickRebet };
 };

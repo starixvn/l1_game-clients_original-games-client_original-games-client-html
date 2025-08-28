@@ -46,10 +46,14 @@ export const useAutoRebet = (): UseAutoRebetReturn => {
             handleClickRebet();
             stopAutoRebet();
         }
+        let isSuccess = false;
         if (remainingRounds > 1) {
             setRemainingRounds((prev) => prev - 1);
-            handleClickRebet();
+            isSuccess = handleClickRebet();
         } else {
+            stopAutoRebet();
+        }
+        if (!isSuccess) {
             stopAutoRebet();
         }
     }, [remainingRounds, stopAutoRebet, handleClickRebet]);
