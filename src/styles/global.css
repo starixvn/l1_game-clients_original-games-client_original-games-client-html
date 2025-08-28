@@ -25,6 +25,7 @@
     --bet-detail-row-2: #172c47;
 
     --modal-text-color: #e6e6e6;
+    --pf-guide-background: linear-gradient(180deg, #094998 0%, #062b57 1.51%, #142030 3.02%);
 }
 
 html[data-theme="dark"] {
@@ -59,6 +60,8 @@ html[data-theme="dark"] {
     --bet-detail-row-2: #172c47;
 
     --modal-text-color: #e6e6e6;
+
+    --pf-guide-background: linear-gradient(180deg, #094998 0%, #062b57 1.51%, #142030 3.02%);
 }
 
 html[data-theme="light"] {

@@ -19,17 +19,15 @@ const PFModalContainer: FC<{
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
 
-    const { togglePFSetting, toggleExpandGuideFirst } = usePFStore(
+    const { togglePFSetting } = usePFStore(
         useShallow((state) => ({
-            togglePFSetting: state.togglePFSetting,
-            toggleExpandGuideFirst: state.toggleExpandGuideFirst,
+            togglePFSetting: state.togglePFSetting
         }))
     );
 
     const handleOpenPFSetting = () => {
         clickSound();
         togglePFSetting(true);
-        toggleExpandGuideFirst(true);
         AnalyticsHelper.trackFunction({ function: TrackingFunction.PFGuide, action: TrackingAction.Open });
     };
 

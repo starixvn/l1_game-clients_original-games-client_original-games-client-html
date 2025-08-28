@@ -8,11 +8,10 @@ import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
 import CopyableTextInput from "../copyable-text-input";
-import { WrapperPFGuide } from "../pf-guide";
+import { ButtonPFGuide } from "../pf-guide";
 import Styles from "../provably-fair.module.scss";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
-import ToggleSection from "./toggle-section";
 import useGameStore from "../../../../_shared/stores/game-store/game-store";
 
 const NUMBER_VALUES = "0123456789";
@@ -41,66 +40,27 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
     );
 
     const { t: translateSNGames } = useSNTranslate();
-    const { t: translateCommon } = useCommonTranslate();
     const handleCloseModal = () => {
         togglePFSetting(false);
         toggleExpandGuideFirst(false);
-    };
-
-    const [isSettingsExpanded, setIsSettingsExpanded] = useState<boolean>(!expandGuideFirst);
-    const [isGuidesExpanded, setIsGuidesExpanded] = useState<boolean>(expandGuideFirst);
-
-    useEffect(() => {
-        if (isShowPFSetting) {
-            setIsSettingsExpanded(!expandGuideFirst);
-            setIsGuidesExpanded(expandGuideFirst);
-        }
-    }, [isShowPFSetting]);
-
-    const toggleSettingsSection = () => {
-        setIsSettingsExpanded(!isSettingsExpanded);
-        if (isGuidesExpanded) {
-            setIsGuidesExpanded(false);
-        }
-    };
-
-    const toggleGuidesSection = () => {
-        setIsGuidesExpanded(!isGuidesExpanded);
-        if (isSettingsExpanded) {
-            setIsSettingsExpanded(false);
-        }
     };
 
     return (
         isShowPFSetting && (
             <ModalContainer
                 id="pf-setting"
-                title={<div className="flex-1 text-center">{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>}
+                title={
+                    <div>
+                        <ButtonPFGuide />
+                        <div className="flex-1 text-center">{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>
+                    </div>
+                }
                 isOpen={true}
                 onCloseModal={handleCloseModal}
-                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[730px] md:mx-auto"
+                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[730px] md:mx-auto mt-10"
             >
                 <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-5">
-                    <div className="flex flex-col">
-                        <ToggleSection
-                            title={translateCommon("pf_title_provably_fair_settings")}
-                            isExpanded={isSettingsExpanded}
-                            onToggle={toggleSettingsSection}
-                            contentClassName="h-auto"
-                        >
-                            <PFSetting customClientSeedInfo={customClientSeedInfo} />
-                        </ToggleSection>
-                    </div>
-
-                    <ToggleSection
-                        title={translateCommon("pf_pop-up_title_pf_guide")}
-                        isExpanded={isGuidesExpanded}
-                        onToggle={toggleGuidesSection}
-                        className="flex flex-col "
-                        contentClassName="h-full"
-                    >
-                        <WrapperPFGuide />
-                    </ToggleSection>
+                    <PFSetting customClientSeedInfo={customClientSeedInfo} />
                 </div>
             </ModalContainer>
         )
@@ -240,7 +200,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     };
 
     return (
-        <div className={Styles["pf-setting-container"] + " bg-[var(--modal-background)]"}>
+        <div className={Styles["pf-setting-container"] + " bg-none"}>
             <div>
                 <ul>
                     <li>{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>

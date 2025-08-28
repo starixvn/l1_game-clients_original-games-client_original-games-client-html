@@ -4,21 +4,23 @@ import { v4 as uuidv4 } from "uuid";
 import { buildVersion } from "../../../../_shared/constants";
 import { buildGameGuideUrl } from "../../../../_shared/helpers";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
-import { useCommonTranslate } from "../../../../_shared/react-hooks";
+import { useAppTheme, useClickSound, useCommonTranslate } from "../../../../_shared/react-hooks";
 import { tolgee } from "../../../../_shared/tolgee";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import Styles from "./pf-guide.module.scss";
-import PFModalContainer from "../../pf-modal";
+import ModalContainer from "../../modal-container";
+import Image from "next/image";
 
 const PFGuide: FC = () => {
     const { gameConfigs } = useGameStateContext();
-    const theme = "pf-original";
+    const { currentTheme } = useAppTheme();
+    const theme = "original";
     const language = tolgee.getLanguage() ?? "en";
     const wrapperRef = useRef<HTMLIFrameElement>();
     const wrapperIframeRef = useRef<HTMLIFrameElement>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const guideUrl = buildGameGuideUrl();
-    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${theme}&dy=1&f=pf&v=${buildVersion}`;
+    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${theme}&dy=1&f=pf&v=${buildVersion}&currentTheme=${currentTheme}`;
     const hideSpinner = () => {
         setIsLoading(false);
         wrapperIframeRef.current?.contentWindow.postMessage(JSON.stringify(gameConfigs), "*");
@@ -32,7 +34,7 @@ const PFGuide: FC = () => {
                     style={{ display: isLoading ? "none" : "block" }}
                     ref={wrapperIframeRef}
                     key={uuidv4()}
-                    className={`h-full w-full`}
+                    className="h-full w-full bg-transparent"
                     src={srcPath}
                     referrerPolicy="strict-origin-when-cross-origin"
                     onLoad={() =>
@@ -54,15 +56,16 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
     return (
         isOpen &&
         createPortal(
-            <PFModalContainer
+            <ModalContainer
                 id="pf-verify-detail-modal"
                 title={translateCommon("pf_pop-up_title_pf_guide")}
                 isOpen={isOpen}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
+                extendedClassName="bg-pf-guide-gradient mt-10"
             >
                 <WrapperPFGuide />
-            </PFModalContainer>,
+            </ModalContainer>,
             document.getElementById("dashboard")
         )
     );
@@ -73,9 +76,19 @@ const ButtonPFGuide: FC = () => {
     const onCloseModal = () => {
         setIsShowPFGuide(false);
     };
+    const clickSound = useClickSound();
 
     return (
         <>
+            <button
+                className="absolute top-5 left-4"
+                onClick={() => {
+                    clickSound();
+                    setIsShowPFGuide(true);
+                }}
+            >
+                <Image src="/static/images/icons/question-mark.svg" alt="close" width={32} height={32} />
+            </button>
             <PFGuideModal isOpen={isShowPFGuide} handleCloseModal={onCloseModal} />
         </>
     );

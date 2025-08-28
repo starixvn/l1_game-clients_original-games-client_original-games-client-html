@@ -40,7 +40,8 @@ module.exports = {
                 "success-gradient": "linear-gradient(121deg, #00AC48 31.4%, #26D45A 97.8%)",
                 "warning-gradient": "linear-gradient(121deg, #DFB513 31.4%, #CA9C08 97.8%)",
                 "btn-green": "linear-gradient(90deg, #00AC48 0%, #26D45A 100%)",
-                "btn-gray": "linear-gradient(90deg, #455F84 0%, #5B769D 100%)"
+                "btn-gray": "linear-gradient(90deg, #455F84 0%, #5B769D 100%)",
+                "pf-guide-gradient": "var(--pf-guide-background)"
             },
             boxShadow: {
                 "popup-bet-form": "var(--popup-bet-form-shadow)",
