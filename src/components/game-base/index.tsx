@@ -48,6 +48,7 @@ import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
+const Header = lazy(() => import("../page-components/header"));
 const Background = lazy(() => import("../game-components/background"));
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
@@ -721,16 +722,19 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         const isDisabledGame = roundState === RoundState.Disabled;
 
         return (
-            <GameContainer>
-                {!isLoaded && this.preloadResource()}
-                {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
-                {(roundState === RoundState.None || !availableInGameData) && (
-                    <LoadingSpinner removeSpinner={isDisabledGame || !!disconnectReason} />
-                )}
-                {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
-                {this.renderConnectFailed(roundState, disconnectReason)}
-                {this.renderNotice()}
-            </GameContainer>
+            <>
+                <Header tolgeeNamespace={this.props.tolgeeNamespace} />
+                <GameContainer>
+                    {!isLoaded && this.preloadResource()}
+                    {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
+                    {(roundState === RoundState.None || !availableInGameData) && (
+                        <LoadingSpinner removeSpinner={isDisabledGame || !!disconnectReason} />
+                    )}
+                    {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
+                    {this.renderConnectFailed(roundState, disconnectReason)}
+                    {this.renderNotice()}
+                </GameContainer>
+            </>
         );
     }
 

@@ -3,7 +3,7 @@ import HeaderTitle from "./header-title";
 import { UserInfo } from "./user-info";
 import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import styles from "./header.module.scss";
-const Header = () => {
+const Header = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
     const { openingGameId } = useGlobalEventsStore();
 
     return (
@@ -23,7 +23,7 @@ const Header = () => {
                             />
                         </svg>
                     </div>
-                    <HeaderTitle openingGameId={openingGameId} />
+                    <HeaderTitle openingGameId={openingGameId} tolgeeNamespace={tolgeeNamespace} />
                 </div>
                 <div className="flex flex-1 items-center justify-end">
                     <UserInfo />

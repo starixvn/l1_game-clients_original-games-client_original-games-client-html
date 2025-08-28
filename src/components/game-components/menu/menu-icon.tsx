@@ -28,7 +28,6 @@ export const MenuIcon = ({ name, onClick }: Props) => {
 
         if (name === "sound") {
             clickSound();
-            console.log("[MenuIcon] sound.open.settings");
             settingDispatch({
                 type: SettingEventActionType.TOGGLE_SETTING,
                 payload: { isShowedSetting: true },
@@ -37,7 +36,9 @@ export const MenuIcon = ({ name, onClick }: Props) => {
     }, [onClick, roundState, name, clickSound, dispatch, settingDispatch]);
 
     const iconSrc = useMemo(() => `/static/images/icons/${name}.svg`, [name]);
-    const computedEnabledSound = ((settingContext?.enabledSound ?? (StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true)) && ((settingContext?.volumeSFX ?? 50) > 0));
+    const computedEnabledSound =
+        (settingContext?.enabledSound ?? StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true) &&
+        (settingContext?.volumeSFX ?? 50) > 0;
 
     const iconClassName = useMemo(() => {
         if (name === "sound") {

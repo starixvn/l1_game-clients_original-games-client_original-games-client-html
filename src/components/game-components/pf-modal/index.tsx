@@ -39,7 +39,7 @@ const PFModalContainer: FC<{
     };
 
     return (
-        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
+        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName="md:top-[50px]">
             <div
                 id={id}
                 className={cn("grid grid-cols-1 grid-rows-[30px_calc(100%-30px)] h-full w-full rounded-t-2xl", {
@@ -48,10 +48,7 @@ const PFModalContainer: FC<{
                 })}
             >
                 <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2">
-                    <button
-                        className="absolute top-[25px] left-[12px] rotate-90"
-                        onClick={handleCloseModal}
-                    >
+                    <button className="absolute top-[25px] left-[12px] rotate-90" onClick={handleCloseModal}>
                         <Image src="/static/images/icons/chevron-down.svg" alt="icon-back" width={16} height={16} />
                     </button>
                     <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">{title}</div>
@@ -60,11 +57,7 @@ const PFModalContainer: FC<{
                     </span>
                 </div>
 
-                <div
-                    className="grid grid-rows-[auto_1fr] h-full min-h-0"
-                >
-                    {children}
-                </div>
+                <div className="grid grid-rows-[auto_1fr] h-full min-h-0">{children}</div>
             </div>
         </BaseDialog>
     );

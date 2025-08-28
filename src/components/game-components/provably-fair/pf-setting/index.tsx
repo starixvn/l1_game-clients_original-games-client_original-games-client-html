@@ -78,6 +78,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 title={<div className="flex-1 text-center">{translateSNGames("pf_title_bacball_provably_fair_settings")}</div>}
                 isOpen={true}
                 onCloseModal={handleCloseModal}
+                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[730px] md:mx-auto"
             >
                 <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-5">
                     <div className="flex flex-col">

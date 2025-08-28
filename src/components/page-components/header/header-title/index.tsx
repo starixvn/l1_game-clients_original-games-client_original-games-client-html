@@ -1,18 +1,19 @@
 import React from "react";
-import { useSedieMultiplayerTranslate } from "../../../../_shared/react-hooks";
+import { useTranslator } from "../../../../_shared/react-hooks";
 
 type Props = {
     openingGameId: number;
+    tolgeeNamespace: string;
 };
 
 const HeaderTitle: React.FC<Props> = (props) => {
-    const { openingGameId } = props;
+    const { openingGameId, tolgeeNamespace } = props;
 
-    const { t: translate } = useSedieMultiplayerTranslate();
+    const { t: translate } = useTranslator([tolgeeNamespace]);
 
     const headerTitle = (
         <div className="text-animation text-primary-text transition-all duration-300 font-semibold text-base leading-[26px]">
-            {translate(`game_name_${openingGameId}`)}
+            {openingGameId > 0 && translate(`${tolgeeNamespace}.game_name_${openingGameId}`)}
         </div>
     );
 

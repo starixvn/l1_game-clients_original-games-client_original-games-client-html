@@ -71,6 +71,8 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                             <input
                                 type="number"
                                 step={1}
+                                pattern="[0-9]*"
+                                inputMode="numeric"
                                 value={rounds}
                                 onChange={handleCustomInputChange}
                                 className="input text-white w-full mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"

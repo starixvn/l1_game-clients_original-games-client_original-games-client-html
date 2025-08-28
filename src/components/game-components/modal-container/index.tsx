@@ -13,26 +13,22 @@ const ModalContainer: FC<{
     onCloseModal: Function;
     isOpen: boolean;
     isOverlap?: boolean;
-}> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
+    extendedClassName?: string;
+}> = ({ title, children, onCloseModal, isOpen, isOverlap, id, extendedClassName }) => {
     const clickSound = useClickSound();
-    
+
     return (
-        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap}>
-            <div 
-                id={id} 
-                className={cn(
-                    "flex flex-col h-full w-full rounded-t-2xl",
-                    {
-                        "flex": isOpen,
-                        "hidden": !isOpen
-                    }
-                )}
+        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName={extendedClassName}>
+            <div
+                id={id}
+                className={cn("flex flex-col h-full w-full rounded-t-2xl", {
+                    flex: isOpen,
+                    hidden: !isOpen,
+                })}
             >
                 {/* Header - Fixed height */}
                 <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2 flex-shrink-0">
-                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-[22px]">
-                        {title}
-                    </div>
+                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-[22px]">{title}</div>
                     <span
                         className="cursor-pointer ml-auto relative z-10"
                         onClick={() => {
@@ -45,9 +41,7 @@ const ModalContainer: FC<{
                 </div>
 
                 {/* Content - Flexible height */}
-                <div className="flex-1 min-h-0 overflow-hidden">
-                    {children}
-                </div>
+                <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
             </div>
         </BaseDialog>
     );

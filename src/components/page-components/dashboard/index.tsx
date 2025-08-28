@@ -13,9 +13,6 @@ import { loadURLContext, PlayerContextProvider, SettingContextProvider, updateUR
 import { UserStakeLevel } from "../../game-base/type";
 import { ModalType } from "../../game-components/base-dialog/type";
 import { ErrorApiText } from "../../game-components/error-api-text";
-
-import Header from "../header";
-
 import Styles from "./dashboard.module.scss";
 import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
@@ -42,8 +39,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     ) {
         super(props);
 
-
-
         this.state = {
             userStakeLevel: { minBet: 0, maxBet: 0 },
             authorizeInfo: this.props.authorizeResponse,
@@ -57,8 +52,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
             dashBoardHeight: 0,
         };
-
-
 
         this.closeDialog = this.closeDialog.bind(this);
         this.showApiErrorMessage = this.showApiErrorMessage.bind(this);
@@ -79,7 +72,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             buildVersion && location.reload();
         }
 
-        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => { });
+        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => {});
 
         this.notificationHandler =
             notificationHandler ??
@@ -126,7 +119,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     async componentDidMount() {
-
         const { dashBoardHeight } = this.state;
 
         const zoomGame = +getComputedStyle(document.getElementById("dashboard")).getPropertyValue("--zoom-game");
@@ -242,7 +234,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     renderDashBoard() {
-
         window.history.pushState(null, null, "/");
 
         const { isShowErrorModal, authorizeInfo, isBlockUI } = this.state;
@@ -265,7 +256,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             <PlayerContextProvider value={authContextValue}>
                 <SettingContextProvider>
                     <div id={"dashboard"}>
-                        <Header />
                         <SoundSettings />
 
                         {isNoGameOffer ? <></> : renderOfferGameContainer()}
