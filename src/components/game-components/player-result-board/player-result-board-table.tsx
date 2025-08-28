@@ -72,7 +72,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
     };
 
     return (
-        <div ref={ref} className="min-h-[465px] w-full">
+        <div ref={ref} className="min-h-[450px] w-full">
             <Table>
                 {renderTableHeader()}
                 {renderTableBody()}
