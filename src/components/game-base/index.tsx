@@ -729,6 +729,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 )}
                 {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
                 {this.renderConnectFailed(roundState, disconnectReason)}
+                {this.renderNotice()}
             </GameContainer>
         );
     }

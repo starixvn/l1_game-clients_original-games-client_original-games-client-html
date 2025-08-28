@@ -12,7 +12,7 @@ const PopupButton: React.FC<PopupButtonProps> = ({ label, className, onClick, ..
         <button
             onClick={onClick}
             className={cn(
-                "font-inherit relative inline-block min-w-[100px] px-9 py-3 border-none shadow-btn",
+                "font-inherit relative inline-block min-w-[100px] px-9 py-3 border-none shadow-[0px 10px 10px rgba(95, 90, 247, 0.03)]",
                 "bg-center transition-all duration-800 text-center rounded-xl text-white text-xs font-semibold",
                 "bg-btn-green hover:enabled:bg-btn-green-hover-bg hover:enabled:cursor-pointer",
                 "disabled:opacity-60",

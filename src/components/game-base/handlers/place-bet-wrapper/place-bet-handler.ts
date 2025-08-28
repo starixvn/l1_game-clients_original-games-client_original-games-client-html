@@ -131,7 +131,7 @@ export class PlaceBetHandler {
         const { playPlaceBetSound, gameMessageHandler } = this.props;
         const enableSound = StorageHelper.get(localStorageKeys.enableSound) ?? true;
         this.isProcessingBet = false;
-        this.clearNotice();
+        // this.clearNotice();
 
         this.clearRetryInterval();
         broadcastCloseDialog();

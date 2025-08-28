@@ -23,7 +23,7 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
                 className={cn(
                     "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-w-[343px] font-normal",
                     "bottom-1/2 translate-y-1/2 z-modal overflow-hidden",
-                    "bg-modal-gradient border border-modal-border-color shadow-modal-new",
+                    "bg-modal-gradient border border-modal-border-color shadow-modal",
                     "before:content-[''] before:block before:absolute before:-top-[100px] before:-left-[100px] before:w-[240px] before:h-[240px] before:rounded-[240px] before:bg-modal-yellow-bg before:opacity-70"
                 )}
             >
@@ -35,7 +35,7 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
                         alt="setting-um"
                     />
                 </div>
-                <div className="font-normal text-[#E6E6E6] text-sm leading-6 tracking-[0.28px] mt-2 ">
+                <div className="font-normal text-modal-text text-sm leading-6 tracking-[0.28px] mt-2">
                     {disableMessage || t({ key: "message_disabled_game" })}
                 </div>
                 <div className="mt-4">

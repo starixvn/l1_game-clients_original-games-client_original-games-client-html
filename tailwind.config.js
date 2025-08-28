@@ -25,10 +25,10 @@ module.exports = {
                 "bet-detail-row-1": "var(--bet-detail-row-1)",
                 "bet-detail-row-2": "var(--bet-detail-row-2)",
                 "modal-text": "var(--modal-text-color)",
-                "modal-bg": "var(--error-message-container-background)",
+                "modal-bg": "#242C32",
                 "modal-border": "var(--error-message-container-border)",
                 "modal-color": "var(--error-message-container-color)",
-                "icon-close": "var(--icon-close-color)",
+                "icon-close": "#ea1d41",
                 "modal-border-color": "#8E8E8E",
                 "btn-green-hover": "#0e7029",
             },
@@ -44,9 +44,7 @@ module.exports = {
             },
             boxShadow: {
                 "popup-bet-form": "var(--popup-bet-form-shadow)",
-                "modal": "rgba(0, 0, 0, 0.5) 0px 19px 38px, rgba(0, 0, 0, 0.3) 0px 15px 12px",
-                "modal-new": "0 0 10px 1px rgba(0, 0, 0, 0.60), 0 0 30px 3px rgba(0, 0, 0, 0.80)",
-                "btn": "0px 10px 10px rgba(95, 90, 247, 0.03)",
+                "modal": "0 0 10px 1px rgba(0, 0, 0, 0.60), 0 0 30px 3px rgba(0, 0, 0, 0.80)",
             },
             animation: {
                 'spin-slow': 'spin 6s linear infinite',
