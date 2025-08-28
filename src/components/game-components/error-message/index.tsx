@@ -7,6 +7,7 @@ import { ConnectFailedReasonKey } from "./type";
 import { URLContext, updateURLContext } from "../../../_shared/react-contexts";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import PopupButton from "../popup-button";
+import Image from "next/image";
 
 export const ConnectFailedMessage: React.FC<{
     tolgeeNamespace: string;
@@ -39,7 +40,7 @@ export const ConnectFailedMessage: React.FC<{
     const renderLostConnectionButtons = () => {
         console.log("[ConnectFailedMessage] rendering lost connection buttons");
         return (
-            <div className="flex justify-between">
+            <div className="flex justify-center gap-8">
                 <PopupButton
                     onClick={handleBackToLobby}
                     className="bg-btn-gray hover:enabled:bg-btn-green-hover-bg"
@@ -80,18 +81,27 @@ export const ConnectFailedMessage: React.FC<{
                 className={cn(
                     "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[343px] font-normal",
                     "bottom-1/2 translate-y-1/2 z-modal overflow-hidden",
-                    "bg-modal-gradient border border-modal-border-color shadow-modal",
-                    "before:content-[''] before:block before:absolute before:-top-[100px] before:-left-[100px] before:w-[240px] before:h-[240px] before:rounded-[240px] before:opacity-70",
+                    "bg-modal-bg border border-modal-border-color shadow-modal",
                     "p-5"
                 )}
             >
-                <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center mx-auto mb-[10px]">
-                    <div className="text-[25px] text-[#ffd21e] before:content-['⚠']"></div>
+                <Image
+                    src={`/static/images/icons/popup-mask.svg`}
+                    alt="popup-mask"
+                    className="absolute top-[-65px] left-[-74px]"
+                    width={212}
+                    height={212}
+                />
+                <div className="flex flex-col justify-center items-center gap-1">
+                    <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center">
+                        <Image src={`/static/images/icons/warning.svg`} alt="warning" width={33} height={29} />
+                    </div>
+                    <div className="text-base leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
+                    <div className="text-sm font-normal text-modal-text">
+                        {t(reason, { gameName: tolgeeNamespace }).replaceTolgeeFormat().replace(tolgeeNamespace, "")}
+                    </div>
                 </div>
-                <div className="text-base leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
-                <div className="text-sm font-normal">
-                    {t(reason, { gameName: tolgeeNamespace }).replaceTolgeeFormat().replace(tolgeeNamespace, "")}
-                </div>
+
                 <div className="mt-4">{renderButtons()}</div>
             </div>
         </BaseDialog>
