@@ -1,5 +1,4 @@
 .countdown-timer-container {
-    height: 38px;
     .text {
         font-size: 14px;
         font-weight: 400;
@@ -8,8 +7,8 @@
     }
     .progress-bar-container-wrapper {
         width: 152px;
-        height: 10px;
-        margin: 5px auto;
+        height: 5px;
+        margin: 5px auto 0;
 
         .progress-bar-container {
             position: relative;

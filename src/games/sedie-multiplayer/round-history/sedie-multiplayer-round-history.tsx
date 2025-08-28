@@ -11,15 +11,13 @@ export const SedieMultiplayerRoundHistory = ({ onOpenStatistic }: { onOpenStatis
     );
 
     return (
-        <div className="my-3">
-            <RoundHistory
-                roundHistory={roundHistory}
-                isShowBlink={isShowBlink}
-                renderItem={SedieMultiplayerRoundHistoryItem}
-                numberOfItems={14}
-                sideButton={<IconStatistic onClick={onOpenStatistic} />}
-                sizeNextItem="medium"
-            />
-        </div>
+        <RoundHistory
+            roundHistory={roundHistory}
+            isShowBlink={isShowBlink}
+            renderItem={SedieMultiplayerRoundHistoryItem}
+            numberOfItems={14}
+            sideButton={<IconStatistic onClick={onOpenStatistic} />}
+            sizeNextItem="medium"
+        />
     );
 };
