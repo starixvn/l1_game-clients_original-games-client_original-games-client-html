@@ -524,8 +524,6 @@ interface PreloadResourcesProps {
 const PreloadResources: React.FC<PreloadResourcesProps> = ({
     setIsDonePreload,
     gameId,
-    bannerId,
-    gameIdsIcon,
     locale = "en",
     cancelPreload,
     progressBarId = DEFAULT_PROGRESS_BAR_ID,
@@ -560,8 +558,8 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                 await preloadManager.startPreload(
                     gameId,
                     locale,
-                    gameIdsIcon || [],
-                    bannerId || 0,
+                    [],
+                    0,
                     () => {
                         if (isMounted) {
                             updateProgressBar(100, progressBarId);
@@ -590,19 +588,19 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
             // Cancel preload if component unmounts
             if (enablePreloadResource && gameId >= 0) {
                 const preloadManager = PreloadManager.getInstance();
-                preloadManager.cancelPreload(gameId, locale, gameIdsIcon || [], bannerId || 0);
+                preloadManager.cancelPreload(gameId, locale, [], 0);
             }
         };
-    }, [router?.isReady, gameId, enablePreloadResource, locale, gameIdsIcon, bannerId, progressBarId, setIsDonePreload]);
+    }, [router?.isReady, gameId, enablePreloadResource, locale, progressBarId, setIsDonePreload]);
 
     // Handle cancel preload
     useEffect(() => {
         if (cancelPreload) {
             const preloadManager = PreloadManager.getInstance();
-            preloadManager.cancelPreload(gameId, locale, gameIdsIcon || [], bannerId || 0);
+            preloadManager.cancelPreload(gameId, locale, [], 0);
             setIsDonePreload();
         }
-    }, [cancelPreload, gameId, locale, gameIdsIcon, bannerId, setIsDonePreload]);
+    }, [cancelPreload, gameId, locale, setIsDonePreload]);
 
     // Render nothing
     return null;

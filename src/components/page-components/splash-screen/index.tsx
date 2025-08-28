@@ -14,7 +14,7 @@ import { PlayerContextModel, URLContext, usePlayerContext } from "../../../_shar
 import { useTranslator } from "../../../_shared/react-hooks";
 import { setSentryUser } from "../../../_shared/sentry";
 import { tolgee } from "../../../_shared/tolgee";
-import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "../../../services/auth-service";
+import { authorize, createNickname, sso, verifySession } from "../../../services/auth-service";
 import { updateSignInSMStatus } from "../../../services/user-setting-service";
 import { MAX_AVATAR_ID } from "../../../_shared/helpers/avatar-helper";
 import NameGenerator from "../../../_shared/helpers/name-generator";
@@ -91,14 +91,9 @@ const SplashScreen: React.FC = () => {
     const player = usePlayerContext();
     const { t } = useTranslator();
 
-    // latestGameId deprecated; keep variable for logs/backward compatibility always 0
-    const latestGameId = 0;
-
     const [isUm, setIsUm] = useState(player?.session?.isUM);
-    const [bannerId, setBannerId] = useState<number>(0);
     const [locale, setLocale] = useState<string>();
 
-    const [gameOfferIds, setGameOfferIds] = useState<number[]>([]);
     const [currentGameId, setCurrentGameId] = useState<number>(-1);
     const [authorizeResponse, setAuthorizeResponse] = useState<AuthorizeResponse>(null);
     const [isRenderDashboard, setIsRenderDashboard] = useState<boolean>(false);
@@ -262,13 +257,11 @@ const SplashScreen: React.FC = () => {
                 <>
                     <PreloadResources
                         data-testid="preload-resources"
-                        bannerId={bannerId}
                         setIsDonePreload={() => {
                             setIsRenderDashboard(true);
                         }}
                         gameId={currentGameId}
                         locale={locale}
-                        gameIdsIcon={gameOfferIds}
                         onProgressUpdate={handlePreloadProgress}
                     />
                 </>
