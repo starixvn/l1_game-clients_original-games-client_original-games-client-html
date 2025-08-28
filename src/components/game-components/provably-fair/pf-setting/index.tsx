@@ -30,7 +30,7 @@ const handleOnKeyDown = (event: any) => {
 };
 
 const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const { isShowPFSetting, togglePFSetting, expandGuideFirst, toggleExpandGuideFirst } = usePFStore(
+    const { isShowPFSetting, togglePFSetting, toggleExpandGuideFirst } = usePFStore(
         useShallow((state) => ({
             isShowPFSetting: state.isShowPFSetting,
             togglePFSetting: state.togglePFSetting,
