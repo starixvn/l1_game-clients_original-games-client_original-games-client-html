@@ -1,45 +1,44 @@
-import { DashboardHandler } from '../dash-board-handler';
-import { StorageHelper, localStorageKeys } from '../../../../../_shared/helpers';
-import { SSOResponse, AuthorizeResponse } from 'sc-user-service-client/dist/auth';
-import { ILobbyConfigs } from '../../type';
-import { TolgeeInstance } from '@tolgee/core';
-import { NextRouter } from 'next/router';
+import { DashboardHandler } from "../dash-board-handler";
+import { StorageHelper } from "../../../../../_shared/helpers";
+import { SSOResponse, AuthorizeResponse } from "sc-user-service-client/dist/auth";
+import { TolgeeInstance } from "@tolgee/core";
+import { NextRouter } from "next/router";
 
 // Mock dependencies
-jest.mock('../../../../../_shared/helpers', () => ({
+jest.mock("../../../../../_shared/helpers", () => ({
     StorageHelper: {
         get: jest.fn(),
-        set: jest.fn()
+        set: jest.fn(),
     },
     localStorageKeys: {
-        url: 'url',
-        latestGameId: 'latestGameId'
+        url: "url",
+        latestGameId: "latestGameId",
     },
     getOfferGamesIds: jest.fn((authorizeInfo) => {
         return authorizeInfo?.user?.offerGames?.map((game: any) => +game?.gameId) || [];
     }),
     getLobbyGameIds: jest.fn((lobbyConfigs) => {
         return lobbyConfigs?.categories?.[0]?.gameSettings?.map((setting: any) => setting.gameId);
-    })
+    }),
 }));
 
 const mockStorageHelper = StorageHelper as jest.Mocked<typeof StorageHelper>;
 
 // Mock router
 const mockRouter: NextRouter = {
-    route: '/',
-    pathname: '/',
+    route: "/",
+    pathname: "/",
     query: {},
-    asPath: '/',
-    basePath: '',
+    asPath: "/",
+    basePath: "",
     isLocaleDomain: false,
     isReady: true,
     isPreview: false,
     isFallback: false,
-    defaultLocale: 'en',
+    defaultLocale: "en",
     domainLocales: [],
-    locale: 'en',
-    locales: ['en'],
+    locale: "en",
+    locales: ["en"],
     events: {
         on: jest.fn(),
         off: jest.fn(),
@@ -54,26 +53,25 @@ const mockRouter: NextRouter = {
     push: jest.fn(),
 } as NextRouter;
 
-describe('DashboardHandler Integration - Direct Mode Scenario', () => {
+describe("DashboardHandler Integration - Direct Mode Scenario", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-
     });
 
-    describe('shouldRenderGames with null openGameId', () => {
-        it('should handle the specific scenario from the logs correctly', () => {
+    describe("shouldRenderGames with null openGameId", () => {
+        it("should handle the specific scenario from the logs correctly", () => {
             // Arrange: Simulate the exact scenario from the logs
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0, // This is the key issue - queryGame is 0
                 setIsUm: jest.fn(),
@@ -83,12 +81,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -104,37 +102,14 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1005, 148],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1005, bigSize: false, newTag: false },
-                                { gameId: 148, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1005, displayTime: 5000 },
-                        { gameId: 148, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1005: { id: 1005, name: 'SeBall1' },
-                        148: { id: 148, name: 'SeDie' },
-                    },
-                    roundTimerGame: 1005,
-                } as ILobbyConfigs
             };
 
             // Mock the URL context to match the logs
             mockStorageHelper.get.mockReturnValue({
                 backToLobby: false,
-                gameId: 0
+                gameId: 0,
             });
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -146,19 +121,19 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             expect(result).toBe(true);
         });
 
-        it('should handle undefined openGameId correctly', () => {
+        it("should handle undefined openGameId correctly", () => {
             // Arrange
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0,
                 setIsUm: jest.fn(),
@@ -168,12 +143,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -190,39 +165,13 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
 
             mockStorageHelper.get.mockReturnValue({
                 backToLobby: false,
-                gameId: 0
+                gameId: 0,
             });
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -234,19 +183,19 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             expect(result).toBe(true);
         });
 
-        it('should handle zero openGameId correctly', () => {
+        it("should handle zero openGameId correctly", () => {
             // Arrange
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0,
                 setIsUm: jest.fn(),
@@ -256,12 +205,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -278,39 +227,13 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
 
             mockStorageHelper.get.mockReturnValue({
                 backToLobby: false,
-                gameId: 0
+                gameId: 0,
             });
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -323,20 +246,20 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
         });
     });
 
-    describe('checkIsNotOfferGame in direct mode', () => {
-        it('should return true when queryGame is 0 (lobby)', () => {
+    describe("checkIsNotOfferGame in direct mode", () => {
+        it("should return true when queryGame is 0 (lobby)", () => {
             // Arrange
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0,
                 setIsUm: jest.fn(),
@@ -346,12 +269,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -368,34 +291,8 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -407,19 +304,19 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002, 1003]
         });
 
-        it('should return false when queryGame is in offer games', () => {
+        it("should return false when queryGame is in offer games", () => {
             // Arrange
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 1001,
                 setIsUm: jest.fn(),
@@ -429,12 +326,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -451,34 +348,8 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -491,19 +362,19 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
             expect(result).toBe(false);
         });
 
-        it('should return true when queryGame is not in offer games', () => {
+        it("should return true when queryGame is not in offer games", () => {
             // Arrange
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 9999,
                 setIsUm: jest.fn(),
@@ -513,12 +384,12 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -537,32 +408,6 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
                     umInfo: null,
                     isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
 
             const handler = new DashboardHandler(props, jest.fn());
@@ -576,52 +421,26 @@ describe('DashboardHandler Integration - Direct Mode Scenario', () => {
     });
 });
 
-describe('DashboardHandler Integration Tests - Timing Issues', () => {
-    describe('checkIsNotOfferGame timing issues', () => {
-        it('should handle first load scenario where authorizeResponse is not available but queryGame is 0', () => {
+describe("DashboardHandler Integration Tests - Timing Issues", () => {
+    describe("checkIsNotOfferGame timing issues", () => {
+        it("should handle first load scenario where authorizeResponse is not available but queryGame is 0", () => {
             // Arrange - Simulate first load where data is not yet loaded but accessing lobby
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -632,19 +451,19 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(false); // Returns false when authorizeResponse is null
         });
 
-        it('should handle first load scenario where lobbyConfigs is not available but queryGame is 0', () => {
+        it("should handle first load scenario where lobbyConfigs is not available but queryGame is 0", () => {
             // Arrange - Simulate first load where data is not yet loaded but accessing lobby
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
                 setIsUm: jest.fn(),
@@ -654,12 +473,12 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -676,9 +495,9 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: null // Data not available yet
+                lobbyConfigs: null, // Data not available yet
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -689,25 +508,25 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(true); // Game 0 is not in offer games [1001, 1002, 1003]
         });
 
-        it('should handle first load scenario where both data sources are not available but queryGame is 0', () => {
+        it("should handle first load scenario where both data sources are not available but queryGame is 0", () => {
             // Arrange - Simulate first load where both data sources are not yet loaded but accessing lobby
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
-                lobbyConfigs: null // Data not available yet
+                lobbyConfigs: null, // Data not available yet
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -718,19 +537,19 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(false); // Returns false when authorizeResponse is null
         });
 
-        it('should work correctly when data becomes available after initial load', () => {
+        it("should work correctly when data becomes available after initial load", () => {
             // Arrange - Simulate data becoming available
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 0, // Lobby access
                 setIsUm: jest.fn(),
@@ -740,30 +559,32 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     user: {
                         UID: 123,
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'testuser',
+                        currency: "USD",
+                        name: "testuser",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         enabledGameIds: [1001, 1002],
                         offerGames: [{ gameId: 1001, minBet: 1, maxBet: 100, maxBetPerChoices: {} }],
                         fractionalOddsFormat: false,
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         availSpins: 0,
-                        scoins: 0
-                    }
+                        scoins: 0,
+                    },
                 },
                 lobbyConfigs: {
-                    name: 'test',
-                    currencyGroupIds: ['USD'],
+                    name: "test",
+                    currencyGroupIds: ["USD"],
                     miniPanelGameIds: [1001],
-                    categories: [{
-                        id: 1,
-                        name: 'test',
-                        gameSettings: [{ gameId: 1001, bigSize: false, newTag: false }]
-                    }],
-                    banners: []
-                }
+                    categories: [
+                        {
+                            id: 1,
+                            name: "test",
+                            gameSettings: [{ gameId: 1001, bigSize: false, newTag: false }],
+                        },
+                    ],
+                    banners: [],
+                },
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -774,25 +595,25 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(true); // Game 0 is not in offer games [1001]
         });
 
-        it('should return false when queryGame is not 0 and data is not available (timing issue)', () => {
+        it("should return false when queryGame is not 0 and data is not available (timing issue)", () => {
             // Arrange - Simulate first load where data is not yet loaded and accessing specific game
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 1001, // Specific game access
                 setIsUm: jest.fn(),
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
-                lobbyConfigs: null // Data not available yet
+                lobbyConfigs: null, // Data not available yet
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -803,19 +624,19 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(false); // Returns false when data is not available (timing issue)
         });
 
-        it('should handle normal mode with complete data correctly', () => {
+        it("should handle normal mode with complete data correctly", () => {
             // Arrange - Normal mode with complete data
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 1001,
 
@@ -826,12 +647,12 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -848,34 +669,8 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -886,19 +681,19 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(false); // Should not show error when game is available
         });
 
-        it('should handle direct mode with complete data correctly', () => {
+        it("should handle direct mode with complete data correctly", () => {
             // Arrange - Direct mode with complete data
             const props = {
                 router: mockRouter,
                 session: {
                     isAuthenticated: true,
-                    username: 'testuser',
-                    language: 'en',
-                    ss: 'test-session-token',
-                    memberName: 'testuser',
+                    username: "testuser",
+                    language: "en",
+                    ss: "test-session-token",
+                    memberName: "testuser",
                     isUM: false,
                     umInfo: null,
-                    system: 1
+                    system: 1,
                 } as SSOResponse,
                 queryGame: 1001,
                 setIsUm: jest.fn(),
@@ -908,12 +703,12 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     user: {
                         UID: 1,
                         id: 1,
-                        username: 'testuser',
+                        username: "testuser",
                         avatarId: 1,
-                        currency: 'USD',
-                        name: 'Test User',
+                        currency: "USD",
+                        name: "Test User",
                         red: 1000,
-                        settings: { theme: 'light' },
+                        settings: { theme: "light" },
                         isSignedInSM: true,
                         isDisplayPlayerCurrency: true,
                         offerGames: [
@@ -930,34 +725,8 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
                     },
                     errorCode: null,
                     umInfo: null,
-                    isUM: false
+                    isUM: false,
                 } as AuthorizeResponse,
-                lobbyConfigs: {
-                    name: "Test Lobby",
-                    currencyGroupIds: ["USD"],
-                    miniPanelGameIds: [1001, 1002, 1003],
-                    categories: [
-                        {
-                            name: "Test Category",
-                            gameSettings: [
-                                { gameId: 1001, bigSize: false, newTag: false },
-                                { gameId: 1002, bigSize: false, newTag: false },
-                                { gameId: 1003, bigSize: false, newTag: false },
-                            ],
-                        },
-                    ],
-                    banners: [
-                        { gameId: 1001, displayTime: 5000 },
-                        { gameId: 1002, displayTime: 5000 },
-                        { gameId: 1003, displayTime: 5000 },
-                    ],
-                    gameSettings: {
-                        1001: { id: 1001, name: 'Game 1' },
-                        1002: { id: 1002, name: 'Game 2' },
-                        1003: { id: 1003, name: 'Game 3' },
-                    },
-                    roundTimerGame: 1001,
-                } as ILobbyConfigs
             };
             const handler = new DashboardHandler(props, jest.fn());
 
@@ -968,4 +737,4 @@ describe('DashboardHandler Integration Tests - Timing Issues', () => {
             expect(result).toBe(false); // Should not show error when game is available
         });
     });
-}); 
+});

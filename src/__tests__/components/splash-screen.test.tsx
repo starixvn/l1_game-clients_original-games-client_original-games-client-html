@@ -4,9 +4,8 @@ import { act } from "react-dom/test-utils";
 import SplashScreen, { customStartup, onStartupError } from "../../components/page-components/splash-screen";
 import { URLContext } from "../../_shared/react-contexts/url-context";
 import { PlayerContext } from "../../_shared/react-contexts/auth";
-import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "../../services/auth-service";
+import { authorize, getLobbyConfigs, sso } from "../../services/auth-service";
 import { getUserLatestGameId } from "../../_shared/helpers";
-import { getEnabledRenderGameSettings } from "../../_shared/helpers/lobby-helper";
 
 // Mock dependencies
 jest.mock("../../services/auth-service");
@@ -169,13 +168,13 @@ describe("SplashScreen Component", () => {
             {
                 id: 123,
                 gameName: "Test Game",
-                gameResourceConfigs: { path: "/test" }
+                gameResourceConfigs: { path: "/test" },
             },
             {
                 id: 1005,
                 gameName: "Default Game",
-                gameResourceConfigs: { path: "/default" }
-            }
+                gameResourceConfigs: { path: "/default" },
+            },
         ]);
     });
 
@@ -239,7 +238,7 @@ describe("SplashScreen Component", () => {
                 memberName: "testUser",
                 isUM: false,
                 umInfo: null,
-                system: 1
+                system: 1,
             };
             const locale = "en";
             const authorizeResponse = { authorized: true };
@@ -283,9 +282,7 @@ describe("SplashScreen Component", () => {
             const gameId1 = 123;
             const gameId2 = 456;
 
-            (getUserLatestGameId as jest.Mock)
-                .mockReturnValueOnce(gameId1)
-                .mockReturnValueOnce(gameId2);
+            (getUserLatestGameId as jest.Mock).mockReturnValueOnce(gameId1).mockReturnValueOnce(gameId2);
 
             // Act
             const result1 = getUserLatestGameId(user1);
@@ -352,9 +349,12 @@ describe("SplashScreen Component", () => {
             });
 
             // Assert - Should complete faster than the old 2000ms delay
-            await waitFor(() => {
-                expect(screen.getByTestId("preload-resources")).toBeInTheDocument();
-            }, { timeout: 1000 }); // Reduced timeout expectation
+            await waitFor(
+                () => {
+                    expect(screen.getByTestId("preload-resources")).toBeInTheDocument();
+                },
+                { timeout: 1000 }
+            ); // Reduced timeout expectation
         });
     });
 
@@ -430,4 +430,4 @@ describe("SplashScreen Component", () => {
             });
         });
     });
-}); 
+});

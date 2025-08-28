@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
 import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
 
-import { getLobbyGamesIds } from "./lobby-helper";
 import { getAppSettings } from "../app-settings";
 import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
 
@@ -499,13 +498,6 @@ const loadAndCacheImageOptimized = async (path: string): Promise<void> => {
 export const getAndHandleBannerOffer = (authorizeInfo: AuthorizeResponse, lobbyConfigs: LobbyConfigs, callbackFn: Function) => {
     // Custom version: No banner functionality since lobby is removed
     return;
-};
-
-export const getAndHandleGameOfferIds = (authorizeInfo: AuthorizeResponse, lobbyConfigs: LobbyConfigs, callbackFn: Function) => {
-    const gameOfferIds = getLobbyGamesIds(lobbyConfigs as any, authorizeInfo);
-    if (gameOfferIds?.length > 0) {
-        callbackFn(gameOfferIds);
-    }
 };
 
 export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PROGRESS_BAR_ID) => {

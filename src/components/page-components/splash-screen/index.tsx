@@ -8,11 +8,8 @@ import Image from "next/image";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from "../../../_shared/app-settings";
 import { Themes, buildVersion, languageMapper, locales, GameIds } from "../../../_shared/constants";
-import { AnalyticsHelper, StorageHelper, getEnabledRenderGameSettings, localStorageKeys, randomInteger } from "../../../_shared/helpers";
-import PreloadResources, {
-    getAndHandleGameOfferIds,
-    getAndHandleBannerOffer as handleBannerOffer,
-} from "../../../_shared/helpers/preload-resources";
+import { AnalyticsHelper, StorageHelper, getRenderGameSettings, localStorageKeys, randomInteger } from "../../../_shared/helpers";
+import PreloadResources from "../../../_shared/helpers/preload-resources";
 import { PlayerContextModel, URLContext, usePlayerContext } from "../../../_shared/react-contexts";
 import { useTranslator } from "../../../_shared/react-hooks";
 import { setSentryUser } from "../../../_shared/sentry";
@@ -21,7 +18,6 @@ import { authorize, createNickname, getLobbyConfigs, sso, verifySession } from "
 import { updateSignInSMStatus } from "../../../services/user-setting-service";
 import { MAX_AVATAR_ID } from "../../../_shared/helpers/avatar-helper";
 import NameGenerator from "../../../_shared/helpers/name-generator";
-import { ILobbyConfigs } from "../dashboard/type";
 import Styles from "./splash-screen.module.scss";
 
 export type SplashScreenProps = WithRouterProps;
@@ -105,7 +101,6 @@ const SplashScreen: React.FC = () => {
     const [gameOfferIds, setGameOfferIds] = useState<number[]>([]);
     const [currentGameId, setCurrentGameId] = useState<number>(-1);
     const [authorizeResponse, setAuthorizeResponse] = useState<AuthorizeResponse>(null);
-    const [lobbyConfigs, setLobbyConfigs] = useState<ILobbyConfigs>(null);
     const [isRenderDashboard, setIsRenderDashboard] = useState<boolean>(false);
     const [isDoneLoadConfig, setIsDoneLoadConfig] = useState<boolean>(false);
     const [preloadProgress, setPreloadProgress] = useState<number>(0);
@@ -129,19 +124,6 @@ const SplashScreen: React.FC = () => {
         await tolgee.changeLanguage(lang);
         setLocale(lang);
         return lang;
-    };
-
-    const loadLobbyConfigs = async (session: SSOResponse, authorizeInfo: any) => {
-        const lobby = await getLobbyConfigs(session);
-        if (!lobby || Object.keys(lobby.lobbyConfigs).length === 0) {
-            return null;
-        }
-        if (lobby?.lobbyConfigs) {
-            setLobbyConfigs(lobby.lobbyConfigs as any);
-            handleBannerOffer(authorizeInfo, lobby.lobbyConfigs, setBannerId);
-            getAndHandleGameOfferIds(authorizeInfo, lobby.lobbyConfigs, setGameOfferIds);
-        }
-        return lobby?.lobbyConfigs;
     };
 
     // Initialize progress bar when component mounts
@@ -181,8 +163,6 @@ const SplashScreen: React.FC = () => {
                 }
             }
 
-            const lobbyConfigs = await loadLobbyConfigs(session, authorizeInfo);
-
             // Custom version: Always direct to specific game, default to SeDie if no valid gameId
             let toLoadGameId = gameId;
 
@@ -192,7 +172,7 @@ const SplashScreen: React.FC = () => {
             }
 
             // Validate if the gameId is available in the enabled games
-            const enabledRenderGameSettings = getEnabledRenderGameSettings(lobbyConfigs as any, authorizeInfo);
+            const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
 
             // Bypass validation for SeDie so we can deep-link even if not in lobby/offer
             let isGameAvailable = toLoadGameId === GameIds.SeDieMultiplayer;
@@ -238,7 +218,6 @@ const SplashScreen: React.FC = () => {
                 setIsUm={setIsUm}
                 tolgee={tolgee}
                 authorizeResponse={authorizeResponse}
-                lobbyConfigs={lobbyConfigs}
             />
         );
     }

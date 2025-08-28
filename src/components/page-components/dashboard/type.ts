@@ -4,14 +4,12 @@ import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth
 
 import { UserStakeLevel } from "../../game-base/type";
 
-
 export type DashboardProps = {
     session: SSOResponse;
     queryGame: number;
     setIsUm: Function;
     tolgee: TolgeeInstance;
     authorizeResponse: AuthorizeResponse;
-    lobbyConfigs: ILobbyConfigs;
 } & WithRouterProps;
 
 type APIErrorProp = {
@@ -40,30 +38,3 @@ export type GameOffer = {
     _id: string;
     maxBetPerChoices: any;
 };
-
-export interface ILobbyConfigs {
-    name: string;
-    currencyGroupIds: string[];
-    miniPanelGameIds: number[];
-    categories: IGameCategory[];
-    banners: IBanner[];
-    gameSettings?: Record<number, any>;
-    roundTimerGame?: number | null;
-}
-
-export interface IBanner {
-    gameId: number;
-    displayTime: number;
-    path?: string;
-}
-
-export interface IGameCategory {
-    name: any;
-    gameSettings: IGameSetting[];
-}
-
-export interface IGameSetting {
-    gameId: number;
-    bigSize: boolean;
-    newTag: boolean;
-}

@@ -159,7 +159,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         checkGameOffer();
 
         // If data might not be ready, retry after a short delay
-        if (!this.props.authorizeResponse || !this.props.lobbyConfigs) {
+        if (!this.props.authorizeResponse) {
             setTimeout(() => {
                 checkGameOffer();
             }, 1000); // Retry after 1 second
