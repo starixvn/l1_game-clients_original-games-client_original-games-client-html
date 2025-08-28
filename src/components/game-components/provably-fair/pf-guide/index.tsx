@@ -62,7 +62,6 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
                 isOpen={isOpen}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
-                extendedClassName="bg-pf-guide-gradient mt-10"
             >
                 <WrapperPFGuide />
             </ModalContainer>,
