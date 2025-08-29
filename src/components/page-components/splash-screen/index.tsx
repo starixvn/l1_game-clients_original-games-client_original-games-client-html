@@ -6,7 +6,7 @@ import { memo, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from "../../../_shared/app-settings";
-import { Themes, buildVersion, languageMapper, locales, GameIds } from "../../../_shared/constants";
+import { Themes, languageMapper, locales, GameIds } from "../../../_shared/constants";
 import { AnalyticsHelper, StorageHelper, getRenderGameSettings, localStorageKeys, randomInteger } from "../../../_shared/helpers";
 import PreloadResources from "../../../_shared/helpers/preload-resources";
 import { PlayerContextModel, URLContext, usePlayerContext } from "../../../_shared/react-contexts";
