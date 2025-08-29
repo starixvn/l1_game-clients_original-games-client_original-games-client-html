@@ -6,18 +6,16 @@ import React from "react";
 import { isDesktop, isMobile, isMobileOnly } from "react-device-detect";
 
 import { ErrorNoGameOffer } from "../../../_shared/constants/error-code-dictionary";
-import { GetLocalizedErrorMessage, localStorageKeys, StorageHelper } from "../../../_shared/helpers";
+import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "../../../_shared/helpers";
 import { broadcastUserInfoRed } from "../../../_shared/helpers/global-events-helper";
 import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import { loadURLContext, PlayerContextProvider, SettingContextProvider, updateURLContext } from "../../../_shared/react-contexts";
 import { UserStakeLevel } from "../../game-base/type";
-import { ModalType } from "../../game-components/base-dialog/type";
-import { ErrorApiText } from "../../game-components/error-api-text";
-import Styles from "./dashboard.module.scss";
 import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
 import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
+import { NoticeDialog } from "../../game-components/notice";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"));
 const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner /> });
@@ -53,7 +51,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             dashBoardHeight: 0,
         };
 
-        this.closeDialog = this.closeDialog.bind(this);
         this.showApiErrorMessage = this.showApiErrorMessage.bind(this);
         this.handleUpdateUserStakeLevel = this.handleUpdateUserStakeLevel.bind(this);
         this.signOut = this.signOut.bind(this);
@@ -141,16 +138,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         });
         this.backToLobbyEventId = unsubscribe;
 
-        // Fix: Add retry mechanism for timing issues with data availability
         const checkGameOffer = () => {
             if (this.dashboardHandler.checkIsNotOfferGame()) {
-                this.setState({
-                    apiError: {
-                        message: ErrorNoGameOffer,
-                        errorCode: "",
-                    },
-                    isShowErrorModal: true,
-                    isBlockUI: true,
+                broadcastNotice({
+                    ...getNotice(ErrorNoGameOffer, false),
+                    onClose: () => {
+                    }
                 });
             }
         };
@@ -162,7 +155,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (!this.props.authorizeResponse) {
             setTimeout(() => {
                 checkGameOffer();
-            }, 1000); // Retry after 1 second
+            }, 1000);
         }
 
         if (isMobile) {
@@ -201,12 +194,14 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     showApiErrorMessage(errorCode: string) {
-        this.setState({ isShowErrorModal: true, isBlockUI: false, apiError: { errorCode, message: GetLocalizedErrorMessage(errorCode) } });
-    }
-
-    closeDialog() {
-        this.setState({ isShowErrorModal: false });
-        this.notificationHandler.isKickOut && this.signOut();
+        broadcastNotice({
+            ...getNotice(errorCode, false),
+            onClose: () => {
+                if (this.notificationHandler.isKickOut) {
+                    this.signOut();
+                }
+            }
+        });
     }
 
     openGame(gameId: number) {
@@ -236,11 +231,10 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     renderDashBoard() {
         window.history.pushState(null, null, "/");
 
-        const { isShowErrorModal, authorizeInfo, isBlockUI } = this.state;
-        const isRenderGames = true; // Custom version: Always render games
+        const { authorizeInfo } = this.state;
+        const isRenderGames = true;
 
-        const isNoGameOffer = this.state.apiError?.message === ErrorNoGameOffer;
-        const renderOfferGameContainer = () => this.renderGames(); // Custom version: Always render games
+        const renderOfferGameContainer = () => this.renderGames();
 
         const authContextValue = {
             authorizeInfo: authorizeInfo,
@@ -258,29 +252,11 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <div id={"dashboard"}>
                         <SoundSettings />
 
-                        {isNoGameOffer ? <></> : renderOfferGameContainer()}
+                        {renderOfferGameContainer()}
 
                         {<MusicPlayer />}
 
-                        {isShowErrorModal && (
-                            <div className={Styles["container-modal"]}>
-                                <div className={`${Styles["bg-opacity"]} ${isBlockUI ? Styles["block-ui-backdrop"] : ""}`}></div>
-                                <BaseDialog
-                                    type={ModalType.Center}
-                                    isOpen={isShowErrorModal}
-                                    onCloseModal={this.closeDialog}
-                                    isBlockUI={isBlockUI}
-                                >
-                                    <div className={`modal-center red-color ${isBlockUI ? Styles["block-ui-message"] : ""}`}>
-                                        {!isBlockUI && <div className={`icon-close modal-icon-close`} onClick={this.closeDialog}></div>}
-                                        <ErrorApiText
-                                            errorMessage={this.state.apiError?.message}
-                                            errorCode={this.state.apiError?.errorCode}
-                                        />
-                                    </div>
-                                </BaseDialog>
-                            </div>
-                        )}
+                        <NoticeDialog />
                     </div>
                 </SettingContextProvider>
             </PlayerContextProvider>

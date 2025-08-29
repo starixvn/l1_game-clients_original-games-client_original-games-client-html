@@ -1,5 +1,5 @@
 
-import { buildUrl, isKickOutError, localStorageKeys, StorageHelper } from "../../../../_shared/helpers";
+import { buildUrl, isKickOutError, localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "../../../../_shared/helpers";
 import { getAppSettings } from "../../../../_shared/app-settings";
 import { io, Socket } from "socket.io-client";
 import MsgpackParser from "socket.io-msgpack-parser";
@@ -63,7 +63,14 @@ export class NotificationHandler {
             }, 10000);
         }
 
-        this.showApiErrorMessage(errorCode)
+        broadcastNotice({
+            ...getNotice(errorCode, false),
+            onClose: () => {
+                if (this.isKickOut) {
+                    this.signOut();
+                }
+            }
+        });
     }
 
     registerNotificationSocketEvent = () => {
