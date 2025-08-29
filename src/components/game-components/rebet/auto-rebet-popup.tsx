@@ -47,7 +47,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                         <h2 className="text-white text-lg font-semibold text-center">Auto Rebet</h2>
                         <button
                             onClick={handleClose}
-                            className="absolute top-0 right-0 text-white hover:text-gray-300 transition-colors duration-200 text-2xl font-bold leading-none"
+                            className="absolute top-0 right-0 text-white hover:text-gray-300 transition-colors duration-200 text-2xl font-semibold leading-none"
                         >
                             ×
                         </button>

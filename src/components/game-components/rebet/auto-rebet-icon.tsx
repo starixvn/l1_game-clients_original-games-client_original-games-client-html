@@ -44,7 +44,7 @@ const AutoRebetIcon = () => {
                 {isAutoRebetActive ? (
                     <>
                         <div className="absolute">
-                            <div className="relative -top-[16px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-white flex items-center justify-center font-bold">
+                            <div className="relative -top-[16px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-white flex items-center justify-center font-semibold">
                                 {remainingRounds === Infinity ? "∞" : remainingRounds}
                             </div>
                         </div>
