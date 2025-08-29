@@ -10,9 +10,10 @@ import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";
 import useBetDetailStore from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
-import PFModalContainer from "../../pf-modal";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../table";
 import { cn } from "../../../../_shared/utils/merge-tailwind-util";
+import ModalContainer from "../../modal-container";
+import { ButtonPFGuide } from "../pf-guide";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
@@ -32,15 +33,18 @@ const PFClientSeedInfoModal: FC<{
     return (
         isShowPFClientSeedInfo &&
         createPortal(
-            <PFModalContainer
+            <ModalContainer
                 id="pf-client-seed-info-modal"
-                title={<div>{translateSNGames("pf_title_client_seed_info")}</div>}
+                title={<div>
+                    <ButtonPFGuide />
+                    <div className="flex-1 text-center">{translateSNGames("pf_title_client_seed_info")}</div>
+                </div>}
                 isOpen={isShowPFClientSeedInfo}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
             >
                 <PFClientSeedInfo fileNameExport={fileNameExport} />
-            </PFModalContainer>,
+            </ModalContainer>,
             document.getElementById("dashboard")
         )
     );

@@ -65,7 +65,7 @@ const WinningBalanceEffect: FC = () => {
     };
 
     useEffect(() => {
-        if (showResultInfo && betWin > 0) {
+        if (showResultInfo && parseFloat(multiplier) > 0) {
             setShowContent(true);
         } else {
             setShowContent(false);
@@ -89,7 +89,7 @@ const WinningBalanceEffect: FC = () => {
                     pointerEvents: "none",
                     width: "100%",
                     height: "100%",
-                    top: -250,
+                    top: -230,
                     left: 0,
                     zIndex: 9999,
                 }}
@@ -97,13 +97,7 @@ const WinningBalanceEffect: FC = () => {
             {showContent && (
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{
-                        duration: 0.8,
-                        delay: 0.5,
-                        ease: [0, 0.71, 0.2, 1.01],
-                    }}
+                    animate={{ scale: [1, 1.5, 0.8, 1], opacity: 1 }}
                     className="fixed inset-0 z-[100] absolute justify-items-center"
                     onClick={(e) => e.stopPropagation()}
                 >

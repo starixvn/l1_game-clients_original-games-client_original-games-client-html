@@ -10,7 +10,8 @@ import { useGameContext } from "../../../../_shared/react-contexts/game-context/
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
 import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
-import PFModalContainer from "../../pf-modal";
+import ModalContainer from "../../modal-container";
+import { ButtonPFGuide } from "../pf-guide";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
@@ -33,15 +34,20 @@ const PFVerifyModal: FC<{
     return (
         isShowPFVerify &&
         createPortal(
-            <PFModalContainer
+            <ModalContainer
                 id="pf-verify"
-                title={<div>{translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}</div>}
+                title={
+                    <div>
+                        <ButtonPFGuide />
+                        <div className="flex-1 text-center">{translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}</div>
+                    </div>
+                }
                 isOpen={isShowPFVerify}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
             >
                 <PFVerify renderResultBlock={renderResultBlock} />
-            </PFModalContainer>,
+            </ModalContainer>,
             document.getElementById("dashboard")
         )
     );

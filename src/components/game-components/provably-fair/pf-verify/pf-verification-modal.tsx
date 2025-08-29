@@ -4,7 +4,8 @@ import { useCommonTranslate } from "../../../../_shared/react-hooks";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
-import PFModalContainer from "../../pf-modal";
+import ModalContainer from "../../modal-container";
+import { ButtonPFGuide } from "../pf-guide";
 
 const PFVerificationModal: FC<{ children: ReactNode }> = ({ children }) => {
     const { t: translateCommon } = useCommonTranslate();
@@ -38,10 +39,11 @@ const PFVerificationModal: FC<{ children: ReactNode }> = ({ children }) => {
     return (
         isShowPFVerification &&
         createPortal(
-            <PFModalContainer
+            <ModalContainer
                 id="pf-verify-detail-modal"
                 title={
                     <div>
+                        <ButtonPFGuide />
                         {translateCommon("pf_title_verification").capitalizeFirstLetter()}
                     </div>
                 }
@@ -50,7 +52,7 @@ const PFVerificationModal: FC<{ children: ReactNode }> = ({ children }) => {
                 onCloseModal={handleCloseModal}
             >
                 {children}
-            </PFModalContainer>,
+            </ModalContainer>,
             document.getElementById("dashboard")
         )
     );

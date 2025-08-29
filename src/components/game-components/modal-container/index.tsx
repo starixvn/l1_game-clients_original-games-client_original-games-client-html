@@ -41,7 +41,7 @@ const ModalContainer: FC<{
                 </div>
 
                 {/* Content - Flexible height */}
-                <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
+                <div className="flex-1 min-h-0 overflow-hidden mt-2">{children}</div>
             </div>
         </BaseDialog>
     );
