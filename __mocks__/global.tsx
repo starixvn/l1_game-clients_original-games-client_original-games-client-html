@@ -63,3 +63,14 @@ jest.mock("swiper/react", () => ({
     Swiper: ({ children }) => <div data-testid="swiper-testid">{children}</div>,
     SwiperSlide: ({ children }) => <div data-testid="swiper-slide-testid">{children}</div>,
 }));
+
+// Provide a global IntersectionObserver mock for jsdom/Jest environment
+if (!(global as any).IntersectionObserver) {
+    (global as any).IntersectionObserver = class {
+        constructor(_callback?: any, _options?: any) {}
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() { return []; }
+    };
+}
