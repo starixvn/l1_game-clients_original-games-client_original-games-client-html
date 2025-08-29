@@ -89,7 +89,7 @@ const ChipControlPanel: React.FC = () => {
                         value={+selectedChip}
                         text={findChipSetting(selectedChip)?.text}
                         color={findChipSetting(selectedChip)?.color}
-                        onClickChip={() => !isAutoRebetActive && !isShowSlider && setIsShowSlider(true)}
+                        onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
                         size={48}
                         fontSize={20}
                     />

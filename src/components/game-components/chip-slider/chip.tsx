@@ -1,6 +1,7 @@
 import React from "react";
 import Styles from "./chip-slider.module.scss";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
+import { BgCachedImage } from "../cached-image/bg-cached-image";
 
 type ChipProps = {
     value: number;
@@ -53,8 +54,20 @@ export const Chip: React.FC<ChipProps> = ({
                 style={{ "--chip-size": `${size}px`, "--chip-value-font-size": `${fontSize}px` } as React.CSSProperties}
             >
                 {renderColorChip()}
-                <div className={Styles["inner"]}></div>
-                <div className={`${Styles["border"]} ${value >= 1000 ? Styles["yellow-border"] : ""}`}></div>
+                <BgCachedImage
+                    pathImage="/static/images/chips/chip.svg"
+                    className="absolute w-full h-full rounded-full"
+                    backgroundSize="100% 100%"
+                    backgroundRepeat="no-repeat"
+                    backgroundPosition="center"
+                />
+                <BgCachedImage
+                    pathImage={`/static/images/chips/chip-${value >= 1000 ? "yellow-" : ""}border.svg`}
+                    className="absolute w-full h-full rounded-full"
+                    backgroundSize="100% 100%"
+                    backgroundRepeat="no-repeat"
+                    backgroundPosition="center"
+                />
                 {selectedChip === value && <div className={`${Styles["selected"]}`}></div>}
                 {!isHideValue && <span className={Styles["value"]}>{text || getDefaultChipText()}</span>}
             </div>

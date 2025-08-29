@@ -7,6 +7,7 @@ import { GameIds } from "../../../_shared/constants";
 import styles from "./scoreboard-elements.module.scss";
 import dotStyles from "../../../components/game-components/round-history/dot/dot.module.scss";
 import { SeDieBetOptions, SeDieSettlementResult } from "../sedie-multiplayer-constants";
+import { BgCachedImage } from "../../../components/game-components/cached-image/bg-cached-image";
 
 export class SeDieBigRoadConverter extends Converter<SeDieSettlementResult> {
     static addBlinkNode(rounds: SeDieSettlementResult[]) {
@@ -41,9 +42,9 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
         if (isBlinkNode) {
             return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
         } else if (odd) {
-            return <span className={styles.red}></span>;
+            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard-red-dot.webp" className={styles.icon} />;
         } else if (even) {
-            return <span className={styles.blue}></span>;
+            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard-blue-dot.webp" className={styles.icon} />;
         } else {
             return <></>;
         }
@@ -52,5 +53,3 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
 
 // Register for SeDieMultiplayer only
 registerBigRoadElement(SeDieBigRoadElement, SeDieBigRoadConverter as any, GameIds.SeDieMultiplayer);
-
-

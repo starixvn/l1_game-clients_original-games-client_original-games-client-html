@@ -1,16 +1,17 @@
 import { FC } from "react";
-import Image from "next/image";
-
 import { useGameContext } from "../../../_shared/react-contexts";
 import { useCommonTranslate, useTranslator } from "../../../_shared/react-hooks";
 import { DrawInfo } from "../../../components/game-base/type";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
+import { CachedImage } from "../../../components/game-components/cached-image";
 
 export interface RoundInfoSeDie extends DrawInfo {
     roundId: number;
-    result: {
-        balls?: Array<number>;
-    } | Record<string, boolean>;
+    result:
+        | {
+              balls?: Array<number>;
+          }
+        | Record<string, boolean>;
     odds: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
@@ -20,13 +21,13 @@ const SUB_OPTIONS = [
     SeDieBetOptions.RED3,
     SeDieBetOptions.RED4,
     SeDieBetOptions.WHITE3,
-    SeDieBetOptions.WHITE4
+    SeDieBetOptions.WHITE4,
 ] as const;
 
 const IMAGE_SIZE = 30;
 
 export const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
-    return SUB_OPTIONS.find(option => settlementResult[option]) || '';
+    return SUB_OPTIONS.find((option) => settlementResult[option]) || "";
 };
 
 const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
@@ -48,7 +49,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
                 {winningSubOption ? (
                     <span className="flex items-center gap-1.5">
                         <span className="text-secondary-text">{translateCommon("result")}</span>
-                        <Image
+                        <CachedImage
                             src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`}
                             alt={`${winningSubOption} result`}
                             width={IMAGE_SIZE}
@@ -64,11 +65,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
 };
 
 export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => {
-    const win = calculateWin(
-        drawInfo.settlementResult?.[item.choice],
-        item.amount,
-        drawInfo.odds[item.choice]
-    );
+    const win = calculateWin(drawInfo.settlementResult?.[item.choice], item.amount, drawInfo.odds[item.choice]);
 
     return {
         rawTime: item.time,
@@ -91,7 +88,7 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
             {isOddOrEven ? (
                 t(`glossary_${choice}`)
             ) : (
-                <Image
+                <CachedImage
                     src={`/static/images/sedie-multiplayer/bet-detail-${choice}.svg`}
                     alt={`${choice} choice`}
                     width={IMAGE_SIZE}
@@ -101,5 +98,3 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
         </span>
     );
 };
-
-

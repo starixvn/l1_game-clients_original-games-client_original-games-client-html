@@ -7,9 +7,17 @@ type Props = {
     backgroundSize?: string;
     backgroundRepeat?: string;
     backgroundPosition?: string;
+    children?: React.ReactNode;
 };
 
-export const BgCachedImage: React.FC<Props> = ({ pathImage, className, backgroundSize, backgroundRepeat, backgroundPosition }) => {
+export const BgCachedImage: React.FC<Props> = ({
+    pathImage,
+    className,
+    backgroundSize,
+    backgroundRepeat,
+    backgroundPosition,
+    children,
+}) => {
     const [source, setSource] = useState<string | null>(imageCache[pathImage]?.data || null);
     const props = { backgroundSize, backgroundRepeat, backgroundPosition };
     Object.keys(props).forEach((key) => props[key] === undefined && delete props[key]);
@@ -33,8 +41,10 @@ export const BgCachedImage: React.FC<Props> = ({ pathImage, className, backgroun
                 backgroundImage: `url('${source.replace(/(\r\n|\n|\r)/gm, "")}')`,
                 ...props,
             }}
-        ></div>
+        >
+            {children}
+        </div>
     ) : (
-        <></>
+        <>{children}</>
     );
 };

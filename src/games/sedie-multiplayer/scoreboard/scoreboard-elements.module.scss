@@ -4,26 +4,9 @@
     font-size: 8px;
 }
 
-// Big Road custom blue dot SVG
-$big-road-blue-bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='12' viewBox='0 0 13 12' fill='none'><circle cx='6.5' cy='6' r='5.5' fill='%232741C2' stroke='url(%23paint0_linear_866_3902)'/><defs><linearGradient id='paint0_linear_866_3902' x1='6.5' y1='0' x2='6.5' y2='12' gradientUnits='userSpaceOnUse'><stop stop-color='%23274DC2'/><stop offset='1' stop-color='%233D81FF'/></linearGradient></defs></svg>");
-
-// Big Road custom red dot SVG
-$big-road-red-bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='12' viewBox='0 0 13 12' fill='none'><circle cx='6.5' cy='6' r='5.5' fill='%23960322' stroke='url(%23paint0_linear_866_3878)'/><defs><linearGradient id='paint0_linear_866_3878' x1='6.5' y1='0' x2='6.5' y2='12' gradientUnits='userSpaceOnUse'><stop stop-color='%23A10325'/><stop offset='1' stop-color='%23FB2956'/></linearGradient></defs></svg>");
-
-// Override blue dot specifically for Big Road
-.blue {
-    background-image: $big-road-blue-bg-image;
+.icon {
+    @extend %statistic-icon;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 100%;
 }
-
-// Override red dot specifically for Big Road
-.red {
-    background-image: $big-road-red-bg-image;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
-}
-
-

@@ -25,7 +25,9 @@ export const CachedImage: React.FC<Props> = ({ src, blurSrc, alt, width, height,
             if (!result.valid && Array.isArray(fallbackSrcs) && fallbackSrcs.length > 0) {
                 for (const fallback of fallbackSrcs) {
                     result = await downloadAndCacheImage(fallback);
-                    if (result.valid) { break; }
+                    if (result.valid) {
+                        break;
+                    }
                 }
             }
             setSource(result.imageBase64 || null);
@@ -35,6 +37,6 @@ export const CachedImage: React.FC<Props> = ({ src, blurSrc, alt, width, height,
         } else {
             setSource(imageCache[src].data);
         }
-    }, [src, JSON.stringify(fallbackSrcs || [])]);
+    }, [src, fallbackSrcs]);
     return (source || blurSrc) && <Image className={className} src={source || blurSrc} alt={alt} {...props} />;
 };

@@ -7,6 +7,7 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/react/shallow";
 import Styles from "./statistic-popup.module.scss";
 import AnimatedContent from "../../../components/game-components/animations/animated-content";
+import { CachedImage } from "../../../components/game-components/cached-image";
 
 interface SedieMultiplayerStatisticPopupProps {
     onClose?: () => void;
@@ -68,7 +69,7 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
                                     white4: "/static/images/sedie-multiplayer/statistic-icon-white4.webp",
                                 } as Record<string, string>;
                                 const src = map[choice];
-                                return src ? <Image src={src} alt={choice} width={16} height={16} /> : null;
+                                return src ? <CachedImage src={src} alt={choice} width={16} height={16} /> : null;
                             }}
                         />
                         <PercentageStatistic

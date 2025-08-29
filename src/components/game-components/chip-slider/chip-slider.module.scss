@@ -52,30 +52,6 @@
         border-radius: 50%;
     }
 
-    .inner {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-image: url("/static/images/chips/chip.svg");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .border {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-image: url("/static/images/chips/chip-border.svg");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-
-        &.yellow-border {
-            background-image: url("/static/images/chips/chip-yellow-border.svg");
-        }
-    }
-
     &:active,
     &:focus,
     &:focus-visible {

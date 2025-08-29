@@ -75,7 +75,7 @@ export const useRebet = (isDoubleBet = false): UseRebetReturn => {
 
     const handleClickRebet = useCallback(() => {
         if (!isEnoughBalance()) {
-            broadcastNotice(getNotice(NoticeErrorCode.insufficientFund, false));
+            broadcastNotice(getNotice(NoticeErrorCode.notEnoughMoney, false));
             disable();
             setIsValidBet(false);
             return false;
