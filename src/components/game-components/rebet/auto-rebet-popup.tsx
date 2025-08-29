@@ -21,6 +21,9 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
 
     const handleConfirm = useCallback(
         (rounds: number) => {
+            if (rounds <= 0) {
+                return;
+            }
             onConfirm(rounds);
             onClose();
         },

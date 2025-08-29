@@ -50,16 +50,16 @@ const BaseDialog: React.FC<Props> = ({
 
     useEffect(() => {
         if (enableBackdrop) {
-            document.getElementById("dashboard")?.classList.add("no-scroll");
-            document.body.classList.add("no-scroll");
-            isMobileOnly && document.documentElement.classList.add("no-scroll-html");
+            document.getElementById("dashboard")?.classList.add("overflow-hidden", "md:overflow-auto");
+            document.body.classList.add("overflow-hidden", "md:overflow-auto");
+            isMobileOnly && document.documentElement.classList.add("overflow-hidden", "md:overflow-auto");
         }
 
         return () => {
             if (enableBackdrop && !isOverlap) {
-                document.body.classList.remove("no-scroll");
-                document.getElementById("dashboard")?.classList.remove("no-scroll");
-                isMobileOnly && document.documentElement.classList.remove("no-scroll-html");
+                document.body.classList.remove("overflow-hidden", "md:overflow-auto");
+                document.getElementById("dashboard")?.classList.remove("overflow-hidden", "md:overflow-auto");
+                isMobileOnly && document.documentElement.classList.remove("overflow-hidden", "md:overflow-auto");
             }
         };
     }, []);

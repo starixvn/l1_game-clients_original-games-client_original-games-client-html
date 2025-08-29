@@ -8,7 +8,7 @@ const Setting = () => {
     const settingDispatch = useSettingDispatch();
     const openSetting = () => {
         console.log("[Header.Setting] open.click");
-        document.body.classList.add("no-scroll");
+        document.body.classList.add("overflow-hidden");
         clickSound();
         console.log("[Header.Setting] dispatch.toggle", { isShowedSetting: true });
         settingDispatch({

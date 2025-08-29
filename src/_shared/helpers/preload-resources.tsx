@@ -1,514 +1,16 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
-import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
-import { LobbyConfigs } from "sc-user-service-client/dist/lobby";
+import { useEffect, useRef, useCallback } from "react";
+import { getAppSettings, getGameSettings } from "../app-settings";
+import { downloadAndCacheImage } from "./image-cache-controller";
 
-import { getAppSettings } from "../app-settings";
-import { imageOptimizationHelper, optimizeImageUrl } from "./image-optimization-helper";
-
+// Constants
 const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
-export const DURATION_HOLD_SPLASH_SCREEN = 1000;
-
-// Analytics tracking
-interface PreloadAnalytics {
-    gameId: number;
-    startTime: number;
-    endTime?: number;
-    totalImages: number;
-    criticalImages: number;
-    loadedImages: number;
-    failedImages: number;
-    apiResponseTime: number;
-    totalLoadTime: number;
-    cacheHits: number;
-    compressionRatio: number;
-}
-
-// Extend Window interface for gtag
-declare global {
-    interface Window {
-        gtag?: (command: string, eventName: string, parameters: any) => void;
-    }
-}
-
-const analyticsData: PreloadAnalytics[] = [];
-
-// Critical image paths that should be loaded first
-const CRITICAL_IMAGE_PATHS = ["/ball/", "/anim/ball-middle/"];
-
-// Progressive loading priorities
-enum ImagePriority {
-    CRITICAL = 1,
-    HIGH = 2,
-    MEDIUM = 3,
-    LOW = 4,
-}
-
-interface ImageWithPriority {
-    path: string;
-    priority: ImagePriority;
-    size?: number;
-    isCompressed?: boolean;
-}
-
-// Global preload manager to prevent multiple simultaneous preloads
-class PreloadManager {
-    private static instance: PreloadManager;
-    private readonly activePreloads: Map<string, Promise<void>> = new Map();
-    private readonly preloadCallbacks: Map<string, Set<() => void>> = new Map();
-    private readonly analytics: Map<string, PreloadAnalytics> = new Map();
-
-    static getInstance(): PreloadManager {
-        if (!PreloadManager.instance) {
-            PreloadManager.instance = new PreloadManager();
-        }
-        return PreloadManager.instance;
-    }
-
-    async startPreload(
-        gameId: number,
-        locale: string,
-        gameIdsIcon: number[],
-        bannerId: number,
-        onComplete: () => void,
-        onProgress?: (progress: number) => void
-    ): Promise<void> {
-        const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
-
-        // Initialize analytics
-        const analytics: PreloadAnalytics = {
-            gameId,
-            startTime: Date.now(),
-            totalImages: 0,
-            criticalImages: 0,
-            loadedImages: 0,
-            failedImages: 0,
-            apiResponseTime: 0,
-            totalLoadTime: 0,
-            cacheHits: 0,
-            compressionRatio: 0,
-        };
-        this.analytics.set(preloadKey, analytics);
-
-        // Register callback for this preload
-        if (!this.preloadCallbacks.has(preloadKey)) {
-            this.preloadCallbacks.set(preloadKey, new Set());
-        }
-        const cbSet = this.preloadCallbacks.get(preloadKey);
-        if (cbSet) {
-            cbSet.add(onComplete);
-        }
-
-        // If preload is already active, just wait for it
-        if (this.activePreloads.has(preloadKey)) {
-            await this.activePreloads.get(preloadKey);
-            return;
-        }
-
-        // Start new preload
-        const preloadPromise = this.executePreload(gameId, locale, gameIdsIcon, bannerId, preloadKey, onProgress);
-        this.activePreloads.set(preloadKey, preloadPromise);
-
-        try {
-            await preloadPromise;
-        } finally {
-            // Finalize analytics
-            const finalAnalytics = this.analytics.get(preloadKey);
-            if (finalAnalytics) {
-                finalAnalytics.endTime = Date.now();
-                finalAnalytics.totalLoadTime = finalAnalytics.endTime - finalAnalytics.startTime;
-                this.logAnalytics(finalAnalytics);
-                analyticsData.push(finalAnalytics);
-            }
-
-            // Clean up
-            this.activePreloads.delete(preloadKey);
-            this.analytics.delete(preloadKey);
-            const callbacks = this.preloadCallbacks.get(preloadKey);
-            if (callbacks) {
-                callbacks.forEach((callback) => callback());
-                this.preloadCallbacks.delete(preloadKey);
-            }
-        }
-    }
-
-    private async executePreload(
-        gameId: number,
-        locale: string,
-        gameIdsIcon: number[],
-        bannerId: number,
-        preloadKey: string,
-        onProgress?: (progress: number) => void
-    ): Promise<void> {
-        try {
-            // Fetch image paths with analytics
-            const imagePaths = await fetchImagesFromAPI(gameId, locale, gameIdsIcon, bannerId, preloadKey);
-
-            // Progressive loading with priority
-            await loadImagesProgressive(imagePaths, gameId, preloadKey, onProgress);
-        } catch (error) {
-            console.error(`[PreloadManager] Preload failed for key: ${preloadKey}:`, error);
-            throw error;
-        }
-    }
-
-    private logAnalytics(analytics: PreloadAnalytics): void {
-        // Analytics logging removed
-        // Send analytics to monitoring service
-        this.sendAnalyticsToService(analytics);
-    }
-
-    private sendAnalyticsToService(analytics: PreloadAnalytics): void {
-        // Send to analytics service (e.g., Google Analytics, custom endpoint)
-        if (typeof window !== "undefined" && window.gtag) {
-            window.gtag("event", "preload_completed", {
-                game_id: analytics.gameId,
-                total_time: analytics.totalLoadTime,
-                api_time: analytics.apiResponseTime,
-                images_loaded: analytics.loadedImages,
-                images_total: analytics.totalImages,
-                cache_hits: analytics.cacheHits,
-                compression_ratio: analytics.compressionRatio,
-            });
-        }
-
-        // Send to custom analytics endpoint
-        fetch("/api/analytics/preload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(analytics),
-        }).catch((error) => {
-            console.warn("[PreloadManager] Failed to send analytics:", error);
-        });
-    }
-
-    cancelPreload(gameId: number, locale: string, gameIdsIcon: number[], bannerId: number): void {
-        const preloadKey = getRequestKey(gameId, locale, gameIdsIcon, bannerId);
-
-        // Remove callbacks
-        this.preloadCallbacks.delete(preloadKey);
-        this.analytics.delete(preloadKey);
-
-        // Note: We can't easily cancel the actual preload promise, but we can prevent new callbacks
-    }
-
-    getAnalytics(): PreloadAnalytics[] {
-        return [...analyticsData];
-    }
-}
-
-// Enhanced global cache with request deduplication
-const loadedGamesCache: Record<number, boolean> = {};
-const imageLoadingPromises: Record<string, Promise<void>> = {};
-const activeRequests: Record<string, Promise<string[]>> = {};
-const requestTimestamps: Record<string, number> = {};
-
-// Request deduplication helper
-const getRequestKey = (gameId: number, locale: string, gameIdsIcon: number[], bannerId: number) => {
-    return `${gameId}-${locale}-${JSON.stringify(gameIdsIcon)}-${bannerId}`;
-};
-
-// Cleanup old requests (older than 30 seconds)
-const cleanupOldRequests = () => {
-    const now = Date.now();
-    const thirtySecondsAgo = now - 30000;
-
-    Object.keys(activeRequests).forEach((key) => {
-        if (requestTimestamps[key] && requestTimestamps[key] < thirtySecondsAgo) {
-            delete activeRequests[key];
-            delete requestTimestamps[key];
-        }
-    });
-};
-
-// CDN URL generation - removed for future implementation
-// const getCDNUrl = (path: string): string => {
-//     return path;
-// };
-
-// Image compression detection
-const isCompressedImage = (path: string): boolean => {
-    return path.includes(".webp") || path.includes("compressed") || path.includes("optimized");
-};
-
-// Progressive image prioritization with optimization
-const prioritizeImages = (imagePaths: string[]): ImageWithPriority[] => {
-    const optimalFormat = imageOptimizationHelper.getOptimalFormat();
-
-    return imagePaths
-        .map((path) => {
-            let priority = ImagePriority.LOW;
-            const isCompressed = isCompressedImage(path);
-
-            // Optimize the URL with the best format
-            const optimizedUrl = optimizeImageUrl(path, {
-                format: optimalFormat as any,
-                quality: 85,
-            });
-
-            // Critical images (UI elements, game mechanics)
-            if (CRITICAL_IMAGE_PATHS.some((criticalPath) => path.includes(criticalPath))) {
-                priority = ImagePriority.CRITICAL;
-            }
-            // High priority (frequently used)
-            else if (path.includes("/ball/")) {
-                priority = ImagePriority.HIGH;
-            }
-            // Medium priority (game-specific assets)
-            else if (path.includes("/number/")) {
-                priority = ImagePriority.MEDIUM;
-            }
-
-            return {
-                path: optimizedUrl,
-                priority,
-                isCompressed: isCompressed || optimizedUrl !== path,
-            };
-        })
-        .sort((a, b) => a.priority - b.priority);
-};
-
-// Fetch images from API with request deduplication and analytics
-const fetchImagesFromAPI = async (
-    gameId: number,
-    locale: string,
-    gameIdsIcon: number[],
-    bannerId: number,
-    preloadKey: string
-): Promise<string[]> => {
-    const requestKey = getRequestKey(gameId, locale, gameIdsIcon || [], bannerId || 0);
-
-    // Check if there's already an active request for this combination
-    if (activeRequests[requestKey]) {
-        try {
-            return await activeRequests[requestKey];
-        } catch (error) {
-            console.error(`[fetchImagesFromAPI] Reused request failed:`, error);
-            // Remove failed request from cache
-            delete activeRequests[requestKey];
-            delete requestTimestamps[requestKey];
-            throw error;
-        }
-    }
-
-    // Cleanup old requests periodically
-    cleanupOldRequests();
-
-    // Create new request
-    const requestPromise = (async () => {
-        try {
-            const startTime = Date.now();
-
-            const response = await axios.post(
-                "/api/preload-images",
-                {
-                    gameId,
-                    locale,
-                    gameIdsIcon,
-                    bannerId,
-                },
-                {
-                    timeout: 10000, // 10 second timeout
-                }
-            );
-
-            const endTime = Date.now();
-            const imagePaths = (response?.data as string[]) || [];
-            const apiResponseTime = endTime - startTime;
-
-            // Update analytics
-            const preloadManager = PreloadManager.getInstance();
-            const analytics = preloadManager["analytics"].get(preloadKey);
-            if (analytics) {
-                analytics.apiResponseTime = apiResponseTime;
-                analytics.totalImages = imagePaths.length;
-                analytics.criticalImages = imagePaths.filter((path) =>
-                    CRITICAL_IMAGE_PATHS.some((criticalPath) => path.includes(criticalPath))
-                ).length;
-            }
-
-            return imagePaths;
-        } catch (error) {
-            console.error(`[fetchImagesFromAPI] Failed to fetch image paths:`, error);
-            throw error;
-        } finally {
-            // Clean up the request from active requests
-            delete activeRequests[requestKey];
-            delete requestTimestamps[requestKey];
-        }
-    })();
-
-    // Store the request promise and timestamp
-    activeRequests[requestKey] = requestPromise;
-    requestTimestamps[requestKey] = Date.now();
-
-    return requestPromise;
-};
-
-// Progressive image loading with priority
-const loadImagesProgressive = async (
-    imagePaths: string[],
-    gameId: number,
-    preloadKey: string,
-    onProgress?: (progress: number) => void
-): Promise<void> => {
-    if (imagePaths.length === 0) {
-        return;
-    }
-
-    const prioritizedImages = prioritizeImages(imagePaths);
-    const preloadManager = PreloadManager.getInstance();
-    const analytics = preloadManager["analytics"].get(preloadKey);
-
-    // Calculate total images for progress tracking
-    const totalImages = prioritizedImages.length;
-    let loadedImages = 0;
-
-    // Progress callback wrapper
-    const updateProgress = () => {
-        const progress = Math.min((loadedImages / totalImages) * 100, 100);
-        onProgress?.(progress);
-        updateProgressBar(progress, DEFAULT_PROGRESS_BAR_ID);
-    };
-
-    // Initial progress (API call completed)
-    updateProgress();
-
-    // Load critical images first
-    await loadImagesByPriority(prioritizedImages, ImagePriority.CRITICAL, analytics, () => {
-        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.CRITICAL).length;
-        updateProgress();
-    });
-
-    // Load high priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.HIGH, analytics, () => {
-        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.HIGH).length;
-        updateProgress();
-    });
-
-    // Load medium priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.MEDIUM, analytics, () => {
-        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.MEDIUM).length;
-        updateProgress();
-    });
-
-    // Load low priority images
-    await loadImagesByPriority(prioritizedImages, ImagePriority.LOW, analytics, () => {
-        loadedImages += prioritizedImages.filter((img) => img.priority === ImagePriority.LOW).length;
-        updateProgress();
-    });
-
-    // Mark game as loaded in cache
-    loadedGamesCache[gameId] = true;
-
-    // Calculate final analytics
-    if (analytics) {
-        analytics.compressionRatio = Math.round(
-            (prioritizedImages.filter((img) => img.isCompressed).length / prioritizedImages.length) * 100
-        );
-    }
-};
-
-// Load images by priority level
-const loadImagesByPriority = async (
-    prioritizedImages: ImageWithPriority[],
-    priority: ImagePriority,
-    analytics?: PreloadAnalytics,
-    onBatchComplete?: () => void
-): Promise<void> => {
-    const imagesToLoad = prioritizedImages.filter((img) => img.priority === priority);
-
-    if (imagesToLoad.length === 0) {
-        return;
-    }
-
-    // Priority name removed as it's not used
-
-    const batchSize = priority === ImagePriority.CRITICAL ? 5 : 15; // Smaller batches for critical images
-    const batches = [];
-
-    for (let i = 0; i < imagesToLoad.length; i += batchSize) {
-        batches.push(imagesToLoad.slice(i, i + batchSize));
-    }
-
-    for (const batch of batches) {
-        // Load batch in parallel
-        await Promise.all(
-            batch.map(async (imageData) => {
-                try {
-                    await loadAndCacheImageOptimized(imageData.path);
-                    if (analytics) {
-                        analytics.loadedImages++;
-                        if (imageData.isCompressed) {
-                            analytics.compressionRatio++;
-                        }
-                    }
-                } catch (error) {
-                    console.warn(`[loadImagesByPriority] Failed to load image: ${imageData.path}`, error);
-                    if (analytics) {
-                        analytics.failedImages++;
-                    }
-                }
-            })
-        );
-
-        // Progress update for critical images
-        if (priority === ImagePriority.CRITICAL) {
-            // Progress calculation removed as it's not used
-        }
-    }
-
-    // Call progress callback when batch is complete
-    onBatchComplete?.();
-};
-
-// Optimized image loading with caching and analytics
-const loadAndCacheImageOptimized = async (path: string): Promise<void> => {
-    try {
-        // Check if already cached
-        if (imageLoadingPromises[path]) {
-            await imageLoadingPromises[path];
-            return;
-        }
-
-        // Create loading promise
-        const loadingPromise = (async () => {
-            const img = new Image();
-            return new Promise<void>((resolve, reject) => {
-                img.onload = () => {
-                    resolve();
-                };
-                img.onerror = () => {
-                    console.warn(`[loadAndCacheImageOptimized] Image failed to load: ${path}`);
-                    resolve(); // Continue even if image fails
-                };
-                img.src = path;
-            });
-        })();
-
-        imageLoadingPromises[path] = loadingPromise;
-        await loadingPromise;
-    } catch (error) {
-        console.warn(`[loadAndCacheImageOptimized] Failed to load image: ${path}`, error);
-        throw error;
-    }
-};
-
-export const getAndHandleBannerOffer = (authorizeInfo: AuthorizeResponse, lobbyConfigs: LobbyConfigs, callbackFn: Function) => {
-    // Custom version: No banner functionality since lobby is removed
-    return;
-};
-
-export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PROGRESS_BAR_ID) => {
-    const progressBars = document.querySelectorAll(`#${progressBarId}`);
-    progressBars.forEach((progressBar) => {
-        if (progressBar instanceof HTMLElement) {
-            progressBar.style.width = `${percentage}%`;
-        }
-    });
-};
-
+const MEMORIED_IMAGES = ["/chips/"];
+const REQUEST_TIMEOUT = 10000;
+const REQUEST_CLEANUP_THRESHOLD = 30000; // 30 seconds
+
+// Types
 interface PreloadResourcesProps {
     setIsDonePreload: () => void;
     gameId: number;
@@ -521,6 +23,252 @@ interface PreloadResourcesProps {
     onProgressUpdate?: (progress: number) => void;
 }
 
+interface PreloadRequest {
+    promise: Promise<string[]>;
+    timestamp: number;
+}
+
+// Global state management
+class GlobalPreloadState {
+    private static instance: GlobalPreloadState;
+    private loadedGamesCache: Record<number, boolean> = {};
+    private activeRequests: Record<number, PreloadRequest> = {};
+    private imageLoadingPromises: Record<string, Promise<void>> = {};
+
+    static getInstance(): GlobalPreloadState {
+        if (!GlobalPreloadState.instance) {
+            GlobalPreloadState.instance = new GlobalPreloadState();
+        }
+        return GlobalPreloadState.instance;
+    }
+
+    isGameLoaded(gameId: number): boolean {
+        return this.loadedGamesCache[gameId] || false;
+    }
+
+    setGameLoaded(gameId: number): void {
+        this.loadedGamesCache[gameId] = true;
+    }
+
+    getActiveRequest(gameId: number): Promise<string[]> | null {
+        const request = this.activeRequests[gameId];
+        if (request && Date.now() - request.timestamp < REQUEST_CLEANUP_THRESHOLD) {
+            return request.promise;
+        }
+        this.cleanupRequest(gameId);
+        return null;
+    }
+
+    setActiveRequest(gameId: number, promise: Promise<string[]>): void {
+        this.activeRequests[gameId] = {
+            promise,
+            timestamp: Date.now(),
+        };
+    }
+
+    cleanupRequest(gameId: number): void {
+        delete this.activeRequests[gameId];
+    }
+
+    cleanupOldRequests(): void {
+        const now = Date.now();
+        Object.keys(this.activeRequests).forEach((gameId) => {
+            const request = this.activeRequests[gameId];
+            if (now - request.timestamp >= REQUEST_CLEANUP_THRESHOLD) {
+                this.cleanupRequest(+gameId);
+            }
+        });
+    }
+
+    getImageLoadingPromise(path: string): Promise<void> | null {
+        return this.imageLoadingPromises[path] || null;
+    }
+
+    setImageLoadingPromise(path: string, promise: Promise<void>): void {
+        this.imageLoadingPromises[path] = promise;
+    }
+}
+
+// Preload manager for coordinating preload operations
+class PreloadManager {
+    private static instance: PreloadManager;
+    private readonly activePreloads: Map<string, Promise<void>> = new Map();
+    private readonly preloadCallbacks: Map<string, Set<() => void>> = new Map();
+
+    static getInstance(): PreloadManager {
+        if (!PreloadManager.instance) {
+            PreloadManager.instance = new PreloadManager();
+        }
+        return PreloadManager.instance;
+    }
+
+    async startPreload(gameId: number, onComplete: () => void, onProgress?: (progress: number) => void): Promise<void> {
+        const preloadKey = gameId.toString();
+
+        // Register callback
+        this.registerCallback(preloadKey, onComplete);
+
+        // If preload is already active, wait for it
+        if (this.activePreloads.has(preloadKey)) {
+            await this.activePreloads.get(preloadKey);
+            return;
+        }
+
+        // Start new preload
+        const preloadPromise = this.executePreload(gameId, preloadKey, onProgress);
+        this.activePreloads.set(preloadKey, preloadPromise);
+
+        try {
+            await preloadPromise;
+        } finally {
+            this.cleanupPreload(preloadKey);
+        }
+    }
+
+    private registerCallback(preloadKey: string, onComplete: () => void): void {
+        if (!this.preloadCallbacks.has(preloadKey)) {
+            this.preloadCallbacks.set(preloadKey, new Set());
+        }
+        this.preloadCallbacks.get(preloadKey)?.add(onComplete);
+    }
+
+    private async executePreload(gameId: number, preloadKey: string, onProgress?: (progress: number) => void): Promise<void> {
+        try {
+            const imagePaths = await this.fetchImagesFromAPI(gameId);
+            await this.loadImagesProgressive(imagePaths, gameId, onProgress);
+        } catch (error) {
+            console.error(`[PreloadManager] Preload failed for key: ${preloadKey}:`, error);
+            throw error;
+        }
+    }
+
+    private async fetchImagesFromAPI(gameId: number): Promise<string[]> {
+        const globalState = GlobalPreloadState.getInstance();
+
+        // Check for existing request
+        const existingRequest = globalState.getActiveRequest(gameId);
+        if (existingRequest) {
+            return existingRequest;
+        }
+
+        globalState.cleanupOldRequests();
+
+        // Create new request
+        const requestPromise = this.createImageRequest(gameId);
+        globalState.setActiveRequest(gameId, requestPromise);
+
+        try {
+            return await requestPromise;
+        } finally {
+            globalState.cleanupRequest(gameId);
+        }
+    }
+
+    private async createImageRequest(gameId: number): Promise<string[]> {
+        try {
+            const response = await axios.post("/api/preload-images", { gameId }, { timeout: REQUEST_TIMEOUT });
+            return (response?.data as string[]) || [];
+        } catch (error) {
+            console.error(`[fetchImagesFromAPI] Failed to fetch image paths:`, error);
+            throw error;
+        }
+    }
+
+    private async loadImagesProgressive(imagePaths: string[], gameId: number, onProgress?: (progress: number) => void): Promise<void> {
+        if (imagePaths.length === 0) {
+            return;
+        }
+
+        const totalImages = imagePaths.length;
+        let loadedImages = 0;
+
+        const updateProgress = () => {
+            const progress = Math.min((loadedImages / totalImages) * 100, 100);
+            onProgress?.(progress);
+            this.updateProgressBar(progress);
+        };
+
+        updateProgress();
+
+        const memoriedImages = this.getMemoriedImages(gameId);
+
+        await Promise.all(
+            imagePaths.map(async (path) => {
+                await this.loadAndCacheImage(path, memoriedImages);
+                loadedImages++;
+                updateProgress();
+            })
+        );
+
+        GlobalPreloadState.getInstance().setGameLoaded(gameId);
+    }
+
+    private getMemoriedImages(gameId: number): string[] {
+        return MEMORIED_IMAGES.concat(getGameSettings(gameId)?.gameResourceConfigs?.cachePaths ?? []);
+    }
+
+    private async loadAndCacheImage(path: string, memoriedImages: string[]): Promise<void> {
+        const globalState = GlobalPreloadState.getInstance();
+
+        // Check if already cached
+        const existingPromise = globalState.getImageLoadingPromise(path);
+        if (existingPromise) {
+            await existingPromise;
+            return;
+        }
+
+        const loadingPromise = this.createImageLoadingPromise(path, memoriedImages);
+        globalState.setImageLoadingPromise(path, loadingPromise);
+
+        try {
+            await loadingPromise;
+        } catch (error) {
+            console.warn(`[loadAndCacheImage] Failed to load image: ${path}`, error);
+            throw error;
+        }
+    }
+
+    private createImageLoadingPromise(path: string, memoriedImages: string[]): Promise<any> {
+        if (memoriedImages.some((memoriedImage) => path.includes(memoriedImage))) {
+            return downloadAndCacheImage(path);
+        }
+
+        return new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => {
+                console.warn(`[loadAndCacheImage] Image failed to load: ${path}`);
+                resolve(); // Continue even if image fails
+            };
+            img.src = path;
+        });
+    }
+
+    private updateProgressBar(percentage: number, progressBarId = DEFAULT_PROGRESS_BAR_ID): void {
+        const progressBars = document.querySelectorAll(`#${progressBarId}`);
+        progressBars.forEach((progressBar) => {
+            if (progressBar instanceof HTMLElement) {
+                progressBar.style.width = `${percentage}%`;
+            }
+        });
+    }
+
+    private cleanupPreload(preloadKey: string): void {
+        this.activePreloads.delete(preloadKey);
+        const callbacks = this.preloadCallbacks.get(preloadKey);
+        if (callbacks) {
+            callbacks.forEach((callback) => callback());
+            this.preloadCallbacks.delete(preloadKey);
+        }
+    }
+
+    cancelPreload(gameId: number): void {
+        const preloadKey = gameId.toString();
+        this.preloadCallbacks.delete(preloadKey);
+    }
+}
+
+// Main component
 const PreloadResources: React.FC<PreloadResourcesProps> = ({
     setIsDonePreload,
     gameId,
@@ -530,23 +278,33 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
     onProgressUpdate,
 }) => {
     const router = useRouter();
-    const componentId = useRef(`preload-${gameId}-${Date.now()}-${Math.random()}`);
+    const componentId = useRef(`preload-${gameId}-${Date.now()}`);
+    const globalState = GlobalPreloadState.getInstance();
 
     const enablePreloadResource = getAppSettings().enablePreloadResource ?? true;
-    // Game settings and cache paths removed as they're not used
 
-    // Main preload effect using the global manager
+    const handlePreloadComplete = useCallback(() => {
+        updateProgressBar(100, progressBarId);
+        setIsDonePreload();
+    }, [progressBarId, setIsDonePreload]);
+
+    const handlePreloadProgress = useCallback(
+        (progress: number) => {
+            onProgressUpdate?.(progress);
+        },
+        [onProgressUpdate]
+    );
+
+    // Main preload effect
     useEffect(() => {
         if (!router?.isReady || !enablePreloadResource || gameId < 0) {
-            updateProgressBar(100, progressBarId);
-            setIsDonePreload();
+            handlePreloadComplete();
             return undefined;
         }
 
         // Check if game is already loaded
-        if (loadedGamesCache[gameId]) {
-            updateProgressBar(100, progressBarId);
-            setIsDonePreload();
+        if (globalState.isGameLoaded(gameId)) {
+            handlePreloadComplete();
             return undefined;
         }
 
@@ -557,25 +315,17 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                 const preloadManager = PreloadManager.getInstance();
                 await preloadManager.startPreload(
                     gameId,
-                    locale,
-                    [],
-                    0,
                     () => {
                         if (isMounted) {
-                            updateProgressBar(100, progressBarId);
-                            setIsDonePreload();
+                            handlePreloadComplete();
                         }
                     },
-                    (progress) => {
-                        if (isMounted && onProgressUpdate) {
-                            onProgressUpdate(progress);
-                        }
-                    }
+                    handlePreloadProgress
                 );
             } catch (error) {
                 if (isMounted) {
                     console.error(`[PreloadResources:${componentId.current}] Preload failed:`, error);
-                    setIsDonePreload();
+                    handlePreloadComplete();
                 }
             }
         };
@@ -584,26 +334,33 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
 
         return () => {
             isMounted = false;
-
-            // Cancel preload if component unmounts
             if (enablePreloadResource && gameId >= 0) {
                 const preloadManager = PreloadManager.getInstance();
-                preloadManager.cancelPreload(gameId, locale, [], 0);
+                preloadManager.cancelPreload(gameId);
             }
         };
-    }, [router?.isReady, gameId, enablePreloadResource, locale, progressBarId, setIsDonePreload]);
+    }, [router?.isReady, gameId, enablePreloadResource, locale, handlePreloadComplete, handlePreloadProgress]);
 
     // Handle cancel preload
     useEffect(() => {
         if (cancelPreload) {
             const preloadManager = PreloadManager.getInstance();
-            preloadManager.cancelPreload(gameId, locale, [], 0);
-            setIsDonePreload();
+            preloadManager.cancelPreload(gameId);
+            handlePreloadComplete();
         }
-    }, [cancelPreload, gameId, locale, setIsDonePreload]);
+    }, [cancelPreload, gameId, handlePreloadComplete]);
 
-    // Render nothing
     return null;
+};
+
+// Utility function for external use
+export const updateProgressBar = (percentage: number, progressBarId = DEFAULT_PROGRESS_BAR_ID) => {
+    const progressBars = document.querySelectorAll(`#${progressBarId}`);
+    progressBars.forEach((progressBar) => {
+        if (progressBar instanceof HTMLElement) {
+            progressBar.style.width = `${percentage}%`;
+        }
+    });
 };
 
 export default PreloadResources;

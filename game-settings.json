@@ -19,26 +19,23 @@
             "startNewRoundAnim": 0
         },
         "numberOfRoundHistory": 100,
-        "gamePath": "sedie-multi-player",
+        "gamePath": "sedie-multiplayer",
         "gameResourceConfigs": {
-            "path": "sedie-multi-player",
-            "optionalPaths": [
-                "sedie-multi-player/highlight-winning-odd",
-                "sedie-multi-player/highlight-winning-even",
-                "sedie-multi-player/highlight-winning-red2",
-                "sedie-multi-player/highlight-winning-red3",
-                "sedie-multi-player/highlight-winning-red4",
-                "sedie-multi-player/highlight-winning-white3",
-                "sedie-multi-player/highlight-winning-white4"
-            ],
+            "path": "sedie-multiplayer",
+            "optionalPaths": ["sedie-multiplayer/result", "background/bg-148.webp"],
             "cachePaths": [
-                "sedie-multi-player/highlight-winning-odd.png",
-                "sedie-multi-player/highlight-winning-even.png",
-                "sedie-multi-player/highlight-winning-red2.png",
-                "sedie-multi-player/highlight-winning-red3.png",
-                "sedie-multi-player/highlight-winning-red4.png",
-                "sedie-multi-player/highlight-winning-white3.png",
-                "sedie-multi-player/highlight-winning-white4.png"
+                "sedie-multiplayer/bet-detail-red2.svg",
+                "sedie-multiplayer/bet-detail-red3.svg",
+                "sedie-multiplayer/bet-detail-red4.svg",
+                "sedie-multiplayer/bet-detail-white3.svg",
+                "sedie-multiplayer/bet-detail-white4.svg",
+                "sedie-multiplayer/scoreboard-blue-dot.webp",
+                "sedie-multiplayer/scoreboard-red-dot.webp",
+                "sedie-multiplayer/statistic-icon-red2.webp",
+                "sedie-multiplayer/statistic-icon-red3.webp",
+                "sedie-multiplayer/statistic-icon-red4.webp",
+                "sedie-multiplayer/statistic-icon-white3.webp",
+                "sedie-multiplayer/statistic-icon-white4.webp"
             ]
         }
     }

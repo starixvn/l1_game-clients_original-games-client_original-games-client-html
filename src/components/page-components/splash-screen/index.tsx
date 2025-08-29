@@ -245,7 +245,7 @@ const SplashScreen: React.FC = () => {
                     </div>
                     <p className={"text-first-download"} data-testid="download-message">
                         {locale && t("Common.message_download_first_visit")}
-                        {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.round(preloadProgress)}%)</span>}
+                        {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
                         {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
                     </p>
                 </div>

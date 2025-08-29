@@ -36,7 +36,8 @@ const cleanupCache = () => {
             currentCacheSize -= entry.size;
             delete imageCache[key];
 
-            if (currentCacheSize <= MAX_CACHE_SIZE * 0.8) { // Leave 20% buffer
+            if (currentCacheSize <= MAX_CACHE_SIZE * 0.8) {
+                // Leave 20% buffer
                 break;
             }
         }
@@ -46,7 +47,7 @@ const cleanupCache = () => {
 // Optimized base64 conversion
 const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
     const bytes = new Uint8Array(buffer);
-    let binary = '';
+    let binary = "";
     const len = bytes.byteLength;
 
     for (let i = 0; i < len; i++) {
@@ -66,12 +67,12 @@ const fetchImageBase64 = async (imageUrl: string, retries = 2): Promise<string> 
         const response = await axios.get(imageUrl, {
             responseType: "arraybuffer",
             signal: controller.signal,
-            timeout: 10000
+            timeout: 10000,
         });
 
         clearTimeout(timeoutId);
 
-        const contentType = response.headers["content-type"]?.toLowerCase() || 'image/png';
+        const contentType = response.headers["content-type"]?.toLowerCase() || "image/png";
         const base64 = arrayBufferToBase64(response.data);
         return `data:${contentType};base64,${base64}`;
     } catch (error) {
@@ -79,7 +80,7 @@ const fetchImageBase64 = async (imageUrl: string, retries = 2): Promise<string> 
 
         if (retries > 0 && !axios.isCancel(error)) {
             // Retry with exponential backoff
-            await new Promise(resolve => setTimeout(resolve, 1000 * (3 - retries)));
+            await new Promise((resolve) => setTimeout(resolve, 1000 * (3 - retries)));
             return fetchImageBase64(imageUrl, retries - 1);
         }
 
@@ -93,6 +94,7 @@ const calculateBase64Size = (base64: string): number => {
     return Math.ceil(base64.length * 0.75);
 };
 
+const loadPromise = new Map<string, Promise<any>>();
 export const downloadAndCacheImage = async (path: string): Promise<{ path: string; valid: boolean; imageBase64: string }> => {
     const cleanPath = path.removeBuildVersion();
 
@@ -118,15 +120,20 @@ export const downloadAndCacheImage = async (path: string): Promise<{ path: strin
         }
 
         // Fetch and cache the image
-        const imageBase64 = await fetchImageBase64(cleanPath);
+        if (!loadPromise.has(cleanPath)) {
+            loadPromise.set(cleanPath, fetchImageBase64(cleanPath));
+        }
+        const imageBase64 = await loadPromise.get(cleanPath);
+        loadPromise.delete(cleanPath);
         const size = calculateBase64Size(imageBase64);
 
         // Only cache if it's not too large
-        if (size < MAX_CACHE_SIZE * 0.1) { // Don't cache if single image is >10% of max cache
+        if (size < MAX_CACHE_SIZE * 0.1) {
+            // Don't cache if single image is >10% of max cache
             imageCache[cleanPath] = {
                 data: imageBase64,
                 timestamp: Date.now(),
-                size
+                size,
             };
             currentCacheSize += size;
         }
@@ -134,7 +141,7 @@ export const downloadAndCacheImage = async (path: string): Promise<{ path: strin
         return { path: cleanPath, imageBase64, valid: true };
     } catch (error) {
         console.warn(`Failed to download and cache image: ${cleanPath}`, error);
-        return { path: cleanPath, imageBase64: '', valid: false };
+        return { path: cleanPath, imageBase64: "", valid: false };
     }
 };
 
@@ -143,11 +150,11 @@ export const getCacheStats = () => ({
     size: currentCacheSize,
     maxSize: MAX_CACHE_SIZE,
     entryCount: Object.keys(imageCache).length,
-    utilization: (currentCacheSize / MAX_CACHE_SIZE) * 100
+    utilization: (currentCacheSize / MAX_CACHE_SIZE) * 100,
 });
 
 // Clear cache manually if needed
 export const clearImageCache = () => {
-    Object.keys(imageCache).forEach(key => delete imageCache[key]);
+    Object.keys(imageCache).forEach((key) => delete imageCache[key]);
     currentCacheSize = 0;
 };

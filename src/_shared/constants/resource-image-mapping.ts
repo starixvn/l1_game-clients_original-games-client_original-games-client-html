@@ -1,9 +1,6 @@
 import { getGameSettings } from "../app-settings";
 
-export const getDevicePixelRatio = () => {
-    return (typeof window !== "undefined" && window?.devicePixelRatio) || 0;
-};
-
+const COMMON_PATHS = ["/chips/"];
 export const getPathImageGameId = (gameId: number) => {
     const gameSettings = getGameSettings(gameId);
     const gameImagePath = gameSettings?.gameResourceConfigs?.path || "";
@@ -13,26 +10,5 @@ export const getPathImageGameId = (gameId: number) => {
         return [];
     }
 
-    const devicePixelRatioSuffix = getDevicePixelRatio() > 1 ? "/2x" : "/1x";
-    return [gameImagePath, `${gameImagePath}${devicePixelRatioSuffix}`, ...optionalGamePaths];
-};
-
-export const getPathBanner = (locale: string, gameId: number) => {
-    if (!gameId) {
-        return [];
-    }
-    return [`lobby/banners/${gameId}/${gameId}_${locale}.gif`];
-};
-
-export const getPathIconGames = (gameIds: number[]): string[] => {
-    if (gameIds?.length < 0) {
-        return [];
-    }
-    const bgIcons = ["lobby/game-board-detail/bg-game-board-2x.webp", "lobby/game-board-detail/bg-game-board.webp"];
-    return [...gameIds.map((gameId) => `lobby/game-board-detail/${gameId}`), ...bgIcons];
-};
-
-export const pathImageMapping = {
-    lobby: [],
-    game: [],
+    return [...COMMON_PATHS, gameImagePath, ...optionalGamePaths];
 };

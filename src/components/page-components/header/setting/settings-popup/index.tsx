@@ -14,7 +14,7 @@ const SoundSettings = () => {
 
     const closePopup = () => {
         console.log("[Setting.Popup] close.click");
-        document.body.classList.remove("no-scroll");
+        document.body.classList.remove("overflow-hidden");
         clickSound();
         console.log("[Setting.Popup] dispatch.toggle", { isShowedSetting: false });
         settingDispatch({
