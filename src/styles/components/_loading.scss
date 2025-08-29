@@ -14,25 +14,30 @@
 
     .progress {
         position: relative;
-        height: 10px;
-        width: 160px;
+        height: 12px;
+        width: 159px;
         border-radius: 5px;
-        background-color: #0f1d40;
+        background-color: transparent;
         border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 1px;
     }
 
     .progress-bar {
-        height: 6px;
+        height: 8px;
         width: 0%;
         border-radius: 10px;
-        background: rgb(32, 201, 255);
-        background: linear-gradient(90deg, rgba(32, 201, 255, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: rgb(5, 13, 255);
+        background: linear-gradient(90deg, rgba(5, 113, 255, 1) 0%, rgba(74, 185, 255, 1) 100%);
         transition: width 0.3s;
     }
 
     .text-first-download {
+        font-size: 12px;
         width: 375px;
         padding: 0 10px;
+
+        @media screen and (min-width: 992px) {
+            font-size: 14px;
+        }
     }
 }

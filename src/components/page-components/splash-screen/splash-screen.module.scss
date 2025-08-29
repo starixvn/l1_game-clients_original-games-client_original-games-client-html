@@ -5,9 +5,15 @@
     max-width: 100%;
     height: 100%;
     margin: auto;
-    background: var(--game-background-image) no-repeat center;
     background-attachment: fixed;
     background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-image: url("/static/images/splash-screen/bg-mobile.webp?v=#{$version-image}");
+
+    @media screen and (min-width: 992px) {
+        background-image: url("/static/images/splash-screen/bg-desktop.webp?v=#{$version-image}");
+    }
 
     &::before {
         content: "";
@@ -16,8 +22,6 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgb(0, 0, 0);
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 8%, rgba(0, 0, 0, 0) 53%, rgba(0, 0, 0, 0.20351890756302526) 82%);
     }
 
     .center {
@@ -46,6 +50,7 @@
 
     .logo {
         position: relative;
+        bottom: -40px;
 
         &::before {
             content: "";
@@ -56,32 +61,20 @@
             display: flex;
             height: 94px;
             width: 374px;
-            background-image: url("/static/images/splash-screen/1x/light.png?v=#{$version-image}");
-            background-image: image-set(
-                url("/static/images/splash-screen/1x/light.png?v=#{$version-image}") 1x,
-                url("/static/images/splash-screen/2x/light.png?v=#{$version-image}") 2x
-            );
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            left: 45px;
-            bottom: -55px;
-            width: 94px;
-            height: 70px;
-            background-image: url("/static/images/splash-screen/light-effect.png?v=#{$version-image}");
-            animation: blink 1.2s ease-in-out infinite forwards;
         }
     }
 
     .slogan {
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 500;
+        font-family: "Inter";
         text-transform: uppercase;
         text-align: center;
         color: #fff;
-        text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.6);
+
+        @media screen and (min-width: 992px) {
+            font-size: 16px;
+        }
     }
 
     .slogan-image {

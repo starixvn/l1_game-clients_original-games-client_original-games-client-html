@@ -1,0 +1,20 @@
+.container {
+    will-change: opacity, transform, filter;
+    transition-property: opacity, transform, filter;
+    transition-duration: var(--duration, 600ms);
+    transition-timing-function: var(--easing, ease-out);
+}
+
+.hidden {
+    opacity: var(--initial-opacity, 0);
+    transform: translateY(var(--distance, 8px));
+    filter: blur(var(--blur-amount, 0));
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+
