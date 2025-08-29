@@ -69,7 +69,7 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
                                     white4: "/static/images/sedie-multiplayer/statistic-icon-white4.webp",
                                 } as Record<string, string>;
                                 const src = map[choice];
-                                return src ? <CachedImage src={src} alt={choice} width={16} height={16} /> : null;
+                                return src ? <CachedImage src={src} alt={choice} width={18} height={18} /> : null;
                             }}
                         />
                         <PercentageStatistic
