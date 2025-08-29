@@ -49,17 +49,18 @@ const BaseDialog: React.FC<Props> = ({
     const isIpad = useMemo(() => /iPad/i.test(navigator.userAgent), []);
 
     useEffect(() => {
+        const classList = ["overflow-hidden", "md:overflow-auto"];
         if (enableBackdrop) {
-            document.getElementById("dashboard")?.classList.add("overflow-hidden", "md:overflow-auto");
-            document.body.classList.add("overflow-hidden", "md:overflow-auto");
-            isMobileOnly && document.documentElement.classList.add("overflow-hidden", "md:overflow-auto");
+            document.getElementById("dashboard")?.classList.add(...classList);
+            document.body.classList.add(...classList);
+            isMobileOnly && document.documentElement.classList.add(...classList);
         }
 
         return () => {
             if (enableBackdrop && !isOverlap) {
-                document.body.classList.remove("overflow-hidden", "md:overflow-auto");
-                document.getElementById("dashboard")?.classList.remove("overflow-hidden", "md:overflow-auto");
-                isMobileOnly && document.documentElement.classList.remove("overflow-hidden", "md:overflow-auto");
+                document.body.classList.remove(...classList);
+                document.getElementById("dashboard")?.classList.remove(...classList);
+                isMobileOnly && document.documentElement.classList.remove(...classList);
             }
         };
     }, []);

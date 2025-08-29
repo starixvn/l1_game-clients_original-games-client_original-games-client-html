@@ -45,7 +45,7 @@ const SedieMultiplayerSubBetOption = ({ tolgeeNamespace, choice }: { tolgeeNames
     };
     return (
         <div className="relative">
-            <div className={`flex-1 text-white relative h-[full] w-[74px] md:w-[93px] ${styles[className]}`}>
+            <div className={`flex-1 text-white relative h-[120px] w-[74px] md:w-[93px] ${styles[className]}`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 {renderImages(choice)}
                 <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />

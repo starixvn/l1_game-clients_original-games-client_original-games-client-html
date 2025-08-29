@@ -1,6 +1,6 @@
 %highlight-option {
     --animation-duration: 2s;
-    --border-radius: 10px;
+    --border-radius: 20px;
     position: absolute;
     top: 0;
     left: 0;
@@ -28,13 +28,10 @@
     .red4,
     .white3,
     .red3,
-    .red2 {
-        border-radius: var(--border-radius);
-    }
-
+    .red2,
     .odd,
     .even {
-        border-radius: 20px;
+        border-radius: var(--border-radius);
     }
 }
 .bg {

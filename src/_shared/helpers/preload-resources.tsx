@@ -185,7 +185,7 @@ class PreloadManager {
         const updateProgress = () => {
             const progress = Math.min((loadedImages / totalImages) * 100, 100);
             onProgress?.(progress);
-            this.updateProgressBar(progress);
+            updateProgressBar(progress);
         };
 
         updateProgress();
@@ -241,15 +241,6 @@ class PreloadManager {
                 resolve(); // Continue even if image fails
             };
             img.src = path;
-        });
-    }
-
-    private updateProgressBar(percentage: number, progressBarId = DEFAULT_PROGRESS_BAR_ID): void {
-        const progressBars = document.querySelectorAll(`#${progressBarId}`);
-        progressBars.forEach((progressBar) => {
-            if (progressBar instanceof HTMLElement) {
-                progressBar.style.width = `${percentage}%`;
-            }
         });
     }
 

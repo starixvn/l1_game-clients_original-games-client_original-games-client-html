@@ -15,11 +15,9 @@ import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
 import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
-import { NoticeDialog } from "../../game-components/notice";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"));
 const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner /> });
-const BaseDialog = dynamic(() => import("../../game-components/base-dialog"));
 const MusicPlayer = dynamic(() => import("../music-player"));
 const LandscapeMode = dynamic(() => import("./landscape-mode/landscape-mode"));
 
@@ -142,8 +140,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             if (this.dashboardHandler.checkIsNotOfferGame()) {
                 broadcastNotice({
                     ...getNotice(ErrorNoGameOffer, false),
-                    onClose: () => {
-                    }
+                    onClose: () => {},
                 });
             }
         };
@@ -200,7 +197,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 if (this.notificationHandler.isKickOut) {
                     this.signOut();
                 }
-            }
+            },
         });
     }
 
@@ -255,7 +252,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                         {renderOfferGameContainer()}
 
                         {<MusicPlayer />}
-
                     </div>
                 </SettingContextProvider>
             </PlayerContextProvider>
