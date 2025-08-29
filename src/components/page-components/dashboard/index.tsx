@@ -256,7 +256,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
                         {<MusicPlayer />}
 
-                        <NoticeDialog />
                     </div>
                 </SettingContextProvider>
             </PlayerContextProvider>
