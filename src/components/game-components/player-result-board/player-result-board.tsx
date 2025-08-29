@@ -12,7 +12,7 @@ export const PlayerResultBoard: FC = () => {
       <span className="inline-flex items-center justify-center mr-2 bg-[#24d67c33] rounded-full">
         <span className="inline-block w-2 h-2 m-1 bg-[#24d67c] rounded-full" />
       </span>
-      <span className="text-primary-text">{totalPlayers} players</span>
+      <span className="text-primary-text">{totalPlayers} {translateCommon("players")}</span>
     </div>
   );
 
