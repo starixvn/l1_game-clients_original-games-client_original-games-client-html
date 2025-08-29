@@ -87,3 +87,4 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
         </div>
     );
 };
+export default SedieMultiplayerStatisticPopup;

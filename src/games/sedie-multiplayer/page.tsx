@@ -19,20 +19,13 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import SediePlate from "./result-block/sedie-plate";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
-import { SedieMultiplayerStatisticPopup } from "./round-history/sedie-multiplayer-statistic-popup";
 import SeDieMultiplayerBetDetailModal from "./history";
 import { PlayerResultBoard } from "../../components/game-components/player-result-board/player-result-board";
 const OwnTotalBet = lazy(() => import("../../components/game-components/own-total-bet/own-total-bet"));
 const DoubleBetIcon = lazy(() => import("../../components/game-components/rebet/double-bet-icon"));
 const AutoRebetIcon = lazy(() => import("../../components/game-components/rebet/auto-rebet-icon"));
 
-export type SeDieState = {
-    statisticGroup?: number;
-    showStatistic?: boolean;
-} & GameBaseState;
-
-class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
-    state: SeDieState = { statisticGroup: 0, isLoaded: false, showStatistic: false };
+class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;
 
     constructor(props: GameBaseProps) {
@@ -63,21 +56,8 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, SeDieState> {
         super.componentDidMount();
     }
 
-    private readonly openStatistic = () => this.setState({ showStatistic: true });
-
-    private readonly closeStatistic = () => this.setState({ showStatistic: false });
-
     renderRoundHistory(): JSX.Element {
-        const { showStatistic } = this.state;
-        return (
-            <div className="mt-[10px]">
-                {showStatistic ? (
-                    <SedieMultiplayerStatisticPopup inline onClose={this.closeStatistic} />
-                ) : (
-                    <SedieMultiplayerRoundHistory onOpenStatistic={this.openStatistic} />
-                )}
-            </div>
-        );
+        return <SedieMultiplayerRoundHistory />;
     }
 
     renderResultBlock() {
