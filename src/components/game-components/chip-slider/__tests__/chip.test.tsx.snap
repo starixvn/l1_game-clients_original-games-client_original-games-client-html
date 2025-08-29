@@ -13,12 +13,6 @@ exports[`Chip should render match the snapshot when chip < 1000 1`] = `
       style="background-color: rgb(0, 1, 35);"
     />
     <div
-      class="inner"
-    />
-    <div
-      class="border "
-    />
-    <div
       class="selected"
     />
     <span
@@ -41,12 +35,6 @@ exports[`Chip should render match the snapshot when chip > 1000 & text is empty 
     <div
       class="absolute w-full h-full rounded-full"
       style="background-color: rgb(0, 1, 35);"
-    />
-    <div
-      class="inner"
-    />
-    <div
-      class="border yellow-border"
     />
     <span
       class="value"
