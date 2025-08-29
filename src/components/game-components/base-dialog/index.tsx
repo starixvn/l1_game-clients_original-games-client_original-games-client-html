@@ -90,7 +90,7 @@ const BaseDialog: React.FC<Props> = ({
                     "absolute cursor-auto p-4 text-popup-text z-[301] rounded-t-md",
                     type === ModalType.Full && "fixed inset-x-0 top-4 bottom-0 pl-0 pr-0 z-[300] bg-popup-gradient",
                     type === ModalType.Rebet && "fixed bg-popup-gradient md:absolute md:right-[50%] md:bottom-0",
-                    type === ModalType.Center && "absolute h-screen top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+                    type === ModalType.Center && "h-full",
                     type === ModalType.Message && "rounded-md p-0 left-1 right-1 shadow-none",
                     isIpad && "pb-[69px]",
                     isOpen ? "block" : "hidden",
