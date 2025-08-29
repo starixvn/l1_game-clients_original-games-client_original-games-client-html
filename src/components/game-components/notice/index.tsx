@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { createOptionForHedgeBetGroup, getExtendMessageByErrorCode } from "../../../_shared/helpers";
 import { numberWithCommas } from "../../../_shared/helpers/number-helper";
 import { useGameContext } from "../../../_shared/react-contexts";
 import { useClickSound, useTranslator } from "../../../_shared/react-hooks";
+import { useClickOutside } from "../../../_shared/react-hooks/use-click-outside";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
@@ -20,6 +21,7 @@ const BaseNotice: React.FC<{
     adjustBetNoticePosition: boolean;
 }> = ({ children, onClose, duration = 3, adjustBetNoticePosition }) => {
     const closeDialog = useGlobalEventsStore((state) => state.closeDialog);
+    const noticeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const timer = setTimeout(onClose, duration * 1000);
@@ -34,11 +36,16 @@ const BaseNotice: React.FC<{
         }
     }, [closeDialog]);
 
+    useClickOutside([noticeRef], () => {
+        onClose();
+    });
+
     const clickSound = useClickSound();
 
     return (
         <BaseDialog type={ModalType.Center} isOpen={true} onCloseModal={onClose}>
             <div
+                ref={noticeRef}
                 className={cn(
                     "absolute text-center py-4 pl-3 pr-10 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[343px] font-normal",
                     "bottom-1/2 translate-y-1/2 z-toast overflow-hidden",
