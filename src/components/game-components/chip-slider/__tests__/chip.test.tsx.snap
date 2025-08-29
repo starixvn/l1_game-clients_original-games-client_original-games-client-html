@@ -3,7 +3,7 @@
 exports[`Chip should render match the snapshot when chip < 1000 1`] = `
 <div>
   <div
-    class="chip-container true md:scale-105 p-1/2
+    class="chip-container true md:scale-105 md:translate-y-[-5px] p-1/2
         transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] "
     id="chip-100"
     style="--chip-size: 46px; --chip-value-font-size: 18px;"
