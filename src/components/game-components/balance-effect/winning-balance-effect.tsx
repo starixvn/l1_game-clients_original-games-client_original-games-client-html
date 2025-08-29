@@ -20,7 +20,7 @@ const WinningBalanceEffect: FC = () => {
     const multiplier = useMemo(() => {
         const multiplier = betWin / totalBetAmount;
         return multiplier.toFixed(2);
-    }, [betWin, totalBetAmount]);
+    }, [betWin]);
 
     const fireConfetti = useCallback(() => {
         if (!animationInstance.current) {
@@ -59,8 +59,8 @@ const WinningBalanceEffect: FC = () => {
         animationInstance.current &&
             animationInstance.current({
                 ...opts,
-                origin: { y: 0.7 },
-                particleCount: Math.floor(200 * particleRatio),
+                origin: { y: 0.5, x: 0.5 },
+                particleCount: Math.floor(140 * particleRatio),
             });
     };
 
@@ -85,25 +85,24 @@ const WinningBalanceEffect: FC = () => {
             <ReactCanvasConfetti
                 refConfetti={getInstance}
                 style={{
-                    position: "fixed",
+                    position: "absolute",
                     pointerEvents: "none",
                     width: "100%",
                     height: "100%",
-                    top: -230,
+                    top: 50,
                     left: 0,
                     zIndex: 9999,
                 }}
             />
             {showContent && (
                 <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: [1, 1.5, 0.8, 1], opacity: 1 }}
-                    className="fixed inset-0 z-[100] absolute justify-items-center"
+                    animate={{ scale: [0.8, 1.2, 1.5, 0.8, 1], opacity: [0.5, 0.8, 1] }}
+                    className=" inset-0 z-[100] absolute justify-items-center"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="absolute inset-0 animate-fadeIn" />
 
-                    <div className="flex justify-center items-start mt-[55px] h-full w-full">
+                    <div className="flex justify-center items-center h-full w-full">
                         <div className="flex z-10 animate-popupIn ">
                             <div className="bg-[#2e3646] relative rounded-2xl" style={{ width: "228px", height: "116px" }}>
                                 <div className="flex flex-col items-center justify-center relative size-full">
