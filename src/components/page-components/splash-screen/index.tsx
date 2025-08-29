@@ -220,19 +220,16 @@ const SplashScreen: React.FC = () => {
     return (
         <>
             <div className={Styles.page} data-testid="splash-screen">
-                <div className={Styles["center"]}>
-                    <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0} distance={0}>
+                <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0}>
+                    <div className={Styles["center"]}>
                         <div className={`${Styles["logo"]}`}>
                             <Logo />
                         </div>
-                    </FadeContent>
-
-                    <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0} distance={0}>
                         <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
                             {locale && t("Common.original_tagline")}
                         </div>
-                    </FadeContent>
-                </div>
+                    </div>
+                </FadeContent>
 
                 <div className={"loading"}>
                     <div className={"progress"}>
