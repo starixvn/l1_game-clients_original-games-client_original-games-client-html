@@ -12,7 +12,7 @@ const Header = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
                 <div className="flex flex-1 gap-2 items-center">
                     <div
                         className="bg-primary-bg rounded-lg w-8 h-8 flex items-center justify-center cursor-pointer hover:opacity-80"
-                        onClick={() => sendMessageToParent(IFRAME_MESSAGES.BACK_TO_HOME)}
+                        onClick={() => sendMessageToParent(IFRAME_MESSAGES.BACK_TO_ORIGINAL_PAGE)}
                         role="button"
                         aria-label="Back"
                     >

@@ -1,5 +1,5 @@
 export const IFRAME_MESSAGES = {
-    BACK_TO_HOME: "backToHome",
+    BACK_TO_ORIGINAL_PAGE: "backToOriginalPage",
 } as const;
 
 export const sendMessageToParent = (action: string, payload?: any): void => {
