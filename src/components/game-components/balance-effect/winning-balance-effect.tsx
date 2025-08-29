@@ -18,7 +18,8 @@ const WinningBalanceEffect: FC = () => {
     };
 
     const multiplier = useMemo(() => {
-        return betWin / totalBetAmount;
+        const multiplier = betWin / totalBetAmount;
+        return multiplier.toFixed(2);
     }, [betWin, totalBetAmount]);
 
     const fireConfetti = useCallback(() => {

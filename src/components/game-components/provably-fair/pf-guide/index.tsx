@@ -70,7 +70,7 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
     );
 };
 
-const ButtonPFGuide: FC = () => {
+const ButtonPFGuide: FC<{ className?: string }> = ({ className = "absolute top-5 left-4" }) => {
     const [isShowPFGuide, setIsShowPFGuide] = useState(false);
     const onCloseModal = () => {
         setIsShowPFGuide(false);
@@ -80,7 +80,7 @@ const ButtonPFGuide: FC = () => {
     return (
         <>
             <button
-                className="absolute top-5 left-4"
+                className={className}
                 onClick={() => {
                     clickSound();
                     setIsShowPFGuide(true);

@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { useShallow } from "zustand/react/shallow";
-import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../_shared/helpers";
-import usePFStore from "../../../_shared/stores/pf-store/pf-store";
+import { ButtonPFGuide } from "../provably-fair/pf-guide";
 
 const PFModalContainer: FC<{
     id?: string;
@@ -18,18 +16,6 @@ const PFModalContainer: FC<{
     isOverlap?: boolean;
 }> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
-
-    const { togglePFSetting } = usePFStore(
-        useShallow((state) => ({
-            togglePFSetting: state.togglePFSetting
-        }))
-    );
-
-    const handleOpenPFSetting = () => {
-        clickSound();
-        togglePFSetting(true);
-        AnalyticsHelper.trackFunction({ function: TrackingFunction.PFGuide, action: TrackingAction.Open });
-    };
 
     const handleCloseModal = () => {
         clickSound();
@@ -46,16 +32,16 @@ const PFModalContainer: FC<{
                 })}
             >
                 <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2">
-                    <button className="absolute top-[25px] left-[12px] rotate-90" onClick={handleCloseModal}>
+                    <button className="absolute top-[23px] left-[12px] rotate-90" onClick={handleCloseModal}>
                         <Image src="/static/images/icons/chevron-down.svg" alt="icon-back" width={16} height={16} />
                     </button>
                     <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">{title}</div>
-                    <span className="cursor-pointer ml-auto relative z-10" onClick={handleOpenPFSetting}>
-                        <Image src="/static/images/icons/question-mark.svg" alt="guide" width={32} height={32} />
+                    <span className="cursor-pointer ml-auto relative z-10">
+                        <ButtonPFGuide className="mt-1" />
                     </span>
                 </div>
 
-                <div className="grid grid-rows-[auto_1fr] h-full min-h-0">{children}</div>
+                <div className="grid grid-rows-[auto_1fr] h-full min-h-0 mt-2">{children}</div>
             </div>
         </BaseDialog>
     );

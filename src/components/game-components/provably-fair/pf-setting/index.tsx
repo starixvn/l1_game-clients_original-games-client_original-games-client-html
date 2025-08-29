@@ -30,19 +30,16 @@ const handleOnKeyDown = (event: any) => {
 };
 
 const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const { isShowPFSetting, togglePFSetting, toggleExpandGuideFirst } = usePFStore(
+    const { isShowPFSetting, togglePFSetting } = usePFStore(
         useShallow((state) => ({
             isShowPFSetting: state.isShowPFSetting,
-            togglePFSetting: state.togglePFSetting,
-            expandGuideFirst: state.expandGuideFirst,
-            toggleExpandGuideFirst: state.toggleExpandGuideFirst,
+            togglePFSetting: state.togglePFSetting
         }))
     );
 
     const { t: translateSNGames } = useSNTranslate();
     const handleCloseModal = () => {
         togglePFSetting(false);
-        toggleExpandGuideFirst(false);
     };
 
     return (
