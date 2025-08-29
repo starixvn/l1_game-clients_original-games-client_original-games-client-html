@@ -27,8 +27,8 @@ export const Chip: React.FC<ChipProps> = ({
     const selectedChip = useBettingStore((state) => state.selectedChip);
 
     const getChipClassName = () => {
-        const isSelected = selectedChip === value;
-        return `${Styles["chip-container"]} ${!isHideValue && isSelected} ${isSelected ? "md:scale-105 md:translate-y-[-5px]" : ""} p-1/2
+        const isSelected = !isHideValue && selectedChip === value;
+        return `${Styles["chip-container"]} ${isSelected ? "md:scale-105 md:translate-y-[-5px]" : ""} p-1/2
         transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] ${className}`;
     };
 
@@ -68,7 +68,7 @@ export const Chip: React.FC<ChipProps> = ({
                     backgroundRepeat="no-repeat"
                     backgroundPosition="center"
                 />
-                {selectedChip === value && <div className={`${Styles["selected"]}`}></div>}
+                {!isHideValue && selectedChip === value && <div className={`${Styles["selected"]}`}></div>}
                 {!isHideValue && <span className={Styles["value"]}>{text || getDefaultChipText()}</span>}
             </div>
         </>

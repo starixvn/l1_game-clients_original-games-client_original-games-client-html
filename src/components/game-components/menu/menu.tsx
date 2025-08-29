@@ -21,7 +21,7 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
     }, [wrapperRef]);
 
     return (
-        <div className="p-2 bg-secondary-bg rounded-b-xl">
+        <div className="p-2 bg-third-bg rounded-b-xl">
             <div className="flex justify-between items-center">
                 <div className="flex gap-1 items-center">{leftSide}</div>
                 <div className="flex gap-1 items-center">{rightSide}</div>

@@ -33,6 +33,7 @@ html[data-theme="dark"] {
     --text-color: #fff;
     --border-color: #27303f;
     --secondary-background-color: #101721;
+    --third-background-color: #141c2a;
     --secondary-text-color: #b3bec1;
 
     --opacity-background: rgba(12, 12, 12, 0.8);
@@ -67,6 +68,7 @@ html[data-theme="light"] {
     --text-color: #000;
     --border-color: #ced5e2;
     --secondary-background-color: #ebebeb;
+    --third-background-color: #f9f9f9;
     --secondary-text-color: #5574a7;
     --opacity-background: rgba(12, 12, 12, 0.36);
     --opacity-background-grey: rgba(221, 221, 221, 0.6);
@@ -89,7 +91,6 @@ html[data-theme="light"] {
 
     --modal-text-color: #e6e6e6;
     --pf-guide-background: linear-gradient(180deg, #094998 0%, #062b57 1.51%, #142030 3.02%);
-
 }
 
 /* Ensure Tailwind has highest priority */

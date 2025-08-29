@@ -6,11 +6,12 @@ import { useGameStateContext } from "../../../_shared/react-contexts/game-state-
 import { SeDieResult } from "../sedie-multiplayer-constants";
 import { SedieButtons } from "./sedie-buttons";
 import { useGameContext } from "../../../_shared/react-contexts";
+import { BgCachedImage } from "../../../components/game-components/cached-image/bg-cached-image";
 
-const BUTTON_SIZE = 30; // Button size in pixels
+const BUTTON_SIZE = 29; // Button size in pixels
 const PLATE_SIZE = 228; // Plate size in pixels
 const BOWL_SIZE = 123; // Bowl size in pixels
-const BOUNDARY_SIZE = 115; // Boundary size in pixels
+const BOUNDARY_SIZE = 110; // Boundary size in pixels
 const CIRCLE_RADIUS = BOUNDARY_SIZE / 2; // Half of boundary diameter
 const BUTTON_BUFFER = 2; // Buffer between buttons
 const SHAKE_DURATION = 2000; // Shake duration in milliseconds
@@ -111,10 +112,22 @@ const SediePlate: React.FC = () => {
                 }
             >
                 <div className={`${styles["plate-buttons"]} ${styles["plate-buttons-" + animationState]}`}>
-                    <div className={`${styles["plate"]} ${styles["plate-" + animationState]}`}>
+                    <BgCachedImage
+                        pathImage={"/static/images/sedie-multiplayer/result/plate.png"}
+                        backgroundPosition="center"
+                        backgroundSize="cover"
+                        backgroundRepeat="no-repeat"
+                        className={`${styles["plate"]} ${styles["plate-" + animationState]}`}
+                    >
                         {renderButtons()}
-                        <div className={`${styles["bowl"]} ${classBowlAnimation}`}></div>
-                    </div>
+                        <BgCachedImage
+                            pathImage={"/static/images/sedie-multiplayer/result/bowl.png"}
+                            backgroundPosition="center"
+                            backgroundSize="cover"
+                            backgroundRepeat="no-repeat"
+                            className={`${styles["bowl"]} ${classBowlAnimation}`}
+                        />
+                    </BgCachedImage>
                 </div>
             </div>
         </div>
