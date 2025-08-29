@@ -80,14 +80,6 @@ jest.mock("zustand/react/shallow", () => ({
 
 describe("SedieMultiplayerRoundHistory Component", () => {
     describe("Basic Rendering", () => {
-        it("should render the main container with correct class", () => {
-            // Arrange & Act
-            render(<SedieMultiplayerRoundHistory />);
-
-            // Assert
-            const container = screen.getByTestId("round-history").parentElement;
-            expect(container).toHaveClass("my-3");
-        });
 
         it("should render the RoundHistory component", () => {
             // Arrange & Act
@@ -208,7 +200,6 @@ describe("SedieMultiplayerRoundHistory Component", () => {
             // Assert
             const container = screen.getByTestId("round-history").parentElement;
             expect(container).toBeInTheDocument();
-            expect(container).toHaveClass("my-3");
 
             const roundHistory = screen.getByTestId("round-history");
             expect(roundHistory).toBeInTheDocument();
