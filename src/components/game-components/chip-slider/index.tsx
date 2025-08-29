@@ -25,8 +25,9 @@ const ChipControlPanel: React.FC = () => {
     const [isShowSlider, setIsShowSlider] = useState(false);
     const { chipSettings } = useSettingContext();
     const sliderRef = useRef<HTMLDivElement>(null);
+    const chipRef = useRef<HTMLDivElement>(null);
 
-    useClickOutside(sliderRef, () => {
+    useClickOutside([sliderRef, chipRef], () => {
         if (isShowSlider) {
             setIsShowSlider(false);
         }
@@ -82,15 +83,17 @@ const ChipControlPanel: React.FC = () => {
             {/* Mobile */}
             <div className={`flex items-center gap-2 md:hidden ${isAutoRebetActive ? "opacity-50" : ""}`}>
                 <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
-                <Chip
-                    key={+selectedChip}
-                    value={+selectedChip}
-                    text={findChipSetting(selectedChip)?.text}
-                    color={findChipSetting(selectedChip)?.color}
-                    onClickChip={() => !isAutoRebetActive && setIsShowSlider(!isShowSlider)}
-                    size={48}
-                    fontSize={20}
-                />
+                <div ref={chipRef}>
+                    <Chip
+                        key={+selectedChip}
+                        value={+selectedChip}
+                        text={findChipSetting(selectedChip)?.text}
+                        color={findChipSetting(selectedChip)?.color}
+                        onClickChip={() => !isAutoRebetActive && !isShowSlider && setIsShowSlider(true)}
+                        size={48}
+                        fontSize={20}
+                    />
+                </div>
                 <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />
             </div>
 
