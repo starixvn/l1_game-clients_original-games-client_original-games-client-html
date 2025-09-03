@@ -7,6 +7,7 @@ import { GameIds } from "../../_shared/constants";
 import { InitSocketIO, writeDebugLog } from "../../_shared/helpers";
 import { AnalyticsHelper } from "../../_shared/helpers/analytic-helper";
 import { broadcastOpeningGameId } from "../../_shared/helpers/global-events-helper";
+
 import { GameActionsContextProvider, GameContextProvider, PlayerContext, PlayerContextModel } from "../../_shared/react-contexts";
 import { GameEventActionType } from "../../_shared/react-contexts/game-state-context/game-event-action";
 import { PlaceBetEventActionType } from "../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
@@ -209,14 +210,31 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onStart() {
-        this.socket?.disconnect();
-        this.socket = null;
-        this.gameMessageHandler.clearAllHandlers();
-        this.props.dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
-        this.clearDisconnectTimeout();
-        this.registerHandlers();
-        this.connectToGameService();
-        this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
+        const transaction = (window as any).Sentry?.startTransaction({
+            name: this.props.gameName,
+            op: "game.load",
+            description: `Loading game: ${this.props.gameName}`,
+        });
+
+        (window as any).Sentry?.getCurrentHub()?.configureScope((scope) => {
+            scope.setSpan(transaction);
+        });
+
+        try {
+            this.socket?.disconnect();
+            this.socket = null;
+            this.gameMessageHandler.clearAllHandlers();
+            this.props.dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
+            this.clearDisconnectTimeout();
+            this.registerHandlers();
+            this.connectToGameService();
+            this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
+        } catch (error) {
+            (window as any).Sentry?.captureException(error);
+            transaction?.setStatus("internal_error");
+        } finally {
+            transaction?.finish();
+        }
     }
 
     onPreloadResourceDone = () => {

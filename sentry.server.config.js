@@ -9,5 +9,8 @@ const appSettings = getAppSettings();
 const sentryConfig = appSettings.sentry || {};
 
 if (sentryConfig) {
-    Sentry.init({ ...sentryConfig });
+    Sentry.init({ 
+        ...sentryConfig,
+        tracesSampleRate: 0.1
+    });
 }
