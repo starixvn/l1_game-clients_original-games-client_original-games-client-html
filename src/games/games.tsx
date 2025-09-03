@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { getAppSettings } from "../_shared/app-settings";
 import { GameIds } from "../_shared/constants";
 import { SettingEventActionType, usePlayerContext, useSettingDispatch } from "../_shared/react-contexts";
@@ -52,7 +52,9 @@ export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, upd
     );
 
     const loadChipSettings = useCallback(async () => {
-        if (!session) return;
+        if (!session) {
+            return;
+        }
 
         try {
             const chipSettings = await getChipSettings(session);
