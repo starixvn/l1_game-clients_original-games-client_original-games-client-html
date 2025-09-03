@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import {
     Table,
     TableBody,
@@ -125,7 +125,34 @@ export const BetHistoryTable = () => {
 
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
+    const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>('640px');
     const isInitialized = useRef(false);
+    const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+
+    // Calculate dynamic max height based on 10 rows
+    const calculateDynamicMaxHeight = useCallback(() => {
+        if (!tableBodyRef.current) {
+            return '640px';
+        }
+
+        const tableBody = tableBodyRef.current;
+        const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+        // Sum the heights of the first 10 rows (or fewer if less data)
+        const rowsHeight = allRows.slice(0, 10).reduce((sum, row) => sum + row.getBoundingClientRect().height, 0);
+
+        // Measure the header height dynamically instead of hard-coding
+        const headerRow = tableBody.parentElement?.querySelector('thead tr') as HTMLTableRowElement | null;
+        const headerHeight = headerRow ? headerRow.getBoundingClientRect().height : 36;
+
+        const buffer = 2;
+
+        const totalHeight = rowsHeight + headerHeight + buffer;
+
+        const minHeight = 300;
+
+        return `${Math.max(totalHeight, minHeight)}px`;
+    }, []);
 
     // Initialize bet history handler
     useEffect(() => {
@@ -141,7 +168,7 @@ export const BetHistoryTable = () => {
                 handler.cleanup();
             };
         }
-        return undefined;
+        return;
     }, [gameMessageHandler]);
 
     // Handle cell click for round column
@@ -182,6 +209,24 @@ export const BetHistoryTable = () => {
     const displayedBetLogs = isExpanded ? betLogs : betLogs.slice(0, 10);
     const tableData = transformBetLogsToDisplayData(displayedBetLogs);
 
+    // Update dynamic max height when data changes or window resizes
+    useLayoutEffect(() => {
+        if (displayedBetLogs.length === 0) {
+            return;
+        }
+
+        const newHeight = calculateDynamicMaxHeight();
+        setDynamicMaxHeight(newHeight);
+
+        // Re-calculate on window resize
+        const handleResize = () => {
+            setDynamicMaxHeight(calculateDynamicMaxHeight());
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [displayedBetLogs, calculateDynamicMaxHeight]);
+
     // Handle toggle expand/collapse
     const handleToggleExpand = () => {
         if (!betHistoryHandler) {
@@ -214,13 +259,14 @@ export const BetHistoryTable = () => {
         <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2 h-full border border-primary-border`}>
             <div
                 key={isExpanded ? 'expanded' : 'collapsed'}
-                className={`bet-history-scroll-wrapper min-h-[300px] max-h-[640px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
+                className={`bet-history-scroll-wrapper min-h-[300px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
+                style={{ maxHeight: dynamicMaxHeight, overflowY: 'auto' }}
             >
                 <Table className="bet-history-table">
                     <TableHeader>
                         {renderBetHistoryHeader(headerColumns)}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody ref={tableBodyRef}>
                         {tableData.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center text-secondary-text">
