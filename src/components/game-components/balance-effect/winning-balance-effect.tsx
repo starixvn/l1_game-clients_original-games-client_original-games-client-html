@@ -7,9 +7,8 @@ import { motion } from "motion/react";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 
 const WinningBalanceEffect: FC = () => {
-    const { betWin } = useGameStateContext();
+    const { betWin, showResultInfo } = useGameStateContext();
     const ownBets = useGameStore((state) => state.ownBets);
-    const showResultInfo = useGameStore((state) => state.showResultInfo);
     const totalBetAmount = Object.values(ownBets).reduce((acc, curr) => acc + curr, 0);
     const [showContent, setShowContent] = useState(false);
     const animationInstance = useRef(null);
