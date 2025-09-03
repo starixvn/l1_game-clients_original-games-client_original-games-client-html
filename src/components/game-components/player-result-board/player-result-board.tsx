@@ -17,7 +17,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   const renderHeaderInfo = () => (
-    <div className="flex justify-between bg-secondary-bg rounded-lg p-2 mb-2 text-sm">
+    <div className="flex justify-between bg-secondary-bg rounded-lg p-2 px-[10px] mb-2 text-sm">
       {renderPlayerCount()}
       <RoundId />
     </div>
@@ -32,7 +32,7 @@ export const PlayerResultBoard: FC = () => {
   );
 
   return (
-    <div className="h-full rounded-xl px-2 py-3 bg-primary-bg border border-primary-border">
+    <div className="h-full rounded-xl px-2 lg:px-4 py-3 bg-primary-bg border border-primary-border">
       {renderHeaderInfo()}
       {renderTable()}
     </div>
