@@ -99,7 +99,7 @@ const WinningBalanceEffect: FC = () => {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
-                        duration: 0.8,
+                        duration: 0.7,
                         delay: 0.4,
                         ease: [0, 1.7, 0.2, 1],
                     }}
@@ -193,7 +193,7 @@ const WinningBalanceEffect: FC = () => {
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 1.4, duration: 0.2, ease: "easeOut" }}
+                                            transition={{ delay: 0.7, duration: 0.2, ease: "easeOut" }}
                                             className="z-[100]"
                                         >
                                             <p className="block font-semibold bg-[linear-gradient(180deg,#FFFADD_13.79%,#FFF832_56.9%,#E0C600_100%)] text-[36px] bg-clip-text text-transparent">
