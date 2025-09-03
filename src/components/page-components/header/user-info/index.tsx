@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
 import { usePlayerContext } from "../../../../_shared/react-contexts";
 import { useGlobalEventsStore } from "../../../../_shared/stores/global-events-store/global-events-store";
+import styles from "./user-info.module.scss";
 
 export const UserInfo: React.FC<{
     customizeClass?: string;
@@ -17,7 +18,7 @@ export const UserInfo: React.FC<{
 
     return (
         <div className={`${customizeClass}`} data-testid="balance">
-            <span id="user-info_balance">
+            <span id="user-info_balance" className={`${styles.balanceContainer}`}>
                 <UserAmount amount={userInfo?.red || 0} />
                 <UserCurrency currency={userInfo.currency} isDisplayPlayerCurrency={userInfo.isDisplayPlayerCurrency} />
             </span>

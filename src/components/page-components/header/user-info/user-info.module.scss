@@ -1,0 +1,6 @@
+// Hide balance on desktop
+@media (width >= 64rem) {
+    .balanceContainer {
+        display: none;
+    }
+}
