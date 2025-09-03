@@ -5,6 +5,7 @@ import { messageEventType } from "../../game-base/handlers";
 import { RoundState } from "../../game-base/type";
 import styles from "./countdown-timer.module.scss";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { useCommonTranslate } from "../../../_shared/react-hooks";
 
 export type Rotation = "clockwise" | "counterclockwise";
 
@@ -14,6 +15,7 @@ export const CountdownTimer = ({ className = "" }) => {
     const { gameMessageHandler, durations } = useGameContext();
     const [clientRemainingTime, setClientRemainingTime] = useState(0);
     const [isAnimate, setIsAnimate] = useState(false);
+    const { t } = useCommonTranslate();
 
     useEffect(() => {
         const { placingBets, lockingBet } = durations;
@@ -32,7 +34,7 @@ export const CountdownTimer = ({ className = "" }) => {
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
             <div className={styles["text"]}>
-                {roundState === RoundState.InRound ? `Start at ${clientRemainingTime}s` : "Waiting for the next round"}
+                {roundState === RoundState.InRound ? `${t("start_in", { time: clientRemainingTime })}` : t("waiting_for_the_next_round")}
             </div>
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>

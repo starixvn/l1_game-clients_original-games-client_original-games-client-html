@@ -6,7 +6,7 @@ import { useGameStore } from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 import { useClickOutside } from "../../../_shared/react-hooks/use-click-outside";
-import { useTranslator } from "../../../_shared/react-hooks";
+import { useCommonTranslate } from "../../../_shared/react-hooks";
 
 const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -27,7 +27,7 @@ const ChipControlPanel: React.FC = () => {
     const { chipSettings } = useSettingContext();
     const sliderRef = useRef<HTMLDivElement>(null);
     const chipRef = useRef<HTMLDivElement>(null);
-    const { t } = useTranslator();
+    const { t } = useCommonTranslate();
 
     useClickOutside([sliderRef, chipRef], () => {
         if (isShowSlider) {
@@ -110,7 +110,7 @@ const ChipControlPanel: React.FC = () => {
                 )}
             </div>
             {/* Desktop */}
-            <div className="hidden md:block md:mb-2 font-semibold text-sm">{t("common.chip_value")}</div>
+            <div className="hidden md:block md:mb-2 font-semibold text-sm">{t("chip_value")}</div>
             <div className="hidden relative md:flex justify-center items-center w-full h-[46px] rounded-xl bg-black/60 border border-[var(--color-input-border)]">
                 {isAutoRebetActive && (
                     <div className="absolute left-0 top-0 w-full h-full bg-black/30 rounded-xl z-[var(--chip-slider-index)]" />
