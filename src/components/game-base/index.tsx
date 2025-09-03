@@ -223,9 +223,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     preloadResource = () => {
-        return (
-            <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} />
-        );
+        return <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} />;
     };
 
     protected async connectToGameService() {
@@ -530,7 +528,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         const { authorizeInfo, enableQuickBet } = this.context as PlayerContextModel;
         const enabledQuickBet = authorizeInfo?.user?.settings.quickBet || enableQuickBet;
 
-        this.placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, this.props.gameStateContextModel, this.props.systemContextModel);
+        this.placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, this.props.gameStateContextModel);
     }
 
     clearDisconnectTimeout = () => {

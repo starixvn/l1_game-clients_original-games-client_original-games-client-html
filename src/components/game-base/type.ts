@@ -1,12 +1,17 @@
-
 import { TFnType, TranslationKey } from "@tolgee/react";
 import { WithRouterProps } from "next/dist/client/with-router";
-import { SystemContextModel, SystemEventAction } from "../../_shared/react-contexts";
 import { GameEventAction } from "../../_shared/react-contexts/game-state-context/game-event-action";
 import { GameStateContextModel } from "../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler } from "../round-base/round-game-sound-handler";
-import { GameDisableHandler, GameErrorHandler, GameFinishHandler, GameRoundHistoryHandler, PlaceBetHandler, PlayerHandler } from "./handlers";
+import {
+    GameDisableHandler,
+    GameErrorHandler,
+    GameFinishHandler,
+    GameRoundHistoryHandler,
+    PlaceBetHandler,
+    PlayerHandler,
+} from "./handlers";
 import { GameMessageHandler } from "./handlers/game-message-handler";
 import { GameRoundDataHandler } from "./handlers/game-round-data-handler";
 import { IGameStateHandler } from "./handlers/game-state-handler";
@@ -61,8 +66,6 @@ export type GamePropsContext = {
     isJoinedGame?: boolean;
     dispatch?: (action: GameEventAction) => {};
     gameStateContextModel?: GameStateContextModel;
-    systemContextModel?: SystemContextModel;
-    systemDispatch?: (action: SystemEventAction) => {};
     translate?: TFnType<string, TranslationKey>;
     hedgeBetGroups?: [string[]];
     gameMessageHandler?: GameMessageHandler;

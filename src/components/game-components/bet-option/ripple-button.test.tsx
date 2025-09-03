@@ -1,12 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { buildVersion } from "../../../_shared/constants";
-import { useGameActionContext, useSystemContext, useSettingContext } from "../../../_shared/react-contexts";
+import { useGameActionContext, useSettingContext } from "../../../_shared/react-contexts";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "../../game-base/type";
 import RippleButton from "./ripple-button";
 
 const mockUseGameStateContext = useGameStateContext as jest.Mock;
-const mockUseSystemContext = useSystemContext as jest.Mock;
 const mockUseGameActionContext = useGameActionContext as jest.Mock;
 const mockUseSettingContext = useSettingContext as jest.Mock;
 jest.mock("../../../_shared/react-contexts/game-state-context/game-state-context", () => ({
@@ -15,7 +14,6 @@ jest.mock("../../../_shared/react-contexts/game-state-context/game-state-context
 }));
 
 jest.mock("../../../_shared/react-contexts", () => ({
-    useSystemContext: jest.fn(),
     useGameActionContext: jest.fn(),
     useSettingContext: jest.fn(),
 }));
@@ -42,7 +40,6 @@ describe("RippleButton", () => {
     beforeEach(() => {
         mockPlaceBet.mockClear();
         mockUseGameStateContext.mockReturnValue({ roundState: RoundState.InRound });
-        mockUseSystemContext.mockReturnValue({ selectedChip: mockSelectedChip });
         mockUseGameActionContext.mockReturnValue({ placeBet: mockPlaceBet });
         mockUseSettingContext.mockReturnValue({ chipSettings: chipSettings });
     });

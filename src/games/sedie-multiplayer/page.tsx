@@ -1,7 +1,6 @@
 import { withRouter } from "next/router";
 import { JSX, lazy } from "react";
 
-import { useSystemContext, useSystemDispatch } from "../../_shared/react-contexts";
 import {
     GameStateProvider,
     useGameStateContext,
@@ -126,8 +125,6 @@ const SeDieFC = (props) => {
             {...{
                 dispatch: useGameStatesDispatch(),
                 gameStateContextModel: useGameStateContext(),
-                systemContextModel: useSystemContext(),
-                systemDispatch: useSystemDispatch(),
                 translate: t,
                 tolgeeNamespace,
                 hedgeBetGroups: [[SeDieBetOptions.ODD, SeDieBetOptions.EVEN]],

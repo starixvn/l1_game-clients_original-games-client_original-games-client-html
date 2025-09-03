@@ -1,6 +1,5 @@
 import { stub } from "jest-auto-stub";
 import { Dispatch } from "react";
-import { SystemContextModel } from "../../../../_shared/react-contexts";
 import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";
 import { PlaceBetEventAction } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetContextModel } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model";
@@ -36,7 +35,6 @@ describe("placeBet", () => {
     let placeBetHandler: PlaceBetHandler;
     let gameMessageHandler: GameMessageHandler;
     let gameStateContextModel: GameStateContextModel;
-    let systemContextModel: SystemContextModel;
     let placeBetHandlerProps: PlaceBetHandlerProps;
     let gameConfigs: GameConfigs;
     let userStakeLevel: IUserStakeLevel;
@@ -45,13 +43,12 @@ describe("placeBet", () => {
 
     const updatePlaceBetContext = (state) => {
         placeBetContext = stub<PlaceBetContextModel>(state);
-        placeBetHandler.registerEvents(() => { }, placeBetContext);
+        placeBetHandler.registerEvents(() => {}, placeBetContext);
     };
 
     beforeEach(() => {
         jest.clearAllMocks();
 
-        systemContextModel = stub<SystemContextModel>();
         placeBetContext = stub<PlaceBetContextModel>();
         gameMessageHandler = stub<GameMessageHandler>();
         gameConfigs = stub<GameConfigs>();
@@ -67,13 +64,13 @@ describe("placeBet", () => {
             getPlayerBalance: jest.fn(),
             tolgeeNamespace: "test",
             gameId: 1,
-            signOut: () => { },
+            signOut: () => {},
         };
 
         placeBetHandler = new PlaceBetHandler(placeBetHandlerProps);
         placeBetHandler.setPlaceBetDispatch(placeBetDispatch);
 
-        placeBetHandler.registerEvents(() => { }, placeBetContext);
+        placeBetHandler.registerEvents(() => {}, placeBetContext);
     });
 
     afterEach(() => {
@@ -93,7 +90,7 @@ describe("placeBet", () => {
             const handlePreventBetSpy = jest.spyOn(placeBetHandler, "handlePreventBet");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel);
 
             // Assert
             expect(handlePreventBetSpy).toHaveBeenCalled();
@@ -105,7 +102,7 @@ describe("placeBet", () => {
             const handlePreventBetSpy = jest.spyOn(placeBetHandler, "handlePreventBet");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel);
 
             // Assert
             expect(handlePreventBetSpy).toHaveBeenCalled();
@@ -123,7 +120,7 @@ describe("placeBet", () => {
             const handleProcessingBetSpy = jest.spyOn(placeBetHandler, "handleProcessingBet");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel);
 
             // Assert
             expect(handleProcessingBetSpy).toHaveBeenCalled();
@@ -136,7 +133,7 @@ describe("placeBet", () => {
             const handleProcessingBetSpy = jest.spyOn(placeBetHandler, "handleProcessingBet");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel);
 
             // Assert
             expect(handleProcessingBetSpy).toHaveBeenCalled();
@@ -150,7 +147,7 @@ describe("placeBet", () => {
             const handleProcessingBetSpy = jest.spyOn(placeBetHandler, "handleProcessingBet");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel);
 
             // Assert
             expect(handleProcessingBetSpy).not.toHaveBeenCalled();
@@ -177,7 +174,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -198,7 +195,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", 100, true, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -228,7 +225,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("betChoice", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -254,7 +251,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("betChoice", amount, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", amount, true, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -281,7 +278,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("betChoice", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("betChoice", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).not.toHaveBeenCalled();
@@ -318,7 +315,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -350,7 +347,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("choice1", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).not.toHaveBeenCalled();
@@ -410,7 +407,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("player", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -435,7 +432,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("player", amount, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("player", amount, true, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -462,7 +459,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("player", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -489,7 +486,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("player", amount, true, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("player", amount, true, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -518,7 +515,7 @@ describe("placeBet", () => {
             const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
             // Act
-            placeBetHandler.placeBet("player", amount, false, gameStateContextModel, systemContextModel);
+            placeBetHandler.placeBet("player", amount, false, gameStateContextModel);
 
             // Assert
             expect(broadcastNoticeSpy).not.toHaveBeenCalled();
@@ -557,7 +554,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -587,7 +584,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, 1000, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, 1000, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -608,7 +605,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -630,7 +627,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -653,7 +650,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -685,7 +682,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -716,7 +713,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -740,7 +737,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).not.toHaveBeenCalled();
@@ -766,7 +763,7 @@ describe("placeBet", () => {
                 const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -792,7 +789,7 @@ describe("placeBet", () => {
                 const broadcastNoticeSpy = jest.spyOn(placeBetHandler, "broadcastNotice");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel);
 
                 // Assert
                 expect(broadcastNoticeSpy).toHaveBeenCalled();
@@ -824,7 +821,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, false, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -857,7 +854,7 @@ describe("placeBet", () => {
                 const sendOutstandingBetSpy = jest.spyOn(placeBetHandler, "sendOutstandingBet");
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, true, gameStateContextModel);
 
                 // Assert
                 expect(sendOutstandingBetSpy).toHaveBeenCalled();
@@ -899,7 +896,7 @@ describe("placeBet", () => {
                 });
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel);
 
                 // Assert
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
@@ -920,7 +917,7 @@ describe("placeBet", () => {
                 });
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel);
 
                 // Assert
                 expect(placeBetHandler.getPlaceBetDispatch()).not.toHaveBeenCalled();
@@ -961,7 +958,7 @@ describe("placeBet", () => {
                 });
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel);
 
                 // Assert
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
@@ -983,7 +980,7 @@ describe("placeBet", () => {
                 });
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel);
 
                 // Assert
                 expect(placeBetHandler.getPlaceBetDispatch()).toHaveBeenCalled();
@@ -1004,7 +1001,7 @@ describe("placeBet", () => {
                 });
 
                 // Act
-                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel, systemContextModel);
+                placeBetHandler.placeBet(betChoice, amount, enabledQuickBet, gameStateContextModel);
 
                 // Assert
                 expect(placeBetHandler.getPlaceBetDispatch()).not.toHaveBeenCalled();
