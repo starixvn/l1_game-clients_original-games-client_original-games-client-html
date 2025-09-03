@@ -283,7 +283,7 @@ export const BetHistoryTable = () => {
                 </Table>
             </div>
 
-            {renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles)}
+            {renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
         </div>
     );
 };
@@ -294,7 +294,8 @@ function renderToggleButton(
     isExpanded: boolean,
     isLoading: boolean,
     handleToggleExpand: () => void,
-    styles: any
+    styles: any,
+    t: any
 ) {
     if (totalPages <= 1) {
         return null;
@@ -313,7 +314,7 @@ function renderToggleButton(
                         Loading...
                     </span>
                 ) : (
-                    isExpanded ? "Show Less" : "Show More"
+                    isExpanded ? t("show_less") : t("show_more")
                 )}
             </button>
         </div>
