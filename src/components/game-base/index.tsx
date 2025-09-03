@@ -223,9 +223,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     preloadResource = () => {
-        const playerContext = this.context as PlayerContextModel;
         return (
-            <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} locale={playerContext?.locale || "en"} />
+            <PreloadResources setIsDonePreload={this.onPreloadResourceDone} gameId={this.props.id} />
         );
     };
 
