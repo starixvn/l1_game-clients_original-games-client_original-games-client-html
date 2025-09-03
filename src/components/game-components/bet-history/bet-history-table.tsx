@@ -168,7 +168,8 @@ export const BetHistoryTable = () => {
                 handler.cleanup();
             };
         }
-        return;
+
+        return () => {};
     }, [gameMessageHandler]);
 
     // Handle cell click for round column
@@ -212,7 +213,7 @@ export const BetHistoryTable = () => {
     // Update dynamic max height when data changes or window resizes
     useLayoutEffect(() => {
         if (displayedBetLogs.length === 0) {
-            return;
+            return () => {};
         }
 
         const newHeight = calculateDynamicMaxHeight();
@@ -224,7 +225,9 @@ export const BetHistoryTable = () => {
         };
 
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, [displayedBetLogs, calculateDynamicMaxHeight]);
 
     // Handle toggle expand/collapse
