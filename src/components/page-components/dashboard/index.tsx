@@ -13,6 +13,7 @@ import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
 import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
+import BalanceSyncProvider from "../../../_shared/react-hooks/providers/balance-sync-provider";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"));
 const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner /> });
@@ -228,15 +229,17 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         return (
             <PlayerContextProvider value={authContextValue}>
-                <SettingContextProvider>
-                    <div id={"dashboard"}>
-                        <SoundSettings />
+                <BalanceSyncProvider>
+                    <SettingContextProvider>
+                        <div id={"dashboard"}>
+                            <SoundSettings />
 
-                        {renderOfferGameContainer()}
+                            {renderOfferGameContainer()}
 
-                        {<MusicPlayer />}
-                    </div>
-                </SettingContextProvider>
+                            {<MusicPlayer />}
+                        </div>
+                    </SettingContextProvider>
+                </BalanceSyncProvider>
             </PlayerContextProvider>
         );
     }
