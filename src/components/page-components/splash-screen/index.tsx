@@ -27,7 +27,6 @@ export type SplashScreenState = {
 };
 
 const UMPage = dynamic(() => import("../um-page"));
-
 const Dashboard = dynamic(() => import("../dashboard"));
 
 export const customStartup = async (
@@ -256,7 +255,6 @@ const SplashScreen: React.FC = () => {
                             setIsRenderDashboard(true);
                         }}
                         gameId={currentGameId}
-                        locale={locale}
                         onProgressUpdate={handlePreloadProgress}
                     />
                 </>
@@ -311,12 +309,7 @@ export const Logo = () => {
                     color-interpolation-filters="sRGB"
                 >
                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                    <feColorMatrix
-                        in="SourceAlpha"
-                        type="matrix"
-                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                        result="hardAlpha"
-                    />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset />
                     <feGaussianBlur stdDeviation="4" />
                     <feComposite in2="hardAlpha" operator="out" />
@@ -335,12 +328,7 @@ export const Logo = () => {
                 >
                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-                    <feColorMatrix
-                        in="SourceAlpha"
-                        type="matrix"
-                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                        result="hardAlpha"
-                    />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset />
                     <feGaussianBlur stdDeviation="2" />
                     <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
@@ -358,12 +346,7 @@ export const Logo = () => {
                 >
                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-                    <feColorMatrix
-                        in="SourceAlpha"
-                        type="matrix"
-                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                        result="hardAlpha"
-                    />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset />
                     <feGaussianBlur stdDeviation="2" />
                     <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
@@ -373,4 +356,4 @@ export const Logo = () => {
             </defs>
         </svg>
     );
-}
+};

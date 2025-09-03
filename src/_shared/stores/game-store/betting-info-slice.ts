@@ -23,7 +23,7 @@ const EVENT_TYPE = {
     END_BET: "endBet",
 };
 
-export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set, get, store) => ({
+export const createBettingInfoSlice: StateCreator<BettingInfoSlice> = (set) => ({
     totalBets: {},
     betPercentage: {},
     playerBetCount: {},

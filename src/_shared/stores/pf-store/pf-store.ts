@@ -8,20 +8,22 @@ import { localStorageKeys } from "../../helpers";
 export type PFStore = {
     registerEvent: (message: any) => void;
     initializePF: (gameId: number, uid: number) => void;
-} & PFSettingsSlice & PFVerificationSlice & PFBetsSlice;
+} & PFSettingsSlice &
+    PFVerificationSlice &
+    PFBetsSlice;
 
 export const usePFStore = create<PFStore>()(
     persist(
-        (set, ...a) => {
-            const pfSettingsSlice = createPFSettingsSlice(set, ...a);
-            const pfVerificationSlice = createPFVerificationSlice(set, ...a);
-            const pfBetsSlice = createPFBetsSlice(set, ...a);
+        (set, ...args) => {
+            const pfSettingsSlice = createPFSettingsSlice(set, ...args);
+            const pfVerificationSlice = createPFVerificationSlice(set, ...args);
+            const pfBetsSlice = createPFBetsSlice(set, ...args);
 
             return {
                 ...pfSettingsSlice,
                 ...pfVerificationSlice,
                 ...pfBetsSlice,
-                
+
                 registerEvent: (message) => {
                     pfBetsSlice.registerPFBetsEvent(message);
                 },
@@ -43,4 +45,4 @@ export const usePFStore = create<PFStore>()(
     )
 );
 
-export default usePFStore; 
+export default usePFStore;

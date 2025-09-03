@@ -9,13 +9,13 @@ export type GameStore = {
     GameConfigSlice &
     SocketSlice;
 
-export const useGameStore = create<GameStore>()((set, ...a) => {
-    const bettingInfoSlice = createBettingInfoSlice(set, ...a);
-    const gameConfigSlice = createGameConfigSlice(set, ...a);
+export const useGameStore = create<GameStore>()((set, ...args) => {
+    const bettingInfoSlice = createBettingInfoSlice(set, ...args);
+    const gameConfigSlice = createGameConfigSlice(set, ...args);
     return {
         ...bettingInfoSlice,
         ...gameConfigSlice,
-        ...createSocketSlice(set, ...a),
+        ...createSocketSlice(set, ...args),
         registerEvent: (message) => {
             bettingInfoSlice.registerBettingInfoEvent(message);
             gameConfigSlice.registerGameConfigEvent(message);

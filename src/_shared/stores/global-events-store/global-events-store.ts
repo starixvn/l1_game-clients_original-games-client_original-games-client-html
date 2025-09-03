@@ -3,9 +3,9 @@ import { GlobalEventsSlice, createGlobalEventsSlice } from "./global-events-slic
 
 export type GlobalEventsStore = GlobalEventsSlice;
 
-export const useGlobalEventsStore = create<GlobalEventsStore>()((...a) => {
-    const globalEventsSlice = createGlobalEventsSlice(...a);
-    
+export const useGlobalEventsStore = create<GlobalEventsStore>()((...args) => {
+    const globalEventsSlice = createGlobalEventsSlice(...args);
+
     return {
         ...globalEventsSlice,
     };

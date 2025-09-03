@@ -14,11 +14,7 @@ const REQUEST_CLEANUP_THRESHOLD = 30000; // 30 seconds
 interface PreloadResourcesProps {
     setIsDonePreload: () => void;
     gameId: number;
-    bannerId?: number;
-    locale?: string;
-    gameIdsIcon?: number[];
     cancelPreload?: boolean;
-    durationDelayDonePreload?: number;
     progressBarId?: string;
     onProgressUpdate?: (progress: number) => void;
 }
@@ -263,7 +259,6 @@ class PreloadManager {
 const PreloadResources: React.FC<PreloadResourcesProps> = ({
     setIsDonePreload,
     gameId,
-    locale = "en",
     cancelPreload,
     progressBarId = DEFAULT_PROGRESS_BAR_ID,
     onProgressUpdate,
@@ -330,7 +325,7 @@ const PreloadResources: React.FC<PreloadResourcesProps> = ({
                 preloadManager.cancelPreload(gameId);
             }
         };
-    }, [router?.isReady, gameId, enablePreloadResource, locale, handlePreloadComplete, handlePreloadProgress]);
+    }, [router?.isReady, gameId, enablePreloadResource, handlePreloadComplete, handlePreloadProgress]);
 
     // Handle cancel preload
     useEffect(() => {

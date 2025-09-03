@@ -7,7 +7,7 @@ export interface SocketSlice {
     sendSocketEvent: (event: string, data: any) => void;
 }
 
-export const createSocketSlice: StateCreator<SocketSlice> = (set, get, store) => ({
+export const createSocketSlice: StateCreator<SocketSlice> = (set, get) => ({
     socket: null,
     setSocket: (socket) => set({ socket }),
     sendSocketEvent: (event, data) => {

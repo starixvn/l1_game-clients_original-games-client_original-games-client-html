@@ -16,7 +16,7 @@ const EVENT_TYPE = {
     OWN_BETS: "ownBets",
 };
 
-export const useBettingStore = create<BettingStore>()((set, ...a) => {
+export const useBettingStore = create<BettingStore>()((set) => {
     return {
         selectedChip: 1,
         ownBets: {},

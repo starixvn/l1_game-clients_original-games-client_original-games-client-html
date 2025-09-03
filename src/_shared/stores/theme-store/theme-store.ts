@@ -3,8 +3,8 @@ import { ThemeSlice, createThemeSlice } from "./theme-slice";
 
 export type ThemeStore = ThemeSlice;
 
-export const useThemeStore = create<ThemeStore>()((set, ...a) => {
-    const themeSlice = createThemeSlice(set, ...a);
+export const useThemeStore = create<ThemeStore>()((set, ...args) => {
+    const themeSlice = createThemeSlice(set, ...args);
 
     return {
         ...themeSlice,

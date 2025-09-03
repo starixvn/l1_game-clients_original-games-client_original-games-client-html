@@ -6,8 +6,8 @@ export type BetHistoryStore = BetHistorySlice;
 
 export const useBetHistoryStore = create<BetHistoryStore>()(
     persist(
-        (set, ...a) => {
-            return createBetHistorySlice(set, ...a);
+        (set, ...args) => {
+            return createBetHistorySlice(set, ...args);
         },
         {
             name: "bet-history-store",
