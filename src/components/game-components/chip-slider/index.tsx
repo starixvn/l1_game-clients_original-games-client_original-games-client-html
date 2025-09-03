@@ -123,12 +123,7 @@ const ChipControlPanel: React.FC = () => {
 
 const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick: () => void }) => {
     return (
-        <div
-            className={`cursor-pointer transition-all duration-300  ${
-                isEnabled ? "hover:scale-110 opacity-100" : "opacity-50 cursor-auto"
-            }`}
-            onClick={isEnabled ? onClick : undefined}
-        >
+        <div className={`cursor-pointer ${isEnabled ? "opacity-100" : "opacity-50 cursor-auto"}`} onClick={isEnabled ? onClick : undefined}>
             <svg width="53" height="76" viewBox="0 0 53 76" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M43.5585 44.4482C46.5452 42.2943 48.0385 41.2174 48.5804 39.8911C49.0756 38.679 49.0756 37.321 48.5804 36.1089C48.0385 34.7826 46.5452 33.7057 43.5585 31.5518L13.1001 9.58662C9.0756 6.68432 7.06333 5.23317 5.38544 5.27162C3.85968 5.30659 2.43343 6.03648 1.51262 7.25356C0.5 8.59198 0.5 11.0729 0.5 16.0348L0.5 59.9652C0.5 64.9271 0.5 67.408 1.51262 68.7464C2.43343 69.9635 3.85968 70.6934 5.38544 70.7284C7.06333 70.7668 9.07559 69.3157 13.1001 66.4134L43.5585 44.4482Z"
@@ -162,12 +157,7 @@ const IconPrevious = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onCl
 
 const IconNext = ({ isEnabled = true, onClick }: { isEnabled?: boolean; onClick: () => void }) => {
     return (
-        <div
-            className={`cursor-pointer transition-all duration-300  ${
-                isEnabled ? "hover:scale-110 opacity-100" : "opacity-50 cursor-auto"
-            }`}
-            onClick={isEnabled ? onClick : undefined}
-        >
+        <div className={`cursor-pointer ${isEnabled ? "opacity-100" : "opacity-50 cursor-auto"}`} onClick={isEnabled ? onClick : undefined}>
             <svg width="53" height="76" viewBox="0 0 53 76" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M9.44146 44.4482C6.45479 42.2943 4.96146 41.2174 4.41957 39.8911C3.92436 38.679 3.92436 37.321 4.41957 36.1089C4.96146 34.7826 6.45479 33.7057 9.44146 31.5518L39.8999 9.58662C43.9244 6.68432 45.9367 5.23317 47.6146 5.27162C49.1403 5.30659 50.5666 6.03648 51.4874 7.25356C52.5 8.59198 52.5 11.0729 52.5 16.0348L52.5 59.9652C52.5 64.9271 52.5 67.408 51.4874 68.7464C50.5666 69.9635 49.1403 70.6934 47.6146 70.7284C45.9367 70.7668 43.9244 69.3157 39.8999 66.4134L9.44146 44.4482Z"
