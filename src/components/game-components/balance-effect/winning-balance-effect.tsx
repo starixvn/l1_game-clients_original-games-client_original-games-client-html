@@ -13,6 +13,7 @@ const WinningBalanceEffect: FC = () => {
     const totalBetAmount = Object.values(ownBets).reduce((acc, curr) => acc + curr, 0);
     const [showContent, setShowContent] = useState(false);
     const animationInstance = useRef(null);
+    const delayFireConfettiAfterShowPopup = 1700;
     const getInstance = (instance: any) => {
         animationInstance.current = instance;
     };
@@ -76,7 +77,7 @@ const WinningBalanceEffect: FC = () => {
         if (showContent) {
             setTimeout(() => {
                 fireConfetti();
-            }, 1200);
+            }, delayFireConfettiAfterShowPopup);
         }
     }, [showContent, fireConfetti]);
 
@@ -96,7 +97,13 @@ const WinningBalanceEffect: FC = () => {
             />
             {showContent && (
                 <motion.div
-                    animate={{ scale: [0.8, 1.2, 1.5, 0.8, 1], opacity: [0.5, 0.8, 1] }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{
+                        duration: 0.8,
+                        delay: 0.4,
+                        ease: [0, 1.7, 0.2, 1],
+                    }}
                     className=" inset-0 z-[100] absolute justify-items-center"
                     onClick={(e) => e.stopPropagation()}
                 >
@@ -187,7 +194,7 @@ const WinningBalanceEffect: FC = () => {
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 0.8 }}
+                                            transition={{ delay: 1.4, duration: 0.2, ease: "easeOut" }}
                                             className="z-[100]"
                                         >
                                             <p className="block font-semibold bg-[linear-gradient(180deg,#FFFADD_13.79%,#FFF832_56.9%,#E0C600_100%)] text-[36px] bg-clip-text text-transparent">
@@ -198,7 +205,7 @@ const WinningBalanceEffect: FC = () => {
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 1.2 }}
+                                            transition={{ delay: 1.6, duration: 0.4, ease: "easeOut" }}
                                             className="bg-none z-[100]"
                                         >
                                             <p className="font-semibold bg-white bg-clip-text text-transparent text-[24px]">
