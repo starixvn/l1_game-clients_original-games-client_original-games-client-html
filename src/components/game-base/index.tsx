@@ -1,6 +1,7 @@
-import React, { lazy } from "react";
+import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
+import dynamic from "next/dynamic";
 
 import { GameIds } from "../../_shared/constants";
 import { InitSocketIO, writeDebugLog } from "../../_shared/helpers";
@@ -46,8 +47,8 @@ import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
-const Header = lazy(() => import("../page-components/header"));
-const Background = lazy(() => import("../game-components/background"));
+const Header = dynamic(() => import("../page-components/header"), { ssr: false });
+const Background = dynamic(() => import("../game-components/background"), { ssr: false });
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;

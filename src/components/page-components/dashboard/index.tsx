@@ -213,8 +213,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         window.history.pushState(null, null, "/");
 
         const { authorizeInfo } = this.state;
-        const isRenderGames = true;
-
         const renderOfferGameContainer = () => this.renderGames();
 
         const authContextValue = {

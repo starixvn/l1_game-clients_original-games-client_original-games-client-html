@@ -84,7 +84,7 @@ const SediePlate: React.FC = () => {
     }, [roundState, durations]);
 
     const renderButtons = () => {
-        if (!showButtons) {
+        if (!showButtons || !buttonsValue.length) {
             return null;
         }
 

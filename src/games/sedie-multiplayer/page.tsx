@@ -1,5 +1,6 @@
 import { withRouter } from "next/router";
-import { JSX, lazy } from "react";
+import { JSX } from "react";
+import dynamic from "next/dynamic";
 
 import {
     GameStateProvider,
@@ -20,9 +21,9 @@ import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import SeDieMultiplayerBetDetailModal from "./history";
 import { PlayerResultBoard } from "../../components/game-components/player-result-board/player-result-board";
-const OwnTotalBet = lazy(() => import("../../components/game-components/own-total-bet/own-total-bet"));
-const DoubleBetIcon = lazy(() => import("../../components/game-components/rebet/double-bet-icon"));
-const AutoRebetIcon = lazy(() => import("../../components/game-components/rebet/auto-rebet-icon"));
+const OwnTotalBet = dynamic(() => import("../../components/game-components/own-total-bet/own-total-bet"), { ssr: false });
+const DoubleBetIcon = dynamic(() => import("../../components/game-components/rebet/double-bet-icon"), { ssr: false });
+const AutoRebetIcon = dynamic(() => import("../../components/game-components/rebet/auto-rebet-icon"), { ssr: false });
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;
