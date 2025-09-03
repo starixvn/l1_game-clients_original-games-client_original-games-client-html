@@ -18,8 +18,7 @@ export class DashboardHandler {
         }
 
         const offerGames = getOfferGamesIds(this.props.authorizeResponse);
-        const isNotOfferGame = !offerGames?.includes(this.props.queryGame);
-        return isNotOfferGame;
+        return !offerGames?.includes(this.props.queryGame);
     };
 
     shouldRenderGames = (offerGames: number[], openGameId: number | null) => {
@@ -27,8 +26,7 @@ export class DashboardHandler {
     };
 
     getOfferGamesIds = () => {
-        const offerGames = getOfferGamesIds(this.props.authorizeResponse);
-        return offerGames;
+        return getOfferGamesIds(this.props.authorizeResponse);
     };
 
     reset = () => {
