@@ -112,7 +112,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 gameId: 0,
             });
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act: Call shouldRenderGames with null openGameId (as seen in logs)
             const result = handler.shouldRenderGames([1005, 148], null);
@@ -174,7 +174,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 gameId: 0,
             });
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.shouldRenderGames([1001, 1002, 1003], undefined);
@@ -236,7 +236,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 gameId: 0,
             });
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.shouldRenderGames([1001, 1002, 1003], 0);
@@ -295,7 +295,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 } as AuthorizeResponse,
             };
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -352,7 +352,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 } as AuthorizeResponse,
             };
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -410,7 +410,7 @@ describe("DashboardHandler Integration - Direct Mode Scenario", () => {
                 } as AuthorizeResponse,
             };
 
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -442,7 +442,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                 tolgee: {} as TolgeeInstance,
                 authorizeResponse: null, // Data not available yet
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -499,7 +499,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                 } as AuthorizeResponse,
                 lobbyConfigs: null, // Data not available yet
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -528,7 +528,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                 authorizeResponse: null, // Data not available yet
                 lobbyConfigs: null, // Data not available yet
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -586,7 +586,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                     banners: [],
                 },
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -615,7 +615,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                 authorizeResponse: null, // Data not available yet
                 lobbyConfigs: null, // Data not available yet
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -672,7 +672,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                     isUM: false,
                 } as AuthorizeResponse,
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
@@ -728,7 +728,7 @@ describe("DashboardHandler Integration Tests - Timing Issues", () => {
                     isUM: false,
                 } as AuthorizeResponse,
             };
-            const handler = new DashboardHandler(props, jest.fn());
+            const handler = new DashboardHandler(props);
 
             // Act
             const result = handler.checkIsNotOfferGame();
