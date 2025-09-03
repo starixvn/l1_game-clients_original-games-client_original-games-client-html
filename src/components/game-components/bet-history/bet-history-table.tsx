@@ -211,7 +211,7 @@ export const BetHistoryTable = () => {
     }
 
     return (
-        <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2`}>
+        <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2 h-full border border-primary-border`}>
             <div
                 key={isExpanded ? 'expanded' : 'collapsed'}
                 className={`bet-history-scroll-wrapper min-h-[300px] max-h-[640px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
