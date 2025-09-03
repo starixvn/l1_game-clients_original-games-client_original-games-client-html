@@ -37,7 +37,7 @@ const BaseNotice: React.FC<{
     const clickSound = useClickSound();
 
     return (
-        <BaseDialog type={ModalType.Center} isOpen={true} onCloseModal={onClose}>
+        <BaseDialog type={ModalType.Toast} isOpen={true} onCloseModal={onClose}>
             <div
                 className={cn(
                     "absolute text-center py-4 pl-3 pr-10 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[343px] font-normal overflow-hidden bottom-0",

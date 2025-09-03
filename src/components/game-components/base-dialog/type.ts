@@ -3,4 +3,5 @@ export enum ModalType {
     Rebet,
     Message,
     Center,
+    Toast,
 }
