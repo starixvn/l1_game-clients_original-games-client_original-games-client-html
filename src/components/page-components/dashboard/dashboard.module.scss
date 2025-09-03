@@ -15,22 +15,6 @@
         max-width: 375px;
         background-size: 375px;
     }
-
-    @media (min-aspect-ratio: 3/4) and (max-height: 800px) {
-        --zoom-game: 0.9;
-        transform: scale(var(--zoom-game));
-        transform-origin: top;
-    }
-
-    @media screen and (min-width: 768px) and (min-height: 850px) {
-        transform: scale(var(--zoom-game));
-        transform-origin: top;
-    }
-
-    @media screen and (min-width: 500px) and (orientation: portrait) {
-        transform: scale(var(--zoom-game));
-        transform-origin: top;
-    }
 }
 
 .hidden-scrollbar {
@@ -75,24 +59,4 @@
 
 .slide-left {
     animation: slide-left 0.5s ease-in-out;
-}
-
-@keyframes slide-right {
-    0% {
-        transform: translateX(-10px) scale(var(--zoom-game));
-    }
-
-    100% {
-        transform: translateX(0) scale(var(--zoom-game));
-    }
-}
-
-@keyframes slide-left {
-    0% {
-        transform: translateX(10px) scale(var(--zoom-game));
-    }
-
-    100% {
-        transform: translateX(0) scale(var(--zoom-game));
-    }
 }

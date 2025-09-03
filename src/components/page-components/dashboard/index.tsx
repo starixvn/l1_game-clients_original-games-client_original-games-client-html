@@ -1,10 +1,8 @@
 import "../../../games/scoreboards";
-
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import React from "react";
-import { isDesktop, isMobile, isMobileOnly } from "react-device-detect";
-
+import { isMobile, isMobileOnly } from "react-device-detect";
 import { ErrorNoGameOffer } from "../../../_shared/constants/error-code-dictionary";
 import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "../../../_shared/helpers";
 import { broadcastUserInfoRed } from "../../../_shared/helpers/global-events-helper";
@@ -24,7 +22,7 @@ const LandscapeMode = dynamic(() => import("./landscape-mode/landscape-mode"));
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
     private readonly dashboardHandler: DashboardHandler;
     private readonly notificationHandler: NotificationHandler;
-    private backToLobbyEventId = null;
+    private backToLobbyEventId: (() => void) | null = null;
     private isUpdatingBalance = false;
 
     constructor(
@@ -45,19 +43,14 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             openGameId: null,
             openGameName: "",
             isLandscapeMode: false,
-
-            dashBoardHeight: 0,
         };
 
-        this.showApiErrorMessage = this.showApiErrorMessage.bind(this);
         this.handleUpdateUserStakeLevel = this.handleUpdateUserStakeLevel.bind(this);
         this.signOut = this.signOut.bind(this);
         this.openGame = this.openGame.bind(this);
         this.onVisibilityChange = this.onVisibilityChange.bind(this);
-
         this.changeOrientation = this.changeOrientation.bind(this);
         this.resetGameIdDashboardEvent = this.resetGameIdDashboardEvent.bind(this);
-
         this.updateUserBalance = this.updateUserBalance.bind(this);
 
         const buildId = process.env.buildVersion;
@@ -67,11 +60,10 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             buildVersion && location.reload();
         }
 
-        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props, () => {});
+        this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props);
 
         this.notificationHandler =
-            notificationHandler ??
-            new NotificationHandler(this.props.session, this.props.setIsUm, this.updateUserBalance, this.showApiErrorMessage, this.signOut);
+            notificationHandler ?? new NotificationHandler(this.props.session, this.props.setIsUm, this.updateUserBalance, this.signOut);
 
         broadcastUserInfoRed(this.props.authorizeResponse.user.red);
     }
@@ -114,17 +106,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     async componentDidMount() {
-        const { dashBoardHeight } = this.state;
-
-        const zoomGame = +getComputedStyle(document.getElementById("dashboard")).getPropertyValue("--zoom-game");
-
-        if (isDesktop && dashBoardHeight !== window.innerHeight) {
-            const scaleHeight = document.getElementById("dashboard").clientHeight * zoomGame;
-            this.setState({
-                dashBoardHeight: window.innerHeight + (window.innerHeight - scaleHeight) * (window.innerHeight / scaleHeight),
-            });
+        // Prevent double initialization
+        if (this.backToLobbyEventId !== null) {
+            return;
         }
 
+        this.notificationHandler?.init();
         document.addEventListener("visibilitychange", this.onVisibilityChange);
         // Subscribe to back to lobby events from the store
         const unsubscribe = useGlobalEventsStore.subscribe((state) => {
@@ -175,8 +162,19 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     componentWillUnmount() {
-        this.backToLobbyEventId?.();
+        // Clean up event listeners and subscriptions
+        if (this.backToLobbyEventId) {
+            this.backToLobbyEventId();
+            this.backToLobbyEventId = null;
+        }
+
         document.removeEventListener("visibilitychange", this.onVisibilityChange);
+
+        // Clean up mobile-specific event listeners
+        if (isMobile) {
+            window.removeEventListener("resize", this.changeOrientation);
+            window.removeEventListener("touchmove", this.preventZoomBehavior);
+        }
 
         this.notificationHandler.reset();
         this.dashboardHandler.reset();
@@ -188,17 +186,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     handleUpdateUserStakeLevel(userStakeLevel: UserStakeLevel) {
         this.setState({ userStakeLevel });
-    }
-
-    showApiErrorMessage(errorCode: string) {
-        broadcastNotice({
-            ...getNotice(errorCode, false),
-            onClose: () => {
-                if (this.notificationHandler.isKickOut) {
-                    this.signOut();
-                }
-            },
-        });
     }
 
     openGame(gameId: number) {
@@ -219,10 +206,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 openGameName={openGameName}
             />
         );
-    }
-
-    setDashBoardStyle(isRenderGames: boolean) {
-        return isDesktop && isRenderGames ? { height: this.state.dashBoardHeight } : {};
     }
 
     renderDashBoard() {

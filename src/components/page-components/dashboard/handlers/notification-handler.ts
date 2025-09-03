@@ -1,4 +1,3 @@
-
 import { buildUrl, isKickOutError, localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "../../../../_shared/helpers";
 import { getAppSettings } from "../../../../_shared/app-settings";
 import { io, Socket } from "socket.io-client";
@@ -7,7 +6,7 @@ import { reCheckIn } from "../../../../services/auth-service";
 import { ReCheckInResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 
 export class NotificationHandler {
-    private readonly reCheckInInterval: NodeJS.Timeout;
+    private reCheckInInterval: NodeJS.Timeout;
     public isKickOut = false;
     public notificationSocket: Socket = null;
 
@@ -15,14 +14,16 @@ export class NotificationHandler {
         private readonly session: SSOResponse,
         private readonly setIsUm: Function,
         private readonly updateUserBalance: Function,
-        private readonly showApiErrorMessage: Function,
-        private readonly signOut: Function) {
+        private readonly signOut: Function
+    ) {}
 
+    init() {
+        this.reset();
         this.connectNotificationSocket();
         this.reCheckInInterval = setInterval(async () => {
-            const reCheckInResponse = await reCheckIn(session);
-            this.handleRecheckInResponse(reCheckInResponse);
+            this.handleReCheckIn();
         }, 60 * 1000);
+        this.handleReCheckIn();
     }
 
     connectNotificationSocket = () => {
@@ -43,7 +44,7 @@ export class NotificationHandler {
 
         this.notificationSocket = io(socketUri, socketOption);
         this.registerNotificationSocketEvent();
-    }
+    };
 
     handleRecheckInResponse = (response: ReCheckInResponse) => {
         if (!response || !response.isSuccessful) {
@@ -53,7 +54,7 @@ export class NotificationHandler {
         } else {
             this.updateUserBalance(response.balance, false);
         }
-    }
+    };
 
     handleShowApiErrorMessage = (errorCode: string, isDisableAccount = false) => {
         if (isDisableAccount || isKickOutError(errorCode)) {
@@ -69,21 +70,21 @@ export class NotificationHandler {
                 if (this.isKickOut) {
                     this.signOut();
                 }
-            }
+            },
         });
-    }
+    };
 
     registerNotificationSocketEvent = () => {
         this.notificationSocket.on("auth", this.handleAuth);
         this.notificationSocket.on("kickedOut", this.handleKickedOut);
         this.notificationSocket.on("reload", this.handleReload);
-    }
+    };
 
     handleAuth = (data: { authorized: boolean }) => {
         if (!data.authorized) {
             this.handleKickedOut(data);
         }
-    }
+    };
 
     handleKickedOut = (data: any) => {
         const { umInfo } = data;
@@ -97,7 +98,7 @@ export class NotificationHandler {
         } else {
             this.signOut();
         }
-    }
+    };
 
     handleReload() {
         globalThis.location.reload();
@@ -106,10 +107,10 @@ export class NotificationHandler {
     handleReCheckIn = async () => {
         const reCheckInResponse = await reCheckIn(this.session);
         this.handleRecheckInResponse(reCheckInResponse);
-    }
+    };
 
     reset = () => {
         this.notificationSocket?.close();
         clearInterval(this.reCheckInInterval);
-    }
+    };
 }

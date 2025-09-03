@@ -27,7 +27,7 @@ export type SplashScreenState = {
 };
 
 const UMPage = dynamic(() => import("../um-page"));
-const Dashboard = dynamic(() => import("../dashboard"));
+const Dashboard = dynamic(() => import("../dashboard"), { ssr: false });
 
 export const customStartup = async (
     session: SSOResponse,

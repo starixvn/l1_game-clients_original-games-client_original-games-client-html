@@ -20,15 +20,13 @@ type APIErrorProp = {
 export type DashboardState = {
     userStakeLevel: UserStakeLevel;
     authorizeInfo: AuthorizeResponse;
-    isShowErrorModal: boolean;  
+    isShowErrorModal: boolean;
     apiError: APIErrorProp;
     isBlockUI: boolean;
     queryGame: number;
     openGameId: number;
     openGameName: string;
     isLandscapeMode: boolean;
-
-    dashBoardHeight: number;
 };
 
 export type GameOffer = {

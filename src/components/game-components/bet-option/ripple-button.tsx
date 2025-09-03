@@ -104,8 +104,8 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
                     <span
                         className="ripple-effect"
                         style={{
-                            top: `calc(1 / var(--zoom-game) * ${ripplePosY}px)`,
-                            left: `calc(1 / var(--zoom-game) * ${ripplePosX}px)`,
+                            top: `${ripplePosY}px`,
+                            left: `${ripplePosX}px`,
                         }}
                     ></span>
                 }
