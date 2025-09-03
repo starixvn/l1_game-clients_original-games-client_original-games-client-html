@@ -674,7 +674,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     <div className="grid grid-cols-12 gap-0">
                         {this.renderLeftSide()}
                         {this.renderRightSide()}
-                        <div className="col-span-12 px-3">{this.renderBetHistoryTable()}</div>
+                        <div className="col-span-12 mb-3 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
                     <PFWrapper
                         socket={this.socket}
