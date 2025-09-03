@@ -42,7 +42,7 @@
         overflow-y: auto;
     }
 
-    // Hide native scrollbars on mobile/tablet but keep scrolling enabled
+    // Hide native scrollbars on all devices but keep scrolling enabled
     -ms-overflow-style: none; // IE and old Edge
     scrollbar-width: none; // Firefox
     &::-webkit-scrollbar { // Chrome, Safari, new Edge
@@ -52,23 +52,6 @@
     &::-webkit-scrollbar-thumb {
         background: transparent;
         border: none;
-    }
-
-    // Show scrollbars on desktop
-    @media (min-width: 1024px) {
-        -ms-overflow-style: auto;
-        scrollbar-width: thin;
-        &::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        &::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 8px;
-        }
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
     }
     
     // Ensure table takes full width
