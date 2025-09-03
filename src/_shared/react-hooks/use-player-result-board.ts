@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { PlayerInPlayerResultBoard, RoundState } from "../../components/game-base/type";
+import { PlayerInPlayerResultBoard, PlayerResultBoard, RoundState } from "../../components/game-base/type";
 import useGameStore from "../stores/game-store/game-store";
 import { useGameStateContext } from "../react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "../react-contexts";
@@ -17,16 +17,18 @@ const calculateAmountByRate = (amount: number, rate: number) => {
     return "";
 };
 
-const DELAY = 1000;
+const DELAY = 2000;
 
 export const usePlayerResultBoard = () => {
     const playerResultBoard = useGameStore((state) => state.playerResultBoard);
     const rate = useGameStore((state) => state.rate);
     const { roundState } = useGameStateContext();
     const { durations } = useGameContext();
-    
+
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [isDisplayingResults, setIsDisplayingResults] = useState(false);
+
+    const [captureSettledPlayerResultBoard, setCaptureSettledPlayerResultBoard] = useState<PlayerResultBoard | null>(null);
 
     useEffect(() => {
         let timeoutDisplayResult: NodeJS.Timeout;
@@ -34,24 +36,27 @@ export const usePlayerResultBoard = () => {
 
         switch (roundState) {
             case RoundState.DisplayResult:
+                if (playerResultBoard && playerResultBoard.players?.length > 0 && playerResultBoard.isSettled) {
+                    setCaptureSettledPlayerResultBoard(playerResultBoard);
+                }
+
                 timeoutDisplayResult = setTimeout(() => {
                     setShouldShowResults(true);
                     setIsDisplayingResults(true);
-                    
+
                     timeoutHideResults = setTimeout(() => {
                         setShouldShowResults(false);
                         setIsDisplayingResults(false);
-                    }, durations.showResult * 1000);
+                    }, (durations?.showResult ?? 0) * 1000);
                 }, DELAY);
                 break;
-                
-            case RoundState.BeforePlaceBet:
+
             case RoundState.InRound:
-            case RoundState.LockingBet:
+                setCaptureSettledPlayerResultBoard(null);
                 setShouldShowResults(false);
                 setIsDisplayingResults(false);
                 break;
-                
+
             default:
                 break;
         }
@@ -60,14 +65,16 @@ export const usePlayerResultBoard = () => {
             timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
             timeoutHideResults && clearTimeout(timeoutHideResults);
         };
-    }, [roundState, durations.showResult]);
+    }, [roundState, durations?.showResult, playerResultBoard]);
 
     const tableData = useMemo(() => {
-        if (!playerResultBoard?.players?.length) {
+        const currentPlayerResultBoard = captureSettledPlayerResultBoard || playerResultBoard;
+
+        if (!currentPlayerResultBoard?.players?.length) {
             return [];
         }
 
-        return playerResultBoard.players.map((player: PlayerInPlayerResultBoard) => {
+        return currentPlayerResultBoard.players.map((player: PlayerInPlayerResultBoard) => {
             const formattedWinAmount = () => {
                 if (!shouldShowResults) {
                     return "-";
@@ -84,11 +91,11 @@ export const usePlayerResultBoard = () => {
                 win: formattedWinAmount(),
             };
         });
-    }, [playerResultBoard, rate, shouldShowResults]);
+    }, [captureSettledPlayerResultBoard, playerResultBoard, rate, shouldShowResults]);
 
     return {
-        totalPlayers: playerResultBoard?.totalPlayers || 0,
-        roundId: playerResultBoard?.roundId?.toString() || "",
+        totalPlayers: (captureSettledPlayerResultBoard || playerResultBoard)?.totalPlayers || 0,
+        roundId: (captureSettledPlayerResultBoard || playerResultBoard)?.roundId?.toString() || "",
         tableData,
         shouldShowResults,
         isDisplayingResults,
