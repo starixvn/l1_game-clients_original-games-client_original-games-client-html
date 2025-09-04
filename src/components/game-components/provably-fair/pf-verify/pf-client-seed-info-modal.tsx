@@ -44,6 +44,7 @@ const PFClientSeedInfoModal: FC<{
                 isOpen={isShowPFClientSeedInfo}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
+                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
                 <PFClientSeedInfo fileNameExport={fileNameExport} />
             </ModalContainer>,

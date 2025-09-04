@@ -33,7 +33,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
     const { isShowPFSetting, togglePFSetting } = usePFStore(
         useShallow((state) => ({
             isShowPFSetting: state.isShowPFSetting,
-            togglePFSetting: state.togglePFSetting
+            togglePFSetting: state.togglePFSetting,
         }))
     );
 
@@ -54,7 +54,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
                 }
                 isOpen={true}
                 onCloseModal={handleCloseModal}
-                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[730px] md:mx-auto"
+                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
                 <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-5">
                     <PFSetting customClientSeedInfo={customClientSeedInfo} />
