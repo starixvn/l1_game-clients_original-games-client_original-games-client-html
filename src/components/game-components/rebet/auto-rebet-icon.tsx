@@ -1,27 +1,36 @@
 import { memo, useEffect, useState } from "react";
-import { useAutoRebet } from "../../../_shared/react-hooks/use-auto-rebet";
+import { useAutoRebet, useBalance } from "../../../_shared/react-hooks";
 import AutoRebetPopup from "./auto-rebet-popup";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
+import { broadcastNotice, getNotice } from "../../../_shared/helpers";
+import { NoticeErrorCode } from "../../../_shared/constants/error-code-dictionary";
 
 const AutoRebetIcon = () => {
     const isAutoRebetActive = useBettingStore((state) => state.isAutoRebetActive);
     const { remainingRounds, startAutoRebet, stopAutoRebet, isEnabled: isRebetEnabled } = useAutoRebet();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-
     const [isEnabled, setIsEnabled] = useState(false);
+    const ownBets = useBettingStore((state) => state.ownBets);
+    const balance = useBalance();
 
     useEffect(() => {
         setIsEnabled(isRebetEnabled || isAutoRebetActive);
     }, [isRebetEnabled, isAutoRebetActive]);
 
     const handleIconClick = () => {
-        if (isEnabled) {
-            if (isAutoRebetActive) {
-                stopAutoRebet();
-            } else {
-                setIsPopupOpen(true);
-            }
+        if (!isEnabled) {
+            return;
         }
+        if (isAutoRebetActive) {
+            stopAutoRebet();
+            return;
+        }
+        const totalAmount = Object.values(ownBets).reduce((acc, bet) => acc + bet, 0);
+        if (balance < totalAmount) {
+            broadcastNotice(getNotice(NoticeErrorCode.notEnoughMoney, false));
+            return;
+        }
+        setIsPopupOpen(true);
     };
 
     const handleClosePopup = () => {
