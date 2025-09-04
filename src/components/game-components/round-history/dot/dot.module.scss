@@ -70,7 +70,7 @@ $dot-next-bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 }
 
 .blink {
-    animation: blinker 2s linear infinite;
+    animation: blinker 1.5s linear infinite;
 }
 
 // sedie
@@ -557,18 +557,18 @@ $dot-next-bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 
 @keyframes blinker {
     0% {
-        transform: scale(0.85);
+        transform: scale(0.9);
     }
     25% {
         transform: scale(1);
     }
     50% {
-        transform: scale(0.85);
+        transform: scale(0.9);
     }
     75% {
         transform: scale(1);
     }
     100% {
-        transform: scale(0.85);
+        transform: scale(0.9);
     }
 }

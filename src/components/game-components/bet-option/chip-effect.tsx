@@ -3,14 +3,21 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { Chip } from "../chip-slider/chip";
 import { useSettingContext } from "../../../_shared/react-contexts/setting-context";
 import styles from "./chip-effect.module.scss";
+import { useShallow } from "zustand/shallow";
 
 export const ChipEffect = ({ choice, className }: { choice: string; className?: string }) => {
-    const ownBet = useGameStore((state) => state.ownBets?.[choice] ?? 0);
+    const { ownBet, roundId } = useGameStore(
+        useShallow((state) => ({ ownBet: state.ownBets?.[choice] ?? 0, roundId: state.roundId ?? 0 }))
+    );
     const [data, setData] = useState([]);
     const [oldValue, setOldValue] = useState(ownBet);
+    const [isReady, setIsReady] = useState(roundId !== 0);
     const { chipSettings } = useSettingContext();
 
     useEffect(() => {
+        if (!isReady) {
+            return;
+        }
         if (ownBet > 0) {
             ownBet - oldValue > 0 && setData((prev) => [...prev, ownBet - oldValue]);
             setOldValue(ownBet);
@@ -19,6 +26,13 @@ export const ChipEffect = ({ choice, className }: { choice: string; className?: 
             setOldValue(0);
         }
     }, [ownBet]);
+
+    useEffect(() => {
+        if (roundId > 0) {
+            setOldValue(ownBet);
+            setIsReady(true);
+        }
+    }, [roundId]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;

@@ -18,9 +18,9 @@ const WinningBalanceEffect: FC = () => {
     };
 
     const multiplier = useMemo(() => {
-        const multiplier = betWin / totalBetAmount;
+        const multiplier = totalBetAmount > 0 ? betWin / totalBetAmount : 0;
         return multiplier.toFixed(2);
-    }, [betWin]);
+    }, [betWin, totalBetAmount]);
 
     const fireConfetti = useCallback(() => {
         if (!animationInstance.current) {
@@ -70,7 +70,7 @@ const WinningBalanceEffect: FC = () => {
         } else {
             setShowContent(false);
         }
-    }, [showResultInfo]);
+    }, [showResultInfo, multiplier]);
 
     useEffect(() => {
         if (showContent) {
@@ -208,7 +208,7 @@ const WinningBalanceEffect: FC = () => {
                                             className="bg-none z-[100]"
                                         >
                                             <p className="font-semibold bg-white bg-clip-text text-transparent text-[24px]">
-                                                {numberWithCommas(betWin, 2)}
+                                                {numberWithCommas(Math.floor(betWin * 100) / 100, 2)}
                                             </p>
                                         </motion.div>
                                     </div>

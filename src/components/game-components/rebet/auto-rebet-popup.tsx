@@ -2,6 +2,7 @@ import React, { useState, useCallback, memo } from "react";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import Image from "next/image";
 import styles from "./auto-rebet-popup.module.scss";
 
 interface AutoRebetPopupProps {
@@ -40,16 +41,13 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                 type={ModalType.Rebet}
                 onCloseModal={handleClose}
                 enableBackdrop={true}
-                extendedClassName="w-full left-0 p-0 -bottom-0 md:w-[425px] md:left-[50%] md:-translate-x-1/2"
+                extendedClassName="w-full left-0 p-0 -bottom-0 md:w-[425px] md:left-[50%] md:-translate-x-1/2 "
             >
-                <div className="p-3 py-6">
+                <div className="p-3 py-6 md:px-5">
                     <div className="relative w-full">
-                        <h2 className="text-white text-lg font-semibold text-center">Auto Rebet</h2>
-                        <button
-                            onClick={handleClose}
-                            className="absolute top-0 right-0 text-white hover:text-gray-300 transition-colors duration-200 text-2xl font-semibold leading-none"
-                        >
-                            ×
+                        <div className="text-white text-2xl font-semibold text-center">Auto Rebet</div>
+                        <button onClick={handleClose} className="absolute top-0 right-0 translate-y-1/2">
+                            <Image src="/static/images/icons/close.svg" className="w-4 h-4" alt="close" width={16} height={16} />
                         </button>
                     </div>
 
@@ -59,7 +57,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                                 key={number}
                                 onClick={() => handleConfirm(number)}
                                 className={`${cn(
-                                    "flex items-center justify-center gap-1 text-white text-[16px] font-medium py-3 px-2 transition-all duration-200 md:py-2",
+                                    "flex items-center justify-center gap-1/2 text-white text-[16px] font-medium py-[6px] px-2 transition-all duration-200 md:py-2",
                                     "hover:scale-105"
                                 )} ${styles.button}`}
                             >
