@@ -22,6 +22,7 @@ import {
 import styles from './bet-history.module.scss';
 import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
 import { cn } from '../../../_shared/utils/merge-tailwind-util';
+import BouncingDotsLoader from './loader';
 
 
 // Function to create row data for bet history table
@@ -145,7 +146,7 @@ export const BetHistoryTable = () => {
         const headerRow = tableBody.parentElement?.querySelector('thead tr') as HTMLTableRowElement | null;
         const headerHeight = headerRow ? headerRow.getBoundingClientRect().height : 36;
 
-        const buffer = 2;
+        const buffer = 1;
 
         const totalHeight = rowsHeight + headerHeight + buffer;
 
@@ -302,21 +303,19 @@ function renderToggleButton(
     }
 
     return (
-        <div className={styles['toggle-button-container']}>
+        <div className={`${styles['toggle-button-container']} py-5`}>
+            {isLoading ? (
+                <BouncingDotsLoader />
+            ) : (
             <button
                 className={`${styles['toggle-button']} rounded-lg`}
                 onClick={handleToggleExpand}
                 disabled={isLoading}
             >
-                {isLoading ? (
-                    <span className="flex items-center gap-2">
-                        <LoadingSpinner />
-                        Loading...
-                    </span>
-                ) : (
-                    isExpanded ? t("show_less") : t("show_more")
-                )}
+                {isExpanded ? t("show_less") : t("show_more")}
             </button>
+            
+        )}
         </div>
     );
 }
