@@ -21,6 +21,7 @@ import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import SeDieMultiplayerBetDetailModal from "./history";
 import { PlayerResultBoard } from "../../components/game-components/player-result-board/player-result-board";
+const Background = dynamic(() => import("../../components/game-components/background"), { ssr: false });
 const OwnTotalBet = dynamic(() => import("../../components/game-components/own-total-bet/own-total-bet"), { ssr: false });
 const DoubleBetIcon = dynamic(() => import("../../components/game-components/rebet/double-bet-icon"), { ssr: false });
 const AutoRebetIcon = dynamic(() => import("../../components/game-components/rebet/auto-rebet-icon"), { ssr: false });
@@ -56,6 +57,22 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
         super.componentDidMount();
     }
 
+    renderGameFrame() {
+        return (
+            <div className={`flex flex-col items-center justify-center relative md:min-h-[542px]`}>
+                <Background gameId={this.props.id} />
+                {this.renderRoundHistory()}
+                {this.renderCountdownTimer()}
+                <div className="flex flex-col">
+                    {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
+                    {this.renderBetOptions()}
+                </div>
+
+                {this.renderNotice()}
+            </div>
+        );
+    }
+
     renderRoundHistory(): JSX.Element {
         return <SedieMultiplayerRoundHistory />;
     }
@@ -74,11 +91,11 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
                 <div className="grid grid-cols-12 gap-0 items-center">
                     <div className="col-span-12 md:col-span-6">
                         <div className="flex gap-2 justify-center items-center">
-                            <div className="md:absolute md:right-[10px] md:top-[-200px]">
+                            <div className="md:absolute md:right-[10px] md:top-[-230px]">
                                 <DoubleBetIcon />
                             </div>
                             {this.renderChipControlPanel()}
-                            <div className="md:absolute md:right-[10px] md:top-[-134px] md:w-full md:h-full">
+                            <div className="md:absolute md:right-[10px] md:top-[-164px] md:w-full md:h-full">
                                 <div className="md:flex md:justify-end">
                                     <AutoRebetIcon />
                                 </div>

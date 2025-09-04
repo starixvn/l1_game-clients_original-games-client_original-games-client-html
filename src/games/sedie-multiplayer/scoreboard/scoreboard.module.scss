@@ -2,7 +2,7 @@
 .scoreboard-full-big-road {
     width: 370px;
     min-width: 370px;
-    height: 121px;
+    height: 104px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
@@ -13,30 +13,30 @@
 }
 
 .big-road-block {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-top: 0;
     border-right: 0;
 }
 
 .big-road-item {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
 }
 
 .big-road-override {
     display: grid;
     grid-template-rows: repeat(6, 1fr);
-    grid-auto-columns: 16px;
+    grid-auto-columns: 14px;
     min-width: fit-content;
     overflow-x: hidden; // Add horizontal scrollbar
     overflow-y: hidden; // Hide vertical scrollbar
-    
+
     &::before,
     &::after {
         display: none;
     }
-    
+
     // Custom scrollbar styles for better UX
     &::-webkit-scrollbar {
         width: 5px;
@@ -49,7 +49,3 @@
         background: linear-gradient(180deg, #84c0ff 0%, #064f9b 100%);
     }
 }
-
-
-
-

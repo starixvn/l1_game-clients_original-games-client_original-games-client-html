@@ -21,7 +21,7 @@ export const SedieMultiplayerRoundHistory = () => {
     const [isShowStatistic, setIsShowStatistic] = useState(false);
 
     return (
-        <div className="mt-[10px]">
+        <div className="mt-[10px] mb-2">
             {isShowStatistic ? (
                 <SedieMultiplayerStatisticPopup inline onClose={() => setIsShowStatistic(false)} />
             ) : (
