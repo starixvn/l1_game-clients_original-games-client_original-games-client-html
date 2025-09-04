@@ -22,7 +22,7 @@ import {
 import styles from './bet-history.module.scss';
 import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
 import { cn } from '../../../_shared/utils/merge-tailwind-util';
-import BouncingDotsLoader from './loader';
+import BouncingDotsLoader from './bouncing-dots-loader';
 
 
 // Function to create row data for bet history table

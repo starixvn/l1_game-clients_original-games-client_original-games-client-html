@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./loader.module.scss";
+import styles from "./bouncing-dots-loader.module.scss";
 
 const BouncingDotsLoader = (props) => {
   return (
