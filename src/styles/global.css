@@ -21,8 +21,8 @@
     --secondary-text-color: #e0e0e0;
     --color-table-text-clickable: #0990ff;
     --table-header: #233046;
-    --bet-detail-row-1: #102136;
-    --bet-detail-row-2: #172c47;
+    --bet-detail-row-1: #1F2A3B;
+    --bet-detail-row-2: #182130;
 
     --modal-text-color: #e6e6e6;
 }
@@ -56,8 +56,8 @@ html[data-theme="dark"] {
     --text-content-color: #ced8e6;
 
     --table-header: #233046;
-    --bet-detail-row-1: #102136;
-    --bet-detail-row-2: #172c47;
+    --bet-detail-row-1: #1F2A3B;
+    --bet-detail-row-2: #182130;
 
     --modal-text-color: #e6e6e6;
 }

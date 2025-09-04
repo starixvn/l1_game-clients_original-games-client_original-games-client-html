@@ -722,7 +722,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     render() {
-        const { signedIn, roundState, disabledMessage, disconnectReason, availableInGameData } = this.props.gameStateContextModel;
+        const { signedIn, roundState, disabledMessage, disconnectReason } = this.props.gameStateContextModel;
         const { isLoaded } = this.state;
         const isDisabledGame = roundState === RoundState.Disabled;
 
