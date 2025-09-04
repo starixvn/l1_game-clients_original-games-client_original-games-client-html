@@ -21,7 +21,6 @@ import { ConnectFailedReasonKey } from "../game-components/error-message/type";
 import GameContainer from "../game-components/game-container";
 import GameGuideModal from "../game-components/game-guide";
 import GameLoading from "../game-components/game-loading";
-import { LoadingSpinner } from "../game-components/game-loading/loading-spinner";
 import { NewRoundTransitionWithoutExtraSeconds } from "../game-components/new-round-transition";
 import { NoticeDialog } from "../game-components/notice";
 import { PFSettingModal } from "../game-components/provably-fair";
@@ -733,9 +732,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 <GameContainer>
                     {!isLoaded && this.preloadResource()}
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
-                    {(roundState === RoundState.None || !availableInGameData) && (
-                        <LoadingSpinner removeSpinner={isDisabledGame || !!disconnectReason} />
-                    )}
                     {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
                     {this.renderConnectFailed(roundState, disconnectReason)}
                 </GameContainer>
