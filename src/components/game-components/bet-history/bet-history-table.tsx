@@ -73,7 +73,7 @@ const renderBetHistoryRows = (
         );
 
         return (
-            <TableRow key={rowIndex} className="text-center border-b border-primary-border">
+            <TableRow key={rowIndex} className={cn("border-none text-center", rowIndex % 2 === 0 ? "bg-bet-history-row-1" : "bg-bet-history-row-2")}>
                 {rowData.map((cell, cellIndex) => (
                     <TableCell
                         key={cellIndex}
@@ -96,10 +96,10 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                 <TableHead
                     key={column.key}
                     className={cn(
-                        "text-primary-text p-2 h-full font-semibold text-sm",
+                        "text-primary-text p-2 lg:p-3 h-full font-semibold text-sm",
                         column.align === "right" ? "text-right" : "text-center",
-                        index === 0 && "rounded-tl-lg rounded-bl-lg",
-                        index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
+                        index === 0 && "lg:rounded-tl-lg lg:rounded-bl-lg",
+                        index === headerColumns.length - 1 && "lg:rounded-tr-lg lg:rounded-br-lg"
                     )}
                 >
                     {column.label}

@@ -23,6 +23,8 @@ module.exports = {
                 "table-text-clickable": "var(--color-table-text-clickable)",
                 "winning-highlight": "var(--color-winning-highlight)",
                 "table-header": "var(--table-header)",
+                "bet-history-row-1": "var(--bet-history-row-1)",
+                "bet-history-row-2": "var(--bet-history-row-2)",
                 "bet-detail-row-1": "var(--bet-detail-row-1)",
                 "bet-detail-row-2": "var(--bet-detail-row-2)",
                 "modal-text": "var(--modal-text-color)",
