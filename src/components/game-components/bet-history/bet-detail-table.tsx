@@ -56,7 +56,7 @@ const renderBetDetailHeader = (translateCommon: any) => {
                     <TableHead
                         key={column.key}
                         className={cn(
-                            "w-1/4 py-3 px-0 text-sm font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-sm",
+                            "w-1/4 py-3 px-0 font-normal text-secondary-text rounded-t-lg border-b border-primary-border text-sm",
                             column.align === "right" ? "text-right" : "text-center"
                         )}
                     >

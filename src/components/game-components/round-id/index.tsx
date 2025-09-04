@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { usePlayerResultBoard } from "../../../_shared/react-hooks";
+import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 
 export const RoundId: FC = () => {
-  const { roundId } = usePlayerResultBoard();
+  const { roundId } = useGameStateContext();
 
   return (
     <div className="text-primary-text">#{roundId}</div>
