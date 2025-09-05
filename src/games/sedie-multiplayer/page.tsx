@@ -16,7 +16,7 @@ import { RoundIdHandler } from "../../components/round-base/round-id-handler";
 import { RoundStateHandler } from "../../components/round-base/round-state-handler";
 import { SeDieBetOptions } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
-import SediePlate from "./result-block/sedie-plate";
+import SedieCup from "./result-block/sedie-cup";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import SeDieMultiplayerBetDetailModal from "./history";
@@ -78,7 +78,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderResultBlock() {
-        return <SediePlate />;
+        return <SedieCup />;
     }
 
     renderBettingBlock() {

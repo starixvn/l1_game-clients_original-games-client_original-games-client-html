@@ -135,7 +135,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                     ></Section>
                                 </div>
                                 <div
-                                    className={`table-container react-infinite-table ${Styles["pf-info"]} rounded-lg overflow-hidden border border-primary-border overflow-y-auto pb-[40px]`}
+                                    className={`table-container react-infinite-table ${Styles["pf-info"]} rounded-lg overflow-hidden border border-primary-border overflow-y-auto pb-[0px]`}
                                 >
                                     <Table className="w-full h-screen">
                                         {renderBetDetailHeader(translateSNGames)}

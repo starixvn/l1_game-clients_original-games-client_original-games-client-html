@@ -1,0 +1,147 @@
+// Plate and buttons component styles
+.plate-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    transform-origin: center bottom;
+}
+
+.plate-buttons-idle {
+    transform: translateX(0) translateY(0) rotate(0deg) scaleX(1) scaleY(1);
+}
+
+.plate-buttons-shake {
+    animation: shake3 calc(2000/ 2) ease-in-out 2;
+}
+
+
+@keyframes shake3 {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    10% {
+        transform: translateY(5px);
+    }
+    20% {
+        transform: translateY(-4px);
+    }
+    30% {
+        transform: translateY(4px);
+    }
+    40% {
+        transform: translateY(4px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+    60% {
+        transform: translateY(-8px);
+    }
+    70% {
+        transform: translateY(8px);
+    }
+    80% {
+        transform: translateY(8px);
+    }
+    90% {
+        transform: translateY(-2px);
+    }
+}
+
+// Open animation keyframes
+@keyframes open {
+    0%,
+    100% {
+        transform: translateX(0) translateY(0) rotate(0deg) scaleX(1) scaleY(1);
+    }
+    10% {
+        transform: translateX(-8px) translateY(-4px) rotate(-3deg);
+    }
+    15% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    20% {
+        transform: translateX(8px) translateY(-4px) rotate(3deg);
+    }
+    30% {
+        transform: translateX(-8px) translateY(4px) rotate(-3deg) scaleX(1.1) scaleY(1.1);
+    }
+    40% {
+        transform: translateX(8px) translateY(4px) rotate(3deg);
+    }
+    45% {
+        transform: scaleX(0.8) scaleY(0.8);
+    }
+    50% {
+        transform: translateX(-4px) translateY(-8px) rotate(-2deg);
+    }
+    60% {
+        transform: translateX(4px) translateY(-8px) rotate(2deg) scaleX(1.1) scaleY(1.1);
+    }
+    70% {
+        transform: translateX(-4px) translateY(8px) rotate(-2deg);
+    }
+    75% {
+        transform: scaleX(1.1) scaleY(1.1);
+    }
+    80% {
+        transform: translateX(4px) translateY(8px) rotate(2deg);
+    }
+    90% {
+        transform: translateX(-2px) translateY(-2px) rotate(-1deg) scaleX(0.8) scaleY(0.8);
+    }
+}
+
+// Close animation keyframes
+@keyframes close {
+    0% {
+        transform: translate(calc(-50% + 100px), calc(-50% - 100px)) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, calc(-50% + 2px)) scale(1);
+        opacity: 1;
+    }
+}
+
+
+.sedie-cup-idle {
+    animation: idle 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes idle {
+    0% {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+    15% {
+        transform: scale(0.3);
+        opacity: 0.3;
+    }
+    30% {
+        transform: scale(0.5);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(0.7);
+        opacity: 0.7;
+    }
+    70% {
+        transform: scale(0.9);
+        opacity: 0.9;
+    }
+    85% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    95% {
+        transform: scale(0.98);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
