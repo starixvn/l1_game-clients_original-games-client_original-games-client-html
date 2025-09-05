@@ -204,7 +204,7 @@ const WinningBalanceEffect: FC = () => {
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 1.6, duration: 0.4, ease: "easeOut" }}
+                                            transition={{ delay: 0.9, duration: 0.4, ease: "easeOut" }}
                                             className="bg-none z-[100]"
                                         >
                                             <p className="font-semibold bg-white bg-clip-text text-transparent text-2xl">
