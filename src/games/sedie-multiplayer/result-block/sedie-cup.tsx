@@ -25,20 +25,13 @@ const SedieCup = () => {
     const data = `/static/images/chips/1.webp`;
 
     const { durations } = useGameContext();
-    const { roundHistory, result, roundState, roundId } = useGameStateContext();
+    const { roundState } = useGameStateContext();
     const [isShow, setIsShow] = useState(false);
-    const [buttonsPosition, setButtonsPosition] = useState<Array<{ x: number; y: number }>>([]);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
-    const [showButtons, setShowButtons] = useState(false);
-
-    useEffect(() => {
-        const id = roundState === RoundState.DisplayResult ? roundId - 1 : roundId;
-    }, [roundId]);
 
     useEffect(() => {
         const resetState = () => {
             setIsShow(false);
-            setShowButtons(false);
             setAnimationState("idle");
         };
         let timeoutDisplayResult;
@@ -46,7 +39,6 @@ const SedieCup = () => {
         switch (roundState) {
             case RoundState.LockingBet:
                 setIsShow(true);
-                setShowButtons(false);
                 setAnimationState("shake");
                 break;
             case RoundState.DisplayResult:
@@ -54,7 +46,6 @@ const SedieCup = () => {
                 timeoutDisplayResult = setTimeout(() => {
                     setIsShow(true);
                     setAnimationState("idle");
-                    setShowButtons(true);
                     setAnimationState("open");
                     timeout = setTimeout(() => {
                         resetState();
