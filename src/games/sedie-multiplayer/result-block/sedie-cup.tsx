@@ -7,17 +7,7 @@ import Image from "next/image";
 import { Spritesheet } from "../../../components/game-components/sprites-sheet";
 import { motion } from "motion/react";
 
-const BUTTON_SIZE = 29; // Button size in pixels
-const PLATE_SIZE = 228; // Plate size in pixels
-const BOWL_SIZE = 123; // Bowl size in pixels
-const BOUNDARY_SIZE = 110; // Boundary size in pixels
-const CIRCLE_RADIUS = BOUNDARY_SIZE / 2; // Half of boundary diameter
-const BUTTON_BUFFER = 2; // Buffer between buttons
-const SHAKE_DURATION = 2000; // Shake duration in milliseconds
-const OPEN_DURATION = 1000; // Open duration in milliseconds
-const CLOSE_DURATION = 1000; // Close duration in milliseconds
-const MAX_ATTEMPTS = 10000;
-const DELAY = 500;
+const OPEN_DURATION = 1200; // Open duration in milliseconds
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
@@ -34,23 +24,22 @@ const SedieCup = () => {
             setIsShow(false);
             setAnimationState("idle");
         };
-        let timeoutDisplayResult;
         let timeout;
+        let delayDisplayResult;
         switch (roundState) {
             case RoundState.LockingBet:
-                setIsShow(true);
+                setIsShow(false);
                 setAnimationState("shake");
                 break;
             case RoundState.DisplayResult:
-                timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
-                timeoutDisplayResult = setTimeout(() => {
-                    setIsShow(true);
-                    setAnimationState("idle");
+                setIsShow(true);
+                delayDisplayResult = setTimeout(() => {
                     setAnimationState("open");
-                    timeout = setTimeout(() => {
-                        resetState();
-                    }, durations.showResult * 1000);
-                }, DELAY);
+                }, OPEN_DURATION);
+
+                timeout = setTimeout(() => {
+                    resetState();
+                }, durations.showResult * 1000);
                 break;
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
@@ -61,7 +50,7 @@ const SedieCup = () => {
         }
         return () => {
             timeout && clearTimeout(timeout);
-            timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
+            delayDisplayResult && clearTimeout(delayDisplayResult);
         };
     }, [roundState, durations]);
 
@@ -76,7 +65,7 @@ const SedieCup = () => {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
-                        duration: 0.8,
+                        duration: 0.7,
                         delay: 0.5,
                         ease: [0, 1.7, 0.3, 1],
                     }}
