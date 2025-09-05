@@ -31,15 +31,15 @@ export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, classNa
             rate: state.rate,
         }))
     );
-
-    if (totalBet <= 0 || rate === 0 || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
+    const value = convertStakeToString(totalBet, rate);
+    if (!value || [RoundState.SwitchRound, RoundState.BeforePlaceBet].includes(roundState)) {
         return <div className={className}></div>;
     }
 
     return (
         <div className={`flex items-center gap-1  ${className}`}>
             <span id={`${tolgeeNamespace}-${choice}-total-stakes`} className={Styles["stakes-value"]}>
-                {convertStakeToString(totalBet, rate)}
+                {value}
             </span>
         </div>
     );

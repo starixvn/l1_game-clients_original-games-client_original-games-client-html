@@ -104,14 +104,7 @@ export const ChipSlider: React.FC<{
                 className={`${Styles["icon-prev"]} ${!enabledPrevBtn && Styles["disabled"]}`}
                 onClick={onClickPrev}
             >
-                <svg width="16" height="22" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g filter="url(#filter0_d_1503_7573)">
-                        <path
-                            d="M10.2936 4.76937C10.703 4.39235 11.3445 4.41365 11.7269 4.81723C12.1092 5.22074 12.0875 5.85329 11.6784 6.23035L6.49903 11L11.6784 15.7697C12.0875 16.1467 12.1092 16.7793 11.7269 17.1828C11.3445 17.5864 10.703 17.6077 10.2936 17.2306L4.32191 11.7305C4.11667 11.5414 4 11.277 4 11C4 10.723 4.11667 10.4586 4.32191 10.2695L10.2936 4.76937Z"
-                            fill="white"
-                        />
-                    </g>
-                </svg>
+                <i className="icon-back text-xl"></i>
             </div>
             <div className="absolute w-[270px] md:w-[220px]">
                 {chipValues?.length > 0 && (
@@ -138,14 +131,7 @@ export const ChipSlider: React.FC<{
                 className={`${Styles["icon-next"]} ${!enabledNextBtn && Styles["disabled"]}`}
                 onClick={onClickNext}
             >
-                <svg width="16" height="22" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g filter="url(#filter0_d_1503_7695)">
-                        <path
-                            d="M5.70636 4.76937C5.29702 4.39235 4.65551 4.41365 4.27311 4.81723C3.89078 5.22074 3.91253 5.85329 4.32164 6.23035L9.50097 11L4.32164 15.7697C3.91253 16.1467 3.89078 16.7793 4.27311 17.1828C4.65551 17.5864 5.29702 17.6077 5.70636 17.2306L11.6781 11.7305C11.8833 11.5414 12 11.277 12 11C12 10.723 11.8833 10.4586 11.6781 10.2695L5.70636 4.76937Z"
-                            fill="white"
-                        />
-                    </g>
-                </svg>
+                <i className="icon-back text-xl rotate-180"></i>
             </div>
         </>
     );

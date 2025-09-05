@@ -9,7 +9,6 @@ import { tolgee } from "../../../../_shared/tolgee";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import Styles from "./pf-guide.module.scss";
 import ModalContainer from "../../modal-container";
-import Image from "next/image";
 
 const PFGuide: FC = () => {
     const { gameConfigs } = useGameStateContext();
@@ -71,7 +70,9 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
     );
 };
 
-const ButtonPFGuide: FC<{ className?: string }> = ({ className = "absolute top-5 left-4" }) => {
+const ButtonPFGuide: FC<{ className?: string }> = ({
+    className = "absolute top-5 left-4 rounded-full flex items-center justify-center border border-solid bg-[#1a274999] border-[#0097ff33]",
+}) => {
     const [isShowPFGuide, setIsShowPFGuide] = useState(false);
     const onCloseModal = () => {
         setIsShowPFGuide(false);
@@ -87,7 +88,7 @@ const ButtonPFGuide: FC<{ className?: string }> = ({ className = "absolute top-5
                     setIsShowPFGuide(true);
                 }}
             >
-                <Image src="/static/images/icons/question-mark.svg" alt="close" width={32} height={32} />
+                <i className="icon-guide-pf w-8 h-8"></i>
             </button>
             <PFGuideModal isOpen={isShowPFGuide} handleCloseModal={onCloseModal} />
         </>

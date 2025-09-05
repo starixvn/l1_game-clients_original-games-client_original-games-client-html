@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
-import Image from "next/image";
 
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
@@ -36,7 +35,7 @@ const ModalContainer: FC<{
                             onCloseModal();
                         }}
                     >
-                        <Image src="/static/images/icons/close.svg" className="w-4 h-4" alt="close" width={16} height={16} />
+                        <i className="icon-close text-sm w-4 h-4"></i>
                     </span>
                 </div>
 

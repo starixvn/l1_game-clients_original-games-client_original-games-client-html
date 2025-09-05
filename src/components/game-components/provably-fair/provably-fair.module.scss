@@ -54,7 +54,7 @@
     overflow-y: auto;
     padding-right: 10px;
     padding-left: 10px;
-    
+
     ul {
         padding: 0;
         margin: 0;
@@ -78,7 +78,7 @@
     border-radius: 10px;
     margin-bottom: 16px;
     transition: all 0.2s ease;
-    
+
     &:hover {
         background-color: #3c3e43;
         border-color: #4a4d54;
@@ -110,14 +110,6 @@
     user-select: none;
 }
 
-.chevron-down {
-    transform: rotate(0deg);
-}
-
-.chevron-right {
-    transform: rotate(-90deg);
-}
-
 .section-content {
     transition: all 0.3s ease-in-out;
     opacity: 1;
@@ -129,7 +121,7 @@
     background: #2c2f36;
     border: 1px solid #3c3e43;
     border-radius: 10px;
-    
+
     p {
         margin: 0;
         text-align: center;
@@ -192,7 +184,7 @@
     border-radius: 10px;
     color: #fff;
     font-size: 13px;
-    background: #00C950;
+    background: #00c950;
 
     &.top {
         bottom: 35px;
@@ -209,7 +201,7 @@
     right: -12px;
     bottom: 42px;
     width: 350px;
-    background: #2993F5;
+    background: #2993f5;
     z-index: 2;
     border-radius: 16px;
     padding: var(--spacing-size-2);
@@ -226,7 +218,7 @@
         height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-top: 10px solid #2993F5;
+        border-top: 10px solid #2993f5;
     }
 }
 
@@ -243,7 +235,7 @@
 .btn-verify {
     height: 44px;
     width: 100%;
-    background: linear-gradient(270deg, #22DE57 1.71%, #16A947 98.29%);
+    background: linear-gradient(270deg, #22de57 1.71%, #16a947 98.29%);
     border-radius: 10px;
     border: none;
     color: #fff;
@@ -310,7 +302,8 @@
     position: absolute;
     width: auto;
     text-align: center;
-    top: -4px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .copy-btn {

@@ -212,9 +212,9 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                 ) : (
                     <div className={Styles["client-seed-options"]}>
                         <div className={Styles["client-seed-option"]}>
-                            <div className="form-check">
+                            <div className="form-check flex align-items-center">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-input h-0"
                                     ref={randomRadio}
                                     type="radio"
                                     id="random-seed"
@@ -222,7 +222,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                     checked={!isManualMode}
                                     onChange={handleCheckRadio}
                                 />
-                                <label className="form-check-label" htmlFor="random-seed">
+                                <label className="form-check-label h-8" htmlFor="random-seed">
                                     {translateCommon("pf_client_seed_para_4")}
                                 </label>
                             </div>
@@ -238,7 +238,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                             />
                         </div>
                         <div className={Styles["client-seed-option"]}>
-                            <div className="form-check">
+                            <div className="form-check flex align-items-center">
                                 <input
                                     ref={manualRadio}
                                     type="radio"
@@ -246,9 +246,9 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                     name="client-seed"
                                     checked={isManualMode}
                                     onChange={handleCheckRadio}
-                                    className="form-check-input"
+                                    className="form-check-input h-0"
                                 />
-                                <label className={`form-check-label ${Styles["form-check-label"]}`} htmlFor="manual-seed">
+                                <label className={`form-check-label ${Styles["form-check-label"]} h-8`} htmlFor="manual-seed">
                                     <div className={Styles["form-check-label-note"]}>
                                         {`${translateCommon("pf_client_seed_para_3")}`} <br /> <span>(0 - 9999)</span>
                                     </div>

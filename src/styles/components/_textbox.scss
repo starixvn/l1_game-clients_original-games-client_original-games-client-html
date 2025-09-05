@@ -46,13 +46,16 @@
     position: relative;
     padding-left: 30px;
     cursor: pointer;
+    @extend %icon-style;
+    justify-content: flex-start;
 
     &::before {
         content: "";
         display: block;
         position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
         left: 0;
-        top: -3px;
         width: 24px;
         height: 24px;
         border-radius: 50%;
@@ -61,12 +64,12 @@
     }
 
     &:after {
-        content: "";
+        content: "\e90c";
+        color: #42ff00;
         display: block;
         position: absolute;
+        top: 10px;
         left: 4px;
-        top: 3px;
-        background: url("/static/images/icons/radio-checked.svg?v=#{$version-image}") no-repeat;
         width: 20px;
         height: 20px;
         transform: scale(0);

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useCallback, useMemo } from "react";
 import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useSettingContext, SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
@@ -35,31 +34,20 @@ export const MenuIcon = ({ name, onClick }: Props) => {
         }
     }, [onClick, roundState, name, clickSound, dispatch, settingDispatch]);
 
-    const iconSrc = useMemo(() => `/static/images/icons/${name}.svg`, [name]);
     const computedEnabledSound =
         (settingContext?.enabledSound ?? StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true) &&
         (settingContext?.volumeSFX ?? 50) > 0;
 
     const iconClassName = useMemo(() => {
         if (name === "sound") {
-            return computedEnabledSound ? Styles.soundOn : Styles.soundOff;
+            return computedEnabledSound ? "sound-on" : "sound-off";
         }
-        if (name === "guide") {
-            return Styles.guide;
-        }
-        if (name === "pf-guide") {
-            return Styles.pfGuide;
-        }
-        return "";
+        return name;
     }, [name, computedEnabledSound]);
 
     return (
-        <div className="cursor-pointer p-1" onClick={handleClick}>
-            {iconClassName ? (
-                <span className={`${Styles.menuIcon} ${iconClassName}`}></span>
-            ) : (
-                <Image src={iconSrc} height={24} width={24} alt="Logo" />
-            )}
+        <div className="cursor-pointer w-8 h-8 flex items-center justify-center" onClick={handleClick}>
+            <i className={`icon-${iconClassName} ${Styles.menuIcon}`}></i>
         </div>
     );
 };
