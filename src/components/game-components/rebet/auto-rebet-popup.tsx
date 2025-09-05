@@ -60,7 +60,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                                 key={number}
                                 onClick={() => handleConfirm(number)}
                                 className={`${cn(
-                                    "flex items-center justify-center h-11 gap-1 text-white text-[16px] font-medium transition-all duration-200",
+                                    "flex items-center justify-center h-11 gap-1 text-white text-base font-medium transition-all duration-200",
                                     "hover:scale-105"
                                 )} ${styles.button}`}
                             >

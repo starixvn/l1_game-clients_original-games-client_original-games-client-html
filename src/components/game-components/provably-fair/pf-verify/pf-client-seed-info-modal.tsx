@@ -44,7 +44,7 @@ const PFClientSeedInfoModal: FC<{
                 isOpen={isShowPFClientSeedInfo}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
-                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
+                extendedClassName="md:top-[10px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
                 <PFClientSeedInfo fileNameExport={fileNameExport} renderResultBlock={renderResultBlock} />
             </ModalContainer>,
@@ -81,7 +81,10 @@ const renderBetDetailHeader = (translateSNGames: any) => {
     );
 };
 
-const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string, renderResultBlock: Function }> = ({ fileNameExport, renderResultBlock }) => {
+const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResultBlock: Function }> = ({
+    fileNameExport,
+    renderResultBlock,
+}) => {
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);

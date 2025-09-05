@@ -196,7 +196,7 @@ const WinningBalanceEffect: FC = () => {
                                             transition={{ delay: 0.7, duration: 0.2, ease: "easeOut" }}
                                             className="z-[100]"
                                         >
-                                            <p className="block font-semibold bg-[linear-gradient(180deg,#FFFADD_13.79%,#FFF832_56.9%,#E0C600_100%)] text-[36px] bg-clip-text text-transparent">
+                                            <p className="block font-semibold bg-[linear-gradient(180deg,#FFFADD_13.79%,#FFF832_56.9%,#E0C600_100%)] text-4xl bg-clip-text text-transparent">
                                                 {multiplier}x
                                             </p>
                                         </motion.div>
@@ -207,7 +207,7 @@ const WinningBalanceEffect: FC = () => {
                                             transition={{ delay: 1.6, duration: 0.4, ease: "easeOut" }}
                                             className="bg-none z-[100]"
                                         >
-                                            <p className="font-semibold bg-white bg-clip-text text-transparent text-[24px]">
+                                            <p className="font-semibold bg-white bg-clip-text text-transparent text-2xl">
                                                 {numberWithCommas(betWin, 2)}
                                             </p>
                                         </motion.div>

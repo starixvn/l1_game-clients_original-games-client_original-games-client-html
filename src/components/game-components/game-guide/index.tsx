@@ -28,7 +28,7 @@ const GameGuideModal: FC = () => {
                 isOpen={true}
                 onCloseModal={handleCloseModal}
                 title={translate("game_guide")}
-                extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
+                extendedClassName="md:top-[10px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
                 <WrapperGameGuide />
             </ModalContainer>

@@ -22,7 +22,7 @@ const PFModalContainer: FC<{
     };
 
     return (
-        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName="md:top-[50px]">
+        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName="md:top-[10px]">
             <div
                 id={id}
                 className={cn("grid grid-cols-1 grid-rows-[30px_calc(100%-30px)] h-full w-full rounded-t-2xl", {
@@ -34,7 +34,7 @@ const PFModalContainer: FC<{
                     <button className="absolute top-[23px] left-[12px] rotate-90" onClick={handleCloseModal}>
                         <i className="icon-back w-4 h-4 rotate-90"></i>
                     </button>
-                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-8">{title}</div>
+                    <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-8">{title}</div>
                     <span className="cursor-pointer ml-auto relative z-10">
                         <ButtonPFGuide className="mt-1" />
                     </span>

@@ -49,7 +49,7 @@ const BaseDialog: React.FC<Props> = ({
     const isIpad = useMemo(() => /iPad/i.test(navigator.userAgent), []);
 
     useEffect(() => {
-        const classList = ["overflow-hidden", "md:overflow-auto"];
+        const classList = ["overflow-hidden"];
         if (enableBackdrop) {
             document.getElementById("dashboard")?.classList.add(...classList);
             document.body.classList.add(...classList);

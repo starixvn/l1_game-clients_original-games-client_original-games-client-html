@@ -27,7 +27,7 @@ const ModalContainer: FC<{
             >
                 {/* Header - Fixed height */}
                 <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2 flex-shrink-0">
-                    <div className="flex flex-1 items-center justify-center font-semibold text-[18px] leading-[22px]">{title}</div>
+                    <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">{title}</div>
                     <span
                         className="cursor-pointer ml-auto relative z-10"
                         onClick={() => {
