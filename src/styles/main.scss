@@ -87,6 +87,12 @@ body {
     height: 100%;
     scrollbar-width: none;
 }
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+    #__next {
+        scale: 0.8;
+        transform-origin: top;
+    }
+}
 // end
 
 .galaxy-bg {

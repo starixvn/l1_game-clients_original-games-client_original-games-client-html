@@ -44,10 +44,12 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SIGNED_IN]: true });
         });
 
-        socket.on(messageEventType.SOCKET_CONNECT_ERROR, () => {
+        socket.on(messageEventType.SOCKET_CONNECT_ERROR, (error) => {
+            console.error("SOCKET_CONNECT_ERROR", error);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_CONNECT_ERROR]: true });
         });
-        socket.on(messageEventType.SOCKET_DISCONNECTED, () => {
+        socket.on(messageEventType.SOCKET_DISCONNECTED, (reason, details) => {
+            console.error("SOCKET_DISCONNECTED", reason, details);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_DISCONNECTED]: true });
         });
     }

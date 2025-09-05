@@ -14,7 +14,7 @@ export const SedieMultiplayerRoundHistoryItem = ({
     }
     const isOdd = result.settlementResult.odd;
     return (
-        <div className="w-[18px] h-[18px] inline-flex items-center justify-center" key={index}>
+        <div className="w-[1.125rem] h-[1.125rem] inline-flex items-center justify-center" key={index}>
             {isOdd ? <OddItem /> : <EvenItem />}
         </div>
     );
