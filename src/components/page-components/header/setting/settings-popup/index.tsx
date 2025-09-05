@@ -30,7 +30,7 @@ const SoundSettings = () => {
             <div className={`${Styles["settings"]}`}>
                 <div className={`${Styles["settings-bg"]}`}></div>
                 <BaseDialog type={ModalType.Center} isOpen={settingContext.isShowedSetting} onCloseModal={closePopup}>
-                    <div className={`modal-center yellow-color ${Styles["settings-popup"]} `}>
+                    <div className={`modal-center ${Styles["settings-popup"]} `}>
                         <div className={`${Styles["settings-header"]}`}>
                             <div className={`${Styles["setting-title"]}`}>{t("lobby_setting")}</div>
                             <span className={`icon-close ${Styles["icon-close"]}`} onClick={() => closePopup()}></span>
