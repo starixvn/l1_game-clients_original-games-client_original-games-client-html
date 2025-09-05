@@ -70,7 +70,7 @@ export const NoticeDialog = () => {
         }))
     );
     const onCloseNotice = () => {
-        notice?.onClose();
+        notice?.onClose?.();
         clearNotice();
     };
 
