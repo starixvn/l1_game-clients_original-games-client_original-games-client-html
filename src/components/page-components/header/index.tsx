@@ -7,7 +7,7 @@ const Header = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
     const { openingGameId } = useGlobalEventsStore();
 
     return (
-        <header className={`${styles.header}`} data-testid="header">
+        <header className={`${styles.header} md:hidden`} data-testid="header">
             <div className="flex justify-between items-center w-full max-w-[1208px] mx-auto px-4">
                 <div className="flex flex-1 gap-2 items-center">
                     <div

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
 import { usePlayerContext } from "../../../../_shared/react-contexts";
 import { useGlobalEventsStore } from "../../../../_shared/stores/global-events-store/global-events-store";
-import styles from "./user-info.module.scss";
 
 export const UserInfo: React.FC<{
     customizeClass?: string;
@@ -18,7 +17,7 @@ export const UserInfo: React.FC<{
 
     return (
         <div className={`${customizeClass}`} data-testid="balance">
-            <span id="user-info_balance" className={`${styles.balanceContainer}`}>
+            <span id="user-info_balance">
                 <UserAmount amount={userInfo?.red || 0} />
                 <UserCurrency currency={userInfo.currency} isDisplayPlayerCurrency={userInfo.isDisplayPlayerCurrency} />
             </span>
@@ -30,7 +29,9 @@ const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
     return useMemo(() => {
         return (
             <>
-                <span data-testid="amount" className="font-semibold text-base leading-[26px]">{numberRoundDownWithCommas(amount)}</span>
+                <span data-testid="amount" className="font-semibold text-base leading-[26px]">
+                    {numberRoundDownWithCommas(amount)}
+                </span>
                 <span>{` `}</span>
             </>
         );
@@ -43,7 +44,11 @@ const UserCurrency: React.FC<{ currency: string; isDisplayPlayerCurrency: boolea
             return <></>;
         }
 
-        return <span data-testid="currency" className="font-semibold text-base leading-[26px]">{currency}</span>;
+        return (
+            <span data-testid="currency" className="font-semibold text-base leading-[26px]">
+                {currency}
+            </span>
+        );
     }, [currency, isDisplayPlayerCurrency]);
 };
 
