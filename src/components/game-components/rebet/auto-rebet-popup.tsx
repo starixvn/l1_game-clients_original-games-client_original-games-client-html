@@ -3,6 +3,7 @@ import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import styles from "./auto-rebet-popup.module.scss";
+import { useCommonTranslate } from "../../../_shared/react-hooks";
 
 interface AutoRebetPopupProps {
     onClose: () => void;
@@ -13,6 +14,7 @@ const PRESET_ROUNDS = [10, 25, 50, 75, 100, 500, 1000, Infinity];
 
 const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) => {
     const [rounds, setRounds] = useState<number>(1);
+    const {t} = useCommonTranslate();
 
     const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
@@ -66,7 +68,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                         ))}
                     </div>
                     <div>
-                        <label className="block text-white text-sm font-medium mb-2">Custom number of rounds</label>
+                        <label className="block text-white text-sm font-medium mb-2">{t("label_custom_rounds")}</label>
                         <div className="flex justify-between">
                             <input
                                 type="number"

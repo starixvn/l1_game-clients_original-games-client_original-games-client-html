@@ -34,6 +34,7 @@ module.exports = {
                 "icon-close": "#ea1d41",
                 "modal-border-color": "#8E8E8E",
                 "btn-green-hover": "#0e7029",
+                "sound-setting-bg": "var(--sound-setting-background)",
             },
             backgroundImage: {
                 "popup-gradient": "var(--popup-background)",

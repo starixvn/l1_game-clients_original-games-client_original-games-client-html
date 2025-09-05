@@ -87,7 +87,7 @@ const MusicSetting = () => {
         <div className={`${Styles["row"]} `}>
             <div className={Styles["text"]}>{t("lobby_background_music")}</div>
             <div className={Styles["setting-item-container"]}>
-                <div className={`${Styles["icon"]} ${Styles["switch"]}`}>
+                <div className={`${Styles["icon"]} ${Styles["switch"]} rounded-[10px] h-8 w-8 bg-[#212D3D66]`}>
                     <button className={`${Styles["button"]}`} onClick={toggle}>
                         <span className={`icon-music-${enabledMusic ? "on" : "off"}`}></span>
                     </button>
