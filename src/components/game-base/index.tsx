@@ -253,7 +253,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onVisibilityChange = () => {
-        document.visibilityState === "hidden" ? this.onDestroy() : this.onStart();
+        // nothing
     };
 
     onConnectFailed() {
