@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import { useAutoRebet, useBalance } from "../../../_shared/react-hooks";
+import { useAutoRebet, useBalance, useClickSound } from "../../../_shared/react-hooks";
 import AutoRebetPopup from "./auto-rebet-popup";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 import { broadcastNotice, getNotice } from "../../../_shared/helpers";
@@ -12,12 +12,14 @@ const AutoRebetIcon = () => {
     const [isEnabled, setIsEnabled] = useState(false);
     const ownBets = useBettingStore((state) => state.ownBets);
     const balance = useBalance();
+    const clickSound = useClickSound();
 
     useEffect(() => {
         setIsEnabled(isRebetEnabled || isAutoRebetActive);
     }, [isRebetEnabled, isAutoRebetActive]);
 
     const handleIconClick = () => {
+        clickSound();
         if (!isEnabled) {
             return;
         }

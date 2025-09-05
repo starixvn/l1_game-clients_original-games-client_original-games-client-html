@@ -3,7 +3,7 @@ import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import styles from "./auto-rebet-popup.module.scss";
-import { useCommonTranslate } from "../../../_shared/react-hooks";
+import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
 
 interface AutoRebetPopupProps {
     onClose: () => void;
@@ -14,7 +14,8 @@ const PRESET_ROUNDS = [10, 25, 50, 75, 100, 500, 1000, Infinity];
 
 const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) => {
     const [rounds, setRounds] = useState<number>(1);
-    const { t } = useCommonTranslate();
+    const {t} = useCommonTranslate();
+    const clickSound = useClickSound();
 
     const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
@@ -23,13 +24,14 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
 
     const handleConfirm = useCallback(
         (rounds: number) => {
+            clickSound();
             if (rounds <= 0) {
                 return;
             }
             onConfirm(rounds);
             onClose();
         },
-        [onConfirm, onClose]
+        [onConfirm, onClose, clickSound]
     );
 
     const handleClose = useCallback(() => {

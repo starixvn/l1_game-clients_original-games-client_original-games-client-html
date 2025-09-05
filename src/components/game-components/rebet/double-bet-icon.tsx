@@ -4,12 +4,16 @@ import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { RoundState } from "../../game-base/type";
 import { broadcastNotice, getNotice } from "../../../_shared/helpers";
 import { NoticeErrorCode } from "../../../_shared/constants/error-code-dictionary";
+import { useClickSound } from "../../../_shared/react-hooks";
 
 const DoubleBetIcon = () => {
     const { isEnabled, handleClickRebet } = useRebet(true);
     const roundState = useGameStore((state) => state.roundState);
 
+    const clickSound = useClickSound();
+    
     const onClick = () => {
+        clickSound();
         if (!isEnabled) {
             return;
         }
