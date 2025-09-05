@@ -69,9 +69,12 @@ export const NoticeDialog = () => {
             clearNotice: state.clearNotice,
         }))
     );
+    const onCloseNotice = () => {
+        notice?.onClose();
+        clearNotice();
+    };
 
     useEffect(() => {
-        const onCloseNotice = notice?.onClose || (() => clearNotice());
         const duration = notice?.duration || 3;
         const timer = setTimeout(onCloseNotice, duration * 1000);
         return () => {
@@ -90,16 +93,10 @@ export const NoticeDialog = () => {
             isWarning,
             betChoice1,
             betChoice2,
-            onClose,
             hedgeBetGroup,
             adjustBetNoticePosition,
         } = notice;
 
-        const closeNotice = () => {
-            clearNotice();
-        };
-
-        const onCloseNotice = onClose || (() => closeNotice());
         let hedgeBet = {};
         if (hedgeBetGroup) {
             hedgeBet = createOptionForHedgeBetGroup(hedgeBetGroup, tolgeeNamespace);
