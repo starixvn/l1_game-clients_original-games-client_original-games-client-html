@@ -59,7 +59,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame() {
         return (
-            <div className={`flex flex-col items-center justify-center relative md:min-h-[27.75rem]`}>
+            <div className={`flex flex-col items-center justify-center relative md:min-h-[28rem]`}>
                 <Background gameId={this.props.id} />
                 {this.renderRoundHistory()}
                 {this.renderCountdownTimer()}

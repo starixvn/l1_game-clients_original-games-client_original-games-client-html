@@ -100,7 +100,7 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
                 }}
                 style={customStyle}
             >
-                {
+                {!isAutoRebetActive && (
                     <span
                         className="ripple-effect"
                         style={{
@@ -108,7 +108,7 @@ const RippleButton: React.FC<RippleButtonProps> = ({ choice, className, id }) =>
                             left: `${ripplePosX}px`,
                         }}
                     ></span>
-                }
+                )}
             </button>
         );
     }, [choice, ripplePosX > 0, ripplePosY > 0, customStyle]);
