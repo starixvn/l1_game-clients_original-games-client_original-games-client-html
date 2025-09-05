@@ -20,7 +20,7 @@ const SeDieMultiplayerBetDetailModal: FC = () => {
                 />
             </BetDetailModal>
             <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
-            <PFClientSeedInfoModal fileNameExport={makeFileNameExport} />
+            <PFClientSeedInfoModal fileNameExport={makeFileNameExport} renderResultBlock={renderPFVerifyResultBlock} />
             <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
         </>
     );

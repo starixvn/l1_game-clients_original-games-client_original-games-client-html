@@ -24,14 +24,12 @@ const SoundSetting = () => {
 
     const toggle = () => {
         clickSound();
-        console.log("[Setting.Sound] toggle.click", { from: enabledSound, to: !enabledSound });
         toggleValue();
 
         AnalyticsHelper.trackFunction({
             function: TrackingFunction.Sound,
             action: !enabledSound ? TrackingAction.ToggleOn : TrackingAction.ToggleOff,
         });
-        console.log("[Setting.Sound] analytics.track", { function: TrackingFunction.Sound, action: !enabledSound ? TrackingAction.ToggleOn : TrackingAction.ToggleOff });
     };
 
     useEffect(() => {
@@ -39,18 +37,15 @@ const SoundSetting = () => {
             return;
         }
         setDebounceSFXVal(volumeSFXVal);
-        console.log("[Setting.Sound] volume.debounce", { debounceValue, volumeSFXVal });
         updateVolume(volumeSFXVal);
     }, [debounceValue]);
 
     const handleChange = (value) => {
-        console.log("[Setting.Sound] volume.change", { from: volumeSFXVal, to: value });
         setVolumeSFXVal(value);
     };
 
     const updateVolume = (value) => {
         StorageHelper.set(localStorageKeys.volumeSFX, value);
-        console.log("[Setting.Sound] storage.write", { key: localStorageKeys.volumeSFX, value });
         settingDispatch({
             type: SettingEventActionType.UPDATE_VOLUME_SFX,
             payload: {
@@ -73,7 +68,6 @@ const SoundSetting = () => {
         const updateSoundSetting = !enabledSound;
         setEnabledSound(updateSoundSetting);
         StorageHelper.set(localStorageKeys.enableSound, updateSoundSetting);
-        console.log("[Setting.Sound] storage.write", { key: localStorageKeys.enableSound, value: updateSoundSetting });
         settingDispatch({ type: SettingEventActionType.TOGGLE_SOUND, payload: { enabledSound: updateSoundSetting } as any });
     };
     return (

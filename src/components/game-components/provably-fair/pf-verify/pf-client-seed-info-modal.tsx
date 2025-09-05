@@ -8,7 +8,6 @@ import Styles from "../provably-fair.module.scss";
 import { Section } from "../pf-form-components";
 import { useShallow } from "zustand/shallow";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
-import { renderPFVerifyResultBlock } from "../../../../games/sedie-multiplayer/provably-fair";
 import useBetDetailStore from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../table";
 import { cn } from "../../../../_shared/utils/merge-tailwind-util";
@@ -17,7 +16,8 @@ import { ButtonPFGuide } from "../pf-guide";
 
 const PFClientSeedInfoModal: FC<{
     fileNameExport: (data?: any) => string;
-}> = ({ fileNameExport }) => {
+    renderResultBlock: Function;
+}> = ({ fileNameExport, renderResultBlock }) => {
     const { isShowPFClientSeedInfo, togglePFClientSeedInfo } = usePopupStore(
         useShallow((state) => ({
             isShowPFClientSeedInfo: state.isShowPFClientSeedInfo,
@@ -46,7 +46,7 @@ const PFClientSeedInfoModal: FC<{
                 onCloseModal={handleCloseModal}
                 extendedClassName="md:top-[50px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
-                <PFClientSeedInfo fileNameExport={fileNameExport} />
+                <PFClientSeedInfo fileNameExport={fileNameExport} renderResultBlock={renderResultBlock} />
             </ModalContainer>,
             document.getElementById("dashboard")
         )
@@ -81,7 +81,7 @@ const renderBetDetailHeader = (translateSNGames: any) => {
     );
 };
 
-const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ fileNameExport }) => {
+const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string, renderResultBlock: Function }> = ({ fileNameExport, renderResultBlock }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { t: translateSNGames } = useSNTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
@@ -97,7 +97,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string }> = ({ file
             <>
                 {betDetailData && (
                     <>
-                        <div className="result-block mb-[8px]">{renderPFVerifyResultBlock(betDetailData.drawInfo)}</div>
+                        <div className="result-block mb-[8px]">{renderResultBlock(betDetailData.drawInfo)}</div>
                         <div className={Styles["pf-setting-container"]}>
                             <div className={Styles["client-seed-form"]}>
                                 <div className="flex items-center justify-between">
