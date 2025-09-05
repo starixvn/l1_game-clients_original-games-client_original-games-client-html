@@ -14,7 +14,7 @@ const PRESET_ROUNDS = [10, 25, 50, 75, 100, 500, 1000, Infinity];
 
 const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) => {
     const [rounds, setRounds] = useState<number>(1);
-    const {t} = useCommonTranslate();
+    const { t } = useCommonTranslate();
 
     const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
@@ -37,7 +37,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     }, [onClose]);
 
     return (
-        <div className="md:absolute md:w-full h-full md:top-1/2 md:-translate-y-1/2 md:z-[var(--popup-index)]">
+        <div className="md:absolute md:w-full h-full md:top-1/2 md:-right-[10px] md:-translate-y-1/2 md:z-[var(--popup-index)]">
             <BaseDialog
                 type={ModalType.Rebet}
                 onCloseModal={handleClose}
@@ -46,7 +46,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
             >
                 <div className="p-3 py-6 md:px-5">
                     <div className="relative w-full">
-                        <div className="text-white text-2xl font-semibold text-center">{t("auto_rebet")}</div>
+                        <div className="text-white text-lg font-semibold text-center">{t("auto_rebet")}</div>
                         <button onClick={handleClose} className="absolute top-1/2 right-0 -translate-y-1/2">
                             <i className="icon-close text-sm w-4 h-4"></i>
                         </button>
@@ -58,7 +58,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                                 key={number}
                                 onClick={() => handleConfirm(number)}
                                 className={`${cn(
-                                    "flex items-center justify-center h-11 text-white text-[16px] font-medium transition-all duration-200",
+                                    "flex items-center justify-center h-11 gap-1 text-white text-[16px] font-medium transition-all duration-200",
                                     "hover:scale-105"
                                 )} ${styles.button}`}
                             >
@@ -77,15 +77,15 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                                 inputMode="numeric"
                                 value={rounds}
                                 onChange={handleCustomInputChange}
-                                className="input text-white w-full mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
+                                className="input text-white flex-1 mr-3 py-3 rounded-xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 text-center"
                                 placeholder="Enter rounds"
                             />
 
                             <button
                                 onClick={() => handleConfirm(rounds)}
-                                className={`${styles["btn-confirm"]} py-2 px-6 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
+                                className={`${styles["btn-confirm"]} py-2 px-6 gap-1 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
                             >
-                                <span>{t("button_confirm")}</span>
+                                {t("button_confirm")}
                                 <i className="icon-auto-bet-round text-3xl w-4 before:text-[#624000] before:content-['\e90b']"></i>
                             </button>
                         </div>

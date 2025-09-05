@@ -13,20 +13,11 @@ import { cn } from "../../../_shared/utils/merge-tailwind-util";
 
 const BaseNotice: React.FC<{
     onClose: () => void;
-    duration: number;
     isOpen?: boolean;
     isWarning: boolean;
     children: React.ReactNode;
-    adjustBetNoticePosition: boolean;
-}> = ({ children, onClose, duration = 3, adjustBetNoticePosition }) => {
+}> = ({ children, onClose }) => {
     const closeDialog = useGlobalEventsStore((state) => state.closeDialog);
-
-    useEffect(() => {
-        const timer = setTimeout(onClose, duration * 1000);
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [duration, onClose]);
 
     useEffect(() => {
         if (closeDialog) {
@@ -59,10 +50,10 @@ const BaseNotice: React.FC<{
                         clickSound();
                         onClose();
                     }}
-                    className="cursor-pointer absolute right-[12px]"
+                    className="cursor-pointer absolute right-[12px] rounded-full w-5 h-5 bg-[#EA1D41] flex items-center justify-center"
                     data-testid="close-btn"
                 >
-                    <Image src="/static/images/icons/modal-close.svg" alt="close button" width={20} height={20} />
+                    <span className="icon-close text-xs font-bold before:text-[#242C32] before:content-['\e908']"></span>
                 </div>
             </div>
         </BaseDialog>
@@ -79,12 +70,20 @@ export const NoticeDialog = () => {
         }))
     );
 
+    useEffect(() => {
+        const onCloseNotice = notice?.onClose || (() => clearNotice());
+        const duration = notice?.duration || 3;
+        const timer = setTimeout(onCloseNotice, duration * 1000);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [notice]);
+
     if (notice) {
         const {
             gameName,
             message,
             roundId,
-            duration,
             minBet,
             maxBet,
             errorCode,
@@ -122,7 +121,6 @@ export const NoticeDialog = () => {
             <BaseNotice
                 {...{
                     onClose: onCloseNotice,
-                    duration: duration || 3,
                     isWarning: isWarning || false,
                     adjustBetNoticePosition: adjustBetNoticePosition || false,
                 }}
