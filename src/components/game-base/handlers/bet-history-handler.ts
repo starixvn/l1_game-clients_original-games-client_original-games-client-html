@@ -1,5 +1,6 @@
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import useBetHistoryStore from "../../../_shared/stores/bet-history-store/bet-history-store";
+import usePFStore from "../../../_shared/stores/pf-store/pf-store";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 import { RoundState } from "../type";
 
@@ -45,13 +46,16 @@ export class BetHistoryHandler {
         firstBetTime: string,
         resultData: BetResultData
     ) {
+        // Use client seed from the first pending bet (all bets in a round use same client seed)
+        const clientSeed = pendingDetails.length > 0 ? pendingDetails[0].clientSeed : "";
+
         return {
             freeBet: false,
             roundId,
             phien: roundId,
             appType: 0,
             betwin,
-            clientSeed: "",
+            clientSeed,
             even: 0,
             name: "",
             odd: 0,
@@ -145,10 +149,16 @@ export class BetHistoryHandler {
         }
 
         if (ownChip && ownChip.amount > 0) {
+            const pfStore = usePFStore.getState();
+            const clientSeed = pfStore.pfClientSeedSetting?.useManualClientSeed
+                ? pfStore.pfClientSeedSetting.manualClientSeed
+                : pfStore.pfClientSeedSetting?.randomClientSeed || "";
+
             const betData = {
                 time: nowIso,
                 amount: ownChip.amount,
                 choice: String(ownChip.betChoice),
+                clientSeed,
             };
             betHistoryStore.addPendingBet(betData);
         }

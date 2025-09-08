@@ -48,7 +48,7 @@ export interface BetHistorySlice {
     hasMoreData: boolean;
 
     // Pending bet tracking (persists across refreshes)
-    pendingBetDetails: Array<{ time: string; amount: number; choice: string }>;
+    pendingBetDetails: Array<{ time: string; amount: number; choice: string; clientSeed: string }>;
     pendingBetRoundId: number | null;
     pendingFirstBetTime: string | null;
 
@@ -64,7 +64,7 @@ export interface BetHistorySlice {
     resetBetHistory: () => void;
 
     // Pending bet actions
-    addPendingBet: (bet: { time: string; amount: number; choice: string }) => void;
+    addPendingBet: (bet: { time: string; amount: number; choice: string; clientSeed: string }) => void;
     setPendingBetRoundId: (roundId: number) => void;
     setPendingFirstBetTime: (time: string) => void;
     clearPendingBets: () => void;
