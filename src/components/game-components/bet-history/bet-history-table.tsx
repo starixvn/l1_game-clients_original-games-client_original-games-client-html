@@ -155,13 +155,10 @@ export const BetHistoryTable = () => {
         return `${Math.max(totalHeight, minHeight)}px`;
     }, []);
 
-    // Initialize bet history handler
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
             const handler = new BetHistoryHandler({ gameMessageHandler });
             setBetHistoryHandler(handler);
-
-            // Load initial data
             handler.requestHistory(1);
             isInitialized.current = true;
 
@@ -169,7 +166,6 @@ export const BetHistoryTable = () => {
                 handler.cleanup();
             };
         }
-
         return () => {};
     }, [gameMessageHandler]);
 

@@ -42,6 +42,7 @@ export interface BetHistorySlice {
     betLogs: BetLog[];
     currentPage: number;
     totalPages: number;
+    serverTotalPages: number; // Server-provided total pages (independent of local pagination)
     isLoading: boolean;
     isExpanded: boolean;
     hasMoreData: boolean;
@@ -53,9 +54,10 @@ export interface BetHistorySlice {
 
     // Actions
     setBetLogs: (logs: BetLog[]) => void;
-    appendBetLogs: (logs: BetLog[]) => void;
+    appendBetLogs: (logs: BetLog[], options?: { updatePagination?: boolean; source?: string }) => void;
     setCurrentPage: (page: number) => void;
     setTotalPages: (totalPages: number) => void;
+    setServerTotalPages: (serverTotalPages: number) => void;
     setIsLoading: (loading: boolean) => void;
     setIsExpanded: (expanded: boolean) => void;
     setHasMoreData: (hasMore: boolean) => void;
@@ -80,6 +82,7 @@ const INITIAL_STATE = {
     betLogs: [],
     currentPage: 1,
     totalPages: 1,
+    serverTotalPages: 1,
     isLoading: false,
     isExpanded: false,
     hasMoreData: true,
@@ -93,32 +96,34 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
     setBetLogs: (logs) => set({ betLogs: sortByRoundDesc(logs) }),
 
-    appendBetLogs: (logs) => {
+    appendBetLogs: (logs, options = {}) => {
         const currentState = get();
         const existingLogs = currentState.betLogs;
+        const { updatePagination = true } = options;
 
-        // Build a set of existing round keys (consider roundId, phien)
         const existingKeys = new Set(existingLogs.map((log) => getRoundKey(log)));
         const newLogs = logs.filter((newLog) => !existingKeys.has(getRoundKey(newLog)));
 
         if (newLogs.length > 0) {
             const updatedLogs = sortByRoundDesc([...existingLogs, ...newLogs]);
-            
-            // Update pagination metadata when logs are added locally
-            const newTotalPages = Math.ceil(updatedLogs.length / 10);
-            const hasMoreData = updatedLogs.length > 10 && currentState.currentPage < newTotalPages;
-            
-            set({ 
-                betLogs: updatedLogs,
-                totalPages: newTotalPages,
-                hasMoreData: hasMoreData
-            });
+            const updateObj: any = { betLogs: updatedLogs };
+
+            if (updatePagination) {
+                const newTotalPages = Math.ceil(updatedLogs.length / 10);
+                const hasMoreData = updatedLogs.length > 10 && currentState.currentPage < newTotalPages;
+                updateObj.totalPages = newTotalPages;
+                updateObj.hasMoreData = hasMoreData;
+            }
+
+            set(updateObj);
         }
     },
 
     setCurrentPage: (page) => set({ currentPage: page }),
 
     setTotalPages: (totalPages) => set({ totalPages }),
+
+    setServerTotalPages: (serverTotalPages) => set({ serverTotalPages }),
 
     setIsLoading: (loading) => set({ isLoading: loading }),
 
@@ -128,10 +133,10 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
     resetBetHistory: () => set(INITIAL_STATE),
 
-    // Pending bet actions
     addPendingBet: (bet) => {
         const state = get();
-        set({ pendingBetDetails: [...state.pendingBetDetails, bet] });
+        const newBets = [...state.pendingBetDetails, bet];
+        set({ pendingBetDetails: newBets });
     },
 
     setPendingBetRoundId: (roundId) => set({ pendingBetRoundId: roundId }),
@@ -171,33 +176,35 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             const { history } = message;
             const state = get();
 
-            // Calculate total pages
             const total = history.total || 0;
             const pageSize = history.pageSize || 10;
             const calculatedTotalPages = Math.ceil(total / pageSize);
 
             state.setTotalPages(calculatedTotalPages);
+            state.setServerTotalPages(calculatedTotalPages);
             state.setIsLoading(false);
 
             if (history.betLogs?.length > 0) {
                 if (history.page === 1) {
-                    // First page
                     if (state.isExpanded && state.betLogs.length > 0) {
-                        // Keep expanded view populated: merge page 1 into the top of existing logs
                         const existingLogs = state.betLogs;
                         const page1Logs = history.betLogs;
                         const page1Ids = new Set(page1Logs.map((log: any) => getRoundKey(log)));
                         const merged = [...page1Logs, ...existingLogs.filter((log: any) => !page1Ids.has(getRoundKey(log)))];
                         state.setBetLogs(sortByRoundDesc(merged));
                     } else {
-                        // Collapsed or initial load: replace with page 1
                         state.setBetLogs(sortByRoundDesc(history.betLogs));
                     }
                 } else {
-                    // Additional pages - append data
-                    state.appendBetLogs(sortByRoundDesc(history.betLogs));
+                    state.appendBetLogs(sortByRoundDesc(history.betLogs), {
+                        updatePagination: false,
+                        source: "server_page"
+                    });
                 }
-                state.setHasMoreData(state.betLogs.length < total);
+
+                const serverExpectedCount = (history.page * pageSize);
+                const hasMoreData = serverExpectedCount < total;
+                state.setHasMoreData(hasMoreData);
             } else {
                 state.setHasMoreData(false);
             }

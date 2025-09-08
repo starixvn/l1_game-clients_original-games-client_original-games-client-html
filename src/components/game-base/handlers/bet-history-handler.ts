@@ -15,6 +15,76 @@ export class BetHistoryHandler {
     private latestOdds: Record<string, number> = {};
     private latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
 
+    private shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
+        return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
+    }
+
+    private calculateBetWin(pendingDetails: any[], settlementResult: any, odds: Record<string, number>): number {
+        let betwin = 0;
+        for (const detail of pendingDetails) {
+            const didWin = !!settlementResult[detail.choice];
+            const betOdds = Number(odds?.[detail.choice] ?? 0);
+            if (didWin && betOdds > 0) {
+                betwin += detail.amount * betOdds;
+            }
+        }
+        return betwin;
+    }
+
+    private createBetLog(
+        roundId: number,
+        totalAmount: number,
+        betwin: number,
+        pendingDetails: any[],
+        firstBetTime: string,
+        result: any,
+        settlementResult: any,
+        odds: Record<string, number>
+    ) {
+        return {
+            freeBet: false,
+            roundId,
+            phien: roundId,
+            appType: 0,
+            betwin,
+            clientSeed: "",
+            even: 0,
+            name: "",
+            odd: 0,
+            rate: 0,
+            red2: 0,
+            red3: 0,
+            red4: 0,
+            time: firstBetTime,
+            totalAmount,
+            white3: 0,
+            white4: 0,
+            result,
+            settlementResult,
+            odds,
+            betLogDetails: pendingDetails.map((d: any) => ({
+                freeBet: false,
+                amount: d.amount,
+                appType: 0,
+                time: d.time,
+                choice: d.choice,
+            })),
+        };
+    }
+
+    private sendHistoryRequest(page: number) {
+        const betHistoryStore = useBetHistoryStore.getState();
+        betHistoryStore.setIsLoading(true);
+        betHistoryStore.setCurrentPage(page);
+
+        this.props.gameMessageHandler.broadcastGameEvent({
+            [messageEventType.SEND_SOCKET_MESSAGE]: {
+                event: this.GET_HISTORY,
+                data: { page },
+            },
+        });
+    }
+
     constructor(private readonly props: BetHistoryHandlerProps) {
         this.registerHistoryEvents();
     }
@@ -40,18 +110,14 @@ export class BetHistoryHandler {
     }
 
     private handleRoundState({ roundState }: { roundState: RoundState }) {
-        const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound;
+        const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound && this.lastRoundState !== null;
+        const isStartingInBettingRound = roundState === RoundState.InRound && this.lastRoundState === null;
 
         if (isEnteringNewRoundBetting) {
-            const betHistoryStore = useBetHistoryStore.getState();
-
-            // Flush any pending bets from the previous round first
             this.flushLocalBetLogIfAny();
 
-            // Clear any stale pending bet data for the new round
-            // This ensures we start fresh for the current betting round
-            const hadPendingData = betHistoryStore.hasPendingBets();
-            if (hadPendingData) {
+            const betHistoryStore = useBetHistoryStore.getState();
+            if (betHistoryStore.hasPendingBets()) {
                 betHistoryStore.clearPendingBets();
             }
         }
@@ -67,24 +133,21 @@ export class BetHistoryHandler {
         const nowIso = new Date().toISOString();
         const currentUIRoundId = gameStore.playerResultBoard?.roundId ?? 0;
 
-        // Always capture/update the round ID from the UI for each bet
-        // This ensures we get the correct current round ID
-        if (!betHistoryStore.pendingBetRoundId || betHistoryStore.pendingBetRoundId !== currentUIRoundId) {
+        if (this.shouldUpdateRoundId(currentUIRoundId, betHistoryStore.pendingBetRoundId)) {
             betHistoryStore.setPendingBetRoundId(currentUIRoundId);
         }
 
-        // Set first bet time if not already set
         if (!betHistoryStore.pendingFirstBetTime) {
             betHistoryStore.setPendingFirstBetTime(nowIso);
         }
 
-        // Process the bet from ownChip (this contains the actual bet placed)
         if (ownChip && ownChip.amount > 0) {
-            betHistoryStore.addPendingBet({
+            const betData = {
                 time: nowIso,
                 amount: ownChip.amount,
                 choice: String(ownChip.betChoice),
-            });
+            };
+            betHistoryStore.addPendingBet(betData);
         }
     }
 
@@ -114,73 +177,38 @@ export class BetHistoryHandler {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
 
-        if (!betHistoryStore.hasPendingBets()) {
-            return;
-        }
-
-        // Important: Only flush if we have settlement data from the previous round
-        // This ensures we wait for the round to finish before calculating wins
-        if (!this.latestFinish?.settlementResult) {
+        if (!betHistoryStore.hasPendingBets() || !this.latestFinish?.settlementResult) {
             return;
         }
 
         const pendingDetails = betHistoryStore.pendingBetDetails;
         const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
 
-        // Get odds from game store if not available locally
         if (Object.keys(this.latestOdds).length === 0 && gameStore.gameConfigs?.odds) {
             this.latestOdds = gameStore.gameConfigs.odds;
         }
 
-        // Calculate total winnings using settlement data
-        let betwin = 0;
-        if (this.latestFinish?.settlementResult && this.latestOdds) {
-            for (const detail of pendingDetails) {
-                const didWin = !!this.latestFinish.settlementResult[detail.choice];
-                const odds = Number(this.latestOdds?.[detail.choice] ?? 0);
-                if (didWin && odds > 0) {
-                    betwin += detail.amount * odds;
-                }
-            }
-        }
-
+        const betwin = this.calculateBetWin(pendingDetails, this.latestFinish.settlementResult, this.latestOdds);
         const actualBettingRoundId = betHistoryStore.pendingBetRoundId || 0;
 
-        const betLog = {
-            freeBet: false,
-            roundId: actualBettingRoundId,
-            phien: actualBettingRoundId,
-            appType: 0,
-            betwin,
-            clientSeed: "",
-            even: 0,
-            name: "",
-            odd: 0,
-            rate: 0,
-            red2: 0,
-            red3: 0,
-            red4: 0,
-            time: betHistoryStore.pendingFirstBetTime,
+        const betLog = this.createBetLog(
+            actualBettingRoundId,
             totalAmount,
-            white3: 0,
-            white4: 0,
-            result: this.latestFinish?.result,
-            settlementResult: this.latestFinish?.settlementResult,
-            odds: this.latestOdds || {},
-            betLogDetails: pendingDetails.map((d: any) => ({
-                freeBet: false,
-                amount: d.amount,
-                appType: 0,
-                time: d.time,
-                choice: d.choice,
-            })),
-        };
+            betwin,
+            pendingDetails,
+            betHistoryStore.pendingFirstBetTime,
+            this.latestFinish.result,
+            this.latestFinish.settlementResult,
+            this.latestOdds || {}
+        );
 
-        // Check if this round already exists to avoid duplicates
         const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
 
         if (!exists && actualBettingRoundId) {
-            betHistoryStore.appendBetLogs([betLog]);
+            betHistoryStore.appendBetLogs([betLog], {
+                updatePagination: true,
+                source: "pending_bet_flush"
+            });
         }
 
         betHistoryStore.clearPendingBets();
@@ -192,17 +220,7 @@ export class BetHistoryHandler {
     }
 
     requestHistory(page = 1) {
-        const betHistoryStore = useBetHistoryStore.getState();
-
-        betHistoryStore.setIsLoading(true);
-        betHistoryStore.setCurrentPage(page);
-
-        this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SEND_SOCKET_MESSAGE]: {
-                event: this.GET_HISTORY,
-                data: { page },
-            },
-        });
+        this.sendHistoryRequest(page);
     }
 
     loadNextPage() {
@@ -216,10 +234,10 @@ export class BetHistoryHandler {
 
     loadAllRemainingPages() {
         const betHistoryStore = useBetHistoryStore.getState();
-        const { currentPage, totalPages } = betHistoryStore;
+        const { currentPage, serverTotalPages } = betHistoryStore;
 
-        for (let page = currentPage + 1; page <= totalPages; page++) {
-            this.requestHistory(page);
+        for (let page = currentPage + 1; page <= serverTotalPages; page++) {
+            setTimeout(() => this.requestHistory(page), (page - currentPage - 1) * 50);
         }
     }
 
@@ -229,7 +247,7 @@ export class BetHistoryHandler {
 
         betHistoryStore.setIsExpanded(newExpandedState);
 
-        if (newExpandedState && betHistoryStore.hasMoreData && betHistoryStore.currentPage < betHistoryStore.totalPages) {
+        if (newExpandedState && betHistoryStore.hasMoreData && betHistoryStore.currentPage < betHistoryStore.serverTotalPages) {
             this.loadAllRemainingPages();
         }
     }
@@ -242,8 +260,7 @@ export class BetHistoryHandler {
     }
 
     resetHistory() {
-        const betHistoryStore = useBetHistoryStore.getState();
-        betHistoryStore.resetBetHistory();
+        useBetHistoryStore.getState().resetBetHistory();
     }
 
     cleanup() {
