@@ -16,9 +16,9 @@ import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
 import BalanceSyncProvider from "../../../_shared/react-hooks/providers/balance-sync-provider";
 
-const SoundSettings = dynamic(() => import("../header/setting/settings-popup"));
-const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner /> });
-const MusicPlayer = dynamic(() => import("../music-player"));
+const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
+const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner />, ssr: false });
+const MusicPlayer = dynamic(() => import("../music-player"), { ssr: false });
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
     private readonly dashboardHandler: DashboardHandler;

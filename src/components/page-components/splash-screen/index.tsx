@@ -26,7 +26,7 @@ export type SplashScreenState = {
     underMaintenance: boolean;
 };
 
-const UMPage = dynamic(() => import("../um-page"));
+const UMPage = dynamic(() => import("../um-page"), { ssr: false });
 const Dashboard = dynamic(() => import("../dashboard"), { ssr: false });
 
 export const customStartup = async (

@@ -37,7 +37,7 @@ export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, classNa
     }
 
     return (
-        <div className={`flex items-center gap-1  ${className}`}>
+        <div className={`flex items-center gap-1 ${className}`}>
             <span id={`${tolgeeNamespace}-${choice}-total-stakes`} className={Styles["stakes-value"]}>
                 {convertStakeToString(totalBet, rate)}
             </span>

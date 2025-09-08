@@ -61,7 +61,6 @@ const PFGuideModal: FC<{ handleCloseModal?: Function; isOpen: boolean; data?: an
                 isOpen={isOpen}
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
-                extendedClassName="md:top-[10px] md:bottom-auto md:max-w-3xl md:h-[85vh] md:max-h-[730px] md:mx-auto"
             >
                 <WrapperPFGuide />
             </ModalContainer>,

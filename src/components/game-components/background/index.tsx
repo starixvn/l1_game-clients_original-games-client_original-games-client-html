@@ -7,7 +7,7 @@ type Props = {
     gameId: number;
 };
 
-const WinningBalanceEffect = dynamic(() => import("../balance-effect/winning-balance-effect"));
+const WinningBalanceEffect = dynamic(() => import("../balance-effect/winning-balance-effect"), { ssr: false });
 
 export const Background: React.FC<Props> = ({ gameId }) => {
     return (

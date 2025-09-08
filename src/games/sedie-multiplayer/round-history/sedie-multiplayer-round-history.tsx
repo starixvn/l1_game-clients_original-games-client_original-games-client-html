@@ -13,6 +13,7 @@ const SedieMultiplayerStatisticPopup = dynamic(() => import("./sedie-multiplayer
             <LoadingSpinner />
         </div>
     ),
+    ssr: false,
 });
 
 export const SedieMultiplayerRoundHistory = () => {

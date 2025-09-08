@@ -12,8 +12,7 @@ const ModalContainer: FC<{
     onCloseModal: Function;
     isOpen: boolean;
     isOverlap?: boolean;
-    extendedClassName?: string;
-}> = ({ title, children, onCloseModal, isOpen, isOverlap, id, extendedClassName }) => {
+}> = ({ title, children, onCloseModal, isOpen, isOverlap, id }) => {
     const clickSound = useClickSound();
 
     return (
@@ -21,8 +20,8 @@ const ModalContainer: FC<{
             type={ModalType.Full}
             enableBackdrop={true}
             isOverlap={isOverlap}
-            extendedClassName={extendedClassName}
             onCloseModal={onCloseModal}
+            extendedClassName="md:top-[10px] md:bottom-auto md:max-w-3xl md:h-[calc(90vh/var(--scale-factor,1))] md:max-h-[calc(730px/var(--scale-factor,1))] md:mx-auto"
         >
             <div
                 id={id}
