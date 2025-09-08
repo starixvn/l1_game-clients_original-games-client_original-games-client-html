@@ -14,7 +14,7 @@ const PRESET_ROUNDS = [10, 25, 50, 75, 100, 500, 1000, Infinity];
 
 const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) => {
     const [rounds, setRounds] = useState<number>(1);
-    const {t} = useCommonTranslate();
+    const { t } = useCommonTranslate();
     const clickSound = useClickSound();
 
     const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

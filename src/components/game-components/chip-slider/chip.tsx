@@ -28,7 +28,7 @@ export const Chip: React.FC<ChipProps> = ({
 
     const getChipClassName = () => {
         const isSelected = !isHideValue && selectedChip === value;
-        return `${Styles["chip-container"]} ${isSelected ? "md:scale-105 md:translate-y-[-5px]" : ""} p-1/2
+        return `${Styles["chip-container"]} ${isSelected ? "md:scale-105 md:translate-y-[-3px]" : ""} p-1/2
         transition-all duration-300 cursor-pointer md:hover:translate-y-[-3px] ${className}`;
     };
 

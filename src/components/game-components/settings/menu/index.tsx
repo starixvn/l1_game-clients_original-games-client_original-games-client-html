@@ -65,7 +65,7 @@ export const Menu: React.FC = () => {
         <div ref={wrapperRef} className={cn(`${Styles["game-menu"]} ${Styles[specialClassByDevice]}, gap-x-[6px]`)}>
             <MenuIcon name="sound" />
             <MenuIcon name="guide" onClick={openGuide} />
-            <MenuIcon name="pf" onClick={handleClickPFSetting} />
+            <MenuIcon name="fairness" onClick={handleClickPFSetting} />
         </div>
     );
 };

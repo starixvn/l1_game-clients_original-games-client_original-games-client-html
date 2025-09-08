@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useGameStateContext, useGameStatesDispatch } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useSettingContext, SettingEventActionType, useSettingDispatch } from "../../../_shared/react-contexts";
-import { useClickSound } from "../../../_shared/react-hooks";
+import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
 import { StorageHelper, localStorageKeys } from "../../../_shared/helpers";
 import { RoundState } from "../../game-base/type";
 import Styles from "./menu-icon.module.scss";
-
+const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
 type Props = { name: string; onClick?: () => void };
 
 export const MenuIcon = ({ name, onClick }: Props) => {
@@ -14,6 +15,7 @@ export const MenuIcon = ({ name, onClick }: Props) => {
     const settingDispatch = useSettingDispatch();
     const clickSound = useClickSound();
     const settingContext = useSettingContext();
+    const { t } = useCommonTranslate();
 
     const handleClick = useCallback(() => {
         if (onClick) {
@@ -46,8 +48,11 @@ export const MenuIcon = ({ name, onClick }: Props) => {
     }, [name, computedEnabledSound]);
 
     return (
-        <div className="cursor-pointer w-8 h-8 flex items-center justify-center" onClick={handleClick}>
-            <i className={`icon-${iconClassName} ${Styles.menuIcon}`}></i>
+        <div className="relative group">
+            <Tooltip message={t(`tooltip_${name}`)} />
+            <div className="cursor-pointer w-8 h-8 flex items-center justify-center" onClick={handleClick}>
+                <i className={`icon-${iconClassName} ${Styles.menuIcon}`}></i>
+            </div>
         </div>
     );
 };
