@@ -2,7 +2,8 @@ import "../../../games/scoreboards";
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import React from "react";
-import { isMobile, isMobileOnly } from "react-device-detect";
+import styles from "./dashboard.module.scss";
+import { isMobile, isDesktop } from "react-device-detect";
 import { ErrorNoGameOffer } from "../../../_shared/constants/error-code-dictionary";
 import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "../../../_shared/helpers";
 import { broadcastUserInfoRed } from "../../../_shared/helpers/global-events-helper";
@@ -18,7 +19,6 @@ import BalanceSyncProvider from "../../../_shared/react-hooks/providers/balance-
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"));
 const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner /> });
 const MusicPlayer = dynamic(() => import("../music-player"));
-const LandscapeMode = dynamic(() => import("./landscape-mode/landscape-mode"));
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
     private readonly dashboardHandler: DashboardHandler;
@@ -43,14 +43,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             queryGame: this.props.queryGame,
             openGameId: null,
             openGameName: "",
-            isLandscapeMode: false,
         };
 
         this.handleUpdateUserStakeLevel = this.handleUpdateUserStakeLevel.bind(this);
         this.signOut = this.signOut.bind(this);
         this.openGame = this.openGame.bind(this);
         this.onVisibilityChange = this.onVisibilityChange.bind(this);
-        this.changeOrientation = this.changeOrientation.bind(this);
         this.resetGameIdDashboardEvent = this.resetGameIdDashboardEvent.bind(this);
         this.updateUserBalance = this.updateUserBalance.bind(this);
 
@@ -83,13 +81,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (!document["hidden"]) {
             this.notificationHandler.handleReCheckIn();
         }
-    }
-
-    changeOrientation() {
-        setTimeout(() => {
-            const isLandscapeMode = window.innerHeight < window.innerWidth;
-            this.setState({ isLandscapeMode });
-        }, 100);
     }
 
     resetGameIdDashboardEvent() {
@@ -144,8 +135,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
 
         if (isMobile) {
-            this.changeOrientation();
-            window.addEventListener("resize", this.changeOrientation);
             window.addEventListener("touchmove", this.preventZoomBehavior, { passive: false });
         }
 
@@ -173,7 +162,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         // Clean up mobile-specific event listeners
         if (isMobile) {
-            window.removeEventListener("resize", this.changeOrientation);
             window.removeEventListener("touchmove", this.preventZoomBehavior);
         }
 
@@ -229,7 +217,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
                     <SettingContextProvider>
-                        <div id={"dashboard"}>
+                        <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : ""}`}>
                             <SoundSettings />
 
                             {renderOfferGameContainer()}
@@ -243,9 +231,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     render() {
-        if (this.state.isLandscapeMode && isMobileOnly) {
-            return <LandscapeMode />;
-        }
         return this.renderDashBoard();
     }
 }

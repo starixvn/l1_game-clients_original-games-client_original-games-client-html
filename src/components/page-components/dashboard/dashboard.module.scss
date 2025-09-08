@@ -1,62 +1,6 @@
-.dashboard {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100%; // To dock the footer
-
-    margin-left: auto;
-    margin-right: auto;
-    background: var(--black-background);
-    max-width: 100%;
-    background-size: cover;
-
-    @media screen and (min-width: 500px) {
-        max-width: 375px;
-        background-size: 375px;
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+    .desktop-dashboard {
+        scale: 0.75;
+        transform-origin: top;
     }
-}
-
-.hidden-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    overflow-y: scroll;
-
-    &::-webkit-scrollbar {
-        display: "none";
-    }
-}
-
-.container-modal {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-
-    .bg-opacity {
-        background: black;
-        opacity: 0.5;
-        width: 100%;
-        height: 100%;
-        display: block;
-        position: absolute;
-        z-index: 100;
-
-        &.block-ui-backdrop {
-            z-index: var(--global-api-error-index);
-        }
-    }
-
-    .block-ui-message {
-        z-index: calc(var(--global-api-error-index) + 1);
-    }
-}
-
-.slide-right {
-    animation: slide-right 0.5s ease-in-out;
-}
-
-.slide-left {
-    animation: slide-left 0.5s ease-in-out;
 }
