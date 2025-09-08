@@ -1,10 +1,9 @@
 import { FC } from "react";
 import { usePlayerResultBoard, useCommonTranslate } from "../../../_shared/react-hooks";
-import { RoundId } from "../round-id";
 import { PlayerResultBoardTable } from "./player-result-board-table";
 
 export const PlayerResultBoard: FC = () => {
-  const { totalPlayers, tableData } = usePlayerResultBoard();
+  const { totalPlayers, roundId, tableData } = usePlayerResultBoard();
   const { t: translateCommon } = useCommonTranslate();
 
   const renderPlayerCount = () => (
@@ -16,10 +15,14 @@ export const PlayerResultBoard: FC = () => {
     </div>
   );
 
+  const renderRoundId = () => (
+    <div className="text-primary-text">#{roundId}</div>
+  );
+
   const renderHeaderInfo = () => (
     <div className="flex justify-between bg-secondary-bg rounded-lg p-2 px-[10px] mb-2 text-sm">
       {renderPlayerCount()}
-      <RoundId />
+      {renderRoundId()}
     </div>
   );
 
