@@ -49,6 +49,7 @@ import { Menu as MenuSettings } from "../game-components/settings/menu";
 import useGameStore from "../../_shared/stores/game-store/game-store";
 const Header = dynamic(() => import("../page-components/header"), { ssr: false });
 const Background = dynamic(() => import("../game-components/background"), { ssr: false });
+const RTP = dynamic(() => import("../game-components/rtp/rtp"), { ssr: false });
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -674,6 +675,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
+    get RTP() {
+        return 97;
+    }
+
+    renderRTP() {
+        return <RTP tolgeeNamespace={this.props.tolgeeNamespace} rtp={this.RTP} />;
+    }
+
     renderBetHistoryTable() {
         return <BetHistoryTable />;
     }
@@ -689,6 +698,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     <div className="grid grid-cols-12 gap-0">
                         {this.renderLeftSide()}
                         {this.renderRightSide()}
+                        <div className="col-span-12 mb-3 px-3">{this.renderRTP()}</div>
                         <div className="col-span-12 mb-3 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
                     <PFWrapper
@@ -728,7 +738,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         return (
             <>
-                <Header tolgeeNamespace={this.props.tolgeeNamespace} />
+                <Header />
                 <GameContainer>
                     {!isLoaded && this.preloadResource()}
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}

@@ -1,11 +1,8 @@
 import { IFRAME_MESSAGES, sendMessageToParent } from "../../../_shared/utils/iframe-messages";
-import HeaderTitle from "./header-title";
 import { UserInfo } from "./user-info";
-import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
 import styles from "./header.module.scss";
-const Header = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
-    const { openingGameId } = useGlobalEventsStore();
 
+const Header = () => {
     return (
         <header className={`${styles.header} md:hidden`} data-testid="header">
             <div className="flex justify-between items-center w-full max-w-[1208px] mx-auto px-4">
@@ -18,7 +15,6 @@ const Header = ({ tolgeeNamespace }: { tolgeeNamespace: string }) => {
                     >
                         <i className="icon-back text-lg"></i>
                     </div>
-                    <HeaderTitle openingGameId={openingGameId} tolgeeNamespace={tolgeeNamespace} />
                 </div>
                 <div className="flex flex-1 items-center justify-end">
                     <UserInfo />
