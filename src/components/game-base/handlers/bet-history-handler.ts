@@ -7,6 +7,12 @@ export type BetHistoryHandlerProps = {
     gameMessageHandler: GameMessageHandler;
 };
 
+interface BetResultData {
+    result: any;
+    settlementResult: any;
+    odds: Record<string, number>;
+}
+
 export class BetHistoryHandler {
     private readonly GET_HISTORY = "getHistory";
     private readonly HISTORY_EVENT = "history";
@@ -19,11 +25,11 @@ export class BetHistoryHandler {
         return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
     }
 
-    private calculateBetWin(pendingDetails: any[], settlementResult: any, odds: Record<string, number>): number {
+    private calculateBetWin(pendingDetails: any[], resultData: BetResultData): number {
         let betwin = 0;
         for (const detail of pendingDetails) {
-            const didWin = !!settlementResult[detail.choice];
-            const betOdds = Number(odds?.[detail.choice] ?? 0);
+            const didWin = !!resultData.settlementResult[detail.choice];
+            const betOdds = Number(resultData.odds?.[detail.choice] ?? 0);
             if (didWin && betOdds > 0) {
                 betwin += detail.amount * betOdds;
             }
@@ -37,9 +43,7 @@ export class BetHistoryHandler {
         betwin: number,
         pendingDetails: any[],
         firstBetTime: string,
-        result: any,
-        settlementResult: any,
-        odds: Record<string, number>
+        resultData: BetResultData
     ) {
         return {
             freeBet: false,
@@ -59,9 +63,9 @@ export class BetHistoryHandler {
             totalAmount,
             white3: 0,
             white4: 0,
-            result,
-            settlementResult,
-            odds,
+            result: resultData.result,
+            settlementResult: resultData.settlementResult,
+            odds: resultData.odds,
             betLogDetails: pendingDetails.map((d: any) => ({
                 freeBet: false,
                 amount: d.amount,
@@ -111,7 +115,6 @@ export class BetHistoryHandler {
 
     private handleRoundState({ roundState }: { roundState: RoundState }) {
         const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound && this.lastRoundState !== null;
-        const isStartingInBettingRound = roundState === RoundState.InRound && this.lastRoundState === null;
 
         if (isEnteringNewRoundBetting) {
             this.flushLocalBetLogIfAny();
@@ -188,7 +191,13 @@ export class BetHistoryHandler {
             this.latestOdds = gameStore.gameConfigs.odds;
         }
 
-        const betwin = this.calculateBetWin(pendingDetails, this.latestFinish.settlementResult, this.latestOdds);
+        const resultData: BetResultData = {
+            result: this.latestFinish.result,
+            settlementResult: this.latestFinish.settlementResult,
+            odds: this.latestOdds || {}
+        };
+
+        const betwin = this.calculateBetWin(pendingDetails, resultData);
         const actualBettingRoundId = betHistoryStore.pendingBetRoundId || 0;
 
         const betLog = this.createBetLog(
@@ -197,9 +206,7 @@ export class BetHistoryHandler {
             betwin,
             pendingDetails,
             betHistoryStore.pendingFirstBetTime,
-            this.latestFinish.result,
-            this.latestFinish.settlementResult,
-            this.latestOdds || {}
+            resultData
         );
 
         const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
