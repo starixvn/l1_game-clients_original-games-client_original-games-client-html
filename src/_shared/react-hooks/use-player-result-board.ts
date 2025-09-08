@@ -58,13 +58,10 @@ export const usePlayerResultBoard = () => {
 
         return playerResultBoard.players.map((player: PlayerInPlayerResultBoard) => {
             const formattedWinAmount = () => {
-                if (!shouldShowResults) {
-                    return "-";
+                if(shouldShowResults && player.winAmount !== null || (roundState === RoundState.InRound && player.winAmount !== null)) {
+                    return calculateAmountByRate(player.winAmount, rate ?? 1) || "0";
                 }
-                if (player.winAmount === null) {
-                    return "-";
-                }
-                return calculateAmountByRate(player.winAmount, rate ?? 1) || "0";
+                return "-";
             };
 
             return {
@@ -73,7 +70,7 @@ export const usePlayerResultBoard = () => {
                 win: formattedWinAmount(),
             };
         });
-    }, [playerResultBoard, rate, shouldShowResults]);
+    }, [playerResultBoard, rate, shouldShowResults, roundState]);
 
     return {
         totalPlayers: playerResultBoard?.totalPlayers || 0,
