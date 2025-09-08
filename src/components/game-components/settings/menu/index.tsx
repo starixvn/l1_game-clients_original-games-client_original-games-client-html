@@ -8,6 +8,7 @@ import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_
 import { MenuIcon } from "../../menu/menu-icon";
 import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
 import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
+import { cn } from "../../../../_shared/utils/merge-tailwind-util";
 
 const dropdownItemClassName = "dropdown-item";
 
@@ -61,7 +62,7 @@ export const Menu: React.FC = () => {
     }, [wrapperRef]);
 
     return (
-        <div ref={wrapperRef} className={`${Styles["game-menu"]} ${Styles[specialClassByDevice]}`}>
+        <div ref={wrapperRef} className={cn(`${Styles["game-menu"]} ${Styles[specialClassByDevice]}, gap-x-[6px]`)}>
             <MenuIcon name="sound" />
             <MenuIcon name="guide" onClick={openGuide} />
             <MenuIcon name="pf" onClick={handleClickPFSetting} />

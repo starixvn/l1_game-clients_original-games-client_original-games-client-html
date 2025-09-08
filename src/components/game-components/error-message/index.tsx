@@ -8,6 +8,7 @@ import { URLContext, updateURLContext } from "../../../_shared/react-contexts";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import PopupButton from "../popup-button";
 import Image from "next/image";
+import { useClickSound } from "../../../_shared/react-hooks";
 
 export const ConnectFailedMessage: React.FC<{
     tolgeeNamespace: string;
@@ -18,22 +19,26 @@ export const ConnectFailedMessage: React.FC<{
 }> = ({ tolgeeNamespace, id, onReconnect, reason, enableBackdrop }) => {
     console.log("[ConnectFailedMessage] rendering with:", { tolgeeNamespace, id, reason, enableBackdrop });
     const { t } = useTranslator([tolgeeNamespace]);
+    const clickSound = useClickSound();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobby = () => {
         console.log("[ConnectFailedMessage] handleBackToLobby called");
+        clickSound();
         updateURLContext({ gameId: 0 });
         backToRedirectUrl?.(redirectUrl);
     };
 
     const handleBackToLobbyWithReload = () => {
         console.log("[ConnectFailedMessage] handleBackToLobbyWithReload called");
+        clickSound();
         updateURLContext({ backToLobby: true, gameId: 0 });
         redirectUrl ? backToRedirectUrl?.(redirectUrl) : window.location.reload();
     };
 
     const handleReconnect = () => {
         console.log("[ConnectFailedMessage] handleReconnect called");
+        clickSound();
         onReconnect();
     };
 

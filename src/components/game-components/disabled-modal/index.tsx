@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext } from "react";
 import { URLContext } from "../../../_shared/react-contexts";
-import { useCommonTranslate } from "../../../_shared/react-hooks";
+import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
@@ -10,10 +10,12 @@ import Image from "next/image";
 
 const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage }) => {
     const { t } = useCommonTranslate();
+    const clickSound = useClickSound();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
     const showOkButton = !!redirectUrl;
 
     const handleOkClick = () => {
+        clickSound();
         backToRedirectUrl?.(redirectUrl);
     };
 

@@ -7,6 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import Styles from "./statistic-popup.module.scss";
 import AnimatedContent from "../../../components/game-components/animations/animated-content";
 import { CachedImage } from "../../../components/game-components/cached-image";
+import { useClickSound } from "../../../_shared/react-hooks";
 
 interface SedieMultiplayerStatisticPopupProps {
     onClose?: () => void;
@@ -14,6 +15,7 @@ interface SedieMultiplayerStatisticPopupProps {
 }
 
 export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticPopupProps> = ({ onClose, inline }) => {
+    const clickSound = useClickSound();
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
@@ -23,6 +25,7 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
     const [isClosing, setIsClosing] = React.useState(false);
 
     const handleClose = () => {
+        clickSound()
         if (!inline) {
             onClose?.();
             return;

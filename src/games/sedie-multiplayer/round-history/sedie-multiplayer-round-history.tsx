@@ -6,6 +6,7 @@ import { IconStatistic } from "../../../components/game-components/statistic/ico
 import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-history-item";
 import useGameStore from "../../../_shared/stores/game-store/game-store";
 import { LoadingSpinner } from "../../../components/game-components/game-loading/loading-spinner";
+import { useClickSound } from "../../../_shared/react-hooks";
 const SedieMultiplayerStatisticPopup = dynamic(() => import("./sedie-multiplayer-statistic-popup"), {
     loading: () => (
         <div className="relative h-[40px]">
@@ -15,10 +16,17 @@ const SedieMultiplayerStatisticPopup = dynamic(() => import("./sedie-multiplayer
 });
 
 export const SedieMultiplayerRoundHistory = () => {
+    const clickSound = useClickSound();
+
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
     const [isShowStatistic, setIsShowStatistic] = useState(false);
+
+    const handleClickStatistic = () => {
+        clickSound();
+        setIsShowStatistic(true);
+    };
 
     return (
         <div className="mt-[10px] mb-2">
@@ -30,7 +38,7 @@ export const SedieMultiplayerRoundHistory = () => {
                     isShowBlink={isShowBlink}
                     renderItem={SedieMultiplayerRoundHistoryItem}
                     numberOfItems={14}
-                    sideButton={<IconStatistic onClick={() => setIsShowStatistic(true)} />}
+                    sideButton={<IconStatistic onClick={handleClickStatistic} />}
                     sizeNextItem="medium"
                 />
             )}
