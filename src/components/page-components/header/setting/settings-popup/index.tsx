@@ -13,10 +13,7 @@ const SoundSettings = () => {
     const { t } = useTranslator();
 
     const closePopup = () => {
-        console.log("[Setting.Popup] close.click");
-        document.body.classList.remove("overflow-hidden");
         clickSound();
-        console.log("[Setting.Popup] dispatch.toggle", { isShowedSetting: false });
         settingDispatch({
             type: SettingEventActionType.TOGGLE_SETTING,
             payload: {
@@ -28,8 +25,7 @@ const SoundSettings = () => {
     return (
         settingContext.isShowedSetting && (
             <div className={`${Styles["settings"]}`}>
-                <div className={`${Styles["settings-bg"]}`}></div>
-                <BaseDialog type={ModalType.Center} isOpen={settingContext.isShowedSetting} onCloseModal={closePopup}>
+                <BaseDialog type={ModalType.Center} isOpen={settingContext.isShowedSetting} onCloseModal={closePopup} enableBackdrop={true}>
                     <div className={`modal-center ${Styles["settings-popup"]} `}>
                         <div className={`${Styles["settings-header"]}`}>
                             <div className={`${Styles["setting-title"]}`}>{t("lobby_setting")}</div>

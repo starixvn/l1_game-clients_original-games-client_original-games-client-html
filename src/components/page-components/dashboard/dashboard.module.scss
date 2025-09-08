@@ -1,6 +1,5 @@
 @media (-webkit-min-device-pixel-ratio: 1.5) {
     .desktop-dashboard {
-        scale: 0.75;
-        transform-origin: top;
+        --scale-factor: 0.75;
     }
 }

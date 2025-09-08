@@ -17,7 +17,13 @@ const ModalContainer: FC<{
     const clickSound = useClickSound();
 
     return (
-        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName={extendedClassName}>
+        <BaseDialog
+            type={ModalType.Full}
+            enableBackdrop={true}
+            isOverlap={isOverlap}
+            extendedClassName={extendedClassName}
+            onCloseModal={onCloseModal}
+        >
             <div
                 id={id}
                 className={cn("flex flex-col h-full w-full rounded-t-2xl", {

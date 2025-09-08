@@ -21,15 +21,16 @@ export type Props = {
 };
 
 const getCustomStyle = ({ betContainerPosition }: { betContainerPosition?: number }) => {
+    const style = { scale: "var(--scale-factor, 1)", transformOrigin: "top" };
     const browserHeight = window.innerHeight;
 
     if (betContainerPosition != null) {
         return browserHeight / betContainerPosition > 2
-            ? { top: `${betContainerPosition}px` }
-            : { bottom: `${browserHeight - betContainerPosition + HeaderHeightInPixel}px`, top: "auto" };
+            ? { top: `${betContainerPosition}px`, ...style }
+            : { bottom: `${browserHeight - betContainerPosition + HeaderHeightInPixel}px`, top: "auto", ...style };
     }
 
-    return {};
+    return style;
 };
 
 const BaseDialog: React.FC<Props> = ({
@@ -49,18 +50,18 @@ const BaseDialog: React.FC<Props> = ({
     const isIpad = useMemo(() => /iPad/i.test(navigator.userAgent), []);
 
     useEffect(() => {
-        const classList = ["overflow-hidden"];
+        const className = "overflow-hidden";
         if (enableBackdrop) {
-            document.getElementById("dashboard")?.classList.add(...classList);
-            document.body.classList.add(...classList);
-            isMobileOnly && document.documentElement.classList.add(...classList);
+            document.getElementById("dashboard")?.classList.add(className);
+            document.body.classList.add(className);
+            isMobileOnly && document.documentElement.classList.add(className);
         }
 
         return () => {
+            document.body.classList.remove(className);
             if (enableBackdrop && !isOverlap) {
-                document.body.classList.remove(...classList);
-                document.getElementById("dashboard")?.classList.remove(...classList);
-                isMobileOnly && document.documentElement.classList.remove(...classList);
+                document.getElementById("dashboard")?.classList.remove(className);
+                isMobileOnly && document.documentElement.classList.remove(className);
             }
         };
     }, []);
@@ -69,7 +70,7 @@ const BaseDialog: React.FC<Props> = ({
         const handleClickOutside = (event: any) => {
             if (isOpen && !wrapperRef?.current?.contains(event.target) && !toggleBtnRef?.current?.contains(event.target)) {
                 clickSound();
-                onCloseModal && onCloseModal();
+                onCloseModal?.();
             }
         };
         !isBlockUI && document.addEventListener("mousedown", handleClickOutside);

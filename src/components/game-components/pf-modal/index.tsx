@@ -22,7 +22,13 @@ const PFModalContainer: FC<{
     };
 
     return (
-        <BaseDialog type={ModalType.Full} enableBackdrop={true} isOverlap={isOverlap} extendedClassName="md:top-[10px]">
+        <BaseDialog
+            type={ModalType.Full}
+            enableBackdrop={true}
+            isOverlap={isOverlap}
+            extendedClassName="md:top-[10px]"
+            onCloseModal={onCloseModal}
+        >
             <div
                 id={id}
                 className={cn("grid grid-cols-1 grid-rows-[30px_calc(100%-30px)] h-full w-full rounded-t-2xl", {
