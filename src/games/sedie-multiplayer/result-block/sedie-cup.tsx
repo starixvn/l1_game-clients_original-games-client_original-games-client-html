@@ -6,18 +6,26 @@ import { useGameContext } from "../../../_shared/react-contexts";
 import Image from "next/image";
 import { Spritesheet } from "../../../components/game-components/sprites-sheet";
 import { motion } from "motion/react";
+import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
 
-const OPEN_DURATION = 1200; // Open duration in milliseconds
+const OPEN_DURATION = 1500; // Open duration in milliseconds
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
 const SedieCup = () => {
-    const data = `/static/images/chips/1.webp`;
 
     const { durations } = useGameContext();
-    const { roundState } = useGameStateContext();
+    const { roundState, settlementResult } = useGameStateContext();
     const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
+    const [data, setData] = useState("");
+
+    useEffect(() => {
+        if (settlementResult) {
+            setData(`/static/images/chips/${getWinningSubOption(settlementResult)}.webp`);
+        }
+    }, [settlementResult]);
+
 
     useEffect(() => {
         const resetState = () => {
@@ -66,8 +74,8 @@ const SedieCup = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
                         duration: 0.7,
-                        delay: 0.5,
-                        ease: [0, 1.7, 0.3, 1],
+                        delay: 0.2,
+                        ease: [0.2, 1.4, 0.6, 1],
                     }}
                     className="relative w-full h-full top-0 z-[var(--result-animation-index)] "
                     onClick={(e) => e.stopPropagation()}

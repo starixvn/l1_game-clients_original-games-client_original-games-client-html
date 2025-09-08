@@ -8,12 +8,12 @@
             "path": "sediemultiplayer"
         },
         "durations": {
-            "wholeRound": 23,
-            "wholeTurn": 23,
+            "wholeRound": 27,
+            "wholeTurn": 27,
             "placingBets": 18,
             "lockingBet": 3,
-            "showResult": 3,
-            "resultAnimation": 2,
+            "showResult": 5,
+            "resultAnimation": 4,
             "beforePlaceBet": 0,
             "switchRoundAnimation": 0,
             "startNewRoundAnim": 0

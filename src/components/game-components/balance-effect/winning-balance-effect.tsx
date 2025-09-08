@@ -99,8 +99,8 @@ const WinningBalanceEffect: FC = () => {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
-                        duration: 0.7,
-                        delay: 0.4,
+                        duration: 1,
+                        delay: 1.3,
                         ease: [0, 1.7, 0.2, 1],
                     }}
                     className=" inset-0 z-[100] absolute justify-items-center"
