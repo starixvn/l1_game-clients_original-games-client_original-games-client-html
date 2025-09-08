@@ -13,9 +13,8 @@ const OPEN_DURATION = 1500; // Open duration in milliseconds
 type AnimationState = "idle" | "shake" | "open" | "close";
 
 const SedieCup = () => {
-
     const { durations } = useGameContext();
-    const { roundState, settlementResult } = useGameStateContext();
+    const { roundState, settlementResult, playResultAnimation } = useGameStateContext();
     const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [data, setData] = useState("");
@@ -25,7 +24,6 @@ const SedieCup = () => {
             setData(`/static/images/chips/${getWinningSubOption(settlementResult)}.webp`);
         }
     }, [settlementResult]);
-
 
     useEffect(() => {
         const resetState = () => {
@@ -40,10 +38,12 @@ const SedieCup = () => {
                 setAnimationState("shake");
                 break;
             case RoundState.DisplayResult:
-                setIsShow(true);
-                delayDisplayResult = setTimeout(() => {
-                    setAnimationState("open");
-                }, OPEN_DURATION);
+                if (playResultAnimation) {
+                    setIsShow(true);
+                    delayDisplayResult = setTimeout(() => {
+                        setAnimationState("open");
+                    }, OPEN_DURATION);
+                }
 
                 timeout = setTimeout(() => {
                     resetState();
@@ -73,8 +73,8 @@ const SedieCup = () => {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
-                        duration: 0.7,
-                        delay: 0.2,
+                        duration: 0.5,
+                        delay: 0,
                         ease: [0.2, 1.4, 0.6, 1],
                     }}
                     className="relative w-full h-full top-0 z-[var(--result-animation-index)] "
@@ -86,7 +86,16 @@ const SedieCup = () => {
                         alt="Box Back"
                         width={202}
                         height={103}
-                        className="absolute top-[92px] left-[82px]"
+                        className="absolute top-[92px] left-[82px] z-[1]"
+                    />
+
+                    {/* Inside */}
+                    <Image
+                        src="/static/images/chip-box/box-inside.png"
+                        alt="Box Bottom"
+                        width={168}
+                        height={91}
+                        className={`z-[2] absolute top-[100px] left-[99px] ${animationState === "open" ? styles["box-bottom-animation"] : ""}`}
                     />
 
                     {/* Front */}
@@ -95,28 +104,19 @@ const SedieCup = () => {
                         alt="Box Front"
                         width={205}
                         height={120}
-                        className="absolute top-[145px] left-[80px]"
-                    />
-
-                    {/* Bottom */}
-                    <Image
-                        src="/static/images/chip-box/box-inside.png"
-                        alt="Box Bottom"
-                        width={168}
-                        height={91}
-                        className={`absolute top-[100px] left-[99px] ${animationState === "open" ? styles["box-bottom-animation"] : ""}`}
+                        className="absolute top-[145px] left-[80px] z-[3]"
                     />
 
                     {/*Cover */}
                     <Image
                         src="/static/images/chip-box/box-cover.png"
                         alt="Box Cover"
-                        className=" absolute top-[13px] left-[91px] scale-[98%]"
+                        className=" absolute top-[13px] left-[91px] scale-[98%] z-[4]"
                         width={185}
                         height={187}
                     />
 
-                    <div className="absolute w-full h-full top-[-57px] left-[0px] scale-[45%]">
+                    <div className="absolute w-full h-full top-[-57px] left-[0px] scale-[45%] z-[5]">
                         {animationState === "open" ? (
                             <div>
                                 <Spritesheet

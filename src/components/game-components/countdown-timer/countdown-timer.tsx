@@ -15,13 +15,14 @@ export const CountdownTimer = ({ className = "" }) => {
     const { gameMessageHandler, durations } = useGameContext();
     const [clientRemainingTime, setClientRemainingTime] = useState(0);
     const [isAnimate, setIsAnimate] = useState(false);
+    const [displayText, setDisplayText] = useState("");
     const { t } = useCommonTranslate();
 
+    const { placingBets, lockingBet } = durations;
     useEffect(() => {
-        const { placingBets, lockingBet } = durations;
         const handlerId = gameMessageHandler?.register(messageEventType.CLIENT_REMAINING_TIME, ({ clientRemainingTime }) => {
-            setClientRemainingTime(clientRemainingTime - lockingBet);
-            const percentage = ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
+            setClientRemainingTime(calculateClientRemainingTime(clientRemainingTime));
+            const percentage = calculatePercentage(clientRemainingTime);
             setIsAnimate(progress !== 0);
             percentage >= 0 && percentage <= 100 && setProgress(percentage);
         });
@@ -31,15 +32,42 @@ export const CountdownTimer = ({ className = "" }) => {
         };
     }, [gameMessageHandler, durations, roundState, progress]);
 
+    const calculateClientRemainingTime = (clientRemainingTime: number) => {
+        if(clientRemainingTime - lockingBet <= 0) {
+            return clientRemainingTime;
+        }
+        return clientRemainingTime - lockingBet;
+    }
+
+    const calculatePercentage = (clientRemainingTime: number) => {
+        if(clientRemainingTime - lockingBet <= 0) {
+            const percentage = clientRemainingTime * 100 / lockingBet;
+            return percentage;
+        }
+        return ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
+    }
+
+    useEffect(() => {
+        if (roundState === RoundState.InRound) {
+            setDisplayText(`${t("start_in", { time: clientRemainingTime })}`);
+        } else if (roundState === RoundState.LockingBet) {
+            setDisplayText(`Lock Bet ${clientRemainingTime}`);
+        } else if (roundState === RoundState.DisplayResult) {
+            setDisplayText(t("waiting_for_the_next_round"));
+        } else {
+            setDisplayText(t("waiting_for_the_next_round"));
+        }
+    }, [roundState, clientRemainingTime]);
+    
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
             <div className={styles["text"]}>
-                {roundState === RoundState.InRound ? `${t("start_in", { time: clientRemainingTime })}` : t("waiting_for_the_next_round")}
+                {displayText}
             </div>
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
-                        className={`h-full ${styles["progress-bar"]} ${isAnimate ? styles["transition"] : ""}`}
+                        className={`h-full ${styles["progress-bar"]} ${isAnimate ? roundState === RoundState.LockingBet ? styles["transition-lock-bet"] : styles["transition"] : ""}`}
                         style={{ width: `${progress}%` }}
                     />
                 </div>
