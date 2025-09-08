@@ -22,7 +22,6 @@ export const usePlayerResultBoard = () => {
     const rate = useGameStore((state) => state.rate);
     const { roundState } = useGameStateContext();
     const { durations } = useGameContext();
-    
     const [shouldShowResults, setShouldShowResults] = useState(false);
 
     useEffect(() => {
@@ -34,13 +33,15 @@ export const usePlayerResultBoard = () => {
                     setShouldShowResults(true);
                 }, (durations?.showResult ?? 0) * 1000);
                 break;
-                
+
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
             case RoundState.LockingBet:
                 setShouldShowResults(false);
                 break;
-                
+            case RoundState.None:
+                setShouldShowResults(true);
+                break;
             default:
                 break;
         }
