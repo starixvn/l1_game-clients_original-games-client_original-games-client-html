@@ -41,8 +41,7 @@ export const CountdownTimer = ({ className = "" }) => {
 
     const calculatePercentage = (clientRemainingTime: number) => {
         if(clientRemainingTime - lockingBet <= 0) {
-            const percentage = clientRemainingTime * 100 / lockingBet;
-            return percentage;
+            return clientRemainingTime * 100 / lockingBet;
         }
         return ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
     }
