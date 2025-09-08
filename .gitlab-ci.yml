@@ -9,3 +9,7 @@ include:
 unit_test_js:
   before_script:
   - yarn global add jest@29.0.0
+
+".unit_test_js":
+  before_script:
+  - yarn global add jest@29.0.0
