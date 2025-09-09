@@ -3,10 +3,11 @@ import styles from "./sedie-cup.module.scss";
 import { RoundState } from "../../../components/game-base/type";
 import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "../../../_shared/react-contexts";
-import Image from "next/image";
 import { Spritesheet } from "../../../components/game-components/sprites-sheet";
 import { motion } from "motion/react";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
+import { CachedImage } from "../../../components/game-components/cached-image";
+import { useMemoriedImage } from "../../../_shared/react-hooks/use-memoried-image";
 
 const OPEN_DURATION = 1500; // Open duration in milliseconds
 
@@ -17,13 +18,7 @@ const SedieCup = () => {
     const { roundState, settlementResult, playResultAnimation } = useGameStateContext();
     const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
-    const [data, setData] = useState("");
-
-    useEffect(() => {
-        if (settlementResult) {
-            setData(`/static/images/chips/${getWinningSubOption(settlementResult)}.webp`);
-        }
-    }, [settlementResult]);
+    const { data } = useMemoriedImage(`/static/images/sedie-multiplayer/result/${getWinningSubOption(settlementResult)}.webp`);
 
     useEffect(() => {
         const resetState = () => {
@@ -81,8 +76,8 @@ const SedieCup = () => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Back */}
-                    <Image
-                        src="/static/images/chip-box/box-back.png"
+                    <CachedImage
+                        src="/static/images/sedie-multiplayer/result/box-back.webp"
                         alt="Box Back"
                         width={202}
                         height={103}
@@ -90,8 +85,8 @@ const SedieCup = () => {
                     />
 
                     {/* Inside */}
-                    <Image
-                        src="/static/images/chip-box/box-inside.png"
+                    <CachedImage
+                        src="/static/images/sedie-multiplayer/result/box-inside.webp"
                         alt="Box Bottom"
                         width={168}
                         height={91}
@@ -99,8 +94,8 @@ const SedieCup = () => {
                     />
 
                     {/* Front */}
-                    <Image
-                        src="/static/images/chip-box/box-front.png"
+                    <CachedImage
+                        src="/static/images/sedie-multiplayer/result/box-front.webp"
                         alt="Box Front"
                         width={205}
                         height={120}
@@ -108,8 +103,8 @@ const SedieCup = () => {
                     />
 
                     {/*Cover */}
-                    <Image
-                        src="/static/images/chip-box/box-cover.png"
+                    <CachedImage
+                        src="/static/images/sedie-multiplayer/result/box-cover.webp"
                         alt="Box Cover"
                         className=" absolute top-[13px] left-[91px] scale-[98%] z-[4]"
                         width={185}

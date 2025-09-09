@@ -33,40 +33,46 @@ export const CountdownTimer = ({ className = "" }) => {
     }, [gameMessageHandler, durations, roundState, progress]);
 
     const calculateClientRemainingTime = (clientRemainingTime: number) => {
-        if(clientRemainingTime - lockingBet <= 0) {
+        if (clientRemainingTime - lockingBet <= 0) {
             return clientRemainingTime;
         }
         return clientRemainingTime - lockingBet;
-    }
+    };
 
     const calculatePercentage = (clientRemainingTime: number) => {
-        if(clientRemainingTime - lockingBet <= 0) {
-            return clientRemainingTime * 100 / lockingBet;
+        if (clientRemainingTime - lockingBet <= 0) {
+            return ((clientRemainingTime - 1) * 100) / (lockingBet - 1);
         }
         return ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
-    }
+    };
 
     useEffect(() => {
-        if (roundState === RoundState.InRound) {
-            setDisplayText(`${t("start_in", { time: clientRemainingTime })}`);
-        } else if (roundState === RoundState.LockingBet) {
-            setDisplayText(`Lock Bet ${clientRemainingTime}`);
-        } else if (roundState === RoundState.DisplayResult) {
-            setDisplayText(t("waiting_for_the_next_round"));
-        } else {
-            setDisplayText(t("waiting_for_the_next_round"));
+        if (clientRemainingTime != 0) {
+            switch (roundState) {
+                case RoundState.InRound:
+                    setDisplayText(`${t("start_in", { time: clientRemainingTime })}`);
+                    break;
+                case RoundState.LockingBet:
+                    setDisplayText(`Lock Bet ${clientRemainingTime}`);
+                    break;
+                case RoundState.DisplayResult:
+                    setDisplayText(t("waiting_for_the_next_round"));
+                    break;
+                default:
+                    setDisplayText(t("waiting_for_the_next_round"));
+            }
         }
     }, [roundState, clientRemainingTime]);
-    
+
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
-            <div className={styles["text"]}>
-                {displayText}
-            </div>
+            <div className={styles["text"]}>{displayText}</div>
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
-                        className={`h-full ${styles["progress-bar"]} ${isAnimate ? roundState === RoundState.LockingBet ? styles["transition-lock-bet"] : styles["transition"] : ""}`}
+                        className={`h-full ${styles["progress-bar"]} ${
+                            isAnimate ? (roundState === RoundState.LockingBet ? styles["transition-lock-bet"] : styles["transition"]) : ""
+                        }`}
                         style={{ width: `${progress}%` }}
                     />
                 </div>
