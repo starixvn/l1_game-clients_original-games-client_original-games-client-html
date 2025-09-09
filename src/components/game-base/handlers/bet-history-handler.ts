@@ -254,7 +254,7 @@ export class BetHistoryHandler {
         const { currentPage, serverTotalPages } = betHistoryStore;
 
         for (let page = currentPage + 1; page <= serverTotalPages; page++) {
-            setTimeout(() => this.requestHistory(page), (page - currentPage - 1) * 50);
+            this.requestHistory(page);
         }
     }
 
