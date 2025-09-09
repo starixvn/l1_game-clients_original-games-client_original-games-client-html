@@ -99,8 +99,8 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                     className={cn(
                         "text-primary-text p-2 lg:p-3 h-full font-semibold text-sm",
                         column.align === "right" ? "text-right" : "text-center",
-                        index === 0 && "lg:rounded-tl-lg lg:rounded-bl-lg",
-                        index === headerColumns.length - 1 && "lg:rounded-tr-lg lg:rounded-br-lg"
+                        index === 0 && "rounded-tl-lg rounded-bl-lg",
+                        index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
                     )}
                 >
                     {column.label}
