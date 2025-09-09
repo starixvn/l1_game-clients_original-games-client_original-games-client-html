@@ -22,7 +22,7 @@
         "gamePath": "sedie-multiplayer",
         "gameResourceConfigs": {
             "path": "sedie-multiplayer",
-            "optionalPaths": ["sedie-multiplayer/result", "background/bg-148.webp"],
+            "optionalPaths": ["sedie-multiplayer/result"],
             "cachePaths": [
                 "sedie-multiplayer/bet-detail-red2.svg",
                 "sedie-multiplayer/bet-detail-red3.svg",

@@ -50,10 +50,10 @@ export const CountdownTimer = ({ className = "" }) => {
         if (clientRemainingTime > 0) {
             switch (roundState) {
                 case RoundState.InRound:
-                    setDisplayText(`${t("start_in", { time: clientRemainingTime })}`);
+                    setDisplayText(t("start_in", { time: clientRemainingTime }));
                     break;
                 case RoundState.LockingBet:
-                    setDisplayText(`Lock Bet ${clientRemainingTime}`);
+                    setDisplayText(t("lock_bet"));
                     break;
                 case RoundState.DisplayResult:
                     setDisplayText(t("waiting_for_the_next_round"));
