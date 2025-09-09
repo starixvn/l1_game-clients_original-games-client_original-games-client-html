@@ -92,7 +92,7 @@ const renderBetHistoryRows = (
 // Function to render bet history table header
 const renderBetHistoryHeader = (headerColumns: any[]) => {
     return (
-        <TableRow className="bg-table-header sticky top-0 z-10 border-none h-[36px]">
+        <TableRow className="bg-table-header border-none h-[36px]">
             {headerColumns.map((column, index) => (
                 <TableHead
                     key={column.key}
@@ -142,13 +142,9 @@ export const BetHistoryTable = () => {
         // Sum the heights of the first 10 rows (or fewer if less data)
         const rowsHeight = allRows.slice(0, 10).reduce((sum, row) => sum + row.getBoundingClientRect().height, 0);
 
-        // Measure the header height dynamically instead of hard-coding
-        const headerRow = tableBody.parentElement?.querySelector('thead tr') as HTMLTableRowElement | null;
-        const headerHeight = headerRow ? headerRow.getBoundingClientRect().height : 36;
-
         const buffer = 1;
 
-        const totalHeight = rowsHeight + headerHeight + buffer;
+        const totalHeight = rowsHeight + buffer;
 
         const minHeight = 300;
 
@@ -257,15 +253,20 @@ export const BetHistoryTable = () => {
 
     return (
         <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2 h-full border border-primary-border`}>
+            {/* Sticky Header Table */}
+            <Table className="bet-history-table sticky top-[50px]">
+                <TableHeader>
+                    {renderBetHistoryHeader(headerColumns)}
+                </TableHeader>
+            </Table>
+
+            {/* Scrollable Body */}
             <div
                 key={isExpanded ? 'expanded' : 'collapsed'}
                 className={`bet-history-scroll-wrapper min-h-[300px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
                 style={{ maxHeight: dynamicMaxHeight, overflowY: 'auto' }}
             >
                 <Table className="bet-history-table">
-                    <TableHeader>
-                        {renderBetHistoryHeader(headerColumns)}
-                    </TableHeader>
                     <TableBody ref={tableBodyRef}>
                         {tableData.length === 0 ? (
                             <TableRow>
