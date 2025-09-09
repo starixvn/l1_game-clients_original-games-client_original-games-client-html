@@ -50,7 +50,7 @@ const BaseNotice: React.FC<{
                         clickSound();
                         onClose();
                     }}
-                    className="cursor-pointer absolute right-[12px] rounded-full w-5 h-5 bg-[#EA1D41] flex items-center justify-center"
+                    className="cursor-pointer absolute right-[12px] rounded-full w-5 h-5 bg-[#EA1D41] flex items-center justify-center transition-all duration-300 hover:scale-110"
                     data-testid="close-btn"
                 >
                     <span className="icon-close text-xs font-bold before:text-[#242C32] before:content-['\e908']"></span>
