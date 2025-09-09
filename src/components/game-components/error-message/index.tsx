@@ -98,11 +98,11 @@ export const ConnectFailedMessage: React.FC<{
                     height={212}
                 />
                 <div className="flex flex-col justify-center items-center gap-1">
-                    <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center">
-                        <Image src={`/static/images/icons/warning.svg`} alt="warning" width={33} height={29} />
+                    <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center md:w-[70px] md:h-[70px] mb-3">
+                        <Image src={`/static/images/icons/warning.svg`} alt="warning" width={33} height={29} className="md:w-[44px] md:h-[38px]" />
                     </div>
-                    <div className="text-base leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
-                    <div className="text-sm font-normal text-modal-text">
+                    <div className="text-base md:text-lg leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
+                    <div className="text-sm font-normal text-modal-text md:text-base">
                         {t(reason, { gameName: tolgeeNamespace }).replaceTolgeeFormat().replace(tolgeeNamespace, "")}
                     </div>
                 </div>

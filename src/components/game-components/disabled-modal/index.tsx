@@ -29,17 +29,17 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
                 )}
             >
                 <Image src={`/static/images/icons/popup-mask.svg`} alt="popup-mask" className="absolute top-[-65px] left-[-74px]" width={212} height={212} />
-                <div className="relative mx-auto mb-5 w-[45px] h-[41px]">
-                    <Image className="animate-spin-slow" src={`/static/images/um-setting-big.svg`} alt="setting-um" width={30} height={30} />
+                <div className="relative mx-auto mb-5 w-[45px] h-[41px] md:w-[70px] md:h-[70px]">
+                    <Image className="animate-spin-slow md:w-[50px] md:h-[50px]" src={`/static/images/um-setting-big.svg`} alt="setting-um" width={30} height={30} />
                     <Image
-                        className="absolute top-[26px] right-0 animate-spin-slow-reverse"
+                        className="absolute top-[35px] right-0 animate-spin-slow-reverse md:w-[35px] md:h-[35px]"
                         src={`/static/images/um-setting-small.svg`}
                         alt="setting-um"
                         width={20}
                         height={20}
                     />
                 </div>
-                <div className="font-normal text-modal-text text-sm leading-6 tracking-[0.28px] mt-2">
+                <div className="font-normal text-modal-text text-sm md:text-base leading-6 tracking-[0.28px] mt-2 md:mt-3">
                     {disableMessage || t({ key: "message_disabled_game" })}
                 </div>
                 <div className="mt-4">

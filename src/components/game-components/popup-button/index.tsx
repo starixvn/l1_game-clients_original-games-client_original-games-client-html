@@ -17,6 +17,7 @@ const PopupButton: React.FC<PopupButtonProps> = ({ label, className, onClick, ..
                 "bg-btn-green hover:enabled:bg-btn-green-hover-bg hover:enabled:cursor-pointer",
                 "disabled:opacity-60",
                 "transition-all duration-300 cursor-pointer hover:scale-110",
+                "md:text-base",
                 className
             )}
             {...props}

@@ -85,7 +85,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
 
                             <button
                                 onClick={() => handleConfirm(rounds)}
-                                className={`${styles["btn-confirm"]} py-2 px-6 gap-1 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
+                                className={`${styles["btn-confirm"]} py-2 px-6 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
                             >
                                 {t("button_confirm")}
                                 <i className="icon-auto-bet-round text-3xl w-4 before:text-[#624000] before:content-['\e90b']"></i>
