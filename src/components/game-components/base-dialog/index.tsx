@@ -64,7 +64,7 @@ const BaseDialog: React.FC<Props> = ({
                 isMobileOnly && document.documentElement.classList.remove(className);
             }
         };
-    }, []);
+    }, [enableBackdrop, isOverlap]);
 
     useEffect(() => {
         const handleClickOutside = (event: any) => {
@@ -78,6 +78,17 @@ const BaseDialog: React.FC<Props> = ({
             !isBlockUI && document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [wrapperRef, isOpen, onCloseModal, clickSound, isBlockUI, toggleBtnRef]);
+
+    const animationClasses = cn(
+        isOpen
+          ? (type === ModalType.Center || type === ModalType.Full
+              ? "block animate-showBottom"
+              : "block animate-showPopup")
+          : (type === ModalType.Center || type === ModalType.Full
+              ? "hidden animate-hideBottom"
+              : "hidden animate-hidePopup")
+      );
+    
 
     return (
         <>
@@ -96,7 +107,7 @@ const BaseDialog: React.FC<Props> = ({
                     type === ModalType.Message && "rounded-md p-0 left-1 right-1 shadow-none",
                     type === ModalType.Toast && "h-full",
                     isIpad && "pb-[69px]",
-                    isOpen ? "block" : "hidden",
+                    animationClasses,
                     extendedClassName
                 )}
             >
