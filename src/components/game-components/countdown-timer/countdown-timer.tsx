@@ -47,7 +47,7 @@ export const CountdownTimer = ({ className = "" }) => {
     };
 
     useEffect(() => {
-        if (clientRemainingTime != 0) {
+        if (clientRemainingTime > 0) {
             switch (roundState) {
                 case RoundState.InRound:
                     setDisplayText(`${t("start_in", { time: clientRemainingTime })}`);
