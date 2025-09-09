@@ -4,6 +4,7 @@ import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import { useClickSound } from "../../../_shared/react-hooks";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
+import { modalStackManager } from "../../../_shared/utils/modal-stack-manager";
 
 const ModalContainer: FC<{
     id?: string;
@@ -38,6 +39,7 @@ const ModalContainer: FC<{
                         onClick={() => {
                             clickSound();
                             onCloseModal();
+                            modalStackManager.closeTopModal();
                         }}
                     >
                         <i className="icon-close text-sm w-4 h-4"></i>

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { isMobileOnly } from "react-device-detect";
 
 import { useClickSound } from "../../../_shared/react-hooks";
+import { useModalStack, modalStackManager } from "../../../_shared/utils/modal-stack-manager";
 import { ModalType } from "./type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 
@@ -48,6 +49,13 @@ const BaseDialog: React.FC<Props> = ({
     const wrapperRef = useRef<HTMLDivElement>(null);
     const clickSound = useClickSound();
     const isIpad = useMemo(() => /iPad/i.test(navigator.userAgent), []);
+    const { addModal} = useModalStack();
+
+    useEffect(() => {
+        if (isOpen) {
+            addModal(onCloseModal);
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         const className = "overflow-hidden";
@@ -66,28 +74,23 @@ const BaseDialog: React.FC<Props> = ({
         };
     }, [enableBackdrop, isOverlap]);
 
-    useEffect(() => {
-        const handleClickOutside = (event: any) => {
-            if (isOpen && !wrapperRef?.current?.contains(event.target) && !toggleBtnRef?.current?.contains(event.target)) {
-                clickSound();
-                onCloseModal?.();
-            }
-        };
-        !isBlockUI && document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            !isBlockUI && document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [wrapperRef, isOpen, onCloseModal, clickSound, isBlockUI, toggleBtnRef]);
+    const handleClickOutside = (event: any) => {
+        clickSound();
+        modalStackManager.closeTopModal();
+    };
 
     return (
-        <>
+        <div onClick={handleClickOutside} className="relative">
             {enableBackdrop && (
                 <div className={cn("fixed inset-0 top-[-8px] z-[300] bg-black/40", type === ModalType.Rebet && "md:hidden")} />
             )}
 
             <div
-                style={getCustomStyle({ betContainerPosition })}
+                style={{
+                    ...getCustomStyle({ betContainerPosition })
+                }}
                 ref={wrapperRef}
+                onClick={(e) => e.stopPropagation()}
                 className={cn(
                     "absolute cursor-auto p-4 text-popup-text z-[301] rounded-t-xl md:rounded-b-xl",
                     type === ModalType.Full && "fixed inset-x-0 top-4 bottom-0 pl-0 pr-0 z-[300] bg-popup-gradient",
@@ -102,7 +105,7 @@ const BaseDialog: React.FC<Props> = ({
             >
                 <div className="h-full flex flex-col">{children}</div>
             </div>
-        </>
+        </div>
     );
 };
 
