@@ -123,9 +123,11 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
                 </div>
                 <div className="flex-1 min-h-0 overflow-y-auto w-full">
                     <Table className="w-full">
-                        <TableRow className="border-none bg-bet-detail-row-1">
-                            <TableCell className="w-1/4 text-sm text-secondary-text text-center p-3">{emptyMessage}</TableCell>
-                        </TableRow>
+                        <TableBody>
+                            <TableRow className="border-none bg-bet-detail-row-1">
+                                <TableCell className="w-1/4 text-sm text-secondary-text text-center p-3">{emptyMessage}</TableCell>
+                            </TableRow>
+                        </TableBody>
                     </Table>
                 </div>
             </div>
@@ -145,7 +147,11 @@ const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ 
             </div>
 
             <div className="shrink-0 w-full">
-                {renderSummaryRows(translateCommon, totalStake, netProfit, data)}
+                <Table className="w-full pr-3">
+                    <TableBody>
+                        {renderSummaryRows(translateCommon, totalStake, netProfit, data)}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );
