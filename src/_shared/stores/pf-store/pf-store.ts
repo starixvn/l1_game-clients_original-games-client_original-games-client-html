@@ -37,7 +37,6 @@ export const usePFStore = create<PFStore>()(
             name: localStorageKeys.pfStore,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
-                isShowPFSetting: state.isShowPFSetting,
                 pfClientSeedSetting: state.pfClientSeedSetting,
                 expandGuideFirst: state.expandGuideFirst,
             }),
