@@ -8,16 +8,13 @@ class ModalStackManager {
     private nextId = 0;
 
 
-    addModal(onClose: () => void): number {
-        const id = this.nextId++;
-        
+    addModal(onClose: () => void): void {  
         this.modals.push({
-            id,
+            id: this.nextId + 1,
             onClose,
         });
         
         this.modals.sort((a, b) => b.id - a.id);
-        return id;
     }
 
     removeModal(): void {
