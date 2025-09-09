@@ -5,12 +5,11 @@ interface ModalInfo {
 
 class ModalStackManager {
     private modals: ModalInfo[] = [];
-    private nextId = 0;
 
 
     addModal(onClose: () => void): void {  
         this.modals.push({
-            id: this.nextId + 1,
+            id: this.modals.length + 1,
             onClose,
         });
         
