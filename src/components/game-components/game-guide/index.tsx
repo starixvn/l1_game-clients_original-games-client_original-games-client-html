@@ -1,5 +1,4 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import { buildVersion } from "../../../_shared/constants";
 import { buildGameGuideUrl } from "../../../_shared/helpers";
@@ -56,7 +55,6 @@ const GameGuide: FC = () => {
                 <iframe
                     style={{ display: isLoading ? "none" : "block" }}
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
-                    key={uuidv4()}
                     className="h-full w-full border-none bg-transparent"
                     allowTransparency={true}
                     src={srcPath}

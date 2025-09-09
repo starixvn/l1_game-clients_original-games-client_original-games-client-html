@@ -1,6 +1,5 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { v4 as uuidv4 } from "uuid";
 import { buildVersion } from "../../../../_shared/constants";
 import { buildGameGuideUrl } from "../../../../_shared/helpers";
 import { useGameStateContext } from "../../../../_shared/react-contexts/game-state-context/game-state-context";
@@ -32,7 +31,6 @@ const PFGuide: FC = () => {
                 <iframe
                     style={{ display: isLoading ? "none" : "block" }}
                     ref={wrapperIframeRef}
-                    key={uuidv4()}
                     className="h-full w-full bg-transparent"
                     src={srcPath}
                     referrerPolicy="strict-origin-when-cross-origin"
