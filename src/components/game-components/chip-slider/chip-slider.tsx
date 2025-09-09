@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { useSelectChipSound } from "../../../_shared/react-hooks";
+import { useClickSound, useSelectChipSound } from "../../../_shared/react-hooks";
 import { Chip } from "./chip";
 import Styles from "./chip-slider.module.scss";
 import { ChipInfo } from "sc-user-service-client/dist/setting";
@@ -21,6 +21,7 @@ export const ChipSlider: React.FC<{
     const [isSliding, setIsSliding] = useState(false);
     let sliderRef = null;
     const playClickChip = useSelectChipSound();
+    const soundClick = useClickSound();
 
     const handleSelectChip = (chipValue: number) => {
         if (isSliding) {
@@ -43,6 +44,7 @@ export const ChipSlider: React.FC<{
     };
 
     const onClickNext = () => {
+        soundClick();
         if (enabledNextBtn && !isSliding) {
             sliderRef.slickNext();
             disableSelectChipWhenSliding();
@@ -50,6 +52,7 @@ export const ChipSlider: React.FC<{
     };
 
     const onClickPrev = () => {
+        soundClick();
         if (enabledPrevBtn && !isSliding) {
             sliderRef.slickPrev();
             disableSelectChipWhenSliding();
