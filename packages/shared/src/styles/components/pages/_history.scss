@@ -1,0 +1,25 @@
+.result-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.draw-info {
+    display: flex;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 0 8px;
+    font-size: 12px;
+    color: #fff;
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &:not(:first-child) {
+            font-weight: bold;
+        }
+    }
+}

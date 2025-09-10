@@ -1,0 +1,102 @@
+.history-loading {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+}
+.provably-fair {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px 8px;
+    color: #20e500;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.icon-pf {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #159500;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+}
+
+.bet-detail {
+    --more-info-height: 68px;
+}
+
+.history {
+    --more-info-height: 0px;
+}
+
+.bet-history-container {
+    display: flex;
+    flex-direction: column;
+}
+
+// Define consistent column widths for both header and body tables
+.bet-history-container :global(.bet-history-table) {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+
+    // Define column widths proportionally
+    th:nth-child(1), td:nth-child(1) { // Time column - needs more space for date/time format
+        width: 25%;
+    }
+    th:nth-child(2), td:nth-child(2) { // Round column - moderate space for round numbers
+        width: 20%;
+    }
+    th:nth-child(3), td:nth-child(3) { // Bet Amount column - moderate space for numbers
+        width: 30%;
+    }
+    th:nth-child(4), td:nth-child(4) { // Win column - moderate space for win amounts
+        width: 25%;
+    }
+}
+
+.table-scroll-wrapper {
+    // When expanded, allow scrolling
+    &.expanded {
+        overflow-y: auto;
+    }
+
+    // Hide native scrollbars on all devices but keep scrolling enabled
+    -ms-overflow-style: none; // IE and old Edge
+    scrollbar-width: none; // Firefox
+    &::-webkit-scrollbar { // Chrome, Safari, new Edge
+        width: 0px;
+        height: 0px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+        border: none;
+    }
+}
+
+.toggle-button-container {
+    margin-top: 12px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle-button {
+    color: var(--primary-text);
+    font-weight: 700;
+    background-color: #000000;
+    border: 1px solid #000000;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        opacity: 0.9;
+    }
+}

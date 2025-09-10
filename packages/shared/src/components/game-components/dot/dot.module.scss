@@ -1,0 +1,27 @@
+%dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.dot-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.two-lines {
+    flex-wrap: wrap;
+    width: 50px;
+}
+
+.dot-red {
+    @extend %dot;
+    background: url("/static/images/happy-four/dot-red.svg?v=#{$version-image}") no-repeat;
+}
+
+.dot-blue {
+    @extend %dot;
+    background: url("/static/images/happy-four/dot-blue.svg?v=#{$version-image}") no-repeat;
+}

@@ -1,0 +1,159 @@
+[data-theme="light"] .container {
+    --game-loading-background: #000000;
+    --game-loading-border: #8e8e8e;
+    --game-loading-line-background: #dce2f3;
+    --skeleton-item-background: #151515;
+}
+
+.container {
+    position: relative;
+    background-color: var(--game-loading-background);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.border-radius-7 {
+    border-radius: 7px;
+}
+
+.border-radius-5 {
+    @extend .full-size;
+    border-radius: 5px !important;
+}
+
+.full-size {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.skeleton-item {
+    background: var(--skeleton-item-background);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 40px;
+    margin-top: 10px;
+    cursor: auto;
+
+    .round-id {
+        width: 133px;
+        height: 10px;
+    }
+
+    .countdown-timer {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+    }
+
+    .pf,
+    .home,
+    .menu {
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+    }
+}
+
+.header-left {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    gap: 10px;
+}
+
+.result-container {
+    height: 195px;
+    padding: 10px;
+}
+
+.bet-container {
+    position: relative;
+    padding: 2px 10px;
+    height: 210px;
+}
+
+.statistic {
+    margin-top: 70px;
+    height: 38px;
+    padding: 0 7px;
+}
+
+.scoreboard {
+    position: relative;
+    height: 112px;
+    margin-top: 2px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    animation: spin-1 0.6s infinite linear alternate, spin-2 1.2s infinite linear;
+}
+
+@keyframes spin-1 {
+    0% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+    }
+    12.5% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%);
+    }
+    25% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%);
+    }
+    50% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+    62.5% {
+        clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+    75% {
+        clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%);
+    }
+    100% {
+        clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%);
+    }
+}
+@keyframes spin-2 {
+    0% {
+        transform: scaleY(1) rotate(0deg);
+    }
+    49.99% {
+        transform: scaleY(1) rotate(135deg);
+    }
+    50% {
+        transform: scaleY(-1) rotate(0deg);
+    }
+    100% {
+        transform: scaleY(-1) rotate(-135deg);
+    }
+}

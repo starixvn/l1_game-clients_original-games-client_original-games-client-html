@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DerivedElement render should match the snapshot 1`] = `<div />`;
+
+exports[`DerivedElement render should match the snapshot 2`] = `
+<div>
+  A
+</div>
+`;
+
+exports[`DerivedElement render should match the snapshot 3`] = `
+<div>
+  B
+</div>
+`;
+
+exports[`DerivedElement static arrange when called should return value match the snapshot 1`] = `
+[
+  {
+    "column": 0,
+    "row": 0,
+    "status": false,
+  },
+  {
+    "column": 0,
+    "row": 1,
+    "status": undefined,
+  },
+  {
+    "column": 0,
+    "row": 2,
+    "status": undefined,
+  },
+  {
+    "column": 0,
+    "row": 3,
+    "status": undefined,
+  },
+  {
+    "column": 0,
+    "row": 4,
+    "status": undefined,
+  },
+  {
+    "column": 0,
+    "row": 5,
+    "status": undefined,
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+]
+`;

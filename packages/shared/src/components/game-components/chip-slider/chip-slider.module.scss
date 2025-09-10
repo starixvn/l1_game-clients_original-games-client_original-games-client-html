@@ -1,0 +1,70 @@
+@import "../../../styles/components/chip";
+
+%icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 15px;
+
+    &:hover:not(.disabled) {
+        cursor: pointer;
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    &.disabled {
+        color: #fff;
+        opacity: 0.5;
+    }
+    @media (width >= 48rem) {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #ffffff1a;
+    }
+}
+
+.icon-prev {
+    @extend %icon;
+    left: 8px;
+}
+
+.icon-next {
+    @extend %icon;
+    right: 8px;
+}
+
+.chip-container {
+    transition: all -0.1s ease-in;
+
+    .selected {
+        --ratio: 1.3;
+        transition: all -0.1s ease-out;
+        position: absolute;
+        box-shadow: 0px 0px 4px 0px #ffffffcc;
+        border: 1px solid #ffffff;
+        width: calc(100% + 2px);
+        height: calc(100% + 2px);
+        margin: -1px;
+        border-radius: 50%;
+    }
+
+    &:active,
+    &:focus,
+    &:focus-visible {
+        outline: none;
+    }
+
+    @keyframes show-highlight-circle {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}

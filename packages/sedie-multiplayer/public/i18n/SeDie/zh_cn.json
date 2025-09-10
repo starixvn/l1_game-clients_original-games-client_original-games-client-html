@@ -1,0 +1,18 @@
+{
+    "bet_option_red2": "2 红",
+    "bet_option_red3": "3 红",
+    "bet_option_red4": "4 红",
+    "bet_option_white3": "1 红",
+    "bet_option_white4": "4 白",
+    "even_win": "双赢",
+    "game_icon_name": "色碟",
+    "game_name": "色碟",
+    "game_name_148": "骰宝多人",
+    "glossary_even": "双",
+    "glossary_odd": "单",
+    "glossary_red": "红",
+    "glossary_white": "白",
+    "odd_win": "单赢",
+    "pf_verifier_tool_button": "按钮 {value}",
+    "pf_verifier_tool_para_24": "将 SHA512 中的每组 2 个字符转换为十进制"
+}

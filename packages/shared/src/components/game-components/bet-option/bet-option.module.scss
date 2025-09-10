@@ -1,0 +1,67 @@
+.bet-name,
+.bet-odds {
+    font-weight: 500;
+    color: white;
+    text-transform: uppercase;
+}
+
+.bet-odds {
+    position: relative;
+    line-height: 1;
+}
+
+.player-count {
+    height: 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color);
+    position: relative;
+}
+
+.own-bet {
+    color: #fff600;
+    font-weight: 600;
+}
+
+.stakes-value,
+.player-count-value {
+    height: 18px;
+    line-height: 1.7;
+    font-size: var(--text-total-stake, 12px);
+}
+
+@keyframes odd-move-up {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes own-bet-move-up {
+    0% {
+        transform: translateY(-30px);
+        opacity: 0.8;
+    }
+
+    60% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+}
+
+@keyframes zoom-in {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}

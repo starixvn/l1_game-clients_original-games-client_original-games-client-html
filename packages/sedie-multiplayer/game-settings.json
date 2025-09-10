@@ -1,0 +1,43 @@
+{
+    "148": {
+        "id": 148,
+        "gameName": "SeDieMultiplayer",
+        "tolgeeNamespace": "SeDie",
+        "socketInfo": {
+            "namespace": "sediemultiplayer",
+            "path": "sediemultiplayer"
+        },
+        "durations": {
+            "wholeRound": 27,
+            "wholeTurn": 27,
+            "placingBets": 18,
+            "lockingBet": 3,
+            "showResult": 5,
+            "resultAnimation": 4,
+            "beforePlaceBet": 0,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 100,
+        "gamePath": "sedie-multiplayer",
+        "gameResourceConfigs": {
+            "path": "sedie-multiplayer",
+            "optionalPaths": ["sedie-multiplayer/result"],
+            "cachePaths": [
+                "sedie-multiplayer/bet-detail-red2.svg",
+                "sedie-multiplayer/bet-detail-red3.svg",
+                "sedie-multiplayer/bet-detail-red4.svg",
+                "sedie-multiplayer/bet-detail-white3.svg",
+                "sedie-multiplayer/bet-detail-white4.svg",
+                "sedie-multiplayer/scoreboard-blue-dot.webp",
+                "sedie-multiplayer/scoreboard-red-dot.webp",
+                "sedie-multiplayer/statistic-icon-red2.webp",
+                "sedie-multiplayer/statistic-icon-red3.webp",
+                "sedie-multiplayer/statistic-icon-red4.webp",
+                "sedie-multiplayer/statistic-icon-white3.webp",
+                "sedie-multiplayer/statistic-icon-white4.webp",
+                "sedie-multiplayer/result/"
+            ]
+        }
+    }
+}

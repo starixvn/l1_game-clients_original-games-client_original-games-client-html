@@ -2,13 +2,17 @@
     "name": "original-games-client-html",
     "version": "0.1.0",
     "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
     "engines": {
         "node": ">=20.9.0"
     },
     "scripts": {
-        "generate-tolgee-data": "npx ts-node --project tsconfig.node.json ./src/_shared/tolgee-generator.ts",
+        "generate-tolgee-data": "npx ts-node --project tsconfig.node.json ./packages/shared/src/tolgee-generator.ts",
         "analyze": "cross-env ANALYZE=true next build",
-        "dev": "npm run generate-tolgee-data &&  next dev",
+        "dev": "npm run dev:sedie-multiplayer",
+        "dev:sedie-multiplayer": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 HOST=sedie.local PORT=3001 next dev -p 3001",
         "dev:game-148": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-148 next dev",
         "dev:standalone": "npm run generate-tolgee-data && next build && npm run copy-standalone-assets && node .next/standalone/server.js",
         "copy-standalone-assets": "node scripts/copy-standalone-assets.js",
@@ -17,7 +21,12 @@
         "fix-and-verify-sonar": "node sonar-scripts/fix-and-verify.js",
         "export-sonar-report": "node sonar-scripts/export-sonar-issues.js",
         "run-code-and-sonar-changed": "node sonar-scripts/run-code-and-sonar-changed.js",
+        "rewrite-imports": "node scripts/rewrite-imports.js",
+        "migrate:packages": "node scripts/migrate-to-packages.js",
         "build": "next build",
+        "build:shared": "npm run -w @shared/merged build",
+        "build:games": "npm run -w @games/sedie-multiplayer build",
+        "build:all": "npm run build:shared && npm run build:games && npm run build",
         "info": "next info",
         "start": "next start -p ${PORT:=5000}",
         "lint": "next lint",

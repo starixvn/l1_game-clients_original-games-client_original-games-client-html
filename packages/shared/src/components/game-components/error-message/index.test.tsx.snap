@@ -1,0 +1,235 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectFailedMessage when disconnect game services when direct mode = false should render buttons back & reconnect 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.message_lost_game_connection
+      </div>
+      <div
+        class="list-action"
+      >
+        <div
+          class="d-flex"
+        >
+          <button
+            class="btn-grey"
+          >
+            Common.back
+          </button>
+          <button
+            class="btn-reconnect btn-green"
+          >
+            SabaNumber.button_reconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ConnectFailedMessage when disconnect game services when direct mode = true and returnURL not has data should render only reconnect button 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.message_lost_game_connection
+      </div>
+      <div
+        class="list-action"
+      >
+        <button
+          class="btn-green w-100"
+        >
+          SabaNumber.button_reconnect
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ConnectFailedMessage when disconnect game services when direct mode = true and returnUrl has data should render buttons back & reconnect 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.message_lost_game_connection
+      </div>
+      <div
+        class="list-action"
+      >
+        <div
+          class="d-flex"
+        >
+          <button
+            class="btn-grey"
+          >
+            Common.back
+          </button>
+          <button
+            class="btn-reconnect btn-green"
+          >
+            SabaNumber.button_reconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ConnectFailedMessage when restrictPlayPermission when direct mode = false should render button ok 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.game_excluded
+      </div>
+      <div
+        class="list-action"
+      >
+        <button
+          class="btn-green w-100"
+        >
+          Common.ok
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ConnectFailedMessage when restrictPlayPermission when direct mode = true and returnURL has data should render button ok 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.game_excluded
+      </div>
+      <div
+        class="list-action"
+      >
+        <button
+          class="btn-green w-100"
+        >
+          Common.ok
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ConnectFailedMessage when restrictPlayPermission when direct mode = true and returnURL not has data should not render button ok 1`] = `
+<div>
+  <div>
+    <div
+      class="modal-center yellow-color error-message-container"
+    >
+      <div
+        class="warning-container"
+      >
+        <div
+          class="icon-warning icon-warning"
+        />
+      </div>
+      <div
+        class="title"
+      >
+        gameA.game_name_1
+      </div>
+      <div
+        class="content"
+      >
+        Common.game_excluded
+      </div>
+      <div
+        class="list-action"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Odds should render match the snapshot when round state = in round 1`] = `
+<div>
+  <div
+    class="text-center bet-odds custom-class up "
+    id="gameA-choice1-odds"
+  >
+    1.96
+  </div>
+</div>
+`;
