@@ -63,16 +63,8 @@
         overflow-y: auto;
     }
 
-    // Hide native scrollbars on all devices but keep scrolling enabled
-    -ms-overflow-style: none; // IE and old Edge
-    scrollbar-width: none; // Firefox
-    &::-webkit-scrollbar { // Chrome, Safari, new Edge
-        width: 0px;
-        height: 0px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background: transparent;
-        border: none;
+    &::-webkit-scrollbar {
+        width: 3px;
     }
 }
 
