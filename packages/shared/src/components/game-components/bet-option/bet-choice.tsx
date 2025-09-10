@@ -1,6 +1,6 @@
 import { memo } from "react";
-import { getGlossaryTranslate } from "../../../_shared/helpers";
-import { useTranslator } from "../../../_shared/react-hooks/use-translator";
+import { getGlossaryTranslate } from '@shared/merged/_shared/helpers';
+import { useTranslator } from '@shared/merged/_shared/react-hooks/use-translator';
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
 

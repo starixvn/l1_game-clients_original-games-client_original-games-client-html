@@ -1,10 +1,10 @@
-import { updateURLContext } from "../../../_shared/react-contexts";
-import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
-import { GameStateContextModel } from "../../../_shared/react-contexts/game-state-context/game-state-context-model";
+import { updateURLContext } from '@shared/merged/_shared/react-contexts';
+import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
+import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
 import { IRoundStateHandler } from "../../round-base/round-state-handler";
 import { GameDurations, RoundState } from "../type";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
 
 export type GameDisabledHandlerProps = {
     dispatch: Function;

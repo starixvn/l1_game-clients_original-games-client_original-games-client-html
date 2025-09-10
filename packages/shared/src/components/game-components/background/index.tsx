@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { buildVersion } from "../../../_shared/constants";
+import { buildVersion } from '@shared/merged/_shared/constants';
 import styles from "./style.module.scss";
 import dynamic from "next/dynamic";
 import Image from "next/image";

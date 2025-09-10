@@ -1,7 +1,7 @@
 import { TFnType, TranslationKey } from "@tolgee/react";
 import { WithRouterProps } from "next/dist/client/with-router";
-import { GameEventAction } from "../../_shared/react-contexts/game-state-context/game-event-action";
-import { GameStateContextModel } from "../../_shared/react-contexts/game-state-context/game-state-context-model";
+import { GameEventAction } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
+import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {

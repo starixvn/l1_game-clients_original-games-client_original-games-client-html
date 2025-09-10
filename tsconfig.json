@@ -1,7 +1,11 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": false,
@@ -14,19 +18,19 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "incremental": true,
-        "types": ["node", "jest"],
+        "types": [
+            "node",
+            "jest"
+        ],
         "baseUrl": ".",
         "paths": {
-            "@games/sedie-multiplayer": [
+            "@sedie-multiplayer": [
                 "packages/sedie-multiplayer/src"
             ],
-            "@games/sedie-multiplayer/*": [
+            "@sedie-multiplayer/*": [
                 "packages/sedie-multiplayer/src/*"
             ],
-            "@shared/merged": [
-                "packages/shared/src"
-            ],
-            "@shared/merged/*": [
+            "@shared/*": [
                 "packages/shared/src/*"
             ]
         }

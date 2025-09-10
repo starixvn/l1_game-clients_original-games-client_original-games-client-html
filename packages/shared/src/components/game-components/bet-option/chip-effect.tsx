@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
 import { Chip } from "../chip-slider/chip";
-import { useSettingContext } from "../../../_shared/react-contexts/setting-context";
+import { useSettingContext } from '@shared/merged/_shared/react-contexts/setting-context';
 import styles from "./chip-effect.module.scss";
 import { useShallow } from "zustand/shallow";
 

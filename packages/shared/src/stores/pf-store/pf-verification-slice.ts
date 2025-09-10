@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { PFResult } from "../../../components/game-base/type";
+import { PFResult } from '@shared/merged/components/game-base/type';
 
 export interface PFVerificationSlice {
     pfVerifyModalData: PFResult | null;

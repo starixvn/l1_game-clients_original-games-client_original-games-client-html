@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
-import { createOptionForHedgeBetGroup, getExtendMessageByErrorCode } from "../../../_shared/helpers";
-import { numberWithCommas } from "../../../_shared/helpers/number-helper";
-import { useGameContext } from "../../../_shared/react-contexts";
-import { useClickSound, useTranslator } from "../../../_shared/react-hooks";
+import { createOptionForHedgeBetGroup, getExtendMessageByErrorCode } from '@shared/merged/_shared/helpers';
+import { numberWithCommas } from '@shared/merged/_shared/helpers/number-helper';
+import { useGameContext } from '@shared/merged/_shared/react-contexts';
+import { useClickSound, useTranslator } from '@shared/merged/_shared/react-hooks';
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
-import { useNoticeStore } from "../../../_shared/stores/notice-store/notice-store";
+import { useGlobalEventsStore } from '@shared/merged/_shared/stores/global-events-store/global-events-store';
+import { useNoticeStore } from '@shared/merged/_shared/stores/notice-store/notice-store';
 import { useShallow } from "zustand/react/shallow";
-import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
 
 const BaseNotice: React.FC<{
     onClose: () => void;

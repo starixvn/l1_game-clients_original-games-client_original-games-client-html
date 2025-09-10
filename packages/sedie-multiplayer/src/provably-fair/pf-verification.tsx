@@ -1,17 +1,17 @@
 import { createHash } from "crypto";
 import { FC, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useTranslator } from "../../../_shared/react-hooks";
-import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from "../../../components/game-components/provably-fair";
-import { Section } from "../../../components/game-components/provably-fair/pf-form-components";
+import { useTranslator } from '@shared/react-hooks';
+import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from '@shared/components/game-components/provably-fair';
+import { Section } from '@shared/components/game-components/provably-fair/pf-form-components';
 import { Markup } from "interweave";
-import PfRoundBaseHelper from "../../../_shared/helpers/pf/pf-round-base-helper";
-import { ResourceTypes } from "../../../_shared/resources";
-import { useGameContext } from "../../../_shared/react-contexts";
+import PfRoundBaseHelper from '@shared/helpers/pf/pf-round-base-helper';
+import { ResourceTypes } from '@shared/resources';
+import { useGameContext } from '@shared/react-contexts';
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
-import { useBetDetailStore } from "../../../_shared/stores/bet-detail-store/bet-detail-store";
+import { useBetDetailStore } from '@shared/stores/bet-detail-store/bet-detail-store';
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();

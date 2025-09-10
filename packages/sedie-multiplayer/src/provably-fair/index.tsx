@@ -1,4 +1,4 @@
-import { formatDate } from "../../../_shared/helpers";
+import { formatDate } from '@shared/helpers';
 import PFVerification from "./pf-verification";
 import renderPFVerifyResultBlock from "./render-pf-verify-result-block";
 

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Styles from "./provably-fair.module.scss";
-import { useClickSound } from "../../../_shared/react-hooks";
+import { useClickSound } from '@shared/merged/_shared/react-hooks';
 
 const NUMBER_VALUES = "0123456789";
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useGameContext } from "../../../_shared/react-contexts/game-context/game-context";
+import { useGameContext } from '@shared/merged/_shared/react-contexts/game-context/game-context';
 import Styles from "./loader.module.scss";
 
 export default function Loader() {

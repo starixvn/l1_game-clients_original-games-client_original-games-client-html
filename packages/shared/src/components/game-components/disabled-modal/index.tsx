@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext } from "react";
-import { URLContext } from "../../../_shared/react-contexts";
-import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
+import { URLContext } from '@shared/merged/_shared/react-contexts';
+import { useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
 import PopupButton from "../popup-button";
 import Image from "next/image";
 

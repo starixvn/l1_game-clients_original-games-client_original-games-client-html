@@ -1,4 +1,4 @@
-import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
+import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
 import { messageEventType } from "../../game-base/handlers/game-message-handler";
 import { RoundState } from "../../game-base/type";
 import { RoundIdHandler } from "../round-id-handler";

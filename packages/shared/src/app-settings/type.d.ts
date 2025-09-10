@@ -1,4 +1,4 @@
-import { GameSettings } from "../../components/game-base/type";
+import { GameSettings } from '@shared/merged/components/game-base/type';
 
 interface ProxySetting {
     ssl: string;

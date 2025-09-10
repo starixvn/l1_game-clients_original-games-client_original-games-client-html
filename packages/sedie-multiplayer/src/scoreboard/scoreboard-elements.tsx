@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { Converter } from "sc-scoreboards";
 
-import { BigRoadElement, BigRoadRound } from "../../../components/game-components/round-history/scoreboard/elements";
-import { registerBigRoadElement } from "../../../_shared/helpers/scoreboard-registry";
-import { GameIds } from "../../../_shared/constants";
+import { BigRoadElement, BigRoadRound } from '@shared/components/game-components/round-history/scoreboard/elements';
+import { registerBigRoadElement } from '@shared/helpers/scoreboard-registry';
+import { GameIds } from '@shared/constants';
 import styles from "./scoreboard-elements.module.scss";
-import dotStyles from "../../../components/game-components/round-history/dot/dot.module.scss";
+import dotStyles from '@shared/components/game-components/round-history/dot/dot.module.scss';
 import { SeDieBetOptions, SeDieSettlementResult } from "../sedie-multiplayer-constants";
-import { BgCachedImage } from "../../../components/game-components/cached-image/bg-cached-image";
+import { BgCachedImage } from '@shared/components/game-components/cached-image/bg-cached-image';
 
 export class SeDieBigRoadConverter extends Converter<SeDieSettlementResult> {
     static addBlinkNode(rounds: SeDieSettlementResult[]) {

@@ -1,13 +1,13 @@
 import dynamic from "next/dynamic";
 import styles from "./style.module.scss";
-const Odds = dynamic(() => import("../../../components/game-components/bet-option/odds"), { ssr: false });
-const OwnBet = dynamic(() => import("../../../components/game-components/bet-option/own-bet"), { ssr: false });
-const TotalBet = dynamic(() => import("../../../components/game-components/bet-option/total-bet"), { ssr: false });
-const RippleButton = dynamic(() => import("../../../components/game-components/bet-option/ripple-button"), { ssr: false });
-const BetChoice = dynamic(() => import("../../../components/game-components/bet-option/bet-choice"), { ssr: false });
+const Odds = dynamic(() => import('@shared/components/game-components/bet-option/odds'), { ssr: false });
+const OwnBet = dynamic(() => import('@shared/components/game-components/bet-option/own-bet'), { ssr: false });
+const TotalBet = dynamic(() => import('@shared/components/game-components/bet-option/total-bet'), { ssr: false });
+const RippleButton = dynamic(() => import('@shared/components/game-components/bet-option/ripple-button'), { ssr: false });
+const BetChoice = dynamic(() => import('@shared/components/game-components/bet-option/bet-choice'), { ssr: false });
 const HighlightBetOption = dynamic(() => import("./highlight-bet-option"), { ssr: false });
 const PrevHighlightBetOption = dynamic(() => import("./highight-prev-round-bet-option"), { ssr: false });
-const ChipEffect = dynamic(() => import("../../../components/game-components/bet-option/chip-effect"), { ssr: false });
+const ChipEffect = dynamic(() => import('@shared/components/game-components/bet-option/chip-effect'), { ssr: false });
 
 export const SedieMultiplayerMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     const choiceStyle = `${styles[choice]} ${styles["main-option"]}`;

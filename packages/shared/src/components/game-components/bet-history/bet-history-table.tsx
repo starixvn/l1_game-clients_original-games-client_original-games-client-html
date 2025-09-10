@@ -7,11 +7,11 @@ import {
     TableHeader,
     TableRow,
 } from '../table';
-import { useGameContext } from '../../../_shared/react-contexts';
+import { useGameContext } from '@shared/merged/_shared/react-contexts';
 import { LoadingSpinner } from '../game-loading/loading-spinner';
-import { useCommonTranslate, useClickSound } from '../../../_shared/react-hooks';
-import useBetHistoryStore from '../../../_shared/stores/bet-history-store/bet-history-store';
-import usePopupStore from '../../../_shared/stores/popup-store/popup-store';
+import { useCommonTranslate, useClickSound } from '@shared/merged/_shared/react-hooks';
+import useBetHistoryStore from '@shared/merged/_shared/stores/bet-history-store/bet-history-store';
+import usePopupStore from '@shared/merged/_shared/stores/popup-store/popup-store';
 import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
 import {
     transformBetLogsToDisplayData,
@@ -20,8 +20,8 @@ import {
     BetHistoryDisplayData
 } from './bet-history-utils';
 import styles from './bet-history.module.scss';
-import useBetDetailStore from '../../../_shared/stores/bet-detail-store';
-import { cn } from '../../../_shared/utils/merge-tailwind-util';
+import useBetDetailStore from '@shared/merged/_shared/stores/bet-detail-store';
+import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
 import BouncingDotsLoader from './bouncing-dots-loader';
 
 

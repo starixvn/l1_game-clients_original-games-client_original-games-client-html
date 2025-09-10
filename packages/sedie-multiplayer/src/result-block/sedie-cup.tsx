@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from "./sedie-cup.module.scss";
-import { RoundState } from "../../../components/game-base/type";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { useGameContext } from "../../../_shared/react-contexts";
-import { Spritesheet } from "../../../components/game-components/sprites-sheet";
+import { RoundState } from '@shared/components/game-base/type';
+import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
+import { useGameContext } from '@shared/react-contexts';
+import { Spritesheet } from '@shared/components/game-components/sprites-sheet';
 import { motion } from "motion/react";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
-import { CachedImage } from "../../../components/game-components/cached-image";
-import { useMemoriedImage } from "../../../_shared/react-hooks/use-memoried-image";
+import { CachedImage } from '@shared/components/game-components/cached-image';
+import { useMemoriedImage } from '@shared/react-hooks/use-memoried-image';
 
 const OPEN_DURATION = 1500; // Open duration in milliseconds
 

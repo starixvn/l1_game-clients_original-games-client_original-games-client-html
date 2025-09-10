@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { downloadAndCacheImage, imageCache } from "../../../_shared/helpers/image-cache-controller";
+import { downloadAndCacheImage, imageCache } from '@shared/merged/_shared/helpers/image-cache-controller';
 
 type Props = {
     pathImage: string;

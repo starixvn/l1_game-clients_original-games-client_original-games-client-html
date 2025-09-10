@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
-import { isShowHighlightPrevResult } from "../../../_shared/react-hooks/use-high-light";
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { isShowHighlightPrevResult } from '@shared/react-hooks/use-high-light';
+import useGameStore from '@shared/stores/game-store/game-store';
 import styles from "./highight-prev-round-bet-option.module.scss";
 
 export const HighlightPrevRoundBetOption = ({ choice }: { choice: string }) => {

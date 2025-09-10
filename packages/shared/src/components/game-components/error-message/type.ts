@@ -1,4 +1,4 @@
-import { ResourceTypes } from "../../../_shared/resources";
+import { ResourceTypes } from '@shared/merged/_shared/resources';
 
 export interface Props {
     message: string | string[];

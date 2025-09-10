@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { PlayerInPlayerResultBoard, RoundState } from "../../components/game-base/type";
+import { PlayerInPlayerResultBoard, RoundState } from '@shared/merged/components/game-base/type';
 import useGameStore from "../stores/game-store/game-store";
 import { useGameStateContext } from "../react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "../react-contexts";

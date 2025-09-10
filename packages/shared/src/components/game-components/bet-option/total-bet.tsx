@@ -1,4 +1,4 @@
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
 import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";

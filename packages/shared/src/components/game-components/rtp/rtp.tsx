@@ -1,5 +1,5 @@
-import { useTranslator } from "../../../_shared/react-hooks";
-import { useGlobalEventsStore } from "../../../_shared/stores/global-events-store/global-events-store";
+import { useTranslator } from '@shared/merged/_shared/react-hooks';
+import { useGlobalEventsStore } from '@shared/merged/_shared/stores/global-events-store/global-events-store';
 
 export const RTP = ({ rtp, tolgeeNamespace }: { rtp: number; tolgeeNamespace: string }) => {
     const { openingGameId } = useGlobalEventsStore();

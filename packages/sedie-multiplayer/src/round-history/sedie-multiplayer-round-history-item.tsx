@@ -1,4 +1,4 @@
-import { useCommonTranslate } from "../../../_shared/react-hooks";
+import { useCommonTranslate } from '@shared/react-hooks';
 import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";
 import styles from "./style.module.scss";
 

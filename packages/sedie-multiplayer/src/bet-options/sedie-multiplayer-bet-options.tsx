@@ -1,6 +1,6 @@
 // useState import removed as it's not used
 
-import { useGameContext } from "../../../_shared/react-contexts";
+import { useGameContext } from '@shared/react-contexts';
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import { SedieMultiplayerSubBetOptions } from "./sedie-sub-option";
 import { SedieMultiplayerMainOption } from "./sedie-main-option";

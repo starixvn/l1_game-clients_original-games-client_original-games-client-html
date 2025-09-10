@@ -1,5 +1,5 @@
 import { ReactEventHandler, useEffect, useState } from "react";
-import { downloadAndCacheImage, imageCache } from "../../../_shared/helpers/image-cache-controller";
+import { downloadAndCacheImage, imageCache } from '@shared/merged/_shared/helpers/image-cache-controller';
 import Image from "next/image";
 
 type Props = {

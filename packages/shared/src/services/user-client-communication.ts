@@ -1,6 +1,6 @@
 import { IUserServiceClient } from "sc-user-service-client/dist";
-import { getAppSettings } from "../_shared/app-settings";
-import { buildUrlWithPath } from "../_shared/helpers/url-helper";
+import { getAppSettings } from '@shared/merged/_shared/app-settings';
+import { buildUrlWithPath } from '@shared/merged/_shared/helpers/url-helper';
 
 let UserServiceClient;
 

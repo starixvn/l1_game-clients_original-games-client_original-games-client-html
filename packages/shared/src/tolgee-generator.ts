@@ -1,7 +1,7 @@
 const { DevTools, Tolgee } = require("@tolgee/react");
 const fs = require("fs");
 const path = require("path");
-const gameSettings = require("../../game-settings.json");
+const gameSettings = require("../../sedie-multiplayer/game-settings.json");
 
 console.log("[TolgeeGenerator] Tolgee generator starting");
 
@@ -73,7 +73,7 @@ tg.on("initialLoad", async () => {
                         languages[languageId][namespace][key] = value as string;
                     });
 
-                    writeFile(`./public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
+                    writeFile(`../sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
                 }
             });
         });

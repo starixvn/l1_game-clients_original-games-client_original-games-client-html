@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { randomBytes } from "crypto";
 import Styles from "./infinite-table.module.scss";
-import { useSNTranslate } from "../../../_shared/react-hooks";
+import { useSNTranslate } from '@shared/merged/_shared/react-hooks';
 
 interface TableRowProps {
     children?: RowContent[];

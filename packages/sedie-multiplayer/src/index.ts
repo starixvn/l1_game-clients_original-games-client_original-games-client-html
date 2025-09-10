@@ -1,4 +1,4 @@
-// Main entry point for sedie-multiplayer package
+// SeDie Multiplayer package exports
+import './game-registry'; // Register the game
 export * from './page';
-export * from './games';
-export * from './games/sedie-multiplayer';
+export * from './pages';

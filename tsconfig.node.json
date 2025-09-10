@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
         "target": "es2020",
-        "lib": ["es2020"],
+        "lib": [
+            "es2020"
+        ],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": false,
@@ -11,8 +13,14 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "types": ["node"]
+        "types": [
+            "node"
+        ]
     },
-    "include": ["src/_shared/tolgee-generator.ts"],
-    "exclude": ["node_modules"]
+    "include": [
+        "packages/shared/src/tolgee-generator.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

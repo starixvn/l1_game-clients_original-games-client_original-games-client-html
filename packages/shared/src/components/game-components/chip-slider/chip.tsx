@@ -1,6 +1,6 @@
 import React from "react";
 import Styles from "./chip-slider.module.scss";
-import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
+import useBettingStore from '@shared/merged/_shared/stores/betting-store/betting-store';
 import { BgCachedImage } from "../cached-image/bg-cached-image";
 
 type ChipProps = {

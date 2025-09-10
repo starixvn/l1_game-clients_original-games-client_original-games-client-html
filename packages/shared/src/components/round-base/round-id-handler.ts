@@ -1,5 +1,5 @@
-import { GameEventActionType } from "../../_shared/react-contexts/game-state-context/game-event-action";
-import { GameStateContextModel } from "../../_shared/react-contexts/game-state-context/game-state-context-model";
+import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
+import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
 import { GameDurations, RoundState } from "../game-base/type";
 import { GameMessageHandler, messageEventType } from "../game-base/handlers/game-message-handler";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppTheme } from "../../../_shared/react-hooks";
+import { useAppTheme } from '@shared/merged/_shared/react-hooks';
 
 const ThemeToggle: React.FC = () => {
     const { toggleTheme, isDark } = useAppTheme();

@@ -1,7 +1,7 @@
 
-import { broadcastNotice } from "../../../_shared/helpers";
-import { GameEventActionType } from "../../../_shared/react-contexts/game-state-context/game-event-action";
-import useGameStore from "../../../_shared/stores/game-store/game-store";
+import { broadcastNotice } from '@shared/merged/_shared/helpers';
+import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
+import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
 import { ConnectFailedReasonKey } from "../../game-components/error-message/type";
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 

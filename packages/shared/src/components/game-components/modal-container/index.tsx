@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { cn } from "../../../_shared/utils/merge-tailwind-util";
+import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
 
-import { useClickSound } from "../../../_shared/react-hooks";
+import { useClickSound } from '@shared/merged/_shared/react-hooks';
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { modalStackManager } from "../../../_shared/utils/modal-stack-manager";
+import { modalStackManager } from '@shared/merged/_shared/utils/modal-stack-manager';
 
 const ModalContainer: FC<{
     id?: string;

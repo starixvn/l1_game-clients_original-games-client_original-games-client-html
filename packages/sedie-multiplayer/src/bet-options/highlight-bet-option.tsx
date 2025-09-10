@@ -1,5 +1,5 @@
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { RoundState } from "../../../components/game-base/type";
+import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
+import { RoundState } from '@shared/components/game-base/type';
 import styles from "./highlight-bet-option.module.scss";
 
 export const HighlightBetOption = ({ choice }: { choice: string }) => {

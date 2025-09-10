@@ -1,7 +1,7 @@
 import { Component, ReactNode, memo } from "react";
-import { Round } from "../../../components/game-base/type";
-import { SwitchableScoreboard } from "../../../components/game-components/round-history/scoreboard";
-import { BigRoadElement } from "../../../components/game-components/round-history/scoreboard/elements";
+import { Round } from '@shared/components/game-base/type';
+import { SwitchableScoreboard } from '@shared/components/game-components/round-history/scoreboard';
+import { BigRoadElement } from '@shared/components/game-components/round-history/scoreboard/elements';
 import { SeDieBigRoadConverter, SeDieBigRoadElement } from "./scoreboard-elements";
 import Styles from "./scoreboard.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";

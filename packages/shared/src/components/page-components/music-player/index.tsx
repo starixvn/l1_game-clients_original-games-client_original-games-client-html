@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import useSound from "use-sound";
-import { formatVolume } from "../../../_shared/helpers";
-import { useSettingContext } from "../../../_shared/react-contexts";
-import { getRandomSong } from "../../../_shared/react-hooks";
+import { formatVolume } from '@shared/merged/_shared/helpers';
+import { useSettingContext } from '@shared/merged/_shared/react-contexts';
+import { getRandomSong } from '@shared/merged/_shared/react-hooks';
 import { controlMusic } from "./music-player-utility";
-import { addMultipleEventListeners } from "../../../_shared/helpers/event-listener-helper";
+import { addMultipleEventListeners } from '@shared/merged/_shared/helpers/event-listener-helper';
 
 const MusicPlayer = () => {
     const [isUserGesture, setIsUserGesture] = useState(null);

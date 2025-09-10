@@ -1,14 +1,14 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
 
-import { buildVersion } from "../../../_shared/constants";
-import { buildGameGuideUrl } from "../../../_shared/helpers";
-import { usePlayerContext } from "../../../_shared/react-contexts";
-import { useGameStateContext } from "../../../_shared/react-contexts/game-state-context/game-state-context";
-import { useCommonTranslate, useAppTheme } from "../../../_shared/react-hooks";
-import { tolgee } from "../../../_shared/tolgee";
+import { buildVersion } from '@shared/merged/_shared/constants';
+import { buildGameGuideUrl } from '@shared/merged/_shared/helpers';
+import { usePlayerContext } from '@shared/merged/_shared/react-contexts';
+import { useGameStateContext } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context';
+import { useCommonTranslate, useAppTheme } from '@shared/merged/_shared/react-hooks';
+import { tolgee } from '@shared/merged/_shared/tolgee';
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
-import usePopupStore from "../../../_shared/stores/popup-store/popup-store";
+import usePopupStore from '@shared/merged/_shared/stores/popup-store/popup-store';
 import { themeGuide } from "./constants";
 
 const GameGuideModal: FC = () => {
