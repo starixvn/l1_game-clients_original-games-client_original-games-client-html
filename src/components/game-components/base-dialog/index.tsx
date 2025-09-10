@@ -19,6 +19,7 @@ export type Props = {
     isBlockUI?: boolean;
     isOverlap?: boolean;
     extendedClassName?: string;
+    isBlockScroll?: boolean;
 };
 
 const getCustomStyle = ({ betContainerPosition }: { betContainerPosition?: number }) => {
@@ -45,11 +46,12 @@ const BaseDialog: React.FC<Props> = ({
     isBlockUI,
     isOverlap = false,
     extendedClassName = "",
+    isBlockScroll = true,
 }: Props) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const clickSound = useClickSound();
     const isIpad = useMemo(() => /iPad/i.test(navigator.userAgent), []);
-    const { addModal} = useModalStack();
+    const { addModal } = useModalStack();
 
     useEffect(() => {
         if (isOpen) {
@@ -58,6 +60,9 @@ const BaseDialog: React.FC<Props> = ({
     }, [isOpen]);
 
     useEffect(() => {
+        if (!isBlockScroll) {
+            return undefined;
+        }
         const className = "overflow-hidden";
         if (enableBackdrop) {
             document.getElementById("dashboard")?.classList.add(className);
@@ -72,7 +77,7 @@ const BaseDialog: React.FC<Props> = ({
                 isMobileOnly && document.documentElement.classList.remove(className);
             }
         };
-    }, [enableBackdrop, isOverlap]);
+    }, [enableBackdrop, isOverlap, isBlockScroll]);
 
     const handleClickOutside = (event: any) => {
         clickSound();
@@ -87,7 +92,7 @@ const BaseDialog: React.FC<Props> = ({
 
             <div
                 style={{
-                    ...getCustomStyle({ betContainerPosition })
+                    ...getCustomStyle({ betContainerPosition }),
                 }}
                 ref={wrapperRef}
                 onClick={(e) => e.stopPropagation()}

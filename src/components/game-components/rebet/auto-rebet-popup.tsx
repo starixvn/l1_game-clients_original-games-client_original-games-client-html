@@ -45,6 +45,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                 type={ModalType.Rebet}
                 onCloseModal={handleClose}
                 enableBackdrop={true}
+                isBlockScroll={false}
                 extendedClassName="w-full left-0 p-0 -bottom-0 md:w-[425px] md:left-0 md:right-0 md:mx-auto"
             >
                 <div className="p-3 py-6 md:px-5">
