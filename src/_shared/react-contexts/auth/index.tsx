@@ -8,6 +8,9 @@ export type PlayerContextModel = {
     locale?: string;
     setBalance?: (balance: number) => void;
     signOut?: () => void;
+    setSession?: (session: SSOResponse) => void;
+    setAuthorizeInfo?: (authorizeInfo: AuthorizeResponse) => void;
+    setLocale?: (locale: string) => void;
     fractionalOddsFormat?: boolean;
     enableQuickBet: boolean
 };

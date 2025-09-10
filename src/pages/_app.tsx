@@ -11,19 +11,41 @@ import { buildVersion, Themes } from "../_shared/constants";
 import { tolgee } from "../_shared/tolgee";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "../components/page-components/google-analytics";
+import { URLContext, initialURLContextData } from "../_shared/react-contexts/url-context";
+import { PlayerContextProvider, PlayerContext } from "../_shared/react-contexts/auth";
+import { useState } from "react";
 
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {
+    const [playerContext, setPlayerContext] = useState(() => ({
+        locale: "en",
+        enableQuickBet: true,
+    }));
+
+    const updatePlayerContext = (updates: Partial<typeof playerContext>) => {
+        setPlayerContext(prev => ({ ...prev, ...updates }));
+    };
 
     return (
-        <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="data-theme">
-            {/* <ThemeToggle /> */}
-            <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
-                <AppTittle />
-                <Component {...pageProps} />
-                <GoogleAnalytic />
-            </TolgeeProvider>
-        </ThemeProvider>
+        <URLContext.Provider value={initialURLContextData}>
+            <PlayerContext.Provider value={{
+                ...playerContext,
+                setBalance: (balance: number) => updatePlayerContext({ balance }),
+                signOut: () => updatePlayerContext({ session: undefined, authorizeInfo: undefined }),
+                setSession: (session: any) => updatePlayerContext({ session }),
+                setAuthorizeInfo: (authorizeInfo: any) => updatePlayerContext({ authorizeInfo }),
+                setLocale: (locale: string) => updatePlayerContext({ locale }),
+            }}>
+                <ThemeProvider defaultTheme={Themes.dark} enableSystem={false} attribute="data-theme">
+                    {/* <ThemeToggle /> */}
+                    <TolgeeProvider tolgee={tolgee} fallback={<LoadingSpinner />}>
+                        <AppTittle />
+                        <Component {...pageProps} />
+                        <GoogleAnalytic />
+                    </TolgeeProvider>
+                </ThemeProvider>
+            </PlayerContext.Provider>
+        </URLContext.Provider>
     );
 };
 

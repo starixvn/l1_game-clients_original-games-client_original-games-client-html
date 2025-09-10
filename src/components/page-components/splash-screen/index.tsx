@@ -37,7 +37,7 @@ export const customStartup = async (
     authorizeResponse: any
 ): Promise<void> => {
     const isTimeout = !session || (!session?.isUM && !session?.isAuthenticated);
-    player.locale = locale;
+    player.setLocale?.(locale);
     if (isTimeout) {
         router.push("timeout");
 
@@ -46,8 +46,8 @@ export const customStartup = async (
 
     if (session?.isAuthenticated) {
         setSentryUser(session);
-        player.session = session;
-        player.authorizeInfo = authorizeResponse;
+        player.setSession?.(session);
+        player.setAuthorizeInfo?.(authorizeResponse);
         AnalyticsHelper.setUser(session.username);
     }
 };
@@ -109,7 +109,7 @@ const SplashScreen: React.FC = () => {
 
     const handleUM = (session: SSOResponse) => {
         StorageHelper.set(localStorageKeys.umInfo, session.umInfo);
-        player.session = session;
+        player.setSession?.(session);
         setIsUm(true);
     };
 
