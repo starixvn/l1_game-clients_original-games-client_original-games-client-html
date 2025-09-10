@@ -254,7 +254,7 @@ export const BetHistoryTable = () => {
     return (
         <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2 h-full border border-primary-border`}>
             {/* Sticky Header Table */}
-            <Table className="bet-history-table sticky top-[50px]">
+            <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
                 <TableHeader>
                     {renderBetHistoryHeader(headerColumns)}
                 </TableHeader>
