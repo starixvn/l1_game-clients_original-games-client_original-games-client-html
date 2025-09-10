@@ -6,7 +6,6 @@ import { useGameStore } from "../../../_shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "../../../_shared/stores/betting-store/betting-store";
 import { useClickOutside } from "../../../_shared/react-hooks/use-click-outside";
-import { useCommonTranslate } from "../../../_shared/react-hooks";
 
 const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -27,7 +26,6 @@ const ChipControlPanel: React.FC = () => {
     const { chipSettings } = useSettingContext();
     const sliderRef = useRef<HTMLDivElement>(null);
     const chipRef = useRef<HTMLDivElement>(null);
-    const { t } = useCommonTranslate();
 
     useClickOutside([sliderRef, chipRef], () => {
         if (isShowSlider) {
