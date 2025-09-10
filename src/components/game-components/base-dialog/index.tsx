@@ -97,7 +97,7 @@ const BaseDialog: React.FC<Props> = ({
                     type === ModalType.Rebet && "fixed bg-popup-gradient md:absolute md:right-[50%] md:bottom-0",
                     type === ModalType.Center && "bg-transparent border-none shadow-none p-0 rounded-none fixed inset-0 top-0",
                     type === ModalType.Message && "rounded-md p-0 left-1 right-1 shadow-none",
-                    type === ModalType.Toast && "h-full",
+                    type === ModalType.Toast && "left-1/2 -translate-x-1/2",
                     isIpad && "pb-[69px]",
                     isOpen ? "block animate-showBottom" : "hidden animate-hideBottom",
                     extendedClassName
