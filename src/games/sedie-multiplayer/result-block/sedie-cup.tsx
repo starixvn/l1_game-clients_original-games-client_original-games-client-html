@@ -13,6 +13,8 @@ const OPEN_DURATION = 1500; // Open duration in milliseconds
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
+const operatorName = "nova88";
+
 const SedieCup = () => {
     const { durations } = useGameContext();
     const { roundState, settlementResult, playResultAnimation } = useGameStateContext();
@@ -86,7 +88,7 @@ const SedieCup = () => {
 
                     {/* Inside */}
                     <CachedImage
-                        src="/static/images/sedie-multiplayer/result/box-inside.webp"
+                        src={`/static/images/sedie-multiplayer/result/box-inside-${operatorName}.webp`}
                         alt="Box Bottom"
                         width={168}
                         height={91}

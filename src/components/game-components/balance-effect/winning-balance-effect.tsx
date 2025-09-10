@@ -97,10 +97,10 @@ const WinningBalanceEffect: FC = () => {
             {showContent && (
                 <motion.div
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 0.93, opacity: 1 }}
                     transition={{
                         duration: 1,
-                        delay: 1.3,
+                        delay: 1.2,
                         ease: [0, 1.7, 0.2, 1],
                     }}
                     className=" inset-0 z-[100] absolute justify-items-center"
