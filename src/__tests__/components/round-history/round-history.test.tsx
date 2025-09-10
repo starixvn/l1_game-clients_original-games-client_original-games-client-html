@@ -37,6 +37,13 @@ jest.mock("../../../_shared/react-hooks", () => ({
     useClickSound: jest.fn(() => jest.fn()),
 }));
 
+// Mock the translator hook
+jest.mock("../../../_shared/react-hooks/use-translator", () => ({
+    useCommonTranslate: jest.fn(() => ({
+        t: jest.fn((key: string) => key),
+    })),
+}));
+
 describe("RoundHistory Component", () => {
     // Arrange: Common test data
     const mockRoundHistory = [
