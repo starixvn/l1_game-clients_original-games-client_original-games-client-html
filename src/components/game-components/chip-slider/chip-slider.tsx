@@ -12,9 +12,10 @@ const slidesToShow = 5;
 
 export const ChipSlider: React.FC<{
     chipValues: number[];
-    onSelectChip?: (chipValue: number) => void;
     chipSettings: ChipInfo[];
-}> = ({ chipValues, onSelectChip, chipSettings }) => {
+    onSelectChip?: (chipValue: number) => void;
+    isHideIcons?: boolean;
+}> = ({ chipValues, onSelectChip, chipSettings, isHideIcons = false }) => {
     const [selectedChip, setSelectedChip] = useBettingStore(useShallow((state) => [state.selectedChip, state.actions.setSelectedChip]));
     const [enabledPrevBtn, setEnabledPrevBtn] = useState(true);
     const [enabledNextBtn, setEnabledNextBtn] = useState(true);
@@ -102,14 +103,16 @@ export const ChipSlider: React.FC<{
 
     return (
         <>
-            <div
-                id="icon-chip-slider-pre"
-                className={`${Styles["icon-prev"]} ${!enabledPrevBtn && Styles["disabled"]}`}
-                onClick={onClickPrev}
-            >
-                <i className="icon-back text-xl"></i>
-            </div>
-            <div className="absolute w-[270px] md:w-[220px]">
+            {!isHideIcons && (
+                <div
+                    id="icon-chip-slider-pre"
+                    className={`${Styles["icon-prev"]} ${!enabledPrevBtn && Styles["disabled"]}`}
+                    onClick={onClickPrev}
+                >
+                    <i className="icon-back text-xl"></i>
+                </div>
+            )}
+            <div className="absolute w-[270px] md:w-full">
                 {chipValues?.length > 0 && (
                     <Slider
                         ref={(c) => {
@@ -129,13 +132,15 @@ export const ChipSlider: React.FC<{
                     </Slider>
                 )}
             </div>
-            <div
-                id="icon-chip-slider-next"
-                className={`${Styles["icon-next"]} ${!enabledNextBtn && Styles["disabled"]}`}
-                onClick={onClickNext}
-            >
-                <i className="icon-back text-xl rotate-180"></i>
-            </div>
+            {!isHideIcons && (
+                <div
+                    id="icon-chip-slider-next"
+                    className={`${Styles["icon-next"]} ${!enabledNextBtn && Styles["disabled"]}`}
+                    onClick={onClickNext}
+                >
+                    <i className="icon-back text-xl rotate-180"></i>
+                </div>
+            )}
         </>
     );
 };

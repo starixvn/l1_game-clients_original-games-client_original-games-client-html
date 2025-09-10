@@ -13,10 +13,10 @@
     outline: none;
 
     @media (width >= 48rem) {
-        grid-template-columns: 36px;
-        grid-template-rows: 36px;
-        width: 36px;
-        height: 36px;
+        grid-template-columns: 48px;
+        grid-template-rows: 48px;
+        width: 48px;
+        height: 48px;
     }
 
     .chip {
@@ -36,7 +36,7 @@
         z-index: 1;
         margin-top: 1px;
         @media (width >= 48rem) {
-            font-size: 16px;
+            font-size: 1.25rem;
         }
     }
 }

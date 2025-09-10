@@ -59,7 +59,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame() {
         return (
-            <div className={`flex flex-col items-center justify-center relative md:min-h-[28rem]`}>
+            <div className={`flex flex-col items-center justify-center relative`}>
                 <Background gameId={this.props.id} />
                 {this.renderRoundHistory()}
                 {this.renderCountdownTimer()}
@@ -87,28 +87,16 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBetControl() {
         return (
-            <div className="relative md:bg-primary-bg md:rounded-t-xl">
-                <div className="grid grid-cols-12 gap-0 items-center">
-                    <div className="col-span-12 md:col-span-6">
-                        <div className="flex gap-2 justify-center items-center">
-                            <div className="md:absolute md:right-[10px] md:top-[-230px]">
-                                <DoubleBetIcon />
-                            </div>
-                            {this.renderChipControlPanel()}
-                            <div className="md:absolute md:right-[10px] md:top-[-164px] md:w-full md:h-full">
-                                <div className="md:flex md:justify-end">
-                                    <AutoRebetIcon />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                        <div className="p-3 rounded-t-xl bg-primary-bg">
-                            <OwnTotalBet />
-                        </div>
-                    </div>
+            <>
+                <div className="flex gap-2 justify-center items-center">
+                    <DoubleBetIcon />
+                    {this.renderChipControlPanel()}
+                    <AutoRebetIcon />
                 </div>
-            </div>
+                <div className="p-3 bg-primary-bg">
+                    <OwnTotalBet />
+                </div>
+            </>
         );
     }
 

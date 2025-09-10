@@ -1,9 +1,9 @@
-import React, { useState, useCallback, memo } from "react";
+import React, { useState, useCallback, memo, useRef } from "react";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { cn } from "../../../_shared/utils/merge-tailwind-util";
 import styles from "./auto-rebet-popup.module.scss";
-import { useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
+import { useClickOutside, useClickSound, useCommonTranslate } from "../../../_shared/react-hooks";
 
 interface AutoRebetPopupProps {
     onClose: () => void;
@@ -16,7 +16,8 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     const [rounds, setRounds] = useState<number>(1);
     const { t } = useCommonTranslate();
     const clickSound = useClickSound();
-
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    useClickOutside([wrapperRef], onClose);
     const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         setRounds(value);
@@ -39,7 +40,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     }, [onClose]);
 
     return (
-        <div className="md:absolute md:w-full md:top-1/2 md:-right-[10px] md:-translate-y-1/2 md:z-[var(--popup-index)]">
+        <div ref={wrapperRef} className="md:absolute md:w-full md:z-[var(--popup-index)]">
             <BaseDialog
                 type={ModalType.Rebet}
                 onCloseModal={handleClose}

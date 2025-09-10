@@ -81,11 +81,11 @@ const ChipControlPanel: React.FC = () => {
     };
 
     return (
-        <div className={`relative gap-2 md:w-full md:mx-4`}>
-            {/* Mobile */}
-            <div className={`flex items-center gap-2 md:hidden ${isAutoRebetActive ? "opacity-50" : ""}`}>
+        <div className={`relative gap-2 md:mx-4`}>
+            <div className={`flex items-center gap-2 ${isAutoRebetActive ? "opacity-50" : ""}`}>
                 <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
-                <div ref={chipRef}>
+                {/* Mobile */}
+                <div ref={chipRef} className="md:hidden">
                     <Chip
                         key={+selectedChip}
                         value={+selectedChip}
@@ -96,9 +96,13 @@ const ChipControlPanel: React.FC = () => {
                         fontSize={20}
                     />
                 </div>
+                {/* Desktop */}
+                <div className="hidden relative md:flex justify-center items-center md:w-[280px] md:h-[76px]">
+                    {isAutoRebetActive && <div className="absolute left-0 top-0 w-full h-full z-[var(--chip-slider-index)]" />}
+                    <ChipSlider chipSettings={chipSettings} chipValues={chipValues} isHideIcons={true} />
+                </div>
                 <IconNext isEnabled={currentIndex < chipValues.length - 1 && !isAutoRebetActive} onClick={onClickNext} />
             </div>
-
             <div className={`flex justify-center items-center md:hidden ${isAutoRebetActive ? "opacity-50" : ""}`}>
                 {isShowSlider && (
                     <div
@@ -108,14 +112,6 @@ const ChipControlPanel: React.FC = () => {
                         <ChipSlider chipSettings={chipSettings} chipValues={chipValues} onSelectChip={onSelectChip} />
                     </div>
                 )}
-            </div>
-            {/* Desktop */}
-            <div className="hidden md:block md:mb-2 font-semibold text-sm">{t("chip_value")}</div>
-            <div className="hidden relative md:flex justify-center items-center w-full h-[46px] rounded-xl bg-black/60 border border-[var(--color-input-border)]">
-                {isAutoRebetActive && (
-                    <div className="absolute left-0 top-0 w-full h-full bg-black/30 rounded-xl z-[var(--chip-slider-index)]" />
-                )}
-                <ChipSlider chipSettings={chipSettings} chipValues={chipValues} />
             </div>
         </div>
     );
