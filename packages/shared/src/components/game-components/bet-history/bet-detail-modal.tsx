@@ -1,7 +1,7 @@
 import { FC, ReactNode, useMemo, useCallback } from "react";
 import ModalContainer from "../modal-container";
-import { useCommonTranslate } from '@shared/merged/_shared/react-hooks';
-import usePopupStore from '@shared/merged/_shared/stores/popup-store/popup-store';
+import { useCommonTranslate } from '@shared/react-hooks';
+import usePopupStore from '@shared/stores/popup-store/popup-store';
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
 

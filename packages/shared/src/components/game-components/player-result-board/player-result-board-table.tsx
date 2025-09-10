@@ -1,6 +1,6 @@
 import * as React from "react";
-import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
-import { useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { cn } from '@shared/utils/merge-tailwind-util';
+import { useCommonTranslate } from '@shared/react-hooks';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../table";
 
 interface PlayerData {

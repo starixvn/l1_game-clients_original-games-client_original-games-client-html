@@ -1,10 +1,10 @@
 import { memo, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useAutoRebet, useBalance, useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { useAutoRebet, useBalance, useClickSound, useCommonTranslate } from '@shared/react-hooks';
 import AutoRebetPopup from "./auto-rebet-popup";
-import useBettingStore from '@shared/merged/_shared/stores/betting-store/betting-store';
-import { broadcastNotice, getNotice } from '@shared/merged/_shared/helpers';
-import { NoticeErrorCode } from '@shared/merged/_shared/constants/error-code-dictionary';
+import useBettingStore from '@shared/stores/betting-store/betting-store';
+import { broadcastNotice, getNotice } from '@shared/helpers';
+import { NoticeErrorCode } from '@shared/constants/error-code-dictionary';
 const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
 
 const AutoRebetIcon = () => {

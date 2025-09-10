@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import NextErrorComponent from "next/error";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { buildVersion } from "../_shared/constants";
-import { useCommonTranslate } from "../_shared/react-hooks";
+import { buildVersion } from '@shared/constants';
+import { useCommonTranslate } from '@shared/react-hooks';
 
 const MyError = ({ statusCode, hasGetInitialPropsRun, err }) => {
     if (!hasGetInitialPropsRun && err) {

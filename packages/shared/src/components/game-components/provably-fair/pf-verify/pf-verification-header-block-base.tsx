@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Styles from "../provably-fair.module.scss";
 import EditableTextInput from "../editable-text-input";
-import { useCommonTranslate, useSNTranslate } from "../../../../_shared/react-hooks";
+import { useCommonTranslate, useSNTranslate } from '@shared/react-hooks';
 import CopyableTextInput from "../copyable-text-input";
 import { Section } from "../pf-form-components";
 

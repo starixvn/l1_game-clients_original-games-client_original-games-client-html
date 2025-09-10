@@ -1,9 +1,9 @@
 import { memo } from "react";
 
-import { numberWithCommas } from '@shared/merged/_shared/helpers';
+import { numberWithCommas } from '@shared/helpers';
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import useGameStore from '@shared/stores/game-store/game-store';
 
 export const OwnBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, className }) => {
     const ownBet = useGameStore((state) => state.ownBets?.[choice] ?? 0);

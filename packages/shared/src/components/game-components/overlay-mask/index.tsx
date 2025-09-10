@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TimeOutConstants } from '@shared/merged/_shared/constants';
+import { TimeOutConstants } from '@shared/constants';
 
 export const OverlayMask = ({ removeOverlay = false, timeOut = TimeOutConstants.OverlayMask }) => {
     const [isClearOverlayMask, setIsClearOverlayMask] = useState(false);

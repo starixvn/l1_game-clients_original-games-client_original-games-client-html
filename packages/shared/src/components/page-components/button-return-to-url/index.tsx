@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { URLContext } from '@shared/merged/_shared/react-contexts';
-import { useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { URLContext } from '@shared/react-contexts';
+import { useCommonTranslate } from '@shared/react-hooks';
 import Styles from "./button-back.module.scss";
 
 const ButtonReturnToURL: React.FC = () => {

@@ -1,6 +1,6 @@
-import MessageTransmitter from '@shared/merged/_shared/helpers/message-transmitter';
-import { MessageTransmitterType } from '@shared/merged/_shared/helpers/message-transmitter/type';
-import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
+import MessageTransmitter from '@shared/helpers/message-transmitter';
+import { MessageTransmitterType } from '@shared/helpers/message-transmitter/type';
+import { GameEventActionType } from '@shared/react-contexts/game-state-context/game-event-action';
 
 export const messageEventType = {
     GAME_CONFIG: "gameConfigs",

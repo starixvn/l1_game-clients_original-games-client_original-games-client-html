@@ -1,10 +1,10 @@
 import { FC, useState, useEffect, useCallback, useRef, useMemo } from "react";
 
-import { numberWithCommas } from '@shared/merged/_shared/helpers';
-import { useGameStore } from '@shared/merged/_shared/stores/game-store/game-store';
+import { numberWithCommas } from '@shared/helpers';
+import { useGameStore } from '@shared/stores/game-store/game-store';
 import ReactCanvasConfetti from "react-canvas-confetti";
 import { motion } from "motion/react";
-import { useGameStateContext } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context';
+import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
 
 const WinningBalanceEffect: FC = () => {
     const { betWin, showResultInfo } = useGameStateContext();

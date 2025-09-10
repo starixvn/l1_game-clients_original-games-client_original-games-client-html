@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { DrawInfo } from '@shared/merged/components/game-base/type';
+import { DrawInfo } from '@shared/components/game-base/type';
 
 export interface BetDetailData {
     drawInfo: DrawInfo;

@@ -1,5 +1,5 @@
 
-import { isKickOutError, broadcastNotice, createNoticeFromErrorCode } from '@shared/merged/_shared/helpers';
+import { isKickOutError, broadcastNotice, createNoticeFromErrorCode } from '@shared/helpers';
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 
 export type GameErrorHandlerProps = {

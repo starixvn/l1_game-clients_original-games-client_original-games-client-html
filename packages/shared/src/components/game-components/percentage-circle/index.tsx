@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useLowPerformanceDevice } from '@shared/merged/_shared/react-hooks';
+import { useLowPerformanceDevice } from '@shared/react-hooks';
 import Styles from "./percentage-circle.module.scss";
 
 const cleanPercentage = (percentage: number) => {

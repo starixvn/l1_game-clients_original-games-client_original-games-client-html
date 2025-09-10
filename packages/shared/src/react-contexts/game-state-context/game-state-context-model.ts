@@ -1,4 +1,4 @@
-import { DrawInfo, GameConfigs, IUserStakeLevel, Round, RoundState } from '@shared/merged/components/game-base/type';
+import { DrawInfo, GameConfigs, IUserStakeLevel, Round, RoundState } from '@shared/components/game-base/type';
 
 export interface GameStateContextModel {
     isConnect: boolean;

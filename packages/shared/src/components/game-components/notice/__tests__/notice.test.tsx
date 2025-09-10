@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { NoticeDialog } from "../index";
-import { useNoticeStore } from "../../../../_shared/stores/notice-store/notice-store";
+import { useNoticeStore } from '@shared/stores/notice-store/notice-store';
 import { NoticeModel } from "../../../../components/game-base/type";
 
 // Mock dependencies

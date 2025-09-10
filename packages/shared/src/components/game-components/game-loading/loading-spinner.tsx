@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Styles from "./styles.module.scss";
-import { TimeOutConstants } from '@shared/merged/_shared/constants';
+import { TimeOutConstants } from '@shared/constants';
 
 export const LoadingSpinner = ({ removeSpinner = false, timeOut = TimeOutConstants.OverlayMask }) => {
     const [isClearSpinner, setIsClearSpinner] = useState(false);

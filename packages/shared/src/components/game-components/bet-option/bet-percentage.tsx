@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import useGameStore from '@shared/stores/game-store/game-store';
 import { RoundState } from "../../game-base/type";
 import PercentageCircle from "../percentage-circle";
 import { BaseProps } from "./types";

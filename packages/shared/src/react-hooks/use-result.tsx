@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import { useEffect, useState } from "react";
-import { Round, RoundState } from '@shared/merged/components/game-base/type';
+import { Round, RoundState } from '@shared/components/game-base/type';
 
 interface UseResultProps<R> {
     result: R;

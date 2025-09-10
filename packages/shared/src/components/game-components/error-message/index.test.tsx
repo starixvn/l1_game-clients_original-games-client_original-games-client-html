@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import React from "react";
 import { ConnectFailedMessage } from ".";
 import "../../../_shared/helpers/string-helper";
-import { updateURLContext } from '@shared/merged/_shared/react-contexts';
+import { updateURLContext } from '@shared/react-contexts';
 import BaseDialog from "../base-dialog";
 import { ConnectFailedReasonKey } from "./type";
 

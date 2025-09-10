@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useGameActionContext } from '@shared/merged/_shared/react-contexts';
+import { useGameActionContext } from '@shared/react-contexts';
 import { RoundState } from "../../game-base/type";
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
-import useBettingStore from '@shared/merged/_shared/stores/betting-store/betting-store';
+import useGameStore from '@shared/stores/game-store/game-store';
+import useBettingStore from '@shared/stores/betting-store/betting-store';
 import { useShallow } from "zustand/shallow";
 
 interface RippleButtonProps {

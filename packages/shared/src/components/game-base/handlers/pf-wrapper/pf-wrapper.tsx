@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { randomNumberSeries } from "../../../../_shared/helpers";
-import { GameIds } from "../../../../_shared/constants";
+import { randomNumberSeries } from "@shared/helpers";
+import { GameIds } from "@shared/constants";
 import { GameMessageHandler, messageEventType } from "../game-message-handler";
 import { Socket } from "socket.io-client";
-import { usePFStore } from "../../../../_shared/stores/pf-store/pf-store";
+import { usePFStore } from "@shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
-import { useClientSeedPF } from "../../../../_shared/react-hooks/use-client-seed-pf";
+import { useClientSeedPF } from "@shared/react-hooks/use-client-seed-pf";
 
 export type PFWrapperProps = {
     socket: Socket;

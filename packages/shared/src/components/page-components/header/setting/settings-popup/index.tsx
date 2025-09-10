@@ -1,5 +1,5 @@
-import { SettingEventActionType, useSettingContext, useSettingDispatch } from "../../../../../_shared/react-contexts";
-import { useClickSound, useTranslator } from "../../../../../_shared/react-hooks";
+import { SettingEventActionType, useSettingContext, useSettingDispatch } from '@shared/react-contexts';
+import { useClickSound, useTranslator } from '@shared/react-hooks';
 import BaseDialog from "../../../../game-components/base-dialog";
 import { ModalType } from "../../../../game-components/base-dialog/type";
 import MusicSetting from "./bgm-setting";

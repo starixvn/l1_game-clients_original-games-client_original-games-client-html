@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { usePlaceBetContext, usePlaceBetDispatch } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context";
+import { usePlaceBetContext, usePlaceBetDispatch } from '@shared/react-contexts/game-state-context/place-bet-context/place-bet-context';
 import { PlaceBetHandler } from "..";
 
 export type PlaceBetWrapperProps = {

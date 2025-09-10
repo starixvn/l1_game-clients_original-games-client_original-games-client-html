@@ -1,7 +1,7 @@
 import { useTranslate } from "@tolgee/react";
 import { createContext, useContext, useReducer } from "react";
 
-import { RoundState } from '@shared/merged/components/game-base/type';
+import { RoundState } from '@shared/components/game-base/type';
 import { LanguageLocaleMapper } from "../../constants";
 import { tolgee } from "../../tolgee";
 import { GameEventAction, GameEventActionType } from "./game-event-action";

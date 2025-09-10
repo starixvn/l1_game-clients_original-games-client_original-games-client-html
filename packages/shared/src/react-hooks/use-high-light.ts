@@ -1,4 +1,4 @@
-import { RoundState } from '@shared/merged/components/game-base/type';
+import { RoundState } from '@shared/components/game-base/type';
 
 export function isHighLightWinningResult({ betChoice, roundState, settlementResult, showResultInfo }) {
     return roundState === RoundState.DisplayResult && showResultInfo && settlementResult?.[betChoice];

@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
+import { cn } from '@shared/utils/merge-tailwind-util';
 
 export const Tooltip: React.FC<{
     message: string;

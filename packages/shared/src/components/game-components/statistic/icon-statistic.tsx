@@ -1,4 +1,4 @@
-import { useCommonTranslate } from '@shared/merged/_shared/react-hooks/use-translator';
+import { useCommonTranslate } from '@shared/react-hooks/use-translator';
 import Tooltip from "../tooltip";
 import Styles from "./icon-statistic.module.scss";
 

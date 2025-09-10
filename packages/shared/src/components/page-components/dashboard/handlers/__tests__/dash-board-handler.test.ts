@@ -1,7 +1,7 @@
 import { DashboardHandler } from "../dash-board-handler";
-import { getAppSettings } from "../../../../../_shared/app-settings";
-import { getOfferGamesIds, StorageHelper } from "../../../../../_shared/helpers";
-import { loadURLContext } from "../../../../../_shared/react-contexts";
+import { getAppSettings } from '@shared/app-settings';
+import { getOfferGamesIds, StorageHelper } from '@shared/helpers';
+import { loadURLContext } from '@shared/react-contexts';
 import { TolgeeInstance } from "@tolgee/core";
 import { SSOResponse, AuthorizeResponse } from "sc-user-service-client/dist/auth";
 

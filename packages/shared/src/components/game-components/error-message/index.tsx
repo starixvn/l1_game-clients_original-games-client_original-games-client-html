@@ -1,14 +1,14 @@
 import React, { useContext } from "react";
-import { useTranslator } from '@shared/merged/_shared/react-hooks/use-translator';
-import { ResourceTypes } from '@shared/merged/_shared/resources';
+import { useTranslator } from '@shared/react-hooks/use-translator';
+import { ResourceTypes } from '@shared/resources';
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { ConnectFailedReasonKey } from "./type";
-import { URLContext, updateURLContext } from '@shared/merged/_shared/react-contexts';
-import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
+import { URLContext, updateURLContext } from '@shared/react-contexts';
+import { cn } from '@shared/utils/merge-tailwind-util';
 import PopupButton from "../popup-button";
 import Image from "next/image";
-import { useClickSound } from '@shared/merged/_shared/react-hooks';
+import { useClickSound } from '@shared/react-hooks';
 
 export const ConnectFailedMessage: React.FC<{
     tolgeeNamespace: string;

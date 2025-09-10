@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { numberRoundDownWithCommas } from "../../../../_shared/helpers/number-helper";
-import { usePlayerContext } from "../../../../_shared/react-contexts";
-import { useGlobalEventsStore } from "../../../../_shared/stores/global-events-store/global-events-store";
+import { numberRoundDownWithCommas } from '@shared/helpers/number-helper';
+import { usePlayerContext } from '@shared/react-contexts';
+import { useGlobalEventsStore } from '@shared/stores/global-events-store/global-events-store';
 
 export const UserInfo: React.FC<{
     customizeClass?: string;

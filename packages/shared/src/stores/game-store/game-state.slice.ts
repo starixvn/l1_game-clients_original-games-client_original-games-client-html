@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { GameConfigs, GameDurations, IUserStakeLevel, PlayerResultBoard, Round, RoundState } from '@shared/merged/components/game-base/type';
+import { GameConfigs, GameDurations, IUserStakeLevel, PlayerResultBoard, Round, RoundState } from '@shared/components/game-base/type';
 import { LanguageLocaleMapper } from "../../constants";
 import { tolgee } from "../../tolgee";
 

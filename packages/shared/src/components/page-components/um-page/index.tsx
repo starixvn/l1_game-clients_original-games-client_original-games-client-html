@@ -2,10 +2,10 @@ import { Markup } from "interweave";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { UMInfo } from "sc-user-service-client/dist/auth";
-import { StorageHelper, localStorageKeys } from '@shared/merged/_shared/helpers/storage-helper';
-import { convertToGMT8, formatDate } from '@shared/merged/_shared/helpers/time-helper';
-import { useTranslator } from '@shared/merged/_shared/react-hooks/use-translator';
-import { ResourceTypes } from '@shared/merged/_shared/resources';
+import { StorageHelper, localStorageKeys } from '@shared/helpers/storage-helper';
+import { convertToGMT8, formatDate } from '@shared/helpers/time-helper';
+import { useTranslator } from '@shared/react-hooks/use-translator';
+import { ResourceTypes } from '@shared/resources';
 import ButtonReturnToURL from "../button-return-to-url";
 import BackgroundComet from "../background-error";
 

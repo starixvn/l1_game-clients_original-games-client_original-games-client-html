@@ -1,4 +1,4 @@
-import { DrawInfo, GameConfigs, GameDurations, PlayerResultBoard, RoundState } from '@shared/merged/components/game-base/type';
+import { DrawInfo, GameConfigs, GameDurations, PlayerResultBoard, RoundState } from '@shared/components/game-base/type';
 
 export enum GameEventActionType {
     CONNECT = "CONNECT",

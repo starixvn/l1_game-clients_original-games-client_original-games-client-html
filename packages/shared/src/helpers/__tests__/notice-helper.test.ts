@@ -1,6 +1,6 @@
 import { GetLocalizedErrorMessage, broadcastNotice, createNoticeFromErrorCode } from "../notice-helper";
 import { useNoticeStore } from "../../stores/notice-store/notice-store";
-import { NoticeModel } from '@shared/merged/components/game-base/type';
+import { NoticeModel } from '@shared/components/game-base/type';
 
 // Mock the notice store
 jest.mock("../../stores/notice-store/notice-store", () => ({

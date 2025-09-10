@@ -1,9 +1,9 @@
 import { FC, ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useCommonTranslate } from "../../../../_shared/react-hooks";
-import usePFStore from "../../../../_shared/stores/pf-store/pf-store";
+import { useCommonTranslate } from '@shared/react-hooks';
+import usePFStore from '@shared/stores/pf-store/pf-store';
 import { useShallow } from "zustand/shallow";
-import usePopupStore from "../../../../_shared/stores/popup-store/popup-store";
+import usePopupStore from '@shared/stores/popup-store/popup-store';
 import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
 

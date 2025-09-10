@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { NoticeModel } from '@shared/merged/components/game-base/type';
+import { NoticeModel } from '@shared/components/game-base/type';
 
 export interface NoticeSlice {
     // State

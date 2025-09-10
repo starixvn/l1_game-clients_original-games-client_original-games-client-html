@@ -1,6 +1,6 @@
 import { getProviderInstance } from "@tolgee/react";
 import { ComponentClass, ReactNode, createElement } from "react";
-import { parseTranslationKey } from '@shared/merged/_shared/react-hooks';
+import { parseTranslationKey } from '@shared/react-hooks';
 
 export type TranslatorProps = {
     t?: (key: string) => string;

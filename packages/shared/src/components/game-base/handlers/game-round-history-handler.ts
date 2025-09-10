@@ -1,6 +1,6 @@
-import { GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
-import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import { GameEventActionType } from '@shared/react-contexts/game-state-context/game-event-action';
+import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
+import useGameStore from '@shared/stores/game-store/game-store';
 import { RoundState } from "../type";
 
 export type GameRoundHistorydHandlerProps = {

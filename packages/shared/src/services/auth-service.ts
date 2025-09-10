@@ -1,6 +1,6 @@
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 
-import { AnalyticsHelper, localStorageKeys, StorageHelper } from '@shared/merged/_shared/helpers';
+import { AnalyticsHelper, localStorageKeys, StorageHelper } from '@shared/helpers';
 import { UserClientCommunication } from "./user-client-communication";
 
 const authService = UserClientCommunication?.getUserClientInstance()?.auth;

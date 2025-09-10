@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { useClickSound, useSelectChipSound } from '@shared/merged/_shared/react-hooks';
+import { useClickSound, useSelectChipSound } from '@shared/react-hooks';
 import { Chip } from "./chip";
 import Styles from "./chip-slider.module.scss";
 import { ChipInfo } from "sc-user-service-client/dist/setting";
 import { useShallow } from "zustand/shallow";
-import useBettingStore from '@shared/merged/_shared/stores/betting-store/betting-store';
+import useBettingStore from '@shared/stores/betting-store/betting-store';
 
 const SlidingTimeInMillisecond = 100;
 const slidesToShow = 5;

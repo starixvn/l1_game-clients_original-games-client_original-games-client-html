@@ -1,5 +1,5 @@
 import ErrorCodeDictionary from "../constants/error-code-dictionary";
-import { NoticeModel } from '@shared/merged/components/game-base/type';
+import { NoticeModel } from '@shared/components/game-base/type';
 import { useNoticeStore } from "../stores/notice-store/notice-store";
 
 export interface INotice {

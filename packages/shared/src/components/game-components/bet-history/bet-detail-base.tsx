@@ -1,11 +1,11 @@
 import { FC, ReactNode, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { numberWithCommas, separateDateTime, sortedCollectionByTime } from '@shared/merged/_shared/helpers';
-import { useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
-import { useBetDetailStore } from '@shared/merged/_shared/stores/bet-detail-store';
+import { numberWithCommas, separateDateTime, sortedCollectionByTime } from '@shared/helpers';
+import { useClickSound, useCommonTranslate } from '@shared/react-hooks';
+import { useBetDetailStore } from '@shared/stores/bet-detail-store';
 import { DrawInfo } from "../../game-base/type";
 import { BetDetailTable } from "./bet-detail-table";
-import usePopupStore from '@shared/merged/_shared/stores/popup-store/popup-store';
+import usePopupStore from '@shared/stores/popup-store/popup-store';
 import { calculateTotalStake, calculateTotalWinFromTable, displayWinAmount } from "./bet-detail-utils";
 
 const BetDetailBase: FC<{

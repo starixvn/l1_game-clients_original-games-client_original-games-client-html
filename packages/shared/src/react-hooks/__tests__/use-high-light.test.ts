@@ -1,4 +1,4 @@
-import { RoundState } from '@shared/merged/components/game-base/type';
+import { RoundState } from '@shared/components/game-base/type';
 import { isHighLightWinningResult, isShowHighlightPrevResult } from "../use-high-light";
 
 describe("use-high-light", () => {

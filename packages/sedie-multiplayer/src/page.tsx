@@ -6,7 +6,7 @@ import {
     GameStateProvider,
     useGameStateContext,
     useGameStatesDispatch,
-} from "@shared/merged/react-contexts/game-state-context/game-state-context";
+} from "@shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from '@shared/react-hooks';
 import GameBase from '@shared/components/game-base/';
 import { GameMessageHandler } from '@shared/components/game-base/handlers';
@@ -20,11 +20,11 @@ import SedieCup from "./result-block/sedie-cup";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
 import SeDieMultiplayerBetDetailModal from "./history";
-import { PlayerResultBoard } from "../../components/game-components/player-result-board/player-result-board";
-const Background = dynamic(() => import("../../components/game-components/background"), { ssr: false });
-const OwnTotalBet = dynamic(() => import("../../components/game-components/own-total-bet/own-total-bet"), { ssr: false });
-const DoubleBetIcon = dynamic(() => import("../../components/game-components/rebet/double-bet-icon"), { ssr: false });
-const AutoRebetIcon = dynamic(() => import("../../components/game-components/rebet/auto-rebet-icon"), { ssr: false });
+import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
+const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
+const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own-total-bet/own-total-bet"), { ssr: false });
+const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
+const AutoRebetIcon = dynamic(() => import("@shared/components/game-components/rebet/auto-rebet-icon"), { ssr: false });
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;

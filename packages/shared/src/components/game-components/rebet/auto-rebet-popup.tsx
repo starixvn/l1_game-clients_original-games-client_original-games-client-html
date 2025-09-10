@@ -1,9 +1,9 @@
 import React, { useState, useCallback, memo, useRef } from "react";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
-import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
+import { cn } from '@shared/utils/merge-tailwind-util';
 import styles from "./auto-rebet-popup.module.scss";
-import { useClickOutside, useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { useClickOutside, useClickSound, useCommonTranslate } from '@shared/react-hooks';
 
 interface AutoRebetPopupProps {
     onClose: () => void;

@@ -1,4 +1,4 @@
-import { GameConfigs, RoundState } from '@shared/merged/components/game-base/type';
+import { GameConfigs, RoundState } from '@shared/components/game-base/type';
 import { confirmBet } from "../constants";
 import { NoticeErrorCode } from "../constants/error-code-dictionary";
 import { GameStateContextModel } from "../react-contexts/game-state-context/game-state-context-model";

@@ -1,4 +1,4 @@
-import { usePlayerContext } from '@shared/merged/_shared/react-contexts';
+import { usePlayerContext } from '@shared/react-contexts';
 import { BeadBoardIconProps } from "./types";
 
 const BeadBoardIcon: React.FC<BeadBoardIconProps> = ({ choice }) => {

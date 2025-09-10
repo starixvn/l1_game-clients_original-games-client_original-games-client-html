@@ -1,8 +1,8 @@
 import { stub } from "jest-auto-stub";
 import { Dispatch } from "react";
-import { GameStateContextModel } from "../../../../_shared/react-contexts/game-state-context/game-state-context-model";
-import { PlaceBetEventAction } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
-import { PlaceBetContextModel } from "../../../../_shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model";
+import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
+import { PlaceBetEventAction } from '@shared/react-contexts/game-state-context/place-bet-context/place-bet-action';
+import { PlaceBetContextModel } from '@shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model';
 import { GameConfigs, IUserStakeLevel, RoundState } from "../../type";
 import { GameMessageHandler } from "../game-message-handler";
 import { PlaceBetHandler, PlaceBetHandlerProps } from "./place-bet-handler";

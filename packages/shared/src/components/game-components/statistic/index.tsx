@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useClickSound } from '@shared/merged/_shared/react-hooks';
+import { useClickSound } from '@shared/react-hooks';
 import { Round } from "../../game-base/type";
 import BeadBoardIcon from "./beadboard-icon";
 import StatisticItem from "./statistic-item";

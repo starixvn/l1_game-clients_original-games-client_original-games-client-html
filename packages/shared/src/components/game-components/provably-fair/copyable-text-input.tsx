@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { useClickSound, useCommonTranslate } from '@shared/react-hooks';
 import Styles from "./provably-fair.module.scss";
 
 const CopyableTextInput: FC<{ value: string; id: string; position?: string; className?: string }> = ({

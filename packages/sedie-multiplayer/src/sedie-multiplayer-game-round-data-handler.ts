@@ -1,4 +1,4 @@
-import { GameRoundDataHandler } from "../../components/game-base/handlers/game-round-data-handler";
+import { GameRoundDataHandler } from '@shared/components/game-base/handlers/game-round-data-handler';
 
 export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
     buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number) {

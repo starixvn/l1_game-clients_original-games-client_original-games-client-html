@@ -1,6 +1,6 @@
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
-import useBetHistoryStore from '@shared/merged/_shared/stores/bet-history-store/bet-history-store';
-import usePFStore from '@shared/merged/_shared/stores/pf-store/pf-store';
+import useGameStore from '@shared/stores/game-store/game-store';
+import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-store';
+import usePFStore from '@shared/stores/pf-store/pf-store';
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 import { RoundState } from "../type";
 

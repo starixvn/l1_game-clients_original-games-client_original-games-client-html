@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import Document, { DocumentContext, Head, Html, Main, NextScript } from "next/document";
 import React from "react";
-import { buildVersion } from "../_shared/constants";
+import { buildVersion } from "@shared/constants";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default class extends Document<{ headScript?: string }> {

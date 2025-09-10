@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { isMobileOnly } from "react-device-detect";
 
-import { useClickSound } from '@shared/merged/_shared/react-hooks';
-import { useModalStack, modalStackManager } from '@shared/merged/_shared/utils/modal-stack-manager';
+import { useClickSound } from '@shared/react-hooks';
+import { useModalStack, modalStackManager } from '@shared/utils/modal-stack-manager';
 import { ModalType } from "./type";
-import { cn } from '@shared/merged/_shared/utils/merge-tailwind-util';
+import { cn } from '@shared/utils/merge-tailwind-util';
 
 const HeaderHeightInPixel = 55;
 

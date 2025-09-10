@@ -1,16 +1,16 @@
-import "../_shared/helpers/string-helper";
-import "../styles/errors.scss";
-import "../styles/main.scss";
-import "../styles/global.css";
+import "@shared/helpers/string-helper";
+import "@shared/styles/errors.scss";
+import "@shared/styles/main.scss";
+import "@shared/styles/global.css";
 
 import { TolgeeProvider } from "@tolgee/react";
 import { ThemeProvider } from "next-themes";
 import App, { AppContext, AppProps } from "next/app";
 import Head from "next/head";
-import { buildVersion, Themes } from "../_shared/constants";
-import { tolgee } from "../_shared/tolgee";
-import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
-import { GoogleAnalytic } from "../components/page-components/google-analytics";
+import { buildVersion, Themes } from "@shared/constants";
+import { tolgee } from "@shared/tolgee";
+import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
+import { GoogleAnalytic } from "@shared/components/page-components/google-analytics";
 
 
 const SabaNumberApp = ({ Component, pageProps }: AppProps) => {

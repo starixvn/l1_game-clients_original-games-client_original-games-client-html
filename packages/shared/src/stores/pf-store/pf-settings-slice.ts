@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { PFClientSeedSetting } from '@shared/merged/components/game-base/type';
+import { PFClientSeedSetting } from '@shared/components/game-base/type';
 import { localStorageKeys, randomNumberSeries, StorageHelper } from "../../helpers";
 
 export interface PFSettingsSlice {

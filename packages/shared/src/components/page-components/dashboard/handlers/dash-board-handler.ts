@@ -1,5 +1,5 @@
-import { getOfferGamesIds } from "../../../../_shared/helpers";
-import { GameIds } from "../../../../_shared/constants";
+import { getOfferGamesIds } from '@shared/helpers';
+import { GameIds } from '@shared/constants';
 
 import { DashboardProps } from "../type";
 

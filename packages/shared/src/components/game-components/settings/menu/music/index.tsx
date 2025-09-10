@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StorageHelper, localStorageKeys } from "../../../../../_shared/helpers";
-import { SettingEventActionType, useSettingDispatch } from "../../../../../_shared/react-contexts";
+import { StorageHelper, localStorageKeys } from '@shared/helpers';
+import { SettingEventActionType, useSettingDispatch } from '@shared/react-contexts';
 import Styles from "./../menu.module.scss";
 
 const dropdownItemClassName = "dropdown-item";

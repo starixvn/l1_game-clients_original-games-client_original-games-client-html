@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { usePlayerResultBoard, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { usePlayerResultBoard, useCommonTranslate } from '@shared/react-hooks';
 import { PlayerResultBoardTable } from "./player-result-board-table";
 
 export const PlayerResultBoard: FC = () => {

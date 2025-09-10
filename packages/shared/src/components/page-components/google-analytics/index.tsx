@@ -1,5 +1,5 @@
 import Script from "next/script";
-import { getAppSettings } from '@shared/merged/_shared/app-settings';
+import { getAppSettings } from '@shared/app-settings';
 
 export function GoogleAnalytic() {
     if (getAppSettings().googleAnalyticId === null) {

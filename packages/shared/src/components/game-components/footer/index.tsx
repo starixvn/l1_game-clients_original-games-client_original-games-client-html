@@ -1,4 +1,4 @@
-import { useTranslator } from '@shared/merged/_shared/react-hooks/use-translator';
+import { useTranslator } from '@shared/react-hooks/use-translator';
 
 const Footer = () => {
     console.log("[Footer] Footer component rendering");

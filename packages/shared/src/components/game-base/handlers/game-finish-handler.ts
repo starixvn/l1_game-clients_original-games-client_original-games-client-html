@@ -1,12 +1,12 @@
 import { Dispatch } from "react";
-import { getGameSettings } from '@shared/merged/_shared/app-settings';
-import { GameEventAction, GameEventActionType } from '@shared/merged/_shared/react-contexts/game-state-context/game-event-action';
-import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
+import { getGameSettings } from '@shared/app-settings';
+import { GameEventAction, GameEventActionType } from '@shared/react-contexts/game-state-context/game-event-action';
+import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
 import { IRoundStateHandler } from "../../round-base/round-state-handler";
 import { GameDurations, Round } from "../type";
 import { GameMessageHandler, messageEventType } from "./";
 import { GameRoundDataHandler } from "./game-round-data-handler";
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import useGameStore from '@shared/stores/game-store/game-store';
 
 export type GameFinishHandlerProps = {
     dispatch: Dispatch<GameEventAction>;

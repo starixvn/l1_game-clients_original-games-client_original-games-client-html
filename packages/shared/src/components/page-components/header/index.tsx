@@ -1,4 +1,4 @@
-import { IFRAME_MESSAGES, sendMessageToParent } from '@shared/merged/_shared/utils/iframe-messages';
+import { IFRAME_MESSAGES, sendMessageToParent } from '@shared/utils/iframe-messages';
 import { UserInfo } from "./user-info";
 import styles from "./header.module.scss";
 

@@ -1,4 +1,4 @@
-import { buildVersion } from "../../_shared/constants";
+import { buildVersion } from "@shared/constants";
 
 export const SeDieBetOptions = {
     ODD: "odd",

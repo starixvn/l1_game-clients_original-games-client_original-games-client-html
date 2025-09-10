@@ -1,7 +1,7 @@
 import React from "react";
-import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from "../../../../../_shared/helpers";
-import { useClickSound } from "../../../../../_shared/react-hooks";
-import { useSettingContext } from "../../../../../_shared/react-contexts";
+import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
+import { useClickSound } from '@shared/react-hooks';
+import { useSettingContext } from '@shared/react-contexts';
 import Styles from "./../menu.module.scss";
 
 const dropdownItemClassName = "dropdown-item";

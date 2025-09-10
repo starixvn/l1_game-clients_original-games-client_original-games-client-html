@@ -1,10 +1,10 @@
 import { memo } from "react";
-import { useRebet } from '@shared/merged/_shared/react-hooks/use-rebet';
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import { useRebet } from '@shared/react-hooks/use-rebet';
+import useGameStore from '@shared/stores/game-store/game-store';
 import { RoundState } from "../../game-base/type";
-import { broadcastNotice, getNotice } from '@shared/merged/_shared/helpers';
-import { NoticeErrorCode } from '@shared/merged/_shared/constants/error-code-dictionary';
-import { useClickSound, useCommonTranslate } from '@shared/merged/_shared/react-hooks';
+import { broadcastNotice, getNotice } from '@shared/helpers';
+import { NoticeErrorCode } from '@shared/constants/error-code-dictionary';
+import { useClickSound, useCommonTranslate } from '@shared/react-hooks';
 import dynamic from "next/dynamic";
 const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
 

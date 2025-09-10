@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { buildVersion } from '@shared/merged/_shared/constants';
-import { useGameActionContext, useSettingContext } from '@shared/merged/_shared/react-contexts';
-import { useGameStateContext } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context';
+import { buildVersion } from '@shared/constants';
+import { useGameActionContext, useSettingContext } from '@shared/react-contexts';
+import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
 import { RoundState } from "../../game-base/type";
 import RippleButton from "./ripple-button";
 

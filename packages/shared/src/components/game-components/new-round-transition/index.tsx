@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 
-import { useGameStateContext } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context';
+import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
 import { RoundState } from "../../game-base/type";
 import Styles from "./new-round-transition.module.scss";
 

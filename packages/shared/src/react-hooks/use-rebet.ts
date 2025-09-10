@@ -2,7 +2,7 @@ import { useShallow } from "zustand/shallow";
 import useBettingStore from "../stores/betting-store/betting-store";
 import { useGameStore } from "../stores/game-store/game-store";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { RoundState } from '@shared/merged/components/game-base/type';
+import { RoundState } from '@shared/components/game-base/type';
 import { useClientSeedPF } from "./use-client-seed-pf";
 import { NoticeErrorCode } from "../constants/error-code-dictionary";
 import { broadcastNotice, getNotice } from "../helpers";

@@ -28,23 +28,23 @@ function updateImportsInFile(filePath) {
             // @shared/merged/... -> @shared/...
             {
                 regex: /import\s+(.+?)\s+from\s+['"]@shared\/merged\/(.+?)['"]/g,
-                replacement: "import $1 from '@shared/$2'"
+                replacement: "import $1 from '@shared/$2'",
             },
             // @shared/merged/... (dynamic imports)
             {
                 regex: /import\s*\(\s*['"]@shared\/merged\/(.+?)['"]/g,
-                replacement: "import('@shared/$1'"
+                replacement: "import('@shared/$1'",
             },
             // Replace @games/sedie-multiplayer/ imports with @/ imports for local files
             {
                 regex: /import\s+(.+?)\s+from\s+['"]@games\/sedie-multiplayer\/(.+?)['"]/g,
-                replacement: "import $1 from '@/$2'"
+                replacement: "import $1 from '@/$2'",
             },
             // @games/sedie-multiplayer/... (dynamic imports)
             {
                 regex: /import\s*\(\s*['"]@games\/sedie-multiplayer\/(.+?)['"]/g,
-                replacement: "import('@/$1'"
-            }
+                replacement: "import('@/$1'",
+            },
         ];
 
         patterns.forEach((pattern) => {

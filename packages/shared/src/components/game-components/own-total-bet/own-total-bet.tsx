@@ -1,6 +1,6 @@
-import { numberWithCommas } from '@shared/merged/_shared/helpers';
-import { useCommonTranslate } from '@shared/merged/_shared/react-hooks';
-import useGameStore from '@shared/merged/_shared/stores/game-store/game-store';
+import { numberWithCommas } from '@shared/helpers';
+import { useCommonTranslate } from '@shared/react-hooks';
+import useGameStore from '@shared/stores/game-store/game-store';
 
 export const OwnTotalBet = () => {
     const ownBets = useGameStore((state) => state.ownBets);

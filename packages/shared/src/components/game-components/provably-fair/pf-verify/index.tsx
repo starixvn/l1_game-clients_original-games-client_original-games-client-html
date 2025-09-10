@@ -1,15 +1,15 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useClickSound, useCommonTranslate, useSNTranslate } from "../../../../_shared/react-hooks";
+import { useClickSound, useCommonTranslate, useSNTranslate } from '@shared/react-hooks';
 import Styles from "../provably-fair.module.scss";
 import CopyableTextInput from "../copyable-text-input";
-import { AnalyticsHelper, TrackingAction, TrackingFunction } from "../../../../_shared/helpers";
+import { AnalyticsHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
 import { Section } from "../pf-form-components";
 import { useShallow } from "zustand/react/shallow";
-import { useGameContext } from "../../../../_shared/react-contexts/game-context/game-context";
+import { useGameContext } from '@shared/react-contexts/game-context/game-context';
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
-import { usePopupStore } from "../../../../_shared/stores/popup-store/popup-store";
-import { useBetDetailStore } from "../../../../_shared/stores/bet-detail-store/bet-detail-store";
+import { usePopupStore } from '@shared/stores/popup-store/popup-store';
+import { useBetDetailStore } from '@shared/stores/bet-detail-store/bet-detail-store';
 import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
 

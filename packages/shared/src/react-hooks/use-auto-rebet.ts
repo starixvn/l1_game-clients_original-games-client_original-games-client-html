@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../stores/game-store/game-store";
-import { RoundState } from '@shared/merged/components/game-base/type';
+import { RoundState } from '@shared/components/game-base/type';
 import useBettingStore from "../stores/betting-store/betting-store";
 import { useRebet } from "./use-rebet";
 

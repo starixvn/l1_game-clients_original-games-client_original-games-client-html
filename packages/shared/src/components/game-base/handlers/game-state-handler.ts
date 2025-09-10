@@ -1,4 +1,4 @@
-import { GameStateContextModel } from '@shared/merged/_shared/react-contexts/game-state-context/game-state-context-model';
+import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
 import { GameDurations, RoundState } from "../type";
 
 type GameStateHandlerProps = {
