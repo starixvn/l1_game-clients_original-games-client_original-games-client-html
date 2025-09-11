@@ -4,7 +4,6 @@
         "outDir": "./dist",
         "declaration": true,
         "declarationMap": true,
-        "sourceMap": true,
         "baseUrl": ".",
         "paths": {
             "@shared/*": [
@@ -20,8 +19,7 @@
         "../shared/src/**/*"
     ],
     "exclude": [
-        "node_modules",
-        "../shared/node_modules",
-        "dist"
+        "dist",
+        "node_modules"
     ]
 }

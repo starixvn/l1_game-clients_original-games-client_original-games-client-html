@@ -8,7 +8,7 @@
         "build": "node -e \"console.log('Skipping sedie-multiplayer package build (using app sources)')\"",
         "clean": "rimraf dist",
         "generate-tolgee-data": "cd ../.. && npm run generate-tolgee-data && cd packages/sedie-multiplayer",
-        "dev:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 FAST_REFRESH=false next dev -p 3001",
+        "dev:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 FAST_REFRESH=false next dev -p 3001",
         "build:standalone": "npm run generate-tolgee-data && next build",
         "start:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 next start -p 3001",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
@@ -26,7 +26,7 @@
         "gsap": "^3.13.0",
         "interweave": "^13.1.0",
         "motion": "^12.23.12",
-        "next": "^14.2.25",
+        "next": "14.2.31",
         "next-themes": "^0.3.0",
         "react": "^18.2.0",
         "react-canvas-confetti": "^1.2.1",
@@ -51,21 +51,8 @@
     },
     "devDependencies": {
         "typescript": "^5.0.0",
-        "@next/bundle-analyzer": "^14.2.5",
+        "@next/bundle-analyzer": "^14.2.31",
         "ts-node": "^10.9.2",
-        "rimraf": "^5.0.0",
-        "@types/node": "^20.11.1",
-        "@babel/core": "^7.23.9",
-        "@babel/preset-env": "^7.23.9",
-        "@babel/preset-typescript": "^7.23.3",
-        "autoprefixer": "^10.4.21",
-        "babel-core": "^6.26.3",
-        "babel-jest": "^29.7.0",
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-react": "^6.24.1",
-        "cross-env": "^7.0.3",
-        "postcss": "^8.5.6",
-        "sass": "^1.77.8",
-        "tailwindcss": "3.4.17"
+        "rimraf": "^5.0.0"
     }
 }

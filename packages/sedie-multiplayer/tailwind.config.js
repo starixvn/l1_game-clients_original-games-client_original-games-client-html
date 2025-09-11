@@ -1,11 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: [
-        "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/**/*.{js,ts,jsx,tsx,mdx}",
-        "../shared/src/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
+    content: ["./src/**/*.{js,ts,jsx,tsx,mdx}", "../shared/src/**/*.{js,ts,jsx,tsx,mdx}"],
     darkMode: "class",
     important: true,
     theme: {
@@ -89,4 +84,12 @@ module.exports = {
         },
     },
     plugins: [],
+    safelist: [
+        { pattern: /(grid|col|row)-.*/ },
+        { pattern: /(md|lg|xl):col-span-\d+/ },
+        { pattern: /(p|px|py|m|mx|my)-.*/ },
+        { pattern: /(top|right|bottom|left)-\[.*\]/ },
+        { pattern: /z-\[.*\]/ },
+        { pattern: /(w|h)-\[.*\]/ },
+    ],
 };
