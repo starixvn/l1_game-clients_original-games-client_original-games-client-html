@@ -66,7 +66,7 @@ export const CountdownTimer = ({ className = "" }) => {
 
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
-            <div className={styles["text"]}>{displayText}</div>
+            <div className={`${roundState === RoundState.LockingBet ? styles["text-lock-bet"] : styles["text"]}`}>{displayText}</div>
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
