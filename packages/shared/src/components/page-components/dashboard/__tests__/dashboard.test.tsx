@@ -3,12 +3,12 @@ import { render, screen, act, waitFor, fireEvent } from "@testing-library/react"
 import "@testing-library/jest-dom";
 
 // Mock object-helper at the very top to fix import issues
-jest.mock("../../../../_shared/helpers/object-helper", () => ({
+jest.mock("@shared/helpers/object-helper", () => ({
     objectMap: (obj: any, fn: any) => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])),
 }));
 
 // Mock use-sound to prevent objectMap import issues
-jest.mock("../../../../_shared/react-hooks/use-sound", () => ({
+jest.mock("@shared/react-hooks/use-sound", () => ({
     usePlaySound: jest.fn(() => jest.fn()),
     useClickSound: jest.fn(() => jest.fn()),
     useSelectChipSound: jest.fn(() => jest.fn()),
@@ -75,11 +75,11 @@ jest.mock("../handlers/notification-handler", () => ({
 }));
 
 // Mock shared dependencies
-jest.mock("../../../../_shared/constants/error-code-dictionary", () => ({
+jest.mock("@shared/constants/error-code-dictionary", () => ({
     ErrorNoGameOffer: "Your account is not supported on this game portal. Please contact your upline, thank you.",
 }));
 
-jest.mock("../../../../_shared/helpers", () => ({
+jest.mock("@shared/helpers", () => ({
     GetLocalizedErrorMessage: jest.fn((errorCode) => `Localized error: ${errorCode}`),
     localStorageKeys: { buildVersion: "buildVersion" },
     StorageHelper: {
@@ -93,7 +93,7 @@ jest.mock("../../../../_shared/helpers", () => ({
     },
 }));
 
-jest.mock("../../../../_shared/helpers/message-transmitter/global-transmitter", () => ({
+jest.mock("@shared/helpers/message-transmitter/global-transmitter", () => ({
     GlobalMessageTransmitter: {
         broadcast: jest.fn()
     },

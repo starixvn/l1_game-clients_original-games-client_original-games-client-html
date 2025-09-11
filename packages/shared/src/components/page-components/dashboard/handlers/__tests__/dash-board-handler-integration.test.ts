@@ -5,7 +5,7 @@ import { TolgeeInstance } from "@tolgee/core";
 import { NextRouter } from "next/router";
 
 // Mock dependencies
-jest.mock("../../../../../_shared/helpers", () => ({
+jest.mock("@shared/helpers", () => ({
     StorageHelper: {
         get: jest.fn(),
         set: jest.fn(),
