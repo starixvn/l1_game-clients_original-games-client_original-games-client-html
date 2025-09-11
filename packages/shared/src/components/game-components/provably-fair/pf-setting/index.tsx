@@ -199,8 +199,8 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         <div className={Styles["pf-setting-container"] + " bg-none"}>
             <div>
                 <ul>
-                    <li>{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
-                    <li>{translateCommon("pf_settings_para_2")}</li>
+                    <li className="text-[14px]">{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
+                    <li className="text-[14px]">{translateCommon("pf_settings_para_2")}</li>
                 </ul>
             </div>
             <h3 className={SECTION_TITLE_CLASS}>{translateCommon("pf_header_client_seed")}</h3>
@@ -277,7 +277,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                 <div className="input-group width-full">
                     <CopyableTextInput value={serverSeedHash} id="server-seed-hash" />
                 </div>
-                {Object.keys(ownBets).length > 0 && <div className={Styles["pf-note"]}>{translateCommon("pf_client_seed_para_1")}</div>}
+                {Object.keys(ownBets).length > 0 && <div className={`${Styles["pf-note"]} text-[14px]`}>{translateCommon("pf_client_seed_para_1")}</div>}
             </div>
         </div>
     );
