@@ -12,7 +12,7 @@ import { tolgee } from "../_shared/tolgee";
 import { LoadingSpinner } from "../components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "../components/page-components/google-analytics";
 import { URLContext, initialURLContextData } from "../_shared/react-contexts/url-context";
-import { PlayerContextProvider, PlayerContext } from "../_shared/react-contexts/auth";
+import { PlayerContext } from "../_shared/react-contexts/auth";
 import { useState } from "react";
 
 
