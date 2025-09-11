@@ -18,7 +18,7 @@
         "@tolgee/format-icu": "^5.28.6",
         "@tolgee/react": "^5.28.6",
         "@use-gesture/react": "^10.3.1",
-        "axios": "^1.8.2",
+        "axios": "^0.30.0",
         "base64-string": "^1.1.2",
         "classnames": "^2.3.2",
         "clsx": "^2.1.1",
@@ -54,5 +54,9 @@
         "@next/bundle-analyzer": "^14.2.31",
         "ts-node": "^10.9.2",
         "rimraf": "^5.0.0"
+    },
+    "resolutions": {
+        "axios": "^0.30.0",
+        "form-data": "^3.0.4"
     }
 }
