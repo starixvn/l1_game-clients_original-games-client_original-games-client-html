@@ -263,6 +263,9 @@ describe("SplashScreen Component", () => {
                 locale: "",
                 session: null,
                 authorizeInfo: null,
+                setLocale: jest.fn(),
+                setSession: jest.fn(),
+                setAuthorizeInfo: jest.fn(),
             } as any;
             const session = {
                 isAuthenticated: true,
@@ -281,9 +284,9 @@ describe("SplashScreen Component", () => {
             await customStartup(session, locale, mockRouter, mockPlayer, authorizeResponse);
 
             // Assert
-            expect(mockPlayer.locale).toBe(locale);
-            expect(mockPlayer.session).toBe(session);
-            expect(mockPlayer.authorizeInfo).toBe(authorizeResponse);
+            expect(mockPlayer.setLocale).toHaveBeenCalledWith(locale);
+            expect(mockPlayer.setSession).toHaveBeenCalledWith(session);
+            expect(mockPlayer.setAuthorizeInfo).toHaveBeenCalledWith(authorizeResponse);
         });
 
         it("should handle custom startup with timeout session", async () => {
@@ -295,6 +298,9 @@ describe("SplashScreen Component", () => {
                 locale: "",
                 session: null,
                 authorizeInfo: null,
+                setLocale: jest.fn(),
+                setSession: jest.fn(),
+                setAuthorizeInfo: jest.fn(),
             } as any;
             const session = null;
             const locale = "en";
@@ -305,6 +311,7 @@ describe("SplashScreen Component", () => {
 
             // Assert
             expect(mockRouter.push).toHaveBeenCalledWith("timeout");
+            expect(mockPlayer.setLocale).toHaveBeenCalledWith(locale);
         });
     });
 
