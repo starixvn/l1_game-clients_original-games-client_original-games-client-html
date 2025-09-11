@@ -1,4 +1,3 @@
-import "../../../games/scoreboards";
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import React from "react";
@@ -17,7 +16,8 @@ import { LoadingSpinner } from "../../game-components/game-loading/loading-spinn
 import BalanceSyncProvider from '@shared/react-hooks/providers/balance-sync-provider';
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
-const Games = dynamic(() => import("../../../games/games"), { loading: () => <LoadingSpinner />, ssr: false });
+// @ts-ignore - Next.js dynamic imports resolve at runtime
+const Games = dynamic(() => import("@/games/games"), { loading: () => <LoadingSpinner /> }) as React.ComponentType<GamesProps>;
 const MusicPlayer = dynamic(() => import("../music-player"), { ssr: false });
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
@@ -119,7 +119,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             if (this.dashboardHandler.checkIsNotOfferGame()) {
                 broadcastNotice({
                     ...getNotice(ErrorNoGameOffer, false),
-                    onClose: () => {},
+                    onClose: () => { },
                 });
             }
         };

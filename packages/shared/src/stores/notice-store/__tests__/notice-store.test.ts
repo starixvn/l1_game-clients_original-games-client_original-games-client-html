@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { useNoticeStore } from "../notice-store";
-import { NoticeModel } from "../../../../components/game-base/type";
+import { NoticeModel } from "@shared/components/game-base/type";
 
 describe("NoticeStore", () => {
     beforeEach(() => {

@@ -1,7 +1,7 @@
 import {
     PFClientSeedSetting,
     PFResult,
-} from "../../../../components/game-base/type";
+} from "@shared/components/game-base/type";
 import { localStorageKeys, StorageHelper } from "../../../helpers";
 
 export interface PFContextModel {

@@ -2,8 +2,8 @@ import { io } from "socket.io-client";
 import MsgpackParser from "socket.io-msgpack-parser";
 import { getAppSettings } from "../app-settings";
 import { buildServerUrl } from "../helpers";
-import { SocketInfo } from "./../../components/game-base/type";
-import { GameMessageHandler, messageEventType } from '@shared/components/game-base/handlers';
+import { SocketInfo } from "@shared/components/game-base/type";
+import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
 import useGameStore from "../stores/game-store/game-store";
 import useBettingStore from "../stores/betting-store/betting-store";
 

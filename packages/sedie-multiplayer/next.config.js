@@ -1,3 +1,4 @@
+const path = require("path");
 const gameSettings = require("./game-settings.json");
 const configs = require("./configs.json");
 const { v4: uuidv4 } = require("uuid");
@@ -16,7 +17,7 @@ const createAppSettings = (config) => ({
 });
 
 const baseAppSettings = createAppSettings(configs);
-const buildVersion = new Date().getTime();
+const buildVersion = new Date().getTime().toString();
 
 /**
  * @type {import('next').NextConfig}
@@ -30,6 +31,8 @@ const nextConfig = withSentryConfig({
         hideSourceMaps: true,
     },
     generateBuildId: async () => uuidv4(),
+    experimental: { externalDir: true },
+    transpilePackages: ["@shared/merged"],
     webpack: (config, options) => {
         // Disable source maps
         config.devtool = false;
@@ -43,6 +46,13 @@ const nextConfig = withSentryConfig({
                 },
             },
         });
+
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            "@shared": path.resolve(__dirname, "../shared/src"),
+            "@": path.resolve(__dirname, "src"),
+            "@sedie-multiplayer": path.resolve(__dirname, "src"),
+        };
 
         return config;
     },
@@ -126,6 +136,15 @@ const nextConfig = withSentryConfig({
     },
     sassOptions: {
         prependData: `$version-image: '${buildVersion}';`,
+        includePaths: [path.resolve(__dirname, "../shared/src/styles"), path.resolve(__dirname, "../shared/src/components")],
+        importer: function (url) {
+            // Resolve SCSS imports that use the @shared alias
+            if (typeof url === "string" && url.startsWith("@shared/")) {
+                const resolved = path.resolve(__dirname, "../shared/src", url.replace(/^@shared\//, ""));
+                return { file: resolved };
+            }
+            return null;
+        },
     },
     output: "standalone",
 });

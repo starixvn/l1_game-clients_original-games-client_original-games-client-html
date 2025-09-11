@@ -1,4 +1,4 @@
-import { PFClientSeedSetting, PFResult } from "../../../../components/game-base/type";
+import { PFClientSeedSetting, PFResult } from "@shared/components/game-base/type";
 
 export enum PFEventActionType {
     TOGGLE_PF_VERIFY = "TOGGLE_PF_VERIFY",
