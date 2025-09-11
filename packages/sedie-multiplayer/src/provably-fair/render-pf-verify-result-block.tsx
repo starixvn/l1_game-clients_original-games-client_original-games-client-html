@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { useTranslator } from '@shared/react-hooks';
-import { DrawInfo } from '@shared/components/game-base/type';
-import { ResourceTypes } from '@shared/resources';
+import { useTranslator } from "@shared/react-hooks";
+import { DrawInfo } from "@shared/components/game-base/type";
+import { ResourceTypes } from "@shared/resources";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
 import Image from "next/image";
 
@@ -21,7 +21,7 @@ const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
                         <span className="flex items-center gap-1.5">
                             <div className="text-[var(--text-content-color)] font-[400]"> {t(`${ResourceTypes.COMMON}.result`)}</div>
                             <Image
-                                src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`}
+                                src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
                                 alt={`${winningSubOption} result`}
                                 width={IMAGE_SIZE}
                                 height={IMAGE_SIZE}

@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { useGameContext } from '@shared/react-contexts';
-import { useCommonTranslate, useTranslator } from '@shared/react-hooks';
-import { DrawInfo } from '@shared/components/game-base/type';
+import Image from "next/image";
+import { useGameContext } from "@shared/react-contexts";
+import { useCommonTranslate, useTranslator } from "@shared/react-hooks";
+import { DrawInfo } from "@shared/components/game-base/type";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
-import { CachedImage } from '@shared/components/game-components/cached-image';
 
 export interface RoundInfoSeDie extends DrawInfo {
     roundId: number;
@@ -49,8 +49,8 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
                 {winningSubOption ? (
                     <span className="flex items-center gap-1.5">
                         <span className="text-secondary-text">{translateCommon("result")}</span>
-                        <CachedImage
-                            src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`}
+                        <Image
+                            src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
                             alt={`${winningSubOption} result`}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}
@@ -88,8 +88,8 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
             {isOddOrEven ? (
                 t(`glossary_${choice}`)
             ) : (
-                <CachedImage
-                    src={`/static/images/sedie-multiplayer/bet-detail-${choice}.svg`}
+                <Image
+                    src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${choice}.svg`}
                     alt={`${choice} choice`}
                     width={IMAGE_SIZE}
                     height={IMAGE_SIZE}

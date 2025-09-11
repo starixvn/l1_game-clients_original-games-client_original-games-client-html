@@ -106,7 +106,7 @@ const PFVerification: FC = () => {
                     >
                         <div className="flex gap-2 items-center">
                         <Image 
-                            src={`/static/images/sedie-multiplayer/bet-detail-${winningSubOption}.svg`} 
+                            src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`} 
                             alt={`${winningSubOption} result`} 
                             width={IMAGE_SIZE} 
                             height={IMAGE_SIZE} 
