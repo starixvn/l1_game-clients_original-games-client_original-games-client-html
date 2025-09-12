@@ -1,10 +1,11 @@
 import { FC, useState, useEffect, useCallback, useRef, useMemo } from "react";
 
-import { numberWithCommas } from '@shared/helpers';
-import { useGameStore } from '@shared/stores/game-store/game-store';
+import { numberWithCommas } from "@shared/helpers";
+import { useGameStore } from "@shared/stores/game-store/game-store";
 import ReactCanvasConfetti from "react-canvas-confetti";
 import { motion } from "motion/react";
-import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
+import { usePopUpWinningSound } from "@shared/react-hooks/use-sound";
 
 const WinningBalanceEffect: FC = () => {
     const { betWin, showResultInfo } = useGameStateContext();
@@ -13,6 +14,13 @@ const WinningBalanceEffect: FC = () => {
     const [showContent, setShowContent] = useState(false);
     const animationInstance = useRef(null);
     const delayFireConfettiAfterShowPopup = 1700;
+
+    const playPopUpWinningSound = usePopUpWinningSound();
+    const playPopUpWinningRef = useRef(playPopUpWinningSound);
+    useEffect(() => {
+        playPopUpWinningRef.current = playPopUpWinningSound;
+    }, [playPopUpWinningSound]);
+
     const getInstance = (instance: any) => {
         animationInstance.current = instance;
     };
@@ -76,6 +84,7 @@ const WinningBalanceEffect: FC = () => {
         if (showContent) {
             setTimeout(() => {
                 fireConfetti();
+                playPopUpWinningRef.current();
             }, delayFireConfettiAfterShowPopup);
         }
     }, [showContent, fireConfetti]);

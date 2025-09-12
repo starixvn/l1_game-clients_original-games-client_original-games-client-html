@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import styles from "./sedie-cup.module.scss";
-import { RoundState } from '@shared/components/game-base/type';
-import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
-import { useGameContext } from '@shared/react-contexts';
-import { Spritesheet } from '@shared/components/game-components/sprites-sheet';
+import { RoundState } from "@shared/components/game-base/type";
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
+import { useGameContext } from "@shared/react-contexts";
+import { Spritesheet } from "@shared/components/game-components/sprites-sheet";
 import { motion } from "motion/react";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
-import { CachedImage } from '@shared/components/game-components/cached-image';
-import { useMemoriedImage } from '@shared/react-hooks/use-memoried-image';
+import { CachedImage } from "@shared/components/game-components/cached-image";
+import { useMemoriedImage } from "@shared/react-hooks/use-memoried-image";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
+import { useDiceShakingRollingSound } from "@shared/react-hooks/use-sound";
 
 const OPEN_DURATION = 1500; // Open duration in milliseconds
 
@@ -50,6 +51,12 @@ const SedieCup = () => {
     const [phase, setPhase] = useState<"spin" | "result">("spin");
     const resultRef = useRef(null);
 
+    const playDiceShakingRollingSound = useDiceShakingRollingSound();
+    const playDiceShakingRollingRef = useRef(playDiceShakingRollingSound);
+    useEffect(() => {
+        playDiceShakingRollingRef.current = playDiceShakingRollingSound;
+    }, [playDiceShakingRollingSound]);
+
     useEffect(() => {
         console.log("animationPhase1", isUseDefaultAnimation);
         if (animationPhase1 && animationPhase2) {
@@ -74,6 +81,7 @@ const SedieCup = () => {
                 if (playResultAnimation) {
                     setIsShow(true);
                     delayDisplayResult = setTimeout(() => {
+                        playDiceShakingRollingRef.current();
                         setAnimationState("open");
                     }, OPEN_DURATION);
                 }

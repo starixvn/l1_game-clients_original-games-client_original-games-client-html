@@ -12,6 +12,8 @@ const mp3File = {
     startingDraw: `starting-draw`,
     showBallResult: `show-ball-result`,
     blockBet: `block-bet`,
+    popUpWinning: `pop-up-winning`,
+    diceShakingRolling: `dice-shaking-rolling`,
 };
 
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
@@ -55,4 +57,12 @@ export const useShowBallResultSound = () => {
 
 export const useBlockBetSound = () => {
     return usePlaySound(resourceMp3.blockBet);
+};
+
+export const usePopUpWinningSound = () => {
+    return usePlaySound(resourceMp3.popUpWinning);
+};
+
+export const useDiceShakingRollingSound = () => {
+    return usePlaySound(resourceMp3.diceShakingRolling);
 };
