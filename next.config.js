@@ -1,8 +1,16 @@
 // Function to load game-specific configurations
 const loadGameConfigs = (gameId) => {
-    // Load SeDie Multiplayer configurations (used for all game variants)
-    const configs = require("./packages/sedie-multiplayer/configs.json");
-    const gameSettings = require("./packages/sedie-multiplayer/game-settings.json");
+    let configs, gameSettings;
+
+    if (gameId === "148" || gameId === 148) {
+        // SeDie Multiplayer game
+        configs = require("./packages/sedie-multiplayer/configs.json");
+        gameSettings = require("./packages/sedie-multiplayer/game-settings.json");
+    } else {
+        // Default to SeDie Multiplayer if no gameId specified
+        configs = require("./packages/sedie-multiplayer/configs.json");
+        gameSettings = require("./packages/sedie-multiplayer/game-settings.json");
+    }
 
     return { configs, gameSettings };
 };
@@ -81,9 +89,32 @@ const nextConfig = withSentryConfig({
             },
         ];
 
-        // Always include game ID redirects regardless of basePath setting
-        // This ensures they work in both development and production environments
-        const gameIdRewrites = [
+        // If a basePath is set, support a dynamic :gameId segment after it
+        if (basePath) {
+            const baseNoSlash = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+            const prodGameIdRewrites = [
+                {
+                    source: `${baseNoSlash}/:gameId/_next/:path*`,
+                    destination: `${baseNoSlash}/_next/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId/static/:path*`,
+                    destination: `${baseNoSlash}/static/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId/:path*`,
+                    destination: `${baseNoSlash}/:path*`,
+                },
+                {
+                    source: `${baseNoSlash}/:gameId`,
+                    destination: `${baseNoSlash}`,
+                },
+            ];
+            return [...base, ...prodGameIdRewrites];
+        }
+
+        // Allow accessing the app under /:gameId/... on localhost without setting basePath
+        const devGameIdRewrites = [
             // Assets under _next
             {
                 source: "/:gameId/_next/:path*",
@@ -105,85 +136,7 @@ const nextConfig = withSentryConfig({
             },
         ];
 
-        // If a basePath is set, support a dynamic :gameId segment after it
-        if (basePath) {
-            const baseNoSlash = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
-
-            // Check if basePath is a full URL - if so, we need to handle redirects differently
-            const isFullUrl = basePath.startsWith("http://") || basePath.startsWith("https://");
-
-            if (isFullUrl) {
-                // For full URLs, redirect to the domain root
-                // Extract domain from the URL (e.g., https://domain.com/game-148 -> https://domain.com)
-                const urlRegex = new RegExp(/^(https?:\/\/[^/]+)/);
-                const urlMatch = urlRegex.exec(basePath);
-                const domainRoot = urlMatch ? urlMatch[1] : "/";
-
-                const prodGameIdRewrites = [
-                    {
-                        source: `${baseNoSlash}/:gameId/_next/:path*`,
-                        destination: `${domainRoot}/_next/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId/static/:path*`,
-                        destination: `${domainRoot}/static/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId/:path*`,
-                        destination: `${domainRoot}/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId`,
-                        destination: domainRoot,
-                    },
-                ];
-                return [...base, ...prodGameIdRewrites, ...gameIdRewrites];
-            } else {
-                // For relative paths (like /game-148), redirect to root /
-                const prodGameIdRewrites = [
-                    {
-                        source: `${baseNoSlash}/:gameId/_next/:path*`,
-                        destination: `/_next/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId/static/:path*`,
-                        destination: `/static/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId/:path*`,
-                        destination: `/:path*`,
-                    },
-                    {
-                        source: `${baseNoSlash}/:gameId`,
-                        destination: "/",
-                    },
-                ];
-                return [...base, ...prodGameIdRewrites, ...gameIdRewrites];
-            }
-        }
-
-        // Return base rewrites plus game ID rewrites for cases where basePath is not set
-        return [...base, ...gameIdRewrites];
-    },
-    async redirects() {
-        return [
-            // Add explicit redirects for game ID patterns
-            {
-                source: "/game-148-m",
-                destination: "/",
-                permanent: false,
-            },
-            {
-                source: "/game-148-d",
-                destination: "/",
-                permanent: false,
-            },
-            {
-                source: "/game-148",
-                destination: "/",
-                permanent: false,
-            },
-        ];
+        return [...base, ...devGameIdRewrites];
     },
     async headers() {
         return [
@@ -198,6 +151,9 @@ const nextConfig = withSentryConfig({
                 ],
             },
         ];
+    },
+    sassOptions: {
+        prependData: `$version-image: '${buildVersion}';`,
     },
     output: "standalone",
 });
