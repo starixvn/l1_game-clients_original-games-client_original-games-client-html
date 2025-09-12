@@ -1,0 +1,67 @@
+// Score Display Styles
+.score {
+    --width-score: 53px;
+    --height-score: 33px;
+    --font-size-score: 20px;
+    --bottom-score: -2px;
+    position: absolute;
+    width: var(--width-score);
+    height: var(--height-score);
+    border-top-left-radius: 53px;
+    border-top-right-radius: 53px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.9rem;
+    font-size: var(--font-size-score);
+    bottom: var(--bottom-score);
+    opacity: 0;
+    animation: scoreAppear 0.4s ease-out forwards;
+    will-change: transform, opacity;
+
+    &-number {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 26px;
+        font-family: 'Arial', sans-serif;
+        position: relative;
+        animation: scoreNumberPulse 0.6s ease-in-out;
+        will-change: transform;
+    }
+
+    &.player-score {
+        right: 50%;
+        transform: translateX(50%);
+        background: linear-gradient(0deg, #27ae60 0%, #2ecc71 100%);
+    }
+
+    &.banker-score {
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(0deg, #e74c3c 6.041653826832771%, #c0392b 100%);
+    }
+}
+
+@keyframes scoreAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.5) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes scoreNumberPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

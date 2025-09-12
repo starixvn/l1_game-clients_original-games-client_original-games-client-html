@@ -1,0 +1,29 @@
+{
+    "150": {
+        "id": 150,
+        "gameName": "Baccarat Multiplayer",
+        "tolgeeNamespace": "Baccarat",
+        "socketInfo": {
+            "namespace": "baccarat-multiplayer",
+            "path": "baccarat-multiplayer"
+        },
+        "durations": {
+            "wholeRound": 46,
+            "wholeTurn": 46,
+            "placingBets": 30,
+            "lockingBet": 3,
+            "showResult": 15,
+            "resultAnimation": 4,
+            "beforePlaceBet": 0,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 102,
+        "gamePath": "baccarat-multiplayer",
+        "gameResourceConfigs": {
+            "path": "baccarat-multiplayer",
+            "optionalPaths": [],
+            "cachePaths": []
+        }
+    }
+}

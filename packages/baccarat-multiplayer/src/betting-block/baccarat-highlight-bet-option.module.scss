@@ -1,0 +1,19 @@
+.highlight {
+    position: absolute;
+    inset: 0;
+}
+
+.bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(transparent 0%, rgba(255, 255, 255, 0.15) 60%);
+}
+
+.border {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+}
+
+

@@ -1,0 +1,204 @@
+// Baccarat Animations Styles
+.animation-container {
+    --gap-player-banker: 30px;
+
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-player-banker);
+    padding-bottom: 4px;
+
+    @media (min-width: 1400px) {
+        --gap-player-banker: 70px;
+    }
+}
+
+// Player and banker base styles
+%player-banker-base {
+    display: flex;
+    flex: 1 1 8.9rem;
+    position: relative;
+}
+
+// Player section
+.player {
+    @extend %player-banker-base;
+    justify-self: flex-end;
+
+    .score {
+        margin-left: 50%;
+        left: -4.7rem;
+        background: linear-gradient(0deg, #27ae60 0%, #2ecc71 100%);
+    }
+}
+
+// Banker section
+.banker {
+    @extend %player-banker-base;
+    justify-self: flex-start;
+
+    .score {
+        left: 7.8rem;
+        background: linear-gradient(0deg, #e74c3c 0%, #c0392b 100%);
+    }
+}
+
+// Card section layout
+.cardSection {
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: 21px 1fr;
+    justify-content: start;
+}
+
+.cardContainer {
+    grid-column: 1/4;
+
+    &.hide-all-cards {
+        opacity: 0;
+    }
+
+    &.show-all-cards {
+        animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+
+        &.banker {
+            opacity: 0;
+            animation-delay: 0.2s;
+        }
+    }
+
+    @keyframes showCards {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        90% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+// Labels
+.label {
+    width: 100%;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 700;
+    line-height: 21px;
+    text-align: center;
+
+    &-player {
+        color: #27ae60;
+        grid-column: 2/4;
+    }
+
+    &-banker {
+        color: #e74c3c;
+        grid-column: 1/3;
+    }
+}
+
+// Winner display animation
+@keyframes floatIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.winner-display {
+    position: absolute;
+    left: 50%;
+    bottom: -20px;
+    min-width: 155px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    line-height: 22px;
+    padding: 7px 18px;
+    margin: 0 auto;
+    z-index: 101;
+    background: linear-gradient(90deg,
+            rgba(135, 56, 0, 0) 0%,
+            rgba(242, 127, 11, 0.5) 14%,
+            #ffb107 50%,
+            rgba(242, 127, 11, 0.5) 84%,
+            rgba(135, 56, 0, 0) 100%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    animation: floatIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.winner-text {
+    margin: 0 auto;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    white-space: nowrap;
+    line-height: 1.2;
+    text-align: center;
+}
+
+// Settlement container
+.settlement-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+// Loading state
+.loading {
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 40px 20px;
+    opacity: 0.7;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .animation-container {
+        --gap-player-banker: 20px;
+    }
+    
+    .cardSection {
+        grid-template-columns: repeat(3, 40px);
+    }
+    
+    .label {
+        font-size: 14px;
+    }
+    
+    .winner-display {
+        font-size: 12px;
+        padding: 5px 12px;
+    }
+}
