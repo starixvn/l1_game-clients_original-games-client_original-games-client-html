@@ -12,8 +12,8 @@
             "wholeTurn": 27,
             "placingBets": 18,
             "lockingBet": 3,
-            "showResult": 5,
-            "resultAnimation": 4,
+            "showResult": 7,
+            "resultAnimation": 3,
             "beforePlaceBet": 0,
             "switchRoundAnimation": 0,
             "startNewRoundAnim": 0

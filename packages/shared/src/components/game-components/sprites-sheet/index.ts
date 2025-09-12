@@ -90,7 +90,7 @@ export class Spritesheet extends Component<SpritesheetProps> {
         const { isResponsive, startAt, endAt, fps, steps, direction } = Object.assign({}, defaultProps, this.props);
 
         this.id = `react-responsive-spritesheet-${parseInt(String(Math.random() * 1000000))}`;
-        this.isResponsive = isResponsive || true;
+        this.isResponsive = isResponsive;
         this.startAt = this.setStartAt(startAt || 0);
         this.endAt = this.setEndAt(endAt || false);
         this.fps = fps;
