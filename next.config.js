@@ -6,6 +6,10 @@ const loadGameConfigs = (gameId) => {
         // SeDie Multiplayer game
         configs = require("./packages/sedie-multiplayer/configs.json");
         gameSettings = require("./packages/sedie-multiplayer/game-settings.json");
+    } else if (gameId === "150" || gameId === 150) {
+        // Baccarat Multiplayer game
+        configs = require("./packages/baccarat-multiplayer/configs.json");
+        gameSettings = require("./packages/baccarat-multiplayer/game-settings.json");
     } else {
         // Default to SeDie Multiplayer if no gameId specified
         configs = require("./packages/sedie-multiplayer/configs.json");
@@ -56,6 +60,7 @@ const nextConfig = withSentryConfig({
             ...(config.resolve.alias || {}),
             "@shared": require("path").resolve(__dirname, "packages/shared/src"),
             "@sedie-multiplayer": require("path").resolve(__dirname, "packages/sedie-multiplayer/src"),
+            "@baccarat-multiplayer": require("path").resolve(__dirname, "packages/baccarat-multiplayer/src"),
         };
 
         config.module.rules.push({
@@ -151,9 +156,6 @@ const nextConfig = withSentryConfig({
                 ],
             },
         ];
-    },
-    sassOptions: {
-        prependData: `$version-image: '${buildVersion}';`,
     },
     output: "standalone",
 });

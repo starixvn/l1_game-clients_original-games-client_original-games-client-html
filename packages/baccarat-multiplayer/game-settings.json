@@ -1,7 +1,7 @@
 {
     "150": {
         "id": 150,
-        "gameName": "Baccarat Multiplayer",
+        "gameName": "BaccaratMultiplayer",
         "tolgeeNamespace": "Baccarat",
         "socketInfo": {
             "namespace": "baccaratmultiplayer",
@@ -19,9 +19,9 @@
             "startNewRoundAnim": 0
         },
         "numberOfRoundHistory": 102,
-        "gamePath": "baccaratmultiplayer",
+        "gamePath": "baccarat-multiplayer",
         "gameResourceConfigs": {
-            "path": "baccaratmultiplayer",
+            "path": "baccarat-multiplayer",
             "optionalPaths": [],
             "cachePaths": []
         }

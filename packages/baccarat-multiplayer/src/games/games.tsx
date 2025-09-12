@@ -8,7 +8,8 @@ import GameLoading from "@shared/components/game-components/game-loading";
 import { getChipSettings } from "@shared/services/user-setting-service";
 import { Props, GameComponentProps, GameComponentRegistry } from "./type";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
-import Baccarat from "../page";
+import dynamic from "next/dynamic";
+import { GAME_ID } from "../game-constants";
 
 const LoadingGameComponent = React.memo(() => (
     <>
@@ -21,8 +22,14 @@ LoadingGameComponent.displayName = "LoadingGameComponent";
 
 // Game registry for better scalability
 // Map both the shared Baccarat id and the saba-game id (150) to the same component
+const BaccaratMultiPlayer = dynamic(() => import("../page"), {
+    loading: () => <LoadingGameComponent />,
+    ssr: false,
+});
+
+// Game registry for better scalability
 const gameComponentRegistry: GameComponentRegistry = {
-    150: Baccarat as unknown as React.ComponentType<GameComponentProps>,
+    [GAME_ID]: BaccaratMultiPlayer,
 };
 
 export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId }) => {
