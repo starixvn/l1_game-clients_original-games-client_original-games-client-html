@@ -7,13 +7,13 @@ import {
     useGameStateContext,
     useGameStatesDispatch,
 } from "@shared/react-contexts/game-state-context/game-state-context";
-import { useTranslator } from '@shared/react-hooks';
-import GameBase from '@shared/components/game-base/';
-import { GameMessageHandler } from '@shared/components/game-base/handlers';
-import { GameBaseHandlers, GameBaseProps, GameBaseState } from '@shared/components/game-base/type';
-import { RoundGameSoundHandler } from '@shared/components/round-base/round-game-sound-handler';
-import { RoundIdHandler } from '@shared/components/round-base/round-id-handler';
-import { RoundStateHandler } from '@shared/components/round-base/round-state-handler';
+import { useTranslator } from "@shared/react-hooks";
+import GameBase from "@shared/components/game-base/";
+import { GameMessageHandler } from "@shared/components/game-base/handlers";
+import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
+import { RoundGameSoundHandler } from "@shared/components/round-base/round-game-sound-handler";
+import { RoundIdHandler } from "@shared/components/round-base/round-id-handler";
+import { RoundStateHandler } from "@shared/components/round-base/round-state-handler";
 import { SeDieBetOptions } from "./sedie-multiplayer-constants";
 import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-handler";
 import SedieCup from "./result-block/sedie-cup";
@@ -25,6 +25,7 @@ const Background = dynamic(() => import("@shared/components/game-components/back
 const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own-total-bet/own-total-bet"), { ssr: false });
 const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
 const AutoRebetIcon = dynamic(() => import("@shared/components/game-components/rebet/auto-rebet-icon"), { ssr: false });
+const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;
@@ -88,7 +89,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     renderBetControl() {
         return (
             <>
-                <div className="flex gap-2 justify-center items-center">
+                <div className="flex gap-6 justify-center items-center md:gap-3">
                     <DoubleBetIcon />
                     {this.renderChipControlPanel()}
                     <AutoRebetIcon />
@@ -98,6 +99,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
                 </div>
             </>
         );
+    }
+
+    renderMoreMenuIcon() {
+        return <PFIcon />;
     }
 
     renderRightSide() {

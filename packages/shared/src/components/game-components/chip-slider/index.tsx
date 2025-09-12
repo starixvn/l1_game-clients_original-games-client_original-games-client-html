@@ -1,11 +1,11 @@
 import { memo, useEffect, useMemo, useState, useRef } from "react";
 import { ChipSlider } from "./chip-slider";
 import { Chip } from "./chip";
-import { useSettingContext } from '@shared/react-contexts';
-import { useGameStore } from '@shared/stores/game-store/game-store';
+import { useSettingContext } from "@shared/react-contexts";
+import { useGameStore } from "@shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
-import useBettingStore from '@shared/stores/betting-store/betting-store';
-import { useClickOutside } from '@shared/react-hooks/use-click-outside';
+import useBettingStore from "@shared/stores/betting-store/betting-store";
+import { useClickOutside } from "@shared/react-hooks/use-click-outside";
 
 const ChipControlPanel: React.FC = () => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -80,7 +80,7 @@ const ChipControlPanel: React.FC = () => {
 
     return (
         <div className={`relative gap-2 md:mx-4`}>
-            <div className={`flex items-center gap-2 ${isAutoRebetActive ? "opacity-50" : ""}`}>
+            <div className={`flex items-center gap-7 ${isAutoRebetActive ? "opacity-50" : ""}`}>
                 <IconPrevious isEnabled={currentIndex > 0 && !isAutoRebetActive} onClick={onClickPrev} />
                 {/* Mobile */}
                 <div ref={chipRef} className="md:hidden">

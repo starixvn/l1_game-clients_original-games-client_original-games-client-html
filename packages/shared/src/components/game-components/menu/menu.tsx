@@ -1,25 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
 export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JSX.Element }> = ({ leftSide, rightSide }) => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const wrapperRef = useRef<HTMLDivElement>(null);
-
-    const handleClickOutside = (event) => {
-        if (wrapperRef && wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-            if (dropdownOpen) {
-                console.log("[Menu] click.outside: close");
-            }
-            setDropdownOpen(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener("click", handleClickOutside);
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
-    }, [wrapperRef]);
-
     return (
         <div className="p-2 bg-third-bg rounded-b-xl">
             <div className="flex justify-between items-center">
@@ -29,3 +10,5 @@ export const Menu: React.FC<{ leftSide?: React.JSX.Element; rightSide?: React.JS
         </div>
     );
 };
+
+export default Menu;

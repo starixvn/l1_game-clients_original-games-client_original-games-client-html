@@ -1,6 +1,8 @@
 import { useCommonTranslate } from '@shared/react-hooks/use-translator';
-import Tooltip from "../tooltip";
 import Styles from "./icon-statistic.module.scss";
+import dynamic from 'next/dynamic';
+
+const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
 
 export const IconStatistic = ({ onClick }: { onClick?: () => void }) => {
     const { t } = useCommonTranslate();
