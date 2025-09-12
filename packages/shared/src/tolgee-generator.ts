@@ -6,7 +6,19 @@ const gameSettings = require("../../sedie-multiplayer/game-settings.json");
 console.log("[TolgeeGenerator] Tolgee generator starting");
 
 // Standalone locales definition
-const locales = { en: "en", vi: "vi", th: "th", id: "id", zh_cn: "zh_cn", zh_tw: "zh_tw", ja: "ja" };
+const locales = { 
+    en: "en",
+    vi: "vi",
+    th: "th",
+    id: "id",
+    zh_cn: "zh_cn",
+    zh_tw: "zh_tw",
+    ms: "ms",
+    hi_in: "hi_in",
+    bn_bd: "bn_bd",
+    ko: "ko",
+    pt_br: "pt_br",
+ };
 
 function writeFile(fileName: string, content: string, extension = "json") {
     console.log("[TolgeeGenerator] writeFile called for:", fileName);
