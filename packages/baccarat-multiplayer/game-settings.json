@@ -4,8 +4,8 @@
         "gameName": "Baccarat Multiplayer",
         "tolgeeNamespace": "Baccarat",
         "socketInfo": {
-            "namespace": "baccarat-multiplayer",
-            "path": "baccarat-multiplayer"
+            "namespace": "baccaratmultiplayer",
+            "path": "baccaratmultiplayer"
         },
         "durations": {
             "wholeRound": 46,
@@ -19,9 +19,9 @@
             "startNewRoundAnim": 0
         },
         "numberOfRoundHistory": 102,
-        "gamePath": "baccarat-multiplayer",
+        "gamePath": "baccaratmultiplayer",
         "gameResourceConfigs": {
-            "path": "baccarat-multiplayer",
+            "path": "baccaratmultiplayer",
             "optionalPaths": [],
             "cachePaths": []
         }
