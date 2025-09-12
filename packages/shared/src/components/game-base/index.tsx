@@ -2,12 +2,10 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
 import dynamic from "next/dynamic";
-
 import { GameIds } from "@shared/constants";
 import { InitSocketIO, writeDebugLog } from "@shared/helpers";
 import { AnalyticsHelper } from "@shared/helpers/analytic-helper";
 import { broadcastOpeningGameId } from "@shared/helpers/global-events-helper";
-
 import { GameActionsContextProvider, GameContextProvider, PlayerContext, PlayerContextModel } from "@shared/react-contexts";
 import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
 import { PlaceBetEventActionType } from "@shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
@@ -19,11 +17,8 @@ import DisabledModal from "../game-components/disabled-modal";
 import { ConnectFailedMessage } from "../game-components/error-message";
 import { ConnectFailedReasonKey } from "../game-components/error-message/type";
 import GameContainer from "../game-components/game-container";
-import GameGuideModal from "../game-components/game-guide";
 import GameLoading from "../game-components/game-loading";
-import { NewRoundTransitionWithoutExtraSeconds } from "../game-components/new-round-transition";
 import { NoticeDialog } from "../game-components/notice";
-import { PFSettingModal } from "../game-components/provably-fair";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
@@ -45,6 +40,8 @@ import PreloadResources from "@shared/helpers/preload-resources";
 import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
 import ChipControlPanel from "../game-components/chip-slider";
 import useGameStore from "@shared/stores/game-store/game-store";
+const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
+const PFSettingModal = dynamic(() => import("../game-components/provably-fair/pf-setting"), { ssr: false });
 const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false });
 const Header = dynamic(() => import("../page-components/header"), { ssr: false });
 const Background = dynamic(() => import("../game-components/background"), { ssr: false });
@@ -558,10 +555,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <NoticeDialog />;
     }
 
-    renderRoundIdSection() {
-        return <></>;
-    }
-
     renderPFSettingModal() {
         return createPortal(<PFSettingModal />, document.getElementById("dashboard"));
     }
@@ -574,15 +567,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return createPortal(<GameGuideModal />, document.getElementById("dashboard"));
     }
 
-    renderMenuButtons() {
-        return <></>;
-    }
-
     renderBettingBlock() {
-        return <></>;
-    }
-
-    renderScoreboards() {
         return <></>;
     }
 
@@ -592,14 +577,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     renderStatistic() {
         return <></>;
-    }
-
-    renderStatisticContent() {
-        return <></>;
-    }
-
-    renderNewRoundTransition() {
-        return <NewRoundTransitionWithoutExtraSeconds />;
     }
 
     renderRoundHistory() {
