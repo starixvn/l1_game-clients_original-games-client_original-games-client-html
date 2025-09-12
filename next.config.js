@@ -165,6 +165,26 @@ const nextConfig = withSentryConfig({
         // Return base rewrites plus game ID rewrites for cases where basePath is not set
         return [...base, ...gameIdRewrites];
     },
+    async redirects() {
+        return [
+            // Add explicit redirects for game ID patterns
+            {
+                source: "/game-148-m",
+                destination: "/",
+                permanent: false,
+            },
+            {
+                source: "/game-148-d",
+                destination: "/",
+                permanent: false,
+            },
+            {
+                source: "/game-148",
+                destination: "/",
+                permanent: false,
+            },
+        ];
+    },
     async headers() {
         return [
             {
