@@ -81,6 +81,30 @@ const nextConfig = withSentryConfig({
             },
         ];
 
+        // Always include game ID redirects regardless of basePath setting
+        // This ensures they work in both development and production environments
+        const gameIdRewrites = [
+            // Assets under _next
+            {
+                source: "/:gameId/_next/:path*",
+                destination: "/_next/:path*",
+            },
+            // Legacy static (if any)
+            {
+                source: "/:gameId/static/:path*",
+                destination: "/static/:path*",
+            },
+            // App routes and public assets
+            {
+                source: "/:gameId/:path*",
+                destination: "/:path*",
+            },
+            {
+                source: "/:gameId",
+                destination: "/",
+            },
+        ];
+
         // If a basePath is set, support a dynamic :gameId segment after it
         if (basePath) {
             const baseNoSlash = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
@@ -113,7 +137,7 @@ const nextConfig = withSentryConfig({
                         destination: domainRoot,
                     },
                 ];
-                return [...base, ...prodGameIdRewrites];
+                return [...base, ...prodGameIdRewrites, ...gameIdRewrites];
             } else {
                 // For relative paths (like /game-148), redirect to root /
                 const prodGameIdRewrites = [
@@ -134,34 +158,12 @@ const nextConfig = withSentryConfig({
                         destination: "/",
                     },
                 ];
-                return [...base, ...prodGameIdRewrites];
+                return [...base, ...prodGameIdRewrites, ...gameIdRewrites];
             }
         }
 
-        // Allow accessing the app under /:gameId/... on localhost without setting basePath
-        const devGameIdRewrites = [
-            // Assets under _next
-            {
-                source: "/:gameId/_next/:path*",
-                destination: "/_next/:path*",
-            },
-            // Legacy static (if any)
-            {
-                source: "/:gameId/static/:path*",
-                destination: "/static/:path*",
-            },
-            // App routes and public assets
-            {
-                source: "/:gameId/:path*",
-                destination: "/:path*",
-            },
-            {
-                source: "/:gameId",
-                destination: "/",
-            },
-        ];
-
-        return [...base, ...devGameIdRewrites];
+        // Return base rewrites plus game ID rewrites for cases where basePath is not set
+        return [...base, ...gameIdRewrites];
     },
     async headers() {
         return [
