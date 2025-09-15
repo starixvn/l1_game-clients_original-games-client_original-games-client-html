@@ -3,19 +3,10 @@
         "connectionId": "https-sonarqube-lumigame-com",
         "projectKey": "sedie-multiplayer-client"
     },
-    "typescript.preferences.includePackageJsonAutoImports": "on",
-    "typescript.suggest.autoImports": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.organizeImports": "explicit"
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.expand": false,
     "explorer.fileNesting.patterns": {
         "*.ts": "${capture}.js, ${capture}.*.ts, ${capture}.d.ts",
         "*.tsx": "${capture}.*.tsx, ${capture}.*.tsx.snap, ${capture}.module.scss"
-    },
-    "sonarlint.output.showVerboseLogs": false
+    }
 }
