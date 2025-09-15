@@ -1,6 +1,12 @@
 import { GameRoundDataHandler } from "@shared/components/game-base/handlers/game-round-data-handler";
 import { BaccaratGameLogic } from "./baccarat-helper";
 
+const Winner = {
+    PLAYER: "player",
+    BANKER: "banker",
+    TIE: "tie",
+} as const;
+
 export class BaccaratGameRoundDataHandler extends GameRoundDataHandler {
     buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number) {
         const normalized = this.normalizeResult(result);
@@ -28,63 +34,67 @@ export class BaccaratGameRoundDataHandler extends GameRoundDataHandler {
     }
 
     private normalizeResult(result: any) {
-        // Handle the new API data format
-        let player: any[] = [];
-        let banker: any[] = [];
-
-        if (result?.result?.player && result?.result?.banker) {
-            // New format: result.player.card1, result.player.card2, etc.
-            const playerCards = [];
-            const bankerCards = [];
-
-            if (result.result.player.card1 && result.result.player.card1.card !== undefined) playerCards.push(result.result.player.card1);
-            if (result.result.player.card2 && result.result.player.card2.card !== undefined) playerCards.push(result.result.player.card2);
-            if (result.result.player.card3 && result.result.player.card3.card !== undefined) playerCards.push(result.result.player.card3);
-
-            if (result.result.banker.card1 && result.result.banker.card1.card !== undefined) bankerCards.push(result.result.banker.card1);
-            if (result.result.banker.card2 && result.result.banker.card2.card !== undefined) bankerCards.push(result.result.banker.card2);
-            if (result.result.banker.card3 && result.result.banker.card3.card !== undefined) bankerCards.push(result.result.banker.card3);
-
-            player = playerCards;
-            banker = bankerCards;
-        } else {
-            // Fallback to old format
-            player = (result?.playerCards || result?.player || []) as any[];
-            banker = (result?.bankerCards || result?.banker || []) as any[];
-        }
-
-        // Determine winner from settlement result or calculate
-        let winner: "player" | "banker" | "tie";
-        if (result?.settlementResult) {
-            if (result.settlementResult.player) {
-                winner = "player";
-            } else if (result.settlementResult.banker) {
-                winner = "banker";
-            } else {
-                winner = "tie";
-            }
-        } else {
-            winner = BaccaratGameLogic.calculateWinner(player, banker);
-        }
-
-        // Add additional baccarat-specific data
-        const playerTotal = BaccaratGameLogic.getBaccaratTotal(player);
-        const bankerTotal = BaccaratGameLogic.getBaccaratTotal(banker);
-        const isNatural = result?.settlementResult?.natural || BaccaratGameLogic.isNatural(player) || BaccaratGameLogic.isNatural(banker);
-        const playerPair = result?.settlementResult?.playerPair || BaccaratGameLogic.hasPair(player);
-        const bankerPair = result?.settlementResult?.bankerPair || BaccaratGameLogic.hasPair(banker);
-        const thirdCardInfo = BaccaratGameLogic.shouldDrawThirdCard(player, banker);
+        const { player, banker } = this.extractCards(result);
+        const winner = this.determineWinner(result, player, banker);
+        const additionalData = this.calculateAdditionalData(result, player, banker);
 
         return {
             player,
             banker,
             winner,
+            ...additionalData,
+        };
+    }
+
+    private extractCards(result: any) {
+        if (result?.result?.player && result?.result?.banker) {
+            return {
+                player: this.extractCardsFromFormat(result.result.player),
+                banker: this.extractCardsFromFormat(result.result.banker),
+            };
+        }
+
+        return {
+            player: (result?.playerCards || result?.player || []) as any[],
+            banker: (result?.bankerCards || result?.banker || []) as any[],
+        };
+    }
+
+    private extractCardsFromFormat(cards: any) {
+        const validCards = [];
+        for (let i = 1; i <= 3; i++) {
+            const card = cards[`card${i}`];
+            if (card?.card !== undefined) {
+                validCards.push(card);
+            }
+        }
+        return validCards;
+    }
+
+    private determineWinner(result: any, player: any[], banker: any[]) {
+        if (result?.settlementResult) {
+            if (result.settlementResult.player) {
+                return Winner.PLAYER;
+            }
+            if (result.settlementResult.banker) {
+                return Winner.BANKER;
+            }
+            return Winner.TIE;
+        }
+        return BaccaratGameLogic.calculateWinner(player, banker);
+    }
+
+    private calculateAdditionalData(result: any, player: any[], banker: any[]) {
+        const playerTotal = BaccaratGameLogic.getBaccaratTotal(player);
+        const bankerTotal = BaccaratGameLogic.getBaccaratTotal(banker);
+
+        return {
             playerTotal,
             bankerTotal,
-            isNatural,
-            playerPair,
-            bankerPair,
-            thirdCardInfo
+            isNatural: result?.settlementResult?.natural || BaccaratGameLogic.isNatural(player) || BaccaratGameLogic.isNatural(banker),
+            playerPair: result?.settlementResult?.playerPair || BaccaratGameLogic.hasPair(player),
+            bankerPair: result?.settlementResult?.bankerPair || BaccaratGameLogic.hasPair(banker),
+            thirdCardInfo: BaccaratGameLogic.shouldDrawThirdCard(player, banker),
         };
     }
 
@@ -128,9 +138,15 @@ export class BaccaratGameRoundDataHandler extends GameRoundDataHandler {
         }
 
         // Update win counts
-        if (normalized.winner === "player") stats.wins.player += 1;
-        if (normalized.winner === "banker") stats.wins.banker += 1;
-        if (normalized.winner === "tie") stats.wins.tie += 1;
+        if (normalized.winner === Winner.PLAYER) {
+            stats.wins.player += 1;
+        }
+        if (normalized.winner === Winner.BANKER) {
+            stats.wins.banker += 1;
+        }
+        if (normalized.winner === Winner.TIE) {
+            stats.wins.tie += 1;
+        }
 
         // Update natural counts
         if (normalized.isNatural) {
@@ -143,17 +159,23 @@ export class BaccaratGameRoundDataHandler extends GameRoundDataHandler {
         }
 
         // Update pair counts
-        if (normalized.playerPair) stats.pairs.player += 1;
-        if (normalized.bankerPair) stats.pairs.banker += 1;
+        if (normalized.playerPair) {
+            stats.pairs.player += 1;
+        }
+        if (normalized.bankerPair) {
+            stats.pairs.banker += 1;
+        }
 
         // Update third card counts
-        if (normalized.thirdCardInfo?.player) stats.thirdCards.player += 1;
-        if (normalized.thirdCardInfo?.banker) stats.thirdCards.banker += 1;
+        if (normalized.thirdCardInfo?.player) {
+            stats.thirdCards.player += 1;
+        }
+        if (normalized.thirdCardInfo?.banker) {
+            stats.thirdCards.banker += 1;
+        }
 
         return stats;
     }
 }
 
 export default BaccaratGameRoundDataHandler;
-
-
