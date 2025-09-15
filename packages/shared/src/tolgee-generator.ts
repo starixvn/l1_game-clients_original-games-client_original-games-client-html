@@ -42,13 +42,10 @@ interface GameSettings {
 
 const tmpGameSettings: { [id: string]: GameSettings } = gameSettings;
 
-//TODO: Need to config dynamically
-const tolgeeNamespaceByBaccaratGameSetting = ["Baccarat"];
-
 const tolgeeNamespaceByGameSetting = Object.values(tmpGameSettings)
     .map((setting) => setting.tolgeeNamespace)
     .filter((ns) => ns);
-const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting, ...tolgeeNamespaceByBaccaratGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
+const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
 
 console.log("[TolgeeGenerator] namespaces:", namespaces);
 
