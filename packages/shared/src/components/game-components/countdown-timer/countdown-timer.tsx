@@ -41,7 +41,7 @@ export const CountdownTimer = ({ className = "" }) => {
 
     const calculatePercentage = (clientRemainingTime: number) => {
         if (clientRemainingTime - lockingBet <= 0) {
-            return ((clientRemainingTime - 1) * 100) / (lockingBet - 1);
+            return ((1 + lockingBet - clientRemainingTime) * 100) / (lockingBet );
         }
         return ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
     };
@@ -66,11 +66,11 @@ export const CountdownTimer = ({ className = "" }) => {
 
     return (
         <div className={`w-full ${styles["countdown-timer-container"]} ${className}`}>
-            <div className={`${roundState === RoundState.LockingBet ? styles["text-lock-bet"] : styles["text"]}`}>{displayText}</div>
+            <div className={`${roundState === RoundState.LockingBet || roundState === RoundState.DisplayResult ? styles["text-lock-bet"] : styles["text"]}`}>{displayText}</div>
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
-                        className={`h-full ${roundState === RoundState.LockingBet ? styles["progress-bar-lock-bet"] : styles["progress-bar"]} ${
+                        className={`h-full ${roundState === RoundState.LockingBet || roundState === RoundState.DisplayResult ? styles["progress-bar-lock-bet"] : styles["progress-bar"]} ${
                             isAnimate ? (roundState === RoundState.LockingBet ? styles["transition-lock-bet"] : styles["transition"]) : ""
                         }`}
                         style={{ width: `${progress}%` }}
