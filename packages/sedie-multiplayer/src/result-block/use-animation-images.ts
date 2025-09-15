@@ -11,9 +11,9 @@ interface AnimationImages {
 
 // Define all available variants for each option
 const ANIMATION_VARIANTS = {
-    [SeDieBetOptions.RED2]: ["red2-op-1", "red2-op-2", "red2-op-3", "red2-op-4", "red2-op-5", "red2-op-6"],
-    [SeDieBetOptions.RED3]: ["red3-op-1", "red3-op-2", "red3-op-3", "red3-op-4"],
-    [SeDieBetOptions.WHITE3]: ["white3-op-1", "white3-op-2", "white3-op-3", "white3-op-4"],
+    [SeDieBetOptions.RED2]: ["red2-op-1", "red2-op-2"],
+    [SeDieBetOptions.RED3]: ["red3-op-1", "red3-op-2"],
+    [SeDieBetOptions.WHITE3]: ["white3-op-1", "white3-op-2"],
     // red4 and white4 don't have variants, use original names
     [SeDieBetOptions.RED4]: ["red4"],
     [SeDieBetOptions.WHITE4]: ["white4"],
