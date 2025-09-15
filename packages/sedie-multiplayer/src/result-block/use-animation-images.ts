@@ -56,35 +56,59 @@ export const useAnimationImages = (settlementResult: any) => {
         setSelectedVariants(newVariants);
     }, [roundId, settlementResult]);
 
-    // Load all phase 2 animations with their selected variants
-    const { data: red2 } = useMemoriedImage(
-        `/static/images/sedie-multiplayer/animation/phase-2/${selectedVariants[SeDieBetOptions.RED2] || "red2-op-1"}.webp`
-    );
-    const { data: red3 } = useMemoriedImage(
-        `/static/images/sedie-multiplayer/animation/phase-2/${selectedVariants[SeDieBetOptions.RED3] || "red3-op-1"}.webp`
-    );
-    const { data: white3 } = useMemoriedImage(
-        `/static/images/sedie-multiplayer/animation/phase-2/${selectedVariants[SeDieBetOptions.WHITE3] || "white3-op-1"}.webp`
-    );
-
+    // Load all phase 2 animations
+    const { data: red2Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-1.webp`);
+    const { data: red2Op2, isLoading: red2Op2Loading, error: red2Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp`);
+    
+    const { data: red3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-1.webp`);
+    const { data: red3Op2, isLoading: red3Op2Loading, error: red3Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp`);
+    
+    const { data: white3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-1.webp`);
+    const { data: white3Op2, isLoading: white3Op2Loading, error: white3Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp`);
+    
     const { data: red4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red4.webp`);
     const { data: white4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white4.webp`);
 
-    const phase2Images = useMemo(
+    // Create a map for all variants
+    const allVariants = useMemo(
         () => ({
-            [SeDieBetOptions.RED2]: red2,
-            [SeDieBetOptions.RED3]: red3,
-            [SeDieBetOptions.RED4]: red4,
-            [SeDieBetOptions.WHITE3]: white3,
-            [SeDieBetOptions.WHITE4]: white4,
+            [SeDieBetOptions.RED2]: [red2Op1, red2Op2],
+            [SeDieBetOptions.RED3]: [red3Op1, red3Op2],
+            [SeDieBetOptions.WHITE3]: [white3Op1, white3Op2],
+            [SeDieBetOptions.RED4]: [red4],
+            [SeDieBetOptions.WHITE4]: [white4],
         }),
-        [red2, red3, red4, white3, white4]
+        [red2Op1, red2Op2, red3Op1, red3Op2, white3Op1, white3Op2, red4, white4]
     );
 
     const animationPhase2 = useMemo(() => {
         const winningOption = getWinningSubOption(settlementResult);
-        return phase2Images[winningOption] || null;
-    }, [settlementResult, phase2Images]);
+        const variants = allVariants[winningOption];
+        const selectedVariant = selectedVariants[winningOption];
+        
+        if (!variants || !selectedVariant) return null;
+        
+        // Find the selected variant index
+        const variantIndex = ANIMATION_VARIANTS[winningOption]?.indexOf(selectedVariant) || 0;
+        const selectedData = variants[variantIndex];
+        
+        // loading or has error, use default animation
+        if (winningOption === SeDieBetOptions.RED2) {
+            if (variantIndex === 1 && (red2Op2Loading || red2Op2Error)) {
+                return red2Op1;
+            }
+        } else if (winningOption === SeDieBetOptions.RED3) {
+            if (variantIndex === 1 && (red3Op2Loading || red3Op2Error)) {
+                return red3Op1;
+            }
+        } else if (winningOption === SeDieBetOptions.WHITE3) {
+            if (variantIndex === 1 && (white3Op2Loading || white3Op2Error)) {
+                return white3Op1;
+            }
+        }
+        
+        return selectedData || variants[0];
+    }, [settlementResult, allVariants, selectedVariants, red2Op1, red2Op2, red2Op2Loading, red2Op2Error, red3Op1, red3Op2, red3Op2Loading, red3Op2Error, white3Op1, white3Op2, white3Op2Loading, white3Op2Error]);
 
     return {
         animationPhase1,
