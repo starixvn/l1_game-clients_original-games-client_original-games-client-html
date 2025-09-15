@@ -1,0 +1,18 @@
+{
+    "bet_option_red2": "빨간색 2개",
+    "bet_option_red3": "빨간색 3개",
+    "bet_option_red4": "빨강 4개",
+    "bet_option_white3": "빨간색 1개",
+    "bet_option_white4": "하양 4개",
+    "even_win": "짝수 승",
+    "game_icon_name": "식보",
+    "game_name": "다이사이",
+    "game_name_148": "Se Die Multiplayer",
+    "glossary_even": "짝",
+    "glossary_odd": "홀",
+    "glossary_red": "빨강",
+    "glossary_white": "하양",
+    "odd_win": "홀수 승",
+    "pf_verifier_tool_button": "버튼 {value}",
+    "pf_verifier_tool_para_24": "SHA512의 각 2자리 문자 그룹을 십진수로 변환"
+}

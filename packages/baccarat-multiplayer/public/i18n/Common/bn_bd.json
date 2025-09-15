@@ -1,0 +1,14 @@
+{
+    "auto_cashout": "স্বয়ংক্রিয় ক্যাশআউট",
+    "auto_play": "অটো প্লে",
+    "bet_accepted": "বাজি গৃহীত হয়েছে",
+    "bet_slip": "বাজি স্লিপ",
+    "cancel_bet": "(বাজি বাতিল করুন)",
+    "cashed": "ক্যাশ করা হয়েছে",
+    "cashout": "Cashout",
+    "game": "গেম",
+    "message_bet_is_accepted": "বাজি গ্রহণ করা হয়েছে",
+    "message_total_cashout_reach_max": "মোট ক্যাশআউটের পরিমাণ সর্বোচ্চ উইনে পৌঁছেছে",
+    "my_bets": "আমার বাজি",
+    "waiting": "অপেক্ষা করুন..."
+}
