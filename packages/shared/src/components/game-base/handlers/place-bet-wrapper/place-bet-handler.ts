@@ -1,14 +1,12 @@
-import { TFnType, TranslationKey } from "@tolgee/react";
-import { Dispatch } from "react";
-import { GameMessageHandler, messageEventType } from "..";
 import { NoticeErrorCode } from '@shared/constants/error-code-dictionary';
 import {
     GetLocalizedErrorMessage,
     StorageHelper,
+    broadcastNotice,
     getGlossaryTranslate,
     localStorageKeys,
-    broadcastNotice,
 } from "@shared/helpers";
+import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
 import {
     findHedgeBetGroup,
     getAccountBalance,
@@ -22,6 +20,9 @@ import {
     PlaceBetEventActionType,
 } from "@shared/react-contexts/game-state-context/place-bet-context/place-bet-action";
 import { PlaceBetContextModel } from '@shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model';
+import { TFnType, TranslationKey } from "@tolgee/react";
+import { Dispatch } from "react";
+import { GameMessageHandler, messageEventType } from "..";
 import { NoticeModel, RoundState } from "../../type";
 import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
 import { useSettingStore } from "@shared/stores/setting-store";
@@ -270,14 +271,14 @@ export class PlaceBetHandler {
             this.props.gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
                     event: "bet",
-                    data: { amount, betChoice: betChoice.toLowerCase(), __pfMode: "clientSeedOnly" },
+                    data: { amount, betChoice: betChoice, __pfMode: "clientSeedOnly" },
                 },
             });
         } else {
             this.props.gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED]: {
                     event: "bet",
-                    data: { betChoices: { [betChoice.toLowerCase()]: amount } },
+                    data: { betChoices: { [betChoice]: amount } },
                 },
             });
         }

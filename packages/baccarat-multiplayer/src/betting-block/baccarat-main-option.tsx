@@ -1,18 +1,18 @@
 import dynamic from "next/dynamic";
 import styles from "./baccarat-bet-options.module.scss";
+import BaccaratHighlightBetOption from "./baccarat-highlight-bet-option";
 const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
 const TotalBet = dynamic(() => import("@shared/components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const BetChoice = dynamic(() => import("@shared/components/game-components/bet-option/bet-choice"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
-import BaccaratHighlightBetOption from "./baccarat-highlight-bet-option";
 
 export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     const buttonId = `${tolgeeNamespace}-choice-${choice}`;
 
     const themeClass =
-        choice === "PLAYER" ? styles.playerTheme : choice === "BANKER" ? styles.bankerTheme : styles.tieTheme;
+        choice === "player" ? styles.playerTheme : choice === "banker" ? styles.bankerTheme : styles.tieTheme;
 
     return (
         <div className="relative">
