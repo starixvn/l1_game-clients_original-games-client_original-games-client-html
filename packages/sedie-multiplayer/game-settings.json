@@ -22,7 +22,7 @@
         "gamePath": "sedie-multiplayer",
         "gameResourceConfigs": {
             "path": "sedie-multiplayer",
-            "optionalPaths": ["sedie-multiplayer/result"],
+            "optionalPaths": ["sedie-multiplayer/result", "sedie-multiplayer/animation/phase-2", "sedie-multiplayer/animation/phase-1"],
             "cachePaths": [
                 "sedie-multiplayer/result/",
                 "sedie-multiplayer/animation/phase-1/animation-phase-1.webp",
