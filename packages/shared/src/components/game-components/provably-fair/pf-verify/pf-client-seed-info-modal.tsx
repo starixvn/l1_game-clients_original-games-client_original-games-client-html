@@ -148,14 +148,14 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                                 </TableCell>
                                                 <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
                                                     {name === clientSeed.name ? (
-                                                        <span className="font-semibold text-winning-highlight">{clientSeed.name}</span>
+                                                        <span className="font-semibold text-[#00C950]">{clientSeed.name}</span>
                                                     ) : (
                                                         <span className="font-text">{encryptName(clientSeed.name)}</span>
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
                                                     {name === clientSeed.name ? (
-                                                        <span className="font-semibold text-winning-highlight">
+                                                        <span className="font-semibold text-[#00C950]">
                                                             {clientSeed.clientSeed}
                                                         </span>
                                                     ) : (
