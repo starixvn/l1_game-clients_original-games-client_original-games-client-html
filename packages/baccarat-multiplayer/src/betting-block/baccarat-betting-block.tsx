@@ -37,7 +37,7 @@ const BaccaratBettingBlock: React.FC<BaccaratBettingBlockProps> = ({ className }
             </div>
             <BaccaratSubOptions
                 tolgeeNamespace={tolgeeNamespace}
-                choices={[BaccaratBetOptions.PLAYER_PAIR, BaccaratBetOptions.TIE, BaccaratBetOptions.BANKER_PAIR]}
+                choices={[BaccaratBetOptions.PLAYER, BaccaratBetOptions.TIE, BaccaratBetOptions.BANKER]}
             />
         </div>
     );
