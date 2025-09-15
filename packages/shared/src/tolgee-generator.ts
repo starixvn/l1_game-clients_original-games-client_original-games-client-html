@@ -88,8 +88,8 @@ tg.on("initialLoad", async () => {
                         languages[languageId][namespace][key] = value as string;
                     });
 
-                    writeFile(`../sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
-                    writeFile(`../baccarat-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
+                    writeFile(`packages/sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
+                    writeFile(`packages/baccarat-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
                 }
             });
         });

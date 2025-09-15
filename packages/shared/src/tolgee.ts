@@ -6,7 +6,11 @@ import { buildVersion, locales } from "./constants";
 const tolgeeNamespaceByGameSetting = Object.values(getAppSettings().gameSettings)
     .map((setting) => setting.tolgeeNamespace)
     .filter((ns) => ns);
-const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
+
+//TODO: Need to config dynamically
+const tolgeeNamespaceByBaccaratGameSetting = ["Baccarat"];
+
+const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting, ...tolgeeNamespaceByBaccaratGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
 const trimSlashes = (path: string): string => {
     if (path.endsWith("/")) {
         return path.slice(0, -1);
