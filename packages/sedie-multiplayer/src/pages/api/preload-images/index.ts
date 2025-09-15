@@ -20,7 +20,7 @@ const DEFAULT_STATIC_PATH = "public/static/images/";
 const DEFAULT_IMG_PATH = "/static/images/";
 
 interface RequestBody {
-    // No gameId needed - using environment variable
+    gameId: number;
 }
 
 // Cleanup cache to prevent memory leaks
@@ -51,7 +51,7 @@ const cleanupCache = () => {
 
 // Validate request body
 const validateRequest = (body: any): body is RequestBody => {
-    return typeof body === "object";
+    return typeof body === "object" && typeof body.gameId === "number";
 };
 
 // Optimized file reading with error handling
@@ -118,9 +118,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>
         return res.status(400).json([]);
     }
 
-    const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID
-        ? Number(process.env.NEXT_PUBLIC_DEFAULT_GAME_ID)
-        : 148; // Default to SeDieMultiplayer gameId
+    const { gameId } = req.body;
 
     const pathsImg = getPathsImg(gameId);
 
