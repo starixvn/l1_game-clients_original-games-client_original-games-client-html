@@ -8,12 +8,12 @@
             "path": "baccaratmultiplayer"
         },
         "durations": {
-            "wholeRound": 46,
-            "wholeTurn": 46,
-            "placingBets": 30,
+            "wholeRound": 30,
+            "wholeTurn": 30,
+            "placingBets": 18,
             "lockingBet": 3,
-            "showResult": 15,
-            "resultAnimation": 4,
+            "showResult": 5,
+            "resultAnimation": 10,
             "beforePlaceBet": 0,
             "switchRoundAnimation": 0,
             "startNewRoundAnim": 0
