@@ -18,6 +18,7 @@ import { BaccaratGameRoundDataHandler } from "./baccarat-game-round-data-handler
 import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
 import { BaccaratBetOptions } from "./baccarat-multiplayer-constants";
 import BaccaratBettingBlock from "./betting-block/baccarat-betting-block";
+import BaccaratMultiplayerBetDetailModal from "./history";
 import BaccaratSettlementResult from "./result-block/baccarat-settlement-result";
 import { BaccaratMultiplayerRoundHistory } from "./round-history/baccarat-multiplayer-round-history";
 const OwnTotalBet = lazy(() => import("@shared/components/game-components/own-total-bet/own-total-bet"));
@@ -99,6 +100,10 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
                 <PlayerResultBoard />
             </div>
         );
+    }
+
+    renderBetDetailModal() {
+        return <BaccaratMultiplayerBetDetailModal />;
     }
 }
 

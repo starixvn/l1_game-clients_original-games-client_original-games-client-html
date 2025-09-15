@@ -1,9 +1,9 @@
-import { FC, ReactNode, useMemo, useCallback } from "react";
-import ModalContainer from "../modal-container";
-import { useCommonTranslate } from '@shared/react-hooks';
-import usePopupStore from '@shared/stores/popup-store/popup-store';
+import { useCommonTranslate } from "@shared/react-hooks";
+import usePopupStore from "@shared/stores/popup-store/popup-store";
+import { FC, ReactNode, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useShallow } from "zustand/react/shallow";
+import ModalContainer from "../modal-container";
 
 const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
     const { t: translateCommon } = useCommonTranslate();
@@ -21,6 +21,8 @@ const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
     const handleCloseModal = useCallback(() => {
         toggleBetDetail(false);
     }, [toggleBetDetail]);
+
+    console.log("isShowBetDetail", isShowBetDetail, "dashboardElement", dashboardElement);
 
     return (
         isShowBetDetail &&

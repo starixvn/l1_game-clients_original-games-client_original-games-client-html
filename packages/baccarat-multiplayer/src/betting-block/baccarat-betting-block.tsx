@@ -1,4 +1,5 @@
 import { useGameContext } from "@shared/react-contexts";
+import { cn } from "@shared/utils/merge-tailwind-util";
 import React, { useEffect } from "react";
 import { BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 import styles from "./baccarat-bet-options.module.scss";
@@ -30,7 +31,7 @@ const BaccaratBettingBlock: React.FC<BaccaratBettingBlockProps> = ({ className }
     }, []);
 
     return (
-        <div className={`${styles.bettingWrapper} ${className || ""}`}>
+        <div className={cn(styles.bettingWrapper, "mt-4", className)}>
             <div className={styles.mainOptionsRow}>
                 <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.PLAYER} />
                 <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.BANKER} />
