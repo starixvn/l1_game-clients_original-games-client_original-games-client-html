@@ -1,11 +1,6 @@
 import { GameRoundDataHandler } from "@shared/components/game-base/handlers/game-round-data-handler";
 import { BaccaratGameLogic } from "./baccarat-helper";
-
-const Winner = {
-    PLAYER: "player",
-    BANKER: "banker",
-    TIE: "tie",
-} as const;
+import { Winner } from "./baccarat-multiplayer-constants";
 
 export class BaccaratGameRoundDataHandler extends GameRoundDataHandler {
     buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number) {

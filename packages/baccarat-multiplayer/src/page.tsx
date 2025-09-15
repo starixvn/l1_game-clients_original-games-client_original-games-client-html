@@ -5,21 +5,21 @@ import GameBase from "@shared/components/game-base";
 import { GameMessageHandler } from "@shared/components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
 import { RoundGameSoundHandler } from "@shared/components/round-base/round-game-sound-handler";
-import { BaccaratGameRoundDataHandler } from "./baccarat-game-round-data-handler";
-import { RoundStateHandler } from "@shared/components/round-base/round-state-handler";
 import { RoundIdHandler } from "@shared/components/round-base/round-id-handler";
-import { useTranslator } from "@shared/react-hooks";
+import { RoundStateHandler } from "@shared/components/round-base/round-state-handler";
 import {
     GameStateProvider,
     useGameStateContext,
     useGameStatesDispatch,
 } from "@shared/react-contexts/game-state-context/game-state-context";
+import { useTranslator } from "@shared/react-hooks";
+import { BaccaratGameRoundDataHandler } from "./baccarat-game-round-data-handler";
 
+import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
+import { BaccaratBetOptions } from "./baccarat-multiplayer-constants";
 import BaccaratBettingBlock from "./betting-block/baccarat-betting-block";
 import BaccaratSettlementResult from "./result-block/baccarat-settlement-result";
-import BaccaratRoundHistory from "./round-history/baccarat-round-history";
-import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
-import { BaccaratBetOptions } from "./baccarat-constants";
+import { BaccaratMultiplayerRoundHistory } from "./round-history/baccarat-multiplayer-round-history";
 const OwnTotalBet = lazy(() => import("@shared/components/game-components/own-total-bet/own-total-bet"));
 const DoubleBetIcon = lazy(() => import("@shared/components/game-components/rebet/double-bet-icon"));
 const AutoRebetIcon = lazy(() => import("@shared/components/game-components/rebet/auto-rebet-icon"));
@@ -30,7 +30,7 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
         console.log("[Baccarat Page] Constructor called with props:", {
             gameId: props.id,
             gameName: props.gameName,
-            openGameId: props.id
+            openGameId: props.id,
         });
 
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
@@ -57,7 +57,7 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderRoundHistory(): JSX.Element {
-        return <BaccaratRoundHistory />;
+        return <BaccaratMultiplayerRoundHistory />;
     }
     renderResultBlock(): JSX.Element {
         return <BaccaratSettlementResult />;
@@ -126,5 +126,3 @@ const BaccaratWrapper = (props: any) => (
 );
 
 export default withRouter(BaccaratWrapper);
-
-

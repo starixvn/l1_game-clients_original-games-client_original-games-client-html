@@ -1,0 +1,84 @@
+.statistic-container {
+    position: absolute;
+    z-index: 99999;
+    width: max-content;
+    height: max-content;
+    top: 45px;
+    left: -10px;
+    animation: curtainUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Inline render container for in-place statistics (not absolute) */
+.inlineContainer {
+    overflow: hidden;
+    width: 100%;
+}
+
+.opening {
+    animation: curtainDown var(--anim-duration, 220ms) var(--anim-ease, ease-out) both;
+    transform-origin: top;
+    will-change: transform, opacity;
+}
+
+.closing {
+    animation: curtainUp var(--anim-close-duration, 200ms) var(--anim-ease, ease-in) both;
+    transform-origin: top;
+    will-change: transform, opacity;
+}
+
+@keyframes curtainDown {
+    from {
+        opacity: 0;
+        transform: translateY(var(--anim-distance, -8px)) scaleY(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+@keyframes curtainUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(var(--anim-distance, -8px)) scaleY(0.9);
+    }
+}
+
+.panel {
+    background-color: #0b1b29;
+    background-image: radial-gradient(120% 120% at 100% 0%, rgba(30, 74, 104, 0.55) 0%, rgba(11, 27, 41, 0) 70%),
+        linear-gradient(180deg, #0e1d2b 0%, #091521 100%);
+    background-blend-mode: screen, normal;
+    border: 1px solid #1e3a55;
+    border-radius: 8px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+}
+
+.title {
+    color: #dbe7ff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+}
+
+.close {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+    background: url("/static/images/button-statistic.webp") no-repeat center/cover;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+}
