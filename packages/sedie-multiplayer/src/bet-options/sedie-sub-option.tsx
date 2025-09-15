@@ -1,10 +1,10 @@
 import dynamic from "next/dynamic";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import styles from "./style.module.scss";
-const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"), { ssr: false });
+import Odds from "@shared/components/game-components/bet-option/odds";
+import TotalBet from "@shared/components/game-components/bet-option/total-bet";
+import RippleButton from "@shared/components/game-components/bet-option/ripple-button";
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"), { ssr: false });
-const TotalBet = dynamic(() => import("@shared/components/game-components/bet-option/total-bet"), { ssr: false });
-const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"), { ssr: false });
 const HighlightBetOption = dynamic(() => import("./highlight-bet-option"), { ssr: false });
 const PrevHighlightBetOption = dynamic(() => import("./highight-prev-round-bet-option"), { ssr: false });
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"), { ssr: false });
