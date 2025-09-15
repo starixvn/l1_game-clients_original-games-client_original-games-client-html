@@ -33,12 +33,8 @@
             ],
             "cachePaths": [
                 "sedie-multiplayer/result/",
-                "sedie-multiplayer/animation/phase-1/animation-phase-1.webp",
-                "sedie-multiplayer/animation/phase-2/red2-op-1.webp",
-                "sedie-multiplayer/animation/phase-2/red3-op-1.webp",
-                "sedie-multiplayer/animation/phase-2/red4.webp",
-                "sedie-multiplayer/animation/phase-2/white3-op-1.webp",
-                "sedie-multiplayer/animation/phase-2/white4.webp"
+                "sedie-multiplayer/animation/phase-1/",
+                "sedie-multiplayer/animation/phase-2/"
             ]
         }
     }
