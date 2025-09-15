@@ -94,7 +94,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
                     {this.renderChipControlPanel()}
                     <AutoRebetIcon />
                 </div>
-                <div className="p-3 bg-primary-bg">
+                <div className="p-3 bg-primary-bg mx-3">
                     <OwnTotalBet />
                 </div>
             </>

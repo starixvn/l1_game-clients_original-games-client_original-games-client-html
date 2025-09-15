@@ -86,7 +86,6 @@ tg.on("initialLoad", async () => {
                     });
 
                     writeFile(`packages/sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
-                    writeFile(`packages/baccarat-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
                 }
             });
         });
