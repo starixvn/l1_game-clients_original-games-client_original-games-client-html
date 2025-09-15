@@ -58,14 +58,26 @@ export const useAnimationImages = (settlementResult: any) => {
 
     // Load all phase 2 animations
     const { data: red2Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-1.webp`);
-    const { data: red2Op2, isLoading: red2Op2Loading, error: red2Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp`);
-    
+    const {
+        data: red2Op2,
+        isLoading: red2Op2Loading,
+        error: red2Op2Error,
+    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp`);
+
     const { data: red3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-1.webp`);
-    const { data: red3Op2, isLoading: red3Op2Loading, error: red3Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp`);
-    
+    const {
+        data: red3Op2,
+        isLoading: red3Op2Loading,
+        error: red3Op2Error,
+    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp`);
+
     const { data: white3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-1.webp`);
-    const { data: white3Op2, isLoading: white3Op2Loading, error: white3Op2Error } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp`);
-    
+    const {
+        data: white3Op2,
+        isLoading: white3Op2Loading,
+        error: white3Op2Error,
+    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp`);
+
     const { data: red4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red4.webp`);
     const { data: white4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white4.webp`);
 
@@ -85,13 +97,15 @@ export const useAnimationImages = (settlementResult: any) => {
         const winningOption = getWinningSubOption(settlementResult);
         const variants = allVariants[winningOption];
         const selectedVariant = selectedVariants[winningOption];
-        
-        if (!variants || !selectedVariant) return null;
-        
+
+        if (!variants || !selectedVariant) {
+            return null;
+        }
+
         // Find the selected variant index
         const variantIndex = ANIMATION_VARIANTS[winningOption]?.indexOf(selectedVariant) || 0;
         const selectedData = variants[variantIndex];
-        
+
         // loading or has error, use default animation
         if (winningOption === SeDieBetOptions.RED2) {
             if (variantIndex === 1 && (red2Op2Loading || red2Op2Error)) {
@@ -106,9 +120,25 @@ export const useAnimationImages = (settlementResult: any) => {
                 return white3Op1;
             }
         }
-        
+
         return selectedData || variants[0];
-    }, [settlementResult, allVariants, selectedVariants, red2Op1, red2Op2, red2Op2Loading, red2Op2Error, red3Op1, red3Op2, red3Op2Loading, red3Op2Error, white3Op1, white3Op2, white3Op2Loading, white3Op2Error]);
+    }, [
+        settlementResult,
+        allVariants,
+        selectedVariants,
+        red2Op1,
+        red2Op2,
+        red2Op2Loading,
+        red2Op2Error,
+        red3Op1,
+        red3Op2,
+        red3Op2Loading,
+        red3Op2Error,
+        white3Op1,
+        white3Op2,
+        white3Op2Loading,
+        white3Op2Error,
+    ]);
 
     return {
         animationPhase1,
