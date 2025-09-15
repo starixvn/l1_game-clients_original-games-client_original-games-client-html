@@ -34,9 +34,8 @@ import { GameRoundDataHandler } from "./handlers/game-round-data-handler";
 import { GameStateHandler, IGameStateHandler } from "./handlers/game-state-handler";
 import { PlaceBetHandlerWrapper } from "./handlers/place-bet-wrapper/place-bet-handler-wrapper";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./type";
-import PreloadResources from '@shared/helpers/preload-resources';
+import PreloadResources from "@shared/helpers/preload-resources";
 import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
-import { Menu } from "../game-components/menu/menu";
 import ChipControlPanel from "../game-components/chip-slider";
 import useGameStore from "@shared/stores/game-store/game-store";
 const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
@@ -45,6 +44,7 @@ const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false 
 const Header = dynamic(() => import("../page-components/header"), { ssr: false });
 const Background = dynamic(() => import("../game-components/background"), { ssr: false });
 const RTP = dynamic(() => import("../game-components/rtp/rtp"), { ssr: false });
+const MenuIconWrapper = dynamic(() => import("../game-components/menu/menu-icon-wrapper"), { ssr: false });
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;
@@ -117,7 +117,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     this.props.gameSound.playPlaceBetSound();
                 },
                 gameId: this.props.id,
-                betPayloadFormat: "single",
+                betPayloadFormat: (this.props.id === GameIds.SeDieMultiplayer || this.props.id === GameIds.BaccaratMultiplayer) ? "single" : "map",
             });
 
         this.gameFinishHandler =
@@ -464,12 +464,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                    this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    })
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
                     ],
                 ...newGameState,
             });
