@@ -67,7 +67,7 @@ const WinningBalanceEffect: FC = () => {
             {showContent && (
                 <motion.div
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={ { scale: 0.93, opacity: 1 }}
+                    animate={isAnimatingOut ? { scale: 0, opacity: 0 } : { scale: 0.93, opacity: 1 }}
                     transition={{
                         duration: isAnimatingOut ? 0.3 : 1,
                         delay: isAnimatingOut ? 0 : 1.2,
