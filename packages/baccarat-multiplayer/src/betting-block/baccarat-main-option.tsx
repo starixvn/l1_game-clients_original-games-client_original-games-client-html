@@ -14,9 +14,13 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
     const themeClass =
         choice === "player" ? styles.playerTheme : choice === "banker" ? styles.bankerTheme : styles.tieTheme;
 
+    const shadowClass =
+        choice === "player" ? styles.playerShadow : choice === "banker" ? styles.bankerShadow : "";
+
     return (
         <div className="relative">
-            <div className={`text-white relative w-[180px] h-[138px] flex flex-col justify-around ${styles["mainOptionBase"]} ${themeClass} md:w-[229px]`}>
+            {shadowClass && <div className={shadowClass}></div>}
+            <div className={`text-white relative w-[183px] h-[169px] flex flex-col justify-around ${themeClass}`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
                     <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xl font-bold" />
@@ -25,7 +29,9 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
                 <div className="h-5">
                     <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
                 </div>
+            </div>
 
+            <div className={`${styles["clickableShape"]} ${choice === "player" ? styles["playerShape"] : choice === "banker" ? styles["bankerShape"] : ""}`}>
                 <RippleButton className={`${styles["btnRipple"]}`} id={buttonId} choice={choice} />
             </div>
             <ChipEffect choice={choice} />
@@ -35,5 +41,3 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
 };
 
 export default BaccaratMainOption;
-
-
