@@ -53,9 +53,10 @@ WORKDIR /app/packages/baccarat-multiplayer
 # Allow configuring Next.js basePath/assetPrefix at build time
 ARG NEXT_PUBLIC_BASE_PATH
 ARG NEXT_PUBLIC_DEFAULT_GAME_ID=150
+ARG NEXT_PUBLIC_GAME_PACKAGE=baccarat-multiplayer
 ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 ENV NEXT_PUBLIC_DEFAULT_GAME_ID=$NEXT_PUBLIC_DEFAULT_GAME_ID
-
+ENV NEXT_PUBLIC_GAME_PACKAGE=$NEXT_PUBLIC_GAME_PACKAGE
 
 # Obfuscate deployment configs and build
 RUN yarn obfuscator-config-file
