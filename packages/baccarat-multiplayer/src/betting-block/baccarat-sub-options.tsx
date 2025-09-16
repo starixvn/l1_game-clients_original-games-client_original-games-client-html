@@ -8,14 +8,15 @@ const TotalBet = dynamic(() => import("@shared/components/game-components/bet-op
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
 
-const SubBet = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+    const SubBet = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
     const themeClass = choice === "tie" ? styles.tieTheme : choice === "anyPair" ? styles.anyPairTheme : "";
-    const heightClass = choice === "anyPair" ? "h-[73px]" : "h-[76px]";
+    const heightClass = choice === "anyPair" ? "h-[73px]" : "h-[77px]";
+    const widthClass = "w-[106px] md:w-[140px]"; // Responsive width for desktop
     const shapeClass = choice === "tie" ? styles.tieShape : choice === "anyPair" ? styles.anyPairShape : "";
     const shadowClass = choice === "tie" ? styles.tieShadow : choice === "anyPair" ? styles.anyPairShadow : "";
 
     return (
-        <div className={`relative w-[106px] ${heightClass}`}>
+        <div className={`relative ${widthClass} ${heightClass}`}>
             {shadowClass && <div className={shadowClass}></div>}
             <div className={`flex-1 text-white relative w-full h-full ${themeClass}`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />

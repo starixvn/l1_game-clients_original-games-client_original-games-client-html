@@ -20,7 +20,7 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
     return (
         <div className="relative">
             {shadowClass && <div className={shadowClass}></div>}
-            <div className={`text-white relative w-[183px] h-[169px] flex flex-col justify-around ${themeClass}`}>
+            <div className={`text-white relative w-[183px] h-[169px] md:w-[220px] md:h-[169px] flex flex-col justify-around ${themeClass}`}>
                 <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 <div>
                     <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xl font-bold" />
