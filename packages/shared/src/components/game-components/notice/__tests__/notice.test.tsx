@@ -18,6 +18,7 @@ jest.mock("@shared/react-hooks", () => ({
         }),
     }),
     useClickSound: () => jest.fn(),
+    useClickOutside: jest.fn(),
 }));
 
 jest.mock("@shared/helpers", () => ({
@@ -25,6 +26,20 @@ jest.mock("@shared/helpers", () => ({
     getExtendMessageByErrorCode: jest.fn(() => ""),
     numberWithCommas: jest.fn((num) => num.toString()),
 }));
+
+jest.mock("@shared/utils/merge-tailwind-util", () => ({
+    cn: jest.fn((...classes) => classes.filter(Boolean).join(" ")),
+}));
+
+jest.mock("@shared/components/game-components/base-dialog", () => {
+    return function MockBaseDialog({ children, onCloseModal }: any) {
+        return (
+            <div data-testid="base-dialog" onClick={onCloseModal}>
+                {children}
+            </div>
+        );
+    };
+});
 
 // Mock the global events store - fix the mock to properly simulate Zustand store
 jest.mock("@shared/stores/global-events-store/global-events-store", () => ({
