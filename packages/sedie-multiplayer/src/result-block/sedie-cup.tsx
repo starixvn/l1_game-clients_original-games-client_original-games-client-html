@@ -151,7 +151,7 @@ const SedieCup = () => {
                                 <div ref={phase1Ref} style={{ opacity: 1 }}>
                                     <Spritesheet
                                         key={`phase-1`}
-                                        className={`absolute inset-0`}
+                                        className={`absolute`}
                                         imageData={animationPhase1}
                                         widthFrame={195}
                                         heightFrame={195}
@@ -173,7 +173,7 @@ const SedieCup = () => {
                                 <div ref={phase2Ref} style={{ opacity: 0 }}>
                                     <Spritesheet
                                         key={`phase-2`}
-                                        className={`absolute inset-0`}
+                                        className={`absolute`}
                                         ref={resultRef}
                                         imageData={animationPhase2}
                                         widthFrame={195}
