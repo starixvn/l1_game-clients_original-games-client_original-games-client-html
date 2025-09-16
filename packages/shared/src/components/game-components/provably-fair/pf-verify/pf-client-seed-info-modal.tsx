@@ -71,7 +71,7 @@ const renderBetDetailHeader = (translateSNGames: any) => {
         <TableHeader className="bg-[#27374a]">
             <TableRow>
                 {headerColumns.map((column) => (
-                    <TableHead key={column.key} className="w-1/3  text-center p-3 text-sm font-medium text-secondary-text">
+                    <TableHead key={column.key} className="w-1/3 border-b border-primary-border text-center p-3 text-sm font-medium text-secondary-text">
                         {column.label}
                     </TableHead>
                 ))}
@@ -139,7 +139,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                             <TableRow
                                                 key={uuidv4()}
                                                 className={cn(
-                                                    "border-none last:border-b-0",
+                                                    "border-none last:border-b-0 ",
                                                     index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2"
                                                 )}
                                             >
