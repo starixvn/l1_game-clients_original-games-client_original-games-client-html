@@ -84,7 +84,7 @@ export class RoundIdHandler {
 
     dispatchClientSeed = (idForSeed: number) => {
         this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER]: { roundId: idForSeed },
+            [messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER]: { roundId: idForSeed },
         });
     };
 

@@ -37,7 +37,7 @@ export const messageEventType = {
     ROUND_ID: "roundId",
     CLIENT_SEED_DETAIL: "clientSeedDetail",
     SAVE_PF_SETTING: "savePFSetting",
-    SAVE_PF_SETTING_FROM_TURN_ID_HANLDER: "savePFSettingFromTurnIdHandler",
+    SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER: "savePFSettingFromRoundIdHandler",
     SYNC_OWN_BETS_TO_PF: "syncOwnBetsToPF",
     START_PLACE_BET: "spb",
     PLAYER_RESULT_BOARD: "playerResultBoard",

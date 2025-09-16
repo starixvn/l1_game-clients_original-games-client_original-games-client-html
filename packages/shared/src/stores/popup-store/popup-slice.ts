@@ -9,6 +9,7 @@ export interface PopupSlice {
     isShowPFClientSeedInfo: boolean;
     isShowPFVerification: boolean;
     expandGuideFirst: boolean;
+    isShowConfetti: boolean;
 
     // Actions
     togglePFVerify: (isShow: boolean) => void;
@@ -19,6 +20,7 @@ export interface PopupSlice {
     toggleGameGuide: (isShow: boolean) => void;
     togglePFSetting: (isShow: boolean) => void;
     toggleExpandGuideFirst: (isExpand: boolean) => void;
+    toggleConfetti: (isShow: boolean) => void;
 }
 
 export const createPopupSlice: StateCreator<PopupSlice> = (set) => ({
@@ -30,6 +32,7 @@ export const createPopupSlice: StateCreator<PopupSlice> = (set) => ({
     isShowPFClientSeedInfo: false,
     isShowPFVerification: false,
     expandGuideFirst: false,
+    isShowConfetti: false,
 
     toggleBetHistory: (isShow) => set({ isShowBetHistory: isShow }),
     toggleBetDetail: (isShow) => set({ isShowBetDetail: isShow }),
@@ -39,4 +42,5 @@ export const createPopupSlice: StateCreator<PopupSlice> = (set) => ({
     togglePFClientSeedInfo: (isShow) => set({ isShowPFClientSeedInfo: isShow }),
     togglePFVerification: (isShow) => set({ isShowPFVerification: isShow }),
     toggleExpandGuideFirst: (isExpand) => set({ expandGuideFirst: isExpand }),
+    toggleConfetti: (isShow) => set({ isShowConfetti: isShow }),
 }); 

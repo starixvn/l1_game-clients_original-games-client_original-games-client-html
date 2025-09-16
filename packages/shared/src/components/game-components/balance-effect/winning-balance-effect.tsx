@@ -2,12 +2,12 @@ import { FC, useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import { numberWithCommas } from "@shared/helpers";
 import { useGameStore } from "@shared/stores/game-store/game-store";
-import ReactCanvasConfetti from "react-canvas-confetti";
 import { motion } from "motion/react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { usePopUpWinningSound } from "@shared/react-hooks/use-sound";
 import { RoundState } from "@shared/components/game-base/type";
 import { useGameContext } from "@shared/react-contexts";
+import usePopupStore from "@shared/stores/popup-store/popup-store";
 
 const WinningBalanceEffect: FC = () => {
     const { betWin, showResultInfo, roundState } = useGameStateContext();
@@ -16,8 +16,8 @@ const WinningBalanceEffect: FC = () => {
     const totalBetAmount = Object.values(ownBets).reduce((acc, curr) => acc + curr, 0);
     const [showContent, setShowContent] = useState(false);
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
-    const animationInstance = useRef(null);
     const delayFireConfettiAfterShowPopup = 1700;
+    const toggleConfetti = usePopupStore((state) => state.toggleConfetti);
 
     const playPopUpWinningSound = usePopUpWinningSound();
     const playPopUpWinningRef = useRef(playPopUpWinningSound);
@@ -25,56 +25,10 @@ const WinningBalanceEffect: FC = () => {
         playPopUpWinningRef.current = playPopUpWinningSound;
     }, [playPopUpWinningSound]);
 
-    const getInstance = (instance: any) => {
-        animationInstance.current = instance;
-    };
-
     const multiplier = useMemo(() => {
         const multiplier = totalBetAmount > 0 ? betWin / totalBetAmount : 0;
         return numberWithCommas(Math.floor(multiplier * 100) / 100, 2);
     }, [betWin, totalBetAmount]);
-
-    const fireConfetti = useCallback(() => {
-        if (!animationInstance.current) {
-            return;
-        }
-
-        makeShot(0.25, {
-            spread: 26,
-            startVelocity: 55,
-        });
-
-        makeShot(0.2, {
-            spread: 60,
-        });
-
-        makeShot(0.35, {
-            spread: 100,
-            decay: 0.91,
-            scalar: 0.8,
-        });
-
-        makeShot(0.1, {
-            spread: 120,
-            startVelocity: 25,
-            decay: 0.92,
-            scalar: 1.2,
-        });
-
-        makeShot(0.1, {
-            spread: 120,
-            startVelocity: 45,
-        });
-    }, []);
-
-    const makeShot = (particleRatio: number, opts: any) => {
-        animationInstance.current &&
-            animationInstance.current({
-                ...opts,
-                origin: { y: 0.5, x: 0.5 },
-                particleCount: Math.floor(140 * particleRatio),
-            });
-    };
 
     useEffect(() => {
         if (showResultInfo && parseFloat(multiplier) > 0) {
@@ -96,36 +50,24 @@ const WinningBalanceEffect: FC = () => {
         setTimeout(() => {
             setShowContent(false);
             setIsAnimatingOut(false);
-        }, 300); // Match animation duration
+        }, 300);
     }, []);
 
     useEffect(() => {
         if (showContent) {
             setTimeout(() => {
-                fireConfetti();
+                toggleConfetti(true);
                 playPopUpWinningRef.current();
             }, delayFireConfettiAfterShowPopup);
         }
-    }, [showContent, fireConfetti]);
+    }, [showContent]);
 
     return (
-        <>
-            <ReactCanvasConfetti
-                refConfetti={getInstance}
-                style={{
-                    position: "absolute",
-                    pointerEvents: "none",
-                    width: "100%",
-                    height: "100%",
-                    top: 50,
-                    left: 0,
-                    zIndex: 9999,
-                }}
-            />
+        <>          
             {showContent && (
                 <motion.div
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={isAnimatingOut ? { scale: 0, opacity: 0 } : { scale: 0.93, opacity: 1 }}
+                    animate={ { scale: 0.93, opacity: 1 }}
                     transition={{
                         duration: isAnimatingOut ? 0.3 : 1,
                         delay: isAnimatingOut ? 0 : 1.2,
