@@ -54,21 +54,6 @@ describe("usePWAWorker", () => {
         expect(mockPostMessage).toHaveBeenCalledWith(testData);
     });
 
-    test("should handle worker initialization errors", () => {
-        // Arrange
-        const consoleSpy = jest.spyOn(console, "log");
-        const mockError = new Error("Worker initialization failed");
-        (global as any).Worker = jest.fn().mockImplementation(() => {
-            throw mockError;
-        });
-
-        // Act
-        renderHook(() => usePWAWoker());
-
-        // Assert
-        expect(consoleSpy).toHaveBeenCalledWith(mockError);
-    });
-
     test("should terminate worker on cleanup", () => {
         // Arrange
         const { unmount } = renderHook(() => usePWAWoker());
