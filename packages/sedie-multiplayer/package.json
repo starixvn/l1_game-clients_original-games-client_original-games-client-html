@@ -7,7 +7,7 @@
     "scripts": {
         "build": "node -e \"console.log('Skipping sedie-multiplayer package build (using app sources)')\"",
         "clean": "rimraf dist",
-        "generate-tolgee-data": "cd ../.. && npm run generate-tolgee-data && cd packages/sedie-multiplayer",
+       "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_GAME_PACKAGE=sedie-multiplayer npm run generate-tolgee-data && cd packages/sedie-multiplayer",
         "dev:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 FAST_REFRESH=false next dev -p 3001",
         "build:standalone": "npm run generate-tolgee-data && next build",
         "start:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 next start -p 3001",

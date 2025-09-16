@@ -66,7 +66,6 @@ const isTimeoutSession = (session: SSOResponse) => {
 export const getDefaultGameId = (): number => {
     // Use environment variable if set, otherwise fallback to a known game ID
 
-    console.log("NEXT_PUBLIC_DEFAULT_GAME_ID", process.env.NEXT_PUBLIC_DEFAULT_GAME_ID);
     const envGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
     if (envGameId) {
         return Number(envGameId);

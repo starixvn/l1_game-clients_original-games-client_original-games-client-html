@@ -1,9 +1,10 @@
 const { DevTools, Tolgee } = require("@tolgee/react");
 const fs = require("fs");
 const path = require("path");
-const gameSettings = require("../../sedie-multiplayer/game-settings.json");
 
-console.log("[TolgeeGenerator] Tolgee generator starting");
+const gamePackage = process.env.NEXT_PUBLIC_GAME_PACKAGE || "sedie-multiplayer";
+
+const gameSettings = require(`../../${gamePackage}/game-settings.json`);
 
 // Standalone locales definition
 const locales = { 
@@ -85,7 +86,7 @@ tg.on("initialLoad", async () => {
                         languages[languageId][namespace][key] = value as string;
                     });
 
-                    writeFile(`packages/sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
+                    writeFile(`packages/${gamePackage}/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
                 }
             });
         });
