@@ -32,7 +32,6 @@ import {
 } from "./handlers";
 import { GameRoundDataHandler } from "./handlers/game-round-data-handler";
 import { GameStateHandler, IGameStateHandler } from "./handlers/game-state-handler";
-import { PFWrapper } from "./handlers/pf-wrapper/pf-wrapper";
 import { PlaceBetHandlerWrapper } from "./handlers/place-bet-wrapper/place-bet-handler-wrapper";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./type";
 import PreloadResources from "@shared/helpers/preload-resources";
@@ -677,15 +676,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                         <div className="col-span-12 mb-3 px-3">{this.renderRTP()}</div>
                         <div className="col-span-12 mb-3 px-3">{this.renderBetHistoryTable()}</div>
                     </div>
-                    <PFWrapper
-                        socket={this.socket}
-                        gameMessageHandler={this.gameMessageHandler}
-                        gameId={this.props.id}
-                        uid={(this.context as PlayerContextModel).authorizeInfo?.user?.UID}
-                    >
-                        {this.renderPFSettingModal()}
-                        {this.renderBetDetailModal()}
-                    </PFWrapper>
+                    {this.renderPFSettingModal()}
+                    {this.renderBetDetailModal()}
                     {this.renderGameGuideModal()}
                 </div>
             </>

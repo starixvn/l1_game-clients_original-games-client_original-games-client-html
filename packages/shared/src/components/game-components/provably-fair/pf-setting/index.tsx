@@ -2,8 +2,8 @@ import { FC, useEffect, useRef, useState } from "react";
 
 import { useGameContext } from "@shared/react-contexts";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
-import { useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
-import { messageEventType } from "../../../game-base/handlers";
+import { useClientSeedPF, useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
+import { GameMessageHandler, messageEventType } from "../../../game-base/handlers";
 import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
@@ -14,6 +14,7 @@ import usePFStore from "@shared/stores/pf-store/pf-store";
 import { useShallow } from "zustand/shallow";
 import useGameStore from "@shared/stores/game-store/game-store";
 import { cn } from "@shared/utils";
+import { randomNumberSeries } from "@shared/helpers/number-helper";
 
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getRoundPF";
@@ -32,14 +33,71 @@ const handleOnKeyDown = (event: any) => {
 };
 
 const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const { isShowPFSetting, togglePFSetting } = usePFStore(
-        useShallow((state) => ({
+    const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting  } = usePFStore(
+        useShallow((state: any) => ({
+            pfClientSeedSetting: state.pfClientSeedSetting,
+            updatePFClientSeedSetting: state.updatePFClientSeedSetting,
             isShowPFSetting: state.isShowPFSetting,
             togglePFSetting: state.togglePFSetting,
         }))
     );
 
     const { t: translateSNGames } = useSNTranslate();
+
+    const { clientSeed } = useClientSeedPF();
+    const { socket } = useGameStore();
+    const { gameMessageHandler } = useGameContext();
+
+    useEffect(() => {
+        const savePFSettingId = gameMessageHandler.register(messageEventType.SAVE_PF_SETTING, handleSavePFSetting);
+        const sendSocketId = gameMessageHandler.register(
+            messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED,
+            sendSocketMessageWithClientSeed
+        );
+        const savePFSettingFromTurnId = gameMessageHandler.register(
+            messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER,
+            handleSavePFSettingFromTurnIdHandler
+        );
+
+        return () => {
+            gameMessageHandler.removeHandler(savePFSettingId);
+            gameMessageHandler.removeHandler(sendSocketId);
+            gameMessageHandler.removeHandler(savePFSettingFromTurnId);
+        };
+    }, [pfClientSeedSetting, clientSeed]);
+
+    const sendSocketMessageWithClientSeed = (message) => {
+        const { event, data } = message[messageEventType.SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED];
+
+        if (data?.__pfMode === "clientSeedOnly") {
+            const { __pfMode, ...rest } = data;
+            socket.emit(event, { ...rest, clientSeed });
+            return;
+        }
+    };
+
+    const handleSavePFSetting = (message) => {
+        const { pfClientSeedSetting } = message[messageEventType.SAVE_PF_SETTING];
+        updatePFClientSeedSetting(pfClientSeedSetting);
+    };
+
+    const handleSavePFSettingFromTurnIdHandler = (message) => {
+        const { roundId } = message[messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER];
+        const newRoundId = roundId;
+        const oldRoundId = pfClientSeedSetting?.roundId;
+        if (oldRoundId !== newRoundId) {
+            handleSavePFSetting({
+                [messageEventType.SAVE_PF_SETTING]: {
+                    pfClientSeedSetting: {
+                        roundId: newRoundId,
+                        randomClientSeed: randomNumberSeries(4),
+                    },
+                },
+            });
+        }
+    };
+
+    
     const handleCloseModal = () => {
         togglePFSetting(false);
     };

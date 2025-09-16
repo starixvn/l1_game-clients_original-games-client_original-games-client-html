@@ -56,7 +56,7 @@ export const PFWrapper = (props: PFWrapperProps) => {
         };
 
         const handleSavePFSettingFromTurnIdHandler = (message) => {
-            const { roundId } = message[messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER];
+            const { roundId } = message[messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER];
             const newRoundId = roundId;
             const oldRoundId = pfClientSeedSetting?.roundId;
             if (oldRoundId !== newRoundId) {
@@ -77,7 +77,7 @@ export const PFWrapper = (props: PFWrapperProps) => {
             sendSocketMessageWithClientSeed
         );
         const savePFSettingFromTurnId = props.gameMessageHandler.register(
-            messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER,
+            messageEventType.SAVE_PF_SETTING_FROM_TURN_ID_HANLDER,
             handleSavePFSettingFromTurnIdHandler
         );
 
