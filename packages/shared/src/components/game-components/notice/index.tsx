@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { createOptionForHedgeBetGroup, getExtendMessageByErrorCode } from '@shared/helpers';
 import { numberWithCommas } from '@shared/helpers/number-helper';
 import { useGameContext } from '@shared/react-contexts';
-import { useClickSound, useTranslator } from '@shared/react-hooks';
+import { useClickOutside, useClickSound, useTranslator } from '@shared/react-hooks';
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useGlobalEventsStore } from '@shared/stores/global-events-store/global-events-store';
@@ -18,6 +18,9 @@ const BaseNotice: React.FC<{
     children: React.ReactNode;
 }> = ({ children, onClose }) => {
     const closeDialog = useGlobalEventsStore((state) => state.closeDialog);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    
+    useClickOutside([wrapperRef], onClose);
 
     useEffect(() => {
         if (closeDialog) {
@@ -35,6 +38,7 @@ const BaseNotice: React.FC<{
                     "bg-modal-red-bg border border-modal-border-color shadow-modal bg-modal-bg",
                     "flex justify-center gap-x-1"
                 )}
+                ref={wrapperRef}
             >
                 <Image
                     src="/static/images/icons/toast-mask.svg"
