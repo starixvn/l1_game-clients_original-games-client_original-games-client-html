@@ -108,7 +108,7 @@ describe(RoundIdHandler.name, () => {
                 payload: { roundId: 10 },
             });
             expect(broadcastGameEvent).toHaveBeenCalledWith({
-                savePFSettingFromTurnIdHandler: { roundId: 10 },
+                savePFSettingFromRoundIdHandler: { roundId: 10 },
             });
             expect(broadcastGameEvent.mock.invocationCallOrder[0]).toBeLessThan(
                 dispatch.mock.invocationCallOrder[0]
@@ -160,7 +160,7 @@ describe(RoundIdHandler.name, () => {
 
             // assert
             expect(dispatch).toHaveBeenCalledWith({ type: GameEventActionType.ROUND_ID, payload: { roundId: 99 } });
-            expect(broadcastGameEvent).toHaveBeenCalledWith({ savePFSettingFromTurnIdHandler: { roundId: 99 } });
+            expect(broadcastGameEvent).toHaveBeenCalledWith({ savePFSettingFromRoundIdHandler: { roundId: 99 } });
             expect(dispatch.mock.invocationCallOrder[0]).toBeLessThan(
                 broadcastGameEvent.mock.invocationCallOrder[0]
             );
@@ -187,7 +187,7 @@ describe(RoundIdHandler.name, () => {
             // assert
             expect(handler["roundId"]).toBe(7);
             expect(dispatch).toHaveBeenCalledWith({ type: GameEventActionType.ROUND_ID, payload: { roundId: 7 } });
-            expect(broadcastGameEvent).toHaveBeenCalledWith({ savePFSettingFromTurnIdHandler: { roundId: 7 } });
+            expect(broadcastGameEvent).toHaveBeenCalledWith({ savePFSettingFromRoundIdHandler: { roundId: 7 } });
             expect(dispatch.mock.invocationCallOrder[0]).toBeLessThan(
                 broadcastGameEvent.mock.invocationCallOrder[0]
             );
@@ -234,7 +234,7 @@ describe(RoundIdHandler.name, () => {
 
             // assert
             expect(broadcastGameEvent).toHaveBeenCalledWith({
-                savePFSettingFromTurnIdHandler: { roundId: 42 },
+                savePFSettingFromRoundIdHandler: { roundId: 42 },
             });
             expect(handler["roundState"]).toBe(RoundState.InRound);
         });
