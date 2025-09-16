@@ -42,9 +42,9 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
         if (isBlinkNode) {
             return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
         } else if (odd) {
-            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard-red-dot.webp" className={styles.icon} />;
+            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard/scoreboard-red-dot.webp" className={styles.icon} />;
         } else if (even) {
-            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard-blue-dot.webp" className={styles.icon} />;
+            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard/scoreboard-blue-dot.webp" className={styles.icon} />;
         } else {
             return <></>;
         }
