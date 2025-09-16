@@ -65,12 +65,14 @@ const isTimeoutSession = (session: SSOResponse) => {
 
 export const getDefaultGameId = (): number => {
     // Use environment variable if set, otherwise fallback to a known game ID
+
+    console.log("NEXT_PUBLIC_DEFAULT_GAME_ID", process.env.NEXT_PUBLIC_DEFAULT_GAME_ID);
     const envGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
     if (envGameId) {
         return Number(envGameId);
     }
 
-    return 0;
+    return 148;
 };
 
 const getSession = async (token: string) => {
@@ -172,6 +174,7 @@ const SplashScreen: React.FC = () => {
 
             // Get default game ID from environment or fallback
             const defaultGameId = getDefaultGameId();
+            console.log("DEFAULT GAME ID", defaultGameId);
 
             let toLoadGameId = defaultGameId;
 
@@ -180,6 +183,8 @@ const SplashScreen: React.FC = () => {
 
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
+            console.log("ENABLED RENDER GAME SETTINGS", enabledRenderGameSettings);
+            
             console.log("[SplashScreen] Enabled games from authorizeInfo:", enabledRenderGameSettings?.map(game => ({ id: game.id, name: game.gameName })));
 
             // Bypass validation for known games (SeDie: 148, Baccarat: 10) so we can deep-link even if not in lobby/offer
