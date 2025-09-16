@@ -8,7 +8,9 @@
     "cashout": "Cashout",
     "game": "গেম",
     "message_bet_is_accepted": "বাজি গ্রহণ করা হয়েছে",
+    "message_download_first_visit": "যদি এটি আপনার প্রথম ভিজিট হয়, তবে ডাউনলোড করতে কিছুটা সময় লাগতে পারে",
     "message_total_cashout_reach_max": "মোট ক্যাশআউটের পরিমাণ সর্বোচ্চ উইনে পৌঁছেছে",
     "my_bets": "আমার বাজি",
+    "splash_check_downloading": "সর্বশেষ আপডেট প্যাকেজগুলি পরীক্ষা করা এবং ডাউনলোড করা হচ্ছে...",
     "waiting": "অপেক্ষা করুন..."
 }

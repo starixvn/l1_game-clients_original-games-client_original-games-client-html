@@ -23,7 +23,7 @@ export const CountdownTimer = ({ className = "" }) => {
         const handlerId = gameMessageHandler?.register(messageEventType.CLIENT_REMAINING_TIME, ({ clientRemainingTime }) => {
             setClientRemainingTime(calculateClientRemainingTime(clientRemainingTime));
             const percentage = calculatePercentage(clientRemainingTime);
-            setIsAnimate(progress !== 0);
+            setIsAnimate(progress >= 0);
             percentage >= 0 && percentage <= 100 && setProgress(percentage);
         });
 
