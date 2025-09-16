@@ -29,7 +29,8 @@ jest.mock("@shared/helpers", () => ({
 }));
 jest.mock("@shared/react-contexts", () => ({
     loadURLContext: jest.fn().mockReturnValue({
-        gameId: 0,
+        token: "test-token",
+        language: "en",
     }),
 }));
 
@@ -160,7 +161,6 @@ describe("DashboardHandler", () => {
         });
         mockGetOfferGamesIds.mockReturnValue([1005, 148]);
         mockLoadURLContext.mockReturnValue({
-            gameId: 1005,
             token: "test-token",
             language: "en",
         });

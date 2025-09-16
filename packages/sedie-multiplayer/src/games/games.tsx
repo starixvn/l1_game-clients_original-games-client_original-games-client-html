@@ -2,7 +2,7 @@ import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { getAppSettings } from "@shared/app-settings";
-import { GameIds } from "@shared/constants";
+import { GAME_ID } from "../game-constants";
 import { SettingEventActionType, usePlayerContext, useSettingDispatch } from "@shared/react-contexts";
 import { useBlockBetSound, usePlaceBetSound, useStartDrawSound, useStartRoundSound } from "@shared/react-hooks";
 import { GameSound } from "@shared/components/game-base/type";
@@ -20,7 +20,6 @@ const LoadingGameComponent = React.memo(() => (
 
 LoadingGameComponent.displayName = "LoadingGameComponent";
 
-// SeBall removed
 const SeDieMultiPlayer = dynamic(() => import("../page"), {
     loading: () => <LoadingGameComponent />,
     ssr: false,
@@ -28,7 +27,7 @@ const SeDieMultiPlayer = dynamic(() => import("../page"), {
 
 // Game registry for better scalability
 const gameComponentRegistry: GameComponentRegistry = {
-    [GameIds.SeDieMultiplayer]: SeDieMultiPlayer,
+    [GAME_ID]: SeDieMultiPlayer,
 };
 
 export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, updateUserStakeLevel, openGameId }) => {

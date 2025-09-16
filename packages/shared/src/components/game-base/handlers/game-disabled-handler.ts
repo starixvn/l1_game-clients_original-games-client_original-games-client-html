@@ -1,4 +1,3 @@
-import { updateURLContext } from '@shared/react-contexts';
 import { GameEventActionType } from '@shared/react-contexts/game-state-context/game-event-action';
 import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
 import { IRoundStateHandler } from "../../round-base/round-state-handler";
@@ -47,8 +46,6 @@ export class GameDisableHandler {
             useGameStore.getState().setRoundState(RoundState.Disabled);
             useGameStore.getState().setUMMessage(um_message);
             useGameStore.getState().setShowResultInfo(false);
-
-            updateURLContext({ gameId: 0 });
         }
     }
 }

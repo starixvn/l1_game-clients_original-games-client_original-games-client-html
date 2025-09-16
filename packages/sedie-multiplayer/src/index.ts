@@ -2,3 +2,4 @@
 import './game-registry'; // Register the game
 export * from './page';
 export * from './pages';
+export * from './provably-fair';

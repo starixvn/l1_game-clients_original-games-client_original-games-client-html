@@ -6,7 +6,7 @@ import { memo, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from '@shared/app-settings';
-import { Themes, languageMapper, locales, GameIds } from '@shared/constants';
+import { Themes, languageMapper, locales } from '@shared/constants';
 import { AnalyticsHelper, StorageHelper, getRenderGameSettings, localStorageKeys, randomInteger } from '@shared/helpers';
 import PreloadResources from '@shared/helpers/preload-resources';
 import { PlayerContextModel, URLContext, usePlayerContext } from '@shared/react-contexts';
@@ -63,6 +63,16 @@ const isTimeoutSession = (session: SSOResponse) => {
     return !session || (!session?.isUM && !session?.isAuthenticated);
 };
 
+export const getDefaultGameId = (): number => {
+    // Use environment variable if set, otherwise fallback to a known game ID
+    const envGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+    if (envGameId) {
+        return Number(envGameId);
+    }
+
+    return 0;
+};
+
 const getSession = async (token: string) => {
     return token ? sso(token, getAppSettings().appType) : verifySession();
 };
@@ -84,7 +94,10 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 };
 
 const SplashScreen: React.FC = () => {
-    const { gameId, token, language } = useContext(URLContext);
+    const { token, language } = useContext(URLContext);
+
+    console.log("[SplashScreen] URL Context values:", { token, language });
+    console.log("[SplashScreen] Loading game registry...");
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -157,28 +170,35 @@ const SplashScreen: React.FC = () => {
                 }
             }
 
-            // Custom version: Always direct to specific game, default to SeDie if no valid gameId
-            let toLoadGameId = gameId;
+            // Get default game ID from environment or fallback
+            const defaultGameId = getDefaultGameId();
 
-            // If no gameId provided or gameId is 0, use default SeDie game
-            if (!toLoadGameId || toLoadGameId === 0) {
-                toLoadGameId = GameIds.SeDieMultiplayer;
-            }
+            let toLoadGameId = defaultGameId;
+
+            console.log("[SplashScreen] Using default gameId from environment:", defaultGameId);
+            console.log("[SplashScreen] Initial toLoadGameId:", toLoadGameId);
 
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
+            console.log("[SplashScreen] Enabled games from authorizeInfo:", enabledRenderGameSettings?.map(game => ({ id: game.id, name: game.gameName })));
 
-            // Bypass validation for SeDie so we can deep-link even if not in lobby/offer
-            let isGameAvailable = toLoadGameId === GameIds.SeDieMultiplayer;
+            // Bypass validation for known games (SeDie: 148, Baccarat: 10) so we can deep-link even if not in lobby/offer
+            const knownGameIds = [148, 150]; // SeDie Multiplayer and Baccarat
+            let isGameAvailable = knownGameIds.includes(toLoadGameId);
+            console.log("[SplashScreen] Is toLoadGameId a known game?", isGameAvailable, "Known games:", knownGameIds);
+
             if (!isGameAvailable) {
                 isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
+                console.log("[SplashScreen] Is game available in enabled games?", isGameAvailable, "for gameId:", toLoadGameId);
             }
 
-            // If game is not available, use default SeDie game
+            // If game is not available, use default game
             if (!isGameAvailable) {
-                toLoadGameId = GameIds.SeDieMultiplayer;
+                console.log("[SplashScreen] Game not available, falling back to default game");
+                toLoadGameId = getDefaultGameId();
             }
 
+            console.log("[SplashScreen] Final toLoadGameId:", toLoadGameId);
             setCurrentGameId(toLoadGameId);
 
             if (authorizeInfo) {
@@ -208,7 +228,7 @@ const SplashScreen: React.FC = () => {
             <Dashboard
                 data-testid="dashboard-component"
                 session={player?.session}
-                queryGame={currentGameId < 0 ? gameId : currentGameId}
+                queryGame={currentGameId}
                 setIsUm={setIsUm}
                 tolgee={tolgee}
                 authorizeResponse={authorizeResponse}
