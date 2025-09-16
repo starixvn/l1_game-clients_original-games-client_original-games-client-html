@@ -117,7 +117,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     this.props.gameSound.playPlaceBetSound();
                 },
                 gameId: this.props.id,
-                betPayloadFormat: (this.props.id === GameIds.SeDieMultiplayer || this.props.id === GameIds.BaccaratMultiplayer) ? "single" : "map",
+                betPayloadFormat: "single",
             });
 
         this.gameFinishHandler =
