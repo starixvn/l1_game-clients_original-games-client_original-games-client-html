@@ -131,7 +131,7 @@ const WinningBalanceEffect: FC = () => {
                         delay: isAnimatingOut ? 0 : 1.2,
                         ease: isAnimatingOut ? [0.2, 1.4, 0.6, 1] : [0, 1.7, 0.5, 1],
                     }}
-                    className=" inset-0 z-[100] absolute mt-[282px]"
+                    className=" inset-0 z-[100] absolute mt-[240px]"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="absolute inset-0 animate-fadeIn" />

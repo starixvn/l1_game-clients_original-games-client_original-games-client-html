@@ -8,6 +8,9 @@ import { motion } from "motion/react";
 import { CachedImage } from "@shared/components/game-components/cached-image";
 import { useDiceShakingRollingSound } from "@shared/react-hooks/use-sound";
 import { useAnimationImages } from "./use-animation-images";
+import dynamic from "next/dynamic";
+
+const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), { ssr: false });
 
 const OPEN_DURATION = 500; // Open duration in milliseconds
 
@@ -205,6 +208,9 @@ const SedieCup = () => {
                     </div>
                 </motion.div>
             </div>
+
+            <WinningBalanceEffect />
+
         </div>
     );
 };
