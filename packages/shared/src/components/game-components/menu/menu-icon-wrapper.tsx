@@ -3,7 +3,7 @@ import { GuideIcon } from "./icons/guide";
 
 export const MenuIconWrapper = ({ children }: { children?: React.ReactNode }) => {
     return (
-        <div className="flex">
+        <div className="flex gap-2 items-center">
             <SoundIcon />
             <GuideIcon />
             {children}

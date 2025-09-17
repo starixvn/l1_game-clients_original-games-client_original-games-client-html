@@ -3,6 +3,7 @@ import { RoundState } from "../../game-base/type";
 import Styles from "./bet-option.module.scss";
 import { BaseProps } from "./types";
 import { useShallow } from "zustand/react/shallow";
+import { cn } from '@shared/utils';
 
 const convertStakeToString = (amount: number, rate: number) => {
     if (amount) {
@@ -38,7 +39,7 @@ export const TotalBet: React.FC<BaseProps> = ({ tolgeeNamespace, choice, classNa
 
     return (
         <div className={`flex items-center gap-1 ${className}`}>
-            <span id={`${tolgeeNamespace}-${choice}-total-stakes`} className={Styles["stakes-value"]}>
+            <span id={`${tolgeeNamespace}-${choice}-total-stakes`} className={cn(Styles["stakes-value"], "text-xs md:text-sm")}>
                 {convertStakeToString(totalBet, rate)}
             </span>
         </div>
