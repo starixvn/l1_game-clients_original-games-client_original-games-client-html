@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { CardSection } from "./card-section";
 import { determineWinner, GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
@@ -14,7 +14,7 @@ interface Result {
         card2: { card: number; type: number };
         card3?: { card: number; type: number };
     };
-    winner: 'player' | 'banker' | 'tie';
+    winner: "player" | "banker" | "tie";
     playerPair?: boolean;
     bankerPair?: boolean;
     natural?: boolean;
@@ -35,16 +35,16 @@ interface PlayerBankerResultState {
 }
 
 export default function PlayerBankerResultComponent(props: PlayerBankerResultProps) {
-    const { playResultAnimation, result, isShowResult, language, isFinishShowResult, isHideAllCards } = props;
+    const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards } = props;
 
-    console.log('[PlayerBankerResult] props:', { playResultAnimation, isShowResult, isFinishShowResult, isHideAllCards });
-    console.log('[PlayerBankerResult] result:', result);
+    console.log("[PlayerBankerResult] props:", { playResultAnimation, isShowResult, isFinishShowResult, isHideAllCards });
+    console.log("[PlayerBankerResult] result:", result);
 
     const playerCards = result ? GetPlayerCardsResult(result) : [];
     const bankerCards = result ? GetBankerCardsResult(result) : [];
 
-    console.log('[PlayerBankerResult] playerCards:', playerCards);
-    console.log('[PlayerBankerResult] bankerCards:', bankerCards);
+    console.log("[PlayerBankerResult] playerCards:", playerCards);
+    console.log("[PlayerBankerResult] bankerCards:", bankerCards);
 
     useEffect(() => {
         if (playResultAnimation) {
@@ -54,7 +54,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
 
     const getWinnerText = (): string => {
         if (!result) {
-            return '';
+            return "";
         }
 
         try {
@@ -62,7 +62,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
             const bankerLastCard = bankerCards[bankerCards.length - 1];
 
             if (!playerLastCard || !bankerLastCard) {
-                return '';
+                return "";
             }
 
             const playerScore = playerLastCard.accumulatedScore;
@@ -70,7 +70,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
 
             return determineWinner(playerScore, bankerScore);
         } catch (error) {
-            return '';
+            return "";
         }
     };
 
@@ -81,7 +81,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
 
         const allCards = [...playerCards, ...bankerCards].sort((a, b) => a.order - b.order).filter((card) => card.value);
 
-        console.log('[PlayerBankerResult] startAnimation cards:', allCards);
+        console.log("[PlayerBankerResult] startAnimation cards:", allCards);
 
         allCards.forEach((card, index) => {
             setTimeout(() => {
@@ -91,8 +91,10 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
     };
 
     return (
-        <div className={`overlay-mask`}>
-            <div className={`${styles['animation-container']}`}>
+        <div
+        // className={`overlay-mask`}
+        >
+            <div className={`${styles["animation-container"]}`}>
                 <CardSection
                     cards={playerCards}
                     label="Player"
@@ -112,8 +114,8 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
                 />
 
                 {isShowResult && isFinishShowResult && !isHideAllCards && (
-                    <div className={`${styles['winner-display']} ${playResultAnimation ? styles['play-animation'] : ''}`}>
-                        <p className={styles['winner-text']}>{getWinnerText()}</p>
+                    <div className={`${styles["winner-display"]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
+                        <p className={styles["winner-text"]}>{getWinnerText()}</p>
                     </div>
                 )}
             </div>

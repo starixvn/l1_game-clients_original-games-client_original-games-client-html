@@ -85,7 +85,7 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
                         </div>
                     </div>
                     <div className="col-span-12 md:col-span-6">
-                        <div className="p-3 rounded-t-xl bg-primary-bg">
+                        <div className="p-3 rounded-t-xl bg-primary-bg mx-3">
                             <OwnTotalBet />
                         </div>
                     </div>
