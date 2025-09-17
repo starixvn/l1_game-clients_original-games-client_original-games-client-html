@@ -50,7 +50,7 @@ const AutoRebetIcon = () => {
     return (
         <>
             <div className="relative group">
-                <Tooltip message={t("auto_rebet")} />
+                <Tooltip message={t("tooltip_auto")} />
                 <div
                     className={`rounded-full w-[52px] h-[52px] flex items-center justify-center border border-solid bg-[#1a274999] border-[#0097ff33] transition-all duration-300 ${
                         isEnabled ? "cursor-pointer hover:scale-110 opacity-100" : "opacity-50 cursor-auto"
