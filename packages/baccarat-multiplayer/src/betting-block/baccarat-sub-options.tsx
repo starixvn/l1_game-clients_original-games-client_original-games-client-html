@@ -14,16 +14,21 @@ const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-
     const widthClass = "w-[106px] md:w-[140px]"; // Responsive width for desktop
     const shapeClass = choice === "tie" ? styles.tieShape : choice === "anyPair" ? styles.anyPairShape : "";
     const shadowClass = choice === "tie" ? styles.tieShadow : choice === "anyPair" ? styles.anyPairShadow : "";
+    const textColorClass = choice === "tie" ? "text-[#41EE7B]" : "text-white";
+    const fontSizeClass = choice === "tie" ? "text-xl" : "text-base";
+    const ownBetPositionClass = choice === "anyPair" ? "bottom-[6px]" : "bottom-[11px]";
 
     return (
         <div className={`relative ${widthClass} ${heightClass}`}>
             {shadowClass && <div className={shadowClass}></div>}
+
             <div className={`flex-1 text-white relative w-full h-full ${themeClass}`}>
-                <TotalBet choice={choice} className={"h-6 pt-1 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
-                <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} />
-                <div className="h-5 mb-0.5">
-                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className=" text-xs" />
-                    <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} />
+                <div className="h-[55px] flex flex-col justify-top pt-[10px]">
+                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className={`${textColorClass} ${fontSizeClass} font-semibold leading-none`} />
+                    <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className="text-base font-light leading-none pt-1" />
+                </div>
+                <div className={`h-auto absolute translate-x-[-50%] left-1/2 ${ownBetPositionClass}`}>
+                    <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />
                 </div>
             </div>
 
