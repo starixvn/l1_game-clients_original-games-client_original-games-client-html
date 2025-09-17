@@ -33,10 +33,6 @@ const SedieCup = () => {
     const phase2Ref = useRef(null);
 
     const playDiceShakingRollingSound = useDiceShakingRollingSound();
-    const playDiceShakingRollingRef = useRef(playDiceShakingRollingSound);
-    useEffect(() => {
-        playDiceShakingRollingRef.current = playDiceShakingRollingSound;
-    }, [playDiceShakingRollingSound]);
 
     useEffect(() => {
         const resetState = () => {
@@ -65,7 +61,7 @@ const SedieCup = () => {
                     setIsShow(true);
                     setIsAnimatingOut(false);
                     delayDisplayResult = setTimeout(() => {
-                        playDiceShakingRollingRef.current();
+                        playDiceShakingRollingSound();
                         setAnimationState("open");
                     }, OPEN_DURATION);
                 }
@@ -87,7 +83,7 @@ const SedieCup = () => {
             timeout && clearTimeout(timeout);
             delayDisplayResult && clearTimeout(delayDisplayResult);
         };
-    }, [roundState, durations]);
+    }, [roundState, durations, playResultAnimation]);
 
     if (!isShow) {
         return null;

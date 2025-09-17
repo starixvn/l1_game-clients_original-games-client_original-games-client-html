@@ -4,10 +4,10 @@ import { formatVolume } from '@shared/helpers';
 import { useSettingContext } from '@shared/react-contexts';
 import { getRandomSong } from '@shared/react-hooks';
 import { controlMusic } from "./music-player-utility";
-import { addMultipleEventListeners } from '@shared/helpers/event-listener-helper';
+import { useUserGesture } from "@shared/react-hooks/use-user-gesture";
 
 const MusicPlayer = () => {
-    const [isUserGesture, setIsUserGesture] = useState(null);
+    const isUserGesture = useUserGesture();
     const [song, setSong] = useState(getRandomSong(""));
 
     const settingContext = useSettingContext();
@@ -53,23 +53,6 @@ const MusicPlayer = () => {
             }
         }
     }, [settingContext.volumeMusic]);
-
-    useEffect(() => {
-        const onChangeGesture = () => {
-            setIsUserGesture(!document.hidden);
-        };
-
-        const onAllowGesture = () => {
-            setIsUserGesture(true);
-        };
-
-        const events = ["scroll", "touchstart", "click"];
-        const removeEventListeners = addMultipleEventListeners(document, events, onAllowGesture, { passive: true });
-
-        document.addEventListener("visibilitychange", onChangeGesture);
-
-        return removeEventListeners;
-    }, []);
 
     return <></>;
 };

@@ -2,6 +2,7 @@ import useSound from "use-sound";
 import { buildVersion } from "../constants";
 import { StorageHelper, formatVolume, localStorageKeys, objectMap } from "../helpers";
 import { useSettingContext } from "../react-contexts";
+import { useUserGesture } from "./use-user-gesture";
 export const path = "./static/sounds/";
 
 const mp3File = {
@@ -21,12 +22,25 @@ const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}
 export const usePlaySound = (resource: string) => {
     const [playSound, { sound: ctx }] = useSound(resource, {});
     const settingContext = useSettingContext();
-
+    const isUserGesture = useUserGesture();
+    
     return () => {
-        if (document.visibilityState === "visible" && ctx) {
+        if (document.visibilityState === "visible" && ctx && isUserGesture) {
             const enable = StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true;
             ctx.volume(formatVolume(settingContext.volumeSFX));
-            settingContext.volumeSFX && enable && playSound();
+            if (settingContext.volumeSFX && enable) {
+                // Resume audio context if suspended
+                const audioContext = (ctx as any)?._sounds?.[0]?._node?.context;
+                if (audioContext?.state === "suspended") {
+                    audioContext.resume().then(() => {
+                        playSound();
+                    }).catch(() => {
+                        playSound();
+                    });
+                } else {
+                    playSound();
+                }
+            }
         }
     };
 };
