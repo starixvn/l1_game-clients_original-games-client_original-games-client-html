@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./sedie-cup.module.scss";
 import { RoundState } from "@shared/components/game-base/type";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
