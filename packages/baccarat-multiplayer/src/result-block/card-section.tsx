@@ -62,8 +62,6 @@ export const CardSection: React.FC<CardSectionProps> = ({
         [type],
     );
 
-    console.log('[CardSection] props:', { type, label, playResultAnimation, isShowResult, isHideAllCards });
-    console.log('[CardSection] cards:', cards);
     return (
         <div className={`${styles.cardSection}`}>
             <div className={`${styles.label} ${type === 'player' ? styles['label-player'] : styles['label-banker']}`}>{label}</div>

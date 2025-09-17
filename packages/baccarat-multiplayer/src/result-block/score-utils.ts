@@ -95,71 +95,78 @@ export interface CardOrderWithTiming {
 export const GetPlayerCardsResult = (result: any): CardOrderWithTiming[] => {
     const { orders, getAnimationTime } = CardAnimationConfig;
     let runningScore = 0;
-    const hasThirdCard = !!result.player.card3;
-    console.log('GetPlayerCardsResult: raw result.player=', result?.player);
+
+    // Check if player has a valid third card
+    const playerHasThirdCard = !!result.player.card3 && result.player.card3.card !== -1;
+
+
     const playerCards = [
         {
             value: result.player.card1,
             order: orders.playerCard1,
             animationDelay: getAnimationTime(orders.playerCard1),
             accumulatedScore: (() => { runningScore = sumScore(0, result.player.card1?.card ?? -1); return runningScore; })(),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         },
         {
             value: result.player.card2,
             order: orders.playerCard2,
             animationDelay: getAnimationTime(orders.playerCard2),
             accumulatedScore: (() => { runningScore = sumScore(runningScore, result.player.card2?.card ?? -1); return runningScore; })(),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         }
     ];
 
-    // Only add third card if it exists
-    if (result.player.card3) {
+    // Only add third card if player actually has one
+    if (playerHasThirdCard) {
         playerCards.push({
             value: result.player.card3,
             order: orders.playerCard3,
             animationDelay: getAnimationTime(orders.playerCard3),
             accumulatedScore: sumScore(runningScore, result.player.card3?.card ?? -1),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         });
     }
-    console.log('GetPlayerCardsResult: computed=', playerCards);
     return playerCards;
 };
 
 export const GetBankerCardsResult = (result: any): CardOrderWithTiming[] => {
     const { orders, getAnimationTime } = CardAnimationConfig;
     let runningScore = 0;
-    const hasThirdCard = !!result.player.card3;
-    console.log('GetBankerCardsResult: raw result.banker=', result?.banker);
+
+    // Check if player has a third card (affects banker card order)
+    const playerHasThirdCard = !!result.player.card3 && result.player.card3.card !== -1;
+    const bankerHasThirdCard = !!result.banker.card3 && result.banker.card3.card !== -1;
+
+
     const bankerCards = [
         {
             value: result.banker.card1,
             order: orders.bankerCard1,
             animationDelay: getAnimationTime(orders.bankerCard1),
             accumulatedScore: (() => { runningScore = sumScore(0, result.banker.card1?.card ?? -1); return runningScore; })(),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         },
         {
             value: result.banker.card2,
             order: orders.bankerCard2,
             animationDelay: getAnimationTime(orders.bankerCard2),
             accumulatedScore: (() => { runningScore = sumScore(runningScore, result.banker.card2?.card ?? -1); return runningScore; })(),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         }
     ];
 
-    // Only add third card if it exists
-    if (result.banker.card3) {
+    // Only add third card if banker actually has one
+    if (bankerHasThirdCard) {
+        const bankerThirdCardOrder = playerHasThirdCard ? orders.bankerCard3 : orders.playerCard3;
+
         bankerCards.push({
             value: result.banker.card3,
-            order: hasThirdCard ? orders.bankerCard3 : orders.playerCard3,
-            animationDelay: getAnimationTime(hasThirdCard ? orders.bankerCard3 : orders.playerCard3),
+            order: bankerThirdCardOrder,
+            animationDelay: getAnimationTime(bankerThirdCardOrder),
             accumulatedScore: sumScore(runningScore, result.banker.card3?.card ?? -1),
-            playerHasThirdCard: hasThirdCard
+            playerHasThirdCard: playerHasThirdCard
         });
     }
-    console.log('GetBankerCardsResult: computed=', bankerCards);
     return bankerCards;
 };

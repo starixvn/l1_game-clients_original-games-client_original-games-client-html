@@ -94,7 +94,8 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     const { durations } = useGameContext();
     const { roundState } = useGameStateContext();
     const gameState = useGameStateContext();
-    const last = (gameState as any)?.last;
+    const last = gameState?.roundData?.last;
+
     const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showCards, setShowCards] = useState(false);
@@ -107,18 +108,21 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         // Get result from game state
         if (last) {
             const gameResult = last as any;
-            console.log("[BaccaratSettlementResult] gameState.last =", gameResult);
 
             // Handle both normalized shape (arrays) and nested service shape (card1/card2/card3)
             const resultData = gameResult.result || gameResult;
             const settlementData = gameResult.settlementResult || {};
 
             const toCard = (input: any, defaultType: number) => {
+                // Handle null/undefined (card3 can be null)
                 if (!input) return { card: EmptyCardIndex, type: defaultType };
-                if (typeof input === "number") return { card: input, type: defaultType };
-                if (typeof input === "object" && typeof input.card === "number") {
-                    return { card: input.card, type: input.type !== undefined ? input.type : defaultType };
+
+                // Handle rank/suit format from socket data
+                if (typeof input === "object" && typeof input.rank === "number" && typeof input.suit === "number") {
+                    return { card: input.rank, type: input.suit };
                 }
+
+                // Fallback for unexpected formats
                 return { card: EmptyCardIndex, type: defaultType };
             };
 
@@ -148,18 +152,27 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             playerCardsArr = playerCardsArr.filter((c) => c !== undefined && c !== null);
             bankerCardsArr = bankerCardsArr.filter((c) => c !== undefined && c !== null);
 
-            console.log("[BaccaratSettlementResult] parsed arrays:", { playerCardsArr, bankerCardsArr });
+
+            // Process player cards
+            const playerCard1 = toCard(playerCardsArr[0], 1);
+            const playerCard2 = toCard(playerCardsArr[1], 1);
+            const playerCard3 = playerCardsArr[2] !== undefined ? toCard(playerCardsArr[2], 1) : undefined;
+
+            // Process banker cards
+            const bankerCard1 = toCard(bankerCardsArr[0], 0);
+            const bankerCard2 = toCard(bankerCardsArr[1], 0);
+            const bankerCard3 = bankerCardsArr[2] !== undefined ? toCard(bankerCardsArr[2], 0) : undefined;
 
             const newResult: Result = {
                 player: {
-                    card1: toCard(playerCardsArr[0], 1),
-                    card2: toCard(playerCardsArr[1], 1),
-                    card3: playerCardsArr[2] !== undefined ? toCard(playerCardsArr[2], 1) : undefined,
+                    card1: playerCard1,
+                    card2: playerCard2,
+                    card3: playerCard3,
                 },
                 banker: {
-                    card1: toCard(bankerCardsArr[0], 0),
-                    card2: toCard(bankerCardsArr[1], 0),
-                    card3: bankerCardsArr[2] !== undefined ? toCard(bankerCardsArr[2], 0) : undefined,
+                    card1: bankerCard1,
+                    card2: bankerCard2,
+                    card3: bankerCard3,
                 },
                 winner: (() => {
                     if (settlementData.banker) return "banker";
@@ -172,12 +185,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 natural: !!settlementData.natural,
             };
 
-            console.log("Baccarat Result Data:", {
-                originalData: gameResult,
-                parsedResult: newResult,
-                playerCards: [newResult.player.card1, newResult.player.card2, newResult.player.card3],
-                bankerCards: [newResult.banker.card1, newResult.banker.card2, newResult.banker.card3],
-            });
 
             setResult(newResult);
             setIsLoading(false);
@@ -210,9 +217,14 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                     setAnimationState("idle");
                     setShowCards(true);
                     setAnimationState("open");
+                    console.log(`[BaccaratSettlementResult] Starting animation with duration: ${durations.showResult}s`);
+                    // Ensure animation lasts at least 6 seconds to cover all card timings (CARD_6 at 5000ms + buffer)
+                    const animationDuration = Math.max(durations.showResult * 1000, 6000);
+                    console.log(`[BaccaratSettlementResult] Using animation duration: ${animationDuration}ms`);
                     timeout = setTimeout(() => {
+                        console.log('[BaccaratSettlementResult] Animation ended - resetting state');
                         resetState();
-                    }, durations.showResult * 1000);
+                    }, animationDuration);
                 }, DELAY);
                 break;
             case RoundState.BeforePlaceBet:

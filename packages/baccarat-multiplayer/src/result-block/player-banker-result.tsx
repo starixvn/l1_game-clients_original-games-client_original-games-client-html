@@ -38,14 +38,8 @@ interface PlayerBankerResultState {
 export default function PlayerBankerResultComponent(props: PlayerBankerResultProps) {
     const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards } = props;
 
-    console.log("[PlayerBankerResult] props:", { playResultAnimation, isShowResult, isFinishShowResult, isHideAllCards });
-    console.log("[PlayerBankerResult] result:", result);
-
     const playerCards = result ? GetPlayerCardsResult(result) : [];
     const bankerCards = result ? GetBankerCardsResult(result) : [];
-
-    console.log("[PlayerBankerResult] playerCards:", playerCards);
-    console.log("[PlayerBankerResult] bankerCards:", bankerCards);
 
     useEffect(() => {
         if (playResultAnimation) {
@@ -82,7 +76,6 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
 
         const allCards = [...playerCards, ...bankerCards].sort((a, b) => a.order - b.order).filter((card) => card.value);
 
-        console.log("[PlayerBankerResult] startAnimation cards:", allCards);
 
         allCards.forEach((card, index) => {
             setTimeout(() => {
