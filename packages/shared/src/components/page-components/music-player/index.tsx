@@ -5,12 +5,17 @@ import { getRandomSong } from '@shared/react-hooks';
 import { controlMusic } from "./music-player-utility";
 import { useUserGesture } from "@shared/react-hooks/use-user-gesture";
 import { useSettingStore } from "@shared/stores/setting-store";
+import { useShallow } from "zustand/react/shallow";
 
 const MusicPlayer = () => {
     const isUserGesture = useUserGesture();
     const [song, setSong] = useState(getRandomSong(""));
 
-    const { enabledMusic, volumeMusic } = useSettingStore();
+    const { enabledMusic, volumeMusic } = useSettingStore(useShallow((state) => ({
+        enabledMusic: state.enabledMusic,
+        volumeMusic: state.volumeMusic,
+    })));
+    
     const [play, { stop, pause, sound: ctx }] = useSound(song, {
         interrupt: false,
         onend: () => {

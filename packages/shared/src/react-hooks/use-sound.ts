@@ -3,6 +3,7 @@ import { buildVersion } from "../constants";
 import { StorageHelper, formatVolume, localStorageKeys, objectMap } from "../helpers";
 import { useSettingStore } from "@shared/stores/setting-store";
 import { useUserGesture } from "./use-user-gesture";
+import { useShallow } from "zustand/react/shallow";
 export const path = "./static/sounds/";
 
 const mp3File = {
@@ -21,7 +22,11 @@ const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}
 
 export const usePlaySound = (resource: string) => {
     const [playSound, { sound: ctx }] = useSound(resource, {});
-    const { volumeSFX, enabledSound } = useSettingStore();
+    const { volumeSFX, enabledSound } = useSettingStore(useShallow((state) => ({
+        volumeSFX: state.volumeSFX,
+        enabledSound: state.enabledSound,
+    })));
+    
     const isUserGesture = useUserGesture();
     
     return () => {

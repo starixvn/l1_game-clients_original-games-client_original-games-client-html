@@ -6,13 +6,17 @@ import Styles from "./settings-popup.module.scss";
 import SoundSetting from "./sfx-setting";
 import { useRef } from 'react';
 import { useSettingStore } from '@shared/stores/setting-store';
+import { useShallow } from 'zustand/react/shallow';
 
 const SoundSettings = () => {
-    const isShowedSetting  = useSettingStore((state) => state.isShowedSetting);
     const clickSound = useClickSound();
     const { t } = useTranslator();
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const { toggleSetting } = useSettingStore();
+    const { toggleSetting, isShowedSetting } = useSettingStore(useShallow((state) => ({
+        toggleSetting: state.toggleSetting,
+        isShowedSetting: state.isShowedSetting,
+    })));
+    
     const closePopup = () => {
         clickSound();
         toggleSetting(false);

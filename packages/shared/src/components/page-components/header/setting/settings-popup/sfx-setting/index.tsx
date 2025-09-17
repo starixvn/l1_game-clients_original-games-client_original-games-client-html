@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
 
-import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
-import { useClickSound, useTranslator } from '@shared/react-hooks';
-import useDebounce from '@shared/react-hooks/use-debounce';
+import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from "@shared/helpers";
+import { useClickSound, useTranslator } from "@shared/react-hooks";
+import useDebounce from "@shared/react-hooks/use-debounce";
 import Styles from "../settings-popup.module.scss";
 import VolumeSetting from "../volume-setting";
 import { useSettingStore } from "@shared/stores/setting-store";
+import { useShallow } from "zustand/react/shallow";
 
 const delaySetVolumeInMilliseconds = 100;
 const SoundSetting = () => {
-    const  {updateVolumeSFX, toggleSound, volumeSFX, enabledSound} = useSettingStore();
+    const { updateVolumeSFX, toggleSound, volumeSFX, enabledSound } = useSettingStore(
+        useShallow((state) => ({
+            updateVolumeSFX: state.updateVolumeSFX,
+            toggleSound: state.toggleSound,
+            volumeSFX: state.volumeSFX,
+            enabledSound: state.enabledSound,
+        }))
+    );
+    
     const clickSound = useClickSound();
 
     const { t } = useTranslator();
@@ -42,7 +51,7 @@ const SoundSetting = () => {
     };
 
     const updateVolume = (value) => {
-        updateVolumeSFX(value);        
+        updateVolumeSFX(value);
 
         if (!+value) {
             if (enabledSound) {

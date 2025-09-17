@@ -6,13 +6,19 @@ import useDebounce from '@shared/react-hooks/use-debounce';
 import Styles from "../settings-popup.module.scss";
 import VolumeSetting from "../volume-setting";
 import { useSettingStore } from "@shared/stores/setting-store";
+import { useShallow } from "zustand/react/shallow";
 
 const delaySetVolumeInMilliseconds = 100;
 const MusicSetting = () => {
     const clickSound = useClickSound();
 
     const { t } = useTranslator();
-    const  {updateVolumeMusic, toggleMusic, enabledMusic, volumeMusic} = useSettingStore();
+    const  {updateVolumeMusic, toggleMusic, enabledMusic, volumeMusic} = useSettingStore(useShallow((state) => ({
+        updateVolumeMusic: state.updateVolumeMusic,
+        toggleMusic: state.toggleMusic,
+        enabledMusic: state.enabledMusic,
+        volumeMusic: state.volumeMusic,
+    })));
 
     const [volumeMusicVal, setVolumeMusicVal] = useState(volumeMusic);
     const [debounceVolumeMusicVal, setDebounceVolumeMusicVal] = useState(volumeMusic);

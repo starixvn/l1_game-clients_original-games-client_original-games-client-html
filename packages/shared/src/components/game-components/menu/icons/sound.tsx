@@ -1,9 +1,14 @@
 import { MenuIcon } from "../menu-icon";
 import { StorageHelper, localStorageKeys } from "@shared/helpers";
 import { useSettingStore } from "@shared/stores/setting-store";
+import { useShallow } from "zustand/react/shallow";
 
 export const SoundIcon = () => {
-    const { toggleSetting, enabledSound, volumeSFX } = useSettingStore();
+    const { toggleSetting, enabledSound, volumeSFX } = useSettingStore(useShallow((state) => ({
+        toggleSetting: state.toggleSetting,
+        enabledSound: state.enabledSound,
+        volumeSFX: state.volumeSFX,
+    })));
 
     const computedEnabledSound =
         (enabledSound ?? StorageHelper.get<boolean>(localStorageKeys.settingStore) ?? true) &&
