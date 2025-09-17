@@ -6,6 +6,7 @@ import { CardDisplay } from "./card-display";
 import { EmptyCardIndex } from "../shared/components/card";
 import styles from "./baccarat-animations.module.scss";
 import { cn } from "@shared/utils";
+import dynamic from "next/dynamic";
 
 interface CardOrder {
     order: number;
@@ -51,6 +52,10 @@ const DEFAULT_RESULT: Result = {
 };
 
 const labels = ["player", "banker"];
+
+const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), {
+    ssr: false,
+});
 
 const renderCardDisplay = (
     result: Result,
@@ -245,6 +250,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 } as React.CSSProperties
             }
         >
+            <WinningBalanceEffect />
             <div
                 className={cn(
                     `${styles["baccarat-result-container"]} ${styles["baccarat-result-container-" + animationState]}`,
