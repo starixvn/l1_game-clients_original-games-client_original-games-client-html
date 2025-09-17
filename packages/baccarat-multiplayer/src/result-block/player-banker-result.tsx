@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { CardSection } from "./card-section";
 import { determineWinner, GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
+import { cn } from "@shared/utils";
 
 interface Result {
     player: {
@@ -94,7 +95,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
         <div
         // className={`overlay-mask`}
         >
-            <div className={`${styles["animation-container"]}`}>
+            <div className={cn(`${styles["animation-container"]} flex justify-between`)}>
                 <CardSection
                     cards={playerCards}
                     label="Player"

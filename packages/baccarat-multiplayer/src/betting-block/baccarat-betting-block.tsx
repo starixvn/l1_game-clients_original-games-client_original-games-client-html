@@ -31,7 +31,7 @@ const BaccaratBettingBlock: React.FC<BaccaratBettingBlockProps> = ({ className }
     }, []);
 
     return (
-        <div className={cn(styles.bettingWrapper, "mt-4", className)}>
+        <div className={cn(styles.bettingWrapper, className)}>
             <div className={styles.mainOptionsRow}>
                 <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.PLAYER} />
                 <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.BANKER} />

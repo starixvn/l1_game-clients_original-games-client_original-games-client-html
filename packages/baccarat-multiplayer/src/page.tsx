@@ -91,12 +91,12 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
     renderBetControl() {
         return (
             <>
-                <div className="flex gap-6 justify-center items-center md:gap-3">
+                <div className="flex gap-6 justify-center items-center md:gap-3 mt-3">
                     <DoubleBetIcon />
                     {this.renderChipControlPanel()}
                     <AutoRebetIcon />
                 </div>
-                <div className="p-3 bg-primary-bg mx-3">
+                <div className="p-3 bg-primary-bg mx-3 mt-3">
                     <OwnTotalBet />
                 </div>
             </>
