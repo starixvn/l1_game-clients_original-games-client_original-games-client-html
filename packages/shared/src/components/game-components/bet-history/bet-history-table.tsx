@@ -1,29 +1,16 @@
-import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '../table';
-import { useGameContext } from '@shared/react-contexts';
-import { LoadingSpinner } from '../game-loading/loading-spinner';
-import { useCommonTranslate, useClickSound } from '@shared/react-hooks';
-import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-store';
-import usePopupStore from '@shared/stores/popup-store/popup-store';
-import { BetHistoryHandler } from '../../game-base/handlers/bet-history-handler';
-import {
-    transformBetLogsToDisplayData,
-    getWinValueColorClass,
-    scrollBetHistoryToTop,
-    BetHistoryDisplayData
-} from './bet-history-utils';
-import styles from './bet-history.module.scss';
-import useBetDetailStore from '@shared/stores/bet-detail-store';
-import { cn } from '@shared/utils/merge-tailwind-util';
-import BouncingDotsLoader from './bouncing-dots-loader';
-
+import { useEffect, useRef, useState, useCallback, useLayoutEffect } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
+import { useGameContext } from "@shared/react-contexts";
+import { LoadingSpinner } from "../game-loading/loading-spinner";
+import { useCommonTranslate, useClickSound } from "@shared/react-hooks";
+import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
+import usePopupStore from "@shared/stores/popup-store/popup-store";
+import { BetHistoryHandler } from "../../game-base/handlers/bet-history-handler";
+import { transformBetLogsToDisplayData, getWinValueColorClass, scrollBetHistoryToTop, BetHistoryDisplayData } from "./bet-history-utils";
+import styles from "./bet-history.module.scss";
+import useBetDetailStore from "@shared/stores/bet-detail-store";
+import { cn } from "@shared/utils/merge-tailwind-util";
+import BouncingDotsLoader from "./bouncing-dots-loader";
 
 // Function to create row data for bet history table
 const createBetHistoryRowData = (
@@ -34,28 +21,20 @@ const createBetHistoryRowData = (
 ) => {
     return [
         {
-            content: <div style={{ whiteSpace: 'pre-line' }}>{row.time}</div>,
+            content: <div style={{ whiteSpace: "pre-line" }}>{row.time}</div>,
         },
         {
-            content: (
-                <span className="text-table-text-clickable cursor-pointer">
-                    {row.round}
-                </span>
-            ),
+            content: <span className="text-table-text-clickable cursor-pointer">{row.round}</span>,
             className: "text-table-text-clickable cursor-pointer",
-            onClick: () => handleCellClick('round', row, rowIndex)
+            onClick: () => handleCellClick("round", row, rowIndex),
         },
         {
             content: row.betAmount,
         },
         {
-            content: (
-                <div className={getWinValueColorClass(row.win)}>
-                    {row.win}
-                </div>
-            ),
+            content: <div className={getWinValueColorClass(row.win)}>{row.win}</div>,
             className: "text-right",
-        }
+        },
     ];
 };
 
@@ -66,15 +45,13 @@ const renderBetHistoryRows = (
     getWinValueColorClass: (win: string) => string
 ) => {
     return tableData.map((row, rowIndex) => {
-        const rowData = createBetHistoryRowData(
-            row,
-            rowIndex,
-            handleCellClick,
-            getWinValueColorClass
-        );
+        const rowData = createBetHistoryRowData(row, rowIndex, handleCellClick, getWinValueColorClass);
 
         return (
-            <TableRow key={rowIndex} className={cn("border-none text-center", rowIndex % 2 === 0 ? "bg-bet-history-row-1" : "bg-bet-history-row-2")}>
+            <TableRow
+                key={rowIndex}
+                className={cn("border-none text-center", rowIndex % 2 === 0 ? "bg-bet-history-row-1" : "bg-bet-history-row-2")}
+            >
                 {rowData.map((cell, cellIndex) => (
                     <TableCell
                         key={cellIndex}
@@ -121,23 +98,23 @@ export const BetHistoryTable = () => {
     const isExpanded = useBetHistoryStore((state) => state.isExpanded);
     const totalPages = useBetHistoryStore((state) => state.totalPages);
 
-    const toggleBetDetail = usePopupStore(state => state.toggleBetDetail);
-    const updateBetDetail = useBetDetailStore(state => state.updateBetDetail);
+    const toggleBetDetail = usePopupStore((state) => state.toggleBetDetail);
+    const updateBetDetail = useBetDetailStore((state) => state.updateBetDetail);
 
     // Local state
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
-    const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>('640px');
+    const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("640px");
     const isInitialized = useRef(false);
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
     // Calculate dynamic max height based on 10 rows
     const calculateDynamicMaxHeight = useCallback(() => {
         if (!tableBodyRef.current) {
-            return '640px';
+            return "640px";
         }
 
         const tableBody = tableBodyRef.current;
-        const allRows = Array.from(tableBody.querySelectorAll('tr'));
+        const allRows = Array.from(tableBody.querySelectorAll("tr"));
 
         // Sum the heights of the first 10 rows (or fewer if less data)
         const rowsHeight = allRows.slice(0, 10).reduce((sum, row) => sum + row.getBoundingClientRect().height, 0);
@@ -167,7 +144,7 @@ export const BetHistoryTable = () => {
 
     // Handle cell click for round column
     const handleCellClick = (columnKey: string, row: BetHistoryDisplayData, index: number) => {
-        if (columnKey === 'round') {
+        if (columnKey === "round") {
             clickSound();
             // Update bet detail data in store
             const roundId = row.originalBetLog?.roundId;
@@ -187,7 +164,7 @@ export const BetHistoryTable = () => {
                         roundResult: [],
                         finalHash: "",
                         clientSeed: row.originalBetLog?.clientSeed || "",
-                        editedMergeClientSeed: ""
+                        editedMergeClientSeed: "",
                     },
                     clientSeed: row.originalBetLog?.clientSeed,
                 },
@@ -217,9 +194,9 @@ export const BetHistoryTable = () => {
             setDynamicMaxHeight(calculateDynamicMaxHeight());
         };
 
-        window.addEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
         return () => {
-            window.removeEventListener('resize', handleResize);
+            window.removeEventListener("resize", handleResize);
         };
     }, [displayedBetLogs, calculateDynamicMaxHeight]);
 
@@ -243,7 +220,7 @@ export const BetHistoryTable = () => {
         { key: "time", label: translateCommon("time") },
         { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
         { key: "total_stake", label: translateCommon("bet_amount") },
-        { key: "win", label: translateCommon("win"), align: "right" }
+        { key: "win", label: translateCommon("win"), align: "right" },
     ];
 
     // Show loading spinner for initial load
@@ -252,19 +229,19 @@ export const BetHistoryTable = () => {
     }
 
     return (
-        <div className={`${styles['bet-history-container']} rounded-xl bg-primary-bg p-2 h-full border border-primary-border`}>
-            {/* Sticky Header Table */}
+            <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`)}>
+                {/* Sticky Header Table */}
             <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
-                <TableHeader>
-                    {renderBetHistoryHeader(headerColumns)}
-                </TableHeader>
+                <TableHeader>{renderBetHistoryHeader(headerColumns)}</TableHeader>
             </Table>
 
             {/* Scrollable Body */}
             <div
-                key={isExpanded ? 'expanded' : 'collapsed'}
-                className={`bet-history-scroll-wrapper min-h-[300px] ${styles['table-scroll-wrapper']} ${isExpanded ? styles.expanded : ''}`}
-                style={{ maxHeight: dynamicMaxHeight, overflowY: 'auto' }}
+                key={isExpanded ? "expanded" : "collapsed"}
+                className={`bet-history-scroll-wrapper min-h-[300px] ${styles["table-scroll-wrapper"]} ${
+                    isExpanded ? styles.expanded : ""
+                }`}
+                style={{ maxHeight: dynamicMaxHeight, overflowY: "auto" }}
             >
                 <Table className="bet-history-table">
                     <TableBody ref={tableBodyRef}>
@@ -300,19 +277,14 @@ function renderToggleButton(
     }
 
     return (
-        <div className={`${styles['toggle-button-container']} py-5`}>
+        <div className={`${styles["toggle-button-container"]} py-5`}>
             {isLoading ? (
                 <BouncingDotsLoader />
             ) : (
-            <button
-                className={`${styles['toggle-button']} rounded-lg`}
-                onClick={handleToggleExpand}
-                disabled={isLoading}
-            >
-                {isExpanded ? t("show_less") : t("show_more")}
-            </button>
-            
-        )}
+                <button className={`${styles["toggle-button"]} rounded-lg`} onClick={handleToggleExpand} disabled={isLoading}>
+                    {isExpanded ? t("show_less") : t("show_more")}
+                </button>
+            )}
         </div>
     );
 }

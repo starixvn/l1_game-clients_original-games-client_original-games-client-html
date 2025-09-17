@@ -6,9 +6,9 @@ export const RTP = ({ rtp, tolgeeNamespace }: { rtp: number; tolgeeNamespace: st
     const { t } = useTranslator([tolgeeNamespace]);
 
     return (
-        <div className="flex flex-wrap items-center justify-between rounded-xl px-2 lg:px-4 py-3 bg-primary-bg border border-primary-border">
-            <div className="text-base font-semibold">{openingGameId > 0 && t(`${tolgeeNamespace}.game_name_${openingGameId}`)}</div>
-            <div className="text-base font-semibold">
+        <div className="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-3 justify-between rounded-xl px-3 py-4 md:py-6 bg-primary-bg border-stroke">
+            <div className="text-base md:text-lg font-medium md:font-semibold">{openingGameId > 0 && t(`${tolgeeNamespace}.game_name_${openingGameId}`)}</div>
+            <div className="text-sm md:text-base font-medium md:font-semibold">
                 RTP: <span className="text-[#8eff77]">{rtp}%</span>
             </div>
         </div>

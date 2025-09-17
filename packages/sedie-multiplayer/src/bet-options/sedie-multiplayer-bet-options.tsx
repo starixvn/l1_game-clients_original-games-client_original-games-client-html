@@ -9,7 +9,7 @@ const SeDieMultiplayerBetOptions = () => {
     const { tolgeeNamespace } = useGameContext();
 
     return (
-        <div className="mt-3 md:my-4">
+        <div className="mt-3 md:mb-4">
             <SedieMultiplayerSubBetOptions tolgeeNamespace={tolgeeNamespace} />
             <div className="flex justify-between my-2">
                 <SedieMultiplayerMainOption tolgeeNamespace={tolgeeNamespace} choice={SeDieBetOptions.EVEN} />

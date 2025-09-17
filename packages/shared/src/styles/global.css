@@ -22,12 +22,12 @@
     --color-table-text-clickable: #0990ff;
     --table-header: #233046;
     --bet-history-row-1: #182130;
-    --bet-history-row-2: #1F2A3B;
-    --bet-detail-row-1: #1F2A3B;
+    --bet-history-row-2: #1f2a3b;
+    --bet-detail-row-1: #1f2a3b;
     --bet-detail-row-2: #182130;
 
     --modal-text-color: #e6e6e6;
-    --sound-setting-background: linear-gradient(180deg, #0854B2 0%, #05264D 38.43%, #060D15 99.85%);
+    --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
 }
 
 html[data-theme="dark"] {
@@ -59,11 +59,11 @@ html[data-theme="dark"] {
     --text-content-color: #ced8e6;
 
     --table-header: #233046;
-    --bet-detail-row-1: #1F2A3B;
+    --bet-detail-row-1: #1f2a3b;
     --bet-detail-row-2: #182130;
 
     --modal-text-color: #e6e6e6;
-    --sound-setting-background: linear-gradient(180deg, #0854B2 0%, #05264D 38.43%, #060D15 99.85%);
+    --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
 }
 
 html[data-theme="light"] {
@@ -95,7 +95,7 @@ html[data-theme="light"] {
 
     --modal-text-color: #e6e6e6;
     --pf-guide-background: linear-gradient(180deg, #094998 0%, #062b57 1.51%, #142030 3.02%);
-    --sound-setting-background: linear-gradient(180deg, #0854B2 0%, #05264D 38.43%, #060D15 99.85%);
+    --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
 }
 
 /* Ensure Tailwind has highest priority */
@@ -111,5 +111,67 @@ html[data-theme="light"] {
     }
     .bg-secondary-bg {
         background-color: var(--secondary-background-color) !important;
+    }
+
+    /* Player Result Board with gradient border */
+    .border-stroke {
+        position: relative;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #293A56 0%, rgba(30, 39, 55, 0) 12.72%);
+    }
+
+    .border-stroke::before {
+        content: '';
+        position: absolute;
+        inset: 1px 0 0 1px;
+        background: #182130;
+        border-radius: 12px;
+        z-index: 0;
+    }
+
+    .border-stroke > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Hide border stroke on md and larger screens */
+    @media (min-width: 768px) {
+        .border-stroke {
+            background: #182130;
+        }
+    }
+
+    /* Sticky table header priority */
+    .bet-history-table.sticky {
+        position: sticky !important;
+        top: 50px !important;
+        z-index: 10 !important;
+    }
+
+    @media (min-width: 1024px) {
+        .bet-history-table.sticky {
+            position: static !important;
+            top: 0 !important;
+        }
+    }
+
+    /* Own Total Bet glow effect */
+    .own-total-bet-glow {
+        position: absolute !important;
+        top: -12px !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 20px !important;
+        background: rgba(77, 134, 202, 0.3);
+        filter: blur(10px);
+        border-radius: 50%;
+        z-index: -1 !important;
+    }
+
+    /* Hide border stroke on md and larger screens */
+    @media (min-width: 768px) {
+        .own-total-bet-glow {
+            display: none;
+        }
     }
 }
