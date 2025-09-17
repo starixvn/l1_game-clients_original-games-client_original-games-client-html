@@ -57,27 +57,21 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
     return btoa(binary);
 };
 
-// Fetch image with timeout and retry logic
+// Fetch image with retry logic
 const fetchImageBase64 = async (imageUrl: string, retries = 2): Promise<string> => {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
         imageUrl = imageUrl.removeBuildVersion().appendBuildVersion();
         const response = await axios.get(imageUrl, {
             responseType: "arraybuffer",
             signal: controller.signal,
-            timeout: 10000,
         });
-
-        clearTimeout(timeoutId);
 
         const contentType = response.headers["content-type"]?.toLowerCase() || "image/png";
         const base64 = arrayBufferToBase64(response.data);
         return `data:${contentType};base64,${base64}`;
     } catch (error) {
-        clearTimeout(timeoutId);
-
         if (retries > 0 && !axios.isCancel(error)) {
             // Retry with exponential backoff
             await new Promise((resolve) => setTimeout(resolve, 1000 * (3 - retries)));

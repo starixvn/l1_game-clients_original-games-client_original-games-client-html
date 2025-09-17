@@ -71,7 +71,7 @@ export const CountdownTimer = ({ className = "" }) => {
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
                         className={`h-full ${roundState === RoundState.LockingBet || roundState === RoundState.DisplayResult ? styles["progress-bar-lock-bet"] : styles["progress-bar"]} ${
-                            isAnimate ? (roundState === RoundState.LockingBet ? styles["transition-lock-bet"] : styles["transition"]) : ""
+                            isAnimate ? styles["transition"] : ""
                         }`}
                         style={{ width: `${progress}%` }}
                     />
