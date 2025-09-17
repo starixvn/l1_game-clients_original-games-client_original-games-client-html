@@ -79,7 +79,7 @@ export const NoticeDialog = () => {
     };
 
     useEffect(() => {
-        const duration = notice?.duration || 3;
+        const duration = notice?.duration ?? 3;
         const timer = setTimeout(onCloseNotice, duration * 1000);
         return () => {
             clearTimeout(timer);
