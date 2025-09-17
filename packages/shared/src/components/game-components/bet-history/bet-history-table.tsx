@@ -241,7 +241,12 @@ export const BetHistoryTable = () => {
                 className={`bet-history-scroll-wrapper min-h-[300px] ${styles["table-scroll-wrapper"]} ${
                     isExpanded ? styles.expanded : ""
                 }`}
-                style={{ maxHeight: dynamicMaxHeight }}
+                style={{ maxHeight: dynamicMaxHeight, overflowY: "auto" }}
+                key={isExpanded ? "expanded" : "collapsed"}
+                className={`bet-history-scroll-wrapper min-h-[300px] ${styles["table-scroll-wrapper"]} ${
+                    isExpanded ? styles.expanded : ""
+                }`}
+                style={{ maxHeight: dynamicMaxHeight, overflowY: "auto" }}
             >
                 <Table className="bet-history-table">
                     <TableBody ref={tableBodyRef}>
