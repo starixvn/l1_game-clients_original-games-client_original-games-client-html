@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useGameStore from '@shared/stores/game-store/game-store';
 import { Chip } from "../chip-slider/chip";
-import { useSettingContext } from '@shared/react-contexts/setting-context';
+import { useSettingStore } from '@shared/stores/setting-store';
 import styles from "./chip-effect.module.scss";
 import { useShallow } from "zustand/shallow";
 
@@ -12,7 +12,8 @@ export const ChipEffect = ({ choice, className }: { choice: string; className?: 
     const [data, setData] = useState([]);
     const [oldValue, setOldValue] = useState(ownBet);
     const [isReady, setIsReady] = useState(roundId !== 0);
-    const { chipSettings } = useSettingContext();
+    const { chipSettings } = useSettingStore();
+
 
     useEffect(() => {
         if (!isReady) {

@@ -6,4 +6,5 @@ export * from './global-events-store';
 export * from './notice-store';
 export * from './pf-store';
 export * from './popup-store';
+export * from './setting-store';
 export * from './theme-store';

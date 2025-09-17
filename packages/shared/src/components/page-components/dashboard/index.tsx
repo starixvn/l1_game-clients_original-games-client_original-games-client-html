@@ -3,17 +3,17 @@ import { withRouter } from "next/router";
 import React from "react";
 import styles from "./dashboard.module.scss";
 import { isMobile, isDesktop } from "react-device-detect";
-import { ErrorNoGameOffer } from '@shared/constants/error-code-dictionary';
-import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from '@shared/helpers';
-import { broadcastUserInfoRed } from '@shared/helpers/global-events-helper';
-import { useGlobalEventsStore } from '@shared/stores/global-events-store/global-events-store';
-import { PlayerContextProvider, SettingContextProvider } from '@shared/react-contexts';
+import { ErrorNoGameOffer } from "@shared/constants/error-code-dictionary";
+import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "@shared/helpers";
+import { broadcastUserInfoRed } from "@shared/helpers/global-events-helper";
+import { useGlobalEventsStore } from "@shared/stores/global-events-store/global-events-store";
+import { PlayerContextProvider } from "@shared/react-contexts";
 import { UserStakeLevel } from "../../game-base/type";
 import { DashboardHandler } from "./handlers/dash-board-handler";
 import { NotificationHandler } from "./handlers/notification-handler";
 import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
-import BalanceSyncProvider from '@shared/react-hooks/providers/balance-sync-provider';
+import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
 // @ts-ignore - Next.js dynamic imports resolve at runtime
@@ -119,7 +119,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             if (this.dashboardHandler.checkIsNotOfferGame()) {
                 broadcastNotice({
                     ...getNotice(ErrorNoGameOffer, false),
-                    onClose: () => { },
+                    onClose: () => {},
                 });
             }
         };
@@ -213,15 +213,13 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
-                    <SettingContextProvider>
-                        <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : ""}`}>
-                            <SoundSettings />
+                    <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : ""}`}>
+                        <SoundSettings />
 
-                            {renderOfferGameContainer()}
+                        {renderOfferGameContainer()}
 
-                            {<MusicPlayer />}
-                        </div>
-                    </SettingContextProvider>
+                        {<MusicPlayer />}
+                    </div>
                 </BalanceSyncProvider>
             </PlayerContextProvider>
         );

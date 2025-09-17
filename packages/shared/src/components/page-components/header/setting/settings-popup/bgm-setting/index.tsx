@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
 
 import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
-import { SettingEventActionType, useSettingDispatch } from '@shared/react-contexts';
 import { useClickSound, useTranslator } from '@shared/react-hooks';
 import useDebounce from '@shared/react-hooks/use-debounce';
 import Styles from "../settings-popup.module.scss";
 import VolumeSetting from "../volume-setting";
+import { useSettingStore } from "@shared/stores/setting-store";
 
 const delaySetVolumeInMilliseconds = 100;
 const MusicSetting = () => {
-    const settingDispatch = useSettingDispatch();
     const clickSound = useClickSound();
 
-    const [enabledMusic, setEnabledMusic] = useState(StorageHelper.get<boolean>(localStorageKeys.enableMusic) ?? true);
-    const volumeMusic = StorageHelper.get<number>(localStorageKeys.volumeMusic) ?? 50;
-
     const { t } = useTranslator();
+    const  {updateVolumeMusic, toggleMusic, enabledMusic, volumeMusic} = useSettingStore();
 
     const [volumeMusicVal, setVolumeMusicVal] = useState(volumeMusic);
     const [debounceVolumeMusicVal, setDebounceVolumeMusicVal] = useState(volumeMusic);
@@ -46,14 +43,7 @@ const MusicSetting = () => {
     };
 
     const updateVolume = (value) => {
-        StorageHelper.set(localStorageKeys.volumeMusic, value);
-
-        settingDispatch({
-            type: SettingEventActionType.UPDATE_VOLUME_MUSIC,
-            payload: {
-                volumeMusic: value,
-            },
-        });
+        updateVolumeMusic(value);
 
         AnalyticsHelper.trackFunction({
             function: TrackingFunction.Music,
@@ -73,14 +63,7 @@ const MusicSetting = () => {
 
     const toggleValue = () => {
         const updateMusicSetting = !enabledMusic;
-        setEnabledMusic(updateMusicSetting);
-        StorageHelper.set(localStorageKeys.enableMusic, updateMusicSetting);
-        settingDispatch({
-            type: SettingEventActionType.TOGGLE_MUSIC,
-            payload: {
-                enabledMusic: updateMusicSetting,
-            },
-        });
+        toggleMusic(updateMusicSetting);
     };
 
     return (

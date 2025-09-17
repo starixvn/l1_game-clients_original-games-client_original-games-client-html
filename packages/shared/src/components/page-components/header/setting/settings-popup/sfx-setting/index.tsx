@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
 
 import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
-import { SettingEventActionType, useSettingDispatch } from '@shared/react-contexts';
 import { useClickSound, useTranslator } from '@shared/react-hooks';
 import useDebounce from '@shared/react-hooks/use-debounce';
 import Styles from "../settings-popup.module.scss";
 import VolumeSetting from "../volume-setting";
+import { useSettingStore } from "@shared/stores/setting-store";
 
 const delaySetVolumeInMilliseconds = 100;
 const SoundSetting = () => {
-    const [enabledSound, setEnabledSound] = useState(StorageHelper.get<boolean>(localStorageKeys.enableSound) ?? true);
+    const  {updateVolumeSFX, toggleSound, volumeSFX, enabledSound} = useSettingStore();
     const clickSound = useClickSound();
 
     const { t } = useTranslator();
-    const volumeSFX = StorageHelper.get<number>(localStorageKeys.volumeSFX) ?? 50;
-
-    const settingDispatch = useSettingDispatch();
 
     const [volumeSFXVal, setVolumeSFXVal] = useState(volumeSFX);
     const [debounceSFXVal, setDebounceSFXVal] = useState(volumeSFX);
@@ -45,13 +42,7 @@ const SoundSetting = () => {
     };
 
     const updateVolume = (value) => {
-        StorageHelper.set(localStorageKeys.volumeSFX, value);
-        settingDispatch({
-            type: SettingEventActionType.UPDATE_VOLUME_SFX,
-            payload: {
-                volumeSFX: value,
-            },
-        });
+        updateVolumeSFX(value);        
 
         if (!+value) {
             if (enabledSound) {
@@ -66,9 +57,7 @@ const SoundSetting = () => {
 
     const toggleValue = () => {
         const updateSoundSetting = !enabledSound;
-        setEnabledSound(updateSoundSetting);
-        StorageHelper.set(localStorageKeys.enableSound, updateSoundSetting);
-        settingDispatch({ type: SettingEventActionType.TOGGLE_SOUND, payload: { enabledSound: updateSoundSetting } as any });
+        toggleSound(updateSoundSetting);
     };
     return (
         <div className={`${Styles["row"]} `}>

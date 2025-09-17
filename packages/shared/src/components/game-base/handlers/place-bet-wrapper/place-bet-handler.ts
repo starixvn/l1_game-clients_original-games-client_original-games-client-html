@@ -24,6 +24,7 @@ import {
 import { PlaceBetContextModel } from '@shared/react-contexts/game-state-context/place-bet-context/place-bet-context-model';
 import { NoticeModel, RoundState } from "../../type";
 import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
+import { useSettingStore } from "@shared/stores/setting-store";
 
 export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
@@ -151,7 +152,7 @@ export class PlaceBetHandler {
 
     handleEndBet = ({ endBet, ownBets, notice, kickedOut, apiError }, signOut: () => void, placeBetContext: PlaceBetContextModel) => {
         const { playPlaceBetSound, gameMessageHandler } = this.props;
-        const enableSound = StorageHelper.get(localStorageKeys.enableSound) ?? true;
+        const enableSound = useSettingStore.getState().enabledSound;
         this.isProcessingBet = false;
 
         this.clearRetryInterval();

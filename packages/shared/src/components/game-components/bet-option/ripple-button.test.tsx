@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { buildVersion } from '@shared/constants';
-import { useGameActionContext, useSettingContext } from '@shared/react-contexts';
+import { useGameActionContext } from '@shared/react-contexts';
 import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
 import { RoundState } from "../../game-base/type";
 import RippleButton from "./ripple-button";
+import { useSettingStore } from "@shared/stores/setting-store";
 
 const mockUseGameStateContext = useGameStateContext as jest.Mock;
 const mockUseGameActionContext = useGameActionContext as jest.Mock;
-const mockUseSettingContext = useSettingContext as jest.Mock;
+const mockUseSettingContext = useSettingStore as unknown as jest.Mock;
 jest.mock("../../../_shared/react-contexts/game-state-context/game-state-context", () => ({
     useGameStateContext: jest.fn(),
     useGameStatesDispatch: jest.fn(),
@@ -15,7 +15,7 @@ jest.mock("../../../_shared/react-contexts/game-state-context/game-state-context
 
 jest.mock("../../../_shared/react-contexts", () => ({
     useGameActionContext: jest.fn(),
-    useSettingContext: jest.fn(),
+    useSettingStore: jest.fn(),
 }));
 
 jest.mock("../../../_shared/constants", () => ({

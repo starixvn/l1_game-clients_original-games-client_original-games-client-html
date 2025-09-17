@@ -121,8 +121,6 @@ export const localStorageKeys = {
     rebet: buildLocalStorageKey("rebet"),
     umInfo: buildLocalStorageKey("um_info"),
     loginStatus: buildLocalStorageKey("login-status"),
-    enableSound: buildLocalStorageKey("enable-sound"),
-    enableMusic: buildLocalStorageKey("enable-music"),
     buildVersion: buildLocalStorageKey("build-version"),
     pfSetting: buildLocalStorageKey("pf-setting"),
     debug: buildLocalStorageKey("debug"),
@@ -133,9 +131,8 @@ export const localStorageKeys = {
     currentSessionSwitchGameGuide: buildLocalStorageKey("currentSessionSwitchGameGuide"),
     showPFSetting: buildLocalStorageKey("show-pf-setting"),
     isSleepMode: buildLocalStorageKey("is-sleep-mode"),
-    volumeMusic: buildLocalStorageKey("volume-music"),
-    volumeSFX: buildLocalStorageKey("volume-SFX"),
     pfStore: buildLocalStorageKey("pf-store"),
+    settingStore: buildLocalStorageKey("setting-store"),
     // latestGameId is deprecated due to one-game-per-session behavior
     latestGameId: buildLocalStorageKey(LATEST_GAME_ID_KEY),
     // User-specific latestGameId is deprecated and kept only for backward-compat mocks

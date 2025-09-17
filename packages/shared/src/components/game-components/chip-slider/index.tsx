@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useState, useRef } from "react";
 import { ChipSlider } from "./chip-slider";
 import { Chip } from "./chip";
-import { useSettingContext } from "@shared/react-contexts";
+import { useSettingStore } from "@shared/stores/setting-store";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "@shared/stores/betting-store/betting-store";
@@ -23,7 +23,7 @@ const ChipControlPanel: React.FC = () => {
     );
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isShowSlider, setIsShowSlider] = useState(false);
-    const { chipSettings } = useSettingContext();
+    const { chipSettings } = useSettingStore();
     const sliderRef = useRef<HTMLDivElement>(null);
     const chipRef = useRef<HTMLDivElement>(null);
 

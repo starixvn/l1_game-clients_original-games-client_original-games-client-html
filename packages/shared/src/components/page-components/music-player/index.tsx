@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import useSound from "use-sound";
 import { formatVolume } from '@shared/helpers';
-import { useSettingContext } from '@shared/react-contexts';
 import { getRandomSong } from '@shared/react-hooks';
 import { controlMusic } from "./music-player-utility";
 import { useUserGesture } from "@shared/react-hooks/use-user-gesture";
+import { useSettingStore } from "@shared/stores/setting-store";
 
 const MusicPlayer = () => {
     const isUserGesture = useUserGesture();
     const [song, setSong] = useState(getRandomSong(""));
 
-    const settingContext = useSettingContext();
+    const { enabledMusic, volumeMusic } = useSettingStore();
     const [play, { stop, pause, sound: ctx }] = useSound(song, {
         interrupt: false,
         onend: () => {
@@ -20,8 +20,8 @@ const MusicPlayer = () => {
 
     useEffect(() => {
         if (ctx) {
-            settingContext.enabledMusic && settingContext.volumeMusic > 0 && play();
-            ctx.volume(formatVolume(settingContext.volumeMusic));
+            enabledMusic && volumeMusic > 0 && play();
+            ctx.volume(formatVolume(volumeMusic));
         }
 
         return () => {
@@ -32,17 +32,17 @@ const MusicPlayer = () => {
     useEffect(() => {
         if (ctx) {
             const audioContext: AudioContext = (ctx as any)?._sounds[0]._node.context;
-            const isPlaying = isUserGesture && settingContext.enabledMusic && settingContext.volumeMusic > 0;
+            const isPlaying = isUserGesture && enabledMusic && volumeMusic > 0;
             controlMusic({ audioContext, isPlaying, play, pause });
         }
-    }, [ctx, isUserGesture, settingContext.enabledMusic]);
+    }, [ctx, isUserGesture, enabledMusic]);
 
     useEffect(() => {
         if (!ctx) {
             return;
         }
-        ctx.volume(formatVolume(settingContext.volumeMusic));
-        const isBGMOn = +settingContext.volumeMusic > 0;
+        ctx.volume(formatVolume(volumeMusic));
+        const isBGMOn = +volumeMusic > 0;
         if (isBGMOn) {
             const sounds = (ctx as any)._sounds;
             const latestSound = sounds[sounds.length - 1];
@@ -52,7 +52,7 @@ const MusicPlayer = () => {
                 controlMusic({ audioContext, isPlaying: true, play, pause: () => {} });
             }
         }
-    }, [settingContext.volumeMusic]);
+    }, [volumeMusic]);
 
     return <></>;
 };
