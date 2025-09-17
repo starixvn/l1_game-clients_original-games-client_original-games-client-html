@@ -7,8 +7,9 @@ import { Spritesheet } from "@shared/components/game-components/sprites-sheet";
 import { motion } from "motion/react";
 import { CachedImage } from "@shared/components/game-components/cached-image";
 import { useDiceShakingRollingSound } from "@shared/react-hooks/use-sound";
-import { useAnimationImages } from "./use-animation-images";
 import dynamic from "next/dynamic";
+import { getWinningSubOption } from "@/history/sedie-multiplayer-bet-detail-result-block";
+import { useMemoriedImage } from "@shared/react-hooks/use-memoried-image";
 
 const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), { ssr: false });
 
@@ -26,11 +27,8 @@ const SedieCup = () => {
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
 
     // Use custom hook to manage all animation images
-    const { animationPhase1, animationPhase2 } = useAnimationImages(settlementResult);
+    const { data } = useMemoriedImage(`/static/images/sedie-multiplayer/result/${getWinningSubOption(settlementResult)}.webp`); 
 
-    const resultRef = useRef(null);
-    const phase1Ref = useRef(null);
-    const phase2Ref = useRef(null);
 
     const playDiceShakingRollingSound = useDiceShakingRollingSound();
 
@@ -144,11 +142,10 @@ const SedieCup = () => {
                     <div className="relative w-full h-full top-[13px] left-[83px] z-[5] scale-[92%]">
                         {animationState === "open" ? (
                             <div>
-                                <div ref={phase1Ref} style={{ opacity: 1 }}>
                                     <Spritesheet
                                         key={`phase-1`}
                                         className={`absolute`}
-                                        imageData={animationPhase1}
+                                        imageData={data}
                                         widthFrame={195}
                                         heightFrame={195}
                                         isResponsive={false}
@@ -156,41 +153,14 @@ const SedieCup = () => {
                                         autoplay={true}
                                         fps={40}
                                         startAt={1}
-                                        endAt={60}
-                                        onPause={(spritesheet) => {
-                                            if (resultRef.current && phase1Ref.current) {
-                                                phase1Ref.current.style.opacity = "0";
-                                                resultRef.current?.goToAndPlay(0);
-                                                phase2Ref.current.style.opacity = "1";
-                                            }
-                                        }}
+                                        endAt={100}
                                     />
-                                </div>
-                                <div ref={phase2Ref} style={{ opacity: 0 }}>
-                                    <Spritesheet
-                                        key={`phase-2`}
-                                        className={`absolute`}
-                                        ref={resultRef}
-                                        imageData={animationPhase2}
-                                        widthFrame={195}
-                                        heightFrame={195}
-                                        isResponsive={false}
-                                        steps={20}
-                                        fps={40}
-                                        startAt={1}
-                                        endAt={60}
-                                        autoplay={false}
-                                        getInstance={(spritesheet) => {
-                                            resultRef.current = spritesheet;
-                                        }}
-                                    />
-                                </div>
                             </div>
                         ) : (
                             <Spritesheet
                                 key={`waiting`}
                                 className={`fade-in`}
-                                imageData={animationPhase1}
+                                imageData={data}
                                 widthFrame={195}
                                 heightFrame={195}
                                 isResponsive={false}
