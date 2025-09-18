@@ -1,12 +1,9 @@
 import { NoticeErrorCode } from '@shared/constants/error-code-dictionary';
 import {
     GetLocalizedErrorMessage,
-    StorageHelper,
     broadcastNotice,
     getGlossaryTranslate,
-    localStorageKeys,
 } from "@shared/helpers";
-import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
 import {
     findHedgeBetGroup,
     getAccountBalance,

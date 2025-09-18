@@ -2,6 +2,8 @@
     "auto_cashout": "স্বয়ংক্রিয় ক্যাশআউট",
     "auto_play": "অটো প্লে",
     "bet_accepted": "বাজি গৃহীত হয়েছে",
+    "bet_choice": "বাজির পছন্দ",
+    "bet_history": "বাজি ইতিহাস",
     "bet_slip": "বাজি স্লিপ",
     "cancel_bet": "(বাজি বাতিল করুন)",
     "cashed": "ক্যাশ করা হয়েছে",
@@ -9,8 +11,18 @@
     "game": "গেম",
     "message_bet_is_accepted": "বাজি গ্রহণ করা হয়েছে",
     "message_download_first_visit": "যদি এটি আপনার প্রথম ভিজিট হয়, তবে ডাউনলোড করতে কিছুটা সময় লাগতে পারে",
+    "message_insufficient_fund": "আপনার অ্যাকাউন্টে পর্যাপ্ত তহবিল নেই। (%{errorCode})",
+    "message_round_maxbet": "এই রাউন্ডে সর্বোচ্চ মোট বাজি %{maxBet}",
+    "message_stop_bet": "আর বাজি নয়",
     "message_total_cashout_reach_max": "মোট ক্যাশআউটের পরিমাণ সর্বোচ্চ উইনে পৌঁছেছে",
     "my_bets": "আমার বাজি",
+    "odds": "অডস",
+    "result": "ফলাফল",
+    "round": "রাউন্ড",
     "splash_check_downloading": "সর্বশেষ আপডেট প্যাকেজগুলি পরীক্ষা করা এবং ডাউনলোড করা হচ্ছে...",
-    "waiting": "অপেক্ষা করুন..."
+    "stake": "স্টেক",
+    "time": "সময়",
+    "total_stake": "মোট স্টেক",
+    "waiting": "অপেক্ষা করুন...",
+    "win": "জয়"
 }
