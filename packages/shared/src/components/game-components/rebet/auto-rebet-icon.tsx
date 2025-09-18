@@ -49,7 +49,7 @@ const AutoRebetIcon = () => {
 
     return (
         <>
-            <div className="relative group">
+            <div className="relative group pl-6 md:pl-0">
                 <Tooltip message={t("tooltip_auto")} />
                 <div
                     className={`rounded-full w-[52px] h-[52px] flex items-center justify-center border border-solid bg-[#1a274999] border-[#0097ff33] transition-all duration-300 ${
