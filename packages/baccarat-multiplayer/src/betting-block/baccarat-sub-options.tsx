@@ -4,7 +4,6 @@ import styles from "./baccarat-bet-options.module.scss";
 import BaccaratHighlightBetOption from "./baccarat-highlight-bet-option";
 const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
-const TotalBet = dynamic(() => import("@shared/components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
 
@@ -24,7 +23,7 @@ const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-
 
             <div className={`flex-1 text-white relative w-full h-full ${themeClass}`}>
                 <div className="h-[55px] flex flex-col justify-top pt-[10px]">
-                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className={`${textColorClass} ${fontSizeClass} font-semibold leading-none`} />
+                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice.toLowerCase()} className={`${textColorClass} ${fontSizeClass} font-semibold leading-none`} />
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className="text-base font-light leading-none pt-1" />
                 </div>
                 <div className={`h-auto absolute translate-x-[-50%] left-1/2 ${ownBetPositionClass}`}>
