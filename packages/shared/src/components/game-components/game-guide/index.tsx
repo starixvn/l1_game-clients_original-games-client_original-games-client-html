@@ -53,7 +53,7 @@ const GameGuide: FC = () => {
             <div className="h-full border-none" ref={wrapperRef as React.RefObject<HTMLDivElement>}>
                 {isLoading && <LoadingSpinner />}
                 <iframe
-                    style={{ display: isLoading ? "none" : "block" }}
+                    style={{ display: isLoading ? "none" : "block", touchAction: "none" }}
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
                     className="h-full w-full border-none bg-transparent"
                     allowTransparency={true}

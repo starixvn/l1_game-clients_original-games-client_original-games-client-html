@@ -29,7 +29,7 @@ const PFGuide: FC = () => {
             <div className={Styles["container-guide"]} ref={wrapperRef}>
                 {isLoading && <LoadingSpinner />}
                 <iframe
-                    style={{ display: isLoading ? "none" : "block" }}
+                    style={{ display: isLoading ? "none" : "block", touchAction: "none" }}
                     ref={wrapperIframeRef}
                     className="h-full w-full bg-transparent"
                     src={srcPath}
