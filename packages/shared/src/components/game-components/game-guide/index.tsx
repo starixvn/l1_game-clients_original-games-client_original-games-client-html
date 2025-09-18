@@ -1,14 +1,14 @@
 import { FC, memo, useMemo, useRef, useState } from "react";
 
-import { buildVersion } from '@shared/constants';
-import { buildGameGuideUrl } from '@shared/helpers';
-import { usePlayerContext } from '@shared/react-contexts';
-import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
-import { useCommonTranslate, useAppTheme } from '@shared/react-hooks';
-import { tolgee } from '@shared/tolgee';
+import { buildVersion } from "@shared/constants";
+import { buildGameGuideUrl } from "@shared/helpers";
+import { usePlayerContext } from "@shared/react-contexts";
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
+import { useCommonTranslate, useAppTheme } from "@shared/react-hooks";
+import { tolgee } from "@shared/tolgee";
 import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
-import usePopupStore from '@shared/stores/popup-store/popup-store';
+import usePopupStore from "@shared/stores/popup-store/popup-store";
 import { themeGuide } from "./constants";
 
 const GameGuideModal: FC = () => {
@@ -50,10 +50,19 @@ const GameGuide: FC = () => {
 
     return useMemo(() => {
         return (
-            <div className="h-full border-none" ref={wrapperRef as React.RefObject<HTMLDivElement>}>
+            <div
+                className="h-full border-none"
+                ref={wrapperRef as React.RefObject<HTMLDivElement>}
+                style={{
+                    touchAction: "none",
+                }}
+            >
                 {isLoading && <LoadingSpinner />}
                 <iframe
-                    style={{ display: isLoading ? "none" : "block", touchAction: "none" }}
+                    style={{
+                        display: isLoading ? "none" : "block",
+                        touchAction: "none",
+                    }}
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
                     className="h-full w-full border-none bg-transparent"
                     allowTransparency={true}

@@ -26,7 +26,9 @@ const PFGuide: FC = () => {
 
     return useMemo(() => {
         return (
-            <div className={Styles["container-guide"]} ref={wrapperRef}>
+            <div className={Styles["container-guide"]} ref={wrapperRef} style={{
+                touchAction: "none",
+            }}>
                 {isLoading && <LoadingSpinner />}
                 <iframe
                     style={{ display: isLoading ? "none" : "block", touchAction: "none" }}
