@@ -25,6 +25,7 @@ import { PlaceBetContextModel } from '@shared/react-contexts/game-state-context/
 import { NoticeModel, RoundState } from "../../type";
 import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
 import { useSettingStore } from "@shared/stores/setting-store";
+import useNoticeStore from "@shared/stores/notice-store/notice-store";
 
 export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
@@ -165,6 +166,8 @@ export class PlaceBetHandler {
                 payload: { ownBets },
             });
             gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: {} });
+            
+            useNoticeStore.getState().clearNotice();
         }
 
         this.placeBetDispatch({
