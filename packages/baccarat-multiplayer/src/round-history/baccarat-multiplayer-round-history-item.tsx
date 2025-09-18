@@ -17,6 +17,8 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
         return null;
     }
 
+    console.log("RESULT::: ", result);
+
     const { settlementResult } = result;
 
     const renderItem = () => {
