@@ -100,7 +100,7 @@ const SedieCup = () => {
                         delay: 0,
                         ease: [0.2, 1.4, 0.6, 1],
                     }}
-                    className="relative w-full h-full top-0 z-[var(--result-animation-index)] "
+                    className="relative z-[var(--result-animation-index)] "
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Back */}
@@ -141,7 +141,7 @@ const SedieCup = () => {
                         height={187}
                     />
 
-                    <div className="relative w-full h-full top-[13px] left-[83px] z-[5] scale-[92%]">
+                    <div className="relative w-full h-full top-[15px] left-[83px] z-[5] scale-[92%]">
                         {animationState === "open" ? (
                             <div>
                                 <div ref={phase1Ref} style={{ opacity: 1 }}>
