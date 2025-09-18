@@ -22,6 +22,10 @@ export const BaccaratMultiplayerRoundHistory = () => {
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
+
+    console.log("ROUND HISTORY::: ", roundHistory);
+    
+
     const [isShowStatistic, setIsShowStatistic] = useState(false);
 
     const handleClickStatistic = () => {

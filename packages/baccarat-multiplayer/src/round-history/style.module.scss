@@ -53,12 +53,33 @@
         }
     }
 
-    &.any-pair-item {
+    &.player-pair-item {
         @extend %icon;
-        background: #f39c12;
+        background: #960322;
         .border {
             @extend %border;
-            background: linear-gradient(180deg, #f39c12 0%, #e67e22 100%);
+            background: linear-gradient(180deg, #a10325 0%, #fb2956 100%);
         }
+    }
+
+    &.banker-pair-item {
+        @extend %icon;
+        background: #2741c2;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #274dc2 0%, #3d81ff 100%);
+        }
+    }
+
+    .pair-dot {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: #ffffff;
+        border-radius: 50%;
+        top: -2.5px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
     }
 }
