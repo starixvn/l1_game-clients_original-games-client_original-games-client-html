@@ -53,7 +53,7 @@
 .settlement-container {
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -63,8 +63,8 @@
 .cards-display {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 20px;
+    margin-bottom: 15px;
 }
 
 .player-section,
@@ -73,9 +73,9 @@
     
     h4 {
         color: #ffffff;
-        font-size: 1.2rem;
+        font-size: 12px;
         font-weight: 600;
-        margin-bottom: 1rem;
+        margin-bottom: 10px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -84,8 +84,8 @@
 .cards-row {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 5px;
+    margin-bottom: 10px;
     min-height: 120px;
     align-items: center;
 }
@@ -161,7 +161,7 @@
     justify-content: center;
     
     .card-value {
-        font-size: 1.5rem;
+        font-size: 15px;
         font-weight: bold;
         color: #2c3e50;
     }
@@ -220,19 +220,19 @@
 
 .total {
     color: #ffffff;
-    font-size: 1.1rem;
+    font-size: 11px;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 1rem;
+    padding: 5px 10px;
     border-radius: 20px;
     display: inline-block;
 }
 
 .winner {
     text-align: center;
-    padding: 1rem;
+    padding: 10px;
     border-radius: 8px;
-    margin-top: 1rem;
+    margin-top: 10px;
     
     &.player {
         background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
@@ -251,36 +251,36 @@
 }
 
 .result-text {
-    font-size: 1.3rem;
+    font-size: 13px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
     
     .natural {
-        font-size: 0.9rem;
+        font-size: 9px;
         opacity: 0.9;
-        margin-left: 0.5rem;
+        margin-left: 5px;
     }
     
     .pair {
-        font-size: 0.9rem;
+        font-size: 9px;
         opacity: 0.9;
-        margin-left: 0.5rem;
+        margin-left: 5px;
     }
 }
 
 .loading {
     text-align: center;
     color: #ffffff;
-    font-size: 1.1rem;
-    padding: 2rem;
+    font-size: 11px;
+    padding: 20px;
 }
 
 // Responsive design
 @media (max-width: 768px) {
     .cards-display {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 10px;
     }
     
     .card {
@@ -289,11 +289,11 @@
     }
     
     .card-front .card-value {
-        font-size: 1.2rem;
+        font-size: 12px;
     }
     
     .result-text {
-        font-size: 1.1rem;
+        font-size: 11px;
     }
 }
 

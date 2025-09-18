@@ -1,7 +1,7 @@
 // Baccarat Result History Styles
 .resultHistoryContainer {
     width: 100%;
-    padding: 1rem;
+    padding: 10px;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -10,10 +10,10 @@
 
 .result-title {
     color: #e94560;
-    font-size: 1.2rem;
+    font-size: 12px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -33,7 +33,7 @@
     background: rgba(233, 69, 96, 0.1);
     border-bottom: 1px solid rgba(233, 69, 96, 0.2);
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 9px;
     color: #ffffff;
     text-align: center;
 }
@@ -62,14 +62,14 @@
     gap: 8px;
     padding: 12px 16px;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 8.5px;
 }
 
 .roundNumber {
     color: #e94560;
     font-weight: bold;
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 8px;
 }
 
 .divider {
@@ -83,7 +83,7 @@
     color: #ffffff;
     text-align: center;
     font-weight: 500;
-    font-size: 0.8rem;
+    font-size: 8px;
     line-height: 1.2;
 }
 
@@ -117,7 +117,7 @@
 // Responsive design
 @media (max-width: 768px) {
     .resultHistoryContainer {
-        padding: 0.5rem;
+        padding: 5px;
     }
     
     .header,
@@ -125,19 +125,19 @@
         grid-template-columns: 1fr 1.5fr 0.5fr 1.5fr 1fr;
         gap: 4px;
         padding: 8px 12px;
-        font-size: 0.75rem;
+        font-size: 7.5px;
     }
     
     .result-title {
-        font-size: 1rem;
+        font-size: 10px;
     }
     
     .roundNumber {
-        font-size: 0.7rem;
+        font-size: 7px;
     }
     
     .winner {
-        font-size: 0.7rem;
+        font-size: 7px;
     }
 }
 

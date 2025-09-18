@@ -21,7 +21,7 @@
 // Player and banker base styles
 %player-banker-base {
     display: flex;
-    flex: 1 1 8.9rem;
+    flex: 1 1 89px;
     position: relative;
 }
 
@@ -32,7 +32,7 @@
 
     .score {
         margin-left: 50%;
-        left: -4.7rem;
+        left: -47px;
         background: linear-gradient(0deg, #27ae60 0%, #2ecc71 100%);
     }
 }
@@ -43,7 +43,7 @@
     justify-self: flex-start;
 
     .score {
-        left: 7.8rem;
+        left: 78px;
         background: linear-gradient(0deg, #e74c3c 0%, #c0392b 100%);
     }
 }
@@ -171,7 +171,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    padding: 10px;
 }
 
 // Loading state

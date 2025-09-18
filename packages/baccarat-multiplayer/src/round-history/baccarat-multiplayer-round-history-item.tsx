@@ -34,7 +34,7 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
         return null;
     };
 
-    return <div className="w-[1.125rem] h-[1.125rem] inline-flex items-center justify-center">{renderItem()}</div>;
+    return <div className="w-[18px] h-[18px] inline-flex items-center justify-center">{renderItem()}</div>;
 };
 
 type RoundHistoryItemProps = {

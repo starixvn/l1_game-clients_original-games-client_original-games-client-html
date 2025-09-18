@@ -6,6 +6,7 @@ import Image from "next/image";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
 import { BaccaratChoices, BaccaratStatisticColors, mainChoices } from "../baccarat-multiplayer-constants";
+import ScoreboardBaccarat from "../scoreboard/scoreboard";
 import Styles from "./statistic-popup.module.scss";
 
 interface BaccaratMultiplayerStatisticPopupProps {
@@ -15,7 +16,7 @@ interface BaccaratMultiplayerStatisticPopupProps {
 
 export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStatisticPopupProps> = ({ onClose, inline }) => {
     const clickSound = useClickSound();
-    const { roundHistory } = useGameStore(useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink })));
+    const { roundHistory, isShowBlink } = useGameStore(useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink })));
 
     const sideChoices = [BaccaratChoices.tie, BaccaratChoices.anyPair];
 
@@ -56,6 +57,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                 >
                     <div className={Styles["grid"]}>
                         <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
+                        {/* TODO: Need to change the total counts instead of percentage */}
                         <PercentageStatistic
                             roundHistory={roundHistory as any}
                             mainChoices={sideChoices as any}
@@ -80,8 +82,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                             roundedRadiusPx={12}
                             barLabelFontSizePx={12}
                         />
-                        {/* TODO: uncomment to use Scroeboard */}
-                        {/* <ScoreboardSeDie roundHistory={roundHistory as any} isShowBlink={isShowBlink} /> */}
+                        <ScoreboardBaccarat roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
                     </div>
                 </div>
             </AnimatedContent>

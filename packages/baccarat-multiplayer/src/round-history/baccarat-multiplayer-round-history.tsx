@@ -34,7 +34,7 @@ export const BaccaratMultiplayerRoundHistory = () => {
     };
 
     return (
-        <div className="mt-[10px] mb-2">
+        <div className="mt-[10px] mb-2 mx-3">
             {isShowStatistic ? (
                 <BaccaratMultiplayerStatisticPopup inline onClose={() => setIsShowStatistic(false)} />
             ) : (
