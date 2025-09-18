@@ -9,7 +9,6 @@ import { cn } from "@shared/utils";
 import dynamic from "next/dynamic";
 import { BaccaratResult } from "./types";
 import { determineWinner } from "./score-utils";
-import { BaccaratResultStorage } from "./result-storage";
 
 
 interface BaccaratSettlementResultProps {
@@ -68,66 +67,70 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     const [showCards, setShowCards] = useState(false);
     const [result, setResult] = useState<BaccaratResult>(DEFAULT_RESULT);
     const [isLoading, setIsLoading] = useState(true);
-    const [isUsingStoredData, setIsUsingStoredData] = useState(false);
+    const [isUsingRoundHistoryData, setIsUsingRoundHistoryData] = useState(false);
 
     const DELAY = 500; // Same delay as sedie plate
 
+    // Helper function to process result data into BaccaratResult format
+    const processResultData = (rawResult: any): BaccaratResult | null => {
+        if (!rawResult) return null;
+
+        const resultData = rawResult.result || rawResult;
+
+        // Simple converter for rank/suit format (your socket format)
+        const toCard = (input: any) => {
+            if (!input || input.rank === undefined) {
+                return { rank: EmptyCardIndex, suit: 0 };
+            }
+            return { rank: input.rank, suit: input.suit ?? 0 };
+        };
+
+        return {
+            player: {
+                card1: toCard(resultData.player?.card1),
+                card2: toCard(resultData.player?.card2),
+                card3: resultData.player?.card3 ? toCard(resultData.player.card3) : undefined,
+                score: resultData.player?.score ?? 0
+            },
+            banker: {
+                card1: toCard(resultData.banker?.card1),
+                card2: toCard(resultData.banker?.card2),
+                card3: resultData.banker?.card3 ? toCard(resultData.banker.card3) : undefined,
+                score: resultData.banker?.score ?? 0
+            },
+            winner: determineWinner(
+                resultData.player?.score ?? 0,
+                resultData.banker?.score ?? 0
+            )
+        };
+    };
+
     useEffect(() => {
-        // Always try to load from storage first (for refresh recovery)
-        const storedResult = BaccaratResultStorage.getStoredResult();
-        if (storedResult) {
-            setResult(storedResult);
-            setIsUsingStoredData(true); // Using stored data
-            setIsLoading(false);
-            return;
+        let resultData: BaccaratResult | null = null;
+        let isUsingHistorical = false;
+
+        if (last) {
+            // WebSocket provided fresh result data
+            resultData = processResultData(last);
+            isUsingHistorical = false;
+        } else if (gameState?.roundHistory && gameState.roundHistory.length > 0) {
+            // No finish event data - use most recent round history (during animation or as fallback)
+            const mostRecentRound = gameState.roundHistory[0] as any;
+            resultData = processResultData(mostRecentRound);
+            isUsingHistorical = true;
         }
 
-        // No stored data - check if we have fresh WebSocket data
-        if (last) {
-            // WebSocket provided fresh result data - process and store it
-            const gameResult = last as any;
-            const resultData = gameResult.result || gameResult;
-
-            // Simple converter for rank/suit format (your socket format)
-            const toCard = (input: any) => {
-                if (!input || input.rank === undefined) {
-                    return { rank: EmptyCardIndex, suit: 0 };
-                }
-                return { rank: input.rank, suit: input.suit ?? 0 };
-            };
-
-            const newResult: BaccaratResult = {
-                player: {
-                    card1: toCard(resultData.player?.card1),
-                    card2: toCard(resultData.player?.card2),
-                    card3: resultData.player?.card3 ? toCard(resultData.player.card3) : undefined,
-                    score: resultData.player?.score ?? 0
-                },
-                banker: {
-                    card1: toCard(resultData.banker?.card1),
-                    card2: toCard(resultData.banker?.card2),
-                    card3: resultData.banker?.card3 ? toCard(resultData.banker.card3) : undefined,
-                    score: resultData.banker?.score ?? 0
-                },
-                winner: determineWinner(
-                    resultData.player?.score ?? 0,
-                    resultData.banker?.score ?? 0
-                )
-            };
-
-            // Store the result for persistence across page refreshes
-            BaccaratResultStorage.storeResult(newResult);
-
-            setResult(newResult);
-            setIsUsingStoredData(false); // Fresh data from WebSocket
+        if (resultData) {
+            setResult(resultData);
+            setIsUsingRoundHistoryData(isUsingHistorical);
             setIsLoading(false);
         } else {
-            // No stored data and no fresh WebSocket data - use default
+            // No data available - use default
             setResult(DEFAULT_RESULT);
-            setIsUsingStoredData(false);
+            setIsUsingRoundHistoryData(false);
             setIsLoading(false);
         }
-    }, [last]);
+    }, [last, roundState, gameState?.roundHistory]);
 
     // Follow sedie plate timing pattern
     useEffect(() => {
@@ -149,8 +152,8 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             case RoundState.DisplayResult:
                 timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
 
-                if (isUsingStoredData) {
-                    // Skip animation and show result immediately when using stored data
+                if (isUsingRoundHistoryData) {
+                    // Skip animation and show result immediately when using historical data
                     setIsShow(true);
                     setShowCards(true);
                     setAnimationState("idle");
@@ -172,10 +175,11 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 break;
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
-                // Clear stored result when starting a new round
-                BaccaratResultStorage.clearStoredResult();
-                setIsUsingStoredData(false); // Reset flag for new round
-                resetState();
+                // Only reset if we don't have historical data to keep visible
+                if (!isUsingRoundHistoryData) {
+                    resetState();
+                }
+                setIsUsingRoundHistoryData(false); // Reset flag for new round
                 break;
             default:
                 break;
@@ -185,7 +189,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             timeout && clearTimeout(timeout);
             timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
         };
-    }, [roundState, durations, isUsingStoredData]);
+    }, [roundState, durations, isUsingRoundHistoryData]);
 
     if (isLoading) {
         return (
