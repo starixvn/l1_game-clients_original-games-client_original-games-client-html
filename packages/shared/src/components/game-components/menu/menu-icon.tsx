@@ -23,7 +23,7 @@ export const MenuIcon = ({ name, iconName, onClick }: Props) => {
 
     return (
         <div className="relative group">
-            <Tooltip message={t(`tooltip_${name}`)} />
+            <Tooltip message={t(`tooltip_${name}`)}>
             <div className="cursor-pointer w-8 h-8 flex items-center justify-center" onClick={handleClick}>
                 {isGuideIcon ? (
                     <div className="icon-guide-svg"></div>
@@ -31,6 +31,7 @@ export const MenuIcon = ({ name, iconName, onClick }: Props) => {
                     <i className={`icon-${iconName ? iconName : name} ${Styles.menuIcon}`}></i>
                 )}
             </div>
+            </Tooltip>
         </div>
     );
 };
