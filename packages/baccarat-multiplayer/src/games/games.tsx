@@ -1,7 +1,7 @@
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { getAppSettings } from "@shared/app-settings";
-import { SettingEventActionType, usePlayerContext, useSettingDispatch } from "@shared/react-contexts";
+import { usePlayerContext } from "@shared/react-contexts";
 import { useBlockBetSound, usePlaceBetSound, useStartDrawSound, useStartRoundSound } from "@shared/react-hooks";
 import { GameSound } from "@shared/components/game-base/type";
 import GameLoading from "@shared/components/game-components/game-loading";
@@ -10,6 +10,7 @@ import { Props, GameComponentProps, GameComponentRegistry } from "./type";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import dynamic from "next/dynamic";
 import { GAME_ID } from "../game-constants";
+import { useSettingStore } from "@shared/stores";
 
 const LoadingGameComponent = React.memo(() => (
     <>
@@ -38,7 +39,7 @@ export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, upd
 
     const { theme } = useTheme();
     const { session } = usePlayerContext();
-    const settingDispatch = useSettingDispatch();
+    const updateChips = useSettingStore((state) => state.updateChips);
 
     const playPlaceBetSound = usePlaceBetSound();
     const startPlaceBetSound = useStartDrawSound();
@@ -63,17 +64,12 @@ export const Games: React.FC<Props> = ({ setApiErrorMessage, userStakeLevel, upd
         try {
             const chipSettings = await getChipSettings(session);
             if (chipSettings) {
-                settingDispatch({
-                    type: SettingEventActionType.UPDATE_CHIPS,
-                    payload: {
-                        chipSettings: chipSettings.chips,
-                    },
-                });
+                updateChips(chipSettings.chips);
             }
         } catch (error) {
             console.error("Failed to load chip settings:", error);
         }
-    }, [session, settingDispatch]);
+    }, [session, updateChips]);
 
     useEffect(() => {
         loadChipSettings();
