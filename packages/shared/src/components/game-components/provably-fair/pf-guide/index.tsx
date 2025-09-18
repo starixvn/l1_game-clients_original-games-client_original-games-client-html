@@ -1,10 +1,10 @@
-import { FC, memo, useMemo, useRef, useState } from "react";
+import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { buildVersion } from '@shared/constants';
-import { buildGameGuideUrl } from '@shared/helpers';
-import { useGameStateContext } from '@shared/react-contexts/game-state-context/game-state-context';
-import { useAppTheme, useClickSound, useCommonTranslate } from '@shared/react-hooks';
-import { tolgee } from '@shared/tolgee';
+import { buildVersion } from "@shared/constants";
+import { buildGameGuideUrl } from "@shared/helpers";
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
+import { useAppTheme, useClickSound, useCommonTranslate } from "@shared/react-hooks";
+import { tolgee } from "@shared/tolgee";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import Styles from "./pf-guide.module.scss";
 import ModalContainer from "../../modal-container";
@@ -24,11 +24,51 @@ const PFGuide: FC = () => {
         wrapperIframeRef.current?.contentWindow.postMessage(JSON.stringify(gameConfigs), "*");
     };
 
+    const preventWheel = (e: WheelEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+        }
+    };
+
+    const preventAllZoom = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    };
+
+    useEffect(() => {
+        if (wrapperRef.current) {
+            const wrapperElement = wrapperRef.current;
+
+            if (wrapperElement) {
+                wrapperElement.addEventListener("wheel", preventWheel, { passive: false });
+
+                // Block gesture events
+                wrapperElement.addEventListener("gesturestart", preventAllZoom, { passive: false });
+                wrapperElement.addEventListener("gesturechange", preventAllZoom, { passive: false });
+                wrapperElement.addEventListener("gestureend", preventAllZoom, { passive: false });
+            }
+
+            return () => {
+                if (wrapperElement) {
+                    wrapperElement.removeEventListener("wheel", preventWheel, { capture: true });
+                    wrapperElement.removeEventListener("gesturestart", preventAllZoom, { capture: true });
+                    wrapperElement.removeEventListener("gesturechange", preventAllZoom, { capture: true });
+                    wrapperElement.removeEventListener("gestureend", preventAllZoom, { capture: true });
+                }
+            };
+        }
+    }, [isLoading]);
+
     return useMemo(() => {
         return (
-            <div className={Styles["container-guide"]} ref={wrapperRef} style={{
-                touchAction: "none",
-            }}>
+            <div
+                className={Styles["container-guide"]}
+                ref={wrapperRef}
+                style={{
+                    touchAction: "none",
+                }}
+            >
                 {isLoading && <LoadingSpinner />}
                 <iframe
                     style={{ display: isLoading ? "none" : "block", touchAction: "none" }}
