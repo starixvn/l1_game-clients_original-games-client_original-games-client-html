@@ -6,37 +6,78 @@ export const Tooltip: React.FC<{
     className?: string;
     classArrow?: string;
     children: React.ReactNode;
-}> = ({ message, className, classArrow, children }) => {
+    touchDelay?: number;
+}> = ({ message, className, classArrow, children, touchDelay = 500 }) => {
     const [isVisible, setIsVisible] = useState(false);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
+    const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isTouchDevice = useRef(false);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            // Chỉ ẩn tooltip nếu click outside và tooltip đang hiển thị
+        isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
             if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node) && 
                 triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
                 setIsVisible(false);
             }
         };
 
-        // Chỉ thêm event listener khi tooltip đang hiển thị
         if (isVisible) {
             document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
         };
     }, [isVisible]);
 
     const handleMouseEnter = () => {
-        setIsVisible(true);
+        if (!isTouchDevice.current) {
+            setIsVisible(true);
+        }
     };
 
     const handleMouseLeave = () => {
-        setIsVisible(false);
+        if (!isTouchDevice.current) {
+            setIsVisible(false);
+        }
     };
+
+    const handleTouchStart = () => {
+        if (touchTimeoutRef.current) {
+            clearTimeout(touchTimeoutRef.current);
+        }
+
+        touchTimeoutRef.current = setTimeout(() => {
+            setIsVisible(true);
+        }, touchDelay);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchTimeoutRef.current) {
+            clearTimeout(touchTimeoutRef.current);
+            touchTimeoutRef.current = null;
+        }
+    };
+
+    const handleTouchMove = () => {
+        if (touchTimeoutRef.current) {
+            clearTimeout(touchTimeoutRef.current);
+            touchTimeoutRef.current = null;
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (touchTimeoutRef.current) {
+                clearTimeout(touchTimeoutRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div 
@@ -44,6 +85,9 @@ export const Tooltip: React.FC<{
             className="relative inline-block"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
         >
             {children}
             <div
