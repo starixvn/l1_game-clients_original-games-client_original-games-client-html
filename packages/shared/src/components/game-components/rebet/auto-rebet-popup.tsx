@@ -30,11 +30,8 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                 return;
             }
             onConfirm(rounds);
-            setTimeout(() => {
-                onClose();
-            }, 200);
         },
-        [onConfirm, onClose, clickSound]
+        [onConfirm, clickSound]
     );
 
     const handleClose = useCallback(() => {

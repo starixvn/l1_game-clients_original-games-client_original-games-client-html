@@ -222,7 +222,7 @@ export class PlaceBetHandler {
     };
 
     handleProcessingBet = () => {
-        this.broadcastNotice({ message: "Common.message_processing_action", duration: 1, adjustBetNoticePosition: true });
+        this.broadcastNotice({ message: "Common.message_processing_action", duration: 3, adjustBetNoticePosition: true });
     };
 
     handlePreventBet = (roundState: RoundState) => {

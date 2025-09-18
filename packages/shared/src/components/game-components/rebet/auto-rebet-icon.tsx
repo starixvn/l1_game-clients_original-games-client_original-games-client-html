@@ -44,7 +44,9 @@ const AutoRebetIcon = () => {
 
     const handleConfirmAutoRebet = (rounds: number) => {
         startAutoRebet(rounds);
-        setIsPopupOpen(false);
+        setTimeout(() => {
+            setIsPopupOpen(false);
+        }, 200);
     };
 
     return (
