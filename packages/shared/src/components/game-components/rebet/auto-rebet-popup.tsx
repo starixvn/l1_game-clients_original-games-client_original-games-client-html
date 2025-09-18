@@ -41,7 +41,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     }, [onClose]);
 
     return (
-        <div ref={wrapperRef} className="md:absolute md:w-full md:z-[var(--popup-index)]">
+        <div ref={wrapperRef} className="md:absolute md:w-full md:z-[var(--popup-index)] pointer-events-auto">
             <BaseDialog
                 type={ModalType.Rebet}
                 onCloseModal={handleClose}
