@@ -24,7 +24,9 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
     }, []);
 
     const handleConfirm = useCallback(
-        (rounds: number) => {
+        (rounds: number, e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            e.preventDefault();
             clickSound();
             if (rounds <= 0) {
                 return;
@@ -59,7 +61,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                         {PRESET_ROUNDS.map((number) => (
                             <button
                                 key={number}
-                                onClick={() => handleConfirm(number)}
+                                onClick={(e) => handleConfirm(number, e)}
                                 className={`${cn(
                                     "flex items-center justify-center h-11 gap-1 text-white text-base font-medium transition-all duration-200",
                                     "hover:scale-105"
@@ -85,7 +87,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                             />
 
                             <button
-                                onClick={() => handleConfirm(rounds)}
+                                onClick={(e) => handleConfirm(rounds, e)}
                                 className={`${styles["btn-confirm"]} py-2 px-6 rounded-xl transition-all duration-200 flex items-center gap-0 hover:scale-105 active:scale-95`}
                             >
                                 {t("button_confirm")}
