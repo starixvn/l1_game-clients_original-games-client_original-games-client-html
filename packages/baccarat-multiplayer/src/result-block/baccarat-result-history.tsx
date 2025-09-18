@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { BaccaratGameLogic } from "../baccarat-helper";
 import { ResultCardSection } from "./result-card-section";
+import { BaccaratHistoryResult } from "./types";
 import styles from "./baccarat-result-history.module.scss";
 
 interface BaccaratResultHistoryProps {
@@ -10,17 +11,6 @@ interface BaccaratResultHistoryProps {
     language?: string;
 }
 
-interface ResultHistoryItem {
-    roundId: number;
-    player: any[];
-    banker: any[];
-    winner: 'player' | 'banker' | 'tie';
-    playerTotal: number;
-    bankerTotal: number;
-    isNatural?: boolean;
-    playerPair?: boolean;
-    bankerPair?: boolean;
-}
 
 const BaccaratResultHistory: React.FC<BaccaratResultHistoryProps> = ({
     className,
@@ -28,7 +18,7 @@ const BaccaratResultHistory: React.FC<BaccaratResultHistoryProps> = ({
     language = 'en'
 }) => {
     const gameState = useGameStateContext();
-    const [results, setResults] = useState<ResultHistoryItem[]>([]);
+    const [results, setResults] = useState<BaccaratHistoryResult[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -42,35 +32,23 @@ const BaccaratResultHistory: React.FC<BaccaratResultHistoryProps> = ({
                     winner: round.winner || 'tie',
                     playerTotal: BaccaratGameLogic.getBaccaratTotal(round.player || []),
                     bankerTotal: BaccaratGameLogic.getBaccaratTotal(round.banker || []),
-                    isNatural: round.isNatural || false,
-                    playerPair: round.playerPair || false,
-                    bankerPair: round.bankerPair || false,
                 }));
 
             setResults(processedResults);
             setIsLoading(false);
         } else {
-            // Mock data for development
-            const mockResults: ResultHistoryItem[] = [
-                { roundId: 1, player: [7, 2], banker: [6, 3], winner: 'tie', playerTotal: 9, bankerTotal: 9 },
-                { roundId: 2, player: [9, 1], banker: [8, 2], winner: 'player', playerTotal: 0, bankerTotal: 0 },
-                { roundId: 3, player: [5, 4], banker: [6, 4], winner: 'banker', playerTotal: 9, bankerTotal: 0 },
-                { roundId: 4, player: [3, 7], banker: [2, 8], winner: 'tie', playerTotal: 0, bankerTotal: 0 },
-                { roundId: 5, player: [1, 9], banker: [3, 7], winner: 'player', playerTotal: 0, bankerTotal: 0 },
-            ];
-            setResults(mockResults);
+            // No round history available - show empty state
+            setResults([]);
             setIsLoading(false);
         }
     }, [gameState, maxResults]);
 
-    const getResultText = (result: ResultHistoryItem): string[] => {
+    const getResultText = (result: BaccaratHistoryResult): string[] => {
         const resultArray: string[] = [];
 
         if (result.winner === 'player') resultArray.push('Player');
         if (result.winner === 'banker') resultArray.push('Banker');
         if (result.winner === 'tie') resultArray.push('Tie');
-        if (result.playerPair) resultArray.push('Player Pair');
-        if (result.bankerPair) resultArray.push('Banker Pair');
 
         return resultArray;
     };
@@ -89,7 +67,7 @@ const BaccaratResultHistory: React.FC<BaccaratResultHistoryProps> = ({
         ));
     };
 
-    const renderRoundResult = (result: ResultHistoryItem, index: number) => {
+    const renderRoundResult = (result: BaccaratHistoryResult, index: number) => {
         const resultTexts = getResultText(result);
         const resultString = language === 'th' ?
             renderResultWithBreaks(resultTexts) :

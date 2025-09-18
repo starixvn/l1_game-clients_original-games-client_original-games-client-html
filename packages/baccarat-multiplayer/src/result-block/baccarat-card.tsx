@@ -3,21 +3,14 @@ import Card from "../shared/components/card";
 import CardBack from "../shared/components/card/card-back";
 import { CARD_TIMINGS } from "./constants";
 import styles from "./baccarat-card.module.scss";
-
-interface CardOrder {
-    order: number;
-    value: any;
-    type: 'player' | 'banker';
-    accumulatedScore: number;
-    playerHasThirdCard?: boolean;
-}
+import { CardOrderWithTiming } from "./types";
 
 interface BaccaratCardProps {
-    card: CardOrder;
+    card: CardOrderWithTiming;
     className?: string;
     isShowResult: boolean;
-    type: 'player' | 'banker';
-    onCardFlip?: (card: CardOrder, accumulatedScore: number) => void;
+    type: 'player' | 'banker'; // Context for styling, not card data
+    onCardFlip?: (card: CardOrderWithTiming, accumulatedScore: number) => void;
     playResultAnimation?: boolean;
 }
 
@@ -50,14 +43,10 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
         return '';
     };
 
-    // Add banker third card class when it's the third card (either order 5 or 6)
+    // Add banker third card class based on card order and player third card status
     const getBankerThirdCardClass = (order: number) => {
-        // Banker's third card can have different orders based on player's third card:
-        // - If player has no third card: banker third card gets order 5
-        // - If player has third card: banker third card gets order 6
-        return (order === 5 && !card.playerHasThirdCard) || (order === 6 && card.playerHasThirdCard)
-            ? styles['banker-third-card']
-            : '';
+        const isBankerThirdCard = card.playerHasThirdCard ? order === 6 : order === 5;
+        return isBankerThirdCard ? styles['banker-third-card'] : '';
     };
 
     useEffect(() => {
@@ -66,31 +55,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             flipScheduledRef.current = true;
 
             // Sequential card opening - Order matters for timing!
-            let delay;
-            switch (card.order) {
-                case 1:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_1 : 0;
-                    break;
-                case 2:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_2 : 0;
-                    break;
-                case 3:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_3 : 0;
-                    break;
-                case 4:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_4 : 0;
-                    break;
-                case 5:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_5 : 0;
-                    break;
-                case 6:
-                    delay = playResultAnimation ? CARD_TIMINGS.CARD_6 : 0;
-                    break;
-                default:
-                    delay = 0;
-            }
-
-
+            const delay = playResultAnimation ? (CARD_TIMINGS[card.order as keyof typeof CARD_TIMINGS] ?? 0) : 0;
 
             const flipTimer = setTimeout(() => {
                 setIsFlipped(true);
@@ -119,7 +84,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
                         <CardBack />
                     </div>
                     <div className={styles['card-front']}>
-                        <Card result={card.value} customClassName={'card-baccarat'} />
+                        <Card result={{ card: card.value.rank, type: card.value.suit }} customClassName={'card-baccarat'} />
                     </div>
                 </div>
             </div>

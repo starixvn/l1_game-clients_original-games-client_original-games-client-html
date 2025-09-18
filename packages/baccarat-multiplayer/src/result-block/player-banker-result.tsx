@@ -1,29 +1,15 @@
 import React, { useEffect } from "react";
 import { CardSection } from "./card-section";
-import { determineWinner, GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
+import { GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
 import { cn } from "@shared/utils";
+import { BaccaratResult } from "./types";
+import { WINNER_TEXT_MAP } from "./constants";
 
-interface Result {
-    player: {
-        card1: { card: number; type: number };
-        card2: { card: number; type: number };
-        card3?: { card: number; type: number };
-    };
-    banker: {
-        card1: { card: number; type: number };
-        card2: { card: number; type: number };
-        card3?: { card: number; type: number };
-    };
-    winner: "player" | "banker" | "tie";
-    playerPair?: boolean;
-    bankerPair?: boolean;
-    natural?: boolean;
-}
 
 interface PlayerBankerResultProps {
     playResultAnimation: boolean;
-    result?: Result;
+    result?: BaccaratResult;
     isShowResult: boolean;
     language: string;
     isFinishShowResult: boolean;
@@ -48,25 +34,8 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
     }, [playResultAnimation, isShowResult]);
 
     const getWinnerText = (): string => {
-        if (!result) {
-            return "";
-        }
-
-        try {
-            const playerLastCard = playerCards[playerCards.length - 1];
-            const bankerLastCard = bankerCards[bankerCards.length - 1];
-
-            if (!playerLastCard || !bankerLastCard) {
-                return "";
-            }
-
-            const playerScore = playerLastCard.accumulatedScore;
-            const bankerScore = bankerLastCard.accumulatedScore;
-
-            return determineWinner(playerScore, bankerScore);
-        } catch (error) {
-            return "";
-        }
+        if (!result) return "";
+        return WINNER_TEXT_MAP[result.winner] || "";
     };
 
     const startAnimation = () => {

@@ -2,36 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "@shared/react-contexts";
 import { RoundState } from "@shared/components/game-base/type";
-import { CardDisplay } from "./card-display";
+import PlayerBankerResultComponent from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
 import styles from "./baccarat-animations.module.scss";
 import { cn } from "@shared/utils";
 import dynamic from "next/dynamic";
+import { BaccaratResult } from "./types";
+import { determineWinner } from "./score-utils";
+import { BaccaratResultStorage } from "./result-storage";
 
-interface CardOrder {
-    order: number;
-    value: number;
-    type: "player" | "banker";
-    accumulatedScore: number;
-    playerHasThirdCard?: boolean;
-}
-
-interface Result {
-    player: {
-        card1: { card: number; type: number };
-        card2: { card: number; type: number };
-        card3?: { card: number; type: number };
-    };
-    banker: {
-        card1: { card: number; type: number };
-        card2: { card: number; type: number };
-        card3?: { card: number; type: number };
-    };
-    winner: "player" | "banker" | "tie";
-    playerPair?: boolean;
-    bankerPair?: boolean;
-    natural?: boolean;
-}
 
 interface BaccaratSettlementResultProps {
     className?: string;
@@ -39,14 +18,16 @@ interface BaccaratSettlementResultProps {
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
-const DEFAULT_RESULT: Result = {
+const DEFAULT_RESULT: BaccaratResult = {
     banker: {
-        card1: { card: EmptyCardIndex, type: 0 },
-        card2: { card: EmptyCardIndex, type: 0 },
+        card1: { rank: EmptyCardIndex, suit: 0 },
+        card2: { rank: EmptyCardIndex, suit: 0 },
+        score: 0
     },
     player: {
-        card1: { card: EmptyCardIndex, type: 1 },
-        card2: { card: EmptyCardIndex, type: 1 },
+        card1: { rank: EmptyCardIndex, suit: 0 },
+        card2: { rank: EmptyCardIndex, suit: 0 },
+        score: 0
     },
     winner: "tie",
 };
@@ -58,33 +39,19 @@ const WinningBalanceEffect = dynamic(() => import("@shared/components/game-compo
 });
 
 const renderCardDisplay = (
-    result: Result,
+    result: BaccaratResult | undefined,
     isShowResult: boolean,
     isAnimationResult: boolean,
     isFinishShowResult: boolean,
     isHideAllCards: boolean
 ) => {
-    const language = "en"; // Default language
-    if (!result || isHideAllCards) {
-        return (
-            <CardDisplay
-                isFinishShowResult={isFinishShowResult}
-                result={DEFAULT_RESULT}
-                isAnimationResult={false}
-                isShowResult={false}
-                language={language}
-                isHideAllCards={isHideAllCards}
-            />
-        );
-    }
-
     return (
-        <CardDisplay
-            isFinishShowResult={isFinishShowResult}
+        <PlayerBankerResultComponent
+            playResultAnimation={isAnimationResult}
             result={result}
-            isAnimationResult={isAnimationResult}
             isShowResult={isShowResult}
-            language={language}
+            language="en"
+            isFinishShowResult={isFinishShowResult}
             isHideAllCards={isHideAllCards}
         />
     );
@@ -99,96 +66,65 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showCards, setShowCards] = useState(false);
-    const [result, setResult] = useState<Result>(DEFAULT_RESULT);
+    const [result, setResult] = useState<BaccaratResult>(DEFAULT_RESULT);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUsingStoredData, setIsUsingStoredData] = useState(false);
 
     const DELAY = 500; // Same delay as sedie plate
 
     useEffect(() => {
-        // Get result from game state
+        // Always try to load from storage first (for refresh recovery)
+        const storedResult = BaccaratResultStorage.getStoredResult();
+        if (storedResult) {
+            setResult(storedResult);
+            setIsUsingStoredData(true); // Using stored data
+            setIsLoading(false);
+            return;
+        }
+
+        // No stored data - check if we have fresh WebSocket data
         if (last) {
+            // WebSocket provided fresh result data - process and store it
             const gameResult = last as any;
-
-            // Handle both normalized shape (arrays) and nested service shape (card1/card2/card3)
             const resultData = gameResult.result || gameResult;
-            const settlementData = gameResult.settlementResult || {};
 
-            const toCard = (input: any, defaultType: number) => {
-                // Handle null/undefined (card3 can be null)
-                if (!input) return { card: EmptyCardIndex, type: defaultType };
-
-                // Handle rank/suit format from socket data
-                if (typeof input === "object" && typeof input.rank === "number" && typeof input.suit === "number") {
-                    return { card: input.rank, type: input.suit };
+            // Simple converter for rank/suit format (your socket format)
+            const toCard = (input: any) => {
+                if (!input || input.rank === undefined) {
+                    return { rank: EmptyCardIndex, suit: 0 };
                 }
-
-                // Fallback for unexpected formats
-                return { card: EmptyCardIndex, type: defaultType };
+                return { rank: input.rank, suit: input.suit ?? 0 };
             };
 
-            const playerSource = resultData.player;
-            const bankerSource = resultData.banker;
-            const sequenceCards: any[] = Array.isArray(resultData.cards) ? resultData.cards : [];
-
-            let playerCardsArr: any[] = Array.isArray(playerSource)
-                ? playerSource
-                : [playerSource?.card1, playerSource?.card2, playerSource?.card3];
-
-            let bankerCardsArr: any[] = Array.isArray(bankerSource)
-                ? bankerSource
-                : [bankerSource?.card1, bankerSource?.card2, bankerSource?.card3];
-
-            // Fallback from sequence array when missing
-            // sequence: [P1, B1, P2, B2, P3?, B3?]
-            const s = sequenceCards;
-            if (!playerCardsArr[0] && s[0]) playerCardsArr[0] = s[0];
-            if (!bankerCardsArr[0] && s[1]) bankerCardsArr[0] = s[1];
-            if (!playerCardsArr[1] && s[2]) playerCardsArr[1] = s[2];
-            if (!bankerCardsArr[1] && s[3]) bankerCardsArr[1] = s[3];
-            if (!playerCardsArr[2] && s[4]) playerCardsArr[2] = s[4];
-            if (!bankerCardsArr[2] && s[5]) bankerCardsArr[2] = s[5];
-
-            // Filter undefined/null
-            playerCardsArr = playerCardsArr.filter((c) => c !== undefined && c !== null);
-            bankerCardsArr = bankerCardsArr.filter((c) => c !== undefined && c !== null);
-
-
-            // Process player cards
-            const playerCard1 = toCard(playerCardsArr[0], 1);
-            const playerCard2 = toCard(playerCardsArr[1], 1);
-            const playerCard3 = playerCardsArr[2] !== undefined ? toCard(playerCardsArr[2], 1) : undefined;
-
-            // Process banker cards
-            const bankerCard1 = toCard(bankerCardsArr[0], 0);
-            const bankerCard2 = toCard(bankerCardsArr[1], 0);
-            const bankerCard3 = bankerCardsArr[2] !== undefined ? toCard(bankerCardsArr[2], 0) : undefined;
-
-            const newResult: Result = {
+            const newResult: BaccaratResult = {
                 player: {
-                    card1: playerCard1,
-                    card2: playerCard2,
-                    card3: playerCard3,
+                    card1: toCard(resultData.player?.card1),
+                    card2: toCard(resultData.player?.card2),
+                    card3: resultData.player?.card3 ? toCard(resultData.player.card3) : undefined,
+                    score: resultData.player?.score ?? 0
                 },
                 banker: {
-                    card1: bankerCard1,
-                    card2: bankerCard2,
-                    card3: bankerCard3,
+                    card1: toCard(resultData.banker?.card1),
+                    card2: toCard(resultData.banker?.card2),
+                    card3: resultData.banker?.card3 ? toCard(resultData.banker.card3) : undefined,
+                    score: resultData.banker?.score ?? 0
                 },
-                winner: (() => {
-                    if (settlementData.banker) return "banker";
-                    if (settlementData.player) return "player";
-                    if (gameResult.winner) return gameResult.winner as "player" | "banker" | "tie";
-                    return "tie";
-                })(),
-                playerPair: !!settlementData.playerPair,
-                bankerPair: !!settlementData.bankerPair,
-                natural: !!settlementData.natural,
+                winner: determineWinner(
+                    resultData.player?.score ?? 0,
+                    resultData.banker?.score ?? 0
+                )
             };
 
+            // Store the result for persistence across page refreshes
+            BaccaratResultStorage.storeResult(newResult);
 
             setResult(newResult);
+            setIsUsingStoredData(false); // Fresh data from WebSocket
             setIsLoading(false);
         } else {
+            // No stored data and no fresh WebSocket data - use default
+            setResult(DEFAULT_RESULT);
+            setIsUsingStoredData(false);
             setIsLoading(false);
         }
     }, [last]);
@@ -212,23 +148,33 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 break;
             case RoundState.DisplayResult:
                 timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
-                timeoutDisplayResult = setTimeout(() => {
+
+                if (isUsingStoredData) {
+                    // Skip animation and show result immediately when using stored data
                     setIsShow(true);
-                    setAnimationState("idle");
                     setShowCards(true);
-                    setAnimationState("open");
-                    console.log(`[BaccaratSettlementResult] Starting animation with duration: ${durations.showResult}s`);
-                    // Ensure animation lasts at least 6 seconds to cover all card timings (CARD_6 at 5000ms + buffer)
-                    const animationDuration = Math.max(durations.showResult * 1000, 6000);
-                    console.log(`[BaccaratSettlementResult] Using animation duration: ${animationDuration}ms`);
-                    timeout = setTimeout(() => {
-                        console.log('[BaccaratSettlementResult] Animation ended - resetting state');
-                        resetState();
-                    }, animationDuration);
-                }, DELAY);
+                    setAnimationState("idle");
+                    // No timeout needed - keep the result visible
+                } else {
+                    // Normal animation flow for fresh WebSocket data
+                    timeoutDisplayResult = setTimeout(() => {
+                        setIsShow(true);
+                        setAnimationState("idle");
+                        setShowCards(true);
+                        setAnimationState("open");
+                        // Ensure animation lasts at least 6 seconds to cover all card timings (CARD_6 at 5000ms + buffer)
+                        const animationDuration = Math.max(durations.showResult * 1000, 6000);
+                        timeout = setTimeout(() => {
+                            resetState();
+                        }, animationDuration);
+                    }, DELAY);
+                }
                 break;
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
+                // Clear stored result when starting a new round
+                BaccaratResultStorage.clearStoredResult();
+                setIsUsingStoredData(false); // Reset flag for new round
                 resetState();
                 break;
             default:
@@ -239,7 +185,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             timeout && clearTimeout(timeout);
             timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
         };
-    }, [roundState, durations]);
+    }, [roundState, durations, isUsingStoredData]);
 
     if (isLoading) {
         return (

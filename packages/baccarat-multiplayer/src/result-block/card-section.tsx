@@ -1,16 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { BaccaratCard } from "./baccarat-card";
 import { ScoreDisplay } from "./score-display";
-import { CardOrderWithTiming } from "./score-utils";
+import { CardOrderWithTiming } from "./types";
 import styles from "./baccarat-animations.module.scss";
 
-interface CardOrder {
-    order: number;
-    value: any;
-    type: 'player' | 'banker';
-    accumulatedScore: number;
-    playerHasThirdCard?: boolean;
-}
 
 interface CardSectionProps {
     cards: CardOrderWithTiming[];
@@ -50,7 +43,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
     }, [isHideAllCards, isShowResult, playResultAnimation]);
 
     const handleCardFlip = useCallback(
-        (card: CardOrder, accumulatedScore: number) => {
+        (card: CardOrderWithTiming, accumulatedScore: number) => {
             // Add delay to match card flip animation completion
             setTimeout(() => {
                 setVisibleScores((prev) => ({
@@ -71,7 +64,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
                         playResultAnimation={playResultAnimation}
                         key={card.order}
                         type={type}
-                        card={{ ...card, type } as CardOrder}
+                        card={card}
                         isShowResult={isShowResult}
                         onCardFlip={handleCardFlip}
                     />
