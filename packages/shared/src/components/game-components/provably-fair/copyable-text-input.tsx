@@ -23,7 +23,7 @@ const CopyableTextInput: FC<{ value: string; id: string; position?: string; clas
 
     return (
         <>
-            <input className={cn(`form-control text-sm font-normal text-white ${className}`)} type="text" name={id} id={id} readOnly value={value || ""} />
+            <input className={cn(`form-control text-sm md:text-base font-normal text-white ${className}`)} type="text" name={id} id={id} readOnly value={value || ""} />
             <button className={Styles["copy-btn"]} onClick={handleCopy}>
                 <span className="icon-copy" />
             </button>

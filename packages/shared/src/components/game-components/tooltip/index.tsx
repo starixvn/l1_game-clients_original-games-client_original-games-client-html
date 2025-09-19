@@ -93,7 +93,7 @@ export const Tooltip: React.FC<{
             <div
                 ref={tooltipRef}
                 className={cn(
-                    `absolute -top-10 left-1/2 -translate-x-1/2 bg-[#2993f5] text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap transition-opacity duration-300 pointer-events-none z-10`,
+                    `absolute -top-10 left-1/2 -translate-x-1/2 bg-[#2993f5] text-white text-sm md:text-base px-3 py-2 rounded-lg whitespace-nowrap transition-opacity duration-300 pointer-events-none z-10`,
                     isVisible ? 'opacity-100' : 'opacity-0',
                     className
                 )}

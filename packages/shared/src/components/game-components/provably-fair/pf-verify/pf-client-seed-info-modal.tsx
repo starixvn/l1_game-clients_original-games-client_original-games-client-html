@@ -71,7 +71,7 @@ const renderBetDetailHeader = (translateSNGames: any) => {
         <TableHeader className="bg-[#27374a]">
             <TableRow>
                 {headerColumns.map((column) => (
-                    <TableHead key={column.key} className="w-1/3 border-b border-primary-border text-center p-3 text-sm font-medium text-secondary-text">
+                    <TableHead key={column.key} className="w-1/3 border-b border-primary-border text-center p-3 text-sm md:text-base font-medium text-secondary-text">
                         {column.label}
                     </TableHead>
                 ))}
@@ -143,17 +143,17 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                                     index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2"
                                                 )}
                                             >
-                                                <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
                                                     {index + 1}
                                                 </TableCell>
-                                                <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
                                                     {name === clientSeed.name ? (
                                                         <span className="font-semibold text-[#00C950]">{clientSeed.name}</span>
                                                     ) : (
                                                         <span className="font-text">{encryptName(clientSeed.name)}</span>
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="w-1/3 text-sm text-secondary-text text-center p-3">
+                                                <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
                                                     {name === clientSeed.name ? (
                                                         <span className="font-semibold text-[#00C950]">
                                                             {clientSeed.clientSeed}

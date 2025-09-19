@@ -53,7 +53,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                     <div className="relative w-full">
                         <div className="text-white text-lg font-semibold text-center">{t("auto_rebet")}</div>
                         <button onClick={handleClose} className="absolute top-1/2 right-0 -translate-y-1/2">
-                            <i className="icon-close text-sm w-4 h-4"></i>
+                            <i className="icon-close text-sm md:text-base w-4 h-4"></i>
                         </button>
                     </div>
 
@@ -73,7 +73,7 @@ const AutoRebetPopup: React.FC<AutoRebetPopupProps> = ({ onClose, onConfirm }) =
                         ))}
                     </div>
                     <div>
-                        <label className="block text-white text-sm font-medium mb-2">{t("label_custom_rounds")}</label>
+                        <label className="block text-white text-sm md:text-base font-medium mb-2">{t("label_custom_rounds")}</label>
                         <div className="flex justify-between">
                             <input
                                 type="number"

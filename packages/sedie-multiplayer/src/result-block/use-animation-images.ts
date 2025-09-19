@@ -103,7 +103,7 @@ export const useAnimationImages = (settlementResult: any) => {
         }
 
         // Find the selected variant index
-        const variantIndex = ANIMATION_VARIANTS[winningOption]?.indexOf(selectedVariant) || 0;
+        const variantIndex = ANIMATION_VARIANTS[winningOption]?.indexOf(selectedVariant);
         const selectedData = variants[variantIndex];
 
         // loading or has error, use default animation
@@ -121,7 +121,7 @@ export const useAnimationImages = (settlementResult: any) => {
             }
         }
 
-        return selectedData || variants[0];
+        return selectedData;
     }, [
         settlementResult,
         allVariants,

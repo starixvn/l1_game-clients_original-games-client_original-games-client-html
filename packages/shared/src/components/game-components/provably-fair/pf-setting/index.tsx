@@ -259,8 +259,8 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         <div className={Styles["pf-setting-container"] + " bg-none"}>
             <div>
                 <ul>
-                    <li className="text-[14px]">{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
-                    <li className="text-[14px]">{translateCommon("pf_settings_para_2")}</li>
+                    <li className="text-sm md:text-base">{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
+                    <li className="text-sm md:text-base">{translateCommon("pf_settings_para_2")}</li>
                 </ul>
             </div>
             <h3 className={cn(SECTION_TITLE_CLASS, "mt-4")}>{translateCommon("pf_header_client_seed")}</h3>
@@ -282,14 +282,14 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                     onChange={handleCheckRadio}
                                 />
                                 <label className="form-check-label h-8" htmlFor="random-seed">
-                                    <span className="text-sm font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
+                                    <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
                                         {translateCommon("pf_client_seed_para_4")}
                                     </span>
                                 </label>
                             </div>
 
                             <input
-                                className={cn("form-control", isManualMode ? "" : " checked", "text-sm font-normal text-white")}
+                                className={cn("form-control", isManualMode ? "" : " checked", "text-sm md:text-base font-normal text-white")}
                                 ref={randomSeed}
                                 type="text"
                                 id="random-client-seed"
@@ -312,14 +312,14 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                 />
                                 <label className={`form-check-label ${Styles["form-check-label"]} h-8`} htmlFor="manual-seed">
                                     <div className={Styles["form-check-label-note"]}>
-                                        <span className="text-sm font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
+                                        <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
                                             {`${translateCommon("pf_client_seed_para_3")}`} <br /> <span>(0 - 9999)</span>
                                         </span>
                                     </div>
                                 </label>
                             </div>
                             <input
-                                className={cn("form-control", isManualMode ? " checked" : "", "text-sm font-normal text-white")}
+                                className={cn("form-control", isManualMode ? " checked" : "", "text-sm md:text-base font-normal text-white")}
                                 id="manual-client-seed"
                                 ref={manualSeed}
                                 type="text"
@@ -343,7 +343,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                     <CopyableTextInput value={serverSeedHash} id="server-seed-hash" />
                 </div>
                 {Object.keys(ownBets).length > 0 && (
-                    <div className={`${Styles["pf-note"]} text-[14px] text-white`}>{translateCommon("pf_client_seed_para_1")}</div>
+                    <div className={`${Styles["pf-note"]} text-sm md:text-base text-white`}>{translateCommon("pf_client_seed_para_1")}</div>
                 )}
             </div>
         </div>
