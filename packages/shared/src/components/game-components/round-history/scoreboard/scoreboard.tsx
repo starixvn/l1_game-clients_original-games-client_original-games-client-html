@@ -15,6 +15,7 @@ export type ScoreboardProps<Round> = {
     block?: number;
     updateScoreboardColumns?: (actualColumns: number) => void;
     scrollToRight?: boolean;
+    columnWidth?: number;
 } & HTMLAttributes<unknown>;
 
 export type ScoreboardItemProps<Round> = {
@@ -109,7 +110,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
             const scoreboardElement = document.querySelector<HTMLElement>('[data-testid="scoreboard"]');
             if (scoreboardElement && this.actualColumns) {
                 // Calculate the total width needed
-                const columnWidth = 18; // 18px per column from CSS
+                const columnWidth = this.props.columnWidth || 18; // Default to 18px if not specified
                 const totalWidth = this.actualColumns * columnWidth;
 
 

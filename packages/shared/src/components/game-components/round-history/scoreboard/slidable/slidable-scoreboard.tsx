@@ -12,7 +12,7 @@ export class SlidableScoreboard extends Component<SlidableScoreboardProps> {
                 slidesPerView={"auto"}
                 navigation={true}
                 modules={[Navigation]}
-                spaceBetween={8}
+                spaceBetween={12}
                 className="swiper-scoreboard relative overflow-hidden"
                 noSwiping={false}
             >

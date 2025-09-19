@@ -9,7 +9,6 @@ import {
 } from "./scoreboard-elements";
 import Styles from "./scoreboard.module.scss";
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
-import { BigRoadElement } from "@shared/components/game-components/round-history/scoreboard/elements";
 import { cn } from "@shared/utils";
 
 export type ScoreboardComponentProps = {
@@ -41,11 +40,8 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
             BaccaratBigRoadConverter.addBlinkNode(settlements);
         }
 
-        const arrange = BigRoadElement.arrange(BaccaratBigRoadConverter.instance as any);
-        const arrangeWithLogs = (rounds: any[], scoreboard: any) => arrange(rounds, scoreboard) as any[];
-
         return (
-            <div className={cn(Styles["scoreboard-full"], "p-1")} id="big-road">
+            <div className={cn(Styles["scoreboard-full"], "py-1 px-0")} id="big-road">
                 <SwitchableScoreboard
                     rounds={settlements as any}
                     scoreboards={[
@@ -58,7 +54,8 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: playResultAnimation
+                            scrollToRight: playResultAnimation,
+                            columnWidth: 16
                         },
                     ]}
                 />
@@ -71,7 +68,7 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
         const rounds = isShowBlink ? [{}, ...roundHistory] : roundHistory;
 
         return (
-            <div className={Styles["scoreboard-full"]} id="bead-road">
+            <div className={cn(Styles["scoreboard-full-bead-road"], "py-1 px-0")} id="bead-road">
                 <SwitchableScoreboard
                     rounds={rounds}
                     scoreboards={[
@@ -84,7 +81,8 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: playResultAnimation
+                            scrollToRight: playResultAnimation,
+                            columnWidth: 16
 
                         },
                     ]}

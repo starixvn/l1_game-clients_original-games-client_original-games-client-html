@@ -1,7 +1,7 @@
 // style for scoreboard
 
 .swiper-scoreboard {
-    --width: calc(100vw - 340px);
+    --width: calc(100vw - 320px);
     width: 100%;
     height: 100%;
 
@@ -13,11 +13,19 @@
 
     .swiper-slide {
         width: auto;
+
+        &:first-child {
+            margin-right: 12px!important;
+        }
+        &:last-child {
+            margin-right: 0px!important;
+        }
     }
 
     .swiper-slide-next,
     .swiper-slide-prev {
         position: relative;
+        border-radius: 10px;
 
         &::after {
             content: "";
@@ -25,7 +33,7 @@
             top: 0;
             width: var(--width);
             height: 100%;
-            border-radius: 3px;
+            border-radius: 10px;
             z-index: 10;
         }
     }
@@ -43,7 +51,7 @@
     .swiper-button-next {
         position: absolute;
         height: 100%;
-        width: calc(100% - 337px);
+        width: calc(100% - 310px);
         top: 0;
         z-index: 10;
         cursor: pointer;
@@ -64,7 +72,7 @@
 
 @media screen and (min-width: 500px) {
     .swiper-scoreboard {
-        --width: calc(375px - 340px);
+        --width: calc(369px - 320px);
     }
 }
 
@@ -82,43 +90,5 @@
     .swiper-button-prev,
     .swiper-button-next {
         z-index: 0;
-    }
-}
-
-// style for banner
-.swiper.swiper-banner {
-    --swiper-pagination-bottom: 0;
-    --swiper-pagination-bullet-width: 8px;
-    --swiper-pagination-bullet-height: 4px;
-    --swiper-pagination-bullet-inactive-color: #a0a6b1;
-    --swiper-pagination-bullet-border-radius: 40px;
-    --swiper-pagination-bullet-inactive-opacity: 1;
-    --swiper-pagination-color: #ffffff;
-    --swiper-pagination-bullet-horizontal-gap: 2px;
-
-    padding-bottom: 20px;
-    padding-top: 4px;
-    width: 367px;
-    margin: 0 auto;
-
-    .swiper-slide {
-        width: auto;
-    }
-
-    .swiper-slide .banner-img {
-        width: 100%;
-        height: 124px;
-        max-width: 367px;
-        object-fit: cover;
-        display: block;
-        border-radius: 10px;
-    }
-
-    .swiper-pagination-bullet {
-        transition: width cubic-bezier(0.33, 0, 0.67, 1) 0.25s, background-color linear 0.25s;
-    }
-
-    .swiper-pagination-bullet-active {
-        --swiper-pagination-bullet-width: 18px;
     }
 }

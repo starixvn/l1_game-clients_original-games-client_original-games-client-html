@@ -153,6 +153,7 @@ const SwipeScrollGrid: React.FC<SwipeScrollGridProps> = ({
             {...bind()}
             $dragging={dragging}
             data-testid="swipe-scroll-grid"
+            className="gap-x-[2px] px-[2px] w-full"
         >
             {children}
         </ScrollContainer>
