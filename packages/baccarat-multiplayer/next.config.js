@@ -133,7 +133,7 @@ const nextConfig = withSentryConfig({
         ];
     },
     sassOptions: {
-        prependData: `$version-image: '${buildVersion}';`,
+        prependData: `$version-image: '${buildVersion}'; $base-path: '${basePath}';`,
         includePaths: [
             require("path").resolve(__dirname, "../shared/src/styles"),
             require("path").resolve(__dirname, "../shared/src/components"),
