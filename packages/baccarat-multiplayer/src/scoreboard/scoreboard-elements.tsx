@@ -13,14 +13,26 @@ import styles from "./scoreboard-elements.module.scss";
 import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 import { GAME_ID } from '../game-constants';
 import BeadBoardIcon from "./beadboard-icon";
+import { hasPlayerPair, hasBankerPair } from "./utils";
 
 export class BaccaratBeadRoadCharacterElement extends BeadRoadElement<Round<BaccaratResult, BaccaratSettlementResult>> {
+
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>, t?: (key: string) => string): ReactNode {
         console.log("ROUND::: ", round);
-        const character = (betChoice) => <BeadBoardIcon choice={betChoice} />;
+        
         if (!round.settlementResult) {
             return <span className={`${styles.blink}`}></span>;
-        } else if (round.settlementResult.tie) {
+        }
+
+        const character = (betChoice: string) => (
+            <BeadBoardIcon 
+                choice={betChoice} 
+                hasPlayerPair={round.result ? hasPlayerPair(round.result.player) : false}
+                hasBankerPair={round.result ? hasBankerPair(round.result.banker) : false}
+            />
+        );
+
+        if (round.settlementResult.tie) {
             return character(BaccaratBetOptions.TIE);
         } else if (round.settlementResult.banker) {
             return character(BaccaratBetOptions.BANKER);

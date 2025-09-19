@@ -64,7 +64,7 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
     }
 
     renderBeadRoad(): ReactNode {
-        const { roundHistory, isShowBlink } = this.props;
+        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const rounds = isShowBlink ? [{}, ...roundHistory] : roundHistory;
 
         return (
@@ -83,7 +83,6 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                             elementClassName: Styles["big-bead-road-item"],
                             scrollToRight: playResultAnimation,
                             columnWidth: 16
-
                         },
                     ]}
                 />
