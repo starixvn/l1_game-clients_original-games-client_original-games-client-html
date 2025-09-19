@@ -58,7 +58,7 @@ const BetDetailBase: FC<{
 
         return (
             <button
-                className="clickable flex items-center gap-2 text-[#00C950] text-sm font-medium w-fit"
+                className="clickable flex items-center gap-2 text-[#00C950] text-sm md:text-base font-medium w-fit"
                 onClick={handleClickProvablyFair}
             >
                 <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
@@ -69,7 +69,7 @@ const BetDetailBase: FC<{
 
     return (
         <div className="mx-3 grid grid-rows-[auto_auto_auto_1fr] h-full min-h-0 gap-3">
-            <div className="text-center font-inter text-sm font-normal leading-5 text-secondary-text">
+            <div className="text-center font-inter text-sm md:text-base font-normal leading-5 text-secondary-text">
                 {translateCommon("bet_detail_note").capitalizeFirstLetter()}
             </div>
 
