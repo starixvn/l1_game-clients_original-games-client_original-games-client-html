@@ -1,4 +1,4 @@
-import { FC, memo, useMemo, useRef, useState, useEffect } from "react";
+import { FC, memo, useMemo, useRef, useState } from "react";
 
 import { buildVersion } from "@shared/constants";
 import { buildGameGuideUrl } from "@shared/helpers";
@@ -48,56 +48,16 @@ const GameGuide: FC = () => {
         }
     };
 
-    const preventWheel = (e: WheelEvent) => {
-        if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-        }
-    };
-
-    const preventAllZoom = (e: Event) => {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-    };
-
-    useEffect(() => {
-        if (wrapperRef.current) {
-            const wrapperElement = wrapperRef.current;
-
-            if (wrapperElement) {
-                wrapperElement.addEventListener("wheel", preventWheel, { passive: false });
-
-                // Block gesture events
-                wrapperElement.addEventListener("gesturestart", preventAllZoom, { passive: false });
-                wrapperElement.addEventListener("gesturechange", preventAllZoom, { passive: false });
-                wrapperElement.addEventListener("gestureend", preventAllZoom, { passive: false });
-            }
-
-            return () => {
-                if (wrapperElement) {
-                    wrapperElement.removeEventListener("wheel", preventWheel, { capture: true });
-                    wrapperElement.removeEventListener("gesturestart", preventAllZoom, { capture: true });
-                    wrapperElement.removeEventListener("gesturechange", preventAllZoom, { capture: true });
-                    wrapperElement.removeEventListener("gestureend", preventAllZoom, { capture: true });
-                }
-            };
-        }
-    }, [isLoading]);
-
     return useMemo(() => {
         return (
             <div
                 className="h-full border-none"
                 ref={wrapperRef as React.RefObject<HTMLDivElement>}
-                style={{
-                    touchAction: "none",
-                }}
             >
                 {isLoading && <LoadingSpinner />}
                 <iframe
                     style={{
                         display: isLoading ? "none" : "block",
-                        touchAction: "none",
                     }}
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
                     className="h-full w-full border-none bg-transparent"
