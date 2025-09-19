@@ -14,6 +14,9 @@ interface SedieMultiplayerStatisticPopupProps {
     inline?: boolean;
 }
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+
 export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticPopupProps> = ({ onClose, inline }) => {
     const clickSound = useClickSound();
     const { roundHistory, isShowBlink } = useGameStore(
@@ -64,11 +67,11 @@ export const SedieMultiplayerStatisticPopup: React.FC<SedieMultiplayerStatisticP
                             mainChoices={sideChoices as any}
                             iconRenderer={(choice) => {
                                 const map = {
-                                    red2: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red2.webp",
-                                    red3: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red3.webp",
-                                    red4: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red4.webp",
-                                    white3: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white3.webp",
-                                    white4: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white4.webp",
+                                    red2: `${basePath}/static/images/sedie-multiplayer/scoreboard/statistic-icon-red2.webp`,
+                                    red3: `${basePath}/static/images/sedie-multiplayer/scoreboard/statistic-icon-red3.webp`,
+                                    red4: `${basePath}/static/images/sedie-multiplayer/scoreboard/statistic-icon-red4.webp`,
+                                    white3: `${basePath}/static/images/sedie-multiplayer/scoreboard/statistic-icon-white3.webp`,
+                                    white4: `${basePath}/static/images/sedie-multiplayer/scoreboard/statistic-icon-white4.webp`,
                                 } as Record<string, string>;
                                 const src = map[choice];
                                 return src ? <Image src={src} alt={choice} width={18} height={18} /> : null;

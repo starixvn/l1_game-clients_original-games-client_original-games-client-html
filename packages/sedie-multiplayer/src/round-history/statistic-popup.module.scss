@@ -1,3 +1,5 @@
+@import "@shared/styles/constants/base-path";
+
 .statistic-container {
     position: absolute;
     z-index: 99999;
@@ -78,7 +80,7 @@
 	right: -2px;
 	width: 32px;
 	height: 32px;
-	background: url('/static/images/button-statistic.webp') no-repeat center/cover;
+	background: url('#{$base-path}/static/images/button-statistic.webp') no-repeat center/cover;
 	border: none;
 	cursor: pointer;
 	z-index: 9999;
