@@ -31,9 +31,10 @@ const DEFAULT_STATIC_PATH = "public/static/images/";
 const DEFAULT_IMG_PATH = "/static/images/";
 
 interface RequestBody {
-    locale: string;
-    gameIdsIcon: number[];
-    bannerId: number;
+    locale?: string;
+    gameIdsIcon?: number[];
+    bannerId?: number;
+    gameId?: number; // For backward compatibility
 }
 
 // Cleanup cache to prevent memory leaks
@@ -67,12 +68,18 @@ const cleanupCache = () => {
 
 // Validate request body
 const validateRequest = (body: any): body is RequestBody => {
-    return (
-        typeof body === 'object' &&
-        typeof body.locale === 'string' &&
+    if (!body || typeof body !== 'object') {
+        return false;
+    }
+
+    // Accept either the full format or just gameId for backward compatibility
+    const hasFullFormat = typeof body.locale === 'string' &&
         Array.isArray(body.gameIdsIcon) &&
-        (body.bannerId === undefined || typeof body.bannerId === 'number')
-    );
+        (body.bannerId === undefined || typeof body.bannerId === 'number');
+
+    const hasSimpleFormat = typeof body.gameId === 'number';
+
+    return hasFullFormat || hasSimpleFormat;
 };
 
 // Optimized file reading with error handling
@@ -177,17 +184,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>
         return res.status(400).json([]);
     }
 
-    const { locale, gameIdsIcon, bannerId } = req.body;
-    const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID
+    const { locale, gameIdsIcon, bannerId, gameId: requestGameId } = req.body;
+    const gameId = requestGameId || (process.env.NEXT_PUBLIC_DEFAULT_GAME_ID
         ? Number(process.env.NEXT_PUBLIC_DEFAULT_GAME_ID)
-        : 150; // Default to Baccarat Multiplayer gameId
-    const cacheKey = `${gameId}-${buildVersion}-${locale}`;
+        : 150); // Default to Baccarat Multiplayer gameId
+
+    // Provide defaults for optional parameters
+    const finalLocale = locale || 'en';
+    const finalGameIdsIcon = gameIdsIcon || [];
+    const finalBannerId = bannerId || 0;
+    const cacheKey = `${gameId}-${buildVersion}-${finalLocale}`;
 
     console.log(`[API:preload-images:${requestId}] Processing request:`, {
         gameId,
-        locale,
-        gameIdsIcon: gameIdsIcon?.length || 0,
-        bannerId,
+        locale: finalLocale,
+        gameIdsIcon: finalGameIdsIcon?.length || 0,
+        bannerId: finalBannerId,
         cacheKey
     });
 
@@ -207,7 +219,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<any[]>
 
     console.log(`[API:preload-images:${requestId}] Cache miss, generating new response`);
 
-    const pathsImg = getPathsImg(gameId, locale, bannerId, gameIdsIcon);
+    const pathsImg = getPathsImg(gameId, finalLocale, finalBannerId, finalGameIdsIcon);
 
     // Validate paths
     if (!Array.isArray(pathsImg) || pathsImg.length === 0) {

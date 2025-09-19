@@ -32,9 +32,9 @@ export const AppTittle = () => {
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
             <title>Original Games</title>
-            <link rel="shortcut icon" type="image/x-icon" href={`/favicons/favicon.ico?v=${buildVersion}`} sizes="any" />
-            <link rel="icon" type="image/png" href={`/favicons/favicon2.png?v=${buildVersion}`} sizes="16x16" />
-            <link rel="apple-touch-icon" type="image/png" href={`/favicons/favicon2.png?v=${buildVersion}`} sizes="any" />
+            <link rel="shortcut icon" type="image/x-icon" href={`/game-150/favicons/favicon.ico?v=${buildVersion}`} sizes="any" />
+            <link rel="icon" type="image/png" href={`/game-150/favicons/favicon2.png?v=${buildVersion}`} sizes="16x16" />
+            <link rel="apple-touch-icon" type="image/png" href={`/game-150/favicons/favicon2.png?v=${buildVersion}`} sizes="any" />
         </Head>
     );
 };

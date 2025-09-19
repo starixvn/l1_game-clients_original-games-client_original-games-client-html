@@ -5,12 +5,19 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "node -e \"console.log('Skipping baccarat package build (using app sources)')\"",
+        "build": "node -e \"console.log('Skipping baccarat-multiplayer package build (using app sources)')\"",
         "clean": "rimraf dist",
-        "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_GAME_PACKAGE=baccarat-multiplayer npm run generate-tolgee-data && cd packages/baccarat-multiplayer",
-        "dev:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 FAST_REFRESH=false next dev -p 3002",
-        "build:standalone": "npm run generate-tolgee-data && next build",
-        "start:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 next start -p 3002",
+        "generate-tolgee-data": "cd ../.. && npm run generate-tolgee-data && cd packages/baccarat-multiplayer",
+        "dev:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH= PORT=3002 FAST_REFRESH=false node custom-server.js",
+        "dev:withproxy": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-150 concurrently \"npm run dev:main-app\" \"npm run dev:proxy-server\"",
+        "dev:throughproxy": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-150 concurrently \"npm run dev:main-app\" \"npm run dev:proxy-server\"",
+        "dev:main-app": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH=/game-150 PORT=5002 FAST_REFRESH=false node custom-server.js",
+        "dev:proxy-server": "cross-env NEXT_PUBLIC_BASE_PATH=/game-150 PROXY_PORT=3002 TARGET_HOST=http://localhost:5002 node reverse-proxy.js",
+        "build:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-150 next build",
+        "start:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH= PORT=3002 node custom-server.js",
+        "dev:dynamic": "node scripts/dev-dynamic.js",
+        "build:dynamic": "node scripts/build-dynamic.js",
+        "proxy": "node reverse-proxy.js",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },
     "dependencies": {
@@ -23,7 +30,9 @@
         "classnames": "^2.3.2",
         "clsx": "^2.1.1",
         "cross-env": "^7.0.3",
+        "express": "^4.18.2",
         "gsap": "^3.13.0",
+        "http-proxy-middleware": "^2.0.9",
         "interweave": "^13.1.0",
         "motion": "^12.23.12",
         "next": "14.2.31",
@@ -50,9 +59,14 @@
         "zustand": "^5.0.7"
     },
     "devDependencies": {
-        "typescript": "^5.5.4",
         "@next/bundle-analyzer": "^14.2.31",
+        "rimraf": "^5.0.0",
         "ts-node": "^10.9.2",
-        "rimraf": "^5.0.0"
+        "typescript": "^5.0.0",
+        "concurrently": "^8.2.2"
+    },
+    "resolutions": {
+        "axios": "^0.30.0",
+        "form-data": "^3.0.4"
     }
 }
