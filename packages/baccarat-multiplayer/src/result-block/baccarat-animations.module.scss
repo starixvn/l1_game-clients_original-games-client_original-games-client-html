@@ -76,19 +76,20 @@
 @keyframes floatIn {
     0% {
         opacity: 0;
-        transform: translate(-50%, 40px);
+        transform: translate(-50%, -50%) translateY(30px);
     }
 
     100% {
         opacity: 1;
-        transform: translate(-50%, 0);
+        transform: translate(-50%, -50%);
     }
 }
 
 .winner-display {
     position: absolute;
     left: 50%;
-    bottom: -20px;
+    top: 50%;
+    transform: translate(-50%, -50%);
     min-width: 155px;
     width: fit-content;
     display: flex;
