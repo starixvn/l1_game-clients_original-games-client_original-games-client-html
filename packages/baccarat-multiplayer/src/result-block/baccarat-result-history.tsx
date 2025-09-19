@@ -4,6 +4,7 @@ import { BaccaratGameLogic } from "../baccarat-helper";
 import { ResultCardSection } from "./result-card-section";
 import { BaccaratHistoryResult } from "./types";
 import styles from "./baccarat-result-history.module.scss";
+import { BaccaratBetOptions } from "@/baccarat-multiplayer-constants";
 
 interface BaccaratResultHistoryProps {
     className?: string;
@@ -46,9 +47,9 @@ const BaccaratResultHistory: React.FC<BaccaratResultHistoryProps> = ({
     const getResultText = (result: BaccaratHistoryResult): string[] => {
         const resultArray: string[] = [];
 
-        if (result.winner === 'player') resultArray.push('Player');
-        if (result.winner === 'banker') resultArray.push('Banker');
-        if (result.winner === 'tie') resultArray.push('Tie');
+        if (result.winner === BaccaratBetOptions.PLAYER) resultArray.push('Player');
+        if (result.winner === BaccaratBetOptions.BANKER) resultArray.push('Banker');
+        if (result.winner === BaccaratBetOptions.TIE) resultArray.push('Tie');
 
         return resultArray;
     };

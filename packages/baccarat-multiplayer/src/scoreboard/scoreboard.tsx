@@ -37,7 +37,6 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const settlements = [...roundHistory].map((round) => round.settlementResult);
 
-        // Add blink node for Big Road animation
         if (isShowBlink) {
             BaccaratBigRoadConverter.addBlinkNode(settlements);
         }
@@ -51,16 +50,15 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                     rounds={settlements as any}
                     scoreboards={[
                         {
-                            // element: BaccaratBigRoadElement as unknown as React.ComponentType<any>,
-                            // arrange: arrangeWithLogs as any,
                             element: BaccaratBigRoadElement,
                             arrange: BaccaratBigRoadElement.arrange(BaccaratBigRoadConverter.instance),
                             column: this.scoreboardColumns,
                             row: 6,
-                            // className: Styles["big-road-override"],
-                            // blockClassName: Styles["big-road-block"],
-                            // elementClassName: Styles["big-road-item"],
-                            // scrollToRight: playResultAnimation
+                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            className: Styles["big-bead-road-override"],
+                            blockClassName: Styles["big-bead-road-block"],
+                            elementClassName: Styles["big-bead-road-item"],
+                            scrollToRight: playResultAnimation
                         },
                     ]}
                 />
@@ -82,11 +80,12 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                             arrange: BaccaratBeadRoadCharacterElement.arrange,
                             column: this.scoreboardColumns,
                             row: 6,
-                            // updateScoreboardColumns: this.updateScoreboardColumns,
+                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            className: Styles["big-bead-road-override"],
+                            blockClassName: Styles["big-bead-road-block"],
+                            elementClassName: Styles["big-bead-road-item"],
+                            scrollToRight: playResultAnimation
 
-                            // className: Styles["big-road-override"],
-                            // blockClassName: Styles["big-road-block"],
-                            // elementClassName: Styles["big-road-item"],
                         },
                     ]}
                 />

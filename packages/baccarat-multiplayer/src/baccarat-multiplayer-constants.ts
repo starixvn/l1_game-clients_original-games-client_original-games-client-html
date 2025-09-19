@@ -81,8 +81,6 @@ export type BaccaratSettlementResult = {
     banker: boolean;
     tie: boolean;
     anyPair: boolean;
-    naturalWin?: boolean;  // Natural 8 or 9
-    naturalTie?: boolean;  // Both get Natural 8 or 9
 };
 
 export type BaccaratResult = {

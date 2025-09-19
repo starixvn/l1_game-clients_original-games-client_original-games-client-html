@@ -11,6 +11,10 @@
     "copy_failed_md5": "कॉपी फंक्शन अस्थायी रूप से अनुपलब्ध है।",
     "game": "गेम",
     "game_excluded": "%{gameName}\n\nआपके खाते को अब यह गेम खेलने की अनुमति नहीं है। कृपया अन्य गेम आज़माएं।",
+<<<<<<< HEAD
+=======
+    "invalid_position": "अमान्य स्थिति",
+>>>>>>> d0b25c5ad (feat: update swiper & beadroad scoreboard - Epic GL-4391)
     "md5_copy": "कॉपी",
     "md5_key": "MD5 KEY",
     "md5_result": "परिणाम",
@@ -58,6 +62,10 @@
     "message_nickname_character": "उपनाम में रिक्त स्थान, विशेष वर्ण और गैर-अंग्रेजी अक्षर नहीं हो सकते।",
     "message_nickname_distance": "उपनाम 3 से 14 अक्षरों के बीच होना चाहिए।",
     "message_no_game_offer": "यह गेम पोर्टल पर आपका खाता समर्थित नहीं है। कृपया अपने अपलाइन से संपर्क करें, धन्यवाद। ",
+<<<<<<< HEAD
+=======
+    "message_not_enough_scoin": "शर्त लगाने के लिए पर्याप्त Scoin नहीं हैं।",
+>>>>>>> d0b25c5ad (feat: update swiper & beadroad scoreboard - Epic GL-4391)
     "message_option_maxbet": "इस विकल्प के लिए अधिकतम बेट %{maxBet} है",
     "message_placebet_failed": "गेम %{gameName} (#%{gameRoundId})\n\nबेट लगाने में विफल! (%{errorCode})",
     "message_placebet_next_round": "कृपया अगले दौर की प्रतीक्षा करें।",

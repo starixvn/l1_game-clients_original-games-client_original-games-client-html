@@ -3,6 +3,7 @@ import { BaccaratCard } from "./baccarat-card";
 import { ScoreDisplay } from "./score-display";
 import { CardOrderWithTiming } from "./types";
 import styles from "./baccarat-animations.module.scss";
+import { BaccaratBetOptions } from "@/baccarat-multiplayer-constants";
 
 
 interface CardSectionProps {
@@ -57,7 +58,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
 
     return (
         <div className={`${styles.cardSection}`}>
-            <div className={`${styles.label} ${type === 'player' ? styles['label-player'] : styles['label-banker']}`}>{label}</div>
+            <div className={`${styles.label} ${type === BaccaratBetOptions.PLAYER ? styles['label-player'] : styles['label-banker']}`}>{label}</div>
             <div className={`${styles.cardContainer} ${styles[type]} ${cardContainerAnimClass}`}>
                 {cards.map((card, index) => (
                     <BaccaratCard

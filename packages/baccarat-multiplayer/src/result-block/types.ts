@@ -34,7 +34,7 @@ export interface BaccaratHistoryResult {
     roundId: number;
     player: any[]; // Raw card data from history
     banker: any[]; // Raw card data from history
-    winner: 'player' | 'banker' | 'tie';
+    winner: "player" | "banker" | "tie";
     playerTotal: number;
     bankerTotal: number;
 }

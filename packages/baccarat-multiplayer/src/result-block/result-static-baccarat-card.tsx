@@ -1,6 +1,7 @@
 import React from "react";
 import { BaccaratGameLogic } from "../baccarat-helper";
 import styles from "./result-baccarat-card.module.scss";
+import { BaccaratBetOptions } from "@/baccarat-multiplayer-constants";
 
 interface StaticBaccaratCardProps {
     card: { card: number; type: number };
@@ -22,7 +23,7 @@ export const ResultStaticBaccaratCard: React.FC<StaticBaccaratCardProps> = ({
 
     const getCardColor = (type: number): string => {
         // Type 1 = Player (green), Type 0 = Banker (red)
-        return type === 1 ? 'player' : 'banker';
+        return type === 1 ? BaccaratBetOptions.PLAYER : BaccaratBetOptions.BANKER;
     };
 
     return (

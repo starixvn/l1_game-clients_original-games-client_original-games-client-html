@@ -56,7 +56,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                         ["--anim-ease" as any]: "cubic-bezier(0.22, 1, 0.36, 1)",
                     }}
                 >
-                    <div className={Styles["grid"]}>
+                    <div className={cn(Styles["grid"], "pl-2 py-1 pr-[2px]")}>
                         <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
                         {/* TODO: Need to change the total counts instead of percentage */}
                         <PercentageStatistic
