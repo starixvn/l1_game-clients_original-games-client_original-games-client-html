@@ -8,6 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 import { BaccaratChoices, BaccaratStatisticColors, mainChoices } from "../baccarat-multiplayer-constants";
 import ScoreboardBaccarat from "../scoreboard/scoreboard";
 import Styles from "./statistic-popup.module.scss";
+import { cn } from "@shared/utils";
 
 interface BaccaratMultiplayerStatisticPopupProps {
     onClose?: () => void;
@@ -44,7 +45,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
     }
 
     return (
-        <div id="statistic-popup" data-testid="statistic-popup" className={containerClassName}>
+        <div id="statistic-popup" data-testid="statistic-popup" className={cn(containerClassName, "w-[369px]")}>
             <AnimatedContent distance={24} duration={0.8} ease="power3.out" initialOpacity={0} animateOpacity>
                 <div
                     className={`${Styles["panel"]} ${panelAnimClass}`}

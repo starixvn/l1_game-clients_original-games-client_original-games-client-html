@@ -229,6 +229,7 @@ import { GAME_ID } from '../game-constants';
 
 export class BaccaratBeadRoadCharacterElement extends BeadRoadElement<Round<BaccaratResult, BaccaratSettlementResult>> {
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>, t?: (key: string) => string): ReactNode {
+        console.log("ROUND::: ", round);
         const character = (betChoice) => <BeadBoardIcon choice={betChoice} />;
         if (!round.settlementResult) {
             return <span className={`${styles.blink}`}></span>;
@@ -254,6 +255,8 @@ export const BaccaratBeadRoadCharacterElementWithTranslator = withTranslator(Bac
 
 export class BaccaratBeadRoadValueElement extends BeadRoadElement<Round<BaccaratResult, BaccaratSettlementResult>> {
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>): ReactNode {
+        console.log("ROUND::: ", round);
+        
         if (!round.settlementResult) {
             return <span className={`${styles.blink}`}></span>;
         } else if (round.settlementResult.tie) {

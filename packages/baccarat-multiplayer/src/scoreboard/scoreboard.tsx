@@ -10,6 +10,7 @@ import {
 import Styles from "./scoreboard.module.scss";
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import { BigRoadElement } from "@shared/components/game-components/round-history/scoreboard/elements";
+import { cn } from "@shared/utils";
 
 export type ScoreboardComponentProps = {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
@@ -32,7 +33,6 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
         };
     }
 
-
     renderBigRoad(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
         const settlements = [...roundHistory].map((round) => round.settlementResult);
@@ -46,29 +46,7 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
         const arrangeWithLogs = (rounds: any[], scoreboard: any) => arrange(rounds, scoreboard) as any[];
 
         return (
-            // <div className={Styles["scoreboard-full"]} id="baccarat-scoreboard">
-            //     <SwitchableScoreboard
-            //         rounds={settlements}
-            //         onSwitch={this.onSwitchBigRoad}
-            //         scoreboards={[
-            //             {
-            //                 name: "Big Road",
-            //                 element: BaccaratBigRoadElement,
-            //                 arrange: BaccaratBigRoadElement.arrange(BaccaratBigRoadConverter.instance),
-            //                 column: 17, // Baccarat uses 17 columns as per README
-            //                 row: 6,
-            //             },
-            //             {
-            //                 name: "Bead Road",
-            //                 element: BaccaratBeadRoadCharacterElementWithTranslator,
-            //                 arrange: BaccaratBeadRoadCharacterElement.arrange,
-            //                 column: 17, // Baccarat uses 17 columns as per README
-            //                 row: 6,
-            //             },
-            //         ]}
-            //     />
-            // </div>
-            <div className={Styles["scoreboard-full"]} id="big-road">
+            <div className={cn(Styles["scoreboard-full"], "p-1")} id="big-road">
                 <SwitchableScoreboard
                     rounds={settlements as any}
                     scoreboards={[
@@ -77,7 +55,7 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                             // arrange: arrangeWithLogs as any,
                             element: BaccaratBigRoadElement,
                             arrange: BaccaratBigRoadElement.arrange(BaccaratBigRoadConverter.instance),
-                            column: 18,
+                            column: this.scoreboardColumns,
                             row: 6,
                             // className: Styles["big-road-override"],
                             // blockClassName: Styles["big-road-block"],
@@ -91,7 +69,7 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
     }
 
     renderBeadRoad(): ReactNode {
-        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
+        const { roundHistory, isShowBlink } = this.props;
         const rounds = isShowBlink ? [{}, ...roundHistory] : roundHistory;
 
         return (
@@ -102,14 +80,13 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                         {
                             element: BaccaratBeadRoadCharacterElementWithTranslator,
                             arrange: BaccaratBeadRoadCharacterElement.arrange,
-                            column: 18,
+                            column: this.scoreboardColumns,
                             row: 6,
                             // updateScoreboardColumns: this.updateScoreboardColumns,
 
                             // className: Styles["big-road-override"],
                             // blockClassName: Styles["big-road-block"],
                             // elementClassName: Styles["big-road-item"],
-                            // scrollToRight: playResultAnimation
                         },
                     ]}
                 />

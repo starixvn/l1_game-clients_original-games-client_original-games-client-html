@@ -56,11 +56,10 @@
     align-items: center;
     width: 14px;
     height: 14px;
-    padding: 1px;
     min-width: 14px; // Ensure minimum width
     flex-shrink: 0; // Prevent shrinking
 
     [class^="icon-"] {
-        font-size: 12px;
+        font-size: 14px;
     }
 }

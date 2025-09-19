@@ -6,8 +6,9 @@
     height: 100%;
 
     .swiper-wrapper {
-        display: flex;
-        align-items: start;
+        display: flex!important;
+        align-items: flex-start!important;
+        justify-content: flex-start!important;
     }
 
     .swiper-slide {
