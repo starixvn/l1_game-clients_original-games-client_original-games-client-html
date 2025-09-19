@@ -2,11 +2,11 @@ import AnimatedContent from "@shared/components/game-components/animations/anima
 import PercentageStatistic from "@shared/components/game-components/statistic";
 import { useClickSound } from "@shared/react-hooks";
 import useGameStore from "@shared/stores/game-store/game-store";
-import Image from "next/image";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
-import { BaccaratChoices, BaccaratStatisticColors, mainChoices } from "../baccarat-multiplayer-constants";
+import { BaccaratStatisticColors, mainChoices } from "../baccarat-multiplayer-constants";
 import ScoreboardBaccarat from "../scoreboard/scoreboard";
+import BaccaratBetCountsComponent from "./baccarat-bet-counts";
 import Styles from "./statistic-popup.module.scss";
 import { cn } from "@shared/utils";
 
@@ -18,8 +18,6 @@ interface BaccaratMultiplayerStatisticPopupProps {
 export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStatisticPopupProps> = ({ onClose, inline }) => {
     const clickSound = useClickSound();
     const { roundHistory, isShowBlink } = useGameStore(useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink })));
-
-    const sideChoices = [BaccaratChoices.tie, BaccaratChoices.anyPair];
 
     const [isClosing, setIsClosing] = React.useState(false);
 
@@ -58,31 +56,8 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                 >
                     <div className={cn(Styles["grid"], "pl-2 py-1 pr-[2px]")}>
                         <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
-                        {/* TODO: Need to change the total counts instead of percentage */}
-                        <PercentageStatistic
-                            roundHistory={roundHistory as any}
-                            mainChoices={sideChoices as any}
-                            iconRenderer={(choice) => {
-                                const map = {
-                                    red2: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red2.webp",
-                                    red3: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red3.webp",
-                                    red4: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red4.webp",
-                                    white3: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white3.webp",
-                                    white4: "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white4.webp",
-                                } as Record<string, string>;
-                                const src = map[choice];
-                                return src ? <Image src={src} alt={choice} width={18} height={18} /> : null;
-                            }}
-                        />
-                        <PercentageStatistic
-                            roundHistory={roundHistory as any}
-                            mainChoices={mainChoices as any}
-                            renderAsBar={true}
-                            barColors={BaccaratStatisticColors}
-                            barHeightPx={8}
-                            roundedRadiusPx={12}
-                            barLabelFontSizePx={12}
-                        />
+                        {/* Baccarat Bet Counts Statistics */}
+                        <BaccaratBetCountsComponent roundHistory={roundHistory as any} />
                         <ScoreboardBaccarat roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
                     </div>
                 </div>

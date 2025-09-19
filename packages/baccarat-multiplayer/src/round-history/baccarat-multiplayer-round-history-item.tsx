@@ -1,5 +1,5 @@
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
-import styles from "./style.module.scss";
+import Image from "next/image";
 
 const PairDot = () => <div className="absolute w-[6px] h-[6px] bg-white rounded-full -top-[2.5px] z-[1]" />;
 
@@ -21,13 +21,13 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
 
     const renderItem = () => {
         if (settlementResult.player) {
-            return <RoundHistoryItem label="P" variant="player-item" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="player" hasPair={settlementResult.anyPair} />;
         }
         if (settlementResult.banker) {
-            return <RoundHistoryItem label="B" variant="banker-item" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="banker" hasPair={settlementResult.anyPair} />;
         }
         if (settlementResult.tie) {
-            return <RoundHistoryItem label="T" variant="tie-item" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="tie" hasPair={settlementResult.anyPair} />;
         }
         return null;
     };
@@ -36,15 +36,34 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
 };
 
 type RoundHistoryItemProps = {
-    label: string;
-    variant: "player-item" | "banker-item" | "tie-item";
+    variant: "player" | "banker" | "tie";
     hasPair: boolean;
 };
 
-const RoundHistoryItem = ({ label, variant, hasPair }: RoundHistoryItemProps) => (
-    <div className={`${styles["round-history-item"]} ${styles[variant]} relative`}>
-        <div className={styles.text}>{label}</div>
-        <div className={styles.border}></div>
-        {hasPair && <PairDot />}
-    </div>
-);
+const RoundHistoryItem = ({ variant, hasPair }: RoundHistoryItemProps) => {
+    const getImagePath = () => {
+        switch (variant) {
+            case "player":
+                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
+            case "banker":
+                return "/static/images/baccarat/scoreboard/bead-road/banker.svg";
+            case "tie":
+                return "/static/images/baccarat/scoreboard/bead-road/tie.svg";
+            default:
+                return "";
+        }
+    };
+
+    return (
+        <div className="relative w-4 h-4">
+            <Image
+                src={getImagePath()}
+                alt={variant}
+                width={16}
+                height={16}
+                className="w-4 h-4"
+            />
+            {hasPair && <PairDot />}
+        </div>
+    );
+};

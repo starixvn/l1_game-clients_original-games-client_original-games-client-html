@@ -1,6 +1,6 @@
 import { BeadBoardIconProps } from '@shared/components/game-components/statistic/types';
-import styles from "./scoreboard-elements.module.scss";
 import { BaccaratBetOptions } from '@/baccarat-multiplayer-constants';
+import Image from "next/image";
 
 type BeadBoardIconComponentProps = BeadBoardIconProps & {
     hasPlayerPair?: boolean;
@@ -20,25 +20,41 @@ const BeadBoardIcon: React.FC<BeadBoardIconComponentProps> = ({ choice, hasPlaye
         return null;
     }
 
-    const getDisplayInfo = (choice: string) => {
+    const getImagePath = (choice: string) => {
         switch (choice.toLowerCase()) {
             case BaccaratBetOptions.PLAYER:
-                return { label: 'P', variant: 'player-item' };
+                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
             case BaccaratBetOptions.BANKER:
-                return { label: 'B', variant: 'banker-item' };
+                return "/static/images/baccarat/scoreboard/bead-road/banker.svg";
             case BaccaratBetOptions.TIE:
-                return { label: 'T', variant: 'tie-item' };
+                return "/static/images/baccarat/scoreboard/bead-road/tie.svg";
             default:
-                return { label: choice.toUpperCase().charAt(0), variant: 'player-item' };
+                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
         }
     };
 
-    const { label, variant } = getDisplayInfo(choice);
+    const getAltText = (choice: string) => {
+        switch (choice.toLowerCase()) {
+            case BaccaratBetOptions.PLAYER:
+                return "player";
+            case BaccaratBetOptions.BANKER:
+                return "banker";
+            case BaccaratBetOptions.TIE:
+                return "tie";
+            default:
+                return "player";
+        }
+    };
 
     return (
-        <div className={`${styles["bead-road-icon"]} ${styles[variant]} relative`}>
-            <div className={styles.text}>{label}</div>
-            <div className={styles.border}></div>
+        <div className="relative w-[14px] h-[14px]">
+            <Image
+                src={getImagePath(choice)}
+                alt={getAltText(choice)}
+                width={14}
+                height={14}
+                className="w-[14px] h-[14px]"
+            />
             {hasPlayerPair && <PlayerPairDot />}
             {hasBankerPair && <BankerPairDot />}
         </div>
