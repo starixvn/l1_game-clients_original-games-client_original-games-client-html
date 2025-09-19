@@ -8,7 +8,6 @@ import { calculateBaccaratBetCounts, BaccaratBetCounts } from "../scoreboard/uti
 interface BetCountItemProps {
     choice: string;
     count: number;
-    label: string;
 }
 
 interface BaccaratBetCountsProps {

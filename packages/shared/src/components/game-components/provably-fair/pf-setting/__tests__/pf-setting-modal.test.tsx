@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import PFSettingModal from "../index";
+import PFSettingModal, { TIME_OUT } from "../index";
 import { useGameContext } from "@shared/react-contexts";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useClientSeedPF, useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
@@ -80,6 +80,8 @@ const mockUseSNTranslate = useSNTranslate as jest.Mock;
 const mockUsePFStore = usePFStore as unknown as jest.Mock;
 const mockUseGameStore = useGameStore as unknown as jest.Mock;
 
+const TEST_ROUND_ID = "test-round-123";
+
 describe("PFSettingModal", () => {
     const mockGameMessageHandler = {
         register: jest.fn(() => "handler-id"),
@@ -88,13 +90,13 @@ describe("PFSettingModal", () => {
     };
 
     const defaultGameStateContext = {
-        roundId: "test-round-123",
+        roundId: TEST_ROUND_ID
     };
 
     const defaultPFStoreState = {
         isShowPFSetting: true,
         pfClientSeedSetting: {
-            roundId: "test-round-123",
+            roundId: TEST_ROUND_ID,
             randomClientSeed: "5678",
             useManualClientSeed: false,
         },
@@ -176,7 +178,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const randomInput = screen.getByDisplayValue("5678");
@@ -187,7 +189,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const manualRadio = screen.getByLabelText(/pf_client_seed_para_3/i);
@@ -214,7 +216,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const randomRadio = screen.getByLabelText(/pf_client_seed_para_4/i);
@@ -241,7 +243,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const manualInput = screen.getByDisplayValue("");
@@ -265,7 +267,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const manualInput = screen.getByDisplayValue("");
@@ -297,7 +299,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const manualInput = screen.getByDisplayValue("");
@@ -354,7 +356,7 @@ describe("PFSettingModal", () => {
             );
             const roundIdHandler = roundIdHandlerCall[1];
 
-            const mockRoundId = "test-round-123";
+            const mockRoundId = TEST_ROUND_ID;
             if (roundIdHandler) {
                 roundIdHandler({ [messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER]: { roundId: mockRoundId } });
             }
@@ -396,7 +398,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             const overlay = screen.getByTestId("modal-content").querySelector(".form-overlay");
@@ -407,7 +409,7 @@ describe("PFSettingModal", () => {
     describe("Round ID Changes", () => {
         it("should fetch PF info when round ID changes", async () => {
             const { rerender } = render(<PFSettingModal />);
-            jest.advanceTimersByTime(5000);
+            jest.advanceTimersByTime(TIME_OUT);
 
             // Change round ID
             mockUseGameStateContext.mockReturnValue({
@@ -432,7 +434,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             // Simulate PF publish message
@@ -443,7 +445,9 @@ describe("PFSettingModal", () => {
 
             const mockServerSeed = "new-server-seed";
             if (pfHandler) {
-                pfHandler({ pf: { serverSeedHash: mockServerSeed } });
+                await act(async () => {
+                    pfHandler({ pf: { serverSeedHash: mockServerSeed } });
+                });
             }
 
             expect(mockUsePFStore().updateServerSeedHash).toHaveBeenCalledWith(mockServerSeed);
@@ -453,7 +457,7 @@ describe("PFSettingModal", () => {
             render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             // Simulate PF result message
@@ -464,7 +468,9 @@ describe("PFSettingModal", () => {
 
             const mockServerSeed = "result-server-seed";
             if (pfResultHandler) {
-                pfResultHandler({ roundPFResult: { serverSeedHash: mockServerSeed } });
+                await act(async () => {
+                    pfResultHandler({ roundPFResult: { serverSeedHash: mockServerSeed } });
+                });
             }
 
             expect(mockUsePFStore().updateServerSeedHash).toHaveBeenCalledWith(mockServerSeed);

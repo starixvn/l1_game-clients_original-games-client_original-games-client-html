@@ -1,5 +1,5 @@
 import { BeadBoardIconProps } from '@shared/components/game-components/statistic/types';
-import { BaccaratBetOptions } from '@/baccarat-multiplayer-constants';
+import { BaccaratBetOptions } from '../baccarat-multiplayer-constants';
 import Image from "next/image";
 
 type BeadBoardIconComponentProps = BeadBoardIconProps & {

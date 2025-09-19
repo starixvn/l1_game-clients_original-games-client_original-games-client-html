@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useGameContext } from "@shared/react-contexts";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useClientSeedPF, useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
-import { GameMessageHandler, messageEventType } from "../../../game-base/handlers";
+import { messageEventType } from "../../../game-base/handlers";
 import { PFSeverSeed } from "../../../game-base/type";
 import { LoadingSpinner } from "../../game-loading/loading-spinner";
 import ModalContainer from "../../modal-container";
@@ -20,7 +20,7 @@ const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
 const PFPublishMessage = "pf";
-const TIME_OUT = 5000;
+export const TIME_OUT = 5000;
 
 const SECTION_TITLE_CLASS = Styles["section-title"];
 const INTER_FONT_STYLE = { fontFamily: "var(--font-family)" };
@@ -72,7 +72,6 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
         if (data?.__pfMode === "clientSeedOnly") {
             const { __pfMode, ...rest } = data;
             socket.emit(event, { ...rest, clientSeed });
-            return;
         }
     };
 

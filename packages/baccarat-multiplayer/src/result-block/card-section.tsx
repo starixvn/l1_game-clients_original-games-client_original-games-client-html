@@ -3,7 +3,7 @@ import { BaccaratCard } from "./baccarat-card";
 import { ScoreDisplay } from "./score-display";
 import { CardOrderWithTiming } from "./types";
 import styles from "./baccarat-animations.module.scss";
-import { BaccaratBetOptions } from "@/baccarat-multiplayer-constants";
+import { BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 
 
 interface CardSectionProps {
