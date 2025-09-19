@@ -611,7 +611,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return (
             <Menu
                 leftSide={
-                    <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-semibold text-sm tracking-wider align-middle">
+                    <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-semibold text-sm tracking-wider align-middle md:text-base">
                         Nova88 Original
                     </div>
                 }

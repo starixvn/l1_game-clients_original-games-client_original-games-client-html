@@ -20,7 +20,7 @@ export const PlayerResultBoard: FC = () => {
     const renderRoundId = () => <div className="text-primary-text">#{roundId}</div>;
 
     const renderHeaderInfo = () => (
-        <div className="flex justify-between bg-secondary-bg rounded-lg p-2 px-[10px] mb-2 text-sm">
+        <div className="flex justify-between bg-secondary-bg rounded-lg p-2 px-[10px] mb-2 text-sm md:text-base">
             {renderPlayerCount()}
             {renderRoundId()}
         </div>

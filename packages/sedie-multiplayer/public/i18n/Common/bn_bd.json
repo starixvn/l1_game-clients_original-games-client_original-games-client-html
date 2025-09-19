@@ -43,6 +43,7 @@
     "message_invalid_deal_dueto_running_round": "Invalid Bet",
     "message_ip_restricted": "আপনার আইপি ঠিকানা সীমাবদ্ধ করা হয়েছে। (%{errorCode})",
     "message_ip_restricted_place_bet": "গেম %{gameName} (#%{gameRoundId})\n\nবেট স্থাপন করতে ব্যর্থ! আপনার আইপি ঠিকানা সীমিত করা হয়েছে। (%{errorCode})",
+    "message_jackpot_processing": "ডাটা প্রক্রিয়াকরণ করা হচ্ছে। কয়েক মিনিটের মধ্যে Jackpot জেতার পরিমাণ আপনার অ্যাকাউন্টে যোগ করা হবে।",
     "message_limitbet_exceeded": "গেম %{gameName} (#%{gameRoundId})\n\nবাজি ধরতে ব্যর্থ! আপনার বাজি সীমা সেটিংস অতিক্রম করেছে, আবার চেষ্টা করুন। (%{errorCode})",
     "message_limit_bet_not_defined": "গেম %{gameName} (#%{gameRoundId})\n\nবাজি রাখতে ব্যর্থ! এই গেমের জন্য আপনার বাজির সীমা নির্ধারণ করা হয়নি। অনুগ্রহ করে আপনার আপলাইনের সাথে যোগাযোগ করুন, ধন্যবাদ। (%{errorCode})",
     "message_limit_bet_updated": "গেম %{gameName} (#%{gameRoundId})\n\nবাজি ধরতে ব্যর্থ! আপনার বাজির সীমা আপডেট করা হয়েছে, আবার চেষ্টা করুন। (%{errorCode})",

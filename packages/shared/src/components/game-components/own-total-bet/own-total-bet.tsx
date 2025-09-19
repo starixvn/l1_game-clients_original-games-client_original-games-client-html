@@ -10,7 +10,7 @@ export const OwnTotalBet = () => {
     return (
         <>
             <div className="own-total-bet-glow"></div>
-            <div className="text-sm mb-2 font-semibold">{t("total_bet")}</div>
+            <div className="text-sm md:text-base mb-2 font-semibold">{t("total_bet")}</div>
             <div className="p-3 rounded-lg bg-secondary-bg border border-[#2b3648] text-sm">{numberWithCommas(totalBet)}</div>
         </>
     );

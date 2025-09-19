@@ -21,13 +21,13 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
         return (
             <TableHeader>
                 <TableRow className="bg-table-header border-none md:px-3">
-                    <TableHead className="text-primary-text h-full text-sm md:text-base text-center p-2 md:pl-3 md:px-0 font-semibold rounded-tl-lg rounded-bl-lg w-1/3">
+                    <TableHead className="text-primary-text h-full text-sm md:text-base text-center p-2 md:py-3 md:pl-3 md:px-0 font-semibold rounded-tl-lg rounded-bl-lg w-1/3">
                         {translateCommon("player")}
                     </TableHead>
-                    <TableHead className="text-primary-text h-full text-sm md:text-base text-center p-2 md:px-0 font-semibold w-1/3">
+                    <TableHead className="text-primary-text h-full text-sm md:text-base text-center p-2 md:py-3 md:px-0 font-semibold w-1/3">
                         {translateCommon("bet_amount")}
                     </TableHead>
-                    <TableHead className="text-primary-text h-full text-sm md:text-base text-right p-2 md:pr-3 pl-0 font-semibold rounded-tr-lg rounded-br-lg w-1/3">
+                    <TableHead className="text-primary-text h-full text-sm md:text-base text-right p-2 md:py-3 md:pr-3 pl-0 font-semibold rounded-tr-lg rounded-br-lg w-1/3">
                         {translateCommon("win")}
                     </TableHead>
                 </TableRow>

@@ -43,6 +43,7 @@
     "message_invalid_deal_dueto_running_round": "Invalid Bet",
     "message_ip_restricted": "आपका IP पता प्रतिबंधित है। (%{errorCode})",
     "message_ip_restricted_place_bet": "गेम %{gameName} (#%{gameRoundId})\n\nबेट लगाने में विफल! आपका IP पता प्रतिबंधित है। (%{errorCode})",
+    "message_jackpot_processing": "डेटा संसाधित किया जा रहा है। कुछ मिनटों में Jackpot जीतने की राशि आपके खाते में जोड़ दी जाएगी।",
     "message_limitbet_exceeded": "गेम %{gameName} (#%{gameRoundId})\n\nबेट लगाने में विफल! आपकी हिस्सेदारी आपकी बेट सीमा सेटिंग्स से अधिक हो गई है, कृपया पुनः प्रयास करें। (%{errorCode})",
     "message_limit_bet_not_defined": "गेम %{gameName} (#%{gameRoundId})\n\nबेट लगाने में विफल! इस गेम के लिए आपकी बेट सीमा निर्धारित नहीं की गई है। कृपया अपने अपलाइन से संपर्क करें, धन्यवाद। (%{errorCode})",
     "message_limit_bet_updated": "गेम %{gameName} (#%{gameRoundId})\n\nबेट लगाने में विफल! आपकी बेट सीमा अपडेट कर दी गई है, कृपया पुनः प्रयास करें। (%{errorCode})",
