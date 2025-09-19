@@ -38,15 +38,14 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
 
     // Add rotation class based on card order
     const getRotationClass = (order: number) => {
-        if (order === 5) return styles['rotate-right']; // Player's third card
-        if (order === 6) return styles['rotate-left']; // Banker's third card
+        // Removed rotation for 3rd cards - they now display straight
         return '';
     };
 
     // Add banker third card class based on card order and player third card status
     const getBankerThirdCardClass = (order: number) => {
-        const isBankerThirdCard = card.playerHasThirdCard ? order === 6 : order === 5;
-        return isBankerThirdCard ? styles['banker-third-card'] : '';
+        // Removed banker third card rotation - now displays straight
+        return '';
     };
 
     useEffect(() => {
@@ -55,7 +54,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             flipScheduledRef.current = true;
 
             // Sequential card opening - Order matters for timing!
-            const delay = playResultAnimation ? (CARD_TIMINGS[card.order as keyof typeof CARD_TIMINGS] ?? 0) : 0;
+            const delay = playResultAnimation ? (CARD_TIMINGS[card.order as any] || 0) : 0;
 
             const flipTimer = setTimeout(() => {
                 setIsFlipped(true);
@@ -74,19 +73,15 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
     }, [isShowResult, card.order, onCardFlip, playResultAnimation]);
 
     const cardOrderClass = styles[`card${card.order}`];
-    const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${getRotationClass(card.order)} ${getBankerThirdCardClass(card.order)} ${className || ''}`;
+    const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${className || ''}`;
 
     return (
         <div className={cardClassName}>
-            <div className={styles['rotate-card']}>
-                <div className={styles.cardFace}>
-                    <div className={styles['card-back']}>
-                        <CardBack />
-                    </div>
-                    <div className={styles['card-front']}>
-                        <Card result={{ card: card.value.rank, type: card.value.suit }} customClassName={'card-baccarat'} />
-                    </div>
-                </div>
+            <div className={styles['baccarat-card-back']}>
+                <CardBack />
+            </div>
+            <div className={styles['baccarat-card-front']}>
+                <Card result={{ card: card.value.rank, type: card.value.suit }}/>
             </div>
         </div>
     );

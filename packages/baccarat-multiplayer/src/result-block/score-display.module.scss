@@ -1,49 +1,46 @@
 // Score Display Styles
 .score {
-    --width-score: 53px;
-    --height-score: 33px;
+    --width-score: 140px;
+    --height-score: 28px;
     --font-size-score: 20px;
-    --bottom-score: -2px;
-    position: absolute;
     width: var(--width-score);
     height: var(--height-score);
-    border-top-left-radius: 53px;
-    border-top-right-radius: 53px;
-    color: #fff;
+    position: absolute;
+    bottom: -65px;
+    border-radius: 0px;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 19px;
     font-size: var(--font-size-score);
-    bottom: var(--bottom-score);
-    opacity: 0;
-    animation: scoreAppear 0.4s ease-out forwards;
-    will-change: transform, opacity;
+    opacity: 1;
+    z-index: 3;
 
     &-number {
-        font-size: 20px;
-        font-weight: 700;
-        line-height: 26px;
-        font-family: 'Arial', sans-serif;
+        font-size: 30px;
+        font-weight: 500;
+        text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
         position: relative;
-        animation: scoreNumberPulse 0.6s ease-in-out;
-        will-change: transform;
+        opacity: 0;
+        animation: scoreNumberAppear 0.4s ease-out forwards, scoreNumberPulse 0.6s ease-in-out 0.4s;
     }
 
     &.player-score {
-        right: 50%;
-        transform: translateX(50%);
-        background: linear-gradient(0deg, #27ae60 0%, #2ecc71 100%);
+        background-image: url("data:image/svg+xml,%3csvg width='140' height='28' viewBox='0 0 140 28' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='140' height='28' fill='url(%23paint0_linear_160_14016)'/%3e%3cdefs%3e%3clinearGradient id='paint0_linear_160_14016' x1='0' y1='13.5172' x2='140' y2='13.5172' gradientUnits='userSpaceOnUse'%3e%3cstop stop-opacity='0'/%3e%3cstop offset='0.25' stop-color='%23137BAA' stop-opacity='0.3'/%3e%3cstop offset='0.5' stop-color='%23137BAA'/%3e%3cstop offset='0.75' stop-color='%23137BAA' stop-opacity='0.3'/%3e%3cstop offset='1' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
     &.banker-score {
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(0deg, #e74c3c 6.041653826832771%, #c0392b 100%);
+        background-image: url("data:image/svg+xml,%3csvg width='140' height='28' viewBox='0 0 140 28' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='140' height='28' fill='url(%23paint0_linear_160_14016)'/%3e%3cdefs%3e%3clinearGradient id='paint0_linear_160_14016' x1='0' y1='13.5172' x2='140' y2='13.5172' gradientUnits='userSpaceOnUse'%3e%3cstop stop-opacity='0'/%3e%3cstop offset='0.25' stop-color='%23FF262A' stop-opacity='0.3'/%3e%3cstop offset='0.5' stop-color='%23FF262A'/%3e%3cstop offset='0.75' stop-color='%23FF262A' stop-opacity='0.3'/%3e%3cstop offset='1' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 }
 
-@keyframes scoreAppear {
+@keyframes scoreNumberAppear {
     from {
         opacity: 0;
         transform: scale(0.5) translateY(10px);

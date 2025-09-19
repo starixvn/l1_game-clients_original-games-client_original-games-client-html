@@ -57,8 +57,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
     );
 
     return (
-        <div className={`${styles.cardSection}`}>
-            <div className={`${styles.label} ${type === BaccaratBetOptions.PLAYER ? styles['label-player'] : styles['label-banker']}`}>{label}</div>
+        <div className={`${styles.cardSection} ${type === BaccaratBetOptions.PLAYER ? 'justify-end' : 'justify-start'}`}>
             <div className={`${styles.cardContainer} ${styles[type]} ${cardContainerAnimClass}`}>
                 {cards.map((card, index) => (
                     <BaccaratCard
@@ -71,12 +70,19 @@ export const CardSection: React.FC<CardSectionProps> = ({
                     />
                 ))}
 
-                {isShowResult &&
-                    cards.map((card, index) => (
-                        <div key={card.order}>
-                            <ScoreDisplay score={card.accumulatedScore} type={type} visible={visibleScores[card.order]} />
-                        </div>
-                    ))}
+                {isShowResult && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        {cards.map((card, index) => (
+                            <div key={`score-container-${card.order}`} className="absolute inset-0 flex items-center justify-center">
+                                <ScoreDisplay
+                                    score={card.accumulatedScore}
+                                    type={type}
+                                    visible={visibleScores[card.order]}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

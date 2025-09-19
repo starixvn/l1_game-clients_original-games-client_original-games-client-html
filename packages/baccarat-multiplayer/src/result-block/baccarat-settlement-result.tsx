@@ -4,8 +4,6 @@ import { useGameContext } from "@shared/react-contexts";
 import { RoundState } from "@shared/components/game-base/type";
 import PlayerBankerResultComponent from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
-import styles from "./baccarat-animations.module.scss";
-import { cn } from "@shared/utils";
 import dynamic from "next/dynamic";
 import { BaccaratResult } from "./types";
 import { determineWinner } from "./score-utils";
@@ -66,7 +64,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showCards, setShowCards] = useState(false);
     const [result, setResult] = useState<BaccaratResult>(DEFAULT_RESULT);
-    const [isLoading, setIsLoading] = useState(true);
     const [isUsingRoundHistoryData, setIsUsingRoundHistoryData] = useState(false);
 
     const DELAY = 500; // Same delay as sedie plate
@@ -109,12 +106,13 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         let resultData: BaccaratResult | null = null;
         let isUsingHistorical = false;
 
+        // Prioritize fresh WebSocket data over historical data
         if (last) {
-            // WebSocket provided fresh result data
+            // Fresh WebSocket result data received - always use this for animation
             resultData = processResultData(last);
             isUsingHistorical = false;
         } else if (gameState?.roundHistory && gameState.roundHistory.length > 0) {
-            // No finish event data - use most recent round history (during animation or as fallback)
+            // No fresh data - fallback to historical data (page load, no active result)
             const mostRecentRound = gameState.roundHistory[0] as any;
             resultData = processResultData(mostRecentRound);
             isUsingHistorical = true;
@@ -122,15 +120,35 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
 
         if (resultData) {
             setResult(resultData);
-            setIsUsingRoundHistoryData(isUsingHistorical);
-            setIsLoading(false);
+
+            // Only update the historical flag if we're actually switching from fresh to historical
+            // If we were using historical data but now have fresh data, switch to fresh
+            if (!isUsingHistorical && isUsingRoundHistoryData) {
+                // We were using historical data but now have fresh data - enable animation
+                setIsUsingRoundHistoryData(false);
+            } else {
+                setIsUsingRoundHistoryData(isUsingHistorical);
+            }
         } else {
             // No data available - use default
             setResult(DEFAULT_RESULT);
             setIsUsingRoundHistoryData(false);
-            setIsLoading(false);
         }
-    }, [last, roundState, gameState?.roundHistory]);
+    }, [last, gameState?.roundHistory]);
+
+    // Handle transition from historical to fresh data
+    useEffect(() => {
+        if (last && isUsingRoundHistoryData) {
+            // We received fresh WebSocket data while using historical data
+            // This happens when you refresh during a round and then receive a finish event
+            setIsUsingRoundHistoryData(false);
+
+            // Reset animation states to prepare for fresh animation
+            setIsShow(false);
+            setShowCards(false);
+            setAnimationState("idle");
+        }
+    }, [last, isUsingRoundHistoryData]);
 
     // Follow sedie plate timing pattern
     useEffect(() => {
@@ -191,19 +209,9 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         };
     }, [roundState, durations, isUsingRoundHistoryData]);
 
-    if (isLoading) {
-        return (
-            <div className={`${styles["settlement-container"]} ${className || ""}`}>
-                <div className={styles.loading}>Loading game results...</div>
-            </div>
-        );
-    }
-
-    const classAnimation = styles[`baccarat-result-${animationState}`];
-
     return (
         <div
-            className={cn(`${styles["baccarat-result-object"]} p-2 h-[94px] w-full mb-1 z-[var(--result-animation-index)] content-center`)}
+            className="h-[71px] w-full mt-3 mb-[26px] z-[var(--result-animation-index)]"
             style={
                 {
                     "--shake-duration": "2000ms",
@@ -213,20 +221,19 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             }
         >
             <WinningBalanceEffect />
-            <div
-                className={cn(
-                    `${styles["baccarat-result-container"]} ${styles["baccarat-result-container-" + animationState]}`,
-                    "flex justify-center w-full"
-                )}
-            >
+            <div className="flex justify-center w-full h-full">
                 {isShow ? (
-                    <div className={cn(`${styles["baccarat-result-display"]} ${classAnimation}`, "w-full")}>
+                    <div className="w-full">
                         {renderCardDisplay(result, showCards, animationState === "open", true, !showCards)}
                     </div>
                 ) : (
-                    <div className="flex justify-between w-full">
+                    <div className="justify-center grid grid-cols-2 gap-[130px] items-center w-full">
                         {labels.map((label) => (
-                            <div key={label} className="text-[rgba(255,255,255,0.16)] text-xl font-semibold px-6 uppercase">
+                            <div
+                                key={label}
+                                className={`text-[rgba(255,255,255,0.16)] text-xl font-[500] uppercase 
+                                    ${label === 'player' ? 'text-right' : 'text-left'}`}
+                            >
                                 {label}
                             </div>
                         ))}

@@ -54,10 +54,7 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
     };
 
     return (
-        <div
-        // className={`overlay-mask`}
-        >
-            <div className={cn(`${styles["animation-container"]} flex justify-between`)}>
+            <div className="grid grid-cols-2 gap-[94px] md:gap-[194px] justify-center h-full pointer-events-none">
                 <CardSection
                     cards={playerCards}
                     label="Player"
@@ -82,6 +79,5 @@ export default function PlayerBankerResultComponent(props: PlayerBankerResultPro
                     </div>
                 )}
             </div>
-        </div>
     );
 }
