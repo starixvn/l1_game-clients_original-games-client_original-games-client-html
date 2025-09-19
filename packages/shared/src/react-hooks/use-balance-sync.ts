@@ -1,5 +1,5 @@
 import { useEffect, useRef, useMemo } from "react";
-import { sendBalanceUpdateToParent, sendNicknameUpdateToParent } from "../utils/iframe-messages";
+import { sendBalanceUpdateToParent } from "../utils/iframe-messages";
 import { usePlayerContext } from "../react-contexts/auth";
 import { useGlobalEventsStore } from "../stores/global-events-store/global-events-store";
 import { getBalance } from '@shared/services/auth-service';
@@ -10,7 +10,6 @@ export const useBalanceSync = () => {
 
     // Track last sent values to avoid duplicate messages
     const lastBalanceRef = useRef<number | null>(null);
-    const lastNicknameRef = useRef<string | null>(null);
     const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const userInfo = useMemo(() => ({
@@ -25,14 +24,7 @@ export const useBalanceSync = () => {
         }
     };
 
-    const updateNickname = (nickname: string) => {
-        if (lastNicknameRef.current !== nickname && nickname) {
-            sendNicknameUpdateToParent(nickname);
-            lastNicknameRef.current = nickname;
-        }
-    };
-
-    // Send balance and nickname updates to parent when they change
+    // Send balance updates to parent when they change
     useEffect(() => {
         if (!userInfo) {
             return () => {};
@@ -45,11 +37,8 @@ export const useBalanceSync = () => {
                 updateBalance(balance);
             }
 
-            // Handle nickname updates
-            const nickname = userInfo?.name || "Player";
-            updateNickname(nickname);
         } catch (error) {
-            console.error("Error sending balance/nickname update to parent:", error);
+            console.error("Error sending balance update to parent:", error);
         }
 
         return () => {};

@@ -55,7 +55,7 @@ const renderBetHistoryRows = (
                 {rowData.map((cell, cellIndex) => (
                     <TableCell
                         key={cellIndex}
-                        className={cn("text-secondary-text h-[60px] py-[7px] sm:p-4 px-1", cell.className)}
+                        className={cn("text-secondary-text h-[60px] py-[7px] sm:p-4 px-1 md:text-base", cell.className)}
                         onClick={cell.onClick}
                     >
                         {cell.content}
@@ -74,7 +74,7 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                 <TableHead
                     key={column.key}
                     className={cn(
-                        "text-primary-text p-2 lg:p-3 h-full font-semibold text-sm",
+                        "text-primary-text p-2 lg:p-3 h-full font-semibold text-sm md:text-base",
                         column.align === "right" ? "text-right" : "text-center",
                         index === 0 && "rounded-tl-lg rounded-bl-lg",
                         index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
