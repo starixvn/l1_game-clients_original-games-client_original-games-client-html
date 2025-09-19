@@ -1,4 +1,5 @@
 @import "../../../styles/components/ballSmall";
+@import "../../../styles/constants/base-path.scss";
 
 %input-style {
     height: 36px;
@@ -24,11 +25,11 @@
 }
 
 .red {
-    --bg: url("/static/images/ball/ball-red.png?v=#{$version-image}") no-repeat;
+    --bg: url("#{$base-path}/static/images/ball/ball-red.png?v=#{$version-image}") no-repeat;
 }
 
 .blue {
-    --bg: url("/static/images/ball/ball-blue.png?v=#{$version-image}") no-repeat;
+    --bg: url("#{$base-path}/static/images/ball/ball-blue.png?v=#{$version-image}") no-repeat;
 }
 
 .balls-container {

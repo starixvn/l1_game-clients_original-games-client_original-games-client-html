@@ -2,6 +2,7 @@
 import Document, { DocumentContext, Head, Html, Main, NextScript } from "next/document";
 import React from "react";
 import { buildVersion } from "@shared/constants";
+import { BASE_PATH } from "@shared/constants/base-path";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default class extends Document<{ headScript?: string }> {
@@ -9,12 +10,12 @@ export default class extends Document<{ headScript?: string }> {
         const initialProps = await Document.getInitialProps(ctx);
 
         // Always use single env config script now
-        const headScript = "./c.js";
+        const headScript = `${BASE_PATH}/c.js`;
         return { ...initialProps, headScript };
     }
 
     render() {
-        const headScript = (this.props as any)?.headScript || "./c.js";
+        const headScript = (this.props as any)?.headScript || `${BASE_PATH}/c.js`;
         const configFileWithVersion = `${headScript}?${buildVersion}`;
 
         return (

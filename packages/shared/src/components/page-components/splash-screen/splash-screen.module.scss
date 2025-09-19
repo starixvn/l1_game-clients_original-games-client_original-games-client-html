@@ -1,3 +1,5 @@
+@import "../../../styles/constants/base-path.scss";
+
 .page {
     display: flex;
     justify-content: center;
@@ -9,10 +11,10 @@
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;
-    background-image: url("/static/images/splash-screen/bg-mobile.webp?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/splash-screen/bg-mobile.webp?v=#{$version-image}");
 
     @media screen and (min-width: 992px) {
-        background-image: url("/static/images/splash-screen/bg-desktop.webp?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/splash-screen/bg-desktop.webp?v=#{$version-image}");
     }
 
     &::before {

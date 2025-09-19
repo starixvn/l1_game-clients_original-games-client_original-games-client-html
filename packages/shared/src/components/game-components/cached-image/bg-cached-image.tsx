@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { downloadAndCacheImage, imageCache } from '@shared/helpers/image-cache-controller';
+import { BASE_PATH } from '@shared/constants/base-path';
 
 type Props = {
     pathImage: string;
@@ -18,21 +19,23 @@ export const BgCachedImage: React.FC<Props> = ({
     backgroundPosition,
     children,
 }) => {
-    const [source, setSource] = useState<string | null>(imageCache[pathImage]?.data || null);
+    // Ensure path has basePath prepended if it's a relative static path
+    const fullPathImage = pathImage.startsWith('/static/') && !pathImage.startsWith(BASE_PATH) ? `${BASE_PATH}${pathImage}` : pathImage;
+    const [source, setSource] = useState<string | null>(imageCache[fullPathImage]?.data || null);
     const props = { backgroundSize, backgroundRepeat, backgroundPosition };
     Object.keys(props).forEach((key) => props[key] === undefined && delete props[key]);
 
     useEffect(() => {
         const loadImage = async () => {
-            const result = await downloadAndCacheImage(pathImage);
+            const result = await downloadAndCacheImage(fullPathImage);
             setSource(result.imageBase64);
         };
-        if (!imageCache[pathImage]) {
+        if (!imageCache[fullPathImage]) {
             loadImage();
         } else {
-            setSource(imageCache[pathImage].data);
+            setSource(imageCache[fullPathImage].data);
         }
-    }, [pathImage]);
+    }, [fullPathImage, pathImage]);
 
     return source ? (
         <div

@@ -12,9 +12,11 @@ class ServiceWorkerHelper {
     private static instance: ServiceWorkerHelper;
     private registration: ServiceWorkerRegistration | null = null;
     private readonly isSupported: boolean;
+    private readonly basePath: string;
 
     private constructor() {
         this.isSupported = 'serviceWorker' in navigator;
+        this.basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
         console.log('[ServiceWorkerHelper] Service Worker supported:', this.isSupported);
     }
 
@@ -174,8 +176,8 @@ class ServiceWorkerHelper {
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('Game Assets Updated', {
                 body: 'New game assets are available. Refresh to update.',
-                icon: '/static/images/favicon.ico',
-                badge: '/static/images/favicon.ico',
+                icon: `${this.basePath}/favicons/favicon.ico`,
+                badge: `${this.basePath}/favicons/favicon.ico`,
                 tag: 'game-update'
             });
         }

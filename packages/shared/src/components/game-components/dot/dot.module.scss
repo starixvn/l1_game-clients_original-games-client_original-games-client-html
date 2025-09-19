@@ -1,3 +1,5 @@
+@import "../../../styles/constants/base-path.scss";
+
 %dot {
     width: 15px;
     height: 15px;
@@ -18,10 +20,10 @@
 
 .dot-red {
     @extend %dot;
-    background: url("/static/images/happy-four/dot-red.svg?v=#{$version-image}") no-repeat;
+    background: url("#{$base-path}/static/images/happy-four/dot-red.svg?v=#{$version-image}") no-repeat;
 }
 
 .dot-blue {
     @extend %dot;
-    background: url("/static/images/happy-four/dot-blue.svg?v=#{$version-image}") no-repeat;
+    background: url("#{$base-path}/static/images/happy-four/dot-blue.svg?v=#{$version-image}") no-repeat;
 }

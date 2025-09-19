@@ -4,7 +4,8 @@ import { StorageHelper, formatVolume, localStorageKeys, objectMap } from "../hel
 import { useSettingStore } from "@shared/stores/setting-store";
 import { useUserGesture } from "./use-user-gesture";
 import { useShallow } from "zustand/react/shallow";
-export const path = "./static/sounds/";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+export const path = `${basePath}/static/sounds/`;
 
 const mp3File = {
     placeBet: `place-bet`,
@@ -26,9 +27,9 @@ export const usePlaySound = (resource: string) => {
         volumeSFX: state.volumeSFX,
         enabledSound: state.enabledSound,
     })));
-    
+
     const isUserGesture = useUserGesture();
-    
+
     return () => {
         if (document.visibilityState === "visible" && ctx && isUserGesture) {
             const enable = enabledSound;

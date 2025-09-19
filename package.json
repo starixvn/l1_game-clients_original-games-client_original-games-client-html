@@ -13,7 +13,6 @@
         "analyze": "cross-env ANALYZE=true next build",
         "dev": "npm run dev:sedie-multiplayer",
         "dev:sedie-multiplayer": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 HOST=sedie.local PORT=3001 next dev -p 3001",
-        "dev:baccarat-multiplayer": "cd ./packages/baccarat-multiplayer && yarn dev:standalone",
         "dev:game-148": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-148 next dev",
         "dev:standalone": "npm run generate-tolgee-data && next build && npm run copy-standalone-assets && node .next/standalone/server.js",
         "copy-standalone-assets": "node scripts/copy-standalone-assets.js",

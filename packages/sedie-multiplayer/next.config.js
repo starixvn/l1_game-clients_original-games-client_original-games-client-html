@@ -17,18 +17,40 @@ const createAppSettings = (config) => ({
 
 const baseAppSettings = createAppSettings(configs);
 
-const nextConfig = withSentryConfig({
+const nextConfig = {
     publicRuntimeConfig: baseAppSettings,
     productionBrowserSourceMaps: false,
-    sentry: {
-        disableServerWebpackPlugin: true,
-        disableClientWebpackPlugin: true,
-        hideSourceMaps: true,
-    },
+    pageExtensions: ["tsx", "ts", "jsx", "js"],
     generateBuildId: async () => uuidv4(),
-    experimental: { externalDir: true },
+    async rewrites() {
+        return [
+            {
+                source: `${basePath}/api/health`,
+                destination: "/api/health",
+            },
+        ];
+    },
+    experimental: {
+        externalDir: true,
+        serverComponentsExternalPackages: [],
+        esmExternals: "loose",
+    },
+    images: {
+        // Use custom image loader to handle basePath properly for reverse proxy environments
+        loader: "custom",
+        loaderFile: "./src/image-loader.js",
+        // Disable image optimization since static files are served directly and work fine
+        unoptimized: true,
+        // Allow images from any domain for flexibility
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "**",
+            },
+        ],
+    },
     transpilePackages: ["@shared/merged"],
-    webpack: (config, options) => {
+    webpack: (config, { isServer }) => {
         config.devtool = false;
         config.resolve.alias = {
             ...config.resolve.alias,
@@ -38,26 +60,42 @@ const nextConfig = withSentryConfig({
         };
         return config;
     },
-    basePath,
-    assetPrefix: basePath || undefined,
+    basePath: "", // Custom server handles basePath
+    assetPrefix: basePath,
     env: {
         buildVersion: String(buildVersion),
         REACT_APP_TOLGEE_API_URL: "https://tolgee.sabagame.com/",
         REACT_APP_TOLGEE_API_KEY: "tgpak_gvpw45brha2xg3btoztxeytunvudc5dbn5twqodtonztc",
     },
     sassOptions: {
-        prependData: `$version-image: '${buildVersion}';`,
+        prependData: `$version-image: '${buildVersion}'; $base-path: '${basePath}';`,
         includePaths: [path.resolve(__dirname, "../shared/src/styles"), path.resolve(__dirname, "../shared/src/components")],
         importer: function (url) {
             // Resolve SCSS imports that use the @shared alias
             if (typeof url === "string" && url.startsWith("@shared/")) {
-                const resolved = path.resolve(__dirname, "../shared/src", url.replace(/^@shared\//, ""));
-                return { file: resolved };
+                let resolvedPath = url.replace(/^@shared\//, "");
+
+                // If no extension provided, treat as SCSS partial (add _ prefix and .scss extension)
+                if (!resolvedPath.includes(".scss") && !resolvedPath.includes(".css")) {
+                    const parts = resolvedPath.split("/");
+                    const filename = parts.pop();
+                    const dirname = parts.join("/");
+                    resolvedPath = dirname ? `${dirname}/_${filename}.scss` : `_${filename}.scss`;
+                }
+
+                const fullPath = path.resolve(__dirname, "../shared/src", resolvedPath);
+                return { file: fullPath };
             }
             return null;
         },
     },
     output: "standalone",
-});
+};
 
-module.exports = withBundleAnalyzer(nextConfig);
+const sentryConfig = {
+    disableServerWebpackPlugin: true,
+    disableClientWebpackPlugin: true,
+    hideSourceMaps: true,
+};
+
+module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, sentryConfig));

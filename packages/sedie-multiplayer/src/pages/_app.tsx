@@ -35,6 +35,8 @@ export const AppTittle = () => {
             <link rel="shortcut icon" type="image/x-icon" href={`/favicons/favicon.ico?v=${buildVersion}`} sizes="any" />
             <link rel="icon" type="image/png" href={`/favicons/favicon2.png?v=${buildVersion}`} sizes="16x16" />
             <link rel="apple-touch-icon" type="image/png" href={`/favicons/favicon2.png?v=${buildVersion}`} sizes="any" />
+            {/* Favicon for browsers that request /favicon.ico */}
+            <link rel="icon" type="image/x-icon" href={`/favicons/favicon.ico?v=${buildVersion}`} />
         </Head>
     );
 };

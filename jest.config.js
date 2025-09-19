@@ -34,6 +34,8 @@ const config = {
     resetMocks: false,
     snapshotResolver: "./__mocks__/snapshot.ts",
     testTimeout: 10000,
+    // Disable debugger for CI/test runs
+    detectOpenHandles: false,
 };
 
 module.exports = config;

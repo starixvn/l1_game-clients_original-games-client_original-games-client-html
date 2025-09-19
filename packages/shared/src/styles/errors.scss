@@ -1,3 +1,5 @@
+@import "./constants/base-path.scss";
+
 [data-theme="light"] .error-page {
     --error-page-background: #061827;
     --error-page-text-color: #fff;
@@ -64,10 +66,10 @@
     transform: translate(0, 0);
     width: 348px;
     height: 206px;
-    background-image: url("/static/images/error-page/1x/spaceman-timeout.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/spaceman-timeout.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/spaceman-timeout.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/spaceman-timeout.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/spaceman-timeout.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/spaceman-timeout.png?v=#{$version-image}") 2x
     );
     animation: spin 9s linear infinite;
 }
@@ -77,10 +79,10 @@
     transform: translate(0, 0);
     width: 348px;
     height: 199px;
-    background-image: url("/static/images/error-page/1x/spaceman-um.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/spaceman-um.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/spaceman-um.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/spaceman-um.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/spaceman-um.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/spaceman-um.png?v=#{$version-image}") 2x
     );
     animation: spin 9s linear infinite;
 }
@@ -101,20 +103,20 @@
     width: 372px;
     height: 376px;
     animation: star-bling 5s infinite;
-    background-image: url("/static/images/error-page/1x/star-bg.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/star-bg.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/star-bg.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/star-bg.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/star-bg.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/star-bg.png?v=#{$version-image}") 2x
     );
 }
 
 .planet-center {
     width: 372px;
     height: 376px;
-    background-image: url("/static/images/error-page/1x/planet-center.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/planet-center.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/planet-center.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/planet-center.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/planet-center.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/planet-center.png?v=#{$version-image}") 2x
     );
 }
 
@@ -135,10 +137,10 @@
         right: 0;
         width: 93px;
         height: 89px;
-        background-image: url("/static/images/error-page/1x/comet-1.png?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/error-page/1x/comet-1.png?v=#{$version-image}");
         background-image: image-set(
-            url("/static/images/error-page/1x/comet-1.png") 1x,
-            url("/static/images/error-page/2x/comet-1.png?v=#{$version-image}") 2x
+            url("#{$base-path}/static/images/error-page/1x/comet-1.png") 1x,
+            url("#{$base-path}/static/images/error-page/2x/comet-1.png?v=#{$version-image}") 2x
         );
     }
 
@@ -148,10 +150,10 @@
         opacity: 0;
         width: 65px;
         height: 57px;
-        background-image: url("/static/images/error-page/1x/comet-2.png?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/error-page/1x/comet-2.png?v=#{$version-image}");
         background-image: image-set(
-            url("/static/images/error-page/1x/comet-2.png") 1x,
-            url("/static/images/error-page/2x/comet-2.png?v=#{$version-image}") 2x
+            url("#{$base-path}/static/images/error-page/1x/comet-2.png") 1x,
+            url("#{$base-path}/static/images/error-page/2x/comet-2.png?v=#{$version-image}") 2x
         );
         animation-delay: 1s;
     }
@@ -162,10 +164,10 @@
         opacity: 0;
         width: 63px;
         height: 56px;
-        background-image: url("/static/images/error-page/1x/comet-3.png?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/error-page/1x/comet-3.png?v=#{$version-image}");
         background-image: image-set(
-            url("/static/images/error-page/1x/comet-3.png?v=#{$version-image}") 1x,
-            url("/static/images/error-page/2x/comet-3.png?v=#{$version-image}") 2x
+            url("#{$base-path}/static/images/error-page/1x/comet-3.png?v=#{$version-image}") 1x,
+            url("#{$base-path}/static/images/error-page/2x/comet-3.png?v=#{$version-image}") 2x
         );
         animation-delay: 1.5s;
     }
@@ -176,10 +178,10 @@
         opacity: 0;
         width: 52px;
         height: 48px;
-        background-image: url("/static/images/error-page/1x/comet-4.png?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/error-page/1x/comet-4.png?v=#{$version-image}");
         background-image: image-set(
-            url("/static/images/error-page/1x/comet-4.png") 1x,
-            url("/static/images/error-page/2x/comet-4.png?v=#{$version-image}") 2x
+            url("#{$base-path}/static/images/error-page/1x/comet-4.png") 1x,
+            url("#{$base-path}/static/images/error-page/2x/comet-4.png?v=#{$version-image}") 2x
         );
         animation-delay: 2s;
     }
@@ -192,10 +194,10 @@
     left: 60px;
     width: 229px;
     height: 228px;
-    background-image: url("/static/images/error-page/1x/planet.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/planet.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/planet.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/planet.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/planet.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/planet.png?v=#{$version-image}") 2x
     );
 }
 
@@ -205,10 +207,10 @@
     z-index: 3;
     width: 92px;
     height: 126px;
-    background-image: url("/static/images/error-page/1x/4.png?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/error-page/1x/4.png?v=#{$version-image}");
     background-image: image-set(
-        url("/static/images/error-page/1x/4.png?v=#{$version-image}") 1x,
-        url("/static/images/error-page/2x/4.png?v=#{$version-image}") 2x
+        url("#{$base-path}/static/images/error-page/1x/4.png?v=#{$version-image}") 1x,
+        url("#{$base-path}/static/images/error-page/2x/4.png?v=#{$version-image}") 2x
     );
 }
 

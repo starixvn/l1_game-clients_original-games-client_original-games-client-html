@@ -10,6 +10,8 @@ import PopupButton from "../popup-button";
 import Image from "next/image";
 import { useClickSound } from '@shared/react-hooks';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export const ConnectFailedMessage: React.FC<{
     tolgeeNamespace: string;
     id: number;
@@ -90,7 +92,7 @@ export const ConnectFailedMessage: React.FC<{
                 )}
             >
                 <Image
-                    src={`/static/images/icons/popup-mask.svg`}
+                    src={`${basePath}/static/images/icons/popup-mask.svg`}
                     alt="popup-mask"
                     className="absolute top-[-65px] left-[-74px]"
                     width={212}
@@ -98,7 +100,7 @@ export const ConnectFailedMessage: React.FC<{
                 />
                 <div className="flex flex-col justify-center items-center gap-1">
                     <div className="w-[50px] h-[50px] bg-black/30 rounded-full flex justify-center items-center md:w-[70px] md:h-[70px] mb-3">
-                        <Image src={`/static/images/icons/warning.svg`} alt="warning" width={33} height={29} className="md:w-[44px] md:h-[38px]" />
+                        <Image src={`${basePath}/static/images/icons/warning.svg`} alt="warning" width={33} height={29} className="md:w-[44px] md:h-[38px]" />
                     </div>
                     <div className="text-base md:text-lg leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
                     <div className="text-sm font-normal text-modal-text md:text-base">

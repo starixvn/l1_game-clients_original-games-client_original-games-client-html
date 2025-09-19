@@ -30,7 +30,8 @@ describe("usePWAWorker", () => {
 
     test("should initialize worker when browser supports Web Workers", () => {
         // Arrange
-        const workerUrl = "/worker.js";
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+        const workerUrl = `${basePath}/worker.js`;
         const workerOptions = { type: "module" };
 
         // Act

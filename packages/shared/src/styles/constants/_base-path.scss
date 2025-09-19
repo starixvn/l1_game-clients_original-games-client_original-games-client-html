@@ -1,0 +1,6 @@
+// Centralized basePath configuration for SCSS files
+// This is the single source of truth for basePath in SCSS across the entire application
+
+// Import this in SCSS files instead of defining $base-path locally
+// Note: This value is dynamically injected at build time via next.config.js sassOptions.prependData
+// and should match NEXT_PUBLIC_BASE_PATH environment variable

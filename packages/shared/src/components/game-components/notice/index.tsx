@@ -11,6 +11,8 @@ import { useNoticeStore } from '@shared/stores/notice-store/notice-store';
 import { useShallow } from "zustand/react/shallow";
 import { cn } from '@shared/utils/merge-tailwind-util';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const BaseNotice: React.FC<{
     onClose: () => void;
     isOpen?: boolean;
@@ -19,7 +21,7 @@ const BaseNotice: React.FC<{
 }> = ({ children, onClose }) => {
     const closeDialog = useGlobalEventsStore((state) => state.closeDialog);
     const wrapperRef = useRef<HTMLDivElement>(null);
-    
+
     useClickOutside([wrapperRef], onClose);
 
     useEffect(() => {
@@ -41,7 +43,7 @@ const BaseNotice: React.FC<{
                 ref={wrapperRef}
             >
                 <Image
-                    src="/static/images/icons/toast-mask.svg"
+                    src={`${basePath}/static/images/icons/toast-mask.svg`}
                     alt="toast mask"
                     width={240}
                     height={240}

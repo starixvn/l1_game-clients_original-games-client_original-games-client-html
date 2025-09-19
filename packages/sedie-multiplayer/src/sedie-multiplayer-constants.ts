@@ -1,4 +1,5 @@
 import { buildVersion } from "@shared/constants";
+import { BASE_PATH } from "@shared/constants/base-path";
 
 export const SeDieBetOptions = {
     ODD: "odd",
@@ -47,23 +48,23 @@ export const DotColorMapper: Record<string, boolean[]> = {
 
 export const BetChoiceImagesData: Record<string, { src: string; blur: string }> = {
     odd: {
-        src: `/static/images/sedie-multiplayer/2x/bg-odd.webp?v=${buildVersion}`,
+        src: `${BASE_PATH}/static/images/sedie-multiplayer/2x/bg-odd.webp?v=${buildVersion}`,
         blur: ``,
     },
     even: {
-        src: `/static/images/sedie-multiplayer/2x/bg-even.webp?v=${buildVersion}`,
+        src: `${BASE_PATH}/static/images/sedie-multiplayer/2x/bg-even.webp?v=${buildVersion}`,
         blur: ``,
     },
     blue3: {
-        src: `/static/images/sedie-multiplayer/2x/bg-blue3.webp?v=${buildVersion}`,
+        src: `${BASE_PATH}/static/images/sedie-multiplayer/2x/bg-blue3.webp?v=${buildVersion}`,
         blur: "",
     },
     red2: {
-        src: `/static/images/sedie-multiplayer/2x/bg-red2.webp?v=${buildVersion}`,
+        src: `${BASE_PATH}/static/images/sedie-multiplayer/2x/bg-red2.webp?v=${buildVersion}`,
         blur: "",
     },
     red4: {
-        src: `/static/images/sedie-multiplayer/2x/bg-red4.webp?v=${buildVersion}`,
+        src: `${BASE_PATH}/static/images/sedie-multiplayer/2x/bg-red4.webp?v=${buildVersion}`,
         blur: "",
     },
 };

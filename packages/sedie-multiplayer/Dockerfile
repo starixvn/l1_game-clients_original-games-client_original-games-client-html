@@ -36,6 +36,7 @@ COPY packages/sedie-multiplayer/postcss.config.js packages/sedie-multiplayer/pos
 COPY packages/sedie-multiplayer/sentry.client.config.js packages/sedie-multiplayer/sentry.client.config.js
 COPY packages/sedie-multiplayer/sentry.edge.config.js packages/sedie-multiplayer/sentry.edge.config.js
 COPY packages/sedie-multiplayer/sentry.server.config.js packages/sedie-multiplayer/sentry.server.config.js
+COPY packages/sedie-multiplayer/custom-server.js packages/sedie-multiplayer/custom-server.js
 COPY packages/sedie-multiplayer/configs.json packages/sedie-multiplayer/configs.json
 COPY packages/sedie-multiplayer/game-settings.json packages/sedie-multiplayer/game-settings.json
 
@@ -50,14 +51,9 @@ COPY packages/shared packages/shared
 # Build sedie-multiplayer app
 WORKDIR /app/packages/sedie-multiplayer
 
-# Allow configuring Next.js basePath/assetPrefix at build time
-ARG NEXT_PUBLIC_BASE_PATH
-ARG NEXT_PUBLIC_DEFAULT_GAME_ID=148
-ARG NEXT_PUBLIC_GAME_PACKAGE=sedie-multiplayer
-ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
-ENV NEXT_PUBLIC_DEFAULT_GAME_ID=$NEXT_PUBLIC_DEFAULT_GAME_ID
-ENV NEXT_PUBLIC_GAME_PACKAGE=$NEXT_PUBLIC_GAME_PACKAGE
-
+# Set Next.js basePath and game ID for production deployment
+ENV NEXT_PUBLIC_BASE_PATH=/game-148
+ENV NEXT_PUBLIC_DEFAULT_GAME_ID=148
 
 # Obfuscate deployment configs and build
 RUN yarn obfuscator-config-file
@@ -68,12 +64,15 @@ FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Optionally expose base path at runtime for any custom logic
-ARG NEXT_PUBLIC_BASE_PATH
-ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
+# Ensure environment variables are available in the runner stage
+ENV NEXT_PUBLIC_BASE_PATH=/game-148
+ENV NEXT_PUBLIC_DEFAULT_GAME_ID=148
 
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs
+
+# Create src directory for image loader
+RUN mkdir -p src
 
 # Copy the built app and required assets
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
@@ -83,6 +82,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/packag
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/next.config.js ./next.config.js
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/game-settings.json ./game-settings.json
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/configs.json ./configs.json
+COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/custom-server.js ./custom-server.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/src/image-loader.js ./src/image-loader.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/.next/static ./.next/static
 
 # Ensure proper permissions for the .next directory
 RUN chown -R nextjs:nodejs .next
@@ -93,4 +95,4 @@ EXPOSE 5000
 ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["./node_modules/.bin/next", "start", "-p", "5000"]
+CMD ["sh", "-c", "PORT=5000 node custom-server.js"]

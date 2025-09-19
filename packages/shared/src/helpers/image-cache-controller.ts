@@ -1,5 +1,6 @@
 import axios from "axios";
 import "./string-helper";
+import { BASE_PATH } from '@shared/constants/base-path';
 
 // Enhanced image cache with memory management
 interface CacheEntry {
@@ -90,7 +91,12 @@ const calculateBase64Size = (base64: string): number => {
 
 const loadPromise = new Map<string, Promise<any>>();
 export const downloadAndCacheImage = async (path: string): Promise<{ path: string; valid: boolean; imageBase64: string }> => {
-    const cleanPath = path.removeBuildVersion();
+    // Ensure path has basePath prepended if it's a relative static path
+    let fullPath = path;
+    if (path.startsWith('/static/') && !path.startsWith(BASE_PATH)) {
+        fullPath = `${BASE_PATH}${path}`;
+    }
+    const cleanPath = fullPath.removeBuildVersion();
 
     // Check cache first
     if (imageCache[cleanPath]) {

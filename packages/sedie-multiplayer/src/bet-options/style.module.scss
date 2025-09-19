@@ -1,3 +1,5 @@
+@import "@shared/styles/constants/base-path";
+
 .dot-white {
     width: var(--dot-size);
     height: var(--dot-size);
@@ -17,7 +19,7 @@
 }
 
 .sub-bet-option {
-    background-image: url("/static/images/sedie-multiplayer/sub-bet-option-bg.svg?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/sedie-multiplayer/sub-bet-option-bg.svg?v=#{$version-image}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -48,7 +50,7 @@
 }
 
 .main-option {
-    background-image: url("/static/images/sedie-multiplayer/odd-bg.svg?v=#{$version-image}");
+    background-image: url("#{$base-path}/static/images/sedie-multiplayer/odd-bg.svg?v=#{$version-image}");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -67,14 +69,14 @@
         border-radius: 20px;
     }
     &.odd {
-        background-image: url("/static/images/sedie-multiplayer/odd-bg.svg?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/sedie-multiplayer/odd-bg.svg?v=#{$version-image}");
         &::before {
             background: linear-gradient(0.04deg, #ff0921 0.03%, #23244b 99.97%);
         }
     }
 
     &.even {
-        background-image: url("/static/images/sedie-multiplayer/even-bg.svg?v=#{$version-image}");
+        background-image: url("#{$base-path}/static/images/sedie-multiplayer/even-bg.svg?v=#{$version-image}");
     }
     .btn-ripple {
         margin-right: 10px;

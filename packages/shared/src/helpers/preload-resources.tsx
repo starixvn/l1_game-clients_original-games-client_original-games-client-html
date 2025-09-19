@@ -9,6 +9,7 @@ const DEFAULT_PROGRESS_BAR_ID = "progress-bar";
 const MEMORIED_IMAGES = ["/chips/"];
 const REQUEST_TIMEOUT = 10000;
 const REQUEST_CLEANUP_THRESHOLD = 30000; // 30 seconds
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 // Types
 interface PreloadResourcesProps {
@@ -162,7 +163,7 @@ class PreloadManager {
 
     private async createImageRequest(gameId: number): Promise<string[]> {
         try {
-            const response = await axios.post("/api/preload-images", { gameId }, { timeout: REQUEST_TIMEOUT });
+            const response = await axios.post(`${basePath}/api/preload-images`, { gameId }, { timeout: REQUEST_TIMEOUT });
             return (response?.data as string[]) || [];
         } catch (error) {
             console.error(`[fetchImagesFromAPI] Failed to fetch image paths:`, error);
