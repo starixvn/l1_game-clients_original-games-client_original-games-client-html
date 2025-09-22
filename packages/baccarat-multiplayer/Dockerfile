@@ -36,6 +36,7 @@ COPY packages/baccarat-multiplayer/postcss.config.js packages/baccarat-multiplay
 COPY packages/baccarat-multiplayer/sentry.client.config.js packages/baccarat-multiplayer/sentry.client.config.js
 COPY packages/baccarat-multiplayer/sentry.edge.config.js packages/baccarat-multiplayer/sentry.edge.config.js
 COPY packages/baccarat-multiplayer/sentry.server.config.js packages/baccarat-multiplayer/sentry.server.config.js
+COPY packages/baccarat-multiplayer/custom-server.js packages/baccarat-multiplayer/custom-server.js
 COPY packages/baccarat-multiplayer/configs.json packages/baccarat-multiplayer/configs.json
 COPY packages/baccarat-multiplayer/game-settings.json packages/baccarat-multiplayer/game-settings.json
 
@@ -50,13 +51,10 @@ COPY packages/shared packages/shared
 # Build baccarat-multiplayer app
 WORKDIR /app/packages/baccarat-multiplayer
 
-# Allow configuring Next.js basePath/assetPrefix at build time
-ARG NEXT_PUBLIC_BASE_PATH
-ARG NEXT_PUBLIC_DEFAULT_GAME_ID=150
-ARG NEXT_PUBLIC_GAME_PACKAGE=baccarat-multiplayer
-ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
-ENV NEXT_PUBLIC_DEFAULT_GAME_ID=$NEXT_PUBLIC_DEFAULT_GAME_ID
-ENV NEXT_PUBLIC_GAME_PACKAGE=$NEXT_PUBLIC_GAME_PACKAGE
+# Set Next.js basePath and game ID for production deployment
+ENV NEXT_PUBLIC_BASE_PATH=/game-150
+ENV NEXT_PUBLIC_DEFAULT_GAME_ID=150
+ENV NEXT_PUBLIC_GAME_PACKAGE=baccarat-multiplayer
 
 # Obfuscate deployment configs and build
 RUN yarn obfuscator-config-file
@@ -67,12 +65,14 @@ FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Optionally expose base path at runtime for any custom logic
-ARG NEXT_PUBLIC_BASE_PATH
-ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
+# Ensure base path is set for runtime
+ENV NEXT_PUBLIC_BASE_PATH=/game-150
 
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs
+
+# Create src directory for image loader
+RUN mkdir -p src
 
 # Copy the built app and required assets
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
@@ -82,7 +82,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/pac
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/next.config.js ./next.config.js
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/game-settings.json ./game-settings.json
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/configs.json ./configs.json
-COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/src/image-loader.js ./packages/baccarat-multiplayer/src/image-loader.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/custom-server.js ./custom-server.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/src/image-loader.js ./src/image-loader.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/.next/static ./.next/static
 
 # Ensure proper permissions for the .next directory
 RUN chown -R nextjs:nodejs .next
@@ -93,4 +95,4 @@ EXPOSE 5000
 ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["./node_modules/.bin/next", "start", "-p", "5000"]
+CMD ["sh", "-c", "PORT=5000 node custom-server.js"]
