@@ -3,14 +3,14 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
-import { getAppSettings } from "./src/_shared/app-settings";
+import { getAppSettings } from "@shared/app-settings";
 
 const appSettings = getAppSettings();
 const sentryConfig = appSettings.sentry || {};
 
 if (sentryConfig) {
-    Sentry.init({ 
+    Sentry.init({
         ...sentryConfig,
-        tracesSampleRate: 0.1
+        tracesSampleRate: 0.1,
     });
 }

@@ -36,7 +36,10 @@
         "test:watch": "jest --watch",
         "test-coverage": "jest --coverage",
         "reg": "npm set registry http://npm.lumigame.com",
-        "obfuscator-config-file": "node ./configs/config-obfuscator.js"
+        "obfuscator-config-file": "node ./configs/config-obfuscator.js",
+        "docker:dev": "docker-compose up",
+        "docker:down": "docker-compose down",
+        "docker:build": "docker-compose build"
     },
     "dependencies": {
         "@sentry/nextjs": "^9.41.0",
