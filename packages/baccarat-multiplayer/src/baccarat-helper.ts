@@ -93,13 +93,17 @@ interface CardData {
 export const BaccaratGameLogic = {
     // Calculate baccarat value (face cards = 0, aces = 1, others = face value)
     getBaccaratValue: (value: number): number => {
-        if (value >= 10) return 0;
+        if (value >= 10) {
+            return 0;
+        }
         return value;
     },
 
     // Calculate total for a hand - handles both number arrays and card objects
     getBaccaratTotal: (cards: number[] | CardData[]): number => {
-        if (!cards || !Array.isArray(cards)) return 0;
+        if (!cards || !Array.isArray(cards)) {
+            return 0;
+        }
 
         let sum = 0;
         for (const card of cards) {
@@ -115,17 +119,54 @@ export const BaccaratGameLogic = {
         const playerTotal = BaccaratGameLogic.getBaccaratTotal(playerCards);
         const bankerTotal = BaccaratGameLogic.getBaccaratTotal(bankerCards);
 
-        if (playerTotal > bankerTotal) return "player";
-        if (bankerTotal > playerTotal) return "banker";
+        if (playerTotal > bankerTotal) {
+            return "player";
+        }
+        if (bankerTotal > playerTotal) {
+            return "banker";
+        }
         return "tie";
     },
 
     // Check if hand is natural (8 or 9 with first two cards)
     isNatural: (cards: number[] | CardData[]): boolean => {
-        if (!cards || !Array.isArray(cards) || cards.length < 2) return false;
+        if (!cards || !Array.isArray(cards) || cards.length < 2) {
+            return false;
+        }
         const firstTwo = cards.slice(0, 2);
         const total = BaccaratGameLogic.getBaccaratTotal(firstTwo);
         return total === 8 || total === 9;
+    },
+
+    // Helper function to get player third card value
+    getPlayerThirdCardValue: (playerCards: number[] | CardData[]): number => {
+        const playerThirdCard = playerCards[2];
+        if (!playerThirdCard) {
+            return 0;
+        }
+        return typeof playerThirdCard === 'number'
+            ? BaccaratGameLogic.getBaccaratValue(playerThirdCard)
+            : BaccaratGameLogic.getBaccaratValue(playerThirdCard.card);
+    },
+
+    // Helper function to determine if banker should draw third card when player drew
+    shouldBankerDrawWhenPlayerDrew: (bankerTotal: number, playerThirdValue: number): boolean => {
+        if (bankerTotal <= 2) {
+            return true;
+        }
+        if (bankerTotal === 3) {
+            return playerThirdValue !== 8;
+        }
+        if (bankerTotal === 4) {
+            return [2, 3, 4, 5, 6, 7].includes(playerThirdValue);
+        }
+        if (bankerTotal === 5) {
+            return [4, 5, 6, 7].includes(playerThirdValue);
+        }
+        if (bankerTotal === 6) {
+            return [6, 7].includes(playerThirdValue);
+        }
+        return false;
     },
 
     // Determine if third card should be drawn
@@ -139,36 +180,14 @@ export const BaccaratGameLogic = {
         }
 
         // Player third card rules
-        let playerDrawsThird = false;
-        if (playerCards && playerCards.length === 2) {
-            playerDrawsThird = playerTotal <= 5;
-        }
+        const playerDrawsThird = playerCards && playerCards.length === 2 && playerTotal <= 5;
 
         // Banker third card rules
         let bankerDrawsThird = false;
         if (bankerCards && bankerCards.length === 2) {
             if (playerDrawsThird) {
-                const playerThirdCard = playerCards[2];
-                let playerThirdValue = 0;
-                if (playerThirdCard) {
-                    if (typeof playerThirdCard === 'number') {
-                        playerThirdValue = BaccaratGameLogic.getBaccaratValue(playerThirdCard);
-                    } else {
-                        playerThirdValue = BaccaratGameLogic.getBaccaratValue(playerThirdCard.card);
-                    }
-                }
-
-                if (bankerTotal <= 2) {
-                    bankerDrawsThird = true;
-                } else if (bankerTotal === 3) {
-                    bankerDrawsThird = playerThirdValue !== 8;
-                } else if (bankerTotal === 4) {
-                    bankerDrawsThird = [2, 3, 4, 5, 6, 7].includes(playerThirdValue);
-                } else if (bankerTotal === 5) {
-                    bankerDrawsThird = [4, 5, 6, 7].includes(playerThirdValue);
-                } else if (bankerTotal === 6) {
-                    bankerDrawsThird = [6, 7].includes(playerThirdValue);
-                }
+                const playerThirdValue = BaccaratGameLogic.getPlayerThirdCardValue(playerCards);
+                bankerDrawsThird = BaccaratGameLogic.shouldBankerDrawWhenPlayerDrew(bankerTotal, playerThirdValue);
             } else {
                 bankerDrawsThird = bankerTotal <= 5;
             }
@@ -182,7 +201,9 @@ export const BaccaratGameLogic = {
 
     // Check for pairs
     hasPair: (cards: number[] | CardData[]): boolean => {
-        if (!cards || !Array.isArray(cards) || cards.length < 2) return false;
+        if (!cards || !Array.isArray(cards) || cards.length < 2) {
+            return false;
+        }
         const firstTwo = cards.slice(0, 2);
         const firstValue = typeof firstTwo[0] === 'number' ? firstTwo[0] : firstTwo[0].card;
         const secondValue = typeof firstTwo[1] === 'number' ? firstTwo[1] : firstTwo[1].card;
@@ -191,10 +212,18 @@ export const BaccaratGameLogic = {
 
     // Get card display value
     getCardDisplayValue: (value: number): string => {
-        if (value === 1) return 'A';
-        if (value === 11) return 'J';
-        if (value === 12) return 'Q';
-        if (value === 13) return 'K';
+        if (value === 1) {
+            return 'A';
+        }
+        if (value === 11) {
+            return 'J';
+        }
+        if (value === 12) {
+            return 'Q';
+        }
+        if (value === 13) {
+            return 'K';
+        }
         return value.toString();
     }
 };

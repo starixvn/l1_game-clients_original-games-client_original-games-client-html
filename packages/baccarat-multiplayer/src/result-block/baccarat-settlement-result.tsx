@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "@shared/react-contexts";
 import { RoundState } from "@shared/components/game-base/type";
-import PlayerBankerResultComponent from "./player-banker-result";
+import PlayerBankerResult from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
 import dynamic from "next/dynamic";
 import { BaccaratResult } from "./types";
@@ -43,7 +43,7 @@ const renderCardDisplay = (
     isHideAllCards: boolean
 ) => {
     return (
-        <PlayerBankerResultComponent
+        <PlayerBankerResult
             playResultAnimation={isAnimationResult}
             result={result}
             isShowResult={isShowResult}
@@ -70,7 +70,9 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
 
     // Helper function to process result data into BaccaratResult format
     const processResultData = (rawResult: any): BaccaratResult | null => {
-        if (!rawResult) return null;
+        if (!rawResult) {
+            return null;
+        }
 
         const resultData = rawResult.result || rawResult;
 
@@ -110,7 +112,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         if (last) {
             // Fresh WebSocket result data received - always use this for animation
             resultData = processResultData(last);
-            isUsingHistorical = false;
+            // isUsingHistorical remains false (default)
         } else if (gameState?.roundHistory && gameState.roundHistory.length > 0) {
             // No fresh data - fallback to historical data (page load, no active result)
             const mostRecentRound = gameState.roundHistory[0] as any;

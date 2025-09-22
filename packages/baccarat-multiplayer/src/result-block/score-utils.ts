@@ -24,13 +24,16 @@ export const sumScore = (score: number, card: number): number => {
         cardValue = 0; // J, Q, K = 0
     }
 
-    const newScore = (score + cardValue) % 10;
-    return newScore;
+    return (score + cardValue) % 10;
 };
 
 export const determineWinner = (playerScore: number, bankerScore: number): "player" | "banker" | "tie" => {
-    if (playerScore > bankerScore) return "player";
-    if (bankerScore > playerScore) return "banker";
+    if (playerScore > bankerScore) {
+        return "player";
+    }
+    if (bankerScore > playerScore) {
+        return "banker";
+    }
     return "tie";
 };
 

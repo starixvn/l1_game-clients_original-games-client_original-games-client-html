@@ -8,10 +8,14 @@ interface ScoreDisplayProps {
 }
 
 export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, type, visible }) => {
-    if (!visible) return null;
+    if (!visible) {
+        return null;
+    }
+
+    const scoreClassName = `${type}-score`;
 
     return (
-        <div className={`${styles.score} ${styles[`${type}-score`]}`}>
+        <div className={`${styles.score} ${styles[scoreClassName]}`}>
             <span className={styles['score-number']}>{score}</span>
         </div>
     );

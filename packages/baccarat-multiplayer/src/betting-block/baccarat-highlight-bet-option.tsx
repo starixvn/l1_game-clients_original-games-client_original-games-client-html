@@ -30,12 +30,20 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
     // Get correct viewBox for desktop vs mobile
     const getViewBox = () => {
         if (isDesktop) {
-            if (choice === 'tie') return "0 0 140 77";
-            if (choice === 'anyPair') return "0 0 140 73";
+            if (choice === 'tie') {
+                return "0 0 140 77";
+            }
+            if (choice === 'anyPair') {
+                return "0 0 140 73";
+            }
             return "0 0 220 169"; // Player and Banker desktop
         } else {
-            if (choice === 'tie') return "0 0 106 77";
-            if (choice === 'anyPair') return "0 0 106 73";
+            if (choice === 'tie') {
+                return "0 0 106 77";
+            }
+            if (choice === 'anyPair') {
+                return "0 0 106 73";
+            }
             return "0 0 183 169"; // Player and Banker mobile
         }
     };

@@ -1,10 +1,8 @@
 import AnimatedContent from "@shared/components/game-components/animations/animated-content";
-import PercentageStatistic from "@shared/components/game-components/statistic";
 import { useClickSound } from "@shared/react-hooks";
 import useGameStore from "@shared/stores/game-store/game-store";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
-import { BaccaratStatisticColors, mainChoices } from "../baccarat-multiplayer-constants";
 import ScoreboardBaccarat from "../scoreboard/scoreboard";
 import BaccaratBetCountsComponent from "./baccarat-bet-counts";
 import Styles from "./statistic-popup.module.scss";

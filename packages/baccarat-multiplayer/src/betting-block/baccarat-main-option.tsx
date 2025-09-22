@@ -16,13 +16,24 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
     const textColorClass = choice === "player" ? "text-[#15B9FF]" : "text-[#FF262A]";
     const positionClass = choice === "player" ? "self-start" : "self-end";
 
+    const getShapeClass = () => {
+        if (choice === "player") {
+            return styles["playerShape"];
+        }
+        if (choice === "banker") {
+            return styles["bankerShape"];
+        }
+        return "";
+    };
+
+    const shapeClass = getShapeClass();
+
     return (
         <div className="relative">
             {shadowClass && <div className={shadowClass}></div>}
 
             <div className={`text-white relative w-[183px] h-[169px] md:w-[220px] md:h-[169px] flex flex-col ${themeClass}`}>
                 <div className={`w-32 md:w-[148px] ${positionClass}`}>
-                    { /* TODO: Change total bet font size in shared package */ }
                     <TotalBet choice={choice} className={"h-10 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
                 </div>
                 <div className={`w-32 md:w-[148px] h-[107px] flex flex-col justify-center ${positionClass}`}>
@@ -34,7 +45,7 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
                 </div>
             </div>
 
-            <div className={`${styles["clickableShape"]} ${choice === "player" ? styles["playerShape"] : choice === "banker" ? styles["bankerShape"] : ""}`}>
+            <div className={`${styles["clickableShape"]} ${shapeClass}`}>
                 <RippleButton className={`${styles["btnRipple"]}`} id={buttonId} choice={choice} />
             </div>
             <ChipEffect choice={choice} />

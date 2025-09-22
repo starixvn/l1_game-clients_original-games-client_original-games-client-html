@@ -2,7 +2,7 @@
 import "../../../game-config";
 
 // Import shared preload images API with game-specific path overrides
-import { default as sharedPreloadImagesApi, getGameSpecificPaths } from "@shared/api/preload-images";
+import { default as sharedPreloadImagesApi } from "@shared/api/preload-images";
 
 // Override game-specific paths for Baccarat
 const getBaccaratSpecificPaths = (gameId?: number): string[] => {
