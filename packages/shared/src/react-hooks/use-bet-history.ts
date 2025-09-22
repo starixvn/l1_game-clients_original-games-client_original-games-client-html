@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
  * Custom hook for managing bet history functionality
  * Provides a clean interface for components to interact with bet history
  */
-export function useBetHistory() {
+export function useBetHistory(gameId?: string) {
     const { gameMessageHandler } = useGameContext();
     const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
     const isInitialized = useRef(false);
@@ -37,7 +37,7 @@ export function useBetHistory() {
     // Initialize bet history handler
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
-            const handler = new BetHistoryHandler({ gameMessageHandler });
+            const handler = new BetHistoryHandler({ gameMessageHandler, gameId });
             setBetHistoryHandler(handler);
             isInitialized.current = true;
 
@@ -46,7 +46,7 @@ export function useBetHistory() {
             };
         }
         return undefined;
-    }, [gameMessageHandler]);
+    }, [gameMessageHandler, gameId]);
 
     // Action functions
     const requestHistory = (page = 1) => {

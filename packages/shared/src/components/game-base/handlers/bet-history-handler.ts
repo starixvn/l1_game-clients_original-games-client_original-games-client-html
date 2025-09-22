@@ -3,9 +3,11 @@ import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-sto
 import usePFStore from '@shared/stores/pf-store/pf-store';
 import { GameMessageHandler, messageEventType } from "./game-message-handler";
 import { RoundState } from "../type";
+import { BetWinCalculatorRegistry } from "@shared/helpers/bet-history/bet-history-calculator";
 
 export type BetHistoryHandlerProps = {
     gameMessageHandler: GameMessageHandler;
+    gameId?: string;
 };
 
 interface BetResultData {
@@ -21,12 +23,20 @@ export class BetHistoryHandler {
     private lastRoundState: RoundState | null = null;
     private latestOdds: Record<string, number> = {};
     private latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
+    private gameId: string;
 
     private shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
         return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
     }
 
     private calculateBetWin(pendingDetails: any[], resultData: BetResultData): number {
+        // Use game-specific calculator from registry
+        const calculator = BetWinCalculatorRegistry.getCalculator(this.gameId);
+        if (calculator) {
+            return calculator.calculateBetWin(pendingDetails, resultData);
+        }
+
+        // Fallback to generic calculation
         let betwin = 0;
         for (const detail of pendingDetails) {
             const didWin = !!resultData.settlementResult[detail.choice];
@@ -56,17 +66,10 @@ export class BetHistoryHandler {
             appType: 0,
             betwin,
             clientSeed,
-            even: 0,
             name: "",
-            odd: 0,
             rate: 0,
-            red2: 0,
-            red3: 0,
-            red4: 0,
             time: firstBetTime,
             totalAmount,
-            white3: 0,
-            white4: 0,
             result: resultData.result,
             settlementResult: resultData.settlementResult,
             odds: resultData.odds,
@@ -94,6 +97,7 @@ export class BetHistoryHandler {
     }
 
     constructor(private readonly props: BetHistoryHandlerProps) {
+        this.gameId = props.gameId || 'generic';
         this.registerHistoryEvents();
     }
 

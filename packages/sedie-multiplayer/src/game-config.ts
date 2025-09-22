@@ -1,4 +1,5 @@
 import { setGameConfig, type GameConfig } from "@shared/game-config";
+import "./history/sedie-multiplayer-bet-history-calculator"; // Register calculators when config loads
 
 /**
  * SeDie Multiplayer Game Configuration

@@ -87,7 +87,7 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
     );
 };
 
-export const BetHistoryTable = () => {
+export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     const { gameMessageHandler } = useGameContext();
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
@@ -130,7 +130,7 @@ export const BetHistoryTable = () => {
 
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
-            const handler = new BetHistoryHandler({ gameMessageHandler });
+            const handler = new BetHistoryHandler({ gameMessageHandler, gameId });
             setBetHistoryHandler(handler);
             handler.requestHistory(1);
             isInitialized.current = true;
@@ -140,7 +140,7 @@ export const BetHistoryTable = () => {
             };
         }
         return () => {};
-    }, [gameMessageHandler]);
+    }, [gameMessageHandler, gameId]);
 
     // Handle cell click for round column
     const handleCellClick = (columnKey: string, row: BetHistoryDisplayData, index: number) => {
@@ -277,11 +277,11 @@ function renderToggleButton(
     }
 
     return (
-        <div className={`${styles["toggle-button-container"]} py-5`}>
+        <div className={`${styles["toggle-button-container"]}`}>
             {isLoading ? (
                 <BouncingDotsLoader />
             ) : (
-                <button className={`${styles["toggle-button"]} rounded-lg`} onClick={handleToggleExpand} disabled={isLoading}>
+                <button className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`} onClick={handleToggleExpand} disabled={isLoading}>
                     {isExpanded ? t("show_less") : t("show_more")}
                 </button>
             )}

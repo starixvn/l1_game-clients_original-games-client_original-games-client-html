@@ -29,14 +29,14 @@ const BetDetailBase: FC<{
             return [];
         }
         return preprocessedBetLogDetails.map((betLogDetail) => {
-            const { rawTime, amount, choice, odds, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
+            const { rawTime, amount, choice, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
             const { time } = separateDateTime(rawTime);
 
             return {
                 time: time,
                 betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
                 stake: numberWithCommas(amount, 2) ?? 0,
-                win: displayWinAmount(amount, odds, win),
+                win: displayWinAmount(win),
                 isWinningBet: win > 0,
             };
         });

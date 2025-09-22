@@ -659,7 +659,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetHistoryTable() {
-        return <BetHistoryTable />;
+        return <BetHistoryTable gameId={this.props.id?.toString()} />;
     }
 
     renderBetDetailModal() {

@@ -1,4 +1,5 @@
 import { setGameConfig, type GameConfig } from "@shared/game-config";
+import "./history/baccarat-multiplayer-bet-history-calculator"; // Register calculators when config loads
 
 /**
  * Baccarat Multiplayer Game Configuration

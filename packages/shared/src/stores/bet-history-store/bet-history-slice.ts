@@ -6,18 +6,11 @@ export interface BetLog {
     appType: number;
     betwin: number;
     clientSeed: string;
-    even: number;
     name: string;
-    odd: number;
     odds: Record<string, number>;
     rate: number;
-    red2: number;
-    red3: number;
-    red4: number;
     time: string;
     totalAmount: number;
-    white3: number;
-    white4: number;
     phien: number;
     result: any;
     settlementResult: any;
@@ -28,6 +21,8 @@ export interface BetLog {
         time: string;
         choice: string;
     }>;
+    // Game-specific fields - these will vary by game
+    [key: string]: any;
 }
 
 export interface BetHistoryData {

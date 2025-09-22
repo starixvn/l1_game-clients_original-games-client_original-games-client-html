@@ -26,8 +26,16 @@ export const getWinningSubOption = (settlementResult: Record<string, boolean>): 
     return SUB_OPTIONS.find((option) => settlementResult[option]) || "";
 };
 
-const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
-    return isWin ? amount * odds : 0;
+const calculateWin = (isWin: boolean, amount: number, odds: number, choice: string, settlementResult: Record<string, boolean>): number => {
+    // Standard win calculation
+    let winAmount = isWin ? amount * odds : 0;
+
+    // Special case for Baccarat: when tie wins, return player/banker bet amounts
+    if (settlementResult.tie && (choice === 'player' || choice === 'banker')) {
+        winAmount += amount; // Return the original bet amount
+    }
+
+    return winAmount;
 };
 
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundInfo: drawInfo }) => {
@@ -44,13 +52,14 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
             <div className="flex items-center gap-1.5">
                 {winningSubOption ? (
                     <span className="flex items-center gap-1.5">
-                        <span className="text-secondary-text">{translateCommon("result")}</span>
+                        <span className="text-secondary-text">{translateCommon("result")}
                         <Image
                             src={`${basePath}/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
                             alt={`${winningSubOption} result`}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}
                         />
+                        </span>
                     </span>
                 ) : (
                     <span aria-label="no result">—</span>
@@ -61,16 +70,21 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
 };
 
 export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => {
-    const win = calculateWin(drawInfo.settlementResult?.[item.choice], item.amount, drawInfo.odds[item.choice]);
+    const isWin = drawInfo.settlementResult?.[item.choice];
+    const odds = drawInfo.odds?.[item.choice];
 
-    return {
+    const win = calculateWin(isWin, item.amount, odds, item.choice, drawInfo.settlementResult);
+
+    const result = {
         rawTime: item.time,
         amount: item.amount,
         choice: item.choice,
-        odds: drawInfo.odds[item.choice],
+        odds: odds,
         win,
-        hightlight: drawInfo.settlementResult?.[item.choice],
+        hightlight: isWin,
     };
+
+    return result;
 };
 
 export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
@@ -81,16 +95,7 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
 
     return (
         <span className="font-text flex justify-center items-center">
-            {isOddOrEven ? (
-                t(`glossary_${choice}`)
-            ) : (
-                <Image
-                    src={`${basePath}/static/images/sedie-multiplayer/bet-detail/bet-detail-${choice}.svg`}
-                    alt={`${choice} choice`}
-                    width={IMAGE_SIZE}
-                    height={IMAGE_SIZE}
-                />
-            )}
+            {t(`glossary_${choice.toLowerCase()}`)}
         </span>
     );
 };
