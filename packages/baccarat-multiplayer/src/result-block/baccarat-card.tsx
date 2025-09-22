@@ -52,8 +52,8 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
                 if (onCardFlip) {
                     onCardFlip(card, card.accumulatedScore);
                 }
-                // Reset the flag when done
-                flipScheduledRef.current = false;
+                // Keep the flag set to prevent re-flipping this card
+                // Only reset when isShowResult becomes false
             }, delay);
 
             cleanup = () => clearTimeout(flipTimer);
@@ -63,7 +63,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
         }
 
         return cleanup;
-    }, [isShowResult, card, onCardFlip, playResultAnimation]);
+    }, [isShowResult, card.order, onCardFlip, playResultAnimation]); // Changed card to card.order to prevent re-triggering on card data changes
 
     const cardOrderClass = styles[`card${card.order}`];
     const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${className || ''}`;

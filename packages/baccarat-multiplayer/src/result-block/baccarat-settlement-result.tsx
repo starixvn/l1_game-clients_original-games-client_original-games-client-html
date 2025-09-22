@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "@shared/react-contexts";
+import { useTranslator } from "@shared/react-hooks";
 import { RoundState } from "@shared/components/game-base/type";
 import PlayerBankerResult from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
@@ -56,6 +57,8 @@ const renderCardDisplay = (
 
 const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ className }) => {
     const { durations } = useGameContext();
+    const { tolgeeNamespace } = useGameContext();
+    const { t } = useTranslator([tolgeeNamespace || ""]);
     const { roundState } = useGameStateContext();
     const gameState = useGameStateContext();
     const last = gameState?.roundData?.last;
@@ -233,10 +236,10 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                         {labels.map((label) => (
                             <div
                                 key={label}
-                                className={`text-[rgba(255,255,255,0.16)] text-xl font-[500] uppercase 
+                                className={`text-[rgba(255,255,255,0.16)] text-xl font-[500] uppercase
                                     ${label === 'player' ? 'text-right' : 'text-left'}`}
                             >
-                                {label}
+                                {t(`glossary_${label}`)}
                             </div>
                         ))}
                     </div>

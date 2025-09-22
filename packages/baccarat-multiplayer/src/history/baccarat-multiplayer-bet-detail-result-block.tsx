@@ -25,8 +25,8 @@ const CardDisplay: FC<{ card: BaccaratCard | null }> = ({ card }) => {
     };
 
     return (
-        <div className="w-8 h-12">
-            <Card result={cardResult} customClassName="small" />
+        <div className="w-[26px] h-[34px]">
+            <Card result={cardResult} />
         </div>
     );
 };
@@ -45,6 +45,8 @@ const calculateWin = (isWin: boolean, amount: number, odds: number, choice: stri
 
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoBaccaratMultiplayer }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
+    const { tolgeeNamespace } = useGameContext();
+    const { t } = useTranslator([tolgeeNamespace || ""]);
     const { roundId, result } = drawInfo;
 
     // Cast result to BaccaratResult since we're only handling baccarat cards
@@ -55,28 +57,26 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoBaccaratMultiplayer 
             <div className="flex items-center gap-1.5 font-medium">
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{roundId}</span>
             </div>
-            <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                    <span className="text-secondary-text text-xs">Player:</span>
-                    <div className="flex items-center gap-0.5">
+            <div className="flex items-start gap-3">
+                <div className="flex flex-col items-center gap-1">
+                    <div className="text-xs text-[#0990FF] font-bold uppercase">{t('glossary_player')}</div>
+                    <div className="flex items-center justify-center w-[86px] gap-1">
                         <CardDisplay card={baccaratResult.player.card1} />
                         <CardDisplay card={baccaratResult.player.card2} />
                         {baccaratResult.player.card3 && (
                             <CardDisplay card={baccaratResult.player.card3} />
                         )}
                     </div>
-                    <span className="text-xs text-primary">({baccaratResult.player.score})</span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <span className="text-secondary-text text-xs">Banker:</span>
-                    <div className="flex items-center gap-0.5">
+                <div className="flex flex-col items-center gap-1">
+                    <div className="text-xs text-[#CC261F] font-bold uppercase">{t('glossary_banker')}</div>
+                    <div className="flex items-center justify-center w-[86px] gap-1">
                         <CardDisplay card={baccaratResult.banker.card1} />
                         <CardDisplay card={baccaratResult.banker.card2} />
                         {baccaratResult.banker.card3 && (
                             <CardDisplay card={baccaratResult.banker.card3} />
                         )}
                     </div>
-                    <span className="text-xs text-primary">({baccaratResult.banker.score})</span>
                 </div>
             </div>
         </div>
