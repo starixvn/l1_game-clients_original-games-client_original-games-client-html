@@ -22,6 +22,12 @@ export { default as GameTimeout } from './components/page-components/error/timeo
 // Game registry template
 export { registerCurrentGame } from './game-registry/game-registry-template';
 
+// Games component
+export { Games, type GameConfig, type GamesProps } from './components/game-components/games';
+
 // API endpoints
 export { default as healthApi } from './api/health';
 // Note: preloadImagesApi is server-side only, import directly when needed
+
+// Utilities
+export { default as imageLoader } from './image-loader';
