@@ -33,9 +33,10 @@ COPY packages/sedie-multiplayer/next.config.js packages/sedie-multiplayer/next.c
 COPY packages/sedie-multiplayer/tsconfig.json packages/sedie-multiplayer/tsconfig.json
 COPY packages/sedie-multiplayer/tailwind.config.js packages/sedie-multiplayer/tailwind.config.js
 COPY packages/sedie-multiplayer/postcss.config.js packages/sedie-multiplayer/postcss.config.js
-COPY packages/sedie-multiplayer/sentry.client.config.js packages/sedie-multiplayer/sentry.client.config.js
-COPY packages/sedie-multiplayer/sentry.edge.config.js packages/sedie-multiplayer/sentry.edge.config.js
-COPY packages/sedie-multiplayer/sentry.server.config.js packages/sedie-multiplayer/sentry.server.config.js
+# Copy sentry config files from shared package
+COPY packages/shared/src/sentry-config/sentry.client.config.js packages/sedie-multiplayer/sentry.client.config.js
+COPY packages/shared/src/sentry-config/sentry.edge.config.js packages/sedie-multiplayer/sentry.edge.config.js
+COPY packages/shared/src/sentry-config/sentry.server.config.js packages/sedie-multiplayer/sentry.server.config.js
 COPY packages/sedie-multiplayer/custom-server.js packages/sedie-multiplayer/custom-server.js
 COPY packages/sedie-multiplayer/configs.json packages/sedie-multiplayer/configs.json
 COPY packages/sedie-multiplayer/game-settings.json packages/sedie-multiplayer/game-settings.json

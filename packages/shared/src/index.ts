@@ -31,3 +31,5 @@ export { default as healthApi } from './api/health';
 
 // Utilities
 export { default as imageLoader } from './image-loader';
+
+// Sentry configurations are loaded automatically by Next.js

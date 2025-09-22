@@ -33,9 +33,10 @@ COPY packages/baccarat-multiplayer/next.config.js packages/baccarat-multiplayer/
 COPY packages/baccarat-multiplayer/tsconfig.json packages/baccarat-multiplayer/tsconfig.json
 COPY packages/baccarat-multiplayer/tailwind.config.js packages/baccarat-multiplayer/tailwind.config.js
 COPY packages/baccarat-multiplayer/postcss.config.js packages/baccarat-multiplayer/postcss.config.js
-COPY packages/baccarat-multiplayer/sentry.client.config.js packages/baccarat-multiplayer/sentry.client.config.js
-COPY packages/baccarat-multiplayer/sentry.edge.config.js packages/baccarat-multiplayer/sentry.edge.config.js
-COPY packages/baccarat-multiplayer/sentry.server.config.js packages/baccarat-multiplayer/sentry.server.config.js
+# Copy sentry config files from shared package
+COPY packages/shared/src/sentry-config/sentry.client.config.js packages/baccarat-multiplayer/sentry.client.config.js
+COPY packages/shared/src/sentry-config/sentry.edge.config.js packages/baccarat-multiplayer/sentry.edge.config.js
+COPY packages/shared/src/sentry-config/sentry.server.config.js packages/baccarat-multiplayer/sentry.server.config.js
 COPY packages/baccarat-multiplayer/custom-server.js packages/baccarat-multiplayer/custom-server.js
 COPY packages/baccarat-multiplayer/configs.json packages/baccarat-multiplayer/configs.json
 COPY packages/baccarat-multiplayer/game-settings.json packages/baccarat-multiplayer/game-settings.json
