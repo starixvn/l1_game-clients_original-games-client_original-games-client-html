@@ -181,8 +181,10 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const randomInput = screen.getByDisplayValue("5678");
-            expect(randomInput).toBeInTheDocument();
+            await waitFor(() => {
+                const randomInput = screen.getByDisplayValue("5678");
+                expect(randomInput).toBeInTheDocument();
+            });
         });
 
         it("should switch to manual mode when manual radio is clicked", async () => {
@@ -192,16 +194,16 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const manualRadio = screen.getByLabelText(/pf_client_seed_para_3/i);
-            const manualInput = screen.getByDisplayValue("");
+            await waitFor(() => {
+                const manualRadio = screen.getByLabelText(/pf_client_seed_para_3/i);
+                const manualInput = screen.getByDisplayValue("");
 
-            expect(manualInput).toBeDisabled();
+                expect(manualInput).toBeDisabled();
 
-            await act(async () => {
                 fireEvent.click(manualRadio);
-            });
 
-            expect(manualInput).not.toBeDisabled();
+                expect(manualInput).not.toBeDisabled();
+            });
         });
 
         it("should switch back to random mode when random radio is clicked", async () => {
@@ -219,16 +221,16 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const randomRadio = screen.getByLabelText(/pf_client_seed_para_4/i);
-            const manualInput = screen.getByDisplayValue("");
+            await waitFor(() => {
+                const randomRadio = screen.getByLabelText(/pf_client_seed_para_4/i);
+                const manualInput = screen.getByDisplayValue("");
 
-            expect(manualInput).not.toBeDisabled();
+                expect(manualInput).not.toBeDisabled();
 
-            await act(async () => {
                 fireEvent.click(randomRadio);
-            });
 
-            expect(manualInput).toBeDisabled();
+                expect(manualInput).toBeDisabled();
+            });
         });
 
         it("should handle manual client seed input changes", async () => {
@@ -246,13 +248,13 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const manualInput = screen.getByDisplayValue("");
+            await waitFor(() => {
+                const manualInput = screen.getByDisplayValue("");
 
-            await act(async () => {
                 fireEvent.change(manualInput, { target: { value: "1234" } });
-            });
 
-            expect(manualInput).toHaveValue("1234");
+                expect(manualInput).toHaveValue("1234");
+            });
         });
 
         it("should validate manual input to only allow numbers and max 4 digits", async () => {
@@ -270,21 +272,19 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const manualInput = screen.getByDisplayValue("");
+            await waitFor(() => {
+                const manualInput = screen.getByDisplayValue("");
 
-            // Test with non-numeric input
-            await act(async () => {
+                // Test with non-numeric input
                 fireEvent.change(manualInput, { target: { value: "abc" } });
-            });
 
-            expect(manualInput).toHaveValue("abc");
+                expect(manualInput).toHaveValue("abc");
 
-            // Test with more than 4 digits
-            await act(async () => {
+                // Test with more than 4 digits
                 fireEvent.change(manualInput, { target: { value: "12345" } });
-            });
 
-            expect(manualInput).toHaveValue("12345");
+                expect(manualInput).toHaveValue("12345");
+            });
         });
 
         it("should set random seed value when manual input is blurred and empty", async () => {
@@ -302,13 +302,13 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const manualInput = screen.getByDisplayValue("");
+            await waitFor(() => {
+                const manualInput = screen.getByDisplayValue("");
 
-            await act(async () => {
                 fireEvent.blur(manualInput);
-            });
 
-            expect(manualInput).toHaveValue("5678");
+                expect(manualInput).toHaveValue("5678");
+            });
         });
     });
 
@@ -401,15 +401,20 @@ describe("PFSettingModal", () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            const overlay = screen.getByTestId("modal-content").querySelector(".form-overlay");
-            expect(overlay).toBeInTheDocument();
+            await waitFor(() => {
+                const overlay = screen.getByTestId("modal-content").querySelector(".form-overlay");
+                expect(overlay).toBeInTheDocument();
+            });
         });
     });
 
     describe("Round ID Changes", () => {
         it("should fetch PF info when round ID changes", async () => {
             const { rerender } = render(<PFSettingModal />);
-            jest.advanceTimersByTime(TIME_OUT);
+            
+            await act(async () => {
+                jest.advanceTimersByTime(5000);
+            });
 
             // Change round ID
             mockUseGameStateContext.mockReturnValue({
