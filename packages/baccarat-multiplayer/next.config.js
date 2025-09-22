@@ -38,7 +38,7 @@ const nextConfig = {
     images: {
         // Use custom image loader to handle basePath properly for reverse proxy environments
         loader: "custom",
-        loaderFile: "./src/image-loader.js",
+        loaderFile: "./packages/baccarat-multiplayer/src/image-loader.js",
         // Disable image optimization since static files are served directly and work fine
         unoptimized: true,
         // Allow images from any domain for flexibility

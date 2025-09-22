@@ -82,6 +82,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/pac
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/next.config.js ./next.config.js
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/game-settings.json ./game-settings.json
 COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/configs.json ./configs.json
+COPY --from=builder --chown=nextjs:nodejs /app/packages/baccarat-multiplayer/src/image-loader.js ./packages/baccarat-multiplayer/src/image-loader.js
 
 # Ensure proper permissions for the .next directory
 RUN chown -R nextjs:nodejs .next
