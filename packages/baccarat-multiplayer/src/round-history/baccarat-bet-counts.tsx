@@ -12,10 +12,10 @@ interface BetCountItemProps {
 
 interface BaccaratBetCountsProps {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
+    onOpenGuide?: () => void;
 }
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
 
 // Component for individual bet count item
 const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
@@ -48,7 +48,7 @@ const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
     );
 };
 
-const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHistory }) => {
+const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHistory, onOpenGuide }) => {
     const betCounts = calculateBaccaratBetCounts(roundHistory);
 
     const countItems = [
@@ -58,6 +58,10 @@ const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHis
         { choice: "playerPair", count: betCounts.playerPair },
         { choice: "bankerPair", count: betCounts.bankerPair },
     ];
+
+    const handleQuestionMarkClick = () => {
+        onOpenGuide?.();
+    };
 
     return (
         <div className="flex gap-1 px-1 py-2 items-center">
@@ -69,7 +73,8 @@ const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHis
                 alt="scoreboard-question-mark"
                 width={16}
                 height={16}
-                className="w-4 h-4 cursor-pointer"
+                className="w-4 h-4 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={handleQuestionMarkClick}
             />
         </div>
     );
