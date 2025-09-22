@@ -1,29 +1,34 @@
 import { DrawInfo } from "@shared/components/game-base/type";
+import { BaccaratCard, BaccaratResult } from "../result-block/types";
 import { useGameContext } from "@shared/react-contexts";
 import { useCommonTranslate, useTranslator } from "@shared/react-hooks";
-import Image from "next/image";
 import { FC } from "react";
-import { BaccaratBetOptions } from "../baccarat-multiplayer-constants";
+import Card from "../shared/components/card";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
-export interface RoundInfoSeDie extends DrawInfo {
+export interface RoundInfoBaccaratMultiplayer extends DrawInfo {
     roundId: number;
-    result:
-    | {
-        balls?: Array<number>;
-    }
-    | Record<string, boolean>;
+    result: BaccaratResult;
     odds: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
 
-const SUB_OPTIONS = [BaccaratBetOptions.BANKER, BaccaratBetOptions.TIE, BaccaratBetOptions.ANY_PAIR] as const;
+// Component to display a single card
+const CardDisplay: FC<{ card: BaccaratCard | null }> = ({ card }) => {
+    if (!card) {
+        return <span className="text-secondary-text text-xs">—</span>;
+    }
 
-const IMAGE_SIZE = 30;
+    // Convert BaccaratCard to ObjectResult format expected by Card component
+    const cardResult = {
+        card: card.rank,
+        type: card.suit
+    };
 
-export const getWinningSubOption = (settlementResult: Record<string, boolean>): string => {
-    return SUB_OPTIONS.find((option) => settlementResult[option]) || "";
+    return (
+        <div className="w-8 h-12">
+            <Card result={cardResult} customClassName="small" />
+        </div>
+    );
 };
 
 const calculateWin = (isWin: boolean, amount: number, odds: number, choice: string, settlementResult: Record<string, boolean>): number => {
@@ -38,44 +43,53 @@ const calculateWin = (isWin: boolean, amount: number, odds: number, choice: stri
     return winAmount;
 };
 
-export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundInfo: drawInfo }) => {
+export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoBaccaratMultiplayer }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { roundId, settlementResult } = drawInfo;
+    const { roundId, result } = drawInfo;
 
-    const winningSubOption = getWinningSubOption(settlementResult);
+    // Cast result to BaccaratResult since we're only handling baccarat cards
+    const baccaratResult = result as BaccaratResult;
 
     return (
         <div className="flex justify-between text-secondary-text text-sm mt-2">
             <div className="flex items-center gap-1.5 font-medium">
                 {translateCommon("round").capitalizeFirstLetter()}: <span>{roundId}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-                {winningSubOption ? (
-                    <span className="flex items-center gap-1.5">
-                        <span className="text-secondary-text">{translateCommon("result")}
-                        <Image
-                            src={`${basePath}/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
-                            alt={`${winningSubOption} result`}
-                            width={IMAGE_SIZE}
-                            height={IMAGE_SIZE}
-                        />
-                        </span>
-                    </span>
-                ) : (
-                    <span aria-label="no result">—</span>
-                )}
+            <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                    <span className="text-secondary-text text-xs">Player:</span>
+                    <div className="flex items-center gap-0.5">
+                        <CardDisplay card={baccaratResult.player.card1} />
+                        <CardDisplay card={baccaratResult.player.card2} />
+                        {baccaratResult.player.card3 && (
+                            <CardDisplay card={baccaratResult.player.card3} />
+                        )}
+                    </div>
+                    <span className="text-xs text-primary">({baccaratResult.player.score})</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <span className="text-secondary-text text-xs">Banker:</span>
+                    <div className="flex items-center gap-0.5">
+                        <CardDisplay card={baccaratResult.banker.card1} />
+                        <CardDisplay card={baccaratResult.banker.card2} />
+                        {baccaratResult.banker.card3 && (
+                            <CardDisplay card={baccaratResult.banker.card3} />
+                        )}
+                    </div>
+                    <span className="text-xs text-primary">({baccaratResult.banker.score})</span>
+                </div>
             </div>
         </div>
     );
 };
 
-export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => {
+export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoBaccaratMultiplayer) => {
     const isWin = drawInfo.settlementResult?.[item.choice];
     const odds = drawInfo.odds?.[item.choice];
 
     const win = calculateWin(isWin, item.amount, odds, item.choice, drawInfo.settlementResult);
 
-    const result = {
+    return {
         rawTime: item.time,
         amount: item.amount,
         choice: item.choice,
@@ -83,15 +97,11 @@ export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoSeDie) => 
         win,
         hightlight: isWin,
     };
-
-    return result;
 };
 
 export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
     const { tolgeeNamespace } = useGameContext();
     const { t } = useTranslator([tolgeeNamespace || ""]);
-
-    const isOddOrEven = choice === BaccaratBetOptions.BANKER || choice === BaccaratBetOptions.PLAYER;
 
     return (
         <span className="font-text flex justify-center items-center">
