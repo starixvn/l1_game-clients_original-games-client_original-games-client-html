@@ -15,6 +15,9 @@ const BankerPairDot = () => (
     <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full -top-[0.6px] -left-[0.6px] z-[1]" />
 );
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+
 const BeadBoardIcon: React.FC<BeadBoardIconComponentProps> = ({ choice, hasPlayerPair = false, hasBankerPair = false }) => {
     if (!choice) {
         return null;
@@ -23,13 +26,13 @@ const BeadBoardIcon: React.FC<BeadBoardIconComponentProps> = ({ choice, hasPlaye
     const getImagePath = (choice: string) => {
         switch (choice.toLowerCase()) {
             case BaccaratBetOptions.PLAYER:
-                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
             case BaccaratBetOptions.BANKER:
-                return "/static/images/baccarat/scoreboard/bead-road/banker.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
             case BaccaratBetOptions.TIE:
-                return "/static/images/baccarat/scoreboard/bead-road/tie.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
             default:
-                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
         }
     };
 

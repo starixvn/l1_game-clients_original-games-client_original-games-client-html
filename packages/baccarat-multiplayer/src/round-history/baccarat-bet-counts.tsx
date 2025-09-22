@@ -14,20 +14,23 @@ interface BaccaratBetCountsProps {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
 }
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+
 // Component for individual bet count item
 const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
     const getChoiceIcon = (choice: string) => {
         switch (choice) {
             case BaccaratBetOptions.PLAYER:
-                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
             case BaccaratBetOptions.BANKER:
-                return "/static/images/baccarat/scoreboard/bead-road/banker.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
             case BaccaratBetOptions.TIE:
-                return "/static/images/baccarat/scoreboard/bead-road/tie.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
             case "playerPair":
-                return "/static/images/baccarat/scoreboard/bead-road/player-pair.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player-pair.svg`;
             case "bankerPair":
-                return "/static/images/baccarat/scoreboard/bead-road/banker-pair.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker-pair.svg`;
             default:
                 return "";
         }
@@ -62,7 +65,7 @@ const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHis
                 <BetCountItem key={item.choice} choice={item.choice} count={item.count} />
             ))}
             <Image
-                src={"/static/images/icons/scoreboard-question-mark.svg"}
+                src={`${basePath}/static/images/icons/scoreboard-question-mark.svg`}
                 alt="scoreboard-question-mark"
                 width={16}
                 height={16}

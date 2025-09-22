@@ -2,6 +2,7 @@ import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplaye
 import Image from "next/image";
 
 const PairDot = () => <div className="absolute w-[6px] h-[6px] bg-white rounded-full -top-[2.5px] z-[1]" />;
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 type Props = {
     result: {
@@ -44,11 +45,11 @@ const RoundHistoryItem = ({ variant, hasPair }: RoundHistoryItemProps) => {
     const getImagePath = () => {
         switch (variant) {
             case "player":
-                return "/static/images/baccarat/scoreboard/bead-road/player.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
             case "banker":
-                return "/static/images/baccarat/scoreboard/bead-road/banker.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
             case "tie":
-                return "/static/images/baccarat/scoreboard/bead-road/tie.svg";
+                return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
             default:
                 return "";
         }
