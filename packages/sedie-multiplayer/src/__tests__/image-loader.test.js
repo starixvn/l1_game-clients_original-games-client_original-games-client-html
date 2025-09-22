@@ -27,7 +27,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo.png");
@@ -39,7 +39,7 @@ describe("imageLoader", () => {
             const params = { src: "/game-148/static/images/logo.png", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert - src is returned as-is since it already has basePath
             expect(result).toBe("/game-148/static/images/logo.png");
@@ -51,7 +51,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo.png");
@@ -65,7 +65,7 @@ describe("imageLoader", () => {
             const params = { src: "https://cdn.example.com/image.jpg", width: 500, quality: 90 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert - external URLs are returned as-is
             expect(result).toBe("https://cdn.example.com/image.jpg");
@@ -77,7 +77,7 @@ describe("imageLoader", () => {
             const params = { src: "http://cdn.example.com/image.jpg", width: 400, quality: 85 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert - external URLs are returned as-is
             expect(result).toBe("http://cdn.example.com/image.jpg");
@@ -91,7 +91,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/static/images/logo.png");
@@ -103,7 +103,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/static/images/logo.png");
@@ -115,7 +115,7 @@ describe("imageLoader", () => {
             const params = { src: "/logo.png", width: 200, quality: 70 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/logo.png");
@@ -127,7 +127,7 @@ describe("imageLoader", () => {
             const params = { src: "static/images/logo.png", width: 250, quality: 75 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148static/images/logo.png");
@@ -141,7 +141,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300, quality: undefined };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo.png");
@@ -153,7 +153,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png", width: 300, quality: null };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo.png");
@@ -167,7 +167,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo with spaces.png", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo with spaces.png");
@@ -179,7 +179,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/logo.png?v=1.2.3", width: 300, quality: 80 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert
             expect(result).toBe("/game-148/static/images/logo.png?v=1.2.3");
@@ -193,7 +193,7 @@ describe("imageLoader", () => {
             const params = { src: "/static/images/game-icon.png", width: 100, quality: 90 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert - URL should start with basePath to ensure reverse proxy handles it
             expect(result).toBe("/game-148/static/images/game-icon.png");
@@ -205,7 +205,7 @@ describe("imageLoader", () => {
             const params = { src: "/images/sprite.png", width: 64, quality: 85 };
 
             // Act
-            const result = imageLoader.default(params);
+            const result = imageLoader(params);
 
             // Assert - The generated URL should include the basePath prefix
             expect(result).toBe("/game-148/images/sprite.png");
