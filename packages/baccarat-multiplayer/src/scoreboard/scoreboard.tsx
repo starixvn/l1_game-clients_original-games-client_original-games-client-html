@@ -10,6 +10,7 @@ import {
 import Styles from "./scoreboard.module.scss";
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import { cn } from "@shared/utils";
+import { hasPlayerPair, hasBankerPair, hasNatural } from './utils';
 
 export type ScoreboardComponentProps = {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
@@ -34,7 +35,13 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
 
     renderBigRoad(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
-        const settlements = [...roundHistory].map((round) => round.settlementResult);
+
+        const settlements = [...roundHistory].map((round) => ({
+            ...round.settlementResult,
+            natural: round.result ? hasNatural(round.result) : false,
+            playerPair: round.result ? hasPlayerPair(round.result.player) : false,
+            bankerPair: round.result ? hasBankerPair(round.result.banker) : false,
+        }));
 
         if (isShowBlink) {
             BaccaratBigRoadConverter.addBlinkNode(settlements);

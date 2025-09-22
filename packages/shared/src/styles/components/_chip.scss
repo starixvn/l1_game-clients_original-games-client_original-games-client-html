@@ -12,7 +12,7 @@
     border-radius: 50%;
     outline: none;
 
-    @media (width >= 480px) {
+    @media (width >= 48rem) {
         grid-template-columns: 48px;
         grid-template-rows: 48px;
         width: 48px;
@@ -35,8 +35,8 @@
         color: #fff;
         z-index: 1;
         margin-top: 1px;
-        @media (width >= 480px) {
-            font-size: 12.5px;
+        @media (width >= 48rem) {
+            font-size: 1.25rem;
         }
     }
 }

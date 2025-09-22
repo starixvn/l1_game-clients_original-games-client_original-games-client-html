@@ -83,6 +83,10 @@ export type BaccaratSettlementResult = {
     banker: boolean;
     tie: boolean;
     anyPair: boolean;
+    playerPair?: boolean;
+    bankerPair?: boolean;
+    natural?: boolean;
+    isBlink?: boolean;
 };
 
 export type BaccaratResult = {

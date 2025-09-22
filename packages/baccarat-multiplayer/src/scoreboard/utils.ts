@@ -12,9 +12,14 @@ export const hasPlayerPair = (playerCards: BaccaratResult['player']): boolean =>
 // Helper function to detect banker pair
 export const hasBankerPair = (bankerCards: BaccaratResult['banker']): boolean => {
     const cards = [bankerCards.card1, bankerCards.card2, bankerCards.card3].filter(Boolean);
-    return cards.some((card1, i) => 
+    return cards.some((card1, i) =>
         cards.some((card2, j) => i !== j && card1?.rank === card2?.rank)
     );
+};
+
+export const hasNatural = (result: BaccaratResult): boolean => {
+    return result.player.score === 8 || result.player.score === 9 ||
+           result.banker.score === 8 || result.banker.score === 9;
 };
 
 // Types for statistics
