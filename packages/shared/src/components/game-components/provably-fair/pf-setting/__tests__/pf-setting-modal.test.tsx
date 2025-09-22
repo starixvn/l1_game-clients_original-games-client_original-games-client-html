@@ -176,7 +176,7 @@ describe("PFSettingModal", () => {
     describe("Client Seed Functionality", () => {
         it("should display random client seed by default", async () => {
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -189,7 +189,7 @@ describe("PFSettingModal", () => {
 
         it("should switch to manual mode when manual radio is clicked", async () => {
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -199,9 +199,16 @@ describe("PFSettingModal", () => {
                 const manualInput = screen.getByDisplayValue("");
 
                 expect(manualInput).toBeDisabled();
+            });
 
+            await act(async () => {
+                const manualRadio = screen.getByLabelText(/pf_client_seed_para_3/i);
                 fireEvent.click(manualRadio);
+            });
 
+            await waitFor(() => {
+                const manualInput = screen.getByTestId("manual-client-seed");
+                expect(manualInput).toHaveValue("5678");
                 expect(manualInput).not.toBeDisabled();
             });
         });
@@ -216,7 +223,7 @@ describe("PFSettingModal", () => {
             });
 
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -226,9 +233,15 @@ describe("PFSettingModal", () => {
                 const manualInput = screen.getByDisplayValue("");
 
                 expect(manualInput).not.toBeDisabled();
+            });
 
+            await act(async () => {
+                const randomRadio = screen.getByLabelText(/pf_client_seed_para_4/i);
                 fireEvent.click(randomRadio);
+            });
 
+            await waitFor(() => {
+                const manualInput = screen.getByDisplayValue("");
                 expect(manualInput).toBeDisabled();
             });
         });
@@ -243,21 +256,27 @@ describe("PFSettingModal", () => {
             });
 
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
             await waitFor(() => {
                 const manualInput = screen.getByDisplayValue("");
+            });
 
+            await act(async () => {
+                const manualInput = screen.getByDisplayValue("");
                 fireEvent.change(manualInput, { target: { value: "1234" } });
+            });
 
+            await waitFor(() => {
+                const manualInput = screen.getByDisplayValue("1234");
                 expect(manualInput).toHaveValue("1234");
             });
         });
 
-        it("should validate manual input to only allow numbers and max 4 digits", async () => {
+        it("should call updatePFSetting when manual input changes", async () => {
             mockUsePFStore.mockReturnValue({
                 ...defaultPFStoreState,
                 pfClientSeedSetting: {
@@ -267,27 +286,31 @@ describe("PFSettingModal", () => {
             });
 
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
+            // Find the manual input and change its value
+            const manualInput = screen.getByTestId("manual-client-seed");
+
+            await act(async () => {
+                fireEvent.change(manualInput, { target: { value: "1234" } });
+            });
+
+            // Check that broadcastGameEvent was called with the new value
             await waitFor(() => {
-                const manualInput = screen.getByDisplayValue("");
-
-                // Test with non-numeric input
-                fireEvent.change(manualInput, { target: { value: "abc" } });
-
-                expect(manualInput).toHaveValue("abc");
-
-                // Test with more than 4 digits
-                fireEvent.change(manualInput, { target: { value: "12345" } });
-
-                expect(manualInput).toHaveValue("12345");
+                expect(mockGameMessageHandler.broadcastGameEvent).toHaveBeenCalledWith({
+                    [messageEventType.SAVE_PF_SETTING]: {
+                        pfClientSeedSetting: {
+                            manualClientSeed: "1234",
+                        },
+                    },
+                });
             });
         });
 
-        it("should set random seed value when manual input is blurred and empty", async () => {
+        it("should call updatePFSetting with random seed when manual input is blurred and empty", async () => {
             mockUsePFStore.mockReturnValue({
                 ...defaultPFStoreState,
                 pfClientSeedSetting: {
@@ -297,17 +320,27 @@ describe("PFSettingModal", () => {
             });
 
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            await waitFor(() => {
-                const manualInput = screen.getByDisplayValue("");
+            // Find the manual input and blur it when empty
+            const manualInput = screen.getByTestId("manual-client-seed");
 
+            await act(async () => {
                 fireEvent.blur(manualInput);
+            });
 
-                expect(manualInput).toHaveValue("5678");
+            // Check that broadcastGameEvent was called with the random seed value
+            await waitFor(() => {
+                expect(mockGameMessageHandler.broadcastGameEvent).toHaveBeenCalledWith({
+                    [messageEventType.SAVE_PF_SETTING]: {
+                        pfClientSeedSetting: {
+                            manualClientSeed: "5678",
+                        },
+                    },
+                });
             });
         });
     });
@@ -396,7 +429,7 @@ describe("PFSettingModal", () => {
             });
 
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -411,7 +444,7 @@ describe("PFSettingModal", () => {
     describe("Round ID Changes", () => {
         it("should fetch PF info when round ID changes", async () => {
             const { rerender } = render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -421,7 +454,9 @@ describe("PFSettingModal", () => {
                 roundId: "test-round-456",
             });
 
-            rerender(<PFSettingModal />);
+            await act(async () => {
+                rerender(<PFSettingModal />);
+            });
 
             await waitFor(() => {
                 expect(mockGameMessageHandler.broadcastGameEvent).toHaveBeenCalledWith({
@@ -437,7 +472,7 @@ describe("PFSettingModal", () => {
     describe("Server Seed Updates", () => {
         it("should handle server seed updates from PF publish message", async () => {
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -450,7 +485,7 @@ describe("PFSettingModal", () => {
 
             const mockServerSeed = "new-server-seed";
             if (pfHandler) {
-                await act(async () => {
+                act(() => {
                     pfHandler({ pf: { serverSeedHash: mockServerSeed } });
                 });
             }
@@ -460,7 +495,7 @@ describe("PFSettingModal", () => {
 
         it("should handle server seed updates from PF result message", async () => {
             render(<PFSettingModal />);
-            
+
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
@@ -473,7 +508,7 @@ describe("PFSettingModal", () => {
 
             const mockServerSeed = "result-server-seed";
             if (pfResultHandler) {
-                await act(async () => {
+                act(() => {
                     pfResultHandler({ roundPFResult: { serverSeedHash: mockServerSeed } });
                 });
             }

@@ -24,14 +24,26 @@
         ],
         "baseUrl": ".",
         "paths": {
+            "@/*": [
+                "packages/baccarat-multiplayer/src/*"
+            ],
+            "@shared": [
+                "packages/shared/src"
+            ],
+            "@shared/*": [
+                "packages/shared/src/*"
+            ],
             "@sedie-multiplayer": [
                 "packages/sedie-multiplayer/src"
             ],
             "@sedie-multiplayer/*": [
                 "packages/sedie-multiplayer/src/*"
             ],
-            "@shared/*": [
-                "packages/shared/src/*"
+            "@baccarat-multiplayer": [
+                "packages/baccarat-multiplayer/src"
+            ],
+            "@baccarat-multiplayer/*": [
+                "packages/baccarat-multiplayer/src/*"
             ]
         }
     },
@@ -42,11 +54,13 @@
         "**/*.js",
         "jest.config.ts",
         "packages/sedie-multiplayer/src/**/*",
+        "packages/baccarat-multiplayer/src/**/*",
         "packages/shared/src/**/*"
     ],
     "exclude": [
         "node_modules",
         "packages/sedie-multiplayer/dist",
+        "packages/baccarat-multiplayer/dist",
         "packages/shared/dist"
     ]
 }

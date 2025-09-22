@@ -1,12 +1,84 @@
 const { DevTools, Tolgee } = require("@tolgee/react");
 const fs = require("fs");
 const path = require("path");
-const gameSettings = require("../../sedie-multiplayer/game-settings.json");
+
+// Function to dynamically discover and load all game configurations
+const loadAllGameConfigs = () => {
+    const packagesDir = path.resolve(__dirname, "../../");
+    const gameConfigs: Array<{ gameSettings: any; outputPath: string; gameId: number }> = [];
+
+    try {
+        // Read all directories in packages/
+        const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name)
+            .filter(name => name !== "shared"); // Skip shared package
+
+        for (const packageName of packageDirs) {
+            const gameSettingsPath = path.join(packagesDir, packageName, "game-settings.json");
+            const publicDir = path.join(packagesDir, packageName, "public");
+
+            // Check if game-settings.json exists
+            if (fs.existsSync(gameSettingsPath)) {
+                try {
+                    const gameSettings = require(gameSettingsPath);
+
+                    // Extract the first game configuration (assuming single game per package)
+                    const gameIds = Object.keys(gameSettings);
+                    if (gameIds.length > 0) {
+                        const gameId = parseInt(gameIds[0]);
+                        gameConfigs.push({
+                            gameSettings: gameSettings,
+                            outputPath: path.join(publicDir, "i18n/"),
+                            gameId
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`[TolgeeGenerator] Failed to load game settings for ${packageName}:`, error.message);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("[TolgeeGenerator] Error discovering game packages:", error.message);
+    }
+
+    return gameConfigs;
+};
+
+// Load all available game configurations
+const allGameConfigs = loadAllGameConfigs();
+
+// Filter for current game if NEXT_PUBLIC_DEFAULT_GAME_ID is specified
+const currentGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+let gameConfigsToProcess = allGameConfigs;
+
+if (currentGameId) {
+    const targetGameId = parseInt(currentGameId);
+    gameConfigsToProcess = allGameConfigs.filter(config => config.gameId === targetGameId);
+
+    if (gameConfigsToProcess.length === 0) {
+        console.warn(`[TolgeeGenerator] No game configuration found for game ID ${currentGameId}, processing all games`);
+        gameConfigsToProcess = allGameConfigs;
+    }
+}
+
+// Collect all unique namespaces from all games
+const allNamespaces = new Set<string>();
+gameConfigsToProcess.forEach(config => {
+    Object.values(config.gameSettings).forEach((gameSetting: any) => {
+        if (gameSetting.tolgeeNamespace) {
+            allNamespaces.add(gameSetting.tolgeeNamespace);
+        }
+    });
+});
+
+// Always include Common and SabaNumber
+const namespaces = ["SabaNumber", "Common", ...Array.from(allNamespaces)].filter((value, index, arr) => arr.indexOf(value) === index);
 
 console.log("[TolgeeGenerator] Tolgee generator starting");
 
 // Standalone locales definition
-const locales = { 
+const locales = {
     en: "en",
     vi: "vi",
     th: "th",
@@ -18,7 +90,7 @@ const locales = {
     bn_bd: "bn_bd",
     ko: "ko",
     pt_br: "pt_br",
- };
+};
 
 function writeFile(fileName: string, content: string, extension = "json") {
     console.log("[TolgeeGenerator] writeFile called for:", fileName);
@@ -36,18 +108,8 @@ function writeFile(fileName: string, content: string, extension = "json") {
     console.log("[TolgeeGenerator] file written successfully:", `${fileName}.${extension}`);
 }
 
-interface GameSettings {
-    tolgeeNamespace?: string;
-}
-
-const tmpGameSettings: { [id: string]: GameSettings } = gameSettings;
-
-const tolgeeNamespaceByGameSetting = Object.values(tmpGameSettings)
-    .map((setting) => setting.tolgeeNamespace)
-    .filter((ns) => ns);
-const namespaces = ["SabaNumber", "Common", ...tolgeeNamespaceByGameSetting].filter((value, index, arr) => arr.indexOf(value) === index);
-
-console.log("[TolgeeGenerator] namespaces:", namespaces);
+console.log("[TolgeeGenerator] Processing", gameConfigsToProcess.length, "game(s)");
+console.log("[TolgeeGenerator] Namespaces:", namespaces);
 
 const tg = Tolgee().use(DevTools()).init({
     defaultLanguage: "en",
@@ -73,10 +135,14 @@ tg.on("initialLoad", async () => {
             };
         };
     } = {};
-    Object.values(locales).forEach(async (languageId) => {
+
+    // Process each language
+    for (const languageId of Object.values(locales)) {
         console.log("[TolgeeGenerator] processing language:", languageId);
         await tg.changeLanguage(languageId);
         languages[languageId] = {};
+
+        // Get all records for this language
         tg.getAllRecords().forEach((record) => {
             namespaces.forEach((namespace) => {
                 if (record.namespace === namespace) {
@@ -84,11 +150,19 @@ tg.on("initialLoad", async () => {
                     record.data.forEach((value, key) => {
                         languages[languageId][namespace][key] = value as string;
                     });
-
-                    writeFile(`../sedie-multiplayer/public/i18n/${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
                 }
             });
         });
-    });
+
+        // Write files for each game configuration
+        for (const gameConfig of gameConfigsToProcess) {
+            namespaces.forEach((namespace) => {
+                if (languages[languageId][namespace]) {
+                    writeFile(`${gameConfig.outputPath}${namespace}/` + languageId, JSON.stringify(languages[languageId][namespace], null, 4));
+                }
+            });
+        }
+    }
+
     console.log("[TolgeeGenerator] initialLoad completed");
 });

@@ -33,7 +33,7 @@ const handleOnKeyDown = (event: any) => {
 };
 
 const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting  } = usePFStore(
+    const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting } = usePFStore(
         useShallow((state: any) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             updatePFClientSeedSetting: state.updatePFClientSeedSetting,
@@ -96,7 +96,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
         }
     };
 
-    
+
     const handleCloseModal = () => {
         togglePFSetting(false);
     };
@@ -323,6 +323,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                                 ref={manualSeed}
                                 type="text"
                                 inputMode="numeric"
+                                data-testid="manual-client-seed"
                                 onKeyDown={handleOnKeyDown}
                                 onPaste={handlePaste}
                                 onBlur={handleOnBlur}
