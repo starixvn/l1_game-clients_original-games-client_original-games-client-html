@@ -11,7 +11,7 @@ import { registerBigRoadElement } from '@shared/helpers/scoreboard-registry';
 import { withTranslator } from "@shared/components/page-components/translator";
 import styles from "./scoreboard-elements.module.scss";
 import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions } from "../baccarat-multiplayer-constants";
-import { GAME_ID } from '../game-constants';
+import { GAME_ID } from '../game-config';
 import BeadBoardIcon from "./beadboard-icon";
 import { hasPlayerPair, hasBankerPair } from "./utils";
 
@@ -19,14 +19,14 @@ export class BaccaratBeadRoadCharacterElement extends BeadRoadElement<Round<Bacc
 
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>, t?: (key: string) => string): ReactNode {
         console.log("ROUND::: ", round);
-        
+
         if (!round.settlementResult) {
             return <span className={`${styles.blink}`}></span>;
         }
 
         const character = (betChoice: string) => (
-            <BeadBoardIcon 
-                choice={betChoice} 
+            <BeadBoardIcon
+                choice={betChoice}
                 hasPlayerPair={round.result ? hasPlayerPair(round.result.player) : false}
                 hasBankerPair={round.result ? hasBankerPair(round.result.banker) : false}
             />
@@ -56,7 +56,7 @@ export const BaccaratBeadRoadCharacterElementWithTranslator = withTranslator(Bac
 export class BaccaratBeadRoadValueElement extends BeadRoadElement<Round<BaccaratResult, BaccaratSettlementResult>> {
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>): ReactNode {
         console.log("ROUND::: ", round);
-        
+
         if (!round.settlementResult) {
             return <span className={`${styles.blink}`}></span>;
         } else if (round.settlementResult.tie) {

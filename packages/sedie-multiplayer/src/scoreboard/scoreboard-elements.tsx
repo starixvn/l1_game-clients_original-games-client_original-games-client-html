@@ -3,7 +3,7 @@ import { Converter } from "sc-scoreboards";
 
 import { BigRoadElement, BigRoadRound } from '@shared/components/game-components/round-history/scoreboard/elements';
 import { registerBigRoadElement } from '@shared/helpers/scoreboard-registry';
-import { GAME_ID } from '../game-constants';
+import { GAME_ID } from '../game-config';
 import styles from "./scoreboard-elements.module.scss";
 import dotStyles from '@shared/components/game-components/round-history/dot/dot.module.scss';
 import { SeDieBetOptions, SeDieSettlementResult } from "../sedie-multiplayer-constants";
