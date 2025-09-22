@@ -1,18 +1,5 @@
-import { memo } from "react";
+// Import game configuration first
+import "../game-config";
 
-import { useRouter } from "next/router";
-import { usePWAWoker } from '@shared/react-hooks/use-pwa-worker';
-import SplashScreen from '@shared/components/page-components/splash-screen';
-
-const Home = () => {
-    usePWAWoker();
-    const router = useRouter();
-
-    if (!router?.isReady || typeof window === "undefined") {
-        return <div></div>;
-    }
-
-    return <SplashScreen />;
-};
-
-export default memo(Home);
+// Import shared home component
+export { GameHome as default } from "@shared";

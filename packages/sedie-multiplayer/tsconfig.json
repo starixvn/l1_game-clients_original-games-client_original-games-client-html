@@ -6,6 +6,9 @@
         "declarationMap": true,
         "baseUrl": ".",
         "paths": {
+            "@shared": [
+                "../shared/src/index"
+            ],
             "@shared/*": [
                 "../shared/src/*"
             ],

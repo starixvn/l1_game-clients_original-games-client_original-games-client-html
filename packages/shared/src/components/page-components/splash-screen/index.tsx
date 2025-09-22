@@ -8,6 +8,7 @@ import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth
 import { getAppSettings } from '@shared/app-settings';
 import { Themes, languageMapper, locales } from '@shared/constants';
 import { AnalyticsHelper, StorageHelper, getRenderGameSettings, localStorageKeys, randomInteger } from '@shared/helpers';
+import { getDefaultGameId } from '@shared/utils';
 import PreloadResources from '@shared/helpers/preload-resources';
 import { PlayerContextModel, URLContext, usePlayerContext } from '@shared/react-contexts';
 import { useTranslator } from '@shared/react-hooks';
@@ -61,17 +62,6 @@ export function onStartupError(error: Error): void {
 
 const isTimeoutSession = (session: SSOResponse) => {
     return !session || (!session?.isUM && !session?.isAuthenticated);
-};
-
-export const getDefaultGameId = (): number => {
-    // Use environment variable if set, otherwise fallback to a known game ID
-
-    const envGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
-    if (envGameId) {
-        return Number(envGameId);
-    }
-
-    return 148;
 };
 
 const getSession = async (token: string) => {
@@ -183,7 +173,7 @@ const SplashScreen: React.FC = () => {
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
             console.log("ENABLED RENDER GAME SETTINGS", enabledRenderGameSettings);
-            
+
             console.log("[SplashScreen] Enabled games from authorizeInfo:", enabledRenderGameSettings?.map(game => ({ id: game.id, name: game.gameName })));
 
             // Bypass validation for known games (SeDie: 148, Baccarat: 10) so we can deep-link even if not in lobby/offer

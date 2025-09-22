@@ -1,7 +1,7 @@
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings, getGameSettings } from "../app-settings";
 import { URLContextModel } from "../react-contexts";
-import { getDefaultGameId } from "@shared/components/page-components/splash-screen";
+import { getDefaultGameId } from "../utils";
 
 export enum TrackingEvent {
     Function = "function_event",
