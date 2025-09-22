@@ -12,8 +12,7 @@ RUN --mount=type=cache,target=$YARN_CACHE_FOLDER \
 COPY package.json yarn.lock ./
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/baccarat-multiplayer/package.json packages/baccarat-multiplayer/package.json
-RUN --mount=type=cache,target=$YARN_CACHE_FOLDER \
-     yarn install --frozen-lockfile --verbose
+RUN yarn install --frozen-lockfile --verbose
 
 FROM base AS builder
 WORKDIR /app
@@ -96,4 +95,4 @@ EXPOSE 5000
 ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["sh", "-c", "PORT=5000 node custom-server.js"]
+CMD ["sh", "-c", "node custom-server.js"]

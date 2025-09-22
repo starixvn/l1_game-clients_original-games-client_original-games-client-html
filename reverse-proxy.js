@@ -72,7 +72,7 @@ app.use(
         onProxyRes: (proxyRes, req, res) => {
             const timestamp = new Date().toISOString();
             const statusCode = proxyRes.statusCode;
-            const statusEmoji = statusCode >= 200 && statusCode < 300 ? "✅" : "⚠️" : "❌";
+            const statusEmoji = statusCode >= 200 && statusCode < 300 ? "✅" : statusCode >= 400 ? "❌" : "⚠️";
             console.log(`📨 [${timestamp}] [BACCARAT] ${req.method} ${req.url} → ${statusCode} ${statusEmoji}`);
         },
         onError: (err, req, res) => {
