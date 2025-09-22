@@ -17,6 +17,7 @@ const OPEN_DURATION = 500; // Open duration in milliseconds
 type AnimationState = "idle" | "shake" | "open" | "close";
 
 const operatorName = "nova88";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const SedieCup = () => {
     const { durations } = useGameContext();
@@ -105,7 +106,7 @@ const SedieCup = () => {
                 >
                     {/* Back */}
                     <CachedImage
-                        src="/static/images/sedie-multiplayer/result/box-back.webp"
+                        src={`${basePath}/static/images/sedie-multiplayer/result/box-back.webp`}
                         alt="Box Back"
                         width={202}
                         height={103}
@@ -114,18 +115,17 @@ const SedieCup = () => {
 
                     {/* Inside */}
                     <CachedImage
-                        src={`/static/images/sedie-multiplayer/result/box-inside-${operatorName}.webp`}
+                        src={`${basePath}/static/images/sedie-multiplayer/result/box-inside-${operatorName}.webp`}
                         alt="Box Bottom"
                         width={168}
                         height={91}
-                        className={`z-[2] absolute top-[100px] left-[99px] ${
-                            animationState === "open" ? styles["box-bottom-animation"] : ""
-                        }`}
+                        className={`z-[2] absolute top-[100px] left-[99px] ${animationState === "open" ? styles["box-bottom-animation"] : ""
+                            }`}
                     />
 
                     {/* Front */}
                     <CachedImage
-                        src="/static/images/sedie-multiplayer/result/box-front.webp"
+                        src={`${basePath}/static/images/sedie-multiplayer/result/box-front.webp`}
                         alt="Box Front"
                         width={205}
                         height={120}
@@ -134,7 +134,7 @@ const SedieCup = () => {
 
                     {/*Cover */}
                     <CachedImage
-                        src="/static/images/sedie-multiplayer/result/box-cover.webp"
+                        src={`${basePath}/static/images/sedie-multiplayer/result/box-cover.webp`}
                         alt="Box Cover"
                         className=" absolute top-[13px] left-[91px] scale-[98%] z-[4]"
                         width={185}

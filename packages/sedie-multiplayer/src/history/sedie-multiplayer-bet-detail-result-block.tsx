@@ -5,13 +5,15 @@ import { useCommonTranslate, useTranslator } from "@shared/react-hooks";
 import { DrawInfo } from "@shared/components/game-base/type";
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export interface RoundInfoSeDie extends DrawInfo {
     roundId: number;
     result:
-        | {
-              balls?: Array<number>;
-          }
-        | Record<string, boolean>;
+    | {
+        balls?: Array<number>;
+    }
+    | Record<string, boolean>;
     odds: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
@@ -50,7 +52,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoSeDie }> = ({ roundI
                     <span className="flex items-center gap-1.5">
                         <span className="text-secondary-text">{translateCommon("result")}</span>
                         <Image
-                            src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
+                            src={`${basePath}/static/images/sedie-multiplayer/bet-detail/bet-detail-${winningSubOption}.svg`}
                             alt={`${winningSubOption} result`}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}
@@ -89,7 +91,7 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
                 t(`glossary_${choice}`)
             ) : (
                 <Image
-                    src={`/static/images/sedie-multiplayer/bet-detail/bet-detail-${choice}.svg`}
+                    src={`${basePath}/static/images/sedie-multiplayer/bet-detail/bet-detail-${choice}.svg`}
                     alt={`${choice} choice`}
                     width={IMAGE_SIZE}
                     height={IMAGE_SIZE}

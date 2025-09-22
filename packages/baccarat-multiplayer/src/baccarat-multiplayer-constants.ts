@@ -1,5 +1,7 @@
 import { buildVersion } from "@shared/constants";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export const BaccaratBetOptions = {
     PLAYER: "player",
     BANKER: "banker",
@@ -59,19 +61,19 @@ export const CardRankMapper = {
 
 export const BetChoiceImagesData: Record<string, { src: string; blur: string }> = {
     player: {
-        src: `/static/images/baccarat-multiplayer/2x/bg-player.webp?v=${buildVersion}`,
+        src: `${basePath}/static/images/baccarat-multiplayer/2x/bg-player.webp?v=${buildVersion}`,
         blur: ``,
     },
     banker: {
-        src: `/static/images/baccarat-multiplayer/2x/bg-banker.webp?v=${buildVersion}`,
+        src: `${basePath}/static/images/baccarat-multiplayer/2x/bg-banker.webp?v=${buildVersion}`,
         blur: ``,
     },
     tie: {
-        src: `/static/images/baccarat-multiplayer/2x/bg-tie.webp?v=${buildVersion}`,
+        src: `${basePath}/static/images/baccarat-multiplayer/2x/bg-tie.webp?v=${buildVersion}`,
         blur: "",
     },
     anyPair: {
-        src: `/static/images/baccarat-multiplayer/2x/bg-anypair.webp?v=${buildVersion}`,
+        src: `${basePath}/static/images/baccarat-multiplayer/2x/bg-anypair.webp?v=${buildVersion}`,
         blur: "",
     },
 };

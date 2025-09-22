@@ -9,6 +9,8 @@ import dotStyles from '@shared/components/game-components/round-history/dot/dot.
 import { SeDieBetOptions, SeDieSettlementResult } from "../sedie-multiplayer-constants";
 import { BgCachedImage } from '@shared/components/game-components/cached-image/bg-cached-image';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export class SeDieBigRoadConverter extends Converter<SeDieSettlementResult> {
     static addBlinkNode(rounds: SeDieSettlementResult[]) {
         const lastRound = rounds.find((round) => round.odd || round.even);
@@ -42,9 +44,9 @@ export class SeDieBigRoadElement extends BigRoadElement<SeDieSettlementResult> {
         if (isBlinkNode) {
             return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
         } else if (odd) {
-            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard/scoreboard-red-dot.webp" className={styles.icon} />;
+            return <BgCachedImage pathImage={`${basePath}/static/images/sedie-multiplayer/scoreboard/scoreboard-red-dot.webp`} className={styles.icon} />;
         } else if (even) {
-            return <BgCachedImage pathImage="/static/images/sedie-multiplayer/scoreboard/scoreboard-blue-dot.webp" className={styles.icon} />;
+            return <BgCachedImage pathImage={`${basePath}/static/images/sedie-multiplayer/scoreboard/scoreboard-blue-dot.webp`} className={styles.icon} />;
         } else {
             return <></>;
         }

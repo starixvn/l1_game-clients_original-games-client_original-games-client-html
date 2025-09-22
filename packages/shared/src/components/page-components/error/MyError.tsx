@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { buildVersion } from "@shared/constants";
 import { useCommonTranslate } from "@shared/react-hooks";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const MyError = ({ statusCode, hasGetInitialPropsRun, err }) => {
     if (!hasGetInitialPropsRun && err) {
         Sentry.captureException(err);
@@ -26,7 +28,7 @@ const MyError = ({ statusCode, hasGetInitialPropsRun, err }) => {
 
     return (
         <div className="error-page">
-            <img className="error-background small" src={`/static/images/error-${theme}.svg?v=${buildVersion}`} alt="error" />
+            <img className="error-background small" src={`${basePath}/static/images/error-${theme}.svg?v=${buildVersion}`} alt="error" />
             <p className="info">{t("message_error_occurred", { errorCode: statusCode }).replaceTolgeeFormat()}</p>
         </div>
     );
