@@ -3,11 +3,13 @@ import { BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import styles from "./scoreboard-elements.module.scss";
 import { BigRoadRound } from "@shared/components/game-components/round-history/scoreboard/elements";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const scoreboardImages: Record<string, string> = {
-    player: '/static/images/baccarat/scoreboard/big-road/player.svg',
-    banker: '/static/images/baccarat/scoreboard/big-road/banker.svg',
-    natural: '/static/images/baccarat/scoreboard/big-road/natural.svg',
-    tie: '/static/images/baccarat/scoreboard/big-road/tie.svg',
+    player: `${basePath}/static/images/baccarat/scoreboard/big-road/player.svg`,
+    banker: `${basePath}/static/images/baccarat/scoreboard/big-road/banker.svg`,
+    natural: `${basePath}/static/images/baccarat/scoreboard/big-road/natural.svg`,
+    tie: `${basePath}/static/images/baccarat/scoreboard/big-road/tie.svg`,
 };
 
 const PlayerPairDot = () => (
@@ -31,30 +33,24 @@ export interface BigRoadIconProps {
     isEmpty: boolean;
 }
 
-// Helper function to determine the main result (banker wins)
 const isBankerWin = (data: BaccaratSettlementResult[]): boolean => {
     return data.some((result) => result.banker);
 };
 
-// Helper function to get enriched settlement data
 const getEnrichedData = (data: BaccaratSettlementResult[]): BaccaratSettlementResult | null => {
     return data?.[0] || null;
 };
 
-// Helper function to calculate tie count for Big Road
 const getTieCount = (data: BaccaratSettlementResult[]): number => {
     const firstResult = data?.[0];
     if (!firstResult) {
         return 0;
     }
 
-    // If first result is tie, count all as ties
-    // If not first is tie, count the non-first results as ties
     return firstResult.tie ? data.length : Math.max(0, data.length - 1);
 };
 
 const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) => {
-    // Handle special states first
     if (isBlink) {
         return <span className={styles.blink}></span>;
     }
@@ -63,7 +59,6 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
         return <div className={styles['dot-empty']}></div>;
     }
 
-    // Get round data and determine result
     const enrichedData = getEnrichedData(round.data);
     const hasBanker = isBankerWin(round.data);
     const imagePath = hasBanker ? scoreboardImages.banker : scoreboardImages.player;
@@ -79,7 +74,6 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
                 priority
             />
 
-            {/* Natural indicator */}
             {enrichedData?.natural && (
                 <Image
                     className={styles['natural-image']}
@@ -90,11 +84,9 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
                 />
             )}
 
-            {/* Pair indicators */}
             {enrichedData?.playerPair && <PlayerPairDot />}
             {enrichedData?.bankerPair && <BankerPairDot />}
 
-            {/* Tie indicator */}
             {tieCount > 0 && <TieDot count={tieCount} />}
         </div>
     );
