@@ -157,8 +157,8 @@
     z-index: 0;
 }
 
-/* Desktop viewport styles (screens > 768px) */
-@media (min-width: 769px) {
+/* Desktop viewport styles */
+@media (min-width: 768px) {
     .mainOptionsRow {
         gap: 6px; /* Increased gap for desktop */
     }

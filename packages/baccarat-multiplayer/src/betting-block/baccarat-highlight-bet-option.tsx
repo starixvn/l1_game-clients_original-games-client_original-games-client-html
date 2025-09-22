@@ -11,7 +11,7 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
     // Track viewport size for responsive shapes
     useEffect(() => {
         const checkViewport = () => {
-            setIsDesktop(window.innerWidth > 768);
+            setIsDesktop(window.innerWidth >= 768);
         };
 
         checkViewport();
