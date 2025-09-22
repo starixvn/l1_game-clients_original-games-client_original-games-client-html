@@ -413,7 +413,7 @@ describe("PFSettingModal", () => {
             const { rerender } = render(<PFSettingModal />);
             
             await act(async () => {
-                jest.advanceTimersByTime(5000);
+                jest.advanceTimersByTime(TIME_OUT);
             });
 
             // Change round ID
