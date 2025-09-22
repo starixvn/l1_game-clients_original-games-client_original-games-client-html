@@ -8,6 +8,7 @@ import BaccaratBetCountsComponent from "./baccarat-bet-counts";
 import BaccaratScoreboardGuidePopup from "./baccarat-scoreboard-guide-popup";
 import Styles from "./statistic-popup.module.scss";
 import { cn } from "@shared/utils";
+import type { Swiper as SwiperType } from 'swiper';
 
 interface BaccaratMultiplayerStatisticPopupProps {
     onClose?: () => void;
@@ -20,7 +21,13 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
 
     const [isClosing, setIsClosing] = React.useState(false);
     const [openScoreBoardGuide, setOpenScoreBoardGuide] = React.useState(false);
+    const [isExpanded, setIsExpanded] = React.useState(false); // false = big road, true = bead road
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const [swiper, setSwiper] = React.useState<SwiperType | null>(null);
+
+    const handleSwiperReady = React.useCallback((swiperInstance: SwiperType) => {
+        setSwiper(swiperInstance);
+    }, []);
 
     const handleClose = () => {
         clickSound();
@@ -29,7 +36,6 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
             return;
         }
         setIsClosing(true);
-        // Match closing animation duration (200ms)
         setTimeout(() => onClose?.(), 200);
     };
 
@@ -40,6 +46,17 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
     const handleCloseGuide = () => {
         setOpenScoreBoardGuide(false);
     };
+
+    const handleExpand = () => {
+        clickSound();
+        const newExpanded = !isExpanded;
+        setIsExpanded(newExpanded);
+        swiper?.slideTo(newExpanded ? 1 : 0, 500);
+    };
+
+    React.useEffect(() => {
+        setIsExpanded(false);
+    }, []);
 
     let containerClassName = Styles["statistic-container"];
     if (inline) {
@@ -65,12 +82,22 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                 >
                     <div ref={containerRef} className={cn(Styles["grid"], "pl-2 py-1 pr-[2px] relative")}>
                         <button type="button" className={Styles["close"]} onClick={handleClose} aria-label="Close" />
+                        <button
+                            type="button"
+                            className={isExpanded ? Styles["collapse"] : Styles["expand"]}
+                            onClick={handleExpand}
+                            aria-label={isExpanded ? "Collapse" : "Expand"}
+                        />
                         {/* Baccarat Bet Counts Statistics */}
                         <BaccaratBetCountsComponent 
                             roundHistory={roundHistory as any} 
                             onOpenGuide={handleOpenGuide}
                         />
-                        <ScoreboardBaccarat roundHistory={roundHistory as any} isShowBlink={isShowBlink} />
+                        <ScoreboardBaccarat
+                            roundHistory={roundHistory as any}
+                            isShowBlink={isShowBlink}
+                            onSwiperReady={handleSwiperReady}
+                        />
                         <BaccaratScoreboardGuidePopup 
                             isVisible={openScoreBoardGuide}
                             onClose={handleCloseGuide}

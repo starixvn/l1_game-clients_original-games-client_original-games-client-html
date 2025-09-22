@@ -15,7 +15,6 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            // Check if click is outside tooltip but still inside container (statistic popup)
             if (
                 tooltipRef.current &&
                 !tooltipRef.current.contains(event.target as Node) &&
@@ -84,7 +83,6 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     ))}
                 </div>
 
-                {/* Arrow pointing up */}
                 <div className="absolute -top-1 right-12 w-5 h-5 bg-[#030A14] rotate-45" />
             </div>
     );

@@ -51,10 +51,9 @@
 
 .panel {
     background-color: #0b1b29;
-    background-image: radial-gradient(120% 120% at 100% 0%, rgba(30, 74, 104, 0.55) 0%, rgba(11, 27, 41, 0) 70%),
-        linear-gradient(180deg, #0e1d2b 0%, #091521 100%);
+    background-image: linear-gradient(185deg, #253B59 4.15%, #051428 50%);
     background-blend-mode: screen, normal;
-    border: 1px solid #1e3a55;
+    border: 1px solid #335897;
     border-radius: 8px;
 }
 
@@ -78,7 +77,31 @@
     right: -2px;
     width: 32px;
     height: 32px;
-    background: url("#{$base-path}/static/images/button-statistic.webp") no-repeat center/cover;
+    background: url("#{$base-path}/static/images/button-statistic.svg") no-repeat center/cover;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.expand {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+    background: url("#{$base-path}/static/images/expand-statistic.svg") no-repeat center/cover;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.collapse {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+    background: url("#{$base-path}/static/images/collapse-statistic.svg") no-repeat center/cover;
     border: none;
     cursor: pointer;
     z-index: 9999;

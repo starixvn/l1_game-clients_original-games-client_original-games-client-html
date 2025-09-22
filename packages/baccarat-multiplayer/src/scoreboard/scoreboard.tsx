@@ -1,6 +1,6 @@
-import { Component, ReactNode, memo } from "react";
+import { ReactNode, memo, useRef } from "react";
 import { Round } from '@shared/components/game-base/type';
-import { ScoreboardProps, SwitchableScoreboard, SlidableScoreboard } from '@shared/components/game-components/round-history/scoreboard';
+import { SwitchableScoreboard, SlidableScoreboard } from '@shared/components/game-components/round-history/scoreboard';
 import {
     BaccaratBigRoadConverter,
     BaccaratBigRoadElement,
@@ -11,31 +11,23 @@ import Styles from "./scoreboard.module.scss";
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import { cn } from "@shared/utils";
 import { hasPlayerPair, hasBankerPair, hasNatural } from './utils';
+import { Swiper as SwiperType } from 'swiper';
 
 export type ScoreboardComponentProps = {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
     isShowBlink: boolean;
     playResultAnimation?: boolean;
+    onSwiperReady?: (swiper: SwiperType) => void;
 };
 
-class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
+const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, isShowBlink, playResultAnimation, onSwiperReady }) => {
+    const scoreboardColumnsRef = useRef(17);
 
-    private scoreboardColumns = 17;
-
-    updateScoreboardColumns = (actualColumns: number) => {
-        this.scoreboardColumns = actualColumns;
+    const updateScoreboardColumns = (actualColumns: number) => {
+        scoreboardColumnsRef.current = actualColumns;
     };
 
-    onSwitchBigRoad(board: Partial<ScoreboardProps<BaccaratSettlementResult>>) {
-        return {
-            ...board,
-            className: `${board.className} ${Styles["scoreboard-expand"]}`,
-        };
-    }
-
-    renderBigRoad(): ReactNode {
-        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
-
+    const renderBigRoad = (): ReactNode => {
         const settlements = [...roundHistory].map((round) => ({
             ...round.settlementResult,
             natural: round.result ? hasNatural(round.result) : false,
@@ -55,9 +47,9 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                         {
                             element: BaccaratBigRoadElement,
                             arrange: BaccaratBigRoadElement.arrange(BaccaratBigRoadConverter.instance),
-                            column: this.scoreboardColumns,
+                            column: scoreboardColumnsRef.current,
                             row: 6,
-                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            updateScoreboardColumns: updateScoreboardColumns,
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
@@ -68,10 +60,9 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                 />
             </div>
         );
-    }
+    };
 
-    renderBeadRoad(): ReactNode {
-        const { roundHistory, isShowBlink, playResultAnimation } = this.props;
+    const renderBeadRoad = (): ReactNode => {
         const rounds = isShowBlink ? [{}, ...roundHistory] : roundHistory;
 
         return (
@@ -82,9 +73,9 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                         {
                             element: BaccaratBeadRoadCharacterElementWithTranslator,
                             arrange: BaccaratBeadRoadCharacterElement.arrange,
-                            column: this.scoreboardColumns,
+                            column: scoreboardColumnsRef.current,
                             row: 6,
-                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            updateScoreboardColumns: updateScoreboardColumns,
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
@@ -95,12 +86,15 @@ class ScoreboardBaccarat extends Component<ScoreboardComponentProps> {
                 />
             </div>
         );
-    }
+    };
 
-    render(): ReactNode {
-        return <SlidableScoreboard boards={[this.renderBigRoad(), this.renderBeadRoad()]} />;
-    }
-}
+    return (
+        <SlidableScoreboard
+            boards={[renderBigRoad(), renderBeadRoad()]}
+            onSwiperReady={onSwiperReady}
+        />
+    );
+};
 
 export default memo(ScoreboardBaccarat);
 
