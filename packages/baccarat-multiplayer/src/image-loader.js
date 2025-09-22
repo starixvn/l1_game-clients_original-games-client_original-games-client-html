@@ -1,2 +1,3 @@
 // Re-export shared image loader
-export { default } from "@shared/image-loader";
+const imageLoader = require("@shared/image-loader");
+module.exports = imageLoader.default;
