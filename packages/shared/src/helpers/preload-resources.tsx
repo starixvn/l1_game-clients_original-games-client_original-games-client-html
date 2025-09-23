@@ -240,6 +240,9 @@ class PreloadManager {
         await Promise.all(
             imagePaths.map(async (path) => {
                 console.log(`[PreloadManager:loadImagesProgressive] Loading image: ${path}`);
+                console.log(`[PreloadManager:loadImagesProgressive] Path starts with '/static/': ${path.startsWith('/static/')}`);
+                console.log(`[PreloadManager:loadImagesProgressive] BASE_PATH: "${basePath}"`);
+                console.log(`[PreloadManager:loadImagesProgressive] Path starts with BASE_PATH: ${path.startsWith(basePath)}`);
                 await this.loadAndCacheImage(path, memoriedImages);
                 loadedImages++;
                 console.log(`[PreloadManager:loadImagesProgressive] Loaded ${loadedImages}/${totalImages} images`);
@@ -281,7 +284,7 @@ class PreloadManager {
     }
 
     private createImageLoadingPromise(path: string, memoriedImages: string[]): Promise<any> {
-        if (memoriedImages.some((memoriedImage) => path.includes(memoriedImage))) {
+        if (memoriedImages.some((memoriedImage) => path.removeBuildVersion().includes(memoriedImage))) {
             return downloadAndCacheImage(path);
         }
 

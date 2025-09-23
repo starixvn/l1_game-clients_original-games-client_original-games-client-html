@@ -4,6 +4,10 @@ import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-res
 import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+console.log(`[use-animation-images] basePath: "${basePath}"`);
+console.log(`[use-animation-images] NEXT_PUBLIC_BASE_PATH: "${process.env.NEXT_PUBLIC_BASE_PATH}"`);
+
 interface AnimationImages {
     animationPhase1: any;
     animationPhase2: any;
@@ -24,7 +28,7 @@ export const useAnimationImages = (settlementResult: any) => {
     const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
 
     // Load animation phase 1
-    const { data: animationPhase1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-1/animation-phase-1.webp`);
+    const { data: animationPhase1 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-1/animation-phase-1.webp`);
 
     // Randomize variants based on roundId for consistent animation across players
     useEffect(() => {
@@ -57,29 +61,29 @@ export const useAnimationImages = (settlementResult: any) => {
     }, [roundId, settlementResult]);
 
     // Load all phase 2 animations
-    const { data: red2Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-1.webp`);
+    const { data: red2Op1 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/red2-op-1.webp`);
     const {
         data: red2Op2,
         isLoading: red2Op2Loading,
         error: red2Op2Error,
-    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp`);
+    } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp`);
 
-    const { data: red3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-1.webp`);
+    const { data: red3Op1 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/red3-op-1.webp`);
     const {
         data: red3Op2,
         isLoading: red3Op2Loading,
         error: red3Op2Error,
-    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp`);
+    } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp`);
 
-    const { data: white3Op1 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-1.webp`);
+    const { data: white3Op1 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/white3-op-1.webp`);
     const {
         data: white3Op2,
         isLoading: white3Op2Loading,
         error: white3Op2Error,
-    } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp`);
+    } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp`);
 
-    const { data: red4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/red4.webp`);
-    const { data: white4 } = useMemoriedImage(`/static/images/sedie-multiplayer/animation/phase-2/white4.webp`);
+    const { data: red4 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/red4.webp`);
+    const { data: white4 } = useMemoriedImage(`${basePath}/static/images/sedie-multiplayer/animation/phase-2/white4.webp`);
 
     // Create a map for all variants
     const allVariants = useMemo(
