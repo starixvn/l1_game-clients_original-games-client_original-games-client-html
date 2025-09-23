@@ -42,24 +42,28 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
 
     const scoreboardGuideItems = [
         {
-            icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`,
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/player.svg`,
             label: "glossary_player",
         },
         {
-            icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`,
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/banker.svg`,
             label: "glossary_banker",
         },
         {
-            icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`,
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/tie.svg`,
             label: "glossary_tie",
         },
         {
-            icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/player-pair.svg`,
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/player-pair.svg`,
             label: "glossary_player_pair",
         },
         {
-            icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/banker-pair.svg`,
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/banker-pair.svg`,
             label: "glossary_banker_pair",
+        },
+        {
+            icon: `${basePath}/static/images/baccarat/scoreboard/scoreboard-guide/natural.svg`,
+            label: "glossary_natural",
         },
     ];
 
@@ -70,16 +74,17 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     "absolute top-[39px] left-[8px] z-50",
                     "bg-[#030A14] backdrop-blur-sm",
                     "rounded-lg",
-                    "p-1 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3 "
+                    "px-2 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3 h-[108px]",
+                    "flex items-center"
                 )}
             >
-                <div className="space-y-1">
+                <div className="grid grid-cols-2 gap-4 gap-y-2">
                     {scoreboardGuideItems.map((item, index) => (
                         <div key={index} className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-4 h-4">
+                            <div className="flex items-center justify-center w-4 h-4 flex-shrink-0">
                                 <Image src={item.icon} alt={item.label} width={16} height={16} className="w-4 h-4" />
                             </div>
-                            <span className={cn("text-sm leading-[14px]")}>{t(item.label)}</span>
+                            <span className={cn("text-sm text-nowrap")}>{t(item.label)}</span>
                         </div>
                     ))}
                 </div>
