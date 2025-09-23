@@ -86,5 +86,6 @@
     "status_stop_bet": "আর বাজি নয়",
     "switch_game_hint": "গেমগুলির মধ্যে স্যুইচ করতে বাম/ডানে সোয়াইপ করুন",
     "table_no_data": "কোনো ডেটা নেই।",
-    "table_no_more_data": "আর কোনো ডেটা নেই।"
+    "table_no_more_data": "আর কোনো ডেটা নেই।",
+    "unstable_connection": "সংযোগটি অস্থির, অনুগ্রহ করে অপেক্ষা করুন..."
 }

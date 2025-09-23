@@ -1,5 +1,6 @@
 {
     "all": "Semua",
+    "all_bets": "Semua Taruhan",
     "auto_cashout": "CASHOUT OTOMATIS",
     "auto_play": "AUTO-PLAY",
     "auto_rebet": "Rebet Otomatis",
@@ -258,5 +259,6 @@
     "waiting_for_the_next_round": "Menunggu putaran berikutnya",
     "win": "Menang",
     "win_loss": "Menang Kalah",
+    "wins": "MENANG",
     "you_reach_max_win": "Anda mencapai Maksimal Menang"
 }

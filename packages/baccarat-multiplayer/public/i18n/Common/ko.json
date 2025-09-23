@@ -1,5 +1,6 @@
 {
     "all": "모두",
+    "all_bets": "모든 베팅",
     "auto_cashout": "자동 캐시아웃",
     "auto_play": "자동 플레이",
     "auto_rebet": "자동 리벳",
@@ -258,5 +259,6 @@
     "waiting_for_the_next_round": "다음 라운드 대기 중",
     "win": "승리",
     "win_loss": "손익",
+    "wins": "승리",
     "you_reach_max_win": "최대 당첨금에 도달했습니다."
 }

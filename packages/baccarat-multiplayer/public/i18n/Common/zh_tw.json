@@ -1,5 +1,6 @@
 {
     "all": "全部",
+    "all_bets": "全部投注",
     "auto_cashout": "自動兌現",
     "auto_play": "自動遊戲",
     "auto_rebet": "自動重押",
@@ -258,5 +259,6 @@
     "waiting_for_the_next_round": "等待下一輪",
     "win": "贏",
     "win_loss": "贏 輸",
+    "wins": "赢",
     "you_reach_max_win": "您達到了最大勝利"
 }

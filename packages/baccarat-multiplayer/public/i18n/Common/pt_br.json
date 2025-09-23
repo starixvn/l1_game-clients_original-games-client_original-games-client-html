@@ -1,5 +1,6 @@
 {
     "all": "Tudo",
+    "all_bets": "Todas as Apostas",
     "auto_cashout": "SAQUE AUTOMÁTICO",
     "auto_play": "JOGADA AUTOMÁTICA",
     "auto_rebet": "Reaposta Automática",
@@ -258,5 +259,6 @@
     "waiting_for_the_next_round": "Aguardando a próxima rodada",
     "win": "Ganho",
     "win_loss": "Ganhos e Perdas",
+    "wins": "Vitórias",
     "you_reach_max_win": "Você atingiu o ganho máximo"
 }

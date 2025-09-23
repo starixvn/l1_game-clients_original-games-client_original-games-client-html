@@ -22,8 +22,6 @@ const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
         toggleBetDetail(false);
     }, [toggleBetDetail]);
 
-    console.log("isShowBetDetail", isShowBetDetail, "dashboardElement", dashboardElement);
-
     return (
         isShowBetDetail &&
         dashboardElement &&
