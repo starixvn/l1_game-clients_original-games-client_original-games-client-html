@@ -31,7 +31,7 @@
             content: "";
             position: absolute;
             top: 0;
-            width: var(--width);
+            width: 38px;
             height: 100%;
             border-radius: 10px;
             z-index: 10;
@@ -44,13 +44,13 @@
 
     .swiper-slide-prev::after {
         right: 0;
-        background: linear-gradient(270deg, rgba(0, 0, 0, 0.00) 0%, #2D53AA 100%);
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.00) 0%, #2D53AA 100%);
     }
 
     .swiper-button-prev {
         position: absolute;
         height: 100%;
-        width: calc(100% - 310px);
+        width: calc(100% - 322px); // scoreboard width + margin
         top: 0;
         z-index: 10;
         cursor: pointer;

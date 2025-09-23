@@ -44,7 +44,7 @@ const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
             <div className="flex items-center justify-center w-4 h-4">
                 {iconSrc && <Image src={iconSrc} alt={choice} width={16} height={16} className="w-4 h-4" />}
             </div>
-            <div className="text-sm font-normal text-white text-right">{count}</div>
+            <div className="text-sm font-normal text-white min-w-[18px] text-left">{count}</div>
         </div>
     );
 };
