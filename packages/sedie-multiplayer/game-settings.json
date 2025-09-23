@@ -23,39 +23,18 @@
         "gameResourceConfigs": {
             "path": "sedie-multiplayer",
             "optionalPaths": [
-                "sedie-multiplayer/result",
-                "sedie-multiplayer/animation"
-            ],
-            "cachePaths": [
-                "/static/images/background/bg-148.webp",
-                "/static/images/sedie-multiplayer/even-bg.svg",
-                "/static/images/sedie-multiplayer/odd-bg.svg",
-                "/static/images/sedie-multiplayer/sub-bet-option-bg.svg",
-                "/static/images/sedie-multiplayer/bet-detail/bet-detail-red2.svg",
-                "/static/images/sedie-multiplayer/bet-detail/bet-detail-red3.svg",
-                "/static/images/sedie-multiplayer/bet-detail/bet-detail-red4.svg",
-                "/static/images/sedie-multiplayer/bet-detail/bet-detail-white3.svg",
-                "/static/images/sedie-multiplayer/bet-detail/bet-detail-white4.svg",
-                "/static/images/sedie-multiplayer/scoreboard-blue-dot.webp",
-                "/static/images/sedie-multiplayer/scoreboard-red-dot.webp",
-                "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red2.webp",
-                "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red3.webp",
-                "/static/images/sedie-multiplayer/scoreboard/statistic-icon-red4.webp",
-                "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white3.webp",
-                "/static/images/sedie-multiplayer/scoreboard/statistic-icon-white4.webp",
+                "/static/images/sedie-multiplayer/result",
                 "/static/images/sedie-multiplayer/animation/phase-1/animation-phase-1.webp",
                 "/static/images/sedie-multiplayer/animation/phase-2/red2-op-1.webp",
-                "/static/images/sedie-multiplayer/animation/phase-2/red2-op-2.webp",
                 "/static/images/sedie-multiplayer/animation/phase-2/red3-op-1.webp",
-                "/static/images/sedie-multiplayer/animation/phase-2/red3-op-2.webp",
                 "/static/images/sedie-multiplayer/animation/phase-2/red4.webp",
                 "/static/images/sedie-multiplayer/animation/phase-2/white3-op-1.webp",
-                "/static/images/sedie-multiplayer/animation/phase-2/white3-op-2.webp",
-                "/static/images/sedie-multiplayer/animation/phase-2/white4.webp",
-                "/static/images/sedie-multiplayer/result/box-back.webp",
-                "/static/images/sedie-multiplayer/result/box-cover.webp",
-                "/static/images/sedie-multiplayer/result/box-front.webp",
-                "/static/images/sedie-multiplayer/result/box-inside-nova88.webp"
+                "/static/images/sedie-multiplayer/animation/phase-2/white4.webp"
+            ],
+            "cachePaths": [
+                "/static/images/sedie-multiplayer/result/",
+                "/static/images/sedie-multiplayer/animation/phase-1/",
+                "/static/images/sedie-multiplayer/animation/phase-2/"
             ]
         }
     }
