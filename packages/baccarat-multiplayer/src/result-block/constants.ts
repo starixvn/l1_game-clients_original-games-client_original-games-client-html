@@ -10,9 +10,9 @@ export const CARD_TIMINGS = {
 
 // Winner text mapping
 export const WINNER_TEXT_MAP = {
-    player: 'Player Wins',
-    banker: 'Banker Wins',
-    tie: 'Tie'
+    player: 'player_win',
+    banker: 'banker_win',
+    tie: 'tie_win'
 } as const;
 // Card animation configuration
 export const CARD_ANIMATION_CONFIG = {

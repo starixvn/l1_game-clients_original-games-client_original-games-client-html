@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { cn } from "@shared/utils";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslator } from "@shared/react-hooks/use-translator";
 
 interface BaccaratScoreboardGuidePopupProps {
     isVisible: boolean;
@@ -12,7 +14,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> = ({ isVisible, onClose, containerRef }) => {
     const tooltipRef = useRef<HTMLDivElement>(null);
-
+    const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -41,23 +43,23 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
     const scoreboardGuideItems = [
         {
             icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`,
-            label: "Player",
+            label: "glossary_player",
         },
         {
             icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`,
-            label: "Banker",
+            label: "glossary_banker",
         },
         {
             icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`,
-            label: "Tie",
+            label: "glossary_tie",
         },
         {
             icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/player-pair.svg`,
-            label: "Player Pair",
+            label: "glossary_player_pair",
         },
         {
             icon: `${basePath}/static/images/baccarat/scoreboard/bead-road/banker-pair.svg`,
-            label: "Banker Pair",
+            label: "glossary_banker_pair",
         },
     ];
 
@@ -78,7 +80,7 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                             <div className="flex items-center justify-center w-4 h-4">
                                 <Image src={item.icon} alt={item.label} width={16} height={16} className="w-4 h-4" />
                             </div>
-                            <span className={cn("text-sm leading-[14px]")}>{item.label}</span>
+                            <span className={cn("text-sm leading-[14px]")}>{t(item.label)}</span>
                         </div>
                     ))}
                 </div>

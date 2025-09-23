@@ -3,4 +3,5 @@ export class ResourceTypes {
     public static readonly SABA_NUMBER = "SabaNumber";
     public static readonly MESSAGES = "messages";
     public static readonly SEDIE_MULTIPLAYER = "SeDie";
+    public static readonly BACCARAT_MULTIPLAYER = "Baccarat";
 }

@@ -4,6 +4,8 @@ import { GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
 import { BaccaratResult } from "./types";
 import { WINNER_TEXT_MAP } from "./constants";
+import { useTranslator } from "@shared/react-hooks/use-translator";
+import { ResourceTypes } from "@shared/resources";
 
 
 interface PlayerBankerResultProps {
@@ -25,6 +27,8 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
 
     const playerCards = result ? GetPlayerCardsResult(result) : [];
     const bankerCards = result ? GetBankerCardsResult(result) : [];
+
+    const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
 
     useEffect(() => {
         if (playResultAnimation) {
@@ -76,7 +80,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
 
             {isShowResult && isFinishShowResult && !isHideAllCards && (
                 <div className={`${styles["winner-display"]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
-                    <p className={styles["winner-text"]}>{getWinnerText()}</p>
+                    <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
                 </div>
             )}
         </div>
