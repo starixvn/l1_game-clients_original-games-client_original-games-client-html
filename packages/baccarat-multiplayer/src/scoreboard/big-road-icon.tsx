@@ -20,9 +20,17 @@ const BankerPairDot = () => (
     <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full -top-[1px] -left-[1px] z-[1]" />
 );
 
-const TieDot: React.FC<{ count: number }> = ({ count }) => (
+const TieDot: React.FC<{ count: number; hasNatural: boolean }> = ({ count, hasNatural }) => (
     <>
-        {count >= 2 && <span className="absolute text-red-600 text-center font-inter text-[9px] font-bold leading-normal tracking-[0.36px] capitalize z-[5]">{count}</span>}
+        {count >= 2 && (
+            <span
+                className={`absolute text-center font-inter text-[11px] font-bold leading-normal tracking-[0.44px] capitalize z-[5] ${
+                    hasNatural ? 'text-black' : 'text-white'
+                }`}
+            >
+                {count}
+            </span>
+        )}
         <Image className={styles['tie-image']} src={scoreboardImages.tie} alt="Tie" width={10} height={10} />
     </>
 );
@@ -69,8 +77,8 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
             <Image
                 src={imagePath}
                 alt={hasBanker ? 'Banker' : 'Player'}
-                width={26}
-                height={26}
+                width={14}
+                height={14}
                 priority
             />
 
@@ -79,15 +87,15 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
                     className={styles['natural-image']}
                     src={scoreboardImages.natural}
                     alt="Natural"
-                    width={8}
-                    height={8}
+                    width={12}
+                    height={12}
                 />
             )}
 
             {enrichedData?.playerPair && <PlayerPairDot />}
             {enrichedData?.bankerPair && <BankerPairDot />}
 
-            {tieCount > 0 && <TieDot count={tieCount} />}
+            {tieCount > 0 && <TieDot count={tieCount} hasNatural={!!enrichedData?.natural} />}
         </div>
     );
 };
