@@ -40,7 +40,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
         }
 
         return (
-            <div className={cn(Styles["scoreboard-full"], "py-1 px-0")} id="big-road">
+            <div className={cn(Styles["scoreboard-full"], "py-1 px-[2px]")} id="big-road">
                 <SwitchableScoreboard
                     rounds={settlements as any}
                     scoreboards={[

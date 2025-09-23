@@ -1,1 +1,16 @@
-{}
+{
+    "banker_pair_shorten": "बी. पेयर",
+    "banker_win": "बैंकर जीता",
+    "game_name_150": "बैकारेट मल्टीप्लेयर",
+    "glossary_anypair": "कोई भी जोड़ी",
+    "glossary_banker": "बैंकर",
+    "glossary_banker_pair": "बैंकर पेयर",
+    "glossary_big": "बड़ा",
+    "glossary_player": "प्लेयर",
+    "glossary_player_pair": "प्लेयर पेयर",
+    "glossary_small": "छोटा",
+    "glossary_tie": "टाई",
+    "player_pair_shorten": "पी. पेयर",
+    "player_win": "खिलाड़ी जीता",
+    "tie_win": "TIE"
+}

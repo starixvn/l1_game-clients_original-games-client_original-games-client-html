@@ -26,6 +26,11 @@
     "fullscreen_guide_2": "मेनू में \"Hide Toolbar\" \nटैप करें",
     "fullscreen_guide_3": "Hide Toolbar",
     "glossary_draw_id": "ड्रा",
+    "glossary_even": "सम",
+    "glossary_odd": "विषम",
+    "glossary_over": "ऊपर",
+    "glossary_tie": "टाई",
+    "glossary_under": "अंडर",
     "lobby_background_music": "पृष्ठभूमि संगीत",
     "lobby_create_nickname": "अपना उपनाम बनाएँ",
     "lobby_favorite": "अभी तक कोई पसंदीदा नहीं है, पसंदीदा गेम के लिए गेम आइकन पर {icon} का उपयोग करें।",
@@ -47,6 +52,7 @@
     "message_welcome": "Selamat datang ke",
     "pf_algorithm": "इंडेक्स वैल्यू = ((Random number + X) mod Number of balls left) + 1",
     "pf_algorithm_random_number": "यादृच्छिक संख्या",
+    "pf_ball_value": "बॉल वैल्यू",
     "pf_client_seed_info_total_players": "कुल खिलाड़ी:",
     "pf_client_seed_tooltip": "क्लाइंट सीड प्लेयर की तरफ से जेनरेट किया जाता है।\nसभी बेटिंग प्लेयर्स के क्लाइंट सीड को पहले प्लेयर से लेकर आखिरी प्लेयर तक बिना किसी स्पेस के क्रम में मर्ज करें।",
     "pf_combined_sha512_hash_tooltip": "अंतिम परिणाम सर्वर सीड और सभी बेटिंग प्लेयर्स के क्लाइंट सीड के कॉम्बिनेशन से निर्धारित होता है, जिसे बाद में SHA512 हैश में बदल दिया जाता है।",
@@ -80,5 +86,6 @@
     "status_stop_bet": "और दांव नहीं",
     "switch_game_hint": "गेम के बीच स्विच करने के लिए बाएं/दाएं स्वाइप करें",
     "table_no_data": "कोई डेटा उपलब्ध नहीं है।",
-    "table_no_more_data": "अब कोई डेटा उपलब्ध नहीं है।"
+    "table_no_more_data": "अब कोई डेटा उपलब्ध नहीं है।",
+    "unstable_connection": "कनेक्शन अस्थिर है, कृपया प्रतीक्षा करें..."
 }
