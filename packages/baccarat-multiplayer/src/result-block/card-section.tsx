@@ -72,15 +72,17 @@ export const CardSection: React.FC<CardSectionProps> = ({
 
                 {isShowResult && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        {cards.map((card, index) => (
-                            <div key={`score-container-${card.order}`} className="absolute inset-0 flex items-center justify-center">
-                                <ScoreDisplay
-                                    score={card.accumulatedScore}
-                                    type={type}
-                                    visible={visibleScores[card.order]}
-                                />
-                            </div>
-                        ))}
+                        <ScoreDisplay
+                            key={`score-${Object.values(visibleScores).filter(Boolean).length}`}
+                            score={cards.reduce((total, card) => {
+                                if (visibleScores[card.order]) {
+                                    return card.accumulatedScore;
+                                }
+                                return total;
+                            }, 0)}
+                            type={type}
+                            visible={Object.values(visibleScores).some(visible => visible)}
+                        />
                     </div>
                 )}
             </div>

@@ -63,7 +63,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     const gameState = useGameStateContext();
     const last = gameState?.roundData?.last;
 
-    const [isShow, setIsShow] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
     const [showCards, setShowCards] = useState(false);
     const [result, setResult] = useState<BaccaratResult>(DEFAULT_RESULT);
@@ -149,7 +148,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             setIsUsingRoundHistoryData(false);
 
             // Reset animation states to prepare for fresh animation
-            setIsShow(false);
             setShowCards(false);
             setAnimationState("idle");
         }
@@ -158,7 +156,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     // Follow sedie plate timing pattern
     useEffect(() => {
         const resetState = () => {
-            setIsShow(false);
             setShowCards(false);
             setAnimationState("idle");
         };
@@ -168,7 +165,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
 
         switch (roundState) {
             case RoundState.LockingBet:
-                setIsShow(true);
                 setShowCards(false);
                 setAnimationState("shake");
                 break;
@@ -177,14 +173,12 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
 
                 if (isUsingRoundHistoryData) {
                     // Skip animation and show result immediately when using historical data
-                    setIsShow(true);
                     setShowCards(true);
                     setAnimationState("idle");
                     // No timeout needed - keep the result visible
                 } else {
                     // Normal animation flow for fresh WebSocket data
                     timeoutDisplayResult = setTimeout(() => {
-                        setIsShow(true);
                         setAnimationState("idle");
                         setShowCards(true);
                         setAnimationState("open");
@@ -216,7 +210,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
 
     return (
         <div
-            className="h-[71px] w-full mt-3 mb-[26px] z-[var(--result-animation-index)]"
+            className="h-[64px] w-full mt-[26px] mb-[19px] z-[var(--result-animation-index)]"
             style={
                 {
                     "--shake-duration": "2000ms",
@@ -227,23 +221,9 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         >
             <WinningBalanceEffect />
             <div className="flex justify-center w-full h-full">
-                {isShow ? (
-                    <div className="w-full">
-                        {renderCardDisplay(result, showCards, animationState === "open", true, !showCards)}
-                    </div>
-                ) : (
-                    <div className="justify-center grid grid-cols-2 gap-[130px] items-center w-full">
-                        {labels.map((label) => (
-                            <div
-                                key={label}
-                                className={`text-[rgba(255,255,255,0.16)] text-xl font-[500] uppercase
-                                    ${label === 'player' ? 'text-right' : 'text-left'}`}
-                            >
-                                {t(`glossary_${label}`)}
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <div className="w-full">
+                    {renderCardDisplay(result, showCards, animationState === "open", true, !showCards)}
+                </div>
             </div>
         </div>
     );

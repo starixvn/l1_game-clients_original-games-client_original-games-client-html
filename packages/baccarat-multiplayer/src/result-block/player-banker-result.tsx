@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CardSection } from "./card-section";
 import { GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
@@ -17,13 +17,10 @@ interface PlayerBankerResultProps {
     isHideAllCards: boolean;
 }
 
-interface PlayerBankerResultState {
-    openedCards: number;
-    showWinner: boolean;
-}
 
 export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards } = props;
+    const [showWinner, setShowWinner] = useState(false);
 
     const playerCards = result ? GetPlayerCardsResult(result) : [];
     const bankerCards = result ? GetBankerCardsResult(result) : [];
@@ -33,8 +30,11 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     useEffect(() => {
         if (playResultAnimation) {
             startAnimation();
+        } else {
+            // For historical data (no animation), show winner immediately when cards are shown
+            setShowWinner(isShowResult && !isHideAllCards);
         }
-    }, [playResultAnimation, isShowResult]);
+    }, [playResultAnimation, isShowResult, isHideAllCards]);
 
     const getWinnerText = (): string => {
         if (!result) {
@@ -50,6 +50,15 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
 
         const allCards = [...playerCards, ...bankerCards].sort((a, b) => a.order - b.order).filter((card) => card.value);
 
+        // Find the maximum animation delay (last card to flip)
+        const maxDelay = allCards.length > 0 ? Math.max(...allCards.map(card => card.animationDelay)) : 0;
+
+        // Show winner after all cards have finished flipping (add 500ms buffer for card flip animation)
+        const winnerDelay = maxDelay + 500;
+
+        setTimeout(() => {
+            setShowWinner(true);
+        }, winnerDelay);
 
         allCards.forEach((card, index) => {
             setTimeout(() => {
@@ -59,7 +68,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     };
 
     return (
-        <div className="grid grid-cols-2 gap-[94px] md:gap-[194px] justify-center h-full pointer-events-none">
+        <div className="grid grid-cols-2 gap-[36px] md:gap-[110px] justify-center h-full pointer-events-none">
             <CardSection
                 cards={playerCards}
                 label="Player"
@@ -78,8 +87,8 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 isHideAllCards={isHideAllCards}
             />
 
-            {isShowResult && isFinishShowResult && !isHideAllCards && (
-                <div className={`${styles["winner-display"]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
+            {isShowResult && isFinishShowResult && !isHideAllCards && showWinner && (
+                <div className={`${styles["winner-display"]} ${styles[`winner-${result?.winner || 'tie'}`]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
                     <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
                 </div>
             )}

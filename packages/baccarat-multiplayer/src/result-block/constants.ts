@@ -14,6 +14,7 @@ export const WINNER_TEXT_MAP = {
     banker: 'banker_win',
     tie: 'tie_win'
 } as const;
+
 // Card animation configuration
 export const CARD_ANIMATION_CONFIG = {
     orders: {

@@ -1,32 +1,59 @@
 // Baccarat Card Styles
 .card {
     position: relative;
-    width: 53px;
-    height: 71px;
+    width: 48px;
+    height: 64px;
     border-radius: 4px;
     background: transparent;
     transform-style: preserve-3d;
-    margin: 0 -10px;
+    margin: 0 1.5px;
     perspective: 1000px;
     opacity: 1;
     transition: transform 0.6s ease-in-out;
 
-    // Removed absolute positioning for card5 - now displays inline
+    // Positioning for 3rd cards based on player/banker type, not order number
+    &.player {
+        // Player third card positioning
+        &.card5 {
+            position: absolute;
+            left: -59px;
+            top: 7.5px;
+            transform: rotate(90deg) rotateY(0deg);
+            z-index: 2;
 
-    &.card5,
-    &.card6 {
-        &:not(.flip) {
-            opacity: 0;
+            &.flip {
+                transform: rotate(90deg) rotateY(180deg);
+            }
+
+            &:not(.flip) {
+                opacity: 0;
+            }
+        }
+    }
+
+    &.banker {
+        // Banker third card positioning (can be card5 or card6 depending on player having third card)
+        &.card5,
+        &.card6 {
+            position: absolute;
+            right: -59px;
+            top: 7.5px;
+            transform: rotate(-90deg) rotateY(0deg);
+            z-index: 2;
+
+            &.flip {
+                transform: rotate(-90deg) rotateY(180deg);
+            }
+
+            &:not(.flip) {
+                opacity: 0;
+            }
         }
     }
 
     &.flip {
         transform: rotateY(180deg);
     }
-
-    // Removed rotation styles for 3rd cards - they now display straight
-    // All cards maintain consistent orientation
-    // No special rotation classes needed anymore
 
     // Card face components
     .baccarat-card-back {
