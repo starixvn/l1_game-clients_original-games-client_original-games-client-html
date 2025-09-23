@@ -11,12 +11,12 @@
         "dev:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH=/game-148 PORT=3001 FAST_REFRESH=false node custom-server.js",
         "dev:throughproxy": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-148 concurrently \"npm run dev:main-app\" \"npm run dev:proxy-server\"",
         "dev:main-app": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH=/game-148 PORT=5000 FAST_REFRESH=false node custom-server.js",
-        "dev:proxy-server": "cross-env NEXT_PUBLIC_BASE_PATH=/game-148 PROXY_PORT=3000 TARGET_HOST=http://localhost:5000 node reverse-proxy.js",
+        "dev:proxy-server": "cross-env NEXT_PUBLIC_BASE_PATH=/game-148 PROXY_PORT=3000 TARGET_HOST=http://localhost:5000 node ../../reverse-proxy.js",
         "build:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-148 next build",
         "start:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH=/game-148 PORT=3001 node custom-server.js",
         "dev:dynamic": "node scripts/dev-dynamic.js",
         "build:dynamic": "node scripts/build-dynamic.js",
-        "proxy": "node reverse-proxy.js",
+        "proxy": "node ../../reverse-proxy.js",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },
     "dependencies": {
