@@ -19,16 +19,16 @@ export const ScrollContainer = styled.div<{ $dragging?: boolean }>`
     flex-basis: 100%; // Ensure full basis
     flex-grow: 1; // Grow to fill available space
     flex-shrink: 0; // Don't shrink
-    padding-bottom: 3.5px;
+    padding-bottom: 3px;
 
     &::-webkit-scrollbar {
         width: 5px;
-        border-radius: 10px;
+        border-radius: 8px;
         background-color: transparent;  
     }
 
     &::-webkit-scrollbar-thumb {
-        border-radius: 10px;
+        border-radius: 8px;
         background: linear-gradient(180deg, #84c0ff 0%, #064f9b 100%);
     }
 

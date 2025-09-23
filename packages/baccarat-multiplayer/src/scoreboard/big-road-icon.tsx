@@ -14,11 +14,11 @@ const scoreboardImages: Record<string, string> = {
 };
 
 const PlayerPairDot = () => (
-    <div className="absolute w-[5px] h-[5px] bg-[#538AFF] rounded-full -bottom-[1px] -right-[1px] z-[1]" />
+    <div className="absolute w-[5px] h-[5px] bg-[#538AFF] rounded-full bottom-[0] right-[0] z-[1]" />
 );
 
 const BankerPairDot = () => (
-    <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full -top-[1px] -left-[1px] z-[1]" />
+    <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full top-[0px] left-[0] z-[1]" />
 );
 
 

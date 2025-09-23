@@ -4,11 +4,11 @@ import { getScoreboardImagePath } from './utils';
 import Image from "next/image";
 
 const PlayerPairDot = () => (
-    <div className="absolute w-[5px] h-[5px] bg-[#538AFF] rounded-full -bottom-[0.6px] -right-[0.6px] z-[1]" />
+    <div className="absolute w-[5px] h-[5px] bg-[#538AFF] rounded-full bottom-[0] right-[0] z-[1]" />
 );
 
 const BankerPairDot = () => (
-    <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full -top-[0.6px] -left-[0.6px] z-[1]" />
+    <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full top-[0] left-[0] z-[1]" />
 );
 
 type BeadBoardIconComponentProps = BeadBoardIconProps & {
