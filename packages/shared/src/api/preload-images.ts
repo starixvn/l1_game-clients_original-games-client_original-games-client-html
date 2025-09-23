@@ -5,6 +5,8 @@ import path from "path";
 import { buildVersion } from "@shared/constants";
 import { getPathImageGameId } from "@shared/constants/resource-image-mapping";
 import { getGameId } from "@shared/game-config";
+import { getGameSettings } from "@shared/app-settings";
+import { BASE_PATH } from "@shared/constants/base-path";
 
 // Enhanced caching with TTL and memory management
 interface CacheEntry {
@@ -75,6 +77,19 @@ export const getGameSpecificPaths = (gameId?: number): string[] => {
     return paths;
 };
 
+// Get cache-specific files that should be preloaded directly
+export const getCacheSpecificFiles = (gameId?: number): string[] => {
+    const files: string[] = [];
+
+    if (gameId) {
+        const gameSettings = getGameSettings(gameId);
+        const cachePaths = gameSettings?.gameResourceConfigs?.cachePaths || [];
+        files.push(...cachePaths);
+    }
+
+    return files;
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         if (req.method !== 'POST') {
@@ -102,10 +117,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const imagePaths: string[] = [];
+        const directFiles: string[] = [];
 
         // Add game-specific image paths
         const gamePaths = getGameSpecificPaths(currentGameId);
         imagePaths.push(...gamePaths);
+
+        // Add cache-specific files that should be loaded directly
+        const cacheFiles = getCacheSpecificFiles(currentGameId);
+        directFiles.push(...cacheFiles);
 
         // Add icon paths for other games
         if (gameIdsIcon && gameIdsIcon.length > 0) {
@@ -134,7 +154,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         .map((file) => {
                             const fileStr = file.toString();
                             const relativePath = path.relative(fullPath, path.join(fullPath, fileStr));
-                            return `${imagePath}${relativePath}?v=${buildVersion}`;
+                            // Normalize path separators to forward slashes for web URLs
+                            const normalizedRelativePath = relativePath.replace(/\\/g, '/');
+                            return `${BASE_PATH}${imagePath}${normalizedRelativePath}?v=${buildVersion}`;
+
                         });
 
                     allImageFiles.push(...imageFiles);
@@ -150,6 +173,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             timestamp: Date.now(),
             ttl: CACHE_TTL
         });
+
+        // Add direct cache files with build version
+        const directFilesWithVersion = directFiles.map(file => `${BASE_PATH}${file}?v=${buildVersion}`);
+        allImageFiles.push(...directFilesWithVersion);
 
         // Periodic cache cleanup
         cleanupCache();

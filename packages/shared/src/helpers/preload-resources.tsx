@@ -256,7 +256,10 @@ class PreloadManager {
     }
 
     private getMemoriedImages(gameId: number): string[] {
-        return MEMORIED_IMAGES.concat(getGameSettings(gameId)?.gameResourceConfigs?.cachePaths ?? []);
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+        const cachePaths = getGameSettings(gameId)?.gameResourceConfigs?.cachePaths ?? [];
+        const cachePathsWithBase = cachePaths.map(path => basePath + path);
+        return MEMORIED_IMAGES.concat(cachePathsWithBase);
     }
 
     private async loadAndCacheImage(path: string, memoriedImages: string[]): Promise<void> {

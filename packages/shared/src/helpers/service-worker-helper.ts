@@ -42,6 +42,15 @@ class ServiceWorkerHelper {
 
             console.log('[ServiceWorkerHelper] Service Worker registered successfully:', this.registration);
 
+            // Send basePath to service worker
+            if (this.registration.active) {
+                this.registration.active.postMessage({
+                    type: 'SET_BASE_PATH',
+                    basePath: this.basePath
+                });
+                console.log('[ServiceWorkerHelper] Sent basePath to service worker:', this.basePath);
+            }
+
             // Handle service worker updates
             this.registration.addEventListener('updatefound', () => {
                 console.log('[ServiceWorkerHelper] Service Worker update found');
@@ -60,6 +69,17 @@ class ServiceWorkerHelper {
             // Handle service worker state changes
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 console.log('[ServiceWorkerHelper] Service Worker controller changed');
+
+                // Send basePath to new active service worker
+                setTimeout(() => {
+                    if (navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({
+                            type: 'SET_BASE_PATH',
+                            basePath: this.basePath
+                        });
+                        console.log('[ServiceWorkerHelper] Sent basePath to new controller:', this.basePath);
+                    }
+                }, 100); // Small delay to ensure controller is ready
             });
 
             return true;
