@@ -14,7 +14,11 @@ export const getPathImageGameId = (gameId: number) => {
     if (gameImagePath) {
         paths.push(`/static/images/${gameImagePath}/`);
     }
-    paths.push(...optionalGamePaths.map(path => path.startsWith('/static/') ? path : `/static/images/${path}`));
+    paths.push(...optionalGamePaths.map(path => {
+        const fullPath = path.startsWith('/static/') ? path : `/static/images/${path}`;
+        // Ensure directory paths end with '/' for proper concatenation
+        return fullPath.endsWith('/') ? fullPath : fullPath + '/';
+    }));
 
     return paths;
 };
