@@ -2,6 +2,7 @@ import Image from "next/image";
 import { BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import styles from "./scoreboard-elements.module.scss";
 import { BigRoadRound } from "@shared/components/game-components/round-history/scoreboard/elements";
+import { isBankerWin, getTieCount } from "./utils";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -19,6 +20,7 @@ const PlayerPairDot = () => (
 const BankerPairDot = () => (
     <div className="absolute w-[5px] h-[5px] bg-[#FF2655] rounded-full -top-[1px] -left-[1px] z-[1]" />
 );
+
 
 const TieDot: React.FC<{ count: number; hasNatural: boolean }> = ({ count, hasNatural }) => (
     <>
@@ -41,21 +43,8 @@ export interface BigRoadIconProps {
     isEmpty: boolean;
 }
 
-const isBankerWin = (data: BaccaratSettlementResult[]): boolean => {
-    return data.some((result) => result.banker);
-};
-
 const getEnrichedData = (data: BaccaratSettlementResult[]): BaccaratSettlementResult | null => {
     return data?.[0] || null;
-};
-
-const getTieCount = (data: BaccaratSettlementResult[]): number => {
-    const firstResult = data?.[0];
-    if (!firstResult) {
-        return 0;
-    }
-
-    return firstResult.tie ? data.length : Math.max(0, data.length - 1);
 };
 
 const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) => {

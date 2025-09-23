@@ -1,7 +1,6 @@
 import { Round } from '@shared/components/game-base/type';
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 
-// Helper function to detect player pair
 export const hasPlayerPair = (playerCards: BaccaratResult['player']): boolean => {
     const cards = [playerCards.card1, playerCards.card2, playerCards.card3].filter(Boolean);
     return cards.some((card1, i) => 
@@ -9,7 +8,6 @@ export const hasPlayerPair = (playerCards: BaccaratResult['player']): boolean =>
     );
 };
 
-// Helper function to detect banker pair
 export const hasBankerPair = (bankerCards: BaccaratResult['banker']): boolean => {
     const cards = [bankerCards.card1, bankerCards.card2, bankerCards.card3].filter(Boolean);
     return cards.some((card1, i) =>
@@ -22,7 +20,48 @@ export const hasNatural = (result: BaccaratResult): boolean => {
            result.banker.score === 8 || result.banker.score === 9;
 };
 
-// Types for statistics
+export const getScoreboardImagePath = (variant: "player" | "banker" | "tie"): string => {
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    switch (variant) {
+        case "player":
+            return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
+        case "banker":
+            return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
+        case "tie":
+            return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
+        default:
+            return "";
+    }
+};
+
+export type WinnerResult = { hasWinner: true; winner: "player" | "banker" | "tie" } | { hasWinner: false };
+
+export const getWinnerFromSettlement = (settlementResult: BaccaratSettlementResult): WinnerResult => {
+    if (settlementResult.player) {
+        return { hasWinner: true, winner: "player" };
+    }
+    if (settlementResult.banker) {
+        return { hasWinner: true, winner: "banker" };
+    }
+    if (settlementResult.tie) {
+        return { hasWinner: true, winner: "tie" };
+    }
+    return { hasWinner: false };
+};
+
+export const isBankerWin = (data: BaccaratSettlementResult[]): boolean => {
+    return data.some((result) => result.banker);
+};
+
+export const getTieCount = (data: BaccaratSettlementResult[]): number => {
+    const firstResult = data?.[0];
+    if (!firstResult) {
+        return 0;
+    }
+    return firstResult.tie ? data.length : Math.max(0, data.length - 1);
+};
+
+
 export interface BaccaratBetCounts {
     player: number;
     banker: number;
@@ -31,7 +70,6 @@ export interface BaccaratBetCounts {
     bankerPair: number;
 }
 
-// Pure function for calculating bet statistics from round history
 export const calculateBaccaratBetCounts = (roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[]): BaccaratBetCounts => {
     const initialCounts: BaccaratBetCounts = {
         player: 0,

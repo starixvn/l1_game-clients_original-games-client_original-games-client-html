@@ -1,6 +1,7 @@
 import { Component, ReactNode } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from 'swiper';
+import { Navigation } from "swiper/modules";
 
 export type SlidableScoreboardProps = {
     boards: ReactNode[];
@@ -14,6 +15,8 @@ export class SlidableScoreboard extends Component<SlidableScoreboardProps> {
             <Swiper
                 onSwiper={onSwiperReady}
                 slidesPerView="auto"
+                navigation={true}
+                modules={[Navigation]}
                 spaceBetween={12}
                 className="swiper-scoreboard relative overflow-hidden"
                 allowTouchMove={false}
