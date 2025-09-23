@@ -54,6 +54,10 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
         swiper?.slideTo(newExpanded ? 1 : 0, 500);
     };
 
+    const handleSlideChange = (swiperInstance: SwiperType) => {
+        setIsExpanded(swiperInstance.activeIndex === 1);
+    };
+
     React.useEffect(() => {
         setIsExpanded(false);
     }, []);
@@ -99,6 +103,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                             roundHistory={roundHistory as any}
                             isShowBlink={isShowBlink}
                             onSwiperReady={handleSwiperReady}
+                            onSlideChange={handleSlideChange}
                         />
                         <BaccaratScoreboardGuidePopup
                             isVisible={openScoreBoardGuide}

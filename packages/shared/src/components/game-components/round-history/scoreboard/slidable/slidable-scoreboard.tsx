@@ -6,14 +6,16 @@ import { Navigation } from "swiper/modules";
 export type SlidableScoreboardProps = {
     boards: ReactNode[];
     onSwiperReady?: (swiper: SwiperType) => void;
+    onSlideChange?: (swiper: SwiperType) => void;
 };
 
 export class SlidableScoreboard extends Component<SlidableScoreboardProps> {
     render(): ReactNode {
-        const { boards, onSwiperReady } = this.props;
+        const { boards, onSwiperReady, onSlideChange } = this.props;
         return (
             <Swiper
                 onSwiper={onSwiperReady}
+                onSlideChange={onSlideChange}
                 slidesPerView="auto"
                 navigation={true}
                 modules={[Navigation]}

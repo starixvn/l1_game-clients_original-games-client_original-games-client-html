@@ -18,9 +18,10 @@ export type ScoreboardComponentProps = {
     isShowBlink: boolean;
     playResultAnimation?: boolean;
     onSwiperReady?: (swiper: SwiperType) => void;
+    onSlideChange?: (swiper: SwiperType) => void;
 };
 
-const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, isShowBlink, playResultAnimation, onSwiperReady }) => {
+const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, isShowBlink, playResultAnimation, onSwiperReady, onSlideChange }) => {
     const scoreboardColumnsRef = useRef(17);
 
     const updateScoreboardColumns = (actualColumns: number) => {
@@ -92,6 +93,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
         <SlidableScoreboard
             boards={[renderBigRoad(), renderBeadRoad()]}
             onSwiperReady={onSwiperReady}
+            onSlideChange={onSlideChange}
         />
     );
 };
