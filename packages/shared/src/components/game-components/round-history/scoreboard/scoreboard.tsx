@@ -138,6 +138,7 @@ export class Scoreboard<Round> extends Component<ScoreboardProps<Round>> {
             blockClassName,
             updateScoreboardColumns,
             scrollToRight,
+            columnWidth,
             ...htmlProps
         } = this.props;
 

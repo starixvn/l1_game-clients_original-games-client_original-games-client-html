@@ -16,16 +16,16 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
 
         checkViewport();
         window.addEventListener('resize', checkViewport);
-        
+
         return () => window.removeEventListener('resize', checkViewport);
     }, []);
 
     // Get shape path from shared constants based on viewport
     const shapes = isDesktop ? BET_OPTION_SHAPES_DESKTOP : BET_OPTION_SHAPES;
     const shapePath = choice === 'banker' ? shapes.banker :
-                     choice === 'tie' ? shapes.tie :
-                     choice === 'anyPair' ? shapes.anyPair :
-                     shapes.player;
+        choice === 'tie' ? shapes.tie :
+            choice === 'anyPair' ? shapes.anyPair :
+                shapes.player;
 
     // Get correct viewBox for desktop vs mobile
     const getViewBox = () => {
@@ -57,11 +57,11 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
                     <svg viewBox={getViewBox()} fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <linearGradient id="strokeGradient" x1="0" y1="0" x2="47.5" y2="73" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FBEC5E"/>
-                                <stop offset="1" stop-color="#FBEC5E" stopOpacity="0.3"/>
+                                <stop stopColor="#FBEC5E" />
+                                <stop offset="1" stopColor="#FBEC5E" stopOpacity="0.3" />
                             </linearGradient>
                         </defs>
-                        <path d={shapePath} data-choice={choice}/>
+                        <path d={shapePath} data-choice={choice} />
                     </svg>
                 </div>
             </div>

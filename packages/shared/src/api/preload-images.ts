@@ -55,7 +55,7 @@ const cleanupCache = () => {
 
 // Get icon paths for games
 const getPathIconGames = (gameIds: number[]): string[] => {
-    return gameIds.map(gameId => `/images/game-icons/${gameId}/`);
+    return gameIds.map(gameId => `/static/images/game-icons/${gameId}/`);
 };
 
 // Get game-specific paths - can be overridden by individual games
@@ -63,8 +63,8 @@ export const getGameSpecificPaths = (gameId?: number): string[] => {
     const paths: string[] = [];
 
     // Lobby and game images are common
-    paths.push("/images/game-icons/");
-    paths.push("/images/chips/");
+    paths.push("/static/images/game-icons/");
+    paths.push("/static/images/chips/");
 
     // Add game-specific paths based on game ID
     if (gameId) {
@@ -115,7 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Add banner path if specified
         if (bannerId) {
-            imagePaths.push(`/images/banners/${bannerId}/`);
+            imagePaths.push(`/static/images/banners/${bannerId}/`);
         }
 
         // Read actual files from filesystem
@@ -123,7 +123,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         for (const imagePath of imagePaths) {
             try {
-                const fullPath = path.join(process.cwd(), DEFAULT_STATIC_PATH, imagePath.replace(DEFAULT_IMG_PATH, ''));
+                const fullPath = path.join(process.cwd(), imagePath.replace('/static/images/', 'public/static/images/'));
                 if (fs.existsSync(fullPath)) {
                     const files = fs.readdirSync(fullPath, { recursive: true });
                     const imageFiles = files
