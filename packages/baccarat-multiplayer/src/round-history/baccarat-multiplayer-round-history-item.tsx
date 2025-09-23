@@ -1,7 +1,15 @@
 import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
+import { hasPlayerPair, hasBankerPair } from "../scoreboard/utils";
 import Image from "next/image";
 
-const PairDot = () => <div className="absolute w-[6px] h-[6px] bg-white rounded-full -top-[2.5px] z-[1]" />;
+const PlayerPairDot = () => (
+    <div className="absolute w-[7px] h-[7px] bg-[#538AFF] rounded-full -bottom-[1px] -right-[1px] z-[1]" />
+);
+
+const BankerPairDot = () => (
+    <div className="absolute w-[7px] h-[7px] bg-[#FF2655] rounded-full -top-[1px] -left-[1px] z-[1]" />
+);
+
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 type Props = {
@@ -21,14 +29,17 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
     const { settlementResult } = result;
 
     const renderItem = () => {
+        const playerPair = result.result ? hasPlayerPair(result.result.player) : false;
+        const bankerPair = result.result ? hasBankerPair(result.result.banker) : false;
+
         if (settlementResult.player) {
-            return <RoundHistoryItem variant="player" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="player" playerPair={playerPair} bankerPair={bankerPair} />;
         }
         if (settlementResult.banker) {
-            return <RoundHistoryItem variant="banker" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="banker" playerPair={playerPair} bankerPair={bankerPair} />;
         }
         if (settlementResult.tie) {
-            return <RoundHistoryItem variant="tie" hasPair={settlementResult.anyPair} />;
+            return <RoundHistoryItem variant="tie" playerPair={playerPair} bankerPair={bankerPair} />;
         }
         return null;
     };
@@ -38,10 +49,11 @@ export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
 
 type RoundHistoryItemProps = {
     variant: "player" | "banker" | "tie";
-    hasPair: boolean;
+    playerPair: boolean;
+    bankerPair: boolean;
 };
 
-const RoundHistoryItem = ({ variant, hasPair }: RoundHistoryItemProps) => {
+const RoundHistoryItem = ({ variant, playerPair, bankerPair }: RoundHistoryItemProps) => {
     const getImagePath = () => {
         switch (variant) {
             case "player":
@@ -64,7 +76,8 @@ const RoundHistoryItem = ({ variant, hasPair }: RoundHistoryItemProps) => {
                 height={16}
                 className="w-4 h-4"
             />
-            {hasPair && <PairDot />}
+            {playerPair && <PlayerPairDot />}
+            {bankerPair && <BankerPairDot />}
         </div>
     );
 };
