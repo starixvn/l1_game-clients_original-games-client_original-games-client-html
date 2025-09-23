@@ -83,7 +83,7 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     ))}
                 </div>
 
-                <div className="absolute -top-1 right-12 w-5 h-5 bg-[#030A14] rotate-45" />
+                <div className="absolute -top-1 right-[91px] w-5 h-5 bg-[#030A14] rotate-45" />
             </div>
     );
 };

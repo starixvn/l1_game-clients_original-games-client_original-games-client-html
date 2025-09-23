@@ -89,16 +89,18 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
                             aria-label={isExpanded ? "Collapse" : "Expand"}
                         />
                         {/* Baccarat Bet Counts Statistics */}
-                        <BaccaratBetCountsComponent 
-                            roundHistory={roundHistory as any} 
+                        <BaccaratBetCountsComponent
+                            roundHistory={roundHistory as any}
                             onOpenGuide={handleOpenGuide}
+                            isTooltipVisible={openScoreBoardGuide}
+                            onCloseGuide={handleCloseGuide}
                         />
                         <ScoreboardBaccarat
                             roundHistory={roundHistory as any}
                             isShowBlink={isShowBlink}
                             onSwiperReady={handleSwiperReady}
                         />
-                        <BaccaratScoreboardGuidePopup 
+                        <BaccaratScoreboardGuidePopup
                             isVisible={openScoreBoardGuide}
                             onClose={handleCloseGuide}
                             containerRef={containerRef}

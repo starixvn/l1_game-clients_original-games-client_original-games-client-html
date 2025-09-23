@@ -4,7 +4,6 @@ import { Round } from "@shared/components/game-base/type";
 import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 import { calculateBaccaratBetCounts, BaccaratBetCounts } from "../scoreboard/utils";
 
-// Types and Interfaces
 interface BetCountItemProps {
     choice: string;
     count: number;
@@ -13,6 +12,8 @@ interface BetCountItemProps {
 interface BaccaratBetCountsProps {
     roundHistory: Round<BaccaratResult, BaccaratSettlementResult>[];
     onOpenGuide?: () => void;
+    isTooltipVisible?: boolean;
+    onCloseGuide?: () => void;
 }
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -48,7 +49,7 @@ const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
     );
 };
 
-const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHistory, onOpenGuide }) => {
+const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHistory, onOpenGuide, isTooltipVisible, onCloseGuide }) => {
     const betCounts = calculateBaccaratBetCounts(roundHistory);
 
     const countItems = [
@@ -59,23 +60,30 @@ const BaccaratBetCountsComponent: React.FC<BaccaratBetCountsProps> = ({ roundHis
         { choice: "bankerPair", count: betCounts.bankerPair },
     ];
 
-    const handleQuestionMarkClick = () => {
-        onOpenGuide?.();
-    };
-
     return (
-        <div className="flex gap-1 px-1 py-2 items-center">
-            {countItems.map((item) => (
-                <BetCountItem key={item.choice} choice={item.choice} count={item.count} />
-            ))}
-            <Image
-                src={`${basePath}/static/images/icons/scoreboard-question-mark.svg`}
-                alt="scoreboard-question-mark"
-                width={16}
-                height={16}
-                className="w-4 h-4 cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={handleQuestionMarkClick}
-            />
+        <div className="relative">
+            <div className="flex gap-1 px-1 py-2 items-center">
+                {countItems.map((item) => (
+                    <BetCountItem key={item.choice} choice={item.choice} count={item.count} />
+                ))}
+                <Image
+                    src={`${basePath}/static/images/icons/scoreboard-question-mark.svg`}
+                    alt="scoreboard-question-mark"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => onOpenGuide?.()}
+                />
+            </div>
+            {isTooltipVisible && (
+                <div
+                    className="absolute inset-0 z-40"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        onCloseGuide?.();
+                    }}
+                />
+            )}
         </div>
     );
 };
