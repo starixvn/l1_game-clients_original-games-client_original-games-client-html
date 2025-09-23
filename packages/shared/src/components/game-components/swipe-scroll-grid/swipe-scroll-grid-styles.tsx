@@ -24,11 +24,17 @@ export const ScrollContainer = styled.div<{ $dragging?: boolean }>`
     &::-webkit-scrollbar {
         width: 5px;
         border-radius: 10px;
-        background-color: #3d3d3d;
+        background-color: transparent;  
     }
 
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
         background: linear-gradient(180deg, #84c0ff 0%, #064f9b 100%);
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background: transparent; 
+        margin: 0 8px; 
     }
 `;

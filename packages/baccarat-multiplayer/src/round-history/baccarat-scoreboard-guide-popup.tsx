@@ -69,7 +69,7 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                 className={cn(
                     "absolute top-10 left-[8px] z-50",
                     "bg-[#030A14] backdrop-blur-sm",
-                    "rounded-lg",
+                    "rounded-xl",
                     "p-1 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3"
                 )}
             >
