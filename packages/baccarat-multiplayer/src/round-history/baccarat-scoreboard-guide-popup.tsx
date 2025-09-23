@@ -67,10 +67,10 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
             <div
                 ref={tooltipRef}
                 className={cn(
-                    "absolute top-10 left-[8px] z-50",
+                    "absolute top-[39px] left-[8px] z-50",
                     "bg-[#030A14] backdrop-blur-sm",
-                    "rounded-xl",
-                    "p-1 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3"
+                    "rounded-lg",
+                    "p-1 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3 "
                 )}
             >
                 <div className="space-y-1">
@@ -84,7 +84,7 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     ))}
                 </div>
 
-                <div className="absolute -top-1 right-[67px] w-5 h-5 bg-[#030A14] rotate-45" />
+                <div className="absolute -top-[5.5px] right-[69px] w-4 h-4 bg-[#030A14] rotate-45" />
             </div>
     );
 };
