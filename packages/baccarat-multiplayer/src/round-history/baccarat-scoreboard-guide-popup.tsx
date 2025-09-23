@@ -73,7 +73,6 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     "p-1 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3"
                 )}
             >
-                {/* Legend content */}
                 <div className="space-y-1">
                     {scoreboardGuideItems.map((item, index) => (
                         <div key={index} className="flex items-center gap-2">

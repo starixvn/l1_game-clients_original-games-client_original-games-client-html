@@ -92,7 +92,7 @@
     background: url("#{$base-path}/static/images/expand-statistic.svg") no-repeat center/cover;
     border: none;
     cursor: pointer;
-    z-index: 9999;
+    z-index: 49;
 }
 
 .collapse {
@@ -104,5 +104,5 @@
     background: url("#{$base-path}/static/images/collapse-statistic.svg") no-repeat center/cover;
     border: none;
     cursor: pointer;
-    z-index: 9999;
+    z-index: 49;
 }
