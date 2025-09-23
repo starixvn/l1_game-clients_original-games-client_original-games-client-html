@@ -77,17 +77,17 @@ export const getGameSpecificPaths = (gameId?: number): string[] => {
     return paths;
 };
 
-// Get cache-specific files that should be preloaded directly
-export const getCacheSpecificFiles = (gameId?: number): string[] => {
-    const files: string[] = [];
+// Get cache-specific paths (directories) that should be scanned for all assets
+export const getCacheSpecificPaths = (gameId?: number): string[] => {
+    const paths: string[] = [];
 
     if (gameId) {
         const gameSettings = getGameSettings(gameId);
         const cachePaths = gameSettings?.gameResourceConfigs?.cachePaths || [];
-        files.push(...cachePaths);
+        paths.push(...cachePaths);
     }
 
-    return files;
+    return paths;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -117,15 +117,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const imagePaths: string[] = [];
-        const directFiles: string[] = [];
 
         // Add game-specific image paths
         const gamePaths = getGameSpecificPaths(currentGameId);
         imagePaths.push(...gamePaths);
 
-        // Add cache-specific files that should be loaded directly
-        const cacheFiles = getCacheSpecificFiles(currentGameId);
-        directFiles.push(...cacheFiles);
+        // Add cache-specific paths (directories to scan for all assets)
+        const cachePaths = getCacheSpecificPaths(currentGameId);
+        imagePaths.push(...cachePaths);
 
         // Add icon paths for other games
         if (gameIdsIcon && gameIdsIcon.length > 0) {
@@ -173,10 +172,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             timestamp: Date.now(),
             ttl: CACHE_TTL
         });
-
-        // Add direct cache files with build version
-        const directFilesWithVersion = directFiles.map(file => `${BASE_PATH}${file}?v=${buildVersion}`);
-        allImageFiles.push(...directFilesWithVersion);
 
         // Periodic cache cleanup
         cleanupCache();
