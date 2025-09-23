@@ -5,9 +5,9 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PROXY_PORT || 3000;
 
-// Game service targets
-const SEDIE_TARGET = process.env.SEDIE_TARGET || "http://sedie-multiplayer:5000";
-const BACCARAT_TARGET = process.env.BACCARAT_TARGET || "http://baccarat-multiplayer:5001";
+// Game service targets - use localhost for development
+const SEDIE_TARGET = "http://localhost:5000";
+const BACCARAT_TARGET = "http://localhost:5002";
 
 // Simulate the deployment environment where requests come in with game-specific prefixes
 console.log(`🚀 Starting Unified Reverse Proxy Server`);
@@ -115,15 +115,15 @@ app.get("/health", (req, res) => {
             sedie: {
                 game_id: 148,
                 target: SEDIE_TARGET,
-                base_path: "/game-148"
+                base_path: "/game-148",
             },
             baccarat: {
                 game_id: 150,
                 target: BACCARAT_TARGET,
-                base_path: "/game-150"
-            }
+                base_path: "/game-150",
+            },
         },
-        proxy_port: PORT
+        proxy_port: PORT,
     });
 });
 

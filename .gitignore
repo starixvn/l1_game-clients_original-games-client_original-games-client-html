@@ -37,6 +37,5 @@ stryker-tmp
 sonar-reports
 .scannerwork
 packages/sedie-multiplayer/.next
+packages/baccarat/.next
 packages/baccarat-multiplayer/.next
-packages/baccarat-multiplayer/public/i18n
-packages/sedie-multiplayer/public/i18n
