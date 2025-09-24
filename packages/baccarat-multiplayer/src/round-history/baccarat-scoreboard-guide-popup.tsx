@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { cn } from "@shared/utils";
 import { ResourceTypes } from "@shared/resources";
@@ -15,6 +15,21 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> = ({ isVisible, onClose, containerRef }) => {
     const tooltipRef = useRef<HTMLDivElement>(null);
     const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [shouldRender, setShouldRender] = useState(false);
+
+    useEffect(() => {
+        if (isVisible) {
+            setShouldRender(true);
+            const timer = setTimeout(() => setIsAnimating(true), 10);
+            return () => clearTimeout(timer);
+        } else {
+            setIsAnimating(false);
+            const timer = setTimeout(() => setShouldRender(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [isVisible]);
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -36,7 +51,7 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
         };
     }, [isVisible, onClose, containerRef]);
 
-    if (!isVisible) {
+    if (!shouldRender) {
         return null;
     }
 
@@ -75,7 +90,12 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     "bg-[#030A14] backdrop-blur-sm",
                     "rounded-lg",
                     "px-2 py-[5px] shadow-lg w-[calc(100%-8px)] rounded-3 h-[108px]",
-                    "flex items-center"
+                    "flex items-center",
+                    "transition-all duration-300 ease-out",
+                    "transform-gpu",
+                    isAnimating
+                        ? "opacity-100 scale-100 translate-y-0"
+                        : "opacity-0 scale-95 -translate-y-4"
                 )}
             >
                 <div className="flex gap-6">
@@ -101,7 +121,13 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     </div>
                 </div>
 
-                <div className="absolute -top-[5.5px] right-[69px] w-4 h-4 bg-[#030A14] rotate-45" />
+                <div
+                    className={cn(
+                        "absolute -top-[5.5px] right-[69px] w-4 h-4 bg-[#030A14] rotate-45",
+                        "transition-all duration-300 ease-out",
+                        isAnimating ? "opacity-100" : "opacity-0"
+                    )}
+                />
             </div>
     );
 };
