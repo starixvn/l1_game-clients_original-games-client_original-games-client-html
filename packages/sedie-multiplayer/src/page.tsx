@@ -60,7 +60,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame() {
         return (
-            <div className={`flex flex-col items-center justify-center relative`}>
+            <div className={`flex flex-col items-center justify-center relative md:mx-3`}>
                 <Background gameId={this.props.id} />
                 {this.renderRoundHistory()}
                 {this.renderCountdownTimer()}
@@ -68,7 +68,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
                     {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
                     {this.renderBetOptions()}
                 </div>
-
+                {this.renderChipAndBetControlPanel()}
                 {this.renderNotice()}
             </div>
         );
@@ -86,19 +86,22 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
         return <SeDieMultiplayerBettingBlock />;
     }
 
+    renderChipAndBetControlPanel() {
+        return (
+            <div className="flex gap-6 justify-center items-center md:gap-3 my-3">
+                <DoubleBetIcon />
+                {this.renderChipControlPanel()}
+                <AutoRebetIcon />
+            </div>
+        );
+    }
+
     renderBetControl() {
         return (
             <>
-                <div className="flex  justify-center items-center md:gap-3 mb-3 md:mb-0">
-                    <DoubleBetIcon />
-                    {this.renderChipControlPanel()}
-                    <AutoRebetIcon />
+                <div className="p-3 bg-primary-bg mx-3 border-stroke rounded-b-none before:rounded-b-none md:rounded-none">
+                    <OwnTotalBet />
                 </div>
-                
-                    <div className="p-3 bg-primary-bg mx-3 border-stroke rounded-b-none before:rounded-b-none">
-                        <OwnTotalBet />
-                    </div>
-                
             </>
         );
     }

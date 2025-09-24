@@ -1,5 +1,4 @@
 import { useTheme } from "next-themes";
-import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { getAppSettings } from "@shared/app-settings";
 import { usePlayerContext } from "@shared/react-contexts";
@@ -7,7 +6,7 @@ import { useBlockBetSound, usePlaceBetSound, useStartDrawSound, useStartRoundSou
 import { GameSound } from "@shared/components/game-base/type";
 import GameLoading from "@shared/components/game-components/game-loading";
 import { getChipSettings } from "@shared/services/user-setting-service";
-import { Props, GameComponentProps, GameComponentRegistry } from "./type";
+import { Props, GameComponentProps } from "./type";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import { useSettingStore } from "@shared/stores";
 

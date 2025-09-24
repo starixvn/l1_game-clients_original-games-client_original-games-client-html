@@ -635,7 +635,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             </div>
         );
     }
-
+    
     renderLeftSide() {
         return (
             <div className="col-span-12 lg:col-span-8 mb-3">
