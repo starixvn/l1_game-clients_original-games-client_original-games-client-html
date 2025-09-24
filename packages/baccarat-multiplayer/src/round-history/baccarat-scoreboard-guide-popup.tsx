@@ -78,15 +78,27 @@ const BaccaratScoreboardGuidePopup: React.FC<BaccaratScoreboardGuidePopupProps> 
                     "flex items-center"
                 )}
             >
-                <div className="grid grid-cols-2 gap-4 gap-y-2">
-                    {scoreboardGuideItems.map((item, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-4 h-4 flex-shrink-0">
-                                <Image src={item.icon} alt={item.label} width={16} height={16} className="w-4 h-4" />
+                <div className="flex gap-6">
+                    <div className="flex flex-col gap-2">
+                        {scoreboardGuideItems.slice(0, 3).map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                                <div className="flex items-center justify-center w-4 h-4 flex-shrink-0">
+                                    <Image src={item.icon} alt={item.label} width={16} height={16} className="w-4 h-4" />
+                                </div>
+                                <span className={cn("text-sm text-nowrap min-w-[80px]")}>{t(item.label)}</span>
                             </div>
-                            <span className={cn("text-sm text-nowrap")}>{t(item.label)}</span>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        {scoreboardGuideItems.slice(3, 6).map((item, index) => (
+                            <div key={index + 3} className="flex items-center gap-2">
+                                <div className="flex items-center justify-center w-4 h-4 flex-shrink-0">
+                                    <Image src={item.icon} alt={item.label} width={16} height={16} className="w-4 h-4" />
+                                </div>
+                                <span className={cn("text-sm text-nowrap")}>{t(item.label)}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="absolute -top-[5.5px] right-[69px] w-4 h-4 bg-[#030A14] rotate-45" />
