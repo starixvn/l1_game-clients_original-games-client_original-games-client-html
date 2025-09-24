@@ -17,8 +17,8 @@ console.log(`  - Baccarat Target: ${BACCARAT_TARGET} (Game ID: 150)`);
 console.log(`  - Base Paths: /game-148, /game-150`);
 console.log(`  - Environment: Simulating deployment environment`);
 console.log(`  - Access URLs:`);
-console.log(`    - Sedie: http://localhost:${PORT}/game-148`);
-console.log(`    - Baccarat: http://localhost:${PORT}/game-150`);
+console.log(`   - Sedie: http://localhost:${PORT}/game-148`);
+console.log(`   - Baccarat: http://localhost:${PORT}/game-150`);
 console.log("");
 
 // Middleware to log all incoming requests

@@ -208,6 +208,7 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
 
         const wasExpanded = isExpanded;
         betHistoryHandler.toggleExpanded();
+        clickSound();
 
         // Scroll to top when collapsing
         if (wasExpanded) {

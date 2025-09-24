@@ -6,8 +6,10 @@ import { useGameStore } from "@shared/stores/game-store/game-store";
 import { useShallow } from "zustand/shallow";
 import useBettingStore from "@shared/stores/betting-store/betting-store";
 import { useClickOutside } from "@shared/react-hooks/use-click-outside";
+import { useClickSound } from "@shared/react-hooks";
 
 const ChipControlPanel: React.FC = () => {
+    const clickSound = useClickSound();
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
@@ -68,6 +70,7 @@ const ChipControlPanel: React.FC = () => {
             const index = currentIndex - 1;
             onSelectChip(chipValues[index]);
             setCurrentIndex(index);
+            clickSound();
         }
     };
     const onClickNext = () => {
@@ -75,6 +78,7 @@ const ChipControlPanel: React.FC = () => {
             const index = currentIndex + 1;
             onSelectChip(chipValues[index]);
             setCurrentIndex(index);
+            clickSound();
         }
     };
 

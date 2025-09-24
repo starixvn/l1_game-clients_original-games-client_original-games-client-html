@@ -41,10 +41,12 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
 
     const handleOpenGuide = () => {
         setOpenScoreBoardGuide(true);
+        clickSound();
     };
 
     const handleCloseGuide = () => {
         setOpenScoreBoardGuide(false);
+        clickSound();
     };
 
     const handleExpand = () => {
@@ -56,6 +58,7 @@ export const BaccaratMultiplayerStatisticPopup: React.FC<BaccaratMultiplayerStat
 
     const handleSlideChange = (swiperInstance: SwiperType) => {
         setIsExpanded(swiperInstance.activeIndex === 1);
+        clickSound();
     };
 
     React.useEffect(() => {
