@@ -69,10 +69,8 @@ ENV NEXT_PUBLIC_BASE_PATH=/game-148
 ENV NEXT_PUBLIC_DEFAULT_GAME_ID=148
 
 RUN addgroup --system --gid 1001 nodejs  \
-     && adduser --system --uid 1001 nextjs
-
-# Create src directory for image loader
-RUN mkdir -p src
+     && adduser --system --uid 1001 nextjs \
+     && mkdir -p src packages/shared/configs
 
 # Copy the built app and required assets
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
@@ -85,6 +83,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/config
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/custom-server.js ./custom-server.js
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/src/image-loader.js ./src/image-loader.js
 COPY --from=builder --chown=nextjs:nodejs /app/packages/sedie-multiplayer/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/packages/shared/configs/custom-server.js ./packages/shared/configs/custom-server.js
 
 # Ensure proper permissions for the .next directory
 RUN chown -R nextjs:nodejs .next
