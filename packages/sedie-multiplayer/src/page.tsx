@@ -88,7 +88,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderChipAndBetControlPanel() {
         return (
-            <div className="flex gap-6 justify-center items-center md:gap-3 my-3">
+            <div className="flex justify-between items-center md:gap-3 my-3 mx-3">
                 <DoubleBetIcon />
                 {this.renderChipControlPanel()}
                 <AutoRebetIcon />
