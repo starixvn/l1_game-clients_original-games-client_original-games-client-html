@@ -24,17 +24,27 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
 }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [flipAnimationClass, setFlipAnimationClass] = useState('');
+    const [isEntrance, setIsEntrance] = useState(false);
     const flipScheduledRef = useRef(false); // Track if we've already scheduled a flip
 
     useEffect(() => {
         if (isFlipped && playResultAnimation) {
-            setFlipAnimationClass(styles['flip']);
+            // For 3rd cards, first show entrance animation, then flip
+            if (card.order >= 5) { // 3rd cards
+                if (isEntrance) {
+                    setFlipAnimationClass(styles['flip']);
+                } else {
+                    setFlipAnimationClass(styles['entrance']);
+                }
+            } else {
+                setFlipAnimationClass(styles['flip']);
+            }
         } else if (isFlipped) {
             setFlipAnimationClass(`${styles['flip']} ${styles['no-animation']}`);
         } else {
             setFlipAnimationClass('');
         }
-    }, [isFlipped, playResultAnimation]);
+    }, [isFlipped, playResultAnimation, isEntrance, card.order]);
 
 
     useEffect(() => {
@@ -45,12 +55,28 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             flipScheduledRef.current = true;
 
             // Sequential card opening - Order matters for timing!
-            const delay = playResultAnimation ? (CARD_TIMINGS[card.order as keyof typeof CARD_TIMINGS] || 0) : 0;
+            const baseDelay = CARD_TIMINGS[card.order as keyof typeof CARD_TIMINGS] || 0;
+            const delay = playResultAnimation ? Math.max(baseDelay, 50) : 0; // Minimum 50ms delay for animation to work
 
             const flipTimer = setTimeout(() => {
-                setIsFlipped(true);
-                if (onCardFlip) {
-                    onCardFlip(card, card.accumulatedScore);
+                // For 3rd cards, first show entrance animation
+                if (card.order >= 5) {
+                    setIsEntrance(false); // Start with entrance
+                    setIsFlipped(true);
+
+                    // After entrance animation completes, flip the card
+                    setTimeout(() => {
+                        setIsEntrance(true);
+                        if (onCardFlip) {
+                            onCardFlip(card, card.accumulatedScore);
+                        }
+                    }, 600); // Wait for fast entrance animation to complete
+                } else {
+                    // Regular cards just flip
+                    setIsFlipped(true);
+                    if (onCardFlip) {
+                        onCardFlip(card, card.accumulatedScore);
+                    }
                 }
                 // Keep the flag set to prevent re-flipping this card
                 // Only reset when isShowResult becomes false
@@ -59,6 +85,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             cleanup = () => clearTimeout(flipTimer);
         } else if (!isShowResult) {
             setIsFlipped(false);
+            setIsEntrance(false);
             flipScheduledRef.current = false; // Reset flag when hiding results
         }
 
@@ -69,7 +96,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
     const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${className || ''}`;
 
     return (
-        <div className={cardClassName}>
+        <div className={cardClassName} data-card-order={card.order}>
             <div className={styles['baccarat-card-back']}>
                 <CardBack />
             </div>

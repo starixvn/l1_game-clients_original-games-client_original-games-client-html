@@ -18,15 +18,20 @@
             position: absolute;
             left: -59px;
             top: 7.5px;
-            transform: rotate(90deg) rotateY(0deg);
+            transform: rotate(90deg) rotateY(0deg) translateX(-59px);
             z-index: 2;
+            opacity: 0;
 
             &.flip {
-                transform: rotate(90deg) rotateY(180deg);
+                opacity: 1;
+                transform: rotate(90deg) rotateY(180deg) translateX(0px);
             }
 
-            &:not(.flip) {
-                opacity: 0;
+            // Intermediate state: visible back card before flipping (dynamic entrance)
+            &.entrance {
+                opacity: 1;
+                transform: rotate(90deg) rotateY(0deg) translateX(0px) scale(1);
+                animation: slideInLeft 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
             }
         }
     }
@@ -38,15 +43,20 @@
             position: absolute;
             right: -59px;
             top: 7.5px;
-            transform: rotate(-90deg) rotateY(0deg);
+            transform: rotate(-90deg) rotateY(0deg) translateX(59px);
             z-index: 2;
+            opacity: 0;
 
             &.flip {
-                transform: rotate(-90deg) rotateY(180deg);
+                opacity: 1;
+                transform: rotate(-90deg) rotateY(180deg) translateX(0px);
             }
 
-            &:not(.flip) {
-                opacity: 0;
+            // Intermediate state: visible back card before flipping (dynamic entrance)
+            &.entrance {
+                opacity: 1;
+                transform: rotate(-90deg) rotateY(0deg) translateX(0px) scale(1);
+                animation: slideInRight 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
             }
         }
     }
@@ -77,6 +87,35 @@
 
     &.no-animation {
         transition: transform 0.3s ease-in-out;
+    }
+
+    // 3rd card dynamic entrance animations
+    @keyframes slideInLeft {
+        0% {
+            transform: rotate(90deg) rotateY(0deg) translateX(-59px) scale(0);
+        }
+
+        90% {
+            transform: rotate(90deg) rotateY(0deg) translateX(5px) scale(1.1);
+        }
+
+        100% {
+            transform: rotate(90deg) rotateY(0deg) translateX(0px) scale(1);
+        }
+    }
+
+    @keyframes slideInRight {
+        0% {
+            transform: rotate(-90deg) rotateY(0deg) translateX(59px) scale(0);
+        }
+
+        90% {
+            transform: rotate(-90deg) rotateY(0deg) translateX(-5px) scale(1.1);
+        }
+
+        100% {
+            transform: rotate(-90deg) rotateY(0deg) translateX(0px) scale(1);
+        }
     }
 }
 

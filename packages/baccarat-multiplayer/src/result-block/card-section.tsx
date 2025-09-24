@@ -62,7 +62,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
                 {cards.map((card, index) => (
                     <BaccaratCard
                         playResultAnimation={playResultAnimation}
-                        key={card.order}
+                        key={`${card.order}-${isShowResult}`}
                         type={type}
                         card={card}
                         isShowResult={isShowResult}

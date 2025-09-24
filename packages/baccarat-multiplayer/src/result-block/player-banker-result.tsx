@@ -54,7 +54,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
         const maxDelay = allCards.length > 0 ? Math.max(...allCards.map(card => card.animationDelay)) : 0;
 
         // Show winner after all cards have finished flipping (add 500ms buffer for card flip animation)
-        const winnerDelay = maxDelay + 500;
+        const winnerDelay = maxDelay + 1000;
 
         setTimeout(() => {
             setShowWinner(true);

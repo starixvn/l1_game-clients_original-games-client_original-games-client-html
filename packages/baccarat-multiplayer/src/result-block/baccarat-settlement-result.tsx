@@ -41,8 +41,31 @@ const renderCardDisplay = (
     isShowResult: boolean,
     isAnimationResult: boolean,
     isFinishShowResult: boolean,
-    isHideAllCards: boolean
+    isHideAllCards: boolean,
+    roundState: RoundState,
+    animationState: AnimationState,
+    isUsingRoundHistoryData: boolean
 ) => {
+    // During betting phases, show back cards
+    const isBettingPhase = [RoundState.BeforePlaceBet, RoundState.InRound, RoundState.LockingBet].includes(roundState);
+
+    // During DisplayResult initial phase, show back cards only if not using historical data
+    const isDisplayResultInitial = roundState === RoundState.DisplayResult && animationState === "idle" && !isUsingRoundHistoryData;
+
+    if (isBettingPhase || isDisplayResultInitial) {
+        return (
+            <PlayerBankerResult
+                playResultAnimation={false}
+                result={DEFAULT_RESULT}
+                isShowResult={false}  // Show back cards
+                language="en"
+                isFinishShowResult={false}
+                isHideAllCards={false}
+            />
+        );
+    }
+
+    // During DisplayResult (with animation or historical data), show actual results
     return (
         <PlayerBankerResult
             playResultAnimation={isAnimationResult}
@@ -153,60 +176,38 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         }
     }, [last, isUsingRoundHistoryData]);
 
-    // Follow sedie plate timing pattern
+    // Handle display result animation timing - only needed for DisplayResult state
     useEffect(() => {
-        const resetState = () => {
+        let timeoutDisplayResult;
+
+        if (roundState === RoundState.DisplayResult) {
+            timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
+
+            if (isUsingRoundHistoryData) {
+                // Show result immediately when using historical data
+                setShowCards(true);
+                setAnimationState("idle");
+            } else {
+                // Keep back cards visible initially, then flip to results after delay
+                setShowCards(true);
+                setAnimationState("idle");
+                timeoutDisplayResult = setTimeout(() => {
+                    setAnimationState("open");
+                }, DELAY);
+            }
+        } else {
+            // Reset for non-DisplayResult states
             setShowCards(false);
             setAnimationState("idle");
-        };
-
-        let timeoutDisplayResult;
-        let timeout;
-
-        switch (roundState) {
-            case RoundState.LockingBet:
-                setShowCards(false);
-                setAnimationState("shake");
-                break;
-            case RoundState.DisplayResult:
-                timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
-
-                if (isUsingRoundHistoryData) {
-                    // Skip animation and show result immediately when using historical data
-                    setShowCards(true);
-                    setAnimationState("idle");
-                    // No timeout needed - keep the result visible
-                } else {
-                    // Normal animation flow for fresh WebSocket data
-                    timeoutDisplayResult = setTimeout(() => {
-                        setAnimationState("idle");
-                        setShowCards(true);
-                        setAnimationState("open");
-                        // Ensure animation lasts at least 6 seconds to cover all card timings (CARD_6 at 5000ms + buffer)
-                        const animationDuration = Math.max(durations.showResult * 1000, 6000);
-                        timeout = setTimeout(() => {
-                            resetState();
-                        }, animationDuration);
-                    }, DELAY);
-                }
-                break;
-            case RoundState.BeforePlaceBet:
-            case RoundState.InRound:
-                // Only reset if we don't have historical data to keep visible
-                if (!isUsingRoundHistoryData) {
-                    resetState();
-                }
+            if (roundState === RoundState.BeforePlaceBet) {
                 setIsUsingRoundHistoryData(false); // Reset flag for new round
-                break;
-            default:
-                break;
+            }
         }
 
         return () => {
-            timeout && clearTimeout(timeout);
             timeoutDisplayResult && clearTimeout(timeoutDisplayResult);
         };
-    }, [roundState, durations, isUsingRoundHistoryData]);
+    }, [roundState, isUsingRoundHistoryData]);
 
     return (
         <div
@@ -219,10 +220,10 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 } as React.CSSProperties
             }
         >
-            <WinningBalanceEffect />
+            {roundState === RoundState.DisplayResult && <WinningBalanceEffect />}
             <div className="flex justify-center w-full h-full">
                 <div className="w-full">
-                    {renderCardDisplay(result, showCards, animationState === "open", true, !showCards)}
+                    {renderCardDisplay(result, showCards, animationState === "open", true, !showCards, roundState, animationState, isUsingRoundHistoryData)}
                 </div>
             </div>
         </div>
