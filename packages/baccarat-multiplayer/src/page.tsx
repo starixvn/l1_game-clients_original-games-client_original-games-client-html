@@ -73,9 +73,8 @@ class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
                     {this.renderBetOptions()}
                 </div>
 
-                {this.renderChipAndBetControlPanel()}
-
                 {this.renderNotice()}
+                {this.renderChipAndBetControlPanel()}
             </div>
         );
     }

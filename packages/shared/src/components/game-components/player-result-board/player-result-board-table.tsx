@@ -58,7 +58,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
                             <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">{row.betAmount}</TableCell>
                             <TableCell
                                 className={cn(
-                                    "py-[10.3px] md:py-[12.5px] px-2 md:px-3 font-semibold text-right pl-0 md:text-base",
+                                    "py-[10.3px] md:py-[12.5px] px-2 md:px-3 font-normal text-right pl-0 md:text-base",
                                     parseFloat(row.win) > 0 ? "text-winning-highlight" : "text-secondary-text"
                                 )}
                             >

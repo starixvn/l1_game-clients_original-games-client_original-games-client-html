@@ -80,7 +80,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                         className={cn(
                             "w-1/4 text-sm md:text-base text-secondary-text p-3",
                             cell.className || "text-center",
-                            cell.isWinningBet && "text-winning-highlight font-semibold"
+                            cell.isWinningBet && "text-winning-highlight font-normal"
                         )}
                     >
                         {cell.content}
@@ -98,8 +98,8 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell colSpan={2} className="w-1/2 text-center p-3 px-0">
                     {translateCommon("total")}
                 </TableCell>
-                <TableCell className="w-1/4 text-center p-3 px-0">{formatNumber(totalStake)}</TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-semibold text-right p-3 px-0 pr-3">
+                <TableCell className="w-1/4 text-center p-3 px-0 font-normal">{formatNumber(totalStake)}</TableCell>
+                <TableCell className="w-1/4 text-winning-highlight font-normal text-right p-3 px-0 pr-3">
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>
@@ -107,8 +107,8 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                 <TableCell colSpan={2} className="w-1/2 text-center p-3 px-0">
                     {translateCommon("win_loss")}
                 </TableCell>
-                <TableCell className="w-1/4 text-center p-3 px-0"></TableCell>
-                <TableCell className={cn("w-1/4 text-right p-3 px-0 pr-3", netProfit > 0 && "text-winning-highlight font-semibold")}>
+                <TableCell className="w-1/4 text-center p-3 px-0 font-normal"></TableCell>
+                <TableCell className={cn("w-1/4 text-right p-3 px-0 pr-3 font-normal", netProfit > 0 && "text-winning-highlight")}>
                     {formatNumber(netProfit)}
                 </TableCell>
             </TableRow>

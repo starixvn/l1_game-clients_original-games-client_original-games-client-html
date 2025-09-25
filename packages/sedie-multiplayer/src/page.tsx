@@ -68,8 +68,8 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
                     {this.props.gameStateContextModel.availableInGameData && this.renderResultBlock()}
                     {this.renderBetOptions()}
                 </div>
-                {this.renderChipAndBetControlPanel()}
                 {this.renderNotice()}
+                {this.renderChipAndBetControlPanel()}
             </div>
         );
     }

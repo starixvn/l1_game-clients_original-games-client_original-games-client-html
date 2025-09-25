@@ -71,7 +71,7 @@ const renderBetDetailHeader = (translateSNGames: any) => {
         <TableHeader className="bg-[#27374a]">
             <TableRow>
                 {headerColumns.map((column) => (
-                    <TableHead key={column.key} className="w-1/3 border-b border-primary-border text-center p-3 text-sm md:text-base font-medium text-secondary-text">
+                    <TableHead key={column.key} className="w-1/3 border-b border-primary-border text-center p-3 text-sm md:text-base text-white font-semibold">
                         {column.label}
                     </TableHead>
                 ))}
@@ -99,7 +99,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
             <>
                 {betDetailData && (
                     <div className={Styles["pf-setting-container"]}>
-                        <div className="result-block mb-[8px]">{renderResultBlock(betDetailData.drawInfo)}</div>
+                        <div className="result-block mb-2">{renderResultBlock(betDetailData.drawInfo)}</div>
 
                         <div className={Styles["client-seed-form"]}>
                             <div className="flex items-center justify-between">
@@ -115,7 +115,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                 </div>
                             </Section>
                         </div>
-                        <div className="form flex flex-col gap-[4px]">
+                        <div className="form flex flex-col gap-1">
                             <div className="flex items-center justify-between">
                                 <Section
                                     title={
@@ -130,9 +130,9 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                 ></Section>
                             </div>
                             <div
-                                className={`table-container react-infinite-table ${Styles["pf-info"]} rounded-lg overflow-hidden border border-primary-border overflow-y-auto pb-[0px]`}
+                                className={`table-container react-infinite-table ${Styles["pf-info"]} rounded-lg overflow-hidden border border-primary-border overflow-y-auto pb-0`}
                             >
-                                <Table className="w-full h-screen">
+                                <Table className="w-full font-normal">
                                     {renderBetDetailHeader(translateSNGames)}
                                     <TableBody>
                                         {betDetailData.drawInfo.pfResult.clientSeeds?.map((clientSeed, index) => (
@@ -148,7 +148,7 @@ const PFClientSeedInfo: FC<{ fileNameExport: (data?: any) => string; renderResul
                                                 </TableCell>
                                                 <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
                                                     {name === clientSeed.name ? (
-                                                        <span className="font-semibold text-[#00C950]">{clientSeed.name}</span>
+                                                        <span className="font-normal text-[#00C950]">{clientSeed.name}</span>
                                                     ) : (
                                                         <span className="font-text">{encryptName(clientSeed.name)}</span>
                                                     )}
