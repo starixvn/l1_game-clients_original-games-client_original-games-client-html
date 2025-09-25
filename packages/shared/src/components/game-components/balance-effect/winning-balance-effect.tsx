@@ -19,6 +19,11 @@ const WinningBalanceEffect: FC = () => {
     const delayFireConfettiAfterShowPopup = 1700;
     const toggleConfetti = usePopupStore((state) => state.toggleConfetti);
 
+    const triggerWinningEffects = useCallback(() => {
+        toggleConfetti(true);
+        playPopUpWinningRef.current();
+    }, [toggleConfetti]);
+
     const playPopUpWinningSound = usePopUpWinningSound();
     const playPopUpWinningRef = useRef(playPopUpWinningSound);
     useEffect(() => {
@@ -29,6 +34,14 @@ const WinningBalanceEffect: FC = () => {
         const multiplier = totalBetAmount > 0 ? betWin / totalBetAmount : 0;
         return numberWithCommas(Math.floor(multiplier * 100) / 100, 2);
     }, [betWin, totalBetAmount]);
+
+    const startExitAnimation = useCallback(() => {
+        setIsAnimatingOut(true);
+        setTimeout(() => {
+            setShowContent(false);
+            setIsAnimatingOut(false);
+        }, 300);
+    }, []);
 
     useEffect(() => {
         if (showResultInfo && parseFloat(multiplier) > 0) {
@@ -43,24 +56,15 @@ const WinningBalanceEffect: FC = () => {
                 startExitAnimation();
             }, durations.showResult * 1000);
         }
-    }, [roundState]);
-
-    const startExitAnimation = useCallback(() => {
-        setIsAnimatingOut(true);
-        setTimeout(() => {
-            setShowContent(false);
-            setIsAnimatingOut(false);
-        }, 300);
-    }, []);
+    }, [roundState, durations.showResult, startExitAnimation]);
 
     useEffect(() => {
-        if (showContent) {
+        if (showContent && parseFloat(multiplier) > 1) {
             setTimeout(() => {
-                toggleConfetti(true);
-                playPopUpWinningRef.current();
+                triggerWinningEffects();
             }, delayFireConfettiAfterShowPopup);
         }
-    }, [showContent]);
+    }, [showContent, multiplier, triggerWinningEffects]);
 
     return (
         <>          
