@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { PlayerInPlayerResultBoard, RoundState } from '@shared/components/game-base/type';
 import useGameStore from "../stores/game-store/game-store";
 import { useGameStateContext } from "../react-contexts/game-state-context/game-state-context";
@@ -20,9 +20,9 @@ const calculateAmountByRate = (amount: number, rate: number) => {
 export const usePlayerResultBoard = () => {
     const playerResultBoard = useGameStore((state) => state.playerResultBoard);
     const rate = useGameStore((state) => state.rate);
+    const shouldShowResults = useGameStore((state) => state.shouldShowResults);
     const { roundState } = useGameStateContext();
     const { durations } = useGameContext();
-    const [shouldShowResults, setShouldShowResults] = useState(false);
 
     useEffect(() => {
         let timeoutDisplayResult: NodeJS.Timeout;
@@ -30,17 +30,17 @@ export const usePlayerResultBoard = () => {
         switch (roundState) {
             case RoundState.DisplayResult:
                 timeoutDisplayResult = setTimeout(() => {
-                    setShouldShowResults(true);
+                    useGameStore.getState().setShouldShowResults(true);
                 }, (durations?.showResult ?? 0) * 1000);
                 break;
 
+                case RoundState.InRound:
+                case RoundState.LockingBet:
+                    useGameStore.getState().setShouldShowResults(false);
+                    break;
             case RoundState.BeforePlaceBet:
-            case RoundState.InRound:
-            case RoundState.LockingBet:
-                setShouldShowResults(false);
-                break;
             case RoundState.None:
-                setShouldShowResults(true);
+                useGameStore.getState().setShouldShowResults(true);
                 break;
             default:
                 break;

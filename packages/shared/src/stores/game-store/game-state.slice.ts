@@ -13,6 +13,7 @@ export interface GameStateSlice {
     showResultInfo: boolean;
     playResultAnimation: boolean;
     isShowBlink: boolean;
+    shouldShowResults: boolean;
     rate?: number;
     userStakeLevel?: IUserStakeLevel;
     playerResultBoard?: PlayerResultBoard;
@@ -30,6 +31,7 @@ export interface GameStateSlice {
     setGameState: (message: any) => void;
     setRoundState: (roundState: RoundState) => void;
     setShowResultInfo: (showResultInfo: boolean) => void;
+    setShouldShowResults: (shouldShowResults: boolean) => void;
     setUMMessage: (message: string) => void;
 }
 
@@ -49,6 +51,7 @@ export const createGameStateSlice: StateCreator<GameStateSlice> = (set) => ({
     showResultInfo: false,
     playResultAnimation: false,
     isShowBlink: false,
+    shouldShowResults: false,
     rate: undefined,
     userStakeLevel: undefined,
     prevRoundState: RoundState.None,
@@ -79,6 +82,7 @@ export const createGameStateSlice: StateCreator<GameStateSlice> = (set) => ({
     },
     setRoundState: (roundState) => set({ roundState }),
     setShowResultInfo: (showResultInfo) => set({ showResultInfo }),
+    setShouldShowResults: (shouldShowResults) => set({ shouldShowResults }),
     setUMMessage: (message) =>
         set({
             disabledMessage: message[LanguageLocaleMapper[tolgee.getLanguage() || "en"]], // TO DO: remove hard code

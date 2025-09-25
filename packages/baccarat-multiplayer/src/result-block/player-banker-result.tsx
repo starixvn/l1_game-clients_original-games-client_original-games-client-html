@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { CardSection } from "./card-section";
 import { GetBankerCardsResult, GetPlayerCardsResult } from "./score-utils";
 import styles from "./baccarat-animations.module.scss";
@@ -6,6 +6,7 @@ import { BaccaratResult } from "./types";
 import { WINNER_TEXT_MAP } from "./constants";
 import { useTranslator } from "@shared/react-hooks/use-translator";
 import { ResourceTypes } from "@shared/resources";
+import useGameStore from "@shared/stores/game-store/game-store";
 
 
 interface PlayerBankerResultProps {
@@ -22,28 +23,12 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards } = props;
     const [showWinner, setShowWinner] = useState(false);
 
-    const playerCards = result ? GetPlayerCardsResult(result) : [];
-    const bankerCards = result ? GetBankerCardsResult(result) : [];
+    const playerCards = useMemo(() => result ? GetPlayerCardsResult(result) : [], [result]);
+    const bankerCards = useMemo(() => result ? GetBankerCardsResult(result) : [], [result]);
 
     const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
 
-    useEffect(() => {
-        if (playResultAnimation) {
-            startAnimation();
-        } else {
-            // For historical data (no animation), show winner immediately when cards are shown
-            setShowWinner(isShowResult && !isHideAllCards);
-        }
-    }, [playResultAnimation, isShowResult, isHideAllCards]);
-
-    const getWinnerText = (): string => {
-        if (!result) {
-            return "";
-        }
-        return WINNER_TEXT_MAP[result.winner] || "";
-    };
-
-    const startAnimation = () => {
+    const startAnimation = useCallback(() => {
         if (!result) {
             return;
         }
@@ -65,6 +50,29 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 // Emit card state change if needed
             }, card.animationDelay);
         });
+    }, [result, playerCards, bankerCards]);
+
+    useEffect(() => {
+        if (playResultAnimation) {
+            startAnimation();
+        } else {
+            setShowWinner(isShowResult && !isHideAllCards);
+        }
+    }, [playResultAnimation, isShowResult, isHideAllCards, startAnimation]);
+
+    useEffect(() => {
+        const isShouldShowResults = isShowResult && isFinishShowResult && !isHideAllCards && showWinner;
+        if (isShouldShowResults && result) {
+            useGameStore.getState().setShouldShowResults(true);
+        }
+    }, [isShowResult, isFinishShowResult, isHideAllCards, showWinner, result]);
+
+    const getWinnerText = (): string => {
+        if (!result) {
+            return "";
+        }
+
+        return WINNER_TEXT_MAP[result.winner] || "";
     };
 
     return (
@@ -88,7 +96,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
             />
 
             {isShowResult && isFinishShowResult && !isHideAllCards && showWinner && (
-                <div className={`${styles["winner-display"]} ${styles[`winner-${result?.winner || 'tie'}`]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
+                <div className={`${styles["winner-display"]} ${styles["winner-" + (result?.winner || 'tie')]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
                     <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
                 </div>
             )}
