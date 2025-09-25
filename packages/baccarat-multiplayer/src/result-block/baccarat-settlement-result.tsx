@@ -30,8 +30,6 @@ const DEFAULT_RESULT: BaccaratResult = {
     winner: "tie",
 };
 
-const labels = ["player", "banker"];
-
 const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), {
     ssr: false,
 });
