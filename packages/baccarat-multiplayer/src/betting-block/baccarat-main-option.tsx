@@ -1,12 +1,13 @@
 import dynamic from "next/dynamic";
 import styles from "./baccarat-bet-options.module.scss";
-import BaccaratHighlightBetOption from "./baccarat-highlight-bet-option";
 const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
 const TotalBet = dynamic(() => import("@shared/components/game-components/bet-option/total-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const BetChoice = dynamic(() => import("@shared/components/game-components/bet-option/bet-choice"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
+const BaccaratHighlightBetOption = dynamic(() => import("./baccarat-highlight-bet-option"), { ssr: false });
+const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./baccarat-highlight-prev-round-bet-option"), { ssr: false });
 import { RoundState } from "@shared/components/game-base/type";
 
 export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
@@ -51,6 +52,7 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { to
             </div>
             <ChipEffect choice={choice} />
             <BaccaratHighlightBetOption choice={choice} />
+            <BaccaratHighlightPrevRoundBetOption choice={choice} />
         </div>
     );
 };

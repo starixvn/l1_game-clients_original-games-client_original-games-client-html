@@ -15,60 +15,43 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
         };
 
         checkViewport();
-        window.addEventListener('resize', checkViewport);
+        window.addEventListener("resize", checkViewport);
 
-        return () => window.removeEventListener('resize', checkViewport);
+        return () => window.removeEventListener("resize", checkViewport);
     }, []);
 
     // Get shape path from shared constants based on viewport
     const shapes = isDesktop ? BET_OPTION_SHAPES_DESKTOP : BET_OPTION_SHAPES;
-    const shapePath = choice === 'banker' ? shapes.banker :
-        choice === 'tie' ? shapes.tie :
-            choice === 'anyPair' ? shapes.anyPair :
-                shapes.player;
+    const shapePath =
+        choice === "banker" ? shapes.banker : choice === "tie" ? shapes.tie : choice === "anyPair" ? shapes.anyPair : shapes.player;
 
-    // Get correct viewBox for desktop vs mobile
-    const getViewBox = () => {
-        if (isDesktop) {
-            if (choice === 'tie') {
-                return "0 0 140 77";
-            }
-            if (choice === 'anyPair') {
-                return "0 0 140 73";
-            }
-            return "0 0 220 169"; // Player and Banker desktop
-        } else {
-            if (choice === 'tie') {
-                return "0 0 106 77";
-            }
-            if (choice === 'anyPair') {
-                return "0 0 106 73";
-            }
-            return "0 0 183 169"; // Player and Banker mobile
-        }
+    // Generate SVG mask for the shape
+    const generateShapeMask = () => {
+        const svgString = `
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <path d="${shapePath}" fill="none" stroke="white" stroke-width="2"/>
+            </svg>
+        `;
+        return `url("data:image/svg+xml,${encodeURIComponent(svgString)}")`;
     };
-
     return (
         [RoundState.None, RoundState.DisplayResult].includes(roundState) &&
         showResultInfo &&
         settlementResult[choice] && (
-            <div className={`${styles["highlight"]}`}>
-                <div className={`${styles["animatedStroke"]}`}>
-                    <svg viewBox={getViewBox()} fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="strokeGradient" x1="0" y1="0" x2="47.5" y2="73" gradientUnits="userSpaceOnUse">
-                                <stop stopColor="#FBEC5E" />
-                                <stop offset="1" stopColor="#FBEC5E" stopOpacity="0.3" />
-                            </linearGradient>
-                        </defs>
-                        <path d={shapePath} data-choice={choice} />
-                    </svg>
-                </div>
+            <div className={`${styles["highlight"]} ${styles[choice]}`}>
+                {/* Background glow effect */}
+                <div className={`${styles["bg"]} ${styles[choice]}`}></div>
+                {/* Glowing border effect */}
+                <div
+                    className={`${styles["border"]} ${styles[choice]}`}
+                    style={{
+                        maskImage: generateShapeMask(),
+                        WebkitMaskImage: generateShapeMask(),
+                    }}
+                ></div>
             </div>
         )
     );
 };
 
 export default BaccaratHighlightBetOption;
-
-

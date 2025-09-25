@@ -6,6 +6,7 @@ const Odds = dynamic(() => import("@shared/components/game-components/bet-option
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
+const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./baccarat-highlight-prev-round-bet-option"), { ssr: false });
 import { RoundState } from "@shared/components/game-base/type";
 
     const SubBet = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
@@ -37,6 +38,7 @@ import { RoundState } from "@shared/components/game-base/type";
             </div>
             <ChipEffect choice={choice} />
             <BaccaratHighlightBetOption choice={choice} />
+            <BaccaratHighlightPrevRoundBetOption choice={choice} />
         </div>
     );
 };

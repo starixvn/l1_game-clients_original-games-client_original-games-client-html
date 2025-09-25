@@ -1,86 +1,104 @@
-.highlight {
+%highlight-option {
+    --animation-duration: 2s;
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.highlight {
+    @extend %highlight-option;
+    width: 183px;
+    height: 169px;
+
+    @media (width >= 48rem) {
+        width: 220px;
+    }
+
+    &.tie {
+        width: 106px;
+        height: 76px;
+        @media (width >= 48rem) {
+            width: 106px;
+        }
+    }
+
+    &.anyPair {
+        width: 105px;
+        height: 73px;
+        @media (width >= 48rem) {
+            width: 105px;
+        }
+    }
 }
 
 .bg {
     position: absolute;
+    width: 100%;
+    height: 100%;
     inset: 0;
-    background: radial-gradient(transparent 0%, rgba(255, 255, 255, 0.15) 60%);
+    background: transparent; 
+    background-origin: border-box;
+    background-clip: content-box, border-box;
 }
 
 .border {
-    position: absolute;
-    inset: 0;
-    border: 2px solid rgba(255, 255, 255, 0.35);
-    border-radius: 12px;
-}
-
-.animatedStroke {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    border: none;
+    mask-mode: alpha;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+}
 
-    svg {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
+.border::before,
+.border::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: conic-gradient(from var(--angle), rgba(255, 217, 5, 0.3), #000000, #ffffff, #000000, #ffea00);
+    animation: glowing-border var(--animation-duration) linear infinite, blur-effect var(--animation-duration) linear infinite;
+    filter: blur(20px);
+}
+
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 53deg;
+    inherits: false;
+}
+
+@keyframes glowing-border {
+    from {
+        --angle: 53deg;
     }
 
-    path {
-        fill: none;
-        stroke: url(#strokeGradient);
-        stroke-width: 2.5;
-        stroke-linecap: round;
-        stroke-dasharray: 250 150;
-        animation: stroke-rotate 2s linear infinite;
-    }
-
-    path[data-choice="banker"] {
-        animation: stroke-rotate-reverse 2s linear infinite;
+    to {
+        --angle: 413deg;
     }
 }
 
-@keyframes stroke-rotate {
+@keyframes blur-effect {
+    from {
+        filter: blur(20px);
+    }
+
+    to {
+        filter: blur(19px);
+    }
+}
+@keyframes fade-in-out {
     0% {
-        stroke-dashoffset: 400;
-        opacity: 0.3;
+        opacity: 0;
     }
-    25% {
-        stroke-dashoffset: 300;
-        opacity: 1;
-    }
-    75% {
-        stroke-dashoffset: 100;
+    50% {
         opacity: 1;
     }
     100% {
-        stroke-dashoffset: 0;
-        opacity: 0.3;
+        opacity: 0;
     }
 }
-
-@keyframes stroke-rotate-reverse {
-    0% {
-        stroke-dashoffset: 0;
-        opacity: 0.3;
-    }
-    25% {
-        stroke-dashoffset: 100;
-        opacity: 1;
-    }
-    75% {
-        stroke-dashoffset: 300;
-        opacity: 1;
-    }
-    100% {
-        stroke-dashoffset: 400;
-        opacity: 0.3;
-    }
-}
-
