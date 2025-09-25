@@ -13,6 +13,7 @@ interface CardSectionProps {
     playResultAnimation: boolean;
     isShowResult: boolean;
     isHideAllCards: boolean;
+    isGetResult?: boolean;
 }
 
 export const CardSection: React.FC<CardSectionProps> = ({
@@ -21,7 +22,8 @@ export const CardSection: React.FC<CardSectionProps> = ({
     type,
     playResultAnimation,
     isShowResult,
-    isHideAllCards
+    isHideAllCards,
+    isGetResult = false
 }) => {
     const [visibleScores, setVisibleScores] = useState<{ [key: number]: boolean }>({});
     const [cardContainerAnimClass, setCardContainerAnimClass] = useState('');
@@ -36,9 +38,12 @@ export const CardSection: React.FC<CardSectionProps> = ({
     useEffect(() => {
         if (isHideAllCards) {
             setCardContainerAnimClass(styles['hide-all-cards']);
-        } else if (!isHideAllCards && !isShowResult && !playResultAnimation) {
+        } else if (!isHideAllCards && !isShowResult && !playResultAnimation && !isGetResult) {
             setCardContainerAnimClass(styles['show-all-cards']);
-        } else {
+        } else if (isGetResult) {
+            setCardContainerAnimClass(styles['show-static-cards']);
+        }
+        else {
             setCardContainerAnimClass('');
         }
     }, [isHideAllCards, isShowResult, playResultAnimation]);

@@ -44,13 +44,10 @@ const renderCardDisplay = (
     animationState: AnimationState,
     isUsingRoundHistoryData: boolean
 ) => {
-    // During betting phases, show back cards
-    const isBettingPhase = [RoundState.BeforePlaceBet, RoundState.InRound, RoundState.LockingBet].includes(roundState);
-
     // During DisplayResult initial phase, show back cards only if not using historical data
     const isDisplayResultInitial = roundState === RoundState.DisplayResult && animationState === "idle" && !isUsingRoundHistoryData;
 
-    if (isBettingPhase || isDisplayResultInitial) {
+    if (roundState === RoundState.LockingBet || isDisplayResultInitial) {
         return (
             <PlayerBankerResult
                 playResultAnimation={false}
@@ -59,6 +56,22 @@ const renderCardDisplay = (
                 language="en"
                 isFinishShowResult={false}
                 isHideAllCards={false}
+                isGetResult={true}
+            />
+        );
+    }
+
+    if ([RoundState.BeforePlaceBet, RoundState.InRound].includes(roundState)) {
+        // BeforePlaceBet & InRound: Show cards with entrance animation
+        return (
+            <PlayerBankerResult
+                playResultAnimation={false}
+                result={DEFAULT_RESULT}
+                isShowResult={false}
+                language="en"
+                isFinishShowResult={false}
+                isHideAllCards={false}
+                isGetResult={false}
             />
         );
     }
@@ -72,6 +85,7 @@ const renderCardDisplay = (
             language="en"
             isFinishShowResult={isFinishShowResult}
             isHideAllCards={isHideAllCards}
+            isGetResult={false}
         />
     );
 };

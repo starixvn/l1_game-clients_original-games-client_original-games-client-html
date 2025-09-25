@@ -60,6 +60,12 @@
         }
     }
 
+    &.show-static-cards {
+        > div {
+            opacity: 1;
+        }
+    }
+
     @keyframes showCards {
         0% {
             opacity: 0;

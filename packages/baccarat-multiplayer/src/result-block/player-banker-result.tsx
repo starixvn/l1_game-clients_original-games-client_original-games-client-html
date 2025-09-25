@@ -16,11 +16,12 @@ interface PlayerBankerResultProps {
     language: string;
     isFinishShowResult: boolean;
     isHideAllCards: boolean;
+    isGetResult?: boolean;
 }
 
 
 export default function PlayerBankerResult(props: PlayerBankerResultProps) {
-    const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards } = props;
+    const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards, isGetResult = false } = props;
     const [showWinner, setShowWinner] = useState(false);
 
     const playerCards = useMemo(() => result ? GetPlayerCardsResult(result) : [], [result]);
@@ -84,6 +85,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 playResultAnimation={playResultAnimation}
                 isShowResult={isShowResult}
                 isHideAllCards={isHideAllCards}
+                isGetResult={isGetResult}
             />
 
             <CardSection
@@ -93,6 +95,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 playResultAnimation={playResultAnimation}
                 isShowResult={isShowResult}
                 isHideAllCards={isHideAllCards}
+                isGetResult={isGetResult}
             />
 
             {isShowResult && isFinishShowResult && !isHideAllCards && showWinner && (
