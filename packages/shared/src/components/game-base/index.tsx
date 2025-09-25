@@ -670,7 +670,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return (
             <>
                 <div className={`game-${this.props.id}`}>
-                    <div className="grid grid-cols-12 gap-0 mt-4">
+                    <div className="grid grid-cols-12 gap-0">
                         {this.renderLeftSide()}
                         {this.renderRightSide()}
                         <div className="col-span-12 mb-3 px-3">{this.renderRTP()}</div>
