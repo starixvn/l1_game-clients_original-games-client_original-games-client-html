@@ -24,27 +24,30 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
 }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [flipAnimationClass, setFlipAnimationClass] = useState('');
-    const [isEntrance, setIsEntrance] = useState(false);
+    const [animationPhase, setAnimationPhase] = useState<'entrance' | 'flip'>('entrance');
     const flipScheduledRef = useRef(false); // Track if we've already scheduled a flip
 
     useEffect(() => {
         if (isFlipped && playResultAnimation) {
-            // For 3rd cards, first show entrance animation, then flip
+            // For 3rd cards during live animation: entrance → flip sequence
             if (card.order >= 5) { // 3rd cards
-                if (isEntrance) {
+                if (animationPhase === 'flip') {
                     setFlipAnimationClass(styles['flip']);
                 } else {
                     setFlipAnimationClass(styles['entrance']);
                 }
             } else {
+                // Regular cards: direct flip
                 setFlipAnimationClass(styles['flip']);
             }
         } else if (isFlipped) {
+            // Historical data: immediate flip without animation
             setFlipAnimationClass(`${styles['flip']} ${styles['no-animation']}`);
         } else {
+            // Not flipped: show back card
             setFlipAnimationClass('');
         }
-    }, [isFlipped, playResultAnimation, isEntrance, card.order]);
+    }, [isFlipped, playResultAnimation, animationPhase, card.order]);
 
 
     useEffect(() => {
@@ -59,20 +62,20 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             const delay = playResultAnimation ? Math.max(baseDelay, 50) : 0; // Minimum 50ms delay for animation to work
 
             const flipTimer = setTimeout(() => {
-                // For 3rd cards, first show entrance animation
-                if (card.order >= 5) {
-                    setIsEntrance(false); // Start with entrance
+                // Live animation with 3rd cards: entrance → flip sequence
+                if (card.order >= 5 && playResultAnimation) {
+                    setAnimationPhase('entrance'); // Start with entrance animation
                     setIsFlipped(true);
 
-                    // After entrance animation completes, flip the card
+                    // After entrance animation completes, transition to flip
                     setTimeout(() => {
-                        setIsEntrance(true);
+                        setAnimationPhase('flip');
                         if (onCardFlip) {
                             onCardFlip(card, card.accumulatedScore);
                         }
-                    }, 600); // Wait for fast entrance animation to complete
+                    }, 600); // Wait for entrance animation to complete
                 } else {
-                    // Regular cards just flip
+                    // Regular cards or historical data: direct flip without entrance
                     setIsFlipped(true);
                     if (onCardFlip) {
                         onCardFlip(card, card.accumulatedScore);
@@ -84,15 +87,16 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
 
             cleanup = () => clearTimeout(flipTimer);
         } else if (!isShowResult) {
+            // Reset animation states when hiding results
             setIsFlipped(false);
-            setIsEntrance(false);
-            flipScheduledRef.current = false; // Reset flag when hiding results
+            setAnimationPhase('entrance'); // Reset to default phase
+            flipScheduledRef.current = false; // Allow re-flip when results show again
         }
 
         return cleanup;
-    }, [isShowResult, card.order, onCardFlip, playResultAnimation]); // Changed card to card.order to prevent re-triggering on card data changes
+    }, [isShowResult, card.order, onCardFlip, playResultAnimation]); // Optimized dependency array
 
-    const cardOrderClass = styles[`card${card.order}`];
+    const cardOrderClass = styles[`card${card.order}`] || '';
     const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${className || ''}`;
 
     return (

@@ -14,7 +14,7 @@ interface BaccaratSettlementResultProps {
     className?: string;
 }
 
-type AnimationState = "idle" | "shake" | "open" | "close";
+type AnimationState = "idle" | "open";
 
 const DEFAULT_RESULT: BaccaratResult = {
     banker: {
@@ -212,13 +212,6 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     return (
         <div
             className="h-[64px] w-full mt-[26px] mb-[19px] z-[var(--result-animation-index)]"
-            style={
-                {
-                    "--shake-duration": "2000ms",
-                    "--open-duration": "1000ms",
-                    "--close-duration": "1000ms",
-                } as React.CSSProperties
-            }
         >
             {roundState === RoundState.DisplayResult && <WinningBalanceEffect />}
             <div className="flex justify-center w-full h-full">

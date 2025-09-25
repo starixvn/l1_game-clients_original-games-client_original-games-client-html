@@ -37,26 +37,26 @@
         // Individual card animations with delays
         > div[data-card-order="1"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation: showCards 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
             animation-delay: 0s;
         }
 
         > div[data-card-order="2"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-            animation-delay: 0.5s;
+            animation: showCards 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation-delay: 0.25s;
         }
 
         > div[data-card-order="3"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-            animation-delay: 1s;
+            animation: showCards 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation-delay: 0.5s;
         }
 
         > div[data-card-order="4"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-            animation-delay: 1.5s;
+            animation: showCards 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation-delay: 0.75s;
         }
     }
 
@@ -106,7 +106,7 @@
 .winner-display {
     position: absolute;
     left: 50%;
-    top: 57%;
+    top: 207px;
     transform: translate(-50%, -50%);
     width: 307px;
     height: 44px;
@@ -161,24 +161,4 @@
     font-size: 14px;
     padding: 40px 20px;
     opacity: 0.7;
-}
-
-// Responsive design
-@media (max-width: 768px) {
-    .animation-container {
-        --gap-player-banker: 20px;
-    }
-    
-    .cardSection {
-        grid-template-columns: repeat(3, 40px);
-    }
-    
-    .label {
-        font-size: 14px;
-    }
-    
-    .winner-display {
-        font-size: 12px;
-        padding: 5px 12px;
-    }
 }

@@ -5,12 +5,14 @@ import { BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 import styles from "./baccarat-bet-options.module.scss";
 import BaccaratMainOption from "./baccarat-main-option";
 import BaccaratSubOptions from "./baccarat-sub-options";
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 
 interface BaccaratBettingBlockProps {
     className?: string;
 }
 
 const BaccaratBettingBlock: React.FC<BaccaratBettingBlockProps> = ({ className }) => {
+    const { roundState } = useGameStateContext();
     const { tolgeeNamespace } = useGameContext();
     // Dev diagnostics for CSS modules
     useEffect(() => {
@@ -33,12 +35,13 @@ const BaccaratBettingBlock: React.FC<BaccaratBettingBlockProps> = ({ className }
     return (
         <div className={cn(styles.bettingWrapper, className)}>
             <div className={styles.mainOptionsRow}>
-                <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.PLAYER} />
-                <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.BANKER} />
+                <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.PLAYER} roundState={roundState} />
+                <BaccaratMainOption tolgeeNamespace={tolgeeNamespace} choice={BaccaratBetOptions.BANKER} roundState={roundState} />
             </div>
             <BaccaratSubOptions
                 tolgeeNamespace={tolgeeNamespace}
                 choices={[BaccaratBetOptions.ANY_PAIR, BaccaratBetOptions.TIE]}
+                roundState={roundState}
             />
         </div>
     );

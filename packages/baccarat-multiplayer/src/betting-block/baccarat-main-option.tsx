@@ -7,8 +7,9 @@ const TotalBet = dynamic(() => import("@shared/components/game-components/bet-op
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const BetChoice = dynamic(() => import("@shared/components/game-components/bet-option/bet-choice"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
+import { RoundState } from "@shared/components/game-base/type";
 
-export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
     const buttonId = `${tolgeeNamespace}-choice-${choice}`;
 
     const themeClass = choice === "player" ? styles.playerTheme : styles.bankerTheme;
@@ -41,7 +42,7 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice }: { tolgeeNamespac
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"text-lg font-light"} />
                 </div>
                 <div className={`w-32 md:w-[148px] ${positionClass} pb-4 absolute bottom-0`}>
-                    <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />
+                    {roundState !== RoundState.BeforePlaceBet && <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />}
                 </div>
             </div>
 

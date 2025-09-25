@@ -6,8 +6,9 @@ const Odds = dynamic(() => import("@shared/components/game-components/bet-option
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
+import { RoundState } from "@shared/components/game-base/type";
 
-    const SubBet = ({ tolgeeNamespace, choice }: { tolgeeNamespace: string; choice: string }) => {
+    const SubBet = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
     const themeClass = choice === "tie" ? styles.tieTheme : choice === "anyPair" ? styles.anyPairTheme : "";
     const heightClass = choice === "anyPair" ? "h-[73px]" : "h-[77px]";
     const widthClass = "w-[106px] md:w-[140px]"; // Responsive width for desktop
@@ -27,7 +28,7 @@ const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className="text-base font-light leading-none pt-1" />
                 </div>
                 <div className={`h-auto absolute translate-x-[-50%] left-1/2 ${ownBetPositionClass}`}>
-                    <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />
+                    {roundState !== RoundState.BeforePlaceBet && <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />}
                 </div>
             </div>
 
@@ -40,11 +41,11 @@ const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-
     );
 };
 
-export const BaccaratSubOptions = ({ tolgeeNamespace, choices }: { tolgeeNamespace: string; choices: string[] }) => {
+export const BaccaratSubOptions = ({ tolgeeNamespace, choices, roundState }: { tolgeeNamespace: string; choices: string[]; roundState: RoundState }) => {
     return (
         <div className={`flex rounded-2xl ${styles["subOptionsColumn"]}`}>
             {choices.map((c) => (
-                <SubBet key={c} tolgeeNamespace={tolgeeNamespace} choice={c} />
+                <SubBet key={c} tolgeeNamespace={tolgeeNamespace} choice={c} roundState={roundState} />
             ))}
         </div>
     );

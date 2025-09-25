@@ -18,19 +18,19 @@
             position: absolute;
             left: -59px;
             top: 7.5px;
-            transform: rotate(90deg) rotateY(0deg) translateX(-59px);
+            transform: rotate(90deg) rotateY(0deg);
             z-index: 2;
             opacity: 0;
 
             &.flip {
                 opacity: 1;
-                transform: rotate(90deg) rotateY(180deg) translateX(0px);
+                transform: rotate(90deg) rotateY(180deg);
             }
 
             // Intermediate state: visible back card before flipping (dynamic entrance)
             &.entrance {
                 opacity: 1;
-                transform: rotate(90deg) rotateY(0deg) translateX(0px) scale(1);
+                transform: rotate(90deg) rotateY(0deg) scale(1);
                 animation: slideInLeft 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
             }
         }
@@ -43,19 +43,19 @@
             position: absolute;
             right: -59px;
             top: 7.5px;
-            transform: rotate(-90deg) rotateY(0deg) translateX(59px);
+            transform: rotate(-90deg) rotateY(0deg);
             z-index: 2;
             opacity: 0;
 
             &.flip {
                 opacity: 1;
-                transform: rotate(-90deg) rotateY(180deg) translateX(0px);
+                transform: rotate(-90deg) rotateY(180deg);
             }
 
             // Intermediate state: visible back card before flipping (dynamic entrance)
             &.entrance {
                 opacity: 1;
-                transform: rotate(-90deg) rotateY(0deg) translateX(0px) scale(1);
+                transform: rotate(-90deg) rotateY(0deg) scale(1);
                 animation: slideInRight 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
             }
         }
