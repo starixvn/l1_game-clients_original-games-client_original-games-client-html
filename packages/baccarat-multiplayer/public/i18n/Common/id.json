@@ -254,7 +254,7 @@
     "splash_login_failed": "Gagal memuat data game. Harap tutup jendela saat ini dan coba lagi.",
     "stake": "Taruhan",
     "start_auto_bet": "Mulai Taruhan Otomatis",
-    "start_in": "Mulai masuk {time}s",
+    "start_in": "Waktu taruhan: {time}s",
     "stop_on_loss": "Berhenti saat Kalah",
     "stop_on_win": "Berhenti saat Menang",
     "submit": "KIRIMKAN",

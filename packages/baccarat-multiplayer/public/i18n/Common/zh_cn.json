@@ -254,7 +254,7 @@
     "splash_login_failed": "无法加载游戏数据。 请关闭当前窗口并重试。",
     "stake": "赌注",
     "start_auto_bet": "开始自动投注",
-    "start_in": "开始于 {time}s",
+    "start_in": "投注时间：{time}秒",
     "stop_on_loss": "亏损时停止",
     "stop_on_win": "赢时停止",
     "submit": "提交",

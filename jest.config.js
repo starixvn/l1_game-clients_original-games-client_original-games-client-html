@@ -2,14 +2,19 @@
 const config = {
     collectCoverageFrom: [
         "packages/*/src/**/*.{js,jsx,ts,tsx}",
+        "packages/*/src/**/*.test.{js,jsx,ts,tsx}",
+        "packages/*/src/**/*.spec.{js,jsx,ts,tsx}",
+        "packages/*/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
         "!packages/*/src/**/*.d.ts",
-        "!packages/*/src/**/*.test.{js,jsx,ts,tsx}",
-        "!packages/*/src/**/*.spec.{js,jsx,ts,tsx}",
-        "!packages/*/src/**/__tests__/**",
         "!packages/*/src/**/*.config.{js,ts}",
         "!packages/*/src/**/*.mock.{js,ts}",
         "!packages/*/src/**/*.stories.{js,jsx,ts,tsx}",
         "!**/node_modules/**",
+    ],
+    
+    forceCoverageMatch: [
+        "**/__tests__/**/*.test.{js,jsx,ts,tsx}",
+        "**/__tests__/**/*.spec.{js,jsx,ts,tsx}",
     ],
     moduleNameMapper: {
         "^.+\\.(css|sass|scss)$": "identity-obj-proxy",
