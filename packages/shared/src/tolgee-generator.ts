@@ -85,7 +85,7 @@ const locales = {
     id: "id",
     zh_cn: "zh_cn",
     zh_tw: "zh_tw",
-    ms: "ms",
+    ms_my: "ms_my",
     hi_in: "hi_in",
     bn_bd: "bn_bd",
     ko: "ko",
