@@ -55,13 +55,9 @@ export const BaccaratHighlightPrevRoundBetOption = ({ choice }: { choice: string
                 <defs>
                     <linearGradient id={`prevBorderGradient-${choice}`} x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="rgba(255, 234, 0, 1)" />
-                        <stop offset="50%" stopColor="rgba(255, 255, 255, 1)" />
+                        <stop offset="50%" stopColor="#ffff99" />
                         <stop offset="100%" stopColor="rgba(255, 217, 5, 1)" />
                     </linearGradient>
-
-                    <filter id={`borderGlow-${choice}`} x="-50%" y="-50%" width="200%" height="200%">
-                        <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="rgba(255,225,0,0.8)" />
-                    </filter>
 
                     <mask id={`prevHighlightMask-${choice}`}>
                         <path d={shapePath} fill="white" />
