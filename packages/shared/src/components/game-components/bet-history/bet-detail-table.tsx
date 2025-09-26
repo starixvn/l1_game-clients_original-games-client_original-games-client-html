@@ -43,10 +43,10 @@ const createBetDetailRowData = (row: BetDetailRow) => {
 
 const renderBetDetailHeader = (translateCommon: any) => {
     const headerColumns = [
-        { key: "time", label: translateCommon("time") },
-        { key: "bet_choice", label: translateCommon("bet_choice") },
-        { key: "stake", label: translateCommon("bet_amount") },
-        { key: "win", label: translateCommon("win"), align: "right" },
+        { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
+        { key: "bet_choice", label: translateCommon("bet_choice").capitalizeFirstLetter() },
+        { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
+        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
     ];
 
     return (

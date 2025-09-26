@@ -218,10 +218,10 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
 
     // Define header columns configuration
     const headerColumns = [
-        { key: "time", label: translateCommon("time") },
+        { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
         { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
-        { key: "total_stake", label: translateCommon("bet_amount") },
-        { key: "win", label: translateCommon("win"), align: "right" },
+        { key: "total_stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
+        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
     ];
 
     // Show loading spinner for initial load
