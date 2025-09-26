@@ -41,7 +41,8 @@ describe("PlayerResultBoardTable", () => {
             render(<PlayerResultBoardTable data={mockData} />);
 
             // Assert
-            expect(screen.getByRole("table")).toBeInTheDocument();
+            const tables = screen.getAllByRole("table");
+            expect(tables).toHaveLength(2); // header table and body table
             expect(screen.getByText("player")).toBeInTheDocument();
             expect(screen.getByText("bet_amount")).toBeInTheDocument();
             expect(screen.getByText("win")).toBeInTheDocument();
@@ -282,7 +283,8 @@ describe("PlayerResultBoardTable", () => {
             render(<PlayerResultBoardTable data={mockData} />);
 
             // Assert
-            expect(screen.getByRole("table")).toBeInTheDocument();
+            const tables = screen.getAllByRole("table");
+            expect(tables).toHaveLength(2);
             expect(screen.getAllByRole("rowgroup")).toHaveLength(2); // thead and tbody
             expect(screen.getAllByRole("row")).toHaveLength(2); // header row + data row
             expect(screen.getAllByRole("columnheader")).toHaveLength(3); // player, bet_amount, win
@@ -294,7 +296,8 @@ describe("PlayerResultBoardTable", () => {
             render(<PlayerResultBoardTable data={[]} />);
 
             // Assert
-            expect(screen.getByRole("table")).toBeInTheDocument();
+            const tables = screen.getAllByRole("table");
+            expect(tables).toHaveLength(2);
             expect(screen.getAllByRole("row")).toHaveLength(2); // header row + empty state row
             expect(screen.getAllByRole("columnheader")).toHaveLength(3); // player, bet_amount, win headers
             expect(screen.getByRole("cell")).toBeInTheDocument(); // empty message cell
@@ -318,7 +321,6 @@ describe("PlayerResultBoardTable", () => {
 
             // Assert
             expect(ref.current).toBeInstanceOf(HTMLDivElement);
-            expect(ref.current).toHaveClass("min-h-[450px]");
         });
 
         it("should have correct displayName", () => {
