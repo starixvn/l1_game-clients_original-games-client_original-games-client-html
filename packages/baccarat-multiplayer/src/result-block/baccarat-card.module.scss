@@ -31,7 +31,16 @@
             &.entrance {
                 opacity: 1;
                 transform: rotate(90deg) rotateY(0deg) scale(1);
-                animation: slideInLeft 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+                animation: slideInCard5 0.3s cubic-bezier(0.59,0.19,0.72,0.97),
+                rotateCard5 0.3s cubic-bezier(0.59,0.19,0.72,0.97);
+
+                .baccarat-card-back {
+                    z-index: 3;
+                }
+
+                .baccarat-card-front {
+                    z-index: 1;
+                }
             }
         }
     }
@@ -56,7 +65,16 @@
             &.entrance {
                 opacity: 1;
                 transform: rotate(-90deg) rotateY(0deg) scale(1);
-                animation: slideInRight 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+                animation: slideInCard6 0.3s cubic-bezier(0.59,0.19,0.72,0.97),
+                rotateCard6 0.3s cubic-bezier(0.59,0.19,0.72,0.97);
+
+                .baccarat-card-back {
+                    z-index: 3;
+                }
+
+                .baccarat-card-front {
+                    z-index: 1;
+                }
             }
         }
     }
@@ -90,31 +108,91 @@
     }
 
     // 3rd card dynamic entrance animations
-    @keyframes slideInLeft {
+    @keyframes slideInCard5 {
         0% {
-            transform: rotate(90deg) rotateY(0deg) translateX(-59px) scale(0);
+            top: -80px;
+            left: 100px
         }
 
-        90% {
-            transform: rotate(90deg) rotateY(0deg) translateX(5px) scale(1.1);
+        50% {
+            top: -40px;
+            left: 0px;
+        }
+
+        80% {
+            top: -20px;
+            left: -55px;
         }
 
         100% {
-            transform: rotate(90deg) rotateY(0deg) translateX(0px) scale(1);
+            top: 7.5px;
+            left: -59px;
         }
     }
 
-    @keyframes slideInRight {
+    @keyframes rotateCard5 {
         0% {
-            transform: rotate(-90deg) rotateY(0deg) translateX(59px) scale(0);
+            opacity: 0;
+            transform: rotate(0deg) scale(0);
         }
 
-        90% {
-            transform: rotate(-90deg) rotateY(0deg) translateX(-5px) scale(1.1);
+        10% {
+            opacity: 0.3;
+            transform: rotate(0deg) scale(0.1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: rotate(0deg) scale(0.6);
+        }
+        
+        100% {
+            opacity: 1;
+            transform: rotate(90deg) scale(1);
+        }
+    }
+
+    @keyframes rotateCard6 {
+        0% {
+            opacity: 0;
+            transform: rotate(0deg) scale(0);
+        }
+
+        10% {
+            opacity: 0.3;
+            transform: rotate(0deg) scale(0.1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: rotate(0deg) scale(0.6);
         }
 
         100% {
-            transform: rotate(-90deg) rotateY(0deg) translateX(0px) scale(1);
+            opacity: 1;
+            transform: rotate(-90deg) scale(1);
+        }
+    }
+
+    @keyframes slideInCard6 {
+        0% {
+            top: -80px;
+            right: 100px
+        }
+
+        80% {
+            top: -20px;
+            right: -55px;
+        }
+
+        100% {
+            top: -40px;
+            right: 0px;
+        }
+
+        100% {
+            top: 7.5px;
+            right: -59px;
         }
     }
 }

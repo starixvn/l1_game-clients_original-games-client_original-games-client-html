@@ -39,7 +39,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
         if (isHideAllCards) {
             setCardContainerAnimClass(styles['hide-all-cards']);
         } else if (!isHideAllCards && !isShowResult && !playResultAnimation && !isGetResult) {
-            setCardContainerAnimClass(styles['show-all-cards']);
+            setCardContainerAnimClass(styles['deal-all-cards']);
         } else if (isGetResult) {
             setCardContainerAnimClass(styles['show-static-cards']);
         }

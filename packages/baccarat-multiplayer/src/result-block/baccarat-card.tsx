@@ -73,7 +73,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
                         if (onCardFlip) {
                             onCardFlip(card, card.accumulatedScore);
                         }
-                    }, 600); // Wait for entrance animation to complete
+                    }, 350); // Wait for entrance animation to complete
                 } else {
                     // Regular cards or historical data: direct flip without entrance
                     setIsFlipped(true);

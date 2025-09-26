@@ -33,29 +33,33 @@
         opacity: 0;
     }
 
-    &.show-all-cards {
+    &.deal-all-cards {
         // Individual card animations with delays
         > div[data-card-order="1"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation: dealCard1 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards,
+            scaleCards 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards;
             animation-delay: 0s;
         }
 
         > div[data-card-order="2"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation: dealCard2 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards,
+            scaleCards 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards;
             animation-delay: 0.25s;
         }
 
         > div[data-card-order="3"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation: dealCard3 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards,
+            scaleCards 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards;
             animation-delay: 0.5s;
         }
 
         > div[data-card-order="4"] {
             opacity: 0;
-            animation: showCards 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            animation: dealCard4 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards,
+            scaleCards 0.6s cubic-bezier(0.59,0.19,0.72,0.97) forwards;
             animation-delay: 0.75s;
         }
     }
@@ -80,6 +84,155 @@
         100% {
             opacity: 1;
             transform: scale(1) rotateY(0deg) translateY(0px);
+        }
+    }
+
+    // CSS Variables for responsive translateX values only
+    --card-out-start-x: 120px;
+    --card-out-mid1-x: 10px;
+    --card-out-mid2-x: 2px;
+    --card-out-end-x: 0px;
+
+    --card-in-start-x: 60px;
+    --card-in-mid1-x: 5px;
+    --card-in-mid2-x: 2px;
+    --card-in-end-x: 1px;
+
+    // Mobile adjustments - reduce horizontal animation distances only
+    @media (max-width: 768px) {
+        --card-out-start-x: 90px;
+        --card-out-mid1-x: 5px;
+        --card-out-mid2-x: 1px;
+        --card-out-end-x: 0px;
+        
+        --card-in-start-x: 45px;
+        --card-in-mid1-x: 5px;
+        --card-in-mid2-x: 1px;
+        --card-in-end-x: 0px;
+    }
+
+    @keyframes dealCard1 {
+        0% {
+            left: var(--card-out-start-x);
+            top: -75px;
+        }
+
+        60% {
+            left: var(--card-out-mid1-x);
+            top: -50px;
+        }
+
+        90% {
+            left: var(--card-out-mid2-x);
+            top: -20px;
+        }
+
+        95% {
+            left: var(--card-out-end-x);
+            top: -10px;
+        }
+
+        100% {
+            left: 0px;
+            top: 0px;
+        }
+    }
+
+    @keyframes dealCard2 {
+        0% {
+            right: var(--card-in-start-x);
+            top: -75px;
+        }
+
+        60% {
+            right: var(--card-in-mid1-x);
+            top: -40px;
+        }
+
+        90% {
+            right: var(--card-in-mid2-x);
+            top: -15px;
+        }
+
+        95% {
+            right: var(--card-in-end-x);
+            top: -7.5px;
+        }
+
+        100% {
+            right: 0px;
+            top: 0px;
+        }
+    }
+
+    @keyframes dealCard3 {
+        0% {
+            left: var(--card-in-start-x);
+            top: -75px;
+        }
+
+        60% {
+            left: var(--card-in-mid1-x);
+            top: -40px;
+        }
+
+        90% {
+            left: var(--card-in-mid2-x);
+            top: -15px;
+        }
+
+        95% {
+            left: var(--card-in-end-x);
+            top: -7.5px;
+        }
+
+        100% {
+            left: 0px;
+            top: 0px;
+        }
+    }
+
+    @keyframes dealCard4 {
+        0% {
+            right: var(--card-out-start-x);
+            top: -75px;
+        }
+
+        60% {
+            right: var(--card-out-mid1-x);
+            top: -50px;
+        }
+
+        90% {
+            right: var(--card-out-mid2-x);
+            top: -15px;
+        }
+
+        95% {
+            right: var(--card-out-end-x);
+            top: -7.5px;
+        }
+
+        100% {
+            right: 0px;
+            top: 0px;
+        }
+    }
+
+    @keyframes scaleCards {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        10% {
+            opacity: 0.3;
+            transform: scale(0.1);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
         }
     }
 }
