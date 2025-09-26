@@ -1,6 +1,6 @@
 import * as React from "react";
-import { cn } from '@shared/utils/merge-tailwind-util';
-import { useCommonTranslate } from '@shared/react-hooks';
+import { cn } from "@shared/utils/merge-tailwind-util";
+import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../table";
 
 interface PlayerData {
@@ -54,8 +54,12 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
                             key={index}
                             className="text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors"
                         >
-                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">{row.playerName}</TableCell>
-                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">{row.betAmount}</TableCell>
+                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
+                                {row.playerName}
+                            </TableCell>
+                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
+                                {row.betAmount}
+                            </TableCell>
                             <TableCell
                                 className={cn(
                                     "py-[10.3px] md:py-[12.5px] px-2 md:px-3 font-normal text-right pl-0 md:text-base",
@@ -72,10 +76,15 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
     };
 
     return (
-        <div ref={ref} className="min-h-[450px] w-full">
-            <Table>
-                {renderTableHeader()}
-                {renderTableBody()}
+        <div ref={ref} className="h-[450px] md:h-[540px] w-full overflow-hidden">
+            <Table className="h-full flex flex-col">
+                <div className="flex-shrink-0 mb-1">
+                    <Table className="w-full table-fixed">{renderTableHeader()}</Table>
+                </div>
+
+                <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-[3px]">
+                    <Table className="w-full table-fixed">{renderTableBody()}</Table>
+                </div>
             </Table>
         </div>
     );
