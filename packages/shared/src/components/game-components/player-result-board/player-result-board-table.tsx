@@ -1,7 +1,9 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
+import { useStatisticStore } from "@shared/stores";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../table";
+import { useShallow } from "zustand/shallow";
 
 interface PlayerData {
     playerName: string;
@@ -16,6 +18,10 @@ interface PlayerResultBoardTableProps {
 
 const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoardTableProps>(({ data }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
+
+    const { isShowStatistic } = useStatisticStore(useShallow((state) => ({
+        isShowStatistic: state.isShowStatistic,
+    })));
 
     const renderTableHeader = () => {
         return (
@@ -76,7 +82,13 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
     };
 
     return (
-        <div ref={ref} className="h-[450px] md:h-[540px] w-full overflow-hidden flex flex-col">
+        <div
+            ref={ref}
+            className={cn(
+                "h-[450px] w-full overflow-hidden flex flex-col",
+                isShowStatistic ? "md:h-[650px]" : "md:h-[540px]"
+            )}
+        >
             <div className="flex-shrink-0 mb-1">
                 <Table className="w-full table-fixed">{renderTableHeader()}</Table>
             </div>

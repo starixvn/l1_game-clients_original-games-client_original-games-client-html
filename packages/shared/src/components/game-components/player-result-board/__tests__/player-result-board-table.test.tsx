@@ -2,13 +2,19 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { PlayerResultBoardTable } from "../player-result-board-table";
 import { useCommonTranslate } from "@shared/react-hooks";
+import { useStatisticStore } from "@shared/stores";
 
-// Mock the hook
+// Mock the hooks
 jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn(),
 }));
 
+jest.mock("@shared/stores", () => ({
+    useStatisticStore: jest.fn(),
+}));
+
 const mockUseCommonTranslate = useCommonTranslate as jest.MockedFunction<typeof useCommonTranslate>;
+const mockUseStatisticStore = useStatisticStore as jest.MockedFunction<typeof useStatisticStore>;
 
 describe("PlayerResultBoardTable", () => {
     const mockTranslateCommon = jest.fn();
@@ -18,6 +24,9 @@ describe("PlayerResultBoardTable", () => {
         mockUseCommonTranslate.mockReturnValue({
             t: mockTranslateCommon,
             isLoading: false,
+        });
+        mockUseStatisticStore.mockReturnValue({
+            isShowStatistic: false,
         });
         mockTranslateCommon.mockImplementation((key: string) => key);
     });
@@ -303,7 +312,6 @@ describe("PlayerResultBoardTable", () => {
             expect(screen.getByRole("cell")).toBeInTheDocument(); // empty message cell
         });
     });
-
     describe("forwardRef", () => {
         it("should forward ref correctly", () => {
             // Arrange

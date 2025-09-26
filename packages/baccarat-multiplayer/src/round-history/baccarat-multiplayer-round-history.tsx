@@ -2,9 +2,9 @@ import { LoadingSpinner } from "@shared/components/game-components/game-loading/
 import { RoundHistory } from "@shared/components/game-components/round-history/chain";
 import { IconStatistic } from "@shared/components/game-components/statistic/icon-statistic";
 import { useClickSound } from "@shared/react-hooks";
+import { useStatisticStore } from "@shared/stores";
 import useGameStore from "@shared/stores/game-store/game-store";
 import dynamic from "next/dynamic";
-import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { BaccaratMultiplayerRoundHistoryItem } from "./baccarat-multiplayer-round-history-item";
 const BaccaratMultiplayerStatisticPopup = dynamic(() => import("./baccarat-multiplayer-statistic-popup"), {
@@ -23,17 +23,21 @@ export const BaccaratMultiplayerRoundHistory = () => {
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
 
-    const [isShowStatistic, setIsShowStatistic] = useState(false);
+    const { isShowStatistic, showStatistic, hideStatistic } = useStatisticStore(useShallow((state) => ({
+        isShowStatistic: state.isShowStatistic,
+        showStatistic: state.showStatistic,
+        hideStatistic: state.hideStatistic,
+    })));
 
     const handleClickStatistic = () => {
         clickSound();
-        setIsShowStatistic(true);
+        showStatistic();
     };
 
     return (
         <div className="mt-[10px] mb-2 mx-3">
             {isShowStatistic ? (
-                <BaccaratMultiplayerStatisticPopup inline onClose={() => setIsShowStatistic(false)} />
+                <BaccaratMultiplayerStatisticPopup inline onClose={hideStatistic} />
             ) : (
                 <RoundHistory
                     roundHistory={roundHistory}
