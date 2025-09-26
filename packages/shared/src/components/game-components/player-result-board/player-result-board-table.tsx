@@ -19,9 +19,31 @@ interface PlayerResultBoardTableProps {
 const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoardTableProps>(({ data }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
 
-    const { isShowStatistic } = useStatisticStore(useShallow((state) => ({
-        isShowStatistic: state.isShowStatistic,
-    })));
+    const { isShowStatistic } = useStatisticStore(
+        useShallow((state) => ({
+            isShowStatistic: state.isShowStatistic,
+        }))
+    );
+
+    const getTableHeightClassName = () => {
+        const currentGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+        switch (currentGameId) {
+            case "148":
+                if (isShowStatistic) {
+                    return "md:h-[700px]";
+                } else {
+                    return "md:h-[560px]";
+                }
+            case "150":
+                if (isShowStatistic) {
+                    return "md:h-[656px]";
+                } else {
+                    return "md:h-[540px]";
+                }
+            default:
+                return "md:h-[540px]";
+        }
+    };
 
     const renderTableHeader = () => {
         return (
@@ -82,13 +104,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
     };
 
     return (
-        <div
-            ref={ref}
-            className={cn(
-                "h-[450px] w-full overflow-hidden flex flex-col",
-                isShowStatistic ? "md:h-[650px]" : "md:h-[540px]"
-            )}
-        >
+        <div ref={ref} className={cn("h-[450px] w-full overflow-hidden flex flex-col", getTableHeightClassName())}>
             <div className="flex-shrink-0 mb-1">
                 <Table className="w-full table-fixed">{renderTableHeader()}</Table>
             </div>

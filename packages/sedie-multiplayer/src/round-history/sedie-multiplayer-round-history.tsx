@@ -1,4 +1,3 @@
-import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useShallow } from "zustand/react/shallow";
 import { RoundHistory } from '@shared/components/game-components/round-history/chain';
@@ -7,6 +6,7 @@ import { SedieMultiplayerRoundHistoryItem } from "./sedie-multiplayer-round-hist
 import useGameStore from '@shared/stores/game-store/game-store';
 import { LoadingSpinner } from '@shared/components/game-components/game-loading/loading-spinner';
 import { useClickSound } from '@shared/react-hooks';
+import { useStatisticStore } from "@shared";
 const SedieMultiplayerStatisticPopup = dynamic(() => import("./sedie-multiplayer-statistic-popup"), {
     loading: () => (
         <div className="relative h-[40px]">
@@ -22,17 +22,21 @@ export const SedieMultiplayerRoundHistory = () => {
     const { roundHistory, isShowBlink } = useGameStore(
         useShallow((state) => ({ roundHistory: state.roundHistory, isShowBlink: state.isShowBlink }))
     );
-    const [isShowStatistic, setIsShowStatistic] = useState(false);
+    const { isShowStatistic, showStatistic, hideStatistic } = useStatisticStore(useShallow((state) => ({
+        isShowStatistic: state.isShowStatistic,
+        showStatistic: state.showStatistic,
+        hideStatistic: state.hideStatistic,
+    })));
 
     const handleClickStatistic = () => {
         clickSound();
-        setIsShowStatistic(true);
+        showStatistic();
     };
 
     return (
         <div className="mt-[10px] mb-2">
             {isShowStatistic ? (
-                <SedieMultiplayerStatisticPopup inline onClose={() => setIsShowStatistic(false)} />
+                <SedieMultiplayerStatisticPopup inline onClose={hideStatistic} />
             ) : (
                 <RoundHistory
                     roundHistory={roundHistory}

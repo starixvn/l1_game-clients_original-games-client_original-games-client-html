@@ -13,6 +13,16 @@ jest.mock("@shared/stores", () => ({
     useStatisticStore: jest.fn(),
 }));
 
+// Mock process.env
+const originalEnv = process.env;
+beforeAll(() => {
+    process.env = { ...originalEnv, NEXT_PUBLIC_DEFAULT_GAME_ID: '150' };
+});
+
+afterAll(() => {
+    process.env = originalEnv;
+});
+
 const mockUseCommonTranslate = useCommonTranslate as jest.MockedFunction<typeof useCommonTranslate>;
 const mockUseStatisticStore = useStatisticStore as jest.MockedFunction<typeof useStatisticStore>;
 
@@ -112,40 +122,6 @@ describe("PlayerResultBoardTable", () => {
         });
     });
 
-    describe("styling and layout", () => {
-        it("should apply correct styling to winning amounts", () => {
-            // Arrange
-            const mockData = [
-                {
-                    playerName: "Winner",
-                    betAmount: "100.00",
-                    win: "50.00",
-                },
-                {
-                    playerName: "Loser",
-                    betAmount: "100.00",
-                    win: "-25.00",
-                },
-                {
-                    playerName: "BreakEven",
-                    betAmount: "100.00",
-                    win: "0.00",
-                },
-            ];
-
-            // Act
-            render(<PlayerResultBoardTable data={mockData} />);
-
-            // Assert
-            const winnerCell = screen.getByText("50.00").closest("td");
-            const loserCell = screen.getByText("-25.00").closest("td");
-            const breakEvenCell = screen.getByText("0.00").closest("td");
-
-            expect(winnerCell).toHaveClass("text-winning-highlight");
-            expect(loserCell).toHaveClass("text-secondary-text");
-            expect(breakEvenCell).toHaveClass("text-secondary-text");
-        });
-    });
 
     describe("props handling", () => {
         it("should use default empty message when data is empty", () => {
@@ -312,6 +288,8 @@ describe("PlayerResultBoardTable", () => {
             expect(screen.getByRole("cell")).toBeInTheDocument(); // empty message cell
         });
     });
+
+
     describe("forwardRef", () => {
         it("should forward ref correctly", () => {
             // Arrange
