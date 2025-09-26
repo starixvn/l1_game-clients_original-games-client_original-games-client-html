@@ -109,7 +109,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
                 <Table className="w-full table-fixed">{renderTableHeader()}</Table>
             </div>
 
-            <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-[3px]">
+            <div className="flex-1 overflow-y-auto scrollbar-hide-on-idle">
                 <Table className="w-full table-fixed">{renderTableBody()}</Table>
             </div>
         </div>

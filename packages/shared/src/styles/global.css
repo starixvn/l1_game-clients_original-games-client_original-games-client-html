@@ -117,11 +117,11 @@ html[data-theme="light"] {
     .border-stroke {
         position: relative;
         border-radius: 12px;
-        background: linear-gradient(180deg, #293A56 0%, rgba(30, 39, 55, 0) 12.72%);
+        background: linear-gradient(180deg, #293a56 0%, rgba(30, 39, 55, 0) 12.72%);
     }
 
     .border-stroke::before {
-        content: '';
+        content: "";
         position: absolute;
         inset: 1px 0 0 1px;
         background: #182130;
@@ -174,4 +174,18 @@ html[data-theme="light"] {
             display: none;
         }
     }
+
+.scrollbar-hide-on-idle {
+    overflow-y: auto;
+  }
+  
+  .scrollbar-hide-on-idle::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  
+  .scrollbar-hide-on-idle:hover::-webkit-scrollbar {
+    width: 3px;
+  }
+  
 }
