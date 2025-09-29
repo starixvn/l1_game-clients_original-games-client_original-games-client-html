@@ -16,6 +16,7 @@ import { RoundState } from "@shared/components/game-base/type";
     const shapeClass = choice === "tie" ? styles.tieShape : choice === "anyPair" ? styles.anyPairShape : "";
     const shadowClass = choice === "tie" ? styles.tieShadow : choice === "anyPair" ? styles.anyPairShadow : "";
     const textColorClass = choice === "tie" ? "text-[#41EE7B]" : "text-white";
+    const shadowColorClass = choice === "tie" ? "drop-shadow-[0_0px_10px_rgba(65,238,123,0.4)]" : "drop-shadow-[0_0px_10px_rgba(255,255,255,0.3)]";
     const fontSizeClass = choice === "tie" ? "text-xl" : "text-base";
     const ownBetPositionClass = choice === "anyPair" ? "bottom-[6px]" : "bottom-[11px]";
 
@@ -25,7 +26,7 @@ import { RoundState } from "@shared/components/game-base/type";
 
             <div className={`flex-1 text-white relative w-full h-full ${themeClass}`}>
                 <div className="h-[55px] flex flex-col justify-top pt-[10px]">
-                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice.toLowerCase()} className={`${textColorClass} ${fontSizeClass} font-semibold leading-none`} />
+                    <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice.toLowerCase()} className={`${textColorClass} ${fontSizeClass} font-semibold leading-none ${shadowColorClass}`} />
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className="text-base font-light leading-none pt-1" />
                 </div>
                 <div className={`h-auto absolute translate-x-[-50%] left-1/2 ${ownBetPositionClass}`}>
