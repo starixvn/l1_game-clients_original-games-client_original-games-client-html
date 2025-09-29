@@ -1,4 +1,5 @@
-// Plinko Game Page Component - Updated to use SplashScreen workflow
-import SplashScreen from "../src/components/splash-screen/SplashScreen";
+// Import game configuration first
+import "../src/game-config";
 
-export default SplashScreen;
+// Import shared home component
+export { GameHome as default } from "@shared";
