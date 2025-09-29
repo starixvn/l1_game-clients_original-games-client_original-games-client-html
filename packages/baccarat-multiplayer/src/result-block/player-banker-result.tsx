@@ -41,14 +41,14 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
         return playerCard1Valid && bankerCard1Valid;
     };
 
-    // Reset animation states when show result changes
+    // Reset animation states when show result changes or when using invalid/dummy data
     useEffect(() => {
-        if (!isShowResult) {
+        if (!isShowResult || !hasValidResult(result)) {
             setShowWinner(false);
             setPlayerAnimationComplete(false);
             setBankerAnimationComplete(false);
         }
-    }, [isShowResult]);
+    }, [isShowResult, result]);
 
     // Handle historical data case - show winner immediately
     useEffect(() => {
@@ -86,6 +86,10 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
         return WINNER_TEXT_MAP[result.winner] || "";
     };
 
+    // Don't show cards during transitions when using dummy/default data
+    const shouldShowCards = isShowResult && hasValidResult(result);
+    const shouldHideCards = isHideAllCards || (isShowResult && !hasValidResult(result));
+
     return (
         <div className="grid grid-cols-2 gap-x-[36px] md:gap-x-[110px] justify-center h-full pointer-events-none">
             <CardSection
@@ -93,8 +97,8 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 label="Player"
                 type="player"
                 playResultAnimation={playResultAnimation}
-                isShowResult={isShowResult}
-                isHideAllCards={isHideAllCards}
+                isShowResult={shouldShowCards}
+                isHideAllCards={shouldHideCards}
                 isGetResult={isGetResult}
                 onAnimationComplete={!isGetResult ? handlePlayerAnimationComplete : undefined}
             />
@@ -104,13 +108,13 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 label="Banker"
                 type="banker"
                 playResultAnimation={playResultAnimation}
-                isShowResult={isShowResult}
-                isHideAllCards={isHideAllCards}
+                isShowResult={shouldShowCards}
+                isHideAllCards={shouldHideCards}
                 isGetResult={isGetResult}
                 onAnimationComplete={!isGetResult ? handleBankerAnimationComplete : undefined}
             />
 
-            {showWinner && result && (
+            {showWinner && result && hasValidResult(result) && (
                 <div className="col-span-2 flex items-center justify-center relative top-[49px]">
                     <div className={`${styles["winner-display"]} ${styles["winner-" + result.winner]}`}>
                         <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
