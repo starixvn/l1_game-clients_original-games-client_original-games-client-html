@@ -233,25 +233,22 @@
 @keyframes floatIn {
     0% {
         opacity: 0;
-        transform: translate(-50%, -50%) translateY(30px);
+        transform: translateY(30px);
     }
 
     100% {
         opacity: 1;
-        transform: translate(-50%, -50%);
+        transform: translateY(0);
     }
 }
 
 .winner-display {
-    position: absolute;
-    left: 50%;
-    top: 207px;
-    transform: translate(-50%, -50%);
+    position: relative;
     width: 307px;
     height: 44px;
     display: flex;
     align-items: center;
-    margin: 0 auto;
+    justify-content: center;
     z-index: 101;
     pointer-events: none;
     animation: floatIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;

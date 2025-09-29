@@ -85,7 +85,7 @@ const renderCardDisplay = (
             language="en"
             isFinishShowResult={isFinishShowResult}
             isHideAllCards={isHideAllCards}
-            isGetResult={false}
+            isGetResult={isUsingRoundHistoryData}
         />
     );
 };

@@ -14,6 +14,7 @@ interface CardSectionProps {
     isShowResult: boolean;
     isHideAllCards: boolean;
     isGetResult?: boolean;
+    onAnimationComplete?: () => void;
 }
 
 export const CardSection: React.FC<CardSectionProps> = ({
@@ -23,15 +24,18 @@ export const CardSection: React.FC<CardSectionProps> = ({
     playResultAnimation,
     isShowResult,
     isHideAllCards,
-    isGetResult = false
+    isGetResult = false,
+    onAnimationComplete
 }) => {
     const [visibleScores, setVisibleScores] = useState<{ [key: number]: boolean }>({});
     const [cardContainerAnimClass, setCardContainerAnimClass] = useState('');
+    const [allAnimationsComplete, setAllAnimationsComplete] = useState(false);
 
     // Reset states when show result changes
     useEffect(() => {
         if (!isShowResult) {
             setVisibleScores({});
+            setAllAnimationsComplete(false);
         }
     }, [isShowResult]);
 
@@ -52,13 +56,29 @@ export const CardSection: React.FC<CardSectionProps> = ({
         (card: CardOrderWithTiming, accumulatedScore: number) => {
             // Add delay to match card flip animation completion
             setTimeout(() => {
-                setVisibleScores((prev) => ({
-                    ...prev,
-                    [card.order]: true,
-                }));
+                setVisibleScores((prev) => {
+                    const newVisibleScores = {
+                        ...prev,
+                        [card.order]: true,
+                    };
+                    
+                    // Check if all cards are now visible
+                    const totalCards = cards.length;
+                    const visibleCount = Object.values(newVisibleScores).filter(Boolean).length;
+                    
+                    if (visibleCount === totalCards && !allAnimationsComplete && !isGetResult) {
+                        setAllAnimationsComplete(true);
+                        // Notify parent that all animations are complete after a brief delay
+                        setTimeout(() => {
+                            onAnimationComplete?.();
+                        }, 100);
+                    }
+                    
+                    return newVisibleScores;
+                });
             }, 600); // Match the animation duration from BaccaratCard
         },
-        [type],
+        [cards.length, allAnimationsComplete, onAnimationComplete, isGetResult],
     );
 
     return (

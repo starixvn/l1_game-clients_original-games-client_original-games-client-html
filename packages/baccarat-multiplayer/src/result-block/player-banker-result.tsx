@@ -6,7 +6,6 @@ import { BaccaratResult } from "./types";
 import { WINNER_TEXT_MAP } from "./constants";
 import { useTranslator } from "@shared/react-hooks/use-translator";
 import { ResourceTypes } from "@shared/resources";
-import useGameStore from "@shared/stores/game-store/game-store";
 
 
 interface PlayerBankerResultProps {
@@ -23,50 +22,61 @@ interface PlayerBankerResultProps {
 export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     const { playResultAnimation, result, isShowResult, isFinishShowResult, isHideAllCards, isGetResult = false } = props;
     const [showWinner, setShowWinner] = useState(false);
+    const [playerAnimationComplete, setPlayerAnimationComplete] = useState(false);
+    const [bankerAnimationComplete, setBankerAnimationComplete] = useState(false);
 
     const playerCards = useMemo(() => result ? GetPlayerCardsResult(result) : [], [result]);
     const bankerCards = useMemo(() => result ? GetBankerCardsResult(result) : [], [result]);
 
     const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
 
-    const startAnimation = useCallback(() => {
-        if (!result) {
-            return;
+    // Helper function to check if result contains valid game data (not default empty result)
+    const hasValidResult = (result: BaccaratResult | undefined): boolean => {
+        if (!result) return false;
+        
+        // Check if this is a default/empty result by looking at card ranks (-1 is EmptyCardIndex)
+        const playerCard1Valid = result.player.card1.rank !== -1;
+        const bankerCard1Valid = result.banker.card1.rank !== -1;
+        
+        return playerCard1Valid && bankerCard1Valid;
+    };
+
+    // Reset animation states when show result changes
+    useEffect(() => {
+        if (!isShowResult) {
+            setShowWinner(false);
+            setPlayerAnimationComplete(false);
+            setBankerAnimationComplete(false);
         }
+    }, [isShowResult]);
 
-        const allCards = [...playerCards, ...bankerCards].sort((a, b) => a.order - b.order).filter((card) => card.value);
-
-        // Find the maximum animation delay (last card to flip)
-        const maxDelay = allCards.length > 0 ? Math.max(...allCards.map(card => card.animationDelay)) : 0;
-
-        // Show winner after all cards have finished flipping (add 500ms buffer for card flip animation)
-        const winnerDelay = maxDelay + 1000;
-
-        setTimeout(() => {
+    // Handle historical data case - show winner immediately
+    useEffect(() => {
+        if (isGetResult && isShowResult && result && !showWinner && hasValidResult(result)) {
+            // For historical/reload data, show winner immediately
             setShowWinner(true);
-        }, winnerDelay);
-
-        allCards.forEach((card, index) => {
-            setTimeout(() => {
-                // Emit card state change if needed
-            }, card.animationDelay);
-        });
-    }, [result, playerCards, bankerCards]);
-
-    useEffect(() => {
-        if (playResultAnimation) {
-            startAnimation();
-        } else {
-            setShowWinner(isShowResult && !isHideAllCards);
         }
-    }, [playResultAnimation, isShowResult, isHideAllCards, startAnimation]);
+    }, [isGetResult, isShowResult, result, showWinner]);
 
+    // Show winner when both player and banker animations are complete (live game)
     useEffect(() => {
-        const isShouldShowResults = isShowResult && isFinishShowResult && !isHideAllCards && showWinner;
-        if (isShouldShowResults && result) {
-            useGameStore.getState().setShouldShowResults(true);
+        if (!isGetResult && playResultAnimation && isShowResult && playerAnimationComplete && bankerAnimationComplete && !showWinner && hasValidResult(result)) {
+            // Add a small delay for better visual effect
+            const winnerTimer = setTimeout(() => {
+                setShowWinner(true);
+            }, 300);
+            
+            return () => clearTimeout(winnerTimer);
         }
-    }, [isShowResult, isFinishShowResult, isHideAllCards, showWinner, result]);
+    }, [isGetResult, playResultAnimation, isShowResult, playerAnimationComplete, bankerAnimationComplete, showWinner, result]);
+
+    const handlePlayerAnimationComplete = useCallback(() => {
+        setPlayerAnimationComplete(true);
+    }, []);
+
+    const handleBankerAnimationComplete = useCallback(() => {
+        setBankerAnimationComplete(true);
+    }, []);
 
     const getWinnerText = (): string => {
         if (!result) {
@@ -77,7 +87,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     };
 
     return (
-        <div className="grid grid-cols-2 gap-[36px] md:gap-[110px] justify-center h-full pointer-events-none">
+        <div className="grid grid-cols-2 gap-x-[36px] md:gap-x-[110px] justify-center h-full pointer-events-none">
             <CardSection
                 cards={playerCards}
                 label="Player"
@@ -86,6 +96,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 isShowResult={isShowResult}
                 isHideAllCards={isHideAllCards}
                 isGetResult={isGetResult}
+                onAnimationComplete={!isGetResult ? handlePlayerAnimationComplete : undefined}
             />
 
             <CardSection
@@ -96,11 +107,14 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 isShowResult={isShowResult}
                 isHideAllCards={isHideAllCards}
                 isGetResult={isGetResult}
+                onAnimationComplete={!isGetResult ? handleBankerAnimationComplete : undefined}
             />
 
-            {isShowResult && isFinishShowResult && !isHideAllCards && showWinner && (
-                <div className={`${styles["winner-display"]} ${styles["winner-" + (result?.winner || 'tie')]} ${playResultAnimation ? styles["play-animation"] : ""}`}>
-                    <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
+            {showWinner && result && (
+                <div className="col-span-2 flex items-center justify-center relative top-[49px]">
+                    <div className={`${styles["winner-display"]} ${styles["winner-" + result.winner]}`}>
+                        <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
+                    </div>
                 </div>
             )}
         </div>
