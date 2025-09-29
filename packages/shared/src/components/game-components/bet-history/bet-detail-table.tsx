@@ -80,7 +80,8 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                         className={cn(
                             "w-1/4 text-sm md:text-base text-secondary-text p-3",
                             cell.className || "text-center",
-                            cell.isWinningBet && "text-winning-highlight font-normal"
+                            cell.isWinningBet && "text-winning-highlight font-normal",
+                            cell.isWinningBet && cellIndex === 1 && "font-semibold",
                         )}
                     >
                         {cell.content}

@@ -55,7 +55,7 @@ const renderBetHistoryRows = (
                 {rowData.map((cell, cellIndex) => (
                     <TableCell
                         key={cellIndex}
-                        className={cn("text-secondary-text h-[60px] py-[7px] sm:p-4 px-1 md:text-base", cell.className)}
+                        className={cn("text-secondary-text h-[60px] py-2 px-2 md:text-base", cell.className)}
                         onClick={cell.onClick}
                     >
                         {cell.content}
