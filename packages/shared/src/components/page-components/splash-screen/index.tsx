@@ -19,6 +19,7 @@ import { updateSignInSMStatus } from '@shared/services/user-setting-service';
 import { MAX_AVATAR_ID } from '@shared/helpers/avatar-helper';
 import NameGenerator from '@shared/helpers/name-generator';
 import { logger } from '@shared/services/logger';
+import { staticAssetTracker } from '@shared/helpers/static-asset-tracker';
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
 import LoggerControls from "@shared/components/game-components/logger-controls/LoggerControls";
@@ -359,8 +360,14 @@ const SplashScreen: React.FC = () => {
                 finalGameId: toLoadGameId,
                 isGameAvailable
             });
-
+            
             setCurrentGameId(toLoadGameId);
+
+            // Track static assets for the selected game
+            logger.info('📦 [SPLASH] Starting static asset tracking', {
+                gameId: toLoadGameId
+            });
+            staticAssetTracker.trackGameAssets(toLoadGameId);
 
             if (authorizeInfo) {
                 logger.info('✅ [SPLASH] Setting authorize response and starting custom startup', {

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { isMobile, isDesktop } from "react-device-detect";
-import { ErrorNoGameOffer } from "@shared/constants/error-code-dictionary";
-import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "@shared/helpers";
+import { isDesktop } from "react-device-detect";
+import { localStorageKeys, StorageHelper } from "@shared/helpers";
 import { broadcastUserInfoRed } from "@shared/helpers/global-events-helper";
 import { useGlobalEventsStore } from "@shared/stores/global-events-store/global-events-store";
 import { PlayerContextProvider } from "@shared/react-contexts";
@@ -14,10 +13,9 @@ import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 import { BASE_PATH } from '@shared/constants/base-path';
-import { logger } from '@shared/services/logger';
 import { logger as plinkoLogger } from '../../services/logger';
 import LoggerControls from "../ui/components/controls/LoggerControls";
-import PlinkoGame from "../../pages/index";
+import PlinkoGame from "../plinko-game/PlinkoGame";
 
 const SoundSettings = dynamic(() => import("@shared/components/page-components/header/setting/settings-popup"), { ssr: false });
 const MusicPlayer = dynamic(() => import("@shared/components/page-components/music-player"), { ssr: false });
@@ -237,7 +235,7 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
         const renderOfferGameContainer = () => this.renderGames();
 
         const authContextValue = {
-            authorizeInfo: authorizeInfo,
+            authorizeInfo,
             session: this.props.session,
             setBalance: this.updateUserBalance,
             signOut: this.signOut,

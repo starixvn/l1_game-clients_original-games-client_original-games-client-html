@@ -7,10 +7,25 @@ import { GameMessageHandler, messageEventType } from "@shared/components/game-ba
 import useGameStore from "../stores/game-store/game-store";
 import useBettingStore from "../stores/betting-store/betting-store";
 import { logger } from "../services/logger";
+import { fileLoadingLogger } from './file-loading-logger';
 
 export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: string, gameMessageHandler: GameMessageHandler) {
+    const startTime = Date.now();
     const { proxy, enableMsgpackParser } = getAppSettings();
     const socketUri = buildServerUrl(socketInfo.namespace);
+    
+    logger.info('🔌 [SOCKET] Initializing Socket.IO connection', {
+        gameName,
+        socketUri,
+        namespace: socketInfo.namespace,
+        path: socketInfo.path,
+        enableMsgpackParser,
+        timestamp: new Date().toISOString()
+    });
+
+    // Track WebSocket connection
+    fileLoadingLogger.trackWebSocketConnection(socketUri, 'socket.io');
+
     const socketOption = {
         forceNew: true,
         transports: ["websocket"],
@@ -19,18 +34,20 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
         parser: enableMsgpackParser ? MsgpackParser : undefined,
     };
 
-    logger.info('Initializing Socket.IO connection', {
-        gameName,
-        socketUri,
-        namespace: socketInfo.namespace,
-        path: socketInfo.path,
-        enableMsgpackParser
-    });
-
     const socket = io(socketUri, socketOption);
 
     if (socket) {
-        logger.info('Socket.IO connection established, registering event handlers', { gameName });
+        const connectionTime = Date.now() - startTime;
+        
+        logger.info('✅ [SOCKET] Socket.IO connection established, registering event handlers', { 
+            gameName,
+            connectionTime: `${connectionTime}ms`,
+            socketUri
+        });
+        
+        // Track successful WebSocket connection
+        fileLoadingLogger.trackWebSocketResult(socketUri, true, connectionTime);
+        
         gameMessageHandler.registerSocketEvents();
         useGameStore.getState().setSocket(socket);
 
@@ -59,12 +76,29 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
         });
 
         socket.on(messageEventType.SOCKET_CONNECT_ERROR, (error) => {
-            logger.error('Socket connection error', { gameName, error });
+            const connectionTime = Date.now() - startTime;
+            
+            logger.error('❌ [SOCKET] Socket connection error', { 
+                gameName, 
+                error: error.message || error,
+                connectionTime: `${connectionTime}ms`,
+                socketUri
+            });
+            
+            // Track failed WebSocket connection
+            fileLoadingLogger.trackWebSocketResult(socketUri, false, connectionTime);
+            
             console.error("SOCKET_CONNECT_ERROR", error);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_CONNECT_ERROR]: true });
         });
+        
         socket.on(messageEventType.SOCKET_DISCONNECTED, (reason, details) => {
-            logger.warn('Socket disconnected', { gameName, reason, details });
+            logger.warn('⚠️ [SOCKET] Socket disconnected', { 
+                gameName, 
+                reason, 
+                details,
+                socketUri
+            });
             console.error("SOCKET_DISCONNECTED", reason, details);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_DISCONNECTED]: true });
         });
