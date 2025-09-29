@@ -1,0 +1,29 @@
+{
+    "149": {
+        "id": 149,
+        "gameName": "Plinko",
+        "tolgeeNamespace": "Common",
+        "socketInfo": {
+            "namespace": "plinko",
+            "path": "plinko"
+        },
+        "durations": {
+            "wholeRound": 30,
+            "wholeTurn": 30,
+            "placingBets": 20,
+            "lockingBet": 2,
+            "showResult": 8,
+            "resultAnimation": 5,
+            "beforePlaceBet": 2,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 50,
+        "gamePath": "plinko",
+        "gameResourceConfigs": {
+            "path": "plinko",
+            "optionalPaths": [],
+            "cachePaths": []
+        }
+    }
+}

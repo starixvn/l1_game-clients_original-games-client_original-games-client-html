@@ -1,0 +1,23 @@
+{
+    "serverDomainMapper": {
+        "localhost": "lumigame.com"
+    },
+    "proxy": {
+        "ssl": true,
+        "subDomain": "l2-proxy1",
+        "path": ""
+    },
+    "sentry": {
+        "dsn": "",
+        "environment": "",
+        "tracesSampleRate": 1
+    },
+    "enableSourceMap": true,
+    "subGuideDomain": "l2-guide-1",
+    "enableMsgpackParser": false,
+    "system": "VG",
+    "appType": 10,
+    "useTolgeeStatic": false,
+    "enableDebugLogs": true,
+    "socketGatewayPath": "gateway"
+}

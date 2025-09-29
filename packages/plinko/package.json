@@ -1,0 +1,37 @@
+{
+  "name": "@games/plinko",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rimraf dist",
+    "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=149 npm run generate-tolgee-data && cd packages/plinko",
+    "dev": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=149 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=149 NEXT_PUBLIC_BASE_PATH= PORT=3003 FAST_REFRESH=false node custom-server.js",
+    "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=149 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-149 next build",
+    "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=149 NEXT_PUBLIC_BASE_PATH= PORT=3003 node custom-server.js",
+    "dev:dynamic": "node scripts/dev-dynamic.js",
+    "build:dynamic": "node scripts/build-dynamic.js",
+    "proxy": "node ../../reverse-proxy.js",
+    "obfuscator-config-file": "node ./configs/config-obfuscator.js"
+  },
+  "dependencies": {
+    "@types/socket.io-client": "^1.4.36",
+    "@types/ws": "^8.18.1",
+    "matter-js": "^0.20.0",
+    "react-toastify": "^11.0.5",
+    "styled-components": "^6.1.13",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.31",
+    "rimraf": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
+    "concurrently": "^8.2.2"
+  },
+  "resolutions": {
+    "axios": "^0.30.0",
+    "form-data": "^3.0.4"
+  }
+}

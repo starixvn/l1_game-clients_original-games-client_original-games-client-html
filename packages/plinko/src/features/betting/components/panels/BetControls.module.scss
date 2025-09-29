@@ -1,0 +1,40 @@
+.bet-controls-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  background: rgba(24, 33, 48, 0.8);
+  border-radius: 6px;
+  border: 1px solid #2c3544;
+}
+
+.mode-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  &.manual {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    border: 1px solid #4a90e2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+  }
+
+  &.auto {
+    background: linear-gradient(135deg, #3fec83, #28c76f);
+    border: 1px solid #3fec83;
+    box-shadow: 0 2px 8px rgba(63, 236, 131, 0.3);
+  }
+}
+
+.mode-text {
+  color: #ffffff;
+  font-family: Inter, var(--default-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
