@@ -1,7 +1,15 @@
 import { GameRoundDataHandler } from '@shared/components/game-base/handlers/game-round-data-handler';
+import { logger } from '@shared/services/logger';
 
 export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
     buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number) {
+        logger.info('Building game round data for sedie-multiplayer', {
+            roundId,
+            winningChoice: result.winningChoice,
+            dice: result.dice,
+            previousRoundDiceCount: previousRoundData?.dice?.length || 0
+        });
+
         const resultRoundData = {
             dice: [result.dice],
             winningChoice: result.winningChoice,
@@ -9,7 +17,7 @@ export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
             roundId: roundId,
         };
 
-        return {
+        const finalRoundData = {
             dice: previousRoundData?.dice?.concat(resultRoundData.dice) || resultRoundData.dice,
             winningChoice: result.winningChoice,
             timestamp: resultRoundData.timestamp,
@@ -18,6 +26,15 @@ export class SeDieGameRoundDataHandler extends GameRoundDataHandler {
             totalDice: result.dice?.length || 0,
             statistics: this.calculateStatistics(previousRoundData, result),
         };
+
+        logger.info('Game round data built successfully', {
+            roundId,
+            totalDice: finalRoundData.totalDice,
+            winningChoice: finalRoundData.winningChoice,
+            statisticsCalculated: !!finalRoundData.statistics
+        });
+
+        return finalRoundData;
     }
 
     private calculateStatistics(previousRoundData: any, result: any) {

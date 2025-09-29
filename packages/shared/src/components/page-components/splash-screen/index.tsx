@@ -18,8 +18,10 @@ import { authorize, createNickname, sso, verifySession } from '@shared/services/
 import { updateSignInSMStatus } from '@shared/services/user-setting-service';
 import { MAX_AVATAR_ID } from '@shared/helpers/avatar-helper';
 import NameGenerator from '@shared/helpers/name-generator';
+import { logger } from '@shared/services/logger';
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
+import LoggerControls from "@shared/components/game-components/logger-controls/LoggerControls";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {
@@ -37,26 +39,61 @@ export const customStartup = async (
     player: PlayerContextModel,
     authorizeResponse: any
 ): Promise<void> => {
+    logger.info('🚀 [SPLASH] Custom startup initiated', {
+        hasSession: !!session,
+        isAuthenticated: session?.isAuthenticated,
+        isUM: session?.isUM,
+        locale,
+        hasAuthorizeResponse: !!authorizeResponse,
+        username: session?.username
+    });
+
     const isTimeout = !session || (!session?.isUM && !session?.isAuthenticated);
     player.locale = locale;
-    if (isTimeout) {
-        router.push("timeout");
 
+    logger.debug('🔍 [SPLASH] Session validation', {
+        isTimeout,
+        sessionValid: !!session,
+        isUM: session?.isUM,
+        isAuthenticated: session?.isAuthenticated
+    });
+
+    if (isTimeout) {
+        logger.warn('⏰ [SPLASH] Session timeout detected, redirecting to timeout page');
+        router.push("timeout");
         return;
     }
 
     if (session?.isAuthenticated) {
+        logger.info('✅ [SPLASH] User authenticated, setting up user context', {
+            username: session.username,
+            hasAuthorizeResponse: !!authorizeResponse
+        });
+
         setSentryUser(session);
         player.session = session;
         player.authorizeInfo = authorizeResponse;
         AnalyticsHelper.setUser(session.username);
+
+        logger.info('🎯 [SPLASH] User context setup completed', {
+            username: session.username,
+            locale: player.locale,
+            hasSession: !!player.session,
+            hasAuthorizeInfo: !!player.authorizeInfo
+        });
     }
 };
 
 export function onStartupError(error: Error): void {
+    logger.error('💥 [SPLASH] Startup error occurred', {
+        error: error.message,
+        stack: error.stack,
+        name: error.name
+    });
     console.error("[SplashScreen] startup error:", error);
     Sentry.captureException(error);
 
+    logger.warn('🔄 [SPLASH] Redirecting to timeout page due to startup error');
     globalThis.location.pathname = "timeout";
 }
 
@@ -65,19 +102,62 @@ const isTimeoutSession = (session: SSOResponse) => {
 };
 
 const getSession = async (token: string) => {
-    return token ? sso(token, getAppSettings().appType) : verifySession();
+    logger.info('🔐 [SPLASH] Getting session', {
+        hasToken: !!token,
+        tokenLength: token?.length,
+        appType: getAppSettings().appType
+    });
+
+    const session = token ? sso(token, getAppSettings().appType) : verifySession();
+
+    logger.debug('🔐 [SPLASH] Session retrieval method', {
+        method: token ? 'SSO' : 'verifySession',
+        hasToken: !!token
+    });
+
+    return session;
 };
 
 const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
+    logger.info('👤 [SPLASH] Auto-creating nickname for user', {
+        username: session.username,
+        hasSession: !!session
+    });
+
     const nickname = NameGenerator.generateName();
     const maxAvatarId = MAX_AVATAR_ID;
     const selectedAvatarId = randomInteger(1, maxAvatarId);
+
+    logger.debug('🎲 [SPLASH] Generated user details', {
+        nickname,
+        selectedAvatarId,
+        maxAvatarId
+    });
+
     const authorizeResponse = (await createNickname(session, nickname, selectedAvatarId)) as AuthorizeResponse;
+
+    logger.info('👤 [SPLASH] Nickname creation result', {
+        authorized: authorizeResponse?.authorized,
+        hasUser: !!authorizeResponse?.user,
+        nickname
+    });
+
     if (authorizeResponse?.authorized) {
+        logger.info('✅ [SPLASH] User authorized, setting up user preferences', {
+            nickname,
+            avatarId: selectedAvatarId
+        });
+
         Object.assign(authorizeResponse.user, { settings: { theme: Themes.light } });
         authorizeResponse.user.isSignedInSM = true;
         updateSignInSMStatus(session);
+
+        logger.info('🎨 [SPLASH] User preferences configured', {
+            theme: Themes.light,
+            isSignedInSM: true
+        });
     } else {
+        logger.error('❌ [SPLASH] User authorization failed, signing out');
         signOut?.();
     }
 
@@ -86,6 +166,13 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 
 const SplashScreen: React.FC = () => {
     const { token, language } = useContext(URLContext);
+
+    logger.info('🎬 [SPLASH] SplashScreen component initialized', {
+        hasToken: !!token,
+        tokenLength: token?.length,
+        language,
+        timestamp: new Date().toISOString()
+    });
 
     console.log("[SplashScreen] URL Context values:", { token, language });
     console.log("[SplashScreen] Loading game registry...");
@@ -103,59 +190,113 @@ const SplashScreen: React.FC = () => {
     const [isDoneLoadConfig, setIsDoneLoadConfig] = useState<boolean>(false);
     const [preloadProgress, setPreloadProgress] = useState<number>(0);
 
+    logger.debug('📊 [SPLASH] Component state initialized', {
+        isUm: player?.session?.isUM,
+        currentGameId: -1,
+        isRenderDashboard: false,
+        isDoneLoadConfig: false,
+        preloadProgress: 0
+    });
+
     const signOut = () => {
+        logger.warn('🚪 [SPLASH] User signing out, redirecting to timeout');
         router.push("timeout");
     };
 
     const handlePreloadProgress = (progress: number) => {
+        logger.debug('📈 [SPLASH] Preload progress updated', { progress });
         setPreloadProgress(progress);
     };
 
     const handleUM = (session: SSOResponse) => {
+        logger.info('👑 [SPLASH] Handling UM (User Management) session', {
+            hasUmInfo: !!session.umInfo,
+            username: session.username
+        });
         StorageHelper.set(localStorageKeys.umInfo, session.umInfo);
         player.session = session;
         setIsUm(true);
     };
 
     const loadLanguage = async (session: SSOResponse) => {
+        logger.info('🌐 [SPLASH] Loading language configuration', {
+            sessionLanguage: session?.language,
+            contextLanguage: language,
+            hasSession: !!session
+        });
+
         const lang = languageMapper[session?.language] || languageMapper[language] || locales.en;
+
+        logger.debug('🌐 [SPLASH] Language mapping result', {
+            selectedLanguage: lang,
+            sessionLanguage: session?.language,
+            contextLanguage: language,
+            fallbackLanguage: locales.en
+        });
+
         await tolgee.changeLanguage(lang);
         setLocale(lang);
+
+        logger.info('✅ [SPLASH] Language loaded successfully', { locale: lang });
         return lang;
     };
 
     // Initialize progress bar when component mounts
     useEffect(() => {
+        logger.debug('📊 [SPLASH] Initializing progress bar');
         setPreloadProgress(0);
     }, []);
 
     useEffect(() => {
         let authorizeInfo;
         const handleInitialization = async () => {
+            logger.info('🚀 [SPLASH] Starting initialization process', {
+                hasToken: !!token,
+                timestamp: new Date().toISOString()
+            });
+
             const session = await getSession(token);
+            logger.info('🔐 [SPLASH] Session retrieved', {
+                hasSession: !!session,
+                isAuthenticated: session?.isAuthenticated,
+                isUM: session?.isUM,
+                username: session?.username
+            });
 
             const lang = await loadLanguage(session);
 
             if (!session || isTimeoutSession(session)) {
+                logger.warn('⏰ [SPLASH] Session timeout or invalid, signing out');
                 signOut();
                 return;
             }
 
             if (session?.isUM) {
+                logger.info('👑 [SPLASH] UM session detected, handling UM flow');
                 handleUM(session);
                 return;
             }
 
+            logger.info('🔑 [SPLASH] Starting authorization process');
             authorizeInfo = await authorize(session);
 
+            logger.info('🔑 [SPLASH] Authorization result', {
+                authorized: authorizeInfo?.authorized,
+                errorCode: authorizeInfo?.errorCode,
+                hasUser: !!authorizeInfo?.user
+            });
+
             if (authorizeInfo.errorCode === "SB0002") {
+                logger.error('❌ [SPLASH] Authorization error SB0002, signing out');
                 signOut();
                 return;
             }
 
             if (!authorizeInfo?.authorized) {
+                logger.info('👤 [SPLASH] User not authorized, attempting auto-create nickname');
                 authorizeInfo = await autoCreateNickname(session, signOut);
                 if (!authorizeInfo?.authorized) {
+                    logger.error('❌ [SPLASH] Auto-create nickname failed, signing out');
                     signOut();
                     return;
                 }
@@ -163,61 +304,115 @@ const SplashScreen: React.FC = () => {
 
             // Get default game ID from environment or fallback
             const defaultGameId = getDefaultGameId();
-            console.log("DEFAULT GAME ID", defaultGameId);
+            logger.info('🎮 [SPLASH] Game configuration started', {
+                defaultGameId,
+                hasAuthorizeInfo: !!authorizeInfo
+            });
 
             let toLoadGameId = defaultGameId;
 
-            console.log("[SplashScreen] Using default gameId from environment:", defaultGameId);
-            console.log("[SplashScreen] Initial toLoadGameId:", toLoadGameId);
+            logger.debug('🎮 [SPLASH] Initial game selection', {
+                defaultGameId,
+                toLoadGameId
+            });
 
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
-            console.log("ENABLED RENDER GAME SETTINGS", enabledRenderGameSettings);
 
-            console.log("[SplashScreen] Enabled games from authorizeInfo:", enabledRenderGameSettings?.map(game => ({ id: game.id, name: game.gameName })));
+            logger.info('🎮 [SPLASH] Enabled games retrieved', {
+                gameCount: enabledRenderGameSettings?.length || 0,
+                games: enabledRenderGameSettings?.map(game => ({
+                    id: game.id,
+                    name: game.gameName
+                })) || []
+            });
 
             // Bypass validation for known games (SeDie: 148, Baccarat: 10) so we can deep-link even if not in lobby/offer
             const knownGameIds = [148, 150]; // SeDie Multiplayer and Baccarat
             let isGameAvailable = knownGameIds.includes(toLoadGameId);
-            console.log("[SplashScreen] Is toLoadGameId a known game?", isGameAvailable, "Known games:", knownGameIds);
+
+            logger.debug('🎮 [SPLASH] Game availability check', {
+                toLoadGameId,
+                isKnownGame: isGameAvailable,
+                knownGameIds
+            });
 
             if (!isGameAvailable) {
                 isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
-                console.log("[SplashScreen] Is game available in enabled games?", isGameAvailable, "for gameId:", toLoadGameId);
+                logger.debug('🎮 [SPLASH] Checking enabled games', {
+                    isGameAvailable,
+                    toLoadGameId,
+                    enabledGameIds: enabledRenderGameSettings?.map(g => g.id) || []
+                });
             }
 
             // If game is not available, use default game
             if (!isGameAvailable) {
-                console.log("[SplashScreen] Game not available, falling back to default game");
+                logger.warn('🎮 [SPLASH] Game not available, falling back to default game', {
+                    requestedGameId: toLoadGameId,
+                    defaultGameId
+                });
                 toLoadGameId = getDefaultGameId();
             }
 
-            console.log("[SplashScreen] Final toLoadGameId:", toLoadGameId);
+            logger.info('🎮 [SPLASH] Final game selection', {
+                finalGameId: toLoadGameId,
+                isGameAvailable
+            });
+
             setCurrentGameId(toLoadGameId);
 
             if (authorizeInfo) {
+                logger.info('✅ [SPLASH] Setting authorize response and starting custom startup', {
+                    hasAuthorizeInfo: !!authorizeInfo,
+                    authorized: authorizeInfo?.authorized,
+                    hasUser: !!authorizeInfo?.user
+                });
+
                 setAuthorizeResponse(authorizeInfo);
 
                 try {
+                    logger.info('🚀 [SPLASH] Starting custom startup process');
                     await customStartup(session, lang, router, player, authorizeInfo);
                     setIsDoneLoadConfig(true);
+
+                    logger.info('✅ [SPLASH] Custom startup completed successfully', {
+                        locale: lang,
+                        hasSession: !!session,
+                        hasAuthorizeInfo: !!authorizeInfo
+                    });
                 } catch (error) {
+                    logger.error('💥 [SPLASH] Custom startup failed', {
+                        error: error.message,
+                        stack: error.stack
+                    });
                     console.error("[SplashScreen] custom startup error:", error);
                     onStartupError(error);
                 }
+            } else {
+                logger.error('❌ [SPLASH] No authorize info available, cannot proceed');
             }
         };
 
+        logger.info('🎬 [SPLASH] Starting initialization handler');
         handleInitialization();
         // Intentional: run once on mount; values used are stable for the session
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (player?.session?.isUM || isUm) {
+        logger.info('👑 [SPLASH] Rendering UM page', {
+            isUM: player?.session?.isUM || isUm
+        });
         return <UMPage data-testid="um-page" />;
     }
 
     if (isRenderDashboard) {
+        logger.info('🏠 [SPLASH] Rendering dashboard', {
+            currentGameId,
+            hasSession: !!player?.session,
+            hasAuthorizeResponse: !!authorizeResponse
+        });
         return (
             <Dashboard
                 data-testid="dashboard-component"
@@ -229,6 +424,14 @@ const SplashScreen: React.FC = () => {
             />
         );
     }
+
+    logger.debug('🎨 [SPLASH] Rendering splash screen UI', {
+        locale,
+        preloadProgress,
+        isDoneLoadConfig,
+        currentGameId,
+        hasLocale: !!locale
+    });
 
     return (
         <>
@@ -261,11 +464,19 @@ const SplashScreen: React.FC = () => {
                 </div>
             </div>
 
+            <LoggerControls className="fixed top-4 right-4 z-50" />
+
             {isDoneLoadConfig && currentGameId >= 0 && (
                 <>
+                    {logger.info('📦 [SPLASH] Starting resource preloading', {
+                        gameId: currentGameId,
+                        isDoneLoadConfig,
+                        preloadProgress
+                    })}
                     <PreloadResources
                         data-testid="preload-resources"
                         setIsDonePreload={() => {
+                            logger.info('✅ [SPLASH] Resource preloading completed, rendering dashboard');
                             setIsRenderDashboard(true);
                         }}
                         gameId={currentGameId}

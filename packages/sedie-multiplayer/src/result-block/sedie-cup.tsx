@@ -8,7 +8,9 @@ import { motion } from "motion/react";
 import { CachedImage } from "@shared/components/game-components/cached-image";
 import { useDiceShakingRollingSound } from "@shared/react-hooks/use-sound";
 import { useAnimationImages } from "./use-animation-images";
+import { logger } from '@shared/services/logger';
 import dynamic from "next/dynamic";
+import LoggerControls from "../features/ui/components/controls/LoggerControls";
 
 const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), { ssr: false });
 
@@ -26,6 +28,13 @@ const SedieCup = () => {
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
 
+    logger.info('🎲 [SEDIE-CUP] SedieCup component initialized', {
+        roundState,
+        hasSettlementResult: !!settlementResult,
+        playResultAnimation,
+        timestamp: new Date().toISOString()
+    });
+
     // Use custom hook to manage all animation images
     const { animationPhase1, animationPhase2 } = useAnimationImages(settlementResult);
 
@@ -35,14 +44,23 @@ const SedieCup = () => {
 
     const playDiceShakingRollingSound = useDiceShakingRollingSound();
 
+    logger.debug('🎲 [SEDIE-CUP] Animation images loaded', {
+        hasAnimationPhase1: !!animationPhase1,
+        hasAnimationPhase2: !!animationPhase2,
+        hasSettlementResult: !!settlementResult
+    });
+
     useEffect(() => {
         const resetState = () => {
+            logger.debug('🔄 [SEDIE-CUP] Resetting animation state to idle');
             setAnimationState("idle");
         };
 
         const startExitAnimation = () => {
+            logger.info('🚪 [SEDIE-CUP] Starting exit animation');
             setIsAnimatingOut(true);
             setTimeout(() => {
+                logger.debug('✅ [SEDIE-CUP] Exit animation completed');
                 setIsShow(false);
                 setIsAnimatingOut(false);
                 resetState();
@@ -51,33 +69,49 @@ const SedieCup = () => {
 
         let timeout;
         let delayDisplayResult;
+
+        logger.info('🎲 [SEDIE-CUP] Round state changed', {
+            roundState,
+            playResultAnimation,
+            showResultDuration: durations.showResult
+        });
+
         switch (roundState) {
             case RoundState.LockingBet:
+                logger.info('🔒 [SEDIE-CUP] Locking bet state - hiding cup and setting shake animation');
                 setIsShow(false);
                 setIsAnimatingOut(false);
                 setAnimationState("shake");
                 break;
             case RoundState.DisplayResult:
+                logger.info('📊 [SEDIE-CUP] Display result state', {
+                    playResultAnimation,
+                    showResultDuration: durations.showResult
+                });
                 if (playResultAnimation) {
                     setIsShow(true);
                     setIsAnimatingOut(false);
                     delayDisplayResult = setTimeout(() => {
+                        logger.info('🎵 [SEDIE-CUP] Playing dice shaking sound and opening cup');
                         playDiceShakingRollingSound();
                         setAnimationState("open");
                     }, OPEN_DURATION);
                 }
 
                 timeout = setTimeout(() => {
+                    logger.info('⏰ [SEDIE-CUP] Show result timeout reached, starting exit animation');
                     startExitAnimation();
                 }, durations.showResult * 1000);
                 break;
             case RoundState.BeforePlaceBet:
             case RoundState.InRound:
+                logger.info('🎯 [SEDIE-CUP] Betting round state - hiding cup and resetting');
                 setIsShow(false);
                 setIsAnimatingOut(false);
                 resetState();
                 break;
             default:
+                logger.debug('❓ [SEDIE-CUP] Unknown round state', { roundState });
                 break;
         }
         return () => {
@@ -87,8 +121,15 @@ const SedieCup = () => {
     }, [roundState, durations, playResultAnimation]);
 
     if (!isShow) {
+        logger.debug('👻 [SEDIE-CUP] Cup not showing, returning null');
         return null;
     }
+
+    logger.debug('🎨 [SEDIE-CUP] Rendering sedie cup', {
+        animationState,
+        isAnimatingOut,
+        hasSettlementResult: !!settlementResult
+    });
 
     return (
         <div className="relative" id="sedie-cup">
@@ -206,6 +247,8 @@ const SedieCup = () => {
             </div>
 
             <WinningBalanceEffect />
+
+            <LoggerControls className="fixed top-4 right-4 z-50" />
 
         </div>
     );

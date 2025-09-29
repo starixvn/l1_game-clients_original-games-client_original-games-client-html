@@ -7,6 +7,7 @@ import useGameStore from '@shared/stores/game-store/game-store';
 import { LoadingSpinner } from '@shared/components/game-components/game-loading/loading-spinner';
 import { useClickSound } from '@shared/react-hooks';
 import { useStatisticStore } from "@shared";
+import LoggerControls from "../features/ui/components/controls/LoggerControls";
 const SedieMultiplayerStatisticPopup = dynamic(() => import("./sedie-multiplayer-statistic-popup"), {
     loading: () => (
         <div className="relative h-[40px]">
@@ -47,6 +48,7 @@ export const SedieMultiplayerRoundHistory = () => {
                     sizeNextItem="medium"
                 />
             )}
+            <LoggerControls className="fixed top-4 right-4 z-50" />
         </div>
     );
 };
