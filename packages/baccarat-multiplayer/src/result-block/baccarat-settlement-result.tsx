@@ -225,7 +225,11 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
         <div
             className="h-[64px] w-full mt-[26px] mb-[19px] z-[var(--result-animation-index)]"
         >
-            {roundState === RoundState.DisplayResult && <WinningBalanceEffect />}
+            {roundState === RoundState.DisplayResult && 
+                <div className="relative top-[-70px]">
+                    <WinningBalanceEffect />
+                </div>
+            }
             <div className="flex justify-center w-full h-full">
                 <div className="w-full">
                     {renderCardDisplay(result, showCards, animationState === "open", true, !showCards, roundState, animationState, isUsingRoundHistoryData)}
