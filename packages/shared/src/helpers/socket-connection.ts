@@ -13,7 +13,7 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
     const startTime = Date.now();
     const { proxy, enableMsgpackParser } = getAppSettings();
     const socketUri = buildServerUrl(socketInfo.namespace);
-    
+
     logger.info('🔌 [SOCKET] Initializing Socket.IO connection', {
         gameName,
         socketUri,
@@ -38,16 +38,16 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
 
     if (socket) {
         const connectionTime = Date.now() - startTime;
-        
-        logger.info('✅ [SOCKET] Socket.IO connection established, registering event handlers', { 
+
+        logger.info('✅ [SOCKET] Socket.IO connection established, registering event handlers', {
             gameName,
             connectionTime: `${connectionTime}ms`,
             socketUri
         });
-        
+
         // Track successful WebSocket connection
         fileLoadingLogger.trackWebSocketResult(socketUri, true, connectionTime);
-        
+
         gameMessageHandler.registerSocketEvents();
         useGameStore.getState().setSocket(socket);
 
@@ -77,25 +77,25 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
 
         socket.on(messageEventType.SOCKET_CONNECT_ERROR, (error) => {
             const connectionTime = Date.now() - startTime;
-            
-            logger.error('❌ [SOCKET] Socket connection error', { 
-                gameName, 
+
+            logger.error('❌ [SOCKET] Socket connection error', {
+                gameName,
                 error: error.message || error,
                 connectionTime: `${connectionTime}ms`,
                 socketUri
             });
-            
+
             // Track failed WebSocket connection
             fileLoadingLogger.trackWebSocketResult(socketUri, false, connectionTime);
-            
+
             console.error("SOCKET_CONNECT_ERROR", error);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_CONNECT_ERROR]: true });
         });
-        
+
         socket.on(messageEventType.SOCKET_DISCONNECTED, (reason, details) => {
-            logger.warn('⚠️ [SOCKET] Socket disconnected', { 
-                gameName, 
-                reason, 
+            logger.warn('⚠️ [SOCKET] Socket disconnected', {
+                gameName,
+                reason,
                 details,
                 socketUri
             });

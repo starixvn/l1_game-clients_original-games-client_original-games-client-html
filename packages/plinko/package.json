@@ -6,9 +6,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf dist",
-    "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 npm run generate-tolgee-data && cd packages/plinko",
-    "dev": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 NEXT_PUBLIC_BASE_PATH= PORT=3003 FAST_REFRESH=false node custom-server.js",
-    "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-145 next build",
+    "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 yarn generate-tolgee-data && cd packages/plinko",
+    "dev": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 yarn generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 NEXT_PUBLIC_BASE_PATH= PORT=3003 FAST_REFRESH=false node custom-server.js",
+    "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 yarn generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-145 next build",
     "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 NEXT_PUBLIC_BASE_PATH= PORT=3003 node custom-server.js",
     "dev:dynamic": "node scripts/dev-dynamic.js",
     "build:dynamic": "node scripts/build-dynamic.js",

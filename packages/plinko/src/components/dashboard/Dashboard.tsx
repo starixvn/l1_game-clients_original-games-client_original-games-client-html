@@ -14,7 +14,7 @@ import { LoadingSpinner } from "@shared/components/game-components/game-loading/
 import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 import { BASE_PATH } from '@shared/constants/base-path';
 import { logger as plinkoLogger } from '../../services/logger';
-import LoggerControls from "../ui/components/controls/LoggerControls";
+import LoggerControls from "../../features/ui/components/controls/LoggerControls";
 import PlinkoGame from "../plinko-game/PlinkoGame";
 
 const SoundSettings = dynamic(() => import("@shared/components/page-components/header/setting/settings-popup"), { ssr: false });

@@ -11,9 +11,9 @@ const lobbyService = UserClientCommunication?.getUserClientInstance()?.lobby;
 export const sso = async (token: string, appType: number): Promise<SSOResponse> => {
     const startTime = Date.now();
     const apiUrl = 'https://l2-proxy1.lumigame.com/user/auth/session/verify';
-    
-    logger.info('🔐 [AUTH] SSO authentication initiated', { 
-        appType, 
+
+    logger.info('🔐 [AUTH] SSO authentication initiated', {
+        appType,
         tokenLength: token?.length,
         apiUrl,
         timestamp: new Date().toISOString()
@@ -34,14 +34,14 @@ export const sso = async (token: string, appType: number): Promise<SSOResponse> 
                 responseTime: `${responseTime}ms`,
                 apiUrl
             });
-            
+
             // Track successful API response
             fileLoadingLogger.trackAPIResponse(apiUrl, 200, responseTime, {
                 username: userSession.username,
                 isAuthenticated: userSession.isAuthenticated,
                 isUM: userSession.isUM
             });
-            
+
             StorageHelper.set(localStorageKeys.session, userSession);
         } else {
             logger.warn('⚠️ [AUTH] SSO authentication failed - not authenticated', {
@@ -49,7 +49,7 @@ export const sso = async (token: string, appType: number): Promise<SSOResponse> 
                 responseTime: `${responseTime}ms`,
                 apiUrl
             });
-            
+
             // Track failed API response
             fileLoadingLogger.trackAPIResponse(apiUrl, 401, responseTime, {
                 isAuthenticated: userSession?.isAuthenticated
@@ -59,17 +59,17 @@ export const sso = async (token: string, appType: number): Promise<SSOResponse> 
         return userSession;
     } catch (error) {
         const responseTime = Date.now() - startTime;
-        logger.error('❌ [AUTH] SSO authentication error', { 
-            error: error.message, 
+        logger.error('❌ [AUTH] SSO authentication error', {
+            error: error.message,
             appType,
             responseTime: `${responseTime}ms`,
             apiUrl,
             stack: error.stack
         });
-        
+
         // Track error API response
         fileLoadingLogger.trackAPIResponse(apiUrl, 500, responseTime, { error: error.message });
-        
+
         throw error;
     }
 };
@@ -174,15 +174,15 @@ export const createNickname = async (userSession: SSOResponse, nickname: string,
 export const authorize = async (userSession: SSOResponse) => {
     const startTime = Date.now();
     const apiUrl = 'https://l2-proxy1.lumigame.com/user/auth/authorize';
-    
-    logger.info('🔑 [AUTH] Authorization initiated', { 
+
+    logger.info('🔑 [AUTH] Authorization initiated', {
         username: userSession.username,
         apiUrl,
         timestamp: new Date().toISOString()
     });
 
     // Track API call
-    fileLoadingLogger.trackAPICall(apiUrl, 'POST', { 
+    fileLoadingLogger.trackAPICall(apiUrl, 'POST', {
         username: userSession.username,
         sessionToken: userSession.ss?.substring(0, 10) + '...' // Truncate for security
     });
@@ -190,7 +190,7 @@ export const authorize = async (userSession: SSOResponse) => {
     try {
         const result = await authService?.authorize(userSession.ss, userSession.username);
         const responseTime = Date.now() - startTime;
-        
+
         logger.info('✅ [AUTH] Authorization completed', {
             username: userSession.username,
             success: !!result,
@@ -199,31 +199,31 @@ export const authorize = async (userSession: SSOResponse) => {
             authorized: result?.authorized,
             hasUser: !!result?.user
         });
-        
+
         // Track successful API response
         fileLoadingLogger.trackAPIResponse(apiUrl, 200, responseTime, {
             username: userSession.username,
             authorized: result?.authorized,
             hasUser: !!result?.user
         });
-        
+
         return result;
     } catch (error) {
         const responseTime = Date.now() - startTime;
-        logger.error('❌ [AUTH] Authorization error', { 
-            error: error.message, 
+        logger.error('❌ [AUTH] Authorization error', {
+            error: error.message,
             username: userSession.username,
             responseTime: `${responseTime}ms`,
             apiUrl,
             stack: error.stack
         });
-        
+
         // Track error API response
-        fileLoadingLogger.trackAPIResponse(apiUrl, 500, responseTime, { 
+        fileLoadingLogger.trackAPIResponse(apiUrl, 500, responseTime, {
             error: error.message,
             username: userSession.username
         });
-        
+
         throw error;
     }
 };
@@ -231,15 +231,15 @@ export const authorize = async (userSession: SSOResponse) => {
 export const getBalance = async (userSession: SSOResponse) => {
     const startTime = Date.now();
     const apiUrl = 'https://l2-proxy1.lumigame.com/user/auth/balance';
-    
-    logger.info('💰 [AUTH] Getting balance', { 
+
+    logger.info('💰 [AUTH] Getting balance', {
         username: userSession.username,
         apiUrl,
         timestamp: new Date().toISOString()
     });
 
     // Track API call
-    fileLoadingLogger.trackAPICall(apiUrl, 'POST', { 
+    fileLoadingLogger.trackAPICall(apiUrl, 'POST', {
         username: userSession.username,
         sessionToken: userSession.ss?.substring(0, 10) + '...' // Truncate for security
     });
@@ -247,7 +247,7 @@ export const getBalance = async (userSession: SSOResponse) => {
     try {
         const result = await authService?.getBalance(userSession.ss, userSession.username);
         const responseTime = Date.now() - startTime;
-        
+
         logger.info('✅ [AUTH] Balance retrieved', {
             username: userSession.username,
             balance: result,
@@ -256,31 +256,31 @@ export const getBalance = async (userSession: SSOResponse) => {
             isSuccessful: result?.isSuccessful,
             balanceAmount: result?.balance
         });
-        
+
         // Track successful API response
         fileLoadingLogger.trackAPIResponse(apiUrl, 200, responseTime, {
             username: userSession.username,
             isSuccessful: result?.isSuccessful,
             balanceAmount: result?.balance
         });
-        
+
         return result;
     } catch (error) {
         const responseTime = Date.now() - startTime;
-        logger.error('❌ [AUTH] Get balance error', { 
-            error: error.message, 
+        logger.error('❌ [AUTH] Get balance error', {
+            error: error.message,
             username: userSession.username,
             responseTime: `${responseTime}ms`,
             apiUrl,
             stack: error.stack
         });
-        
+
         // Track error API response
-        fileLoadingLogger.trackAPIResponse(apiUrl, 500, responseTime, { 
+        fileLoadingLogger.trackAPIResponse(apiUrl, 500, responseTime, {
             error: error.message,
             username: userSession.username
         });
-        
+
         throw error;
     }
 };

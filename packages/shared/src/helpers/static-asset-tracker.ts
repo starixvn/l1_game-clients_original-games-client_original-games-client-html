@@ -18,14 +18,14 @@ class StaticAssetTracker {
         const buildVersion = process.env.BUILD_VERSION || Date.now().toString();
         const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
         const jsUrl = `${basePath}/game-${gameId}/c.js?${buildVersion}`;
-        
+
         if (this.trackedAssets.has(jsUrl)) {
             logger.debug('♻️ [STATIC-ASSET] Game JS file already tracked', { jsUrl });
             return;
         }
 
         this.trackedAssets.add(jsUrl);
-        
+
         logger.info('📜 [STATIC-ASSET] Tracking main game JavaScript file', {
             gameId,
             jsUrl,
@@ -44,7 +44,7 @@ class StaticAssetTracker {
     // Monitor script tag loading
     private monitorScriptTag(jsUrl: string, gameId: number): void {
         const startTime = Date.now();
-        
+
         // Check if script is already loaded
         const existingScript = document.querySelector(`script[src="${jsUrl}"]`);
         if (existingScript) {
@@ -60,7 +60,7 @@ class StaticAssetTracker {
         const script = document.createElement('script');
         script.src = jsUrl;
         script.async = true;
-        
+
         script.onload = () => {
             const loadTime = Date.now() - startTime;
             logger.info('✅ [STATIC-ASSET] Game JS file loaded successfully', {
@@ -70,7 +70,7 @@ class StaticAssetTracker {
                 scriptSize: this.getScriptSize(script)
             });
         };
-        
+
         script.onerror = (error) => {
             const loadTime = Date.now() - startTime;
             logger.error('❌ [STATIC-ASSET] Game JS file failed to load', {
@@ -80,10 +80,10 @@ class StaticAssetTracker {
                 error: error.toString()
             });
         };
-        
+
         // Add to document
         document.head.appendChild(script);
-        
+
         logger.debug('🔄 [STATIC-ASSET] Game JS script tag added to document', {
             gameId,
             jsUrl
@@ -108,7 +108,7 @@ class StaticAssetTracker {
         }
 
         this.trackedAssets.add(cssUrl);
-        
+
         logger.info('🎨 [STATIC-ASSET] Tracking CSS file', {
             gameId,
             cssUrl,
@@ -126,7 +126,7 @@ class StaticAssetTracker {
         }
 
         this.trackedAssets.add(imageUrl);
-        
+
         logger.info('🖼️ [STATIC-ASSET] Tracking image file', {
             gameId,
             imageUrl,
@@ -144,7 +144,7 @@ class StaticAssetTracker {
         }
 
         this.trackedAssets.add(fontUrl);
-        
+
         logger.info('🔤 [STATIC-ASSET] Tracking font file', {
             gameId,
             fontUrl,
@@ -162,7 +162,7 @@ class StaticAssetTracker {
         }
 
         this.trackedAssets.add(audioUrl);
-        
+
         logger.info('🔊 [STATIC-ASSET] Tracking audio file', {
             gameId,
             audioUrl,
@@ -176,7 +176,7 @@ class StaticAssetTracker {
     trackGameAssets(gameId: number): void {
         const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
         const buildVersion = process.env.BUILD_VERSION || Date.now().toString();
-        
+
         logger.info('📦 [STATIC-ASSET] Starting comprehensive game asset tracking', {
             gameId,
             basePath,

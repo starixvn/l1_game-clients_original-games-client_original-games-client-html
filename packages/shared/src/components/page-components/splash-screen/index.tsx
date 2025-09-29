@@ -360,7 +360,7 @@ const SplashScreen: React.FC = () => {
                 finalGameId: toLoadGameId,
                 isGameAvailable
             });
-            
+
             setCurrentGameId(toLoadGameId);
 
             // Track static assets for the selected game

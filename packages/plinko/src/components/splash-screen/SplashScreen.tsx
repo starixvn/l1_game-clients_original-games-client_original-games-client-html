@@ -18,10 +18,10 @@ import { updateSignInSMStatus } from '@shared/services/user-setting-service';
 import { MAX_AVATAR_ID } from '@shared/helpers/avatar-helper';
 import NameGenerator from '@shared/helpers/name-generator';
 import { logger } from '@shared/services/logger';
-import { logger as plinkoLogger } from '../services/logger';
+import { logger as plinkoLogger } from '../../services/logger';
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
-import LoggerControls from "../ui/components/controls/LoggerControls";
+import LoggerControls from "../../features/ui/components/controls/LoggerControls";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {

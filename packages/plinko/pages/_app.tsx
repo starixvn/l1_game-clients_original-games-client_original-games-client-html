@@ -1,11 +1,5 @@
-import type { AppProps } from 'next/app';
-import '../styles/globals.scss';
-import { GameServiceProvider } from '../src/services/useGameService';
+// Import game configuration first
+import "../src/game-config";
 
-export default function App({ Component, pageProps }: AppProps) {
-    return (
-        <GameServiceProvider>
-            <Component {...pageProps} />
-        </GameServiceProvider>
-    );
-}
+// Import shared app component
+export { GameApp as default, AppTitle } from "@shared";
