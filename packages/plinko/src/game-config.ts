@@ -7,11 +7,11 @@ import { setGameConfig, type GameConfig } from "@shared/game-config";
  * Configuration is validated at runtime to ensure data integrity.
  */
 const gameConfig: GameConfig = {
-    gameId: 149,
+    gameId: 145,
     gameName: "Plinko",
     gameVersion: "1.0.0",
     gameDescription: "Exciting Plinko game with physics-based ball dropping",
-    assetPath: "/game-149",
+    assetPath: "/game-145",
     serviceName: "plinko"
 };
 

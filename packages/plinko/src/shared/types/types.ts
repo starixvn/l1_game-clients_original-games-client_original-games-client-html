@@ -1,3 +1,68 @@
+// Service-compatible types from plinko-service
+export type PlinkoOdds = Record<number, Record<number, number[]>>;
+export type PlinkoConfig = {
+    odds: PlinkoOdds;
+};
+export type SettlementResult = {
+    slotIndex: number;
+    multiplier: number;
+};
+export type PlinkoRound = {
+    id: number;
+    result: number[];
+    settlementResult: SettlementResult;
+    uid: string;
+    name: string;
+    amount: number;
+    totalAmount: number;
+    betWin: number;
+    reachMaxWin: boolean;
+    paid: true;
+    rate: number;
+    odds: PlinkoOdds;
+    time: Date;
+    clientSeed: string;
+    currency: string;
+    siteId: string;
+    playerId: string;
+    operatorId: string;
+    appType: number;
+    gameMode: number;
+    numberOfRows: number;
+    freeBet: boolean;
+    exchangeRateId: number;
+};
+export type PlaceBetPayload = {
+    amount: number;
+    gameMode: number;
+    numberOfRows: number;
+    clientSeed: string;
+    time?: Date;
+    receivedTime?: Date;
+    freeBet?: boolean;
+    m?: string;
+    mode?: string;
+};
+export type GameConfigs = {
+    choices_maxbet: Record<string, number>;
+    delayStartTime: number;
+    enableFreeBet: boolean;
+    enabled: boolean;
+    maxbet: number;
+    maxWinPerRound: number;
+    maxbot: number;
+    minbet: number;
+    odds: Record<string, number>;
+    randomMode: number;
+    name: string;
+    siteExclusions: string[];
+    exchangeReload: boolean;
+    gameId: number;
+    displayName: string;
+    type: number;
+    plinkoConfig: PlinkoConfig;
+};
+
 // Component prop interfaces following Interface Segregation Principle
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

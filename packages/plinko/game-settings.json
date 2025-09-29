@@ -1,6 +1,6 @@
 {
-    "149": {
-        "id": 149,
+    "145": {
+        "id": 145,
         "gameName": "Plinko",
         "tolgeeNamespace": "Common",
         "socketInfo": {
@@ -8,7 +8,7 @@
             "path": "plinko"
         },
         "durations": {
-            "wholeRound": 30,
+            "wholeRound": 60,
             "wholeTurn": 30,
             "placingBets": 20,
             "lockingBet": 2,

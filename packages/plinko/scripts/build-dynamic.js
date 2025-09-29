@@ -9,8 +9,8 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 // Get environment variables with defaults
-const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "149";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-149";
+const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "145";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-145";
 
 console.log(`Building plinko with:`);
 console.log(`  Game ID: ${gameId}`);
