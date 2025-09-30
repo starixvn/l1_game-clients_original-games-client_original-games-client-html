@@ -120,33 +120,26 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated
     const isBetting = false; // Plinko manages its own betting state
 
-    // Use shared PF system for bets (like sedie-multiplayer)
+    // Send bets directly with clientSeed (compatible with PF system)
     const placeBet = (amount: number, gameMode: number, rows: number) => {
-        // Use shared PF system to automatically include clientSeed (like sedie-multiplayer)
-        logger.info('Plinko placeBet called - using shared PF system', {
+        logger.info('🎮 [PLINKO GAME] Placing bet', {
             amount,
             gameMode,
             rows,
-            clientSeed: clientSeed // From shared PF system
+            clientSeed
         });
 
-        if (!gameMessageHandler) {
-            logger.error('gameMessageHandler not available for sending bet');
-            return;
+        if (socket?.connected) {
+            socket.emit("bet", {
+                amount,
+                gameMode,
+                numberOfRows: rows,
+                clientSeed
+            });
+            logger.info('✅ [PLINKO GAME] Bet message sent to socket');
+        } else {
+            logger.error('❌ [PLINKO GAME] Socket not connected, cannot send bet');
         }
-
-        // Send message that PF system will intercept and add clientSeed
-        gameMessageHandler.broadcastGameEvent({
-            SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED: {
-                event: "bet",
-                data: {
-                    amount,
-                    gameMode,
-                    numberOfRows: rows,
-                    __pfMode: "clientSeedOnly"
-                },
-            },
-        });
     };
     const clearBetResult = () => {
         // Plinko handles clearing results internally

@@ -58,7 +58,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
                 {/* Plinko specific game content */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4">
-                        <PlinkoGame />
+                    <PlinkoGame />
                 </div>
 
                 {this.renderNotice()}
