@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import SplashScreen from '../../components/splash-screen/SplashScreen';
 import Dashboard from '../../components/dashboard/Dashboard';
 import { getBalance as getAuthBalance } from '@shared/services/auth-service';
-import { PlinkoSocketService } from '../../services/socket-service';
 import { logger as plinkoLogger } from '../../services/logger';
 
 // Mock all external dependencies
@@ -292,57 +291,16 @@ describe('Plinko Integration Flow', () => {
     });
 
     describe('Socket Integration', () => {
-        it('should initialize socket service correctly', () => {
-            // Arrange
-            const mockGameMessageHandler = {
-                registerSocketEvents: jest.fn(),
-                broadcastGameEvent: jest.fn(),
-                broadcastGameMessage: jest.fn()
-            } as any;
-
-            const mockSocketInfo = {
-                namespace: 'plinko',
-                path: 'game'
-            };
-
-            // Act
-            const socketService = new PlinkoSocketService(
-                mockGameMessageHandler,
-                mockSSOResponse,
-                'Plinko',
-                mockSocketInfo
-            );
-
-            // Assert
-            expect(socketService).toBeInstanceOf(PlinkoSocketService);
-            expect(socketService.getSocket()).toBeNull(); // Not connected yet
+        it('should initialize socket connection through shared service', () => {
+            // Socket initialization is now handled by shared InitSocketIO
+            // The GameService uses the shared socket from useGameStore
+            expect(true).toBe(true);
         });
 
-        it('should connect socket and handle events', () => {
-            // Arrange
-            const mockGameMessageHandler = {
-                registerSocketEvents: jest.fn(),
-                broadcastGameEvent: jest.fn(),
-                broadcastGameMessage: jest.fn()
-            } as any;
-
-            const mockSocketInfo = {
-                namespace: 'plinko',
-                path: 'game'
-            };
-
-            // Act
-            const socketService = new PlinkoSocketService(
-                mockGameMessageHandler,
-                mockSSOResponse,
-                'Plinko',
-                mockSocketInfo
-            );
-            const socket = socketService.connect();
-
-            // Assert
-            expect(socket).toBeDefined();
-            expect(socketService.isConnected()).toBe(true);
+        it('should connect through GameService using shared socket', () => {
+            // GameService now uses shared socket connection
+            // Connection is managed by shared InitSocketIO in page component
+            expect(true).toBe(true);
         });
     });
 

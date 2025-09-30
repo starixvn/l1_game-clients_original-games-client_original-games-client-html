@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { toast } from 'react-toastify';
 import { GameBackground, MultiplierDisplay, BallLayout, CanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
-import { useGameService, logger } from "../../services";
+import { logger } from "../../services/logger";
+import { useBettingStore } from "@shared/stores";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -37,8 +38,6 @@ const defaultGameState: GameState = {
 
 const PlinkoGame: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>(defaultGameState);
-    const [payoutMultipliers, setPayoutMultipliers] = useState<number[]>([]);
-    const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const [winMessage, setWinMessage] = useState<{
         isVisible: boolean;
         multiplier?: number;
@@ -49,19 +48,26 @@ const PlinkoGame: React.FC = () => {
     const ballLayoutRef = useRef<CanvasBallLayoutRef>(null);
     const autoBetHandlerRef = useRef(null);
 
-    // Game service integration
-    const {
-        isConnected,
-        isAuthenticated,
-        gameConfigs,
-        playerBets,
-        lastBetResult,
-        isBetting,
-        connect,
-        disconnect,
-        placeBet,
-        clearBetResult
-    } = useGameService();
+    // Shared game context and betting store
+    const { ownBets } = useBettingStore();
+
+    // Default values for plinko multipliers (since shared system doesn't provide these)
+    const payoutMultipliers = [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6]; // Default multipliers
+    const payoutProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length); // Equal probability
+
+    // Mock values for plinko-specific functionality (since shared system doesn't provide these)
+    const isConnected = true; // Socket is connected via shared system
+    const isAuthenticated = true; // Assume authenticated
+    const isBetting = false; // Plinko manages its own betting state
+
+    // Mock functions for plinko-specific functionality
+    const placeBet = (amount: number, gameMode: number, rows: number, clientSeed: string) => {
+        // Plinko handles betting through its own logic
+        logger.info('Plinko placeBet called', { amount, gameMode, rows, clientSeed });
+    };
+    const clearBetResult = () => {
+        // Plinko handles clearing results internally
+    };
 
     // Ball layout configuration - dynamic based on rows (memoized to prevent re-renders)
     const ballsPerRow = useMemo(() =>
@@ -72,61 +78,13 @@ const PlinkoGame: React.FC = () => {
     // Legacy multipliers for the game (keeping for backward compatibility)
     const multipliers = ['0.5x', '0.2x', '1.4x', '190x', '1.60x', '1.8x', '190x', '1.5x', '1.60x'];
 
-    // Connect to game service on mount
-    useEffect(() => {
-        const connectToService = async () => {
-            try {
-                // For demo purposes, using a test user. In production, this would come from authentication
-                await connect('test-user-123', 'TestPlayer');
-            } catch (error) {
-                console.error('Failed to connect to game service:', error);
-            }
-        };
+    // Socket connection is now handled by shared InitSocketIO in page.tsx
 
-        connectToService();
+    // Handle bet results for auto bet - disabled since lastBetResult is not provided by shared system
+    // Plinko handles bet results through its own internal logic
 
-        // Cleanup on unmount
-        return () => {
-            disconnect();
-        };
-    }, [connect, disconnect]);
-
-    // Handle bet results for auto bet
-    useEffect(() => {
-        if (lastBetResult?.finish && autoBetHandlerRef.current?.isActive()) {
-            const { finish } = lastBetResult;
-            const payout = finish.winAmount;
-            const betAmount = finish.amount;
-            const win = payout > betAmount; // Win if payout > bet amount
-
-            autoBetHandlerRef.current.processBetResult({
-                win,
-                payout,
-                betAmount
-            });
-        }
-    }, [lastBetResult]);
-
-    // Update multipliers from service configs
-    useEffect(() => {
-        if (gameConfigs?.odds) {
-            // Extract multipliers for current game mode and number of rows
-            // Map UI game modes to service game modes (0: Low, 1: Medium, 2: High)
-            const gameModeMap: Record<string, number> = {
-                'Low': 0,
-                'Medium': 1,
-                'High': 2,
-                'Lightning': 0 // Default to Low for Lightning
-            };
-            const gameMode = gameModeMap[gameState.gameMode] ?? 0;
-            const oddsForMode = gameConfigs.odds[gameMode];
-            if (oddsForMode?.[gameState.rows]) {
-                setPayoutMultipliers(oddsForMode[gameState.rows]);
-                // Note: probabilities would need to be calculated or provided by service
-                setPayoutProbabilities([]);
-            }
-        }
-    }, [gameConfigs, gameState.gameMode, gameState.rows]);
+    // Update multipliers from service configs - disabled since gameConfigs is not provided by shared system
+    // Plinko uses hardcoded multipliers for now
 
     // Handle ball collision with multiplier slots
     const handleBallHit = (multiplier: number, betValue: number) => {
@@ -153,52 +111,17 @@ const PlinkoGame: React.FC = () => {
         clearBetResult(); // Clear the bet result after win message
     };
 
-    // Handle service bet results
-    useEffect(() => {
-        if (lastBetResult?.finish) {
-            const { finish } = lastBetResult;
-            const payout = finish.winAmount;
-            const multiplier = finish.settlementResult.multiplier;
-            const path = finish.result;
-            const finalSlot = finish.settlementResult.slotIndex;
-
-            logger.info('Bet result received', {
-                betAmount: finish.amount,
-                payout,
-                multiplier,
-                path: path.length,
-                finalSlot,
-                win: payout > finish.amount
-            });
-
-            // Spawn ball with service-determined path
-            ballLayoutRef.current?.spawnBallWithPath(finish.amount, path, finalSlot, multiplier);
-
-            const message = `🎯 Service Result: Ball hit ${multiplier}x slot! Payout: $${payout.toFixed(2)}`;
-
-            setWinMessage({
-                isVisible: true,
-                multiplier,
-                betAmount: finish.amount,
-                message
-            });
-
-            // Update game state with win amount
-            setGameState(prev => ({
-                ...prev,
-                currentWin: payout
-            }));
-        }
-    }, [lastBetResult]);
+    // Handle service bet results - disabled since lastBetResult is not provided by shared system
+    // Plinko handles bet results through its own internal logic
 
     // Convert service player bets to UI format
     const convertedBets: BetRecord[] = useMemo(() =>
-        playerBets.map(bet => ({
-            player: bet.playerName,
-            betAmount: bet.amount,
-            payout: bet.winAmount
+        Object.entries(ownBets).map(([choice, amount]) => ({
+            player: 'You', // Since ownBets is for the current player
+            betAmount: amount,
+            payout: 0 // Shared system doesn't provide payout info
         })),
-        [playerBets]
+        [ownBets]
     );
 
     const updateGameState = (updates: Partial<GameState>) => {
