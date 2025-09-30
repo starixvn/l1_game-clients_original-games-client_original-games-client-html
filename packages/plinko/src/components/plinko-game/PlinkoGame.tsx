@@ -116,27 +116,29 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const payoutMultipliers = [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6]; // Default multipliers
     const payoutProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length); // Equal probability
 
-    // Mock values for plinko-specific functionality (since shared system doesn't provide these)
-    const isConnected = true; // Socket is connected via shared system
-    const isAuthenticated = true; // Assume authenticated
+    // Connection status from socket (reactive to socket changes)
+    const isConnected = useMemo(() => socket?.connected ?? false, [socket?.connected]);
+    const isAuthenticated = true; // Assume authenticated since we're in the game
     const isBetting = false; // Plinko manages its own betting state
 
+
     // Send bets directly with clientSeed (compatible with PF system)
-    const placeBet = (amount: number, gameMode: number, rows: number) => {
+    const placeBet = (amount: number, gameMode: number, rows: number, clientSeedParam: string) => {
         logger.info('🎮 [PLINKO GAME] Placing bet', {
             amount,
             gameMode,
             rows,
-            clientSeed
+            clientSeed: clientSeedParam
         });
 
         if (socket?.connected) {
-            socket.emit("bet", {
+            const betData = {
                 amount,
                 gameMode,
                 numberOfRows: rows,
-                clientSeed
-            });
+                clientSeed: clientSeedParam
+            };
+            socket.emit("bet", betData);
             logger.info('✅ [PLINKO GAME] Bet message sent to socket');
         } else {
             logger.error('❌ [PLINKO GAME] Socket not connected, cannot send bet');
@@ -289,10 +291,16 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                             balance: gameState.balance
                                         });
 
-                                        placeBet(gameState.betAmount, gameMode, gameState.rows);
+                                        placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
 
                                         // Ball will be spawned with service-determined path when results are received
                                     } else {
+                                        console.error('❌ Cannot place bet - conditions not met:', {
+                                            isConnected,
+                                            isAuthenticated,
+                                            localGameInitialized,
+                                            socketConnected: socket?.connected
+                                        });
                                         logger.warn('Cannot place bet - game not ready', {
                                             isConnected,
                                             isAuthenticated,
@@ -448,7 +456,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                             }
                                         };
 
-                                        autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, placeBet, callbacks);
+                                        autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
                                     }
 
                                     logger.info('Starting auto bet', {

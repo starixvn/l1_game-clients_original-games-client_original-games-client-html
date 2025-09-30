@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
-import { BallLayoutProps } from '../../../shared/types';
+import { BallLayoutProps } from '../../../../shared/types';
 
 // Import layer components
 import BackgroundLayer from './layers/BackgroundLayer';
@@ -22,16 +22,6 @@ export interface LayeredCanvasBallLayoutRef {
  */
 const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ rows, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
-        console.log('🔄 LayeredCanvasBallLayout component STARTED with props:', {
-            rows,
-            multipliersLength: multipliers.length,
-            multipliers: multipliers.slice(0, 5), // Log first 5 multipliers
-            probabilitiesLength: probabilities.length,
-            betAmount,
-            hasOnBallHit: !!onBallHit,
-            hasRef: !!ref,
-            timestamp: new Date().toISOString()
-        });
 
         const containerRef = useRef<HTMLDivElement>(null);
         const physicsLayerRef = useRef<PhysicsLayerRef>(null);
@@ -68,30 +58,32 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             boardHeight: number;
             boardX: number;
         }) => {
-            setBoardDimensions(dimensions);
+            // Only update if dimensions actually changed
+            setBoardDimensions(prev => {
+                if (!prev ||
+                    prev.topMargin !== dimensions.topMargin ||
+                    prev.bottomMargin !== dimensions.bottomMargin ||
+                    prev.leftMargin !== dimensions.leftMargin ||
+                    prev.rightMargin !== dimensions.rightMargin ||
+                    prev.boardWidth !== dimensions.boardWidth ||
+                    prev.boardHeight !== dimensions.boardHeight ||
+                    prev.boardX !== dimensions.boardX) {
+                    return dimensions;
+                }
+                return prev;
+            });
         }, []);
 
         // Try to get container size as early as possible
         useLayoutEffect(() => {
-            console.log('🎯 useLayoutEffect: Attempting early container size detection');
             const updateSizeEarly = () => {
                 if (containerRef.current) {
                     const rect = containerRef.current.getBoundingClientRect();
-                    console.log('🎯 useLayoutEffect: Container rect:', {
-                        width: rect.width,
-                        height: rect.height,
-                        top: rect.top,
-                        left: rect.left
-                    });
                     if (rect.width > 0 && rect.height > 0) {
-                        console.log('✅ useLayoutEffect: Setting container size:', { width: rect.width, height: rect.height });
                         setContainerSize({ width: rect.width, height: rect.height });
                     } else {
-                        console.log('❌ useLayoutEffect: Invalid container dimensions, using fallback');
                         setContainerSize({ width: 400, height: 400 });
                     }
-                } else {
-                    console.log('❌ useLayoutEffect: No container ref available');
                 }
             };
             updateSizeEarly();
@@ -99,7 +91,6 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
 
         // Handle container resize
         useEffect(() => {
-            console.log('🎯 Container resize useEffect triggered');
             const updateSize = () => {
                 if (containerRef.current) {
                     const rect = containerRef.current.getBoundingClientRect();
@@ -107,19 +98,13 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     const width = rect.width || parseInt(computedStyle.width) || 400;
                     const height = rect.height || parseInt(computedStyle.height) || 400;
 
-                    console.log('🎯 Container size:', { width, height });
-
                     setContainerSize({ width, height });
                 } else {
-                    console.log('🎯 Container ref is null, setting defaults');
                     setContainerSize({ width: 400, height: 400 });
                 }
             };
 
-            // Update size but don't change isInitialized since it starts as true
-            console.log('🎯 Updating container size');
             updateSize();
-            console.log('🎯 updateSize completed');
 
             // Set up ResizeObserver for responsive sizing
             const resizeObserver = new ResizeObserver((entries) => {
@@ -249,24 +234,11 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             }
         }), [isInitialized]);
 
-        // Debug: Log when isInitialized changes
-        useEffect(() => {
-            console.log('🎯 isInitialized changed to:', isInitialized);
-        }, [isInitialized]);
 
         // Force initialization on mount
         useEffect(() => {
-            console.log('🎯 Force initialization useEffect triggered');
-            console.log('🎯 Current state:', { isInitialized, containerSize });
+            // Component initialization logic if needed
         }, []);
-
-        console.log('🎯 LayeredCanvasBallLayout render conditions:', {
-            isInitialized,
-            containerSize,
-            boardDimensions: boardDimensions ? 'set' : 'null',
-            multipliersLength: multipliers.length,
-            timestamp: new Date().toISOString()
-        });
 
         return (
             <div
@@ -286,93 +258,51 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 aria-label={`Layered Plinko game with ${rows} rows and ${multipliers.length} multiplier slots`}
             >
                 {/* Layer 1: Full Canvas Background */}
-                {(() => {
-                    const shouldRender = isInitialized && containerSize.width > 0 && containerSize.height > 0;
-                    console.log('🎯 BackgroundLayer render condition:', shouldRender, { containerSize, isInitialized });
-                    if (shouldRender) {
-                        console.log('✅ Rendering BackgroundLayer');
-                        return (
-                            <BackgroundLayer
-                                width={containerSize.width}
-                                height={containerSize.height}
-                                className="background-layer"
-                            />
-                        );
-                    }
-                    console.log('❌ Skipping BackgroundLayer render');
-                    return null;
-                })()}
+                {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
+                    <BackgroundLayer
+                        width={containerSize.width}
+                        height={containerSize.height}
+                        className="background-layer"
+                    />
+                )}
 
                 {/* Layer 2: Triangular Board Area */}
-                {(() => {
-                    const shouldRender = isInitialized && containerSize.width > 0 && containerSize.height > 0;
-                    console.log('🎯 BoardLayer render condition:', shouldRender, { containerSize, isInitialized });
-                    if (shouldRender) {
-                        console.log('✅ Rendering BoardLayer');
-                        return (
-                            <BoardLayer
-                                width={containerSize.width}
-                                height={containerSize.height}
-                                rows={rows}
-                                multipliers={multipliers}
-                                className="board-layer"
-                                onBoardDimensionsCalculated={handleBoardDimensionsCalculated}
-                            />
-                        );
-                    }
-                    console.log('❌ Skipping BoardLayer render');
-                    return null;
-                })()}
+                {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
+                    <BoardLayer
+                        width={containerSize.width}
+                        height={containerSize.height}
+                        rows={rows}
+                        multipliers={multipliers}
+                        className="board-layer"
+                        onBoardDimensionsCalculated={handleBoardDimensionsCalculated}
+                    />
+                )}
 
                 {/* Layer 3: Physics Simulation (Clipped to Board) */}
-                {(() => {
-                    const shouldRender = isInitialized;
-                    console.log('🎯 PhysicsLayer render condition:', shouldRender, {
-                        hasBoardDimensions: !!boardDimensions,
-                        boardDimensions
-                    });
-                    if (shouldRender) {
-                        console.log('✅ Rendering PhysicsLayer');
-                        return (
-                            <PhysicsLayer
-                                ref={physicsLayerRef}
-                                rows={rows}
-                                multipliers={multipliers}
-                                probabilities={probabilities}
-                                betAmount={betAmount}
-                                onBallHit={onBallHit}
-                                boardDimensions={boardDimensions}
-                                ballPaths={ballPaths}
-                                setBallPaths={setBallPaths}
-                            />
-                        );
-                    }
-                    console.log('❌ Skipping PhysicsLayer render');
-                    return null;
-                })()}
+                {isInitialized && (
+                    <PhysicsLayer
+                        ref={physicsLayerRef}
+                        rows={rows}
+                        multipliers={multipliers}
+                        probabilities={probabilities}
+                        betAmount={betAmount}
+                        onBallHit={onBallHit}
+                        boardDimensions={boardDimensions}
+                        ballPaths={ballPaths}
+                        setBallPaths={setBallPaths}
+                    />
+                )}
 
                 {/* Layer 4: Ball Path Trails (Above Physics) */}
-                {(() => {
-                    const shouldRender = isInitialized && containerSize.width > 0 && containerSize.height > 0;
-                    console.log('🎯 BallPathLayer render condition:', shouldRender, {
-                        ballPathsCount: ballPaths.size,
-                        hasBoardDimensions: !!boardDimensions
-                    });
-                    if (shouldRender) {
-                        console.log('✅ Rendering BallPathLayer');
-                        return (
-                            <BallPathLayer
-                                ballPaths={ballPaths}
-                                width={containerSize.width}
-                                height={containerSize.height}
-                                boardDimensions={boardDimensions}
-                                className="ball-path-layer"
-                            />
-                        );
-                    }
-                    console.log('❌ Skipping BallPathLayer render');
-                    return null;
-                })()}
+                {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
+                    <BallPathLayer
+                        ballPaths={ballPaths}
+                        width={containerSize.width}
+                        height={containerSize.height}
+                        boardDimensions={boardDimensions}
+                        className="ball-path-layer"
+                    />
+                )}
 
                 {/* Layer 5: UI Overlays */}
 

@@ -36,19 +36,8 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        console.log('📐 BoardLayer useEffect triggered:', {
-            hasCanvasRef: !!canvasRef.current,
-            width,
-            height,
-            rows,
-            multipliersLength: multipliers.length,
-            multipliers: multipliers.slice(0, 5), // Log first 5 multipliers
-            timestamp: new Date().toISOString()
-        });
-
         const canvas = canvasRef.current;
         if (!canvas) {
-            console.error('❌ BoardLayer: No canvas ref available');
             return;
         }
 
@@ -68,23 +57,11 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
         // Use the same calculations as physics bodies to ensure proper alignment
         // If multipliers is empty, use default multipliers for board calculation
         const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
-        console.log('📐 BoardLayer: Using effective multipliers:', {
-            originalLength: multipliers.length,
-            effectiveLength: effectiveMultipliers.length,
-            effectiveMultipliers: effectiveMultipliers.slice(0, 5)
-        });
 
         const { pins } = createPhysicsBodies(width, height, rows, effectiveMultipliers);
-        console.log('📐 BoardLayer: Physics bodies created:', {
-            pinsCount: pins.length,
-            rows,
-            width,
-            height
-        });
 
         // Calculate board dimensions based on actual pin positions
         if (pins.length === 0) {
-            console.error('❌ BoardLayer: No pins generated, skipping board dimension calculation');
             return;
         }
 
@@ -113,17 +90,6 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
 
         // Notify parent component about calculated board dimensions
         if (onBoardDimensionsCalculated) {
-            console.log('📐 BoardLayer: Calling onBoardDimensionsCalculated with dimensions:', {
-                topMargin: boardTopMargin,
-                bottomMargin: boardBottomMargin,
-                leftMargin: boardLeftMargin,
-                rightMargin: boardRightMargin,
-                boardWidth,
-                boardHeight,
-                boardX,
-                timestamp: new Date().toISOString()
-            });
-
             onBoardDimensionsCalculated({
                 topMargin: boardTopMargin,
                 bottomMargin: boardBottomMargin,
@@ -133,10 +99,6 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
                 boardHeight,
                 boardX
             });
-
-            console.log('✅ BoardLayer: onBoardDimensionsCalculated callback completed');
-        } else {
-            console.warn('⚠️ BoardLayer: No onBoardDimensionsCalculated callback provided');
         }
 
         // 1. Main Plinko board area - triangular background that wraps the pin matrix

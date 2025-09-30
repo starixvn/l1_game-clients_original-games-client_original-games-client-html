@@ -168,21 +168,6 @@ interface PhysicsLayerProps extends BallLayoutProps {
 
 const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
     ({ rows, multipliers = [], probabilities: _probabilities = [], betAmount = 100, onBallHit, boardDimensions, ballPaths: _ballPaths, setBallPaths }, ref) => {
-        console.log('⚡ PhysicsLayer component STARTED with props:', {
-            rows,
-            multipliersLength: multipliers.length,
-            multipliers: multipliers.slice(0, 5), // Log first 5 multipliers
-            betAmount,
-            hasOnBallHit: !!onBallHit,
-            hasBoardDimensions: !!boardDimensions,
-            boardDimensions: boardDimensions ? {
-                topMargin: boardDimensions.topMargin,
-                leftMargin: boardDimensions.leftMargin,
-                boardWidth: boardDimensions.boardWidth,
-                boardHeight: boardDimensions.boardHeight
-            } : null,
-            timestamp: new Date().toISOString()
-        });
 
         const canvasRef = useRef<HTMLDivElement>(null);
         const engineRef = useRef<Engine | null>(null);
@@ -199,17 +184,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
         // Initialize physics engine with triangular clipping
         useEffect(() => {
-            console.log('🔧 PhysicsLayer useEffect triggered:', {
-                hasCanvasRef: !!canvasRef.current,
-                isInitialized,
-                rows,
-                multipliersLength: multipliers.length,
-                hasBoardDimensions: !!boardDimensions,
-                timestamp: new Date().toISOString()
-            });
-
             if (!canvasRef.current) {
-                console.error('❌ PhysicsLayer: No canvas ref available');
                 return;
             }
 
@@ -279,9 +254,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                     bottomMargin: canvasHeight * 0.15,
                     multipliers: [...effectiveMultipliers]
                 };
-
-                // Use slotLayout for physics body creation
-                console.log('Slot layout created:', slotLayout);
 
                 // Create Matter.js renderer with triangular clipping
                 const render = Render.create({
@@ -453,7 +425,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                     }
                 });
 
-                console.log('🎯 PhysicsLayer physics engine initialized successfully - calling setIsInitialized(true)');
                 setIsInitialized(true);
 
             }, 100);
@@ -554,48 +525,13 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
         useImperativeHandle(ref, () => ({
             isReady: () => isInitialized && !!engineRef.current,
             spawnBall: (betValue?: number) => {
-                console.log('🎯 PhysicsLayer.spawnBall called:', {
-                    betValue,
-                    isInitialized,
-                    hasEngine: !!engineRef.current,
-                    timestamp: new Date().toISOString()
-                });
-
                 if (isInitialized && engineRef.current) {
-                    console.log('✅ PhysicsLayer.spawnBall: Calling internal spawnBall function');
                     spawnBall(betValue);
-                } else {
-                    console.error('❌ PhysicsLayer.spawnBall: Cannot spawn ball - not ready:', {
-                        isInitialized,
-                        hasEngine: !!engineRef.current
-                    });
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                console.log('🎯 PhysicsLayer.spawnBallWithPath called:', {
-                    betValue,
-                    path,
-                    pathLength: path.length,
-                    pathArray: Array.isArray(path) ? 'YES' : 'NO',
-                    pathType: typeof path,
-                    finalSlot,
-                    multiplier,
-                    isInitialized,
-                    hasEngine: !!engineRef.current,
-                    expectedRows: rows,
-                    timestamp: new Date().toISOString()
-                });
-
                 if (isInitialized && engineRef.current) {
-                    console.log('✅ PhysicsLayer.spawnBallWithPath: Calling internal spawnBallWithPath function');
                     spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                } else {
-                    console.error('❌ PhysicsLayer.spawnBallWithPath: Cannot spawn ball - not ready:', {
-                        isInitialized,
-                        hasEngine: !!engineRef.current,
-                        pathLength: path.length,
-                        expectedRows: rows
-                    });
                 }
             }
         }), [isInitialized]);
