@@ -20,17 +20,11 @@ export { default as GameError } from './components/page-components/error/MyError
 export { default as Game404 } from './components/page-components/error/Custom404';
 export { default as GameTimeout } from './components/page-components/error/timeout';
 
-// React hooks providers
-export { default as BalanceSyncProvider } from './react-hooks/providers/balance-sync-provider';
-
 // Game registry template
 export { registerCurrentGame } from './game-registry/game-registry-template';
 
 // Games component
-export { Games, type GamesProps } from './components/game-components/games';
-
-// Logger Controls component
-export { default as LoggerControls } from './components/game-components/logger-controls/LoggerControls';
+export { Games, type GameConfig, type GamesProps } from './components/game-components/games';
 
 // API endpoints
 export { default as healthApi } from './api/health';

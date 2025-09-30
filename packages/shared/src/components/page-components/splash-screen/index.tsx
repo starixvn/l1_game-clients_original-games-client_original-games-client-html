@@ -19,9 +19,9 @@ import { updateSignInSMStatus } from '@shared/services/user-setting-service';
 import { MAX_AVATAR_ID } from '@shared/helpers/avatar-helper';
 import NameGenerator from '@shared/helpers/name-generator';
 import { logger } from '@shared/services/logger';
-import { staticAssetTracker } from '@shared/helpers/static-asset-tracker';
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
+import LoggerControls from "@shared/components/game-components/logger-controls/LoggerControls";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {
@@ -362,12 +362,6 @@ const SplashScreen: React.FC = () => {
 
             setCurrentGameId(toLoadGameId);
 
-            // Track static assets for the selected game
-            logger.info('📦 [SPLASH] Starting static asset tracking', {
-                gameId: toLoadGameId
-            });
-            staticAssetTracker.trackGameAssets(toLoadGameId);
-
             if (authorizeInfo) {
                 logger.info('✅ [SPLASH] Setting authorize response and starting custom startup', {
                     hasAuthorizeInfo: !!authorizeInfo,
@@ -439,84 +433,64 @@ const SplashScreen: React.FC = () => {
         hasLocale: !!locale
     });
 
-    try {
-        return (
-            <>
-                <div className={Styles.page} data-testid="splash-screen">
-                    <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0}>
-                        <div className={Styles["center"]}>
-                            <div className={`${Styles["logo"]}`}>
-                                <Logo />
-                            </div>
-                            <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
-                                {locale && t("Common.original_tagline")}
-                            </div>
+    return (
+        <>
+            <div className={Styles.page} data-testid="splash-screen">
+                <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0}>
+                    <div className={Styles["center"]}>
+                        <div className={`${Styles["logo"]}`}>
+                            <Logo />
                         </div>
-                    </FadeContent>
-
-                    <div className={"loading"}>
-                        <div className={"progress"}>
-                            <div
-                                className={"progress-bar"}
-                                id="progress-bar"
-                                data-testid="progress-bar"
-                                style={{ width: `${preloadProgress}%` }}
-                            ></div>
+                        <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
+                            {locale && t("Common.original_tagline")}
                         </div>
-                        <p className={"text-first-download"} data-testid="download-message">
-                            {locale && t("Common.message_download_first_visit")}
-                            {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
-                            {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
-                        </p>
                     </div>
-                </div>
+                </FadeContent>
 
-
-                {isDoneLoadConfig && currentGameId >= 0 && (
-                    <>
-                        {logger.info('📦 [SPLASH] Starting resource preloading', {
-                            gameId: currentGameId,
-                            isDoneLoadConfig,
-                            preloadProgress
-                        })}
-                        <PreloadResources
-                            data-testid="preload-resources"
-                            setIsDonePreload={() => {
-                                logger.info('✅ [SPLASH] Resource preloading completed, rendering dashboard');
-                                setIsRenderDashboard(true);
-                            }}
-                            gameId={currentGameId}
-                            onProgressUpdate={handlePreloadProgress}
-                        />
-                    </>
-                )}
-            </>
-        );
-    } catch (error) {
-        console.error('SplashScreen: Critical render error', error);
-        return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                <div className="text-center text-white p-8">
-                    <h1 className="text-4xl font-bold mb-4 text-red-500">🚨 SPLASH SCREEN ERROR 🚨</h1>
-                    <p className="text-xl mb-8">Failed to render splash screen. LoggerControls should still be visible.</p>
-                    <div className="text-sm text-gray-400 mb-4">
-                        Error: {error.message}
+                <div className={"loading"}>
+                    <div className={"progress"}>
+                        <div
+                            className={"progress-bar"}
+                            id="progress-bar"
+                            data-testid="progress-bar"
+                            style={{ width: `${preloadProgress}%` }}
+                        ></div>
                     </div>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-                    >
-                        Reload Application
-                    </button>
+                    <p className={"text-first-download"} data-testid="download-message">
+                        {locale && t("Common.message_download_first_visit")}
+                        {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                        {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
+                    </p>
                 </div>
             </div>
-        );
-    }
+
+            <LoggerControls className="fixed top-4 right-4 z-50" />
+
+            {isDoneLoadConfig && currentGameId >= 0 && (
+                <>
+                    {logger.info('📦 [SPLASH] Starting resource preloading', {
+                        gameId: currentGameId,
+                        isDoneLoadConfig,
+                        preloadProgress
+                    })}
+                    <PreloadResources
+                        data-testid="preload-resources"
+                        setIsDonePreload={() => {
+                            logger.info('✅ [SPLASH] Resource preloading completed, rendering dashboard');
+                            setIsRenderDashboard(true);
+                        }}
+                        gameId={currentGameId}
+                        onProgressUpdate={handlePreloadProgress}
+                    />
+                </>
+            )}
+        </>
+    );
 };
 
 export default memo(SplashScreen);
 
-const Logo = () => {
+export const Logo = () => {
     return (
         <svg width="205" height="52" viewBox="0 0 205 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#filter0_d_28_2650)">

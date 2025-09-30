@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { logger } from '@shared/services/logger';
+import { logger } from '../../../../services';
 
 interface LoggerControlsProps {
   className?: string;
