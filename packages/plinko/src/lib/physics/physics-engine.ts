@@ -93,9 +93,9 @@ export function createPhysicsBodies(
         // Classic triangular pattern: row 0 has 2 pins, row 1 has 3 pins, etc.
         const linePins = l + 2; // 2, 3, 4, 5, 6, 7, 8, 9, 10 for rows 0-8
 
-        // Calculate pin spacing to create proper triangular shape
+        // Calculate pin spacing to create proper triangular shape - NARROWED for more collisions
         const maxPinsInBottomRow = rows + 1; // 10 pins in bottom row for 9 rows
-        const maxLineWidth = canvasWidth * 0.85; // Use 85% of canvas width for pin area
+        const maxLineWidth = canvasWidth * 0.45; // NARROWED: Use only 45% of canvas width for pin area (was 85%)
         const pinSpacing = maxLineWidth / (maxPinsInBottomRow - 1); // Even spacing based on bottom row
 
         // Calculate the width of this specific row

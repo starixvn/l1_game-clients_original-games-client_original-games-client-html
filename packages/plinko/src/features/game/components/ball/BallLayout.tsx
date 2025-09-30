@@ -5,8 +5,12 @@ import { logger } from '../../../../services/logger';
 logger.info('📦 [BALL_LAYOUT] BallLayout module loaded - Direct alias for LayeredCanvasBallLayout');
 logger.debug('📦 [BALL_LAYOUT] Exporting LayeredCanvasBallLayout as default export');
 
+// Export the main component
 export { default } from './LayeredCanvasBallLayout';
 export type { LayeredCanvasBallLayoutRef } from './LayeredCanvasBallLayout';
+
+// Export test utilities for testing ball spawning
+export * from './ball-test-utils';
 
 logger.info('✅ [BALL_LAYOUT] BallLayout module exports completed');
 

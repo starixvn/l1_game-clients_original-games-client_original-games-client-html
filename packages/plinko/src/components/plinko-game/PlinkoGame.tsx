@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from 'react-toastify';
 import { MultiplierDisplay, BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
+import { performDirectSpawnTest } from "../../features/game/components/ball/ball-test-utils";
 import { LoggerControls } from "../../features/ui/components";
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
@@ -350,62 +351,18 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                             <button
                                 className="span-bet"
                                 onClick={() => {
-                                    console.log('🎯 DIRECT SPAWN BUTTON CLICKED - Starting test');
-                                    logger.info('🎯 DIRECT SPAWN TEST clicked');
-                                    logger.debug('📊 Game Configuration:', {
+                                    console.log('🎯 DIRECT SPAWN BUTTON CLICKED - Starting test using @ball/ test utilities');
+                                    logger.info('🎯 DIRECT SPAWN TEST clicked - using ball test utilities');
+
+                                    // Use the test utilities from @ball/ folder
+                                    const testConfig = {
                                         rows: gameState.rows,
                                         betAmount: gameState.betAmount,
                                         multipliers: payoutMultipliers,
                                         payoutProbabilities: payoutProbabilities
-                                    });
+                                    };
 
-                                    console.log('🔍 Checking ballLayoutRef:', {
-                                        exists: !!ballLayoutRef.current,
-                                        hasSpawnBallWithPath: !!ballLayoutRef.current?.spawnBallWithPath
-                                    });
-
-                                    if (ballLayoutRef.current) {
-                                        console.log('✅ ballLayoutRef exists, calling spawnBallWithPath directly');
-                                        logger.info('✅ ballLayoutRef exists, calling spawnBallWithPath directly');
-
-                                        // Calculate expected ball size for logging
-                                        const { calculateBallSize } = require('../../lib/physics/ball-calculations');
-                                        const ballRadius = calculateBallSize(gameState.rows);
-                                        const ballDiameter = ballRadius * 2;
-
-                                        const testPath = [0, 1, 0, 1, 0, 1, 0, 1]; // 8 steps for 9 rows
-                                        const finalSlot = 4;
-                                        const multiplier = 2;
-
-                                        logger.info('🎯 Ball Spawn Details:', {
-                                            ballRadius: `${ballRadius.toFixed(2)}px`,
-                                            ballDiameter: `${ballDiameter.toFixed(2)}px`,
-                                            testPath: testPath,
-                                            pathLength: testPath.length,
-                                            finalSlot: finalSlot,
-                                            expectedMultiplier: multiplier,
-                                            betValue: 100,
-                                            expectedCollisions: testPath.length,
-                                            expectedPath: testPath.join(''),
-                                            pathDescription: 'Left-Right-Left-Right-Left-Right-Left-Right'
-                                        });
-
-                                        // Log board layout information for debugging alignment
-                                        logger.debug('📐 Board Layout Analysis:', {
-                                            canvasWidth: typeof window !== 'undefined' ? window.innerWidth : 'unknown',
-                                            canvasHeight: typeof window !== 'undefined' ? window.innerHeight : 'unknown',
-                                            expectedBoardCenter: 'Canvas center horizontally',
-                                            expectedSpawnY: '30px from top',
-                                            triangularArea: 'Defined by pin positions and ball clipping',
-                                            physicsBodies: 'Pins at calculated positions, ball with gravity'
-                                        });
-
-                                        ballLayoutRef.current.spawnBallWithPath(100, testPath, finalSlot, multiplier);
-                                        logger.info('✅ Direct spawn call completed');
-                                    } else {
-                                        console.error('❌ ballLayoutRef.current is null - Cannot spawn ball');
-                                        logger.error('❌ ballLayoutRef.current is null - Cannot spawn ball');
-                                    }
+                                    performDirectSpawnTest(ballLayoutRef.current, testConfig);
                                 }}
                                 style={{
                                     marginLeft: '10px',

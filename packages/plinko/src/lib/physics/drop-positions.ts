@@ -41,7 +41,7 @@ export function calculateDropPositions(canvasWidth: number): number[] {
     for (let i = 0; i < numPositions; i++) {
         const position = spawnMargin + (i * positionSpacing);
         positions.push(position);
-        
+
         logger.debug('📍 [DROP_POSITIONS] Drop position calculated', {
             index: i,
             position: position.toFixed(1),

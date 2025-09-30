@@ -4,6 +4,10 @@
 export { default as BallLayout } from './ball/BallLayout';
 export type { LayeredCanvasBallLayoutRef } from './ball/BallLayout';
 
+// Ball test utilities
+export { performDirectSpawnTest, USER_SPECIFIED_COLLISION_PATH } from './ball/ball-test-utils';
+export type { TestSpawnConfig, TestSpawnDetails } from './ball/ball-test-utils';
+
 // Display components
 export { default as MultiplierDisplay } from './display/MultiplierDisplay';
 export { default as PayoutsDisplay } from './display/PayoutsDisplay';

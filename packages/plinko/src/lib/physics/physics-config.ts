@@ -97,10 +97,10 @@ logger.info('⚙️ [PHYSICS_CONFIG] Main physics configuration created', {
  */
 export const ballSizingConfig = {
     baseRows: 10,           // Reference row count for base sizing
-    baseDiameter: 16,       // Base ball diameter in pixels at baseRows (reduced for better proportions)
-    minDiameter: 6,         // Minimum ball diameter to prevent invisibility
-    maxDiameter: 28,        // Maximum ball diameter to prevent overcrowding
-    sizeScaleFactor: 0.8    // Additional scaling factor for peg gap consideration
+    baseDiameter: 14,       // REDUCED: Base ball diameter in pixels at baseRows (narrowed pegs need smaller balls)
+    minDiameter: 5,         // REDUCED: Minimum ball diameter to prevent invisibility
+    maxDiameter: 24,        // REDUCED: Maximum ball diameter to prevent overcrowding
+    sizeScaleFactor: 0.75   // REDUCED: Additional scaling factor for peg gap consideration (narrower pegs)
 };
 
 logger.info('⚙️ [PHYSICS_CONFIG] Ball sizing configuration created', {
