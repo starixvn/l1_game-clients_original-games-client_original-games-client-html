@@ -4,7 +4,7 @@ import { GameBackground, MultiplierDisplay, BallLayout, CanvasBallLayoutRef, Win
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
-import { useBettingStore } from "@shared/stores";
+import { useBettingStore, useGameStore } from "@shared/stores";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -50,6 +50,7 @@ const PlinkoGame: React.FC = () => {
 
     // Shared game context and betting store
     const { ownBets } = useBettingStore();
+    const { sendSocketEvent } = useGameStore();
 
     // Default values for plinko multipliers (since shared system doesn't provide these)
     const payoutMultipliers = [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6]; // Default multipliers
@@ -62,8 +63,9 @@ const PlinkoGame: React.FC = () => {
 
     // Mock functions for plinko-specific functionality
     const placeBet = (amount: number, gameMode: number, rows: number, clientSeed: string) => {
-        // Plinko handles betting through its own logic
-        logger.info('Plinko placeBet called', { amount, gameMode, rows, clientSeed });
+        // Send bet to service using shared socket
+        logger.info('Plinko placeBet called - sending to service', { amount, gameMode, rows, clientSeed });
+        sendSocketEvent('bet', { amount, gameMode, numberOfRows: rows, clientSeed });
     };
     const clearBetResult = () => {
         // Plinko handles clearing results internally
