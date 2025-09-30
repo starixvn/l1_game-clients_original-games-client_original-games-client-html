@@ -18,7 +18,9 @@ export interface LayeredCanvasBallLayoutRef {
  * - Layer 1: Full Canvas Background (gradient, light effects, decorative elements, payout slots)
  * - Layer 2: Triangular Board Area (board background, borders, pin visualization)
  * - Layer 3: Physics Simulation (clipped to triangular board area)
- * - Layer 4: UI Overlays (loading indicators, debug info, hover tooltips)
+ * - Layer 4: Ball Rendering (balls using physics position data)
+ * - Layer 5: Ball Path Trails (trail effects above balls)
+ * - Layer 6: UI Overlays (loading indicators, debug info, hover tooltips)
  */
 const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ rows, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
@@ -35,6 +37,12 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             boardWidth: number;
             boardHeight: number;
             boardX: number;
+            triangleTopX: number;
+            triangleTopY: number;
+            triangleBottomLeftX: number;
+            triangleBottomLeftY: number;
+            triangleBottomRightX: number;
+            triangleBottomRightY: number;
         } | null>(null);
 
         const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number, y: number, timestamp: number }>>>(new Map());
@@ -63,6 +71,12 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             boardWidth: number;
             boardHeight: number;
             boardX: number;
+            triangleTopX: number;
+            triangleTopY: number;
+            triangleBottomLeftX: number;
+            triangleBottomLeftY: number;
+            triangleBottomRightX: number;
+            triangleBottomRightY: number;
         }) => {
             // Only update if dimensions actually changed
             setBoardDimensions(prev => {
@@ -73,7 +87,13 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     prev.rightMargin !== dimensions.rightMargin ||
                     prev.boardWidth !== dimensions.boardWidth ||
                     prev.boardHeight !== dimensions.boardHeight ||
-                    prev.boardX !== dimensions.boardX) {
+                    prev.boardX !== dimensions.boardX ||
+                    prev.triangleTopX !== dimensions.triangleTopX ||
+                    prev.triangleTopY !== dimensions.triangleTopY ||
+                    prev.triangleBottomLeftX !== dimensions.triangleBottomLeftX ||
+                    prev.triangleBottomLeftY !== dimensions.triangleBottomLeftY ||
+                    prev.triangleBottomRightX !== dimensions.triangleBottomRightX ||
+                    prev.triangleBottomRightY !== dimensions.triangleBottomRightY) {
                     return dimensions;
                 }
                 return prev;
@@ -268,6 +288,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     <BackgroundLayer
                         width={containerSize.width}
                         height={containerSize.height}
+                        multipliers={multipliers}
                         className="background-layer"
                     />
                 )}

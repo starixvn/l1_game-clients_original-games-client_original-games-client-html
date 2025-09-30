@@ -15,15 +15,22 @@ export interface BoardLayerProps {
         boardWidth: number;
         boardHeight: number;
         boardX: number;
+        triangleTopX: number;
+        triangleTopY: number;
+        triangleBottomLeftX: number;
+        triangleBottomLeftY: number;
+        triangleBottomRightX: number;
+        triangleBottomRightY: number;
     }) => void;
 }
 
 /**
  * Layer 2: Triangular Board Area
- * Renders the triangular game board and pin visualization
+ * Renders the triangular game board and pin visualization within the triangular area
  * - Plinko board (triangular background with border)
  * - Pin visualization (white circles representing pegs)
  * - Board borders and outlines
+ * Note: Payout slots are rendered in BackgroundLayer (Layer 1)
  */
 const BoardLayer: React.FC<BoardLayerProps> = ({
     width,
@@ -88,6 +95,14 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
         const boardHeight = maxY - boardTopMargin + padding;
         const boardX = boardLeftMargin;
 
+        // Calculate triangular coordinates (same as used for drawing)
+        const triangleTopX = boardX + boardWidth / 2;
+        const triangleTopY = boardTopMargin;
+        const triangleBottomLeftX = boardX - padding;
+        const triangleBottomLeftY = maxY + padding;
+        const triangleBottomRightX = boardX + boardWidth + padding;
+        const triangleBottomRightY = maxY + padding;
+
         // Notify parent component about calculated board dimensions
         if (onBoardDimensionsCalculated) {
             onBoardDimensionsCalculated({
@@ -97,7 +112,13 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
                 rightMargin: boardRightMargin,
                 boardWidth,
                 boardHeight,
-                boardX
+                boardX,
+                triangleTopX,
+                triangleTopY,
+                triangleBottomLeftX,
+                triangleBottomLeftY,
+                triangleBottomRightX,
+                triangleBottomRightY
             });
         }
 
@@ -144,52 +165,6 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
             ctx.stroke();
         });
 
-        // 3. Payout slots at the bottom with proper colors (outside triangular area)
-        if (multipliers.length > 0) {
-            const slotWidth = Math.max(25, Math.min(60, width / multipliers.length * 0.85));
-            const slotHeight = Math.max(20, Math.min(40, height * 0.08));
-            const totalSlotWidth = slotWidth * multipliers.length;
-            const startX = (width - totalSlotWidth) / 2;
-            const slotY = height - boardBottomMargin + slotHeight / 2;
-
-            multipliers.forEach((multiplier, index) => {
-                const slotX = startX + index * slotWidth;
-
-                // Color coding based on multiplier value
-                let slotColor = '#2c3e50'; // Default dark blue
-                if (multiplier >= 100) {
-                    slotColor = '#8e44ad'; // Purple for highest multipliers
-                } else if (multiplier >= 15) {
-                    slotColor = '#9b59b6'; // Light purple
-                } else if (multiplier >= 2) {
-                    slotColor = '#3498db'; // Blue
-                } else if (multiplier >= 0.9) {
-                    slotColor = '#2980b9'; // Darker blue
-                } else if (multiplier >= 0.5) {
-                    slotColor = '#1f4e79'; // Darkest blue
-                }
-
-                // Draw slot background
-                ctx.fillStyle = slotColor;
-                ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
-
-                // Draw slot border
-                ctx.strokeStyle = '#34495e';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
-
-                // Draw multiplier text
-                ctx.fillStyle = '#ffffff';
-                ctx.font = `bold ${Math.max(10, Math.min(16, slotWidth / 4))}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(
-                    multiplier.toFixed(1),
-                    slotX + slotWidth / 2,
-                    slotY
-                );
-            });
-        }
 
         // Restore context state
         ctx.restore();

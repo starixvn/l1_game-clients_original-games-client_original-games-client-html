@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 export interface BackgroundLayerProps {
     width: number;
     height: number;
+    multipliers?: number[];
     className?: string;
 }
 
@@ -18,6 +19,7 @@ export interface BackgroundLayerProps {
 const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
     width,
     height,
+    multipliers = [],
     className = 'background-layer'
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,10 +93,57 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
         ctx.fill();
         ctx.restore();
 
+        // 4. Payout slots at the bottom with proper colors (full canvas - bottom area)
+        if (multipliers.length > 0) {
+            const slotWidth = Math.max(25, Math.min(60, width / multipliers.length * 0.85));
+            const slotHeight = Math.max(20, Math.min(40, height * 0.08));
+            const totalSlotWidth = slotWidth * multipliers.length;
+            const startX = (width - totalSlotWidth) / 2;
+            const slotY = height - height * 0.15 + slotHeight / 2; // Position below triangular area
+
+            multipliers.forEach((multiplier, index) => {
+                const slotX = startX + index * slotWidth;
+
+                // Color coding based on multiplier value
+                let slotColor = '#2c3e50'; // Default dark blue
+                if (multiplier >= 100) {
+                    slotColor = '#8e44ad'; // Purple for highest multipliers
+                } else if (multiplier >= 15) {
+                    slotColor = '#9b59b6'; // Light purple
+                } else if (multiplier >= 2) {
+                    slotColor = '#3498db'; // Blue
+                } else if (multiplier >= 0.9) {
+                    slotColor = '#2980b9'; // Darker blue
+                } else if (multiplier >= 0.5) {
+                    slotColor = '#1f4e79'; // Darkest blue
+                }
+
+                // Draw slot background
+                ctx.fillStyle = slotColor;
+                ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+
+                // Draw slot border
+                ctx.strokeStyle = '#34495e';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+
+                // Draw multiplier text
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.max(10, Math.min(16, slotWidth / 4))}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(
+                    multiplier.toFixed(1),
+                    slotX + slotWidth / 2,
+                    slotY
+                );
+            });
+        }
+
         // Restore context state
         ctx.restore();
 
-    }, [width, height]);
+    }, [width, height, multipliers]);
 
     return (
         <canvas

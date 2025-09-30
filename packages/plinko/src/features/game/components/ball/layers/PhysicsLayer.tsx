@@ -15,6 +15,12 @@ interface BallPathLayerProps {
         boardWidth: number;
         boardHeight: number;
         boardX: number;
+        triangleTopX: number;
+        triangleTopY: number;
+        triangleBottomLeftX: number;
+        triangleBottomLeftY: number;
+        triangleBottomRightX: number;
+        triangleBottomRightY: number;
     } | null;
     className?: string;
 }
@@ -43,12 +49,12 @@ const BallPathLayer: React.FC<BallPathLayerProps> = ({
 
         ctx.save();
 
-        // Apply the same triangular clipping as physics layer
-        const { topMargin, boardWidth, boardHeight, boardX } = boardDimensions;
+        // Apply the same triangular clipping as the board layer
+        const { triangleTopX, triangleTopY, triangleBottomLeftX, triangleBottomLeftY, triangleBottomRightX, triangleBottomRightY } = boardDimensions;
         ctx.beginPath();
-        ctx.moveTo(boardX + boardWidth / 2, topMargin);
-        ctx.lineTo(boardX + boardWidth * 0.1, topMargin + boardHeight * 0.9);
-        ctx.lineTo(boardX + boardWidth * 0.9, topMargin + boardHeight * 0.9);
+        ctx.moveTo(triangleTopX, triangleTopY);
+        ctx.lineTo(triangleBottomLeftX, triangleBottomLeftY);
+        ctx.lineTo(triangleBottomRightX, triangleBottomRightY);
         ctx.closePath();
         ctx.clip();
 
@@ -103,7 +109,7 @@ const BallPathLayer: React.FC<BallPathLayerProps> = ({
                 left: 0,
                 width: '100%',
                 height: '100%',
-                zIndex: 4, // Above physics layer
+                zIndex: 6, // Above ball layer
                 pointerEvents: 'none'
             }}
         />
@@ -137,6 +143,12 @@ interface BallLayerProps {
         boardWidth: number;
         boardHeight: number;
         boardX: number;
+        triangleTopX: number;
+        triangleTopY: number;
+        triangleBottomLeftX: number;
+        triangleBottomLeftY: number;
+        triangleBottomRightX: number;
+        triangleBottomRightY: number;
     } | null;
     className?: string;
 }
@@ -165,12 +177,12 @@ const BallLayer: React.FC<BallLayerProps> = ({
 
         ctx.save();
 
-        // Apply the same triangular clipping as physics layer
-        const { topMargin, boardWidth, boardHeight, boardX } = boardDimensions;
+        // Apply the same triangular clipping as the board layer
+        const { triangleTopX, triangleTopY, triangleBottomLeftX, triangleBottomLeftY, triangleBottomRightX, triangleBottomRightY } = boardDimensions;
         ctx.beginPath();
-        ctx.moveTo(boardX + boardWidth / 2, topMargin);
-        ctx.lineTo(boardX + boardWidth * 0.1, topMargin + boardHeight * 0.9);
-        ctx.lineTo(boardX + boardWidth * 0.9, topMargin + boardHeight * 0.9);
+        ctx.moveTo(triangleTopX, triangleTopY);
+        ctx.lineTo(triangleBottomLeftX, triangleBottomLeftY);
+        ctx.lineTo(triangleBottomRightX, triangleBottomRightY);
         ctx.closePath();
         ctx.clip();
 
@@ -214,7 +226,7 @@ const BallLayer: React.FC<BallLayerProps> = ({
                 left: 0,
                 width: '100%',
                 height: '100%',
-                zIndex: 5, // Above ball path layer
+                zIndex: 5, // Above physics layer, below ball paths
                 pointerEvents: 'none'
             }}
         />
@@ -258,6 +270,12 @@ interface PhysicsLayerProps extends BallLayoutProps {
         boardWidth: number;
         boardHeight: number;
         boardX: number;
+        triangleTopX: number;
+        triangleTopY: number;
+        triangleBottomLeftX: number;
+        triangleBottomLeftY: number;
+        triangleBottomRightX: number;
+        triangleBottomRightY: number;
     } | null;
     ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number }>>;
     setBallPaths: React.Dispatch<React.SetStateAction<Map<number, Array<{ x: number, y: number, timestamp: number }>>>>;
