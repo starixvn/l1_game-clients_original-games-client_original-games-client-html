@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 import { BallLayoutProps } from '../../../../shared/types';
+import { logger } from '../../../../services/logger';
 
 // Import layer components
 import BackgroundLayer from './layers/BackgroundLayer';
@@ -24,11 +25,26 @@ export interface LayeredCanvasBallLayoutRef {
  */
 const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ rows, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
+        logger.info('🎬 [LAYERED_CANVAS] LayeredCanvasBallLayout component initializing', {
+            rows,
+            multipliersCount: multipliers.length,
+            probabilitiesCount: probabilities.length,
+            betAmount,
+            hasOnBallHit: !!onBallHit,
+            timestamp: new Date().toISOString()
+        });
 
         const containerRef = useRef<HTMLDivElement>(null);
         const physicsLayerRef = useRef<PhysicsLayerRef>(null);
         const [containerSize, setContainerSize] = useState({ width: 400, height: 400 }); // Start with defaults
         const [isInitialized] = useState(true); // Start as initialized
+
+        logger.debug('🎬 [LAYERED_CANVAS] Component state initialized', {
+            initialContainerSize: { width: 400, height: 400 },
+            isInitialized: true,
+            hasContainerRef: !!containerRef.current,
+            hasPhysicsRef: !!physicsLayerRef.current
+        });
         const [boardDimensions, setBoardDimensions] = useState<{
             topMargin: number;
             bottomMargin: number;
@@ -50,6 +66,11 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
 
         // Callback for ball position updates from physics layer
         const handleBallPositionsUpdate = useCallback((positions: Map<number, { x: number, y: number, radius: number, betValue: number }>) => {
+            logger.debug('🎯 [LAYERED_CANVAS] Ball positions updated from physics layer', {
+                ballCount: positions.size,
+                ballIds: Array.from(positions.keys()),
+                timestamp: new Date().toISOString()
+            });
             setBallPositions(positions);
         }, []);
 
@@ -78,6 +99,27 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             triangleBottomRightX: number;
             triangleBottomRightY: number;
         }) => {
+            logger.info('📐 [LAYERED_CANVAS] Board dimensions calculated from BoardLayer', {
+                boardDimensions: {
+                    topMargin: dimensions.topMargin.toFixed(1),
+                    bottomMargin: dimensions.bottomMargin.toFixed(1),
+                    leftMargin: dimensions.leftMargin.toFixed(1),
+                    rightMargin: dimensions.rightMargin.toFixed(1),
+                    boardWidth: dimensions.boardWidth.toFixed(1),
+                    boardHeight: dimensions.boardHeight.toFixed(1),
+                    boardX: dimensions.boardX.toFixed(1)
+                },
+                triangleCoordinates: {
+                    topX: dimensions.triangleTopX.toFixed(1),
+                    topY: dimensions.triangleTopY.toFixed(1),
+                    bottomLeftX: dimensions.triangleBottomLeftX.toFixed(1),
+                    bottomLeftY: dimensions.triangleBottomLeftY.toFixed(1),
+                    bottomRightX: dimensions.triangleBottomRightX.toFixed(1),
+                    bottomRightY: dimensions.triangleBottomRightY.toFixed(1)
+                },
+                timestamp: new Date().toISOString()
+            });
+
             // Only update if dimensions actually changed
             setBoardDimensions(prev => {
                 if (!prev ||
@@ -94,8 +136,18 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     prev.triangleBottomLeftY !== dimensions.triangleBottomLeftY ||
                     prev.triangleBottomRightX !== dimensions.triangleBottomRightX ||
                     prev.triangleBottomRightY !== dimensions.triangleBottomRightY) {
+
+                    logger.debug('📐 [LAYERED_CANVAS] Board dimensions updated (changed from previous)', {
+                        hasPreviousDimensions: !!prev,
+                        dimensionsChanged: true
+                    });
                     return dimensions;
                 }
+
+                logger.debug('📐 [LAYERED_CANVAS] Board dimensions unchanged (same as previous)', {
+                    hasPreviousDimensions: !!prev,
+                    dimensionsChanged: false
+                });
                 return prev;
             });
         }, []);
@@ -106,10 +158,27 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 if (containerRef.current) {
                     const rect = containerRef.current.getBoundingClientRect();
                     if (rect.width > 0 && rect.height > 0) {
+                        logger.debug('📏 [LAYERED_CANVAS] Early container size detected', {
+                            width: rect.width.toFixed(1),
+                            height: rect.height.toFixed(1),
+                            source: 'getBoundingClientRect'
+                        });
                         setContainerSize({ width: rect.width, height: rect.height });
                     } else {
+                        logger.debug('📏 [LAYERED_CANVAS] Using default container size (early)', {
+                            width: 400,
+                            height: 400,
+                            reason: 'getBoundingClientRect returned zero dimensions'
+                        });
                         setContainerSize({ width: 400, height: 400 });
                     }
+                } else {
+                    logger.debug('📏 [LAYERED_CANVAS] Container ref not available (early)', {
+                        width: 400,
+                        height: 400,
+                        reason: 'containerRef.current is null'
+                    });
+                    setContainerSize({ width: 400, height: 400 });
                 }
             };
             updateSizeEarly();
@@ -124,8 +193,23 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     const width = rect.width || parseInt(computedStyle.width) || 400;
                     const height = rect.height || parseInt(computedStyle.height) || 400;
 
+                    logger.debug('📏 [LAYERED_CANVAS] Container size updated', {
+                        width: width.toFixed(1),
+                        height: height.toFixed(1),
+                        rectWidth: rect.width.toFixed(1),
+                        rectHeight: rect.height.toFixed(1),
+                        computedWidth: computedStyle.width,
+                        computedHeight: computedStyle.height,
+                        source: 'updateSize'
+                    });
+
                     setContainerSize({ width, height });
                 } else {
+                    logger.debug('📏 [LAYERED_CANVAS] Using default container size (resize)', {
+                        width: 400,
+                        height: 400,
+                        reason: 'containerRef.current is null'
+                    });
                     setContainerSize({ width: 400, height: 400 });
                 }
             };
@@ -138,6 +222,11 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 if (entry) {
                     const { width, height } = entry.contentRect;
                     if (width > 0 && height > 0) {
+                        logger.debug('📏 [LAYERED_CANVAS] Container resized via ResizeObserver', {
+                            width: width.toFixed(1),
+                            height: height.toFixed(1),
+                            source: 'ResizeObserver'
+                        });
                         setContainerSize({ width, height });
                     }
                 }
@@ -145,9 +234,11 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
 
             if (containerRef.current) {
                 resizeObserver.observe(containerRef.current);
+                logger.debug('📏 [LAYERED_CANVAS] ResizeObserver attached to container');
             }
 
             return () => {
+                logger.debug('📏 [LAYERED_CANVAS] ResizeObserver disconnected');
                 resizeObserver.disconnect();
             };
         }, []);
@@ -207,28 +298,34 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         // Expose methods for external use
         useImperativeHandle(ref, () => ({
             spawnBall: (betValue?: number) => {
-                console.log('🎯 LayeredCanvasBallLayout.spawnBall called:', {
+                logger.info('🎯 [LAYERED_CANVAS] spawnBall method called', {
                     betValue,
                     isInitialized,
                     hasPhysicsRef: !!physicsLayerRef.current,
+                    containerSize,
                     timestamp: new Date().toISOString()
                 });
 
                 if (physicsLayerRef.current && isInitialized) {
-                    console.log('✅ Calling physicsLayerRef.current.spawnBall');
+                    logger.info('✅ [LAYERED_CANVAS] Calling physicsLayerRef.current.spawnBall', {
+                        betValue,
+                        physicsLayerReady: true
+                    });
                     physicsLayerRef.current.spawnBall(betValue);
                 } else {
-                    console.error('❌ Cannot spawn ball - physics layer not ready:', {
+                    logger.error('❌ [LAYERED_CANVAS] Cannot spawn ball - physics layer not ready', {
                         hasPhysicsRef: !!physicsLayerRef.current,
                         isInitialized,
-                        containerSize
+                        containerSize,
+                        physicsLayerReady: physicsLayerRef.current?.isReady?.() ?? false
                     });
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                console.log('🎯 LayeredCanvasBallLayout.spawnBallWithPath called:', {
+                logger.info('🎯 [LAYERED_CANVAS] spawnBallWithPath method called', {
                     betValue,
                     path,
+                    pathLength: path.length,
                     finalSlot,
                     multiplier,
                     isInitialized,
@@ -238,17 +335,18 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 });
 
                 if (physicsLayerRef.current && physicsLayerRef.current.isReady()) {
-                    console.log('✅ Calling physicsLayerRef.current.spawnBallWithPath with params:', {
+                    logger.info('✅ [LAYERED_CANVAS] Calling physicsLayerRef.current.spawnBallWithPath', {
                         betValue,
                         path,
                         pathLength: path.length,
                         finalSlot,
-                        multiplier
+                        multiplier,
+                        physicsLayerReady: true
                     });
                     physicsLayerRef.current.spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                    console.log('✅ spawnBallWithPath call completed');
+                    logger.info('✅ [LAYERED_CANVAS] spawnBallWithPath call completed');
                 } else {
-                    console.error('❌ Cannot spawn ball with path - physics layer not ready:', {
+                    logger.error('❌ [LAYERED_CANVAS] Cannot spawn ball with path - physics layer not ready', {
                         hasPhysicsRef: !!physicsLayerRef.current,
                         isPhysicsReady: physicsLayerRef.current?.isReady?.() ?? false,
                         isInitialized,
@@ -263,7 +361,13 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
 
         // Force initialization on mount
         useEffect(() => {
-            // Component initialization logic if needed
+            logger.info('🎬 [LAYERED_CANVAS] Component mounted and initialized', {
+                rows,
+                multipliersCount: multipliers.length,
+                containerSize,
+                hasBoardDimensions: !!boardDimensions,
+                timestamp: new Date().toISOString()
+            });
         }, []);
 
         return (

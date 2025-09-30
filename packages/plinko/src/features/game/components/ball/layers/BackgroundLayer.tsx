@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { logger } from '../../../../../services/logger';
 
 export interface BackgroundLayerProps {
     width: number;
@@ -22,14 +23,44 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
     multipliers = [],
     className = 'background-layer'
 }) => {
+    logger.info('🎨 [BACKGROUND_LAYER] BackgroundLayer component initializing', {
+        width: width.toFixed(1),
+        height: height.toFixed(1),
+        multipliersCount: multipliers.length,
+        className,
+        timestamp: new Date().toISOString()
+    });
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas) {
+            logger.warn('🎨 [BACKGROUND_LAYER] Canvas ref not available', {
+                width: width.toFixed(1),
+                height: height.toFixed(1),
+                multipliersCount: multipliers.length
+            });
+            return;
+        }
 
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) {
+            logger.error('🎨 [BACKGROUND_LAYER] Failed to get 2D context', {
+                width: width.toFixed(1),
+                height: height.toFixed(1),
+                multipliersCount: multipliers.length
+            });
+            return;
+        }
+
+        logger.debug('🎨 [BACKGROUND_LAYER] Starting canvas rendering', {
+            width: width.toFixed(1),
+            height: height.toFixed(1),
+            multipliersCount: multipliers.length,
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height
+        });
 
         // Set canvas size
         canvas.width = width;
@@ -101,6 +132,16 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
             const startX = (width - totalSlotWidth) / 2;
             const slotY = height - height * 0.15 + slotHeight / 2; // Position below triangular area
 
+            logger.debug('🎨 [BACKGROUND_LAYER] Rendering payout slots', {
+                slotCount: multipliers.length,
+                slotWidth: slotWidth.toFixed(1),
+                slotHeight: slotHeight.toFixed(1),
+                totalSlotWidth: totalSlotWidth.toFixed(1),
+                startX: startX.toFixed(1),
+                slotY: slotY.toFixed(1),
+                multipliers: multipliers.map(m => m.toFixed(1))
+            });
+
             multipliers.forEach((multiplier, index) => {
                 const slotX = startX + index * slotWidth;
 
@@ -137,11 +178,35 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
                     slotX + slotWidth / 2,
                     slotY
                 );
+
+                logger.debug('🎨 [BACKGROUND_LAYER] Rendered slot', {
+                    index,
+                    multiplier: multiplier.toFixed(1),
+                    slotX: slotX.toFixed(1),
+                    slotY: slotY.toFixed(1),
+                    slotColor,
+                    fontSize: Math.max(10, Math.min(16, slotWidth / 4)).toFixed(1)
+                });
             });
+
+            logger.info('🎨 [BACKGROUND_LAYER] All payout slots rendered', {
+                totalSlots: multipliers.length,
+                slotWidth: slotWidth.toFixed(1),
+                slotHeight: slotHeight.toFixed(1)
+            });
+        } else {
+            logger.debug('🎨 [BACKGROUND_LAYER] No multipliers provided, skipping payout slots');
         }
 
         // Restore context state
         ctx.restore();
+
+        logger.info('🎨 [BACKGROUND_LAYER] Canvas rendering completed', {
+            width: width.toFixed(1),
+            height: height.toFixed(1),
+            multipliersCount: multipliers.length,
+            timestamp: new Date().toISOString()
+        });
 
     }, [width, height, multipliers]);
 

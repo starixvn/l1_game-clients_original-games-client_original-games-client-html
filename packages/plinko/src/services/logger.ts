@@ -17,7 +17,7 @@ class Logger {
     }
 
     // Also log to console for immediate feedback
-    console.log(logEntry);
+    // console.log(logEntry);
 
     // Store in memory
     this.logs.push(logEntry);

@@ -1,7 +1,11 @@
+import { logger } from '../../services/logger';
+
 /**
  * Physics Configuration for Plinko Ball Layout
  * Defines all physics-related constants and configuration
  */
+
+logger.info('⚙️ [PHYSICS_CONFIG] Physics configuration module loaded');
 
 export interface PhysicsConfig {
     pins: {
@@ -60,6 +64,33 @@ export const physicsConfig: PhysicsConfig = {
     }
 };
 
+logger.info('⚙️ [PHYSICS_CONFIG] Main physics configuration created', {
+    pins: {
+        startPins: physicsConfig.pins.startPins,
+        pinSize: physicsConfig.pins.pinSize,
+        pinGap: physicsConfig.pins.pinGap
+    },
+    ball: {
+        ballSize: physicsConfig.ball.ballSize
+    },
+    engine: {
+        engineGravity: physicsConfig.engine.engineGravity
+    },
+    world: {
+        width: physicsConfig.world.width,
+        height: physicsConfig.world.height
+    },
+    colors: {
+        background: physicsConfig.colors.background,
+        ball: physicsConfig.colors.ball,
+        pin: physicsConfig.colors.pin,
+        multiplierHigh: physicsConfig.colors.multiplierHigh,
+        multiplierMedium: physicsConfig.colors.multiplierMedium,
+        multiplierLow: physicsConfig.colors.multiplierLow,
+        multiplierLoss: physicsConfig.colors.multiplierLoss
+    }
+});
+
 /**
  * Dynamic Ball Sizing Configuration
  * Adjusts ball size based on number of rows for optimal visual balance and gameplay
@@ -71,3 +102,13 @@ export const ballSizingConfig = {
     maxDiameter: 28,        // Maximum ball diameter to prevent overcrowding
     sizeScaleFactor: 0.8    // Additional scaling factor for peg gap consideration
 };
+
+logger.info('⚙️ [PHYSICS_CONFIG] Ball sizing configuration created', {
+    baseRows: ballSizingConfig.baseRows,
+    baseDiameter: ballSizingConfig.baseDiameter,
+    minDiameter: ballSizingConfig.minDiameter,
+    maxDiameter: ballSizingConfig.maxDiameter,
+    sizeScaleFactor: ballSizingConfig.sizeScaleFactor
+});
+
+logger.info('✅ [PHYSICS_CONFIG] Physics configuration module completed');

@@ -88,17 +88,32 @@ export function createPhysicsBodies(
         totalRows: rows
     });
 
-    // Create pins in triangular layout
+    // Create pins in proper triangular layout (2, 3, 4, 5, 6, 7, 8, 9, 10 pegs per row)
     for (let l = 0; l < rows; l++) {
-        const linePins = Math.max(3, Math.min(multipliers.length + 2, physicsConfig.pins.startPins + l));
-        const lineWidth = Math.min(canvasWidth * 0.95, linePins * 20); // Use up to 95% of width
-        const adjustedGap = lineWidth / (linePins - 1); // Distribute pins evenly across width
+        // Classic triangular pattern: row 0 has 2 pins, row 1 has 3 pins, etc.
+        const linePins = l + 2; // 2, 3, 4, 5, 6, 7, 8, 9, 10 for rows 0-8
 
-        console.log(`Row ${l}:`, { linePins, lineWidth, adjustedGap });
+        // Calculate pin spacing to create proper triangular shape
+        const maxPinsInBottomRow = rows + 1; // 10 pins in bottom row for 9 rows
+        const maxLineWidth = canvasWidth * 0.85; // Use 85% of canvas width for pin area
+        const pinSpacing = maxLineWidth / (maxPinsInBottomRow - 1); // Even spacing based on bottom row
+
+        // Calculate the width of this specific row
+        const lineWidth = (linePins - 1) * pinSpacing;
+
+        // Center this row horizontally
+        const rowStartX = (canvasWidth - lineWidth) / 2;
+
+        console.log(`Row ${l}:`, {
+            linePins,
+            lineWidth: lineWidth.toFixed(1),
+            pinSpacing: pinSpacing.toFixed(1),
+            rowStartX: rowStartX.toFixed(1)
+        });
 
         for (let i = 0; i < linePins; i++) {
-            const pinX = (canvasWidth - lineWidth) / 2 + i * adjustedGap; // Center horizontally
-            const pinY = topMargin + (l + 1) * verticalSpacing; // Distribute vertically
+            const pinX = rowStartX + i * pinSpacing;
+            const pinY = topMargin + (l + 1) * verticalSpacing;
 
             const pin = Bodies.circle(pinX, pinY, 2, {
                 label: `pin-${l}-${i}`,
@@ -154,13 +169,13 @@ export function createPhysicsBodies(
     const totalSlotWidth = slotWidth * multipliers.length;
     const startX = (canvasWidth - totalSlotWidth) / 2; // Center the slots
 
-    console.log('Multiplier slot layout:', {
-        slotWidth,
-        slotHeight,
-        totalSlotWidth,
-        startX,
-        multipliersCount: multipliers.length
-    });
+    // console.log('Multiplier slot layout:', {
+    //     slotWidth,
+    //     slotHeight,
+    //     totalSlotWidth,
+    //     startX,
+    //     multipliersCount: multipliers.length
+    // });
 
     multipliers.forEach((multiplier, index) => {
         const slotX = startX + index * slotWidth + slotWidth / 2; // Center each slot
@@ -221,11 +236,11 @@ export function spawnBall(
 
     // Prevent rapid successive ball drops (anti-spam protection)
     if (lastSpawnTimeRef.current > 0 && timeSinceLastSpawn < minSpawnInterval) {
-        console.warn('🚫 Ball spawn blocked - too frequent!', {
-            timeSinceLastSpawn: timeSinceLastSpawn + 'ms',
-            minInterval: minSpawnInterval + 'ms',
-            betAmount
-        });
+        // console.warn('🚫 Ball spawn blocked - too frequent!', {
+        //     timeSinceLastSpawn: timeSinceLastSpawn + 'ms',
+        //     minInterval: minSpawnInterval + 'ms',
+        //     betAmount
+        // });
         return;
     }
 

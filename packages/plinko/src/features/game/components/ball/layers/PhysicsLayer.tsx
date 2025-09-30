@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Bodies, Body, Composite, Engine, Events, Runner, World } from 'matter-js';
 import { BallLayoutProps } from '../../../../../shared/types';
+import { logger } from '../../../../../services/logger';
 
 // Ball Path Trail Layer Component
 interface BallPathLayerProps {
@@ -406,6 +407,20 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                                     path.shift();
                                 }
                             }
+
+                            // Check if ball has fallen off the board (below canvas height)
+                            const ballExtension = ball as Body & BallBodyExtension;
+                            if (ball.position.y > canvasHeight + 50 && ballExtension.isServiceGuided) {
+                                logger.warn('⚠️ Physics Layer: Ball fell off board', {
+                                    ballId: ball.id,
+                                    ballPosition: { x: ball.position.x.toFixed(1), y: ball.position.y.toFixed(1) },
+                                    canvasHeight: canvasHeight,
+                                    currentPathIndex: ballExtension.currentPathIndex || 0,
+                                    expectedCollisions: ballExtension.servicePath?.length || 0,
+                                    pathProgress: ballExtension.servicePath ? `${ballExtension.currentPathIndex || 0}/${ballExtension.servicePath.length}` : 'N/A',
+                                    wasServiceGuided: ballExtension.isServiceGuided
+                                });
+                            }
                         });
 
                         return newPaths;
@@ -447,6 +462,26 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
                         // Handle multiplier (payout) collisions
                         if (obstacleBody.label?.includes('multiplier')) {
+                            const multiplier = parseFloat(obstacleBody.label.split('-')[1]) || 1;
+                            const betValue = ballExtension.betValue || 100;
+                            const finalSlot = parseInt(obstacleBody.label.split('-')[2]) || 0;
+
+                            logger.info('💰 Physics Layer: Ball reached multiplier slot', {
+                                ballId: ballBody.id,
+                                finalPosition: { x: ballBody.position.x.toFixed(1), y: ballBody.position.y.toFixed(1) },
+                                multiplierSlot: multiplier,
+                                betValue: betValue,
+                                payout: (betValue * multiplier).toFixed(2),
+                                actualSlot: finalSlot,
+                                expectedSlot: ballExtension.expectedFinalSlot,
+                                expectedMultiplier: ballExtension.multiplier,
+                                pathCompleted: ballExtension.currentPathIndex >= (ballExtension.servicePath?.length || 0),
+                                wasServiceGuided: ballExtension.isServiceGuided,
+                                totalCollisions: ballExtension.currentPathIndex || 0,
+                                expectedCollisions: ballExtension.servicePath?.length || 0,
+                                collisionAccuracy: ballExtension.servicePath ? `${((ballExtension.currentPathIndex || 0) / ballExtension.servicePath.length * 100).toFixed(1)}%` : 'N/A'
+                            });
+
                             ballExtension.isRemoved = true;
                             ballBody.isSensor = true;
                             ballBody.isStatic = true;
@@ -460,9 +495,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                             });
 
                             World.remove(engine.world, ballBody);
-
-                            const multiplier = parseFloat(obstacleBody.label.split('-')[1]) || 1;
-                            const betValue = ballExtension.betValue || 100;
 
                             if (!ballExtension.hasTriggeredWin) {
                                 ballExtension.hasTriggeredWin = true;
@@ -479,17 +511,54 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                         else if (obstacleBody.label?.includes('pin')) {
                             const servicePath = ballExtension.servicePath;
                             const currentPathIndex = ballExtension.currentPathIndex || 0;
+                            const pinPosition = obstacleBody.position;
+
+                            logger.info('📌 Physics Layer: Pin Collision Detected', {
+                                ballId: ballBody.id,
+                                ballPosition: { x: ballBody.position.x.toFixed(1), y: ballBody.position.y.toFixed(1) },
+                                pinPosition: { x: pinPosition.x.toFixed(1), y: pinPosition.y.toFixed(1) },
+                                pinLabel: obstacleBody.label,
+                                isServiceGuided: ballExtension.isServiceGuided,
+                                currentPathIndex: currentPathIndex,
+                                servicePath: servicePath,
+                                pathRemaining: servicePath ? servicePath.length - currentPathIndex : 0,
+                                totalExpectedCollisions: servicePath ? servicePath.length : 0,
+                                collisionProgress: servicePath ? `${currentPathIndex + 1}/${servicePath.length}` : 'N/A'
+                            });
 
                             if (ballExtension.isServiceGuided && servicePath && currentPathIndex < servicePath.length) {
                                 const direction = servicePath[currentPathIndex];
                                 const forceMagnitude = 0.08;
                                 const forceX = direction === 1 ? forceMagnitude : -forceMagnitude;
 
+                                logger.info('🎯 Physics Layer: Applying guided force', {
+                                    direction: direction,
+                                    forceMagnitude: forceMagnitude,
+                                    forceX: forceX.toFixed(3),
+                                    nextPathIndex: currentPathIndex + 1,
+                                    pathProgress: `${currentPathIndex + 1}/${servicePath.length}`,
+                                    ballPosition: { x: ballBody.position.x.toFixed(1), y: ballBody.position.y.toFixed(1) },
+                                    pinLabel: obstacleBody.label,
+                                    remainingCollisions: servicePath.length - currentPathIndex - 1
+                                });
+
                                 Body.applyForce(ballBody, ballBody.position, { x: forceX, y: 0 });
                                 ballExtension.currentPathIndex = currentPathIndex + 1;
                             } else {
                                 const ballRadius = ballBody.circleRadius || 5;
                                 const deflectionStrength = Math.max(0.1, Math.min(0.3, 0.25 / (ballRadius / 5)));
+
+                                logger.info('🎲 Physics Layer: Applying random deflection', {
+                                    ballRadius: ballRadius.toFixed(2),
+                                    deflectionStrength: deflectionStrength.toFixed(3),
+                                    reason: ballExtension.isServiceGuided ? 'Path completed' : 'Not service guided',
+                                    ballPosition: { x: ballBody.position.x.toFixed(1), y: ballBody.position.y.toFixed(1) },
+                                    pinLabel: obstacleBody.label,
+                                    currentPathIndex: currentPathIndex,
+                                    servicePathLength: servicePath?.length || 0,
+                                    isServiceGuided: ballExtension.isServiceGuided
+                                });
+
                                 applyRandomPegDeflection(ballBody, deflectionStrength);
                             }
                         }
@@ -555,17 +624,44 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
         // Method to spawn ball with service-determined path
         const spawnBallWithPath = (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-            if (!engineRef.current || !canvasRef.current) return;
+            console.log('🔧 Physics Layer: spawnBallWithPath called with:', { betValue, path, finalSlot, multiplier });
+            logger.info('🔧 Physics Layer: Spawning ball with path');
+
+            if (!engineRef.current || !canvasRef.current) {
+                logger.error('❌ Physics Layer: Engine or canvas not ready');
+                return;
+            }
 
             const containerRect = canvasRef.current.getBoundingClientRect();
             const canvasWidth = containerRect.width || physicsConfig.world.width;
+            const canvasHeight = containerRect.height || physicsConfig.world.height;
 
-            const canvasScaleFactor = Math.min(canvasWidth / 400, containerRect.height / 400);
+            const canvasScaleFactor = Math.min(canvasWidth / 400, canvasHeight / 400);
             const ballRadius = calculateBallSize(rows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
             const ballX = getMiddleDropPosition(canvasWidth);
+            const ballY = ballRadius + 10; // Spawn position from top
             const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
+
+            console.log('📍 Physics Layer: Spawn Position Details', {
+                canvasWidth: canvasWidth.toFixed(1),
+                canvasHeight: canvasHeight.toFixed(1),
+                canvasScaleFactor: canvasScaleFactor.toFixed(3),
+                ballX: ballX.toFixed(1),
+                ballY: ballY.toFixed(1),
+                ballRadius: ballRadius.toFixed(2),
+                middleDropPosition: ballX.toFixed(1),
+                boardDimensions: boardDimensions ? {
+                    boardWidth: boardDimensions.boardWidth.toFixed(1),
+                    boardHeight: boardDimensions.boardHeight.toFixed(1),
+                    boardX: boardDimensions.boardX.toFixed(1),
+                    triangleTopX: boardDimensions.triangleTopX.toFixed(1),
+                    triangleTopY: boardDimensions.triangleTopY.toFixed(1),
+                    triangleBottomLeftX: boardDimensions.triangleBottomLeftX.toFixed(1),
+                    triangleBottomRightX: boardDimensions.triangleBottomRightX.toFixed(1)
+                } : 'Not available'
+            });
 
             const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
                 restitution: physicsTweaks.restitution,
@@ -589,7 +685,17 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
             ballExtension.betValue = betValue;
             ballExtension.isServiceGuided = true;
 
+            logger.info('🎯 Physics Layer: Path Setup', {
+                servicePath: path,
+                pathLength: path.length,
+                expectedFinalSlot: finalSlot,
+                expectedMultiplier: multiplier,
+                ballId: ball.id,
+                initialPosition: { x: ballX.toFixed(1), y: (ballRadius + 10).toFixed(1) }
+            });
+
             Composite.add(engineRef.current.world, ball);
+            logger.info('✅ Physics Layer: Ball added to physics world');
         };
 
         // Expose methods for external use
