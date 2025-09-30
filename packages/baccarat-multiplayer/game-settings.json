@@ -22,8 +22,12 @@
         "gamePath": "baccarat-multiplayer",
         "gameResourceConfigs": {
             "path": "baccarat-multiplayer",
-            "optionalPaths": [],
-            "cachePaths": []
+            "optionalPaths": [
+                "/static/images/baccarat/cards"
+            ],
+            "cachePaths": [
+                "/static/images/baccarat/cards/"
+            ]
         }
     }
 }
