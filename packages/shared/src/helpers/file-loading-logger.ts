@@ -452,3 +452,6 @@ interface LoadingStatistics {
 // Export singleton instance
 export const fileLoadingLogger = FileLoadingLogger.getInstance();
 export type { FileLoadInfo, LoadingStatistics, TypeStatistics };
+
+
+

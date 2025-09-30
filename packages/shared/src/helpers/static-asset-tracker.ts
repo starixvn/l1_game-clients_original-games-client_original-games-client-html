@@ -17,7 +17,8 @@ class StaticAssetTracker {
     trackGameJSFile(gameId: number): void {
         const buildVersion = process.env.BUILD_VERSION || Date.now().toString();
         const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-        const jsUrl = `${basePath}/game-${gameId}/c.js?${buildVersion}`;
+        // c.js is served from root level regardless of basePath
+        const jsUrl = `/c.js?${buildVersion}`;
 
         if (this.trackedAssets.has(jsUrl)) {
             logger.debug('♻️ [STATIC-ASSET] Game JS file already tracked', { jsUrl });
@@ -187,42 +188,48 @@ class StaticAssetTracker {
         // Track main JS file
         this.trackGameJSFile(gameId);
 
-        // Track common CSS files
-        const commonCSSFiles = [
-            `${basePath}/_next/static/css/`,
-            `${basePath}/styles/`,
-            `${basePath}/game-${gameId}/styles/`
-        ];
-
-        commonCSSFiles.forEach(cssPath => {
-            this.trackCSSFile(cssPath, gameId);
-        });
-
-        // Track common image directories
-        const commonImageDirs = [
-            `${basePath}/static/images/`,
-            `${basePath}/game-${gameId}/images/`,
-            `${basePath}/chips/`,
-            `${basePath}/icons/`
-        ];
-
-        commonImageDirs.forEach(imageDir => {
-            this.trackImageFile(imageDir, gameId);
-        });
-
-        // Track common font files
-        const commonFontFiles = [
-            `${basePath}/fonts/`,
-            `${basePath}/_next/static/fonts/`
-        ];
-
-        commonFontFiles.forEach(fontPath => {
-            this.trackFontFile(fontPath, gameId);
-        });
-
-        logger.info('✅ [STATIC-ASSET] Game asset tracking initiated', {
+        // Disabled aggressive asset tracking to prevent 404 errors
+        // The assets being tracked don't exist at these paths
+        logger.debug('🚫 [STATIC-ASSET] Skipping asset tracking to prevent 404 errors', {
             gameId,
-            trackedAssets: this.trackedAssets.size
+            reason: 'Assets at tracked paths do not exist'
+        });
+
+        // Track common CSS files - DISABLED
+        // const commonCSSFiles = [
+        //     `${basePath}/_next/static/css/`,
+        //     `${basePath}/styles/`,
+        //     `${basePath}/game-${gameId}/styles/`
+        // ];
+        // commonCSSFiles.forEach(cssPath => {
+        //     this.trackCSSFile(cssPath, gameId);
+        // });
+
+        // Track common image directories - DISABLED
+        // const commonImageDirs = [
+        //     `${basePath}/static/images/`,
+        //     `${basePath}/game-${gameId}/images/`,
+        //     `${basePath}/chips/`,
+        //     `${basePath}/icons/`
+        // ];
+
+        // commonImageDirs.forEach(imageDir => {
+        //     this.trackImageFile(imageDir, gameId);
+        // });
+
+        // Track common font files - DISABLED
+        // const commonFontFiles = [
+        //     `${basePath}/fonts/`,
+        //     `${basePath}/_next/static/fonts/`
+        // ];
+        // commonFontFiles.forEach(fontPath => {
+        //     this.trackFontFile(fontPath, gameId);
+        // });
+
+        logger.info('✅ [STATIC-ASSET] Game asset tracking initiated (minimal)', {
+            gameId,
+            trackedAssets: this.trackedAssets.size,
+            note: 'Only tracking JS file to prevent 404 errors'
         });
     }
 

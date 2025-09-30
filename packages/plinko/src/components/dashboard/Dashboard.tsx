@@ -105,7 +105,18 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
         this.dashboardHandler.reCheckIn();
 
         document.addEventListener("visibilitychange", this.onVisibilityChange);
-        this.backToLobbyEventId = useGlobalEventsStore.getState().subscribe("resetGameIdDashboard", this.resetGameIdDashboardEvent);
+
+        // Subscribe to back to lobby events from the store
+        plinkoLogger.debug('📡 [DASHBOARD] Subscribing to global events store');
+        const unsubscribe = useGlobalEventsStore.subscribe((state) => {
+            if (state.backToLobby) {
+                plinkoLogger.info('🏠 [DASHBOARD] Back to lobby event received');
+                this.resetGameIdDashboardEvent();
+                // Reset the flag
+                useGlobalEventsStore.getState().setBackToLobby(false);
+            }
+        });
+        this.backToLobbyEventId = unsubscribe;
 
         plinkoLogger.debug('👁️ [DASHBOARD] Adding visibility change listener');
         plinkoLogger.debug('📡 [DASHBOARD] Subscribing to global events store');
@@ -124,18 +135,19 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
     }
 
     shouldComponentUpdate(nextProps: DashboardProps, nextState: DashboardState) {
-        const willUpdate =
-            this.state.openGameId !== nextState.openGameId ||
-            this.state.isUpdatingBalance !== nextState.isUpdatingBalance ||
-            this.state.authorizeInfo !== nextState.authorizeInfo;
-
         plinkoLogger.debug('🔄 [DASHBOARD] Checking if component should update', {
             openGameId: this.state.openGameId,
-            isUpdatingBalance: this.state.isUpdatingBalance,
-            willUpdate
+            isUpdatingBalance: this.isUpdatingBalance,
+            willUpdate: !(this.state.openGameId > 0 && this.isUpdatingBalance)
         });
 
-        return willUpdate;
+        if (this.state.openGameId > 0 && this.isUpdatingBalance) {
+            this.isUpdatingBalance = false;
+            plinkoLogger.debug('⏸️ [DASHBOARD] Skipping update due to balance update in progress');
+            return false;
+        }
+
+        return true;
     }
 
     handleUpdateUserStakeLevel(userStakeLevel: UserStakeLevel) {
@@ -274,4 +286,4 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
     }
 }
 
-export default withRouter(Dashboard);
+export default Dashboard;

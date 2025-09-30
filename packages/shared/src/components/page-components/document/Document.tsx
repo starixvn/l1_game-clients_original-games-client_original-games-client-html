@@ -9,13 +9,13 @@ export default class extends Document<{ headScript?: string }> {
     static async getInitialProps(ctx: DocumentContext) {
         const initialProps = await Document.getInitialProps(ctx);
 
-        // Always use single env config script now
-        const headScript = `${BASE_PATH}/c.js`;
+        // Always use single env config script now - c.js is served from root regardless of basePath
+        const headScript = `/c.js`;
         return { ...initialProps, headScript };
     }
 
     render() {
-        const headScript = (this.props as any)?.headScript || `${BASE_PATH}/c.js`;
+        const headScript = (this.props as any)?.headScript || `/c.js`;
         const configFileWithVersion = `${headScript}?${buildVersion}`;
 
         return (

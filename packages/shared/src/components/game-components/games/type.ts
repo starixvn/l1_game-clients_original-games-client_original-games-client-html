@@ -1,7 +1,7 @@
 import { UserStakeLevel } from "@shared/components/game-base/type";
 
 export interface Props {
-    setApiErrorMessage: (message: string | null) => void;
+    setApiErrorMessage: (errorCode: string, isDisableAccount?: boolean) => void;
     userStakeLevel: UserStakeLevel;
     updateUserStakeLevel: (level: UserStakeLevel) => void;
     openGameId: number;
@@ -10,7 +10,7 @@ export interface Props {
 
 export interface GameComponentProps {
     gameSound: any;
-    setApiErrorMessage: (message: string | null) => void;
+    setApiErrorMessage: (errorCode: string, isDisableAccount?: boolean) => void;
     theme: string | undefined;
     userStakeLevel: UserStakeLevel;
     updateUserStakeLevel: (level: UserStakeLevel) => void;

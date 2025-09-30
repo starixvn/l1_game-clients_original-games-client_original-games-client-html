@@ -130,13 +130,13 @@ export class PlinkoAuthService {
 
             if (authorizeResponse) {
                 this.updateAuthState({
-                    authorizeResponse,
-                    balance: authorizeResponse.user?.red || 0
+                    authorizeResponse: authorizeResponse as AuthorizeResponse,
+                    balance: (authorizeResponse as AuthorizeResponse).user?.red || 0
                 });
 
                 plinkoLogger.info('✅ [AUTH] Authorization successful for Plinko', {
                     username: session.username,
-                    balance: authorizeResponse.user?.red || 0
+                    balance: (authorizeResponse as AuthorizeResponse).user?.red || 0
                 });
             } else {
                 plinkoLogger.warn('❌ [AUTH] Authorization failed for Plinko', {
@@ -144,7 +144,7 @@ export class PlinkoAuthService {
                 });
             }
 
-            return authorizeResponse;
+            return authorizeResponse as AuthorizeResponse;
         } catch (error) {
             plinkoLogger.error('❌ [AUTH] Authorization error for Plinko', {
                 error: error.message,
@@ -154,7 +154,7 @@ export class PlinkoAuthService {
         }
     }
 
-    public async getBalance(): Promise<number> {
+    public async refreshBalance(): Promise<number> {
         const { session } = this.authState;
 
         if (!session) {

@@ -58,7 +58,7 @@ class PlinkoEnhancedLogger {
         }
 
         // Log initialization
-        this.info('🔧 [LOGGER] Enhanced logger initialized', {
+        this.info('LOGGER', '🔧 [LOGGER] Enhanced logger initialized', {
             sessionId: this.sessionId,
             config: this.config
         });
@@ -213,28 +213,28 @@ class PlinkoEnhancedLogger {
     // User and session management
     public setUserId(userId: string): void {
         this.userId = userId;
-        this.info('🔐 [LOGGER] User ID set', { userId });
+        this.info('LOGGER', '🔐 [LOGGER] User ID set', { userId });
     }
 
     public setGameId(gameId: number): void {
         this.gameId = gameId;
-        this.info('🎮 [LOGGER] Game ID set', { gameId });
+        this.info('LOGGER', '🎮 [LOGGER] Game ID set', { gameId });
     }
 
     public clearUserId(): void {
         this.userId = null;
-        this.info('🔐 [LOGGER] User ID cleared');
+        this.info('LOGGER', '🔐 [LOGGER] User ID cleared');
     }
 
     // Configuration management
     public updateConfig(config: Partial<LoggerConfig>): void {
         this.config = { ...this.config, ...config };
-        this.info('🔧 [LOGGER] Configuration updated', { config });
+        this.info('LOGGER', '🔧 [LOGGER] Configuration updated', { config });
     }
 
     public setLogLevel(level: LogLevel): void {
         this.config.logLevel = level;
-        this.info('🔧 [LOGGER] Log level updated', { level });
+        this.info('LOGGER', '🔧 [LOGGER] Log level updated', { level });
     }
 
     // Log retrieval and management
@@ -263,7 +263,7 @@ class PlinkoEnhancedLogger {
     public clearLogs(): void {
         this.logStorage = [];
         this.saveLogs();
-        this.info('🧹 [LOGGER] Logs cleared');
+        this.info('LOGGER', '🧹 [LOGGER] Logs cleared');
     }
 
     public exportLogs(): string {
@@ -291,7 +291,7 @@ class PlinkoEnhancedLogger {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        this.info('📥 [LOGGER] Logs downloaded', { filename: link.download });
+        this.info('LOGGER', '📥 [LOGGER] Logs downloaded', { filename: link.download });
     }
 
     // Performance monitoring
@@ -302,7 +302,7 @@ class PlinkoEnhancedLogger {
         return () => {
             const endTime = performance.now();
             const duration = endTime - startTime;
-            this.info('⏱️ [TIMER]', `Timer ended: ${label}`, {
+            this.info('TIMER', `Timer ended: ${label}`, {
                 label,
                 startTime,
                 endTime,
@@ -323,23 +323,23 @@ class PlinkoEnhancedLogger {
 
     // Game-specific logging methods
     public logGameEvent(event: string, data?: any): void {
-        this.info('🎮 [GAME]', event, data);
+        this.info('GAME', event, data);
     }
 
     public logBettingEvent(event: string, data?: any): void {
-        this.info('💰 [BETTING]', event, data);
+        this.info('BETTING', event, data);
     }
 
     public logSocketEvent(event: string, data?: any): void {
-        this.info('📡 [SOCKET]', event, data);
+        this.info('SOCKET', event, data);
     }
 
     public logAuthEvent(event: string, data?: any): void {
-        this.info('🔐 [AUTH]', event, data);
+        this.info('AUTH', event, data);
     }
 
     public logBalanceEvent(event: string, data?: any): void {
-        this.info('💰 [BALANCE]', event, data);
+        this.info('BALANCE', event, data);
     }
 
     // Statistics

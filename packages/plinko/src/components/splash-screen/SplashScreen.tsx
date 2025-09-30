@@ -98,7 +98,7 @@ const autoCreateNickname = async (userSession: SSOResponse): Promise<AuthorizeRe
     });
 
     try {
-        const nickname = NameGenerator.generate();
+        const nickname = NameGenerator.generateName();
         const avatarId = randomInteger(1, MAX_AVATAR_ID);
 
         plinkoLogger.debug('🎭 [SPLASH] Generated nickname and avatar', {
@@ -106,7 +106,7 @@ const autoCreateNickname = async (userSession: SSOResponse): Promise<AuthorizeRe
             avatarId
         });
 
-        const authorizeResponse = await createNickname(userSession, nickname, avatarId);
+        const authorizeResponse = await createNickname(userSession, nickname, avatarId) as AuthorizeResponse;
 
         plinkoLogger.info('✅ [SPLASH] Nickname created successfully', {
             username: userSession.username,
@@ -185,7 +185,7 @@ const SplashScreen: React.FC = () => {
             hasSession: !!session
         });
 
-        const selectedLanguage = languageMapper(session.language, language);
+        const selectedLanguage = languageMapper[session.language] || languageMapper[language] || locales.en;
         plinkoLogger.debug('🌐 [SPLASH] Language mapping result', {
             selectedLanguage,
             sessionLanguage: session.language,
@@ -194,7 +194,7 @@ const SplashScreen: React.FC = () => {
         });
 
         try {
-            await tolgee.loadLanguage(selectedLanguage);
+            await tolgee.changeLanguage(selectedLanguage);
             plinkoLogger.info('✅ [SPLASH] Language loaded successfully', {
                 locale: selectedLanguage
             });
@@ -245,7 +245,7 @@ const SplashScreen: React.FC = () => {
 
             plinkoLogger.info('🔑 [SPLASH] Authorization result', {
                 authorized: !!authorizeResponse,
-                hasUser: !!authorizeResponse?.user
+                hasUser: !!(authorizeResponse as AuthorizeResponse)?.user
             });
 
             plinkoLogger.info('🎮 [SPLASH] Game configuration started', {
@@ -265,7 +265,7 @@ const SplashScreen: React.FC = () => {
             });
 
             await customStartup(session, loadedLocale, router, player, authorizeResponse);
-            setAuthorizeResponse(authorizeResponse);
+            setAuthorizeResponse(authorizeResponse as AuthorizeResponse);
 
         } catch (error) {
             plinkoLogger.error('❌ [SPLASH] Initialization failed', {
@@ -311,6 +311,7 @@ const SplashScreen: React.FC = () => {
                 setIsUm={setIsUm}
                 tolgee={tolgee}
                 authorizeResponse={authorizeResponse}
+                router={router}
             />
         );
     }

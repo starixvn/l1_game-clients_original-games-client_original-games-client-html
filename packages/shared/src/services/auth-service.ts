@@ -1,4 +1,4 @@
-import { SSOResponse } from "sc-user-service-client/dist/auth";
+import { SSOResponse, AuthorizeResponse } from "sc-user-service-client/dist/auth";
 
 import { AnalyticsHelper, localStorageKeys, StorageHelper } from '@shared/helpers';
 import { UserClientCommunication } from "./user-client-communication";
@@ -196,15 +196,15 @@ export const authorize = async (userSession: SSOResponse) => {
             success: !!result,
             responseTime: `${responseTime}ms`,
             apiUrl,
-            authorized: result?.authorized,
-            hasUser: !!result?.user
+            authorized: (result as AuthorizeResponse)?.authorized,
+            hasUser: !!(result as AuthorizeResponse)?.user
         });
 
         // Track successful API response
         fileLoadingLogger.trackAPIResponse(apiUrl, 200, responseTime, {
             username: userSession.username,
-            authorized: result?.authorized,
-            hasUser: !!result?.user
+            authorized: (result as AuthorizeResponse)?.authorized,
+            hasUser: !!(result as AuthorizeResponse)?.user
         });
 
         return result;

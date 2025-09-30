@@ -20,7 +20,7 @@ import LoggerControls from "@shared/components/game-components/logger-controls/L
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
 // @ts-ignore - Next.js dynamic imports resolve at runtime
-const Games = dynamic(() => import("@shared/components/game-components/games"), { loading: () => <LoadingSpinner /> }) as React.ComponentType<GamesProps>;
+const Games = dynamic(() => import("@/games/games"), { loading: () => <LoadingSpinner /> }) as React.ComponentType<GamesProps>;
 const MusicPlayer = dynamic(() => import("../music-player"), { ssr: false });
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {

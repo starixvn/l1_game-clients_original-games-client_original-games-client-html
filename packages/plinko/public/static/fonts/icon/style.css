@@ -1,0 +1,102 @@
+@font-face {
+    font-family: "icomoon";
+    src: url("fonts/icomoon.eot?dbbkfd");
+    src: url("fonts/icomoon.eot?dbbkfd#iefix") format("embedded-opentype"), url("fonts/icomoon.ttf?dbbkfd") format("truetype"),
+        url("fonts/icomoon.woff?dbbkfd") format("woff"), url("fonts/icomoon.svg?dbbkfd#icomoon") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: "icomoon" !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-check:before {
+    content: "\e90c";
+    color: #42ff00;
+}
+.icon-auto-bet-round:before {
+    content: "\e90b";
+    color: #f9fdff;
+}
+.icon-guide:before {
+    content: "\e90a";
+    color: #b3bec1;
+}
+.icon-guide-pf:before {
+    content: "\e900";
+    color: #fff;
+}
+.icon-stop-auto-bet:before {
+    content: "\e901";
+    color: #fff;
+}
+.icon-auto-bet:before {
+    content: "\e902";
+    color: #fff;
+}
+.icon-double-bet:before {
+    content: "\e905";
+    color: #fff;
+}
+.icon-statistic:before {
+    content: "\e907";
+    color: #fff;
+}
+.icon-close:before {
+    content: "\e908";
+    color: #fff;
+}
+.icon-back:before {
+    content: "\e909";
+    color: #fff;
+}
+.icon-edit:before {
+    content: "\e914";
+    color: #6c737b;
+}
+.icon-copy:before {
+    content: "\e911";
+    color: #9ca3ae;
+}
+.icon-info:before {
+    content: "\e912";
+    color: #fff;
+}
+.icon-music-off:before {
+    content: "\e90d";
+    color: #fff;
+}
+.icon-music-on:before {
+    content: "\e90e";
+    color: #fff;
+}
+.icon-pf:before {
+    content: "\e90f";
+    color: #fff;
+}
+.icon-user:before {
+    content: "\e906";
+    color: #fff;
+}
+.icon-sound-off:before {
+    content: "\e903";
+    color: #fff;
+}
+.icon-sound-on:before {
+    content: "\e904";
+    color: #fff;
+}

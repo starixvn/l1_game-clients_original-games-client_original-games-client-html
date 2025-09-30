@@ -1,4 +1,4 @@
-import { Dashboard } from "../Dashboard";
+import Dashboard from "../Dashboard";
 import { reCheckIn } from "@shared/services/auth-service";
 import { logger as plinkoLogger } from "../../../services/logger";
 

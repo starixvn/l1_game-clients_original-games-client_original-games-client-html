@@ -1,4 +1,4 @@
-// Import game configuration first
+﻿// Import game configuration first
 import "./game-config";
 
 // Import shared game registry template

@@ -1,21 +1,27 @@
-import { SSOResponse } from "sc-user-service-client/dist/auth";
-import { AuthorizeResponse } from "sc-user-service-client/dist/auth";
-import { Tolgee } from "@shared/tolgee";
+import { TolgeeInstance } from "@tolgee/react";
+import { WithRouterProps } from "next/dist/client/with-router";
+import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
+
 import { UserStakeLevel } from "@shared/components/game-base/type";
 
-export interface DashboardProps {
+export interface DashboardProps extends WithRouterProps {
     session: SSOResponse;
     queryGame: number;
-    setIsUm: (isUm: boolean) => void;
-    tolgee: Tolgee;
+    setIsUm: Function;
+    tolgee: TolgeeInstance;
     authorizeResponse: AuthorizeResponse;
 }
+
+type APIErrorProp = {
+    message: string;
+    errorCode: string;
+};
 
 export interface DashboardState {
     userStakeLevel: UserStakeLevel;
     authorizeInfo: AuthorizeResponse;
     isShowErrorModal: boolean;
-    apiError: string | null;
+    apiError: APIErrorProp | null;
     isBlockUI: boolean;
     queryGame: number;
     openGameId: number | null;
