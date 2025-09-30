@@ -72,6 +72,10 @@ export class GameMessageHandler {
     };
 
     broadcastGameMessage = (message) => {
+        if (message.endBet || message.finish) {
+            console.log('🎯 GameMessageHandler broadcastGameMessage called with endBet/finish:', message);
+        }
+        // Also broadcast through the message transmitter to trigger registered handlers
         if (message[messageEventType.USER_STAKE_LEVEL]) {
             this.messageTransmitter.broadcast({ ...message, hasNotice: false });
         } else {

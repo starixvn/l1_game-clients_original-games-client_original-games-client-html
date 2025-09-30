@@ -36,12 +36,14 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
 
         socket.off(gameName).on(gameName, (message) => {
             logger.debug('Received game message', { gameName, messageType: Object.keys(message)[0] });
+            console.log('🎯 SOCKET: Received message through gameName event:', message);
             gameMessageHandler.broadcastGameEvent(message);
             useGameStore.getState().registerEvent(message);
             useBettingStore.getState().registerEvent(message);
         });
         socket.off("message").on("message", (message) => {
             logger.debug('Received generic message', { gameName, messageType: Object.keys(message)[0] });
+            console.log('🎯 SOCKET: Received message through message event:', message);
             gameMessageHandler.broadcastGameMessage(message);
             useGameStore.getState().registerEvent(message);
         });

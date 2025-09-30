@@ -93,6 +93,55 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             setLocalGameInitialized(true);
         });
 
+        // Register handler for endBet message (contains the finish object with result path)
+        console.log('🎯 Registering endBet handler...');
+        const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
+            logger.info('🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path', action);
+            console.log('🎯 ENDBET HANDLER CALLED with action:', action);
+
+            if (action?.finish?.result) {
+                const resultPath = action.finish.result;
+                const slotIndex = action.finish.settlementResult?.slotIndex || 4;
+                const multiplier = action.finish.settlementResult?.multiplier || 1;
+                const betAmount = action.finish.amount || action.endBet || 100;
+                const winAmount = action.finish.winAmount;
+
+                console.log('🎯 HANDLER: Processing result path:', resultPath, 'slotIndex:', slotIndex, 'multiplier:', multiplier);
+                console.log('🎯 HANDLER: ballLayoutRef.current exists:', !!ballLayoutRef.current);
+                console.log('🎯 HANDLER: ballLayoutRef.current.spawnBallWithPath exists:', !!ballLayoutRef.current?.spawnBallWithPath);
+
+                logger.info('🎯 [PLINKO GAME] Spawning ball with server result path', {
+                    resultPath,
+                    pathLength: resultPath.length,
+                    slotIndex,
+                    multiplier,
+                    betAmount,
+                    winAmount
+                });
+
+                // Spawn ball with the server-provided path
+                if (ballLayoutRef.current && ballLayoutRef.current.spawnBallWithPath) {
+                    console.log('🎯 HANDLER: Calling spawnBallWithPath with params:', betAmount, resultPath, slotIndex, multiplier);
+                    try {
+                        ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
+                        logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
+                        console.log('✅ HANDLER: spawnBallWithPath call completed');
+                    } catch (error) {
+                        console.error('❌ HANDLER: Error calling spawnBallWithPath:', error);
+                        logger.error('❌ [PLINKO GAME] Error spawning ball', { error });
+                    }
+                } else {
+                    console.error('❌ HANDLER: ballLayoutRef not ready:', {
+                        ref: ballLayoutRef.current,
+                        hasSpawnMethod: !!ballLayoutRef.current?.spawnBallWithPath
+                    });
+                    logger.error('❌ [PLINKO GAME] ballLayoutRef not available for spawning');
+                }
+            } else {
+                logger.warn('⚠️ [PLINKO GAME] EndBet message received but no result path found', action);
+            }
+        });
+
         // Check if socket is already connected and signed in, send inGame if needed
         if (socket?.connected) {
             logger.info('🎮 [PLINKO GAME] Socket already connected, sending inGame');
@@ -104,6 +153,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             if (gameMessageHandler.removeHandler) {
                 gameMessageHandler.removeHandler(signedInHandlerId);
                 gameMessageHandler.removeHandler(gameConfigsHandlerId);
+                gameMessageHandler.removeHandler(endBetHandlerId);
             }
         };
     }, [gameMessageHandler, socket]);
