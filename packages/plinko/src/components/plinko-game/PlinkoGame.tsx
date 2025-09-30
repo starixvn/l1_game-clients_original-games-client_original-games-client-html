@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from 'react-toastify';
-import { GameBackground, MultiplierDisplay, BallLayout, CanvasBallLayoutRef, WinMessage } from "../../features/game/components";
+import { MultiplierDisplay, BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
+import { LoggerControls } from "../../features/ui/components";
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
@@ -13,7 +14,7 @@ const defaultGameState: GameState = {
     currentWin: 106,
     betAmount: 100,
     gameMode: 'Lightning',
-    rows: 8,
+    rows: 9,
     numberOfBets: 20000,
     onWinAction: 'Reset',
     onWinPercentage: 0,
@@ -53,7 +54,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     }>({ isVisible: false });
     const [isAutoBetRunning, setIsAutoBetRunning] = useState(false);
     const [localGameInitialized, setLocalGameInitialized] = useState(isGameInitialized);
-    const ballLayoutRef = useRef<CanvasBallLayoutRef>(null);
+    const ballLayoutRef = useRef<LayeredCanvasBallLayoutRef>(null);
     const autoBetHandlerRef = useRef(null);
 
     // Shared game context and betting store
@@ -206,10 +207,18 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     return (
         <div className="main-container">
-            {/* Logger Controls - provided by shared GameApp at app level */}
+            {/* Logger Controls - positioned outside game-info to avoid clipping */}
+            <div style={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                right: '10px',
+                zIndex: 10000
+            }}>
+                <LoggerControls className="w-full" />
+            </div>
 
             <div className="game-info">
-                <GameBackground />
 
                 <div className="frame-game">
                     <div className="frame-2">

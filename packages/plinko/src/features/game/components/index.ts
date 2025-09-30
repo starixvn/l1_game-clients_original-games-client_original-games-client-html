@@ -1,8 +1,8 @@
 // Game feature components
 
 // Ball components
-export { default as BallLayout } from './ball/CanvasBallLayout';
-export type { CanvasBallLayoutRef } from './ball/CanvasBallLayout';
+export { default as BallLayout } from './ball/BallLayout';
+export type { LayeredCanvasBallLayoutRef } from './ball/BallLayout';
 export { default as Ball } from './ball/Ball';
 export { default as BallRow } from './ball/BallRow';
 export { default as HybridBallLayoutTest } from './ball/HybridBallLayoutTest';

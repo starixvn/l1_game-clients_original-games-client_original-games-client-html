@@ -1,12 +1,23 @@
 import React, { forwardRef } from 'react';
 import { BallLayoutProps } from '../../../../shared/types';
-import CanvasBallLayout, { CanvasBallLayoutRef } from './CanvasBallLayout';
+import LayeredCanvasBallLayout, { LayeredCanvasBallLayoutRef } from './LayeredCanvasBallLayout';
 
-// BallLayout now acts as a wrapper that uses the CanvasBallLayout from ball-layout directory
-const BallLayout = forwardRef<CanvasBallLayoutRef, BallLayoutProps>(
+// BallLayout now uses the new layered architecture for better separation of concerns
+const BallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ rows, ballsPerRow, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
+        console.log('🎯 BallLayout component rendering with props:', {
+            rows,
+            ballsPerRow,
+            multipliersLength: multipliers.length,
+            multipliers,
+            probabilitiesLength: probabilities.length,
+            betAmount,
+            hasOnBallHit: !!onBallHit,
+            hasRef: !!ref
+        });
+
         return (
-            <CanvasBallLayout
+            <LayeredCanvasBallLayout
                 ref={ref}
                 rows={rows}
                 ballsPerRow={ballsPerRow}
@@ -21,7 +32,7 @@ const BallLayout = forwardRef<CanvasBallLayoutRef, BallLayoutProps>(
 
 BallLayout.displayName = 'BallLayout';
 
-export type { CanvasBallLayoutRef };
+export type { LayeredCanvasBallLayoutRef };
 export default BallLayout;
 
 
