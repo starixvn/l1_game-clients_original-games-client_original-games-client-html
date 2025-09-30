@@ -10,7 +10,7 @@ const defaultGameState: GameState = {
     currentWin: 106,
     betAmount: 100,
     gameMode: 'Lightning',
-    rows: 9,
+    rows: 8,
     numberOfBets: 20000,
     onWinAction: 'Reset',
     onWinPercentage: 0,
@@ -36,7 +36,11 @@ const defaultGameState: GameState = {
     betsTab: 'All'
 };
 
-const PlinkoGame: React.FC = () => {
+interface PlinkoGameProps {
+    isGameInitialized?: boolean;
+}
+
+const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) => {
     const [gameState, setGameState] = useState<GameState>(defaultGameState);
     const [winMessage, setWinMessage] = useState<{
         isVisible: boolean;
@@ -166,12 +170,18 @@ const PlinkoGame: React.FC = () => {
                 </div>
 
                 <div id="button-bet" className="button-bet">
+                    {!isGameInitialized && (
+                        <div className="game-initializing">
+                            Initializing game...
+                        </div>
+                    )}
                     {gameState.activeTab === 'Manual' ? (
                         // Manual Bet Button
                         <button
                             className="span-bet"
+                            disabled={!isGameInitialized}
                             onClick={async () => {
-                                if (isConnected && isAuthenticated) {
+                                if (isConnected && isAuthenticated && isGameInitialized) {
                                     // Manual bet mode - place single bet
                                     const gameModeMap: Record<string, number> = {
                                         'Low': 0,
@@ -180,7 +190,7 @@ const PlinkoGame: React.FC = () => {
                                         'Lightning': 0 // Default to Low for Lightning
                                     };
                                     const gameMode = gameModeMap[gameState.gameMode] ?? 0;
-                                    const clientSeed = Math.random().toString(36).substring(2, 15);
+                                    const clientSeed = Math.floor(Math.random() * 1000000).toString();
 
                                     logger.info('Placing manual bet', {
                                         betAmount: gameState.betAmount,
@@ -195,9 +205,10 @@ const PlinkoGame: React.FC = () => {
 
                                     // Ball will be spawned with service-determined path when results are received
                                 } else {
-                                    logger.warn('Cannot place bet - not connected to game service', {
+                                    logger.warn('Cannot place bet - game not ready', {
                                         isConnected,
-                                        isAuthenticated
+                                        isAuthenticated,
+                                        isGameInitialized
                                     });
                                 }
                             }}
@@ -221,6 +232,7 @@ const PlinkoGame: React.FC = () => {
                         // Auto Bet Button - moved from AutoBetPanel
                         <button
                             className="span-bet"
+                            disabled={!isGameInitialized}
                             onClick={async () => {
                                 if (isAutoBetRunning) {
                                     logger.info('Stopping auto bet');
