@@ -16,8 +16,10 @@ export const hasBankerPair = (bankerCards: BaccaratResult['banker']): boolean =>
 };
 
 export const hasNatural = (result: BaccaratResult): boolean => {
-    return result.player.score === 8 || result.player.score === 9 ||
-           result.banker.score === 8 || result.banker.score === 9;
+    const playerNatural = (result.player.score === 8 || result.player.score === 9) && !result.player.card3;
+    const bankerNatural = (result.banker.score === 8 || result.banker.score === 9) && !result.banker.card3;
+
+    return playerNatural || bankerNatural;
 };
 
 export const getScoreboardImagePath = (variant: "player" | "banker" | "tie"): string => {

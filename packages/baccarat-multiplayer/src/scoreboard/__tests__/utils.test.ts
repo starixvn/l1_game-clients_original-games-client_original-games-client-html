@@ -308,6 +308,66 @@ describe("Baccarat Utils", () => {
             const natural = hasNatural(result);
             expect(natural).toBe(false);
         });
+
+        it("should return false when player has score 8 but with 3 cards (not natural)", () => {
+            const result: BaccaratResult = {
+                player: {
+                    card1: { suit: 0, rank: 3 },
+                    card2: { suit: 1, rank: 3 },
+                    card3: { suit: 2, rank: 2 },
+                    score: 8,
+                },
+                banker: {
+                    card1: { suit: 2, rank: 5 },
+                    card2: { suit: 3, rank: 2 },
+                    card3: null,
+                    score: 7,
+                },
+            };
+
+            const natural = hasNatural(result);
+            expect(natural).toBe(false);
+        });
+
+        it("should return false when banker has score 9 but with 3 cards (not natural)", () => {
+            const result: BaccaratResult = {
+                player: {
+                    card1: { suit: 0, rank: 5 },
+                    card2: { suit: 1, rank: 2 },
+                    card3: null,
+                    score: 7,
+                },
+                banker: {
+                    card1: { suit: 2, rank: 4 },
+                    card2: { suit: 3, rank: 3 },
+                    card3: { suit: 1, rank: 2 },
+                    score: 9,
+                },
+            };
+
+            const natural = hasNatural(result);
+            expect(natural).toBe(false);
+        });
+
+        it("should return true when player has score 8 with 2 cards (natural) even if banker has score 9 with 3 cards", () => {
+            const result: BaccaratResult = {
+                player: {
+                    card1: { suit: 0, rank: 8 },
+                    card2: { suit: 1, rank: 13 },
+                    card3: null,
+                    score: 8,
+                },
+                banker: {
+                    card1: { suit: 2, rank: 4 },
+                    card2: { suit: 3, rank: 3 },
+                    card3: { suit: 1, rank: 2 },
+                    score: 9,
+                },
+            };
+
+            const natural = hasNatural(result);
+            expect(natural).toBe(true);
+        });
     });
 
     describe("getScoreboardImagePath", () => {
