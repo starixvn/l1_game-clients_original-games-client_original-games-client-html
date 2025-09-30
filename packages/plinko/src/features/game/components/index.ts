@@ -3,9 +3,6 @@
 // Ball components
 export { default as BallLayout } from './ball/BallLayout';
 export type { LayeredCanvasBallLayoutRef } from './ball/BallLayout';
-export { default as Ball } from './ball/Ball';
-export { default as BallRow } from './ball/BallRow';
-export { default as HybridBallLayoutTest } from './ball/HybridBallLayoutTest';
 
 // Display components
 export { default as MultiplierDisplay } from './display/MultiplierDisplay';
