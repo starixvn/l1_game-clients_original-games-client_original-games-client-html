@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/router';
-import { GameHome } from '@shared';
+import { GameHome } from '../../../../shared/src';
 import { logger as plinkoLogger } from '../../services/logger';
 
 // Mock all external dependencies
@@ -108,11 +108,11 @@ jest.mock('@shared/helpers/preload-resources', () => {
     };
 });
 
-jest.mock('../ui/components/controls/LoggerControls', () => {
-    return function MockLoggerControls() {
-        return <div data-testid="logger-controls">Logger Controls</div>;
-    };
-});
+// jest.mock('../../../features/ui/components/controls/LoggerControls', () => {
+//     return function MockLoggerControls() {
+//         return <div data-testid="logger-controls">Logger Controls</div>;
+//     };
+// });
 
 describe('Plinko Integration Flow', () => {
     let mockRouter: any;
