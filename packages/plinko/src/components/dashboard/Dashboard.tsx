@@ -14,7 +14,6 @@ import { LoadingSpinner } from "@shared/components/game-components/game-loading/
 import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 import { BASE_PATH } from '@shared/constants/base-path';
 import { logger as plinkoLogger } from '../../services/logger';
-import LoggerControls from "../../features/ui/components/controls/LoggerControls";
 import PlinkoGame from "../plinko-game/PlinkoGame";
 
 const SoundSettings = dynamic(() => import("@shared/components/page-components/header/setting/settings-popup"), { ssr: false });
@@ -273,8 +272,6 @@ class Dashboard extends Component<DashboardProps, DashboardState> {
                         {renderOfferGameContainer()}
 
                         {<MusicPlayer />}
-
-                        <LoggerControls className="fixed top-4 right-4 z-50" />
                     </div>
                 </BalanceSyncProvider>
             </PlayerContextProvider>

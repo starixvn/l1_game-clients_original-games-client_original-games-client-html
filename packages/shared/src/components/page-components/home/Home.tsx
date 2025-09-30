@@ -1,5 +1,7 @@
 import { memo } from "react";
-import SplashScreen from "@shared/components/page-components/splash-screen";
+import dynamic from "next/dynamic";
+
+const SplashScreen = dynamic(() => import("@shared/components/page-components/splash-screen"), { ssr: false });
 
 const Home = () => {
     // Add any game-specific logic here if needed

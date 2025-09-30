@@ -327,8 +327,8 @@ const SplashScreen: React.FC = () => {
                 })) || []
             });
 
-            // Bypass validation for known games (SeDie: 148, Baccarat: 10) so we can deep-link even if not in lobby/offer
-            const knownGameIds = [148, 150]; // SeDie Multiplayer and Baccarat
+            // Bypass validation for known games (SeDie: 148, Plinko: 145, Baccarat: 150) so we can deep-link even if not in lobby/offer
+            const knownGameIds = [145, 148, 150]; // Plinko, SeDie Multiplayer and Baccarat
             let isGameAvailable = knownGameIds.includes(toLoadGameId);
 
             logger.debug('🎮 [SPLASH] Game availability check', {

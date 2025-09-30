@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { toast } from 'react-toastify';
 import { GameBackground, MultiplierDisplay, BallLayout, CanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
-import { LoggerControls } from "../../features/ui/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { useGameService, logger } from "../../services";
 
@@ -208,16 +207,7 @@ const PlinkoGame: React.FC = () => {
 
     return (
         <div className="main-container">
-            {/* Logger Controls - positioned outside game-info to avoid clipping */}
-            <div style={{
-                position: 'absolute',
-                top: '10px',
-                left: '10px',
-                right: '10px',
-                zIndex: 10000
-            }}>
-                <LoggerControls className="w-full" />
-            </div>
+            {/* Logger Controls - provided by shared GameApp at app level */}
 
             <div className="game-info">
                 <GameBackground />

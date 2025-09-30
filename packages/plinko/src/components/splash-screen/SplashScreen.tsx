@@ -21,7 +21,6 @@ import { logger } from '@shared/services/logger';
 import { logger as plinkoLogger } from '../../services/logger';
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
-import LoggerControls from "../../features/ui/components/controls/LoggerControls";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {
@@ -354,8 +353,6 @@ const SplashScreen: React.FC = () => {
                     </p>
                 </div>
             </div>
-
-            <LoggerControls className="fixed top-4 right-4 z-50" />
 
             {isDoneLoadConfig && currentGameId >= 0 && (
                 <>

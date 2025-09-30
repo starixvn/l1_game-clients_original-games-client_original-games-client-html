@@ -106,7 +106,7 @@ export class GameService {
     private isConnected = false;
     private eventListeners: Map<string, Function[]> = new Map();
 
-    constructor(private serviceUrl = 'http://localhost:5000/user/plinko') { }
+    constructor(private serviceUrl = 'https://l2-proxy1.lumigame.com/plinko') { }
 
     async connect(userSession: UserSession): Promise<void> {
         return new Promise((resolve, reject) => {

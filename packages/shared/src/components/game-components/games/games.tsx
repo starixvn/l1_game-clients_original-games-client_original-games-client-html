@@ -9,7 +9,6 @@ import { getChipSettings } from "@shared/services/user-setting-service";
 import { Props, GameComponentProps } from "./type";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import { useSettingStore } from "@shared/stores";
-import LoggerControls from "@shared/components/game-components/logger-controls/LoggerControls";
 
 const LoadingGameComponent = React.memo(() => (
     <>
@@ -105,7 +104,6 @@ export const Games: React.FC<GamesProps> = ({
     return (
         <>
             {renderGameComponent()}
-            <LoggerControls className="fixed top-4 right-4 z-50" />
         </>
     );
 };

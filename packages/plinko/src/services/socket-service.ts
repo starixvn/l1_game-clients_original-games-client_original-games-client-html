@@ -25,7 +25,8 @@ export class PlinkoSocketService {
 
     public connect(): Socket {
         const { proxy, enableMsgpackParser } = getAppSettings();
-        const socketUri = buildServerUrl(this.socketInfo.namespace);
+        // For plinko, use direct path without /user/ prefix
+        const socketUri = `https://l2-proxy1.lumigame.com/${this.socketInfo.namespace}`;
         const socketOption = {
             forceNew: true,
             transports: ["websocket"],
