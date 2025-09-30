@@ -351,11 +351,35 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 className="span-bet"
                                 onClick={() => {
                                     console.log('🎯 DIRECT SPAWN TEST clicked');
+                                    console.log('📊 Game Configuration:', {
+                                        rows: gameState.rows,
+                                        betAmount: gameState.betAmount,
+                                        multipliers: payoutMultipliers,
+                                        payoutProbabilities: payoutProbabilities
+                                    });
+
                                     if (ballLayoutRef.current) {
                                         console.log('✅ ballLayoutRef exists, calling spawnBallWithPath directly');
+
+                                        // Calculate expected ball size for logging
+                                        const { calculateBallSize } = require('../../lib/physics/ball-calculations');
+                                        const ballRadius = calculateBallSize(gameState.rows);
+                                        const ballDiameter = ballRadius * 2;
+
                                         const testPath = [0, 1, 0, 1, 0, 1, 0, 1]; // 8 steps for 9 rows
                                         const finalSlot = 4;
                                         const multiplier = 2;
+
+                                        console.log('🎯 Ball Spawn Details:', {
+                                            ballRadius: `${ballRadius.toFixed(2)}px`,
+                                            ballDiameter: `${ballDiameter.toFixed(2)}px`,
+                                            testPath: testPath,
+                                            pathLength: testPath.length,
+                                            finalSlot: finalSlot,
+                                            expectedMultiplier: multiplier,
+                                            betValue: 100
+                                        });
+
                                         ballLayoutRef.current.spawnBallWithPath(100, testPath, finalSlot, multiplier);
                                         console.log('✅ Direct spawn call completed');
                                     } else {

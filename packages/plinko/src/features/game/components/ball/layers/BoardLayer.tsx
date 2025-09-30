@@ -25,11 +25,10 @@ export interface BoardLayerProps {
 }
 
 /**
- * Layer 2: Triangular Board Area
- * Renders the triangular game board and pin visualization within the triangular area
- * - Plinko board (triangular background with border)
+ * Layer 2: Pin Visualization
+ * Renders the pin visualization within the triangular area
  * - Pin visualization (white circles representing pegs)
- * - Board borders and outlines
+ * Note: Triangular board area is defined by pin placement and ball clipping
  * Note: Payout slots are rendered in BackgroundLayer (Layer 1)
  */
 const BoardLayer: React.FC<BoardLayerProps> = ({
@@ -122,33 +121,8 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
             });
         }
 
-        // 1. Main Plinko board area - triangular background that wraps the pin matrix
-        ctx.fillStyle = '#1a2332';
-        ctx.strokeStyle = '#4a90e2';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-
-        // Create triangular shape that wraps the pin matrix
-        // Top point: center of the top row
-        const topCenterX = boardX + boardWidth / 2;
-        const topCenterY = boardTopMargin;
-
-        // Bottom left: left edge of bottom row with some padding
-        const bottomLeftX = boardX - padding;
-        const bottomLeftY = maxY + padding;
-
-        // Bottom right: right edge of bottom row with some padding
-        const bottomRightX = boardX + boardWidth + padding;
-        const bottomRightY = maxY + padding;
-
-        ctx.moveTo(topCenterX, topCenterY);
-        ctx.lineTo(bottomLeftX, bottomLeftY);
-        ctx.lineTo(bottomRightX, bottomRightY);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        // 2. Draw pins as small white circles using actual physics body positions
+        // 1. Draw pins as small white circles using actual physics body positions
+        // The triangular board area is defined by pin placement and ball clipping
         pins.forEach(pin => {
             const bounds = pin.bounds;
             const centerX = (bounds.min.x + bounds.max.x) / 2;

@@ -4,7 +4,7 @@ import { BallLayoutProps } from '../../../../../shared/types';
 
 // Ball Path Trail Layer Component
 interface BallPathLayerProps {
-    ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number }>>;
+    ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number, radius?: number }>>;
     width: number;
     height: number;
     boardDimensions: {
@@ -62,6 +62,10 @@ const BallPathLayer: React.FC<BallPathLayerProps> = ({
         ballPaths.forEach((path) => {
             if (path.length < 2) return;
 
+            // Get ball radius from the first path point (should be consistent for each ball)
+            const ballRadius = path[0].radius || 5;
+            const trailWidth = Math.max(1, Math.min(4, ballRadius * 0.3)); // Scale trail width with ball size
+
             // Create gradient for trail effect
             const gradient = ctx.createLinearGradient(
                 path[0].x, path[0].y,
@@ -71,7 +75,7 @@ const BallPathLayer: React.FC<BallPathLayerProps> = ({
             gradient.addColorStop(1, 'rgba(255, 215, 0, 0.1)'); // Gold with low opacity at end
 
             ctx.strokeStyle = gradient;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = trailWidth;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
@@ -277,8 +281,8 @@ interface PhysicsLayerProps extends BallLayoutProps {
         triangleBottomRightX: number;
         triangleBottomRightY: number;
     } | null;
-    ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number }>>;
-    setBallPaths: React.Dispatch<React.SetStateAction<Map<number, Array<{ x: number, y: number, timestamp: number }>>>>;
+    ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number, radius?: number }>>;
+    setBallPaths: React.Dispatch<React.SetStateAction<Map<number, Array<{ x: number, y: number, timestamp: number, radius?: number }>>>>;
     onBallPositionsUpdate?: (ballPositions: Map<number, { x: number, y: number, radius: number, betValue: number }>) => void;
 }
 
@@ -386,13 +390,15 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
                             const path = newPaths.get(ball.id)!;
                             const currentTime = Date.now();
+                            const ballRadius = ball.circleRadius || 5;
 
                             // Only add position if enough time has passed (throttle for performance)
                             if (path.length === 0 || currentTime - path[path.length - 1].timestamp > 16) { // ~60fps
                                 path.push({
                                     x: ball.position.x,
                                     y: ball.position.y,
-                                    timestamp: currentTime
+                                    timestamp: currentTime,
+                                    radius: ballRadius
                                 });
 
                                 // Limit path length to prevent memory issues
@@ -611,8 +617,9 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    zIndex: 3,
-                    overflow: 'hidden'
+                    zIndex: -1, // Behind all visual layers
+                    overflow: 'hidden',
+                    pointerEvents: 'none' // Don't interfere with user interactions
                 }}
             />
         );

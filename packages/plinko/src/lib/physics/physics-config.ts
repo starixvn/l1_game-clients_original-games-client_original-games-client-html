@@ -40,7 +40,7 @@ export const physicsConfig: PhysicsConfig = {
         pinGap: 20
     },
     ball: {
-        ballSize: 5.7
+        ballSize: 8 // Base radius for 10 rows (dynamically scaled for other row counts)
     },
     engine: {
         engineGravity: 1.0
@@ -66,8 +66,8 @@ export const physicsConfig: PhysicsConfig = {
  */
 export const ballSizingConfig = {
     baseRows: 10,           // Reference row count for base sizing
-    baseDiameter: 20,       // Base ball diameter in pixels at baseRows
-    minDiameter: 8,         // Minimum ball diameter to prevent invisibility
-    maxDiameter: 35,        // Maximum ball diameter to prevent overcrowding
+    baseDiameter: 16,       // Base ball diameter in pixels at baseRows (reduced for better proportions)
+    minDiameter: 6,         // Minimum ball diameter to prevent invisibility
+    maxDiameter: 28,        // Maximum ball diameter to prevent overcrowding
     sizeScaleFactor: 0.8    // Additional scaling factor for peg gap consideration
 };

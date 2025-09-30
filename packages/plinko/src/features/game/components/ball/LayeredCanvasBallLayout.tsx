@@ -16,9 +16,9 @@ export interface LayeredCanvasBallLayoutRef {
  *
  * This component implements the layered architecture we defined:
  * - Layer 1: Full Canvas Background (gradient, light effects, decorative elements, payout slots)
- * - Layer 2: Triangular Board Area (board background, borders, pin visualization)
- * - Layer 3: Physics Simulation (clipped to triangular board area)
- * - Layer 4: Ball Rendering (balls using physics position data)
+ * - Layer 2: Pin Visualization (pins within the triangular area)
+ * - Layer 3: Physics Simulation (headless physics engine)
+ * - Layer 4: Ball Rendering (balls using physics position data, clipped to triangular area)
  * - Layer 5: Ball Path Trails (trail effects above balls)
  * - Layer 6: UI Overlays (loading indicators, debug info, hover tooltips)
  */
@@ -45,7 +45,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             triangleBottomRightY: number;
         } | null>(null);
 
-        const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number, y: number, timestamp: number }>>>(new Map());
+        const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number, y: number, timestamp: number, radius?: number }>>>(new Map());
         const [ballPositions, setBallPositions] = useState<Map<number, { x: number, y: number, radius: number, betValue: number }>>(new Map());
 
         // Callback for ball position updates from physics layer
@@ -293,7 +293,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     />
                 )}
 
-                {/* Layer 2: Triangular Board Area */}
+                {/* Layer 2: Pin Visualization */}
                 {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
                     <BoardLayer
                         width={containerSize.width}
