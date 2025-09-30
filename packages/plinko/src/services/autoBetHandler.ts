@@ -34,12 +34,12 @@ export class AutoBetHandler {
     private remainingBets: number;
     private totalNetProfit = 0;
     private currentBalance: number;
-    private placeBetFn: (amount: number, gameMode: number, numberOfRows: number, clientSeed: string) => void;
+    private placeBetFn: (amount: number, gameMode: number, numberOfRows: number) => void;
 
     constructor(
         config: AutoBetConfig,
         initialBalance: number,
-        placeBetFn: (amount: number, gameMode: number, numberOfRows: number, clientSeed: string) => void,
+        placeBetFn: (amount: number, gameMode: number, numberOfRows: number) => void,
         callbacks: AutoBetHandlerCallbacks
     ) {
         this.config = config;
@@ -187,23 +187,20 @@ export class AutoBetHandler {
             return;
         }
 
-        // Generate unique client seed for each bet
-        const clientSeed = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
         console.log(`AutoBetHandler: Placing auto bet ${this.config.numberOfBets - this.remainingBets + 1}/${this.config.numberOfBets}:`, {
             amount: this.currentBetAmount,
             gameMode: this.config.gameMode,
             numberOfRows: this.config.numberOfRows,
             remainingBets: this.remainingBets,
-            clientSeed
+            clientSeed: 'handled-by-pf-system' // clientSeed is now handled by shared PF system
         });
 
         // Notify that bet is being placed
         this.callbacks.onBetPlaced(this.currentBetAmount);
 
-        // Place the bet
+        // Place the bet (clientSeed is handled by shared PF system)
         console.log('AutoBetHandler: Calling placeBetFn');
-        this.placeBetFn(this.currentBetAmount, this.config.gameMode, this.config.numberOfRows, clientSeed);
+        this.placeBetFn(this.currentBetAmount, this.config.gameMode, this.config.numberOfRows);
     }
 
     isActive(): boolean {

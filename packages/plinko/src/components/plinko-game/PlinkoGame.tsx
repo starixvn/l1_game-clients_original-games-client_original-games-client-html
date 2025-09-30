@@ -1,10 +1,13 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from 'react-toastify';
 import { GameBackground, MultiplierDisplay, BallLayout, CanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { AutoBetPanel, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
 import { useBettingStore, useGameStore } from "@shared/stores";
+import { useClientSeedPF } from "@shared/react-hooks";
+import { useGameContext } from "@shared/react-contexts";
+import { messageEventType } from "@shared/components/game-base/handlers";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -49,12 +52,64 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         message?: string;
     }>({ isVisible: false });
     const [isAutoBetRunning, setIsAutoBetRunning] = useState(false);
+    const [localGameInitialized, setLocalGameInitialized] = useState(isGameInitialized);
     const ballLayoutRef = useRef<CanvasBallLayoutRef>(null);
     const autoBetHandlerRef = useRef(null);
 
     // Shared game context and betting store
     const { ownBets } = useBettingStore();
-    const { sendSocketEvent } = useGameStore();
+    const { socket } = useGameStore();
+
+    // Use shared PF system for clientSeed (like sedie-multiplayer)
+    const { clientSeed } = useClientSeedPF();
+    const { gameMessageHandler } = useGameContext();
+
+    // Register Plinko-specific handlers when component mounts
+    useEffect(() => {
+        if (!gameMessageHandler) {
+            logger.warn('gameMessageHandler not available, cannot register handlers');
+            return;
+        }
+
+        logger.info('🎮 [PLINKO GAME] Registering Plinko-specific handlers');
+
+        // Register handler for SIGNED_IN to send inGame message
+        const signedInHandlerId = gameMessageHandler.register(messageEventType.SIGNED_IN, (action) => {
+            logger.info('🎮 [PLINKO GAME] SIGNED_IN received, sending inGame for Plinko', action);
+            if (socket?.connected) {
+                // Plinko service expects inGame without parameters (based on integration tests)
+                socket.emit("inGame");
+                logger.info('Sent inGame event to Plinko service');
+            } else {
+                logger.warn('Socket not connected, cannot send inGame');
+            }
+        });
+
+        // Register handler for gameConfigs response to mark game as initialized
+        const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
+            logger.info('🎮 [PLINKO GAME] Game initialized with configs', action);
+            setLocalGameInitialized(true);
+        });
+
+        // Check if socket is already connected and signed in, send inGame if needed
+        if (socket?.connected) {
+            logger.info('🎮 [PLINKO GAME] Socket already connected, sending inGame');
+            socket.emit("inGame");
+        }
+
+        return () => {
+            // Cleanup handlers when component unmounts
+            if (gameMessageHandler.removeHandler) {
+                gameMessageHandler.removeHandler(signedInHandlerId);
+                gameMessageHandler.removeHandler(gameConfigsHandlerId);
+            }
+        };
+    }, [gameMessageHandler, socket]);
+
+    // Update local state when prop changes
+    useEffect(() => {
+        setLocalGameInitialized(isGameInitialized);
+    }, [isGameInitialized]);
 
     // Default values for plinko multipliers (since shared system doesn't provide these)
     const payoutMultipliers = [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6]; // Default multipliers
@@ -65,13 +120,33 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated
     const isBetting = false; // Plinko manages its own betting state
 
-    // Mock functions for plinko-specific functionality
-    const placeBet = (amount: number, gameMode: number, rows: number, clientSeed: string) => {
-        // Send bet to service directly using socket (like Plinko-9 rows pattern)
-        logger.info('Plinko placeBet called - sending to service', { amount, gameMode, rows, clientSeed });
+    // Use shared PF system for bets (like sedie-multiplayer)
+    const placeBet = (amount: number, gameMode: number, rows: number) => {
+        // Use shared PF system to automatically include clientSeed (like sedie-multiplayer)
+        logger.info('Plinko placeBet called - using shared PF system', {
+            amount,
+            gameMode,
+            rows,
+            clientSeed: clientSeed // From shared PF system
+        });
 
-        // Send bet payload directly to socket (following Plinko-9 rows pattern)
-        sendSocketEvent('bet', { amount, gameMode, numberOfRows: rows, clientSeed });
+        if (!gameMessageHandler) {
+            logger.error('gameMessageHandler not available for sending bet');
+            return;
+        }
+
+        // Send message that PF system will intercept and add clientSeed
+        gameMessageHandler.broadcastGameEvent({
+            SEND_SOCKET_MESSAGE_WITH_CLIENT_SEED: {
+                event: "bet",
+                data: {
+                    amount,
+                    gameMode,
+                    numberOfRows: rows,
+                    __pfMode: "clientSeedOnly"
+                },
+            },
+        });
     };
     const clearBetResult = () => {
         // Plinko handles clearing results internally
@@ -170,7 +245,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 </div>
 
                 <div id="button-bet" className="button-bet">
-                    {!isGameInitialized && (
+                    {!localGameInitialized && (
                         <div className="game-initializing">
                             Initializing game...
                         </div>
@@ -179,9 +254,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         // Manual Bet Button
                         <button
                             className="span-bet"
-                            disabled={!isGameInitialized}
+                            disabled={!localGameInitialized || !isConnected || !isAuthenticated || isBetting}
                             onClick={async () => {
-                                if (isConnected && isAuthenticated && isGameInitialized) {
+                                if (isConnected && isAuthenticated && localGameInitialized) {
                                     // Manual bet mode - place single bet
                                     const gameModeMap: Record<string, number> = {
                                         'Low': 0,
@@ -190,18 +265,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                         'Lightning': 0 // Default to Low for Lightning
                                     };
                                     const gameMode = gameModeMap[gameState.gameMode] ?? 0;
-                                    const clientSeed = Math.floor(Math.random() * 1000000).toString();
 
                                     logger.info('Placing manual bet', {
                                         betAmount: gameState.betAmount,
                                         gameMode: gameState.gameMode,
                                         gameModeIndex: gameMode,
                                         rows: gameState.rows,
-                                        clientSeed,
+                                        clientSeed: clientSeed, // From shared PF system
                                         balance: gameState.balance
                                     });
 
-                                    placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
+                                    placeBet(gameState.betAmount, gameMode, gameState.rows);
 
                                     // Ball will be spawned with service-determined path when results are received
                                 } else {
@@ -221,7 +295,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 cursor: 'pointer',
                                 padding: 0
                             }}
-                            disabled={!isConnected || !isAuthenticated || isBetting}
                         >
                             BET (${gameState.betAmount})
                             {!isConnected && ' (Connecting...)'}
@@ -232,7 +305,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         // Auto Bet Button - moved from AutoBetPanel
                         <button
                             className="span-bet"
-                            disabled={!isGameInitialized}
+                            disabled={!localGameInitialized || !isConnected || !isAuthenticated}
                             onClick={async () => {
                                 if (isAutoBetRunning) {
                                     logger.info('Stopping auto bet');
@@ -333,7 +406,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 cursor: 'pointer',
                                 padding: 0
                             }}
-                            disabled={false} // Allow stopping anytime
                         >
                             {isAutoBetRunning ? 'STOP AUTO BET' : 'START AUTO BET'}
                         </button>

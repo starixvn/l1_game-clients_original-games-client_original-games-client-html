@@ -21,32 +21,10 @@ const Menu = dynamic(() => import("@shared/components/game-components/menu/menu"
 const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
-    private readonly plinkoGameMessageHandler: GameMessageHandler;
-    private isGameInitialized = false;
 
     constructor(props: GameBaseProps) {
-        // Create Plinko-specific game message handler
+        // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
-
-        // Register Plinko-specific handlers
-        gameMessageHandler.register(messageEventType.SIGNED_IN, (action) => {
-            if (action?.[messageEventType.SIGNED_IN]) {
-                const { socket } = require("@shared/stores").useGameStore.getState();
-                if (socket?.connected) {
-                    logger.info('Sending inGame event to plinko service');
-                    socket.emit("inGame"); // Send inGame without parameters as expected by plinko service
-                }
-            }
-        });
-
-        // Register handler for inGame response to mark game as initialized
-        gameMessageHandler.register("inGameResponse", (action) => {
-            if (action?.gameConfigs) {
-                logger.info('🎮 [PLINKO GAME BASE] Game initialized with configs', action.gameConfigs);
-                this.isGameInitialized = true;
-            }
-        });
-
         const gameBaseHandlers: GameBaseHandlers = {
             roundStateHandler: new PlinkoStateHandler(),
             gameMessageHandler: gameMessageHandler,
@@ -55,25 +33,19 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         };
         super(props, gameBaseHandlers);
 
-        this.plinkoGameMessageHandler = gameMessageHandler;
-
         logger.info('🏠 [PLINKO GAME BASE] PlinkoGameBase initialized', {
             gameId: props.id,
             timestamp: new Date().toISOString()
         });
     }
 
+
     componentDidMount() {
         super.componentDidMount();
         logger.info('🚀 [PLINKO GAME BASE] Component mounted');
 
-        // Wait for game initialization (inGame response with gameConfigs)
-        // This simulates waiting for the service to respond with game configs
-        setTimeout(() => {
-            logger.info('🎮 [PLINKO GAME BASE] Game initialized after delay');
-            this.isGameInitialized = true;
-            this.forceUpdate(); // Re-render to update PlinkoGame with new prop
-        }, 2000); // 2 second delay to allow inGame response
+        // Game initialization will be handled by the gameConfigs message handler
+        // No need for setTimeout since we properly wait for the service response
     }
 
     renderGameFrame(): JSX.Element {
@@ -86,7 +58,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
                 {/* Plinko specific game content */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4">
-                    <PlinkoGame isGameInitialized={this.isGameInitialized} />
+                        <PlinkoGame />
                 </div>
 
                 {this.renderNotice()}
