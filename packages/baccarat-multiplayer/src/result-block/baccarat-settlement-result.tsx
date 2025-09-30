@@ -38,7 +38,6 @@ const renderCardDisplay = (
     result: BaccaratResult | undefined,
     isShowResult: boolean,
     isAnimationResult: boolean,
-    isFinishShowResult: boolean,
     isHideAllCards: boolean,
     roundState: RoundState,
     animationState: AnimationState,
@@ -54,7 +53,6 @@ const renderCardDisplay = (
                 result={DEFAULT_RESULT}
                 isShowResult={false}  // Show back cards
                 language="en"
-                isFinishShowResult={false}
                 isHideAllCards={false}
                 isGetResult={true}
             />
@@ -69,7 +67,6 @@ const renderCardDisplay = (
                 result={DEFAULT_RESULT}
                 isShowResult={false}
                 language="en"
-                isFinishShowResult={false}
                 isHideAllCards={false}
                 isGetResult={false}
             />
@@ -83,7 +80,6 @@ const renderCardDisplay = (
             result={result}
             isShowResult={isShowResult}
             language="en"
-            isFinishShowResult={isFinishShowResult}
             isHideAllCards={isHideAllCards}
             isGetResult={isUsingRoundHistoryData}
         />
@@ -232,7 +228,7 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
             }
             <div className="flex justify-center w-full h-full">
                 <div className="w-full">
-                    {renderCardDisplay(result, showCards, animationState === "open", true, !showCards, roundState, animationState, isUsingRoundHistoryData)}
+                    {renderCardDisplay(result, showCards, animationState === "open", !showCards, roundState, animationState, isUsingRoundHistoryData)}
                 </div>
             </div>
         </div>
