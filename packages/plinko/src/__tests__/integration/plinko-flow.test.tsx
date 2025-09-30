@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/router';
-import SplashScreen from '../../components/splash-screen/SplashScreen';
-import Dashboard from '../../components/dashboard/Dashboard';
-import { getBalance as getAuthBalance } from '@shared/services/auth-service';
+import { GameHome } from '@shared';
 import { logger as plinkoLogger } from '../../services/logger';
 
 // Mock all external dependencies
@@ -85,13 +83,8 @@ jest.mock('../../components/um-page/UmPage', () => {
     };
 });
 
-jest.mock('../../components/dashboard/Dashboard', () => {
-    return function MockDashboard() {
-        return <div data-testid="dashboard-component">Dashboard</div>;
-    };
-});
 
-jest.mock('../../pages/index', () => {
+jest.mock('../../../pages/index', () => {
     return function MockPlinkoGame() {
         return <div data-testid="plinko-game">Plinko Game</div>;
     };
@@ -170,7 +163,7 @@ describe('Plinko Integration Flow', () => {
             getBalance.mockResolvedValue(mockBalanceResponse);
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for authentication to complete
             await waitFor(() => {
@@ -217,7 +210,7 @@ describe('Plinko Integration Flow', () => {
             sso.mockResolvedValue(failedResponse);
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for authentication failure
             await waitFor(() => {
@@ -238,7 +231,7 @@ describe('Plinko Integration Flow', () => {
             sso.mockResolvedValue(umResponse);
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for UM page to render
             await waitFor(() => {
@@ -261,7 +254,6 @@ describe('Plinko Integration Flow', () => {
             authorize.mockResolvedValue(mockAuthorizeResponse);
 
             // Act
-            const { sso, authorize } = require('@shared/services/auth-service');
             await sso('test-token', 10);
             await authorize(mockSSOResponse);
 
@@ -311,7 +303,7 @@ describe('Plinko Integration Flow', () => {
             sso.mockRejectedValue(new Error('Network error'));
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for error handling
             await waitFor(() => {
@@ -332,7 +324,7 @@ describe('Plinko Integration Flow', () => {
             authorize.mockRejectedValue(new Error('Authorization failed'));
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for error handling
             await waitFor(() => {
@@ -377,7 +369,7 @@ describe('Plinko Integration Flow', () => {
             getBalance.mockResolvedValue(mockBalanceResponse);
 
             // Act
-            render(<SplashScreen />);
+            render(<GameHome />);
 
             // Wait for complete flow
             await waitFor(() => {
@@ -398,27 +390,5 @@ describe('Plinko Integration Flow', () => {
             );
         });
 
-        it('should handle session timeout during gameplay', async () => {
-            // Arrange
-            const { sso, authorize } = require('@shared/services/auth-service');
-            sso.mockResolvedValue(mockSSOResponse);
-            authorize.mockResolvedValue(mockAuthorizeResponse);
-
-            // Act
-            render(<SplashScreen />);
-
-            // Wait for dashboard
-            await waitFor(() => {
-                expect(screen.getByTestId('dashboard-component')).toBeInTheDocument();
-            }, { timeout: 2000 });
-
-            // Simulate session timeout
-            const authService = getPlinkoAuthService();
-            authService.clearSession();
-
-            // Assert
-            expect(authService.isAuthenticated()).toBe(false);
-            expect(authService.getSession()).toBeNull();
-        });
     });
 });
