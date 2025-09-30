@@ -110,4 +110,5 @@ export const Winner = {
     PLAYER: "player",
     BANKER: "banker",
     TIE: "tie",
+    ANY_PAIR: "anyPair",
 } as const;

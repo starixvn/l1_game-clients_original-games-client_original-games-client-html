@@ -1,3 +1,12 @@
+%highlight-option {
+    --animation-duration: 2s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
 .prev-highlight {
     position: absolute;
     inset: 0;
@@ -15,4 +24,54 @@
 .highlight-border {
     stroke-width: 1.8;
     background: linear-gradient(180deg, rgba(255, 217, 5, 0.6) 0%, #ffffff 50%, #ffea00 100%);
+}
+
+.highlight {
+    @extend %highlight-option;
+    width: 203px;
+    height: 190px;
+
+    @media (width >= 48rem) {
+        width: 220px;
+    }
+
+    &.player {
+        width: 203px;
+        height: 190px;
+        @media (width >= 48rem) {
+            width: 220px;
+        }
+        // transform: translateY(20px);
+        // transform: translateX(-10px);
+        margin-top: -10px;
+        margin-left: -10.5px;
+    }
+
+    &.banker {
+        width: 203px;
+        height: 190px;
+        @media (width >= 48rem) {
+            width: 220px;
+        }
+        // transform: translateY(20px);
+        // transform: translateX(-10px);
+        margin-top: -10px;
+        margin-left: -10.5px;
+    }
+
+    &.tie {
+        width: 106px;
+        height: 76px;
+        @media (width >= 48rem) {
+            width: 106px;
+        }
+    }
+
+    &.anyPair {
+        width: 105px;
+        height: 73px;
+        @media (width >= 48rem) {
+            width: 105px;
+        }
+    }
 }
