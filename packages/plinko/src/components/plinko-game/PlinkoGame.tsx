@@ -63,8 +63,10 @@ const PlinkoGame: React.FC = () => {
 
     // Mock functions for plinko-specific functionality
     const placeBet = (amount: number, gameMode: number, rows: number, clientSeed: string) => {
-        // Send bet to service using shared socket
+        // Send bet to service directly using socket (like Plinko-9 rows pattern)
         logger.info('Plinko placeBet called - sending to service', { amount, gameMode, rows, clientSeed });
+
+        // Send bet payload directly to socket (following Plinko-9 rows pattern)
         sendSocketEvent('bet', { amount, gameMode, numberOfRows: rows, clientSeed });
     };
     const clearBetResult = () => {

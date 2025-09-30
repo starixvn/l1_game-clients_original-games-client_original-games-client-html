@@ -5,23 +5,36 @@ import React from "react";
 import { GameStateProvider, useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from "@shared/react-hooks";
 import { InitSocketIO } from "@shared/helpers";
-import { GameMessageHandler } from "@shared/components/game-base/handlers";
+import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
 import PlinkoGame from "./components/plinko-game/PlinkoGame";
 import { logger } from "./services/logger";
 
 class PlinkoGameComponent extends React.Component<any, any> {
     componentDidMount() {
         // Initialize socket connection using shared InitSocketIO
-        const gameMessageHandler = new GameMessageHandler(() => { }); // Simple dispatch for plinko
+        const gameMessageHandler = new GameMessageHandler((action) => {
+            // Handle signed in event to send inGame without parameters (plinko service requirement)
+            if (action?.[messageEventType.SIGNED_IN]) {
+                const { socket } = require("@shared/stores").useGameStore.getState();
+                if (socket?.connected) {
+                    logger.info('Sending inGame event to plinko service');
+                    socket.emit("inGame"); // Send inGame without parameters as expected by plinko service
+                }
+            }
+        });
+
         const socketInfo = {
             namespace: 'plinko',
             path: 'plinko'
         };
 
-        // Use session from props or create a default one
+        // Use session from props or create a default one that matches integration test format
         const session = this.props.session || {
+            session: 'plinko-user-session-id',
+            ss: 'plinko-user-session-id',
+            currency: '$US',
             username: 'plinko-user',
-            ss: 'default-session'
+            browserUserAgent: 'browser-user-agent'
         };
 
         logger.info('Initializing Plinko socket connection', { socketInfo, session });
