@@ -3,6 +3,7 @@ import { BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import styles from "./scoreboard-elements.module.scss";
 import { BigRoadRound } from "@shared/components/game-components/round-history/scoreboard/elements";
 import { isBankerWin, getTieCount } from "./utils";
+import dotStyles from '@shared/components/game-components/round-history/dot/dot.module.scss';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -62,7 +63,7 @@ const getWinnerImage = (round: BigRoadRound<BaccaratSettlementResult>) =>
 
 const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) => {
     if (isBlink) {
-        return <span className={styles.blink}></span>;
+        return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
     }
     if (isEmpty) {
         return <div className={styles["dot-empty"]}></div>;

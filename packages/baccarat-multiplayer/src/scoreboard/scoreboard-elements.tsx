@@ -8,19 +8,19 @@ import {
 } from "@shared/components/game-components/round-history/scoreboard/elements";
 import { registerBigRoadElement } from '@shared/helpers/scoreboard-registry';
 import { withTranslator } from "@shared/components/page-components/translator";
-import styles from "./scoreboard-elements.module.scss";
 import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions } from "../baccarat-multiplayer-constants";
 import { GAME_ID } from '../game-config';
 import BeadBoardIcon from "./beadboard-icon";
 import BigRoadIcon from "./big-road-icon";
 import { hasPlayerPair, hasBankerPair } from "./utils";
+import dotStyles from '@shared/components/game-components/round-history/dot/dot.module.scss';
 
 export class BaccaratBeadRoadCharacterElement extends BeadRoadElement<Round<BaccaratResult, BaccaratSettlementResult>> {
 
     renderElement(round: Round<BaccaratResult, BaccaratSettlementResult>, t?: (key: string) => string): ReactNode {
 
         if (!round.settlementResult) {
-            return <span className={`${styles.blink}`}></span>;
+            return <span className={`${dotStyles["dot-next"]} ${dotStyles["blink"]}`}></span>;
         }
 
         const character = (betChoice: string) => (
