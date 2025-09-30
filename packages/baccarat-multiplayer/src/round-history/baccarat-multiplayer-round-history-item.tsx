@@ -1,16 +1,17 @@
-import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
-import { hasPlayerPair, hasBankerPair, getWinnerFromSettlement, getScoreboardImagePath } from "../scoreboard/utils";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslator } from "@shared/react-hooks/use-translator";
+import { BaccaratResult, BaccaratSettlementResult, BaccaratWinner } from "../baccarat-multiplayer-constants";
+import { hasPlayerPair, hasBankerPair, getWinnerFromSettlement, getScoreboardImagePath, getDisplayTextKey } from "../scoreboard/utils";
 import Image from "next/image";
 
-const PlayerPairDot = () => (
-    <div className="absolute w-[7px] h-[7px] bg-[#538AFF] rounded-full -bottom-[1px] -right-[1px] z-[1]" />
+const Dot = ({ color, position }: { color: string; position: string }) => (
+    <div className={`absolute w-[7px] h-[7px] rounded-full z-[1] ${color} ${position}`} />
 );
 
-const BankerPairDot = () => (
-    <div className="absolute w-[7px] h-[7px] bg-[#FF2655] rounded-full -top-[1px] -left-[1px] z-[1]" />
-);
+const PlayerPairDot = () => <Dot color="bg-[#538AFF]" position="-bottom-[1px] -right-[1px]" />;
+const BankerPairDot = () => <Dot color="bg-[#FF2655]" position="-top-[1px] -left-[1px]" />;
 
-type Props = {
+type BaccaratRoundHistoryProps = {
     result: {
         result: BaccaratResult;
         settlementResult: BaccaratSettlementResult;
@@ -19,42 +20,45 @@ type Props = {
     index: number;
 };
 
-export const BaccaratMultiplayerRoundHistoryItem = ({ result }: Props) => {
-    if (!result?.settlementResult) {
-        return null;
-    }
-
-    const { settlementResult } = result;
-
-    const renderItem = () => {
-        const winnerResult = getWinnerFromSettlement(settlementResult);
-        if (!winnerResult.hasWinner) { return null; }
-
-        const playerPair = result.result ? hasPlayerPair(result.result.player) : false;
-        const bankerPair = result.result ? hasBankerPair(result.result.banker) : false;
-
-        return <RoundHistoryItem variant={winnerResult.winner} playerPair={playerPair} bankerPair={bankerPair} />;
-    };
-
-    return <div className="w-[18px] h-[18px] inline-flex items-center justify-center" key={result.roundId}>{renderItem()}</div>;
-};
-
 type RoundHistoryItemProps = {
-    variant: "player" | "banker" | "tie";
+    variant: BaccaratWinner;
     playerPair: boolean;
     bankerPair: boolean;
 };
 
-const RoundHistoryItem = ({ variant, playerPair, bankerPair }: RoundHistoryItemProps) => {
+export const BaccaratMultiplayerRoundHistoryItem = ({ result }: BaccaratRoundHistoryProps) => {
+    if (!result?.settlementResult) {
+        return null;
+    }
+
+    const winnerInfo = getWinnerFromSettlement(result.settlementResult);
+    if (!winnerInfo.hasWinner) {
+        return null;
+    }
+
+    const playerPair = hasPlayerPair(result.result?.player);
+    const bankerPair = hasBankerPair(result.result?.banker);
+
     return (
-        <div className="relative w-4 h-4">
-            <Image
-                src={getScoreboardImagePath(variant)}
-                alt={variant}
-                width={16}
-                height={16}
-                className="w-4 h-4"
-            />
+        <div key={result.roundId} className="w-[18px] h-[18px] inline-flex items-center justify-center">
+            <RoundHistoryItem variant={winnerInfo.winner} playerPair={playerPair} bankerPair={bankerPair} />
+        </div>
+    );
+};
+
+const RoundHistoryItem = ({ variant, playerPair, bankerPair }: RoundHistoryItemProps) => {
+    const { t } = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
+
+    const displayText = t(getDisplayTextKey(variant));
+
+    return (
+        <div className="relative w-[18px] h-[18px] flex items-center justify-center">
+            <Image src={getScoreboardImagePath(variant)} alt={variant} width={18} height={18} className="w-[18px] h-[18px]" />
+
+            <span className="absolute inset-0 flex items-center justify-center text-white text-center text-[11px] font-semibold tracking-[0.44px] capitalize z-[1]">
+                {displayText}
+            </span>
+
             {playerPair && <PlayerPairDot />}
             {bankerPair && <BankerPairDot />}
         </div>

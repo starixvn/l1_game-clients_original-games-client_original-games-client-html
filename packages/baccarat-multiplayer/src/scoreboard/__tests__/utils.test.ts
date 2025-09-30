@@ -7,9 +7,13 @@ import {
     isBankerWin,
     getTieCount,
     calculateBaccaratBetCounts,
+    getActualWinner,
+    getCombinedTieData,
+    hasTies,
+    getDisplayTextKey,
 } from "../utils";
 import { Round } from "@shared/components/game-base/type";
-import { BaccaratResult, BaccaratSettlementResult } from "../../baccarat-multiplayer-constants";
+import { BaccaratResult, BaccaratSettlementResult, Winner } from "../../baccarat-multiplayer-constants";
 
 describe("Baccarat Utils", () => {
     describe("hasPlayerPair", () => {
@@ -383,17 +387,17 @@ describe("Baccarat Utils", () => {
         });
 
         it("should return player image path", () => {
-            const result = getScoreboardImagePath("player");
+            const result = getScoreboardImagePath(Winner.PLAYER);
             expect(result).toBe("/static/images/baccarat/scoreboard/bead-road/player.svg");
         });
 
         it("should return banker image path", () => {
-            const result = getScoreboardImagePath("banker");
+            const result = getScoreboardImagePath(Winner.BANKER);
             expect(result).toBe("/static/images/baccarat/scoreboard/bead-road/banker.svg");
         });
 
         it("should return tie image path", () => {
-            const result = getScoreboardImagePath("tie");
+            const result = getScoreboardImagePath(Winner.TIE);
             expect(result).toBe("/static/images/baccarat/scoreboard/bead-road/tie.svg");
         });
 
@@ -404,7 +408,7 @@ describe("Baccarat Utils", () => {
 
         it("should prepend base path when NEXT_PUBLIC_BASE_PATH is set", () => {
             process.env.NEXT_PUBLIC_BASE_PATH = "/game";
-            const result = getScoreboardImagePath("player");
+            const result = getScoreboardImagePath(Winner.PLAYER);
             expect(result).toBe("/game/static/images/baccarat/scoreboard/bead-road/player.svg");
         });
     });
@@ -693,6 +697,152 @@ describe("Baccarat Utils", () => {
                 playerPair: 0,
                 bankerPair: 0,
             });
+        });
+    });
+
+    describe("getActualWinner", () => {
+        it("should return player when first result has player win", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: true, banker: false, tie: false, anyPair: false },
+                { player: false, banker: true, tie: false, anyPair: false },
+            ];
+
+            const result = getActualWinner(data);
+            expect(result).toBe(Winner.PLAYER);
+        });
+
+        it("should return banker when first result has banker win", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: false, banker: true, tie: false, anyPair: false },
+                { player: true, banker: false, tie: false, anyPair: false },
+            ];
+
+            const result = getActualWinner(data);
+            expect(result).toBe(Winner.BANKER);
+        });
+
+        it("should return null when no winner found", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: false, banker: false, tie: true, anyPair: false },
+                { player: false, banker: false, tie: true, anyPair: false },
+            ];
+
+            const result = getActualWinner(data);
+            expect(result).toBeNull();
+        });
+
+        it("should return null for empty array", () => {
+            const data: BaccaratSettlementResult[] = [];
+
+            const result = getActualWinner(data);
+            expect(result).toBeNull();
+        });
+    });
+
+    describe("getCombinedTieData", () => {
+        it("should combine data from multiple tie rounds", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: false, banker: false, tie: true, natural: false, playerPair: true, bankerPair: false, anyPair: false },
+                { player: false, banker: false, tie: true, natural: true, playerPair: false, bankerPair: false, anyPair: false },
+                { player: false, banker: false, tie: true, natural: false, playerPair: false, bankerPair: true, anyPair: false },
+            ];
+
+            const result = getCombinedTieData(data);
+            expect(result).toEqual({
+                natural: true,
+                playerPair: true,
+                bankerPair: true,
+            });
+        });
+
+        it("should return null when no tie rounds", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: true, banker: false, tie: false, natural: false, playerPair: false, bankerPair: false, anyPair: false },
+            ];
+
+            const result = getCombinedTieData(data);
+            expect(result).toBeNull();
+        });
+
+        it("should handle empty array", () => {
+            const data: BaccaratSettlementResult[] = [];
+
+            const result = getCombinedTieData(data);
+            expect(result).toBeNull();
+        });
+
+        it("should return false for all properties when no tie data has special flags", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: false, banker: false, tie: true, natural: false, playerPair: false, bankerPair: false, anyPair: false },
+            ];
+
+            const result = getCombinedTieData(data);
+            expect(result).toEqual({
+                natural: false,
+                playerPair: false,
+                bankerPair: false,
+            });
+        });
+    });
+
+    describe("hasTies", () => {
+        it("should return true when data contains tie rounds", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: true, banker: false, tie: false, anyPair: false },
+                { player: false, banker: false, tie: true, anyPair: false },
+            ];
+
+            const result = hasTies(data);
+            expect(result).toBe(true);
+        });
+
+        it("should return false when data contains no tie rounds", () => {
+            const data: BaccaratSettlementResult[] = [
+                { player: true, banker: false, tie: false, anyPair: false },
+                { player: false, banker: true, tie: false, anyPair: false },
+            ];
+
+            const result = hasTies(data);
+            expect(result).toBe(false);
+        });
+
+        it("should return false for empty array", () => {
+            const data: BaccaratSettlementResult[] = [];
+
+            const result = hasTies(data);
+            expect(result).toBe(false);
+        });
+    });
+
+    describe("getDisplayTextKey", () => {
+        it("should return short_player for PLAYER", () => {
+            const result = getDisplayTextKey(Winner.PLAYER);
+            expect(result).toBe("short_player");
+        });
+
+        it("should return short_banker for BANKER", () => {
+            const result = getDisplayTextKey(Winner.BANKER);
+            expect(result).toBe("short_banker");
+        });
+
+        it("should return short_tie for TIE", () => {
+            const result = getDisplayTextKey(Winner.TIE);
+            expect(result).toBe("short_tie");
+        });
+
+        it("should return empty string for playerPair", () => {
+            const result = getDisplayTextKey("playerPair");
+            expect(result).toBe("");
+        });
+
+        it("should return empty string for bankerPair", () => {
+            const result = getDisplayTextKey("bankerPair");
+            expect(result).toBe("");
+        });
+
+        it("should return empty string for invalid variant", () => {
+            const result = getDisplayTextKey("invalid" as any);
+            expect(result).toBe("");
         });
     });
 });

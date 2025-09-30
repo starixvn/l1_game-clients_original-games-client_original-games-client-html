@@ -1,8 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import { Round } from "@shared/components/game-base/type";
-import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions } from "../baccarat-multiplayer-constants";
-import { calculateBaccaratBetCounts, BaccaratBetCounts } from "../scoreboard/utils";
+import { BaccaratResult, BaccaratSettlementResult, BaccaratBetOptions, BaccaratWinner, Winner } from "../baccarat-multiplayer-constants";
+import { calculateBaccaratBetCounts, BaccaratBetCounts, getScoreboardImagePath, getDisplayTextKey } from "../scoreboard/utils";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslator } from "@shared/react-hooks/use-translator";
 
 interface BetCountItemProps {
     choice: string;
@@ -18,31 +20,66 @@ interface BaccaratBetCountsProps {
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-// Component for individual bet count item
+type BetCountVariant = BaccaratWinner | "playerPair" | "bankerPair";
+
 const BetCountItem: React.FC<BetCountItemProps> = ({ choice, count }) => {
-    const getChoiceIcon = (choice: string) => {
+    const { t } = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
+
+    const getChoiceVariant = (choice: string): BetCountVariant | null => {
         switch (choice) {
             case BaccaratBetOptions.PLAYER:
-                return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
+                return Winner.PLAYER;
             case BaccaratBetOptions.BANKER:
-                return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
+                return Winner.BANKER;
             case BaccaratBetOptions.TIE:
-                return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
+                return Winner.TIE;
+            case "playerPair":
+                return "playerPair";
+            case "bankerPair":
+                return "bankerPair";
+            default:
+                return null;
+        }
+    };
+
+    const getIconSrc = (variant: BetCountVariant): string => {
+        switch (variant) {
             case "playerPair":
                 return `${basePath}/static/images/baccarat/scoreboard/bead-road/player-pair.svg`;
             case "bankerPair":
                 return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker-pair.svg`;
             default:
-                return "";
+                return getScoreboardImagePath(variant);
         }
     };
 
-    const iconSrc = getChoiceIcon(choice);
+    const getDisplayText = (variant: BetCountVariant): string => {
+        const key = getDisplayTextKey(variant);
+        return key ? t(key) : "";
+    };
+
+    const variant = getChoiceVariant(choice);
+
+    if (!variant) {
+        return null;
+    }
+
+    const iconSrc = getIconSrc(variant);
+    const displayText = getDisplayText(variant);
 
     return (
         <div className="flex items-center gap-1 pr-3 rounded transition-all duration-200">
-            <div className="flex items-center justify-center w-4 h-4">
-                {iconSrc && <Image src={iconSrc} alt={choice} width={16} height={16} className="w-4 h-4" />}
+            <div className="relative flex items-center justify-center w-4 h-4">
+                {iconSrc && (
+                    <>
+                        <Image src={iconSrc} alt={choice} width={16} height={16} className="w-4 h-4" />
+                        {displayText && (
+                            <span className="absolute inset-0 flex items-center justify-center text-white text-center text-[11px] font-semibold z-[1]">
+                                {displayText}
+                            </span>
+                        )}
+                    </>
+                )}
             </div>
             <div className="text-sm font-normal text-white min-w-[18px] text-left">{count}</div>
         </div>

@@ -71,7 +71,6 @@ export class BaccaratBigRoadConverter extends Converter<BaccaratSettlementResult
     }
 }
 
-
 export class BaccaratBigRoadElement extends BigRoadElement<BaccaratSettlementResult> {
     renderElement(round: BigRoadRound<BaccaratSettlementResult>): ReactNode {
         const isBlink = round.data.some((result) => result.player === undefined || result.banker === undefined);

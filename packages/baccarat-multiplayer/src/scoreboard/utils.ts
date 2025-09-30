@@ -1,5 +1,5 @@
 import { Round } from '@shared/components/game-base/type';
-import { BaccaratResult, BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
+import { BaccaratResult, BaccaratSettlementResult, BaccaratWinner, Winner } from "../baccarat-multiplayer-constants";
 
 export const hasPlayerPair = (playerCards: BaccaratResult['player']): boolean => {
     const cards = [playerCards.card1, playerCards.card2, playerCards.card3].filter(Boolean);
@@ -22,14 +22,14 @@ export const hasNatural = (result: BaccaratResult): boolean => {
     return playerNatural || bankerNatural;
 };
 
-export const getScoreboardImagePath = (variant: "player" | "banker" | "tie"): string => {
+export const getScoreboardImagePath = (variant: BaccaratWinner): string => {
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
     switch (variant) {
-        case "player":
+        case Winner.PLAYER:
             return `${basePath}/static/images/baccarat/scoreboard/bead-road/player.svg`;
-        case "banker":
+        case Winner.BANKER:
             return `${basePath}/static/images/baccarat/scoreboard/bead-road/banker.svg`;
-        case "tie":
+        case Winner.TIE:
             return `${basePath}/static/images/baccarat/scoreboard/bead-road/tie.svg`;
         default:
             return "";
@@ -61,6 +61,38 @@ export const getTieCount = (data: BaccaratSettlementResult[]): number => {
         return 0;
     }
     return firstResult.tie ? data.length : data.length - 1;
+};
+
+export const getActualWinner = (data: BaccaratSettlementResult[]): BaccaratWinner | null => {
+    const winnerResult = data.find(result => result.player || result.banker);
+    if (winnerResult?.player) {
+        return Winner.PLAYER;
+    }
+    if (winnerResult?.banker) {
+        return Winner.BANKER;
+    }
+    return null;
+};
+
+export const getCombinedTieData = (data: BaccaratSettlementResult[]): { natural: boolean; playerPair: boolean; bankerPair: boolean } | null => {
+    const tieRounds = data.filter(result => result.tie);
+
+    if (tieRounds.length === 0) {
+        return null;
+    }
+
+    return tieRounds.reduce(
+        (acc, round) => ({
+            natural: acc.natural || !!round.natural,
+            playerPair: acc.playerPair || !!round.playerPair,
+            bankerPair: acc.bankerPair || !!round.bankerPair,
+        }),
+        { natural: false, playerPair: false, bankerPair: false }
+    );
+};
+
+export const hasTies = (data: BaccaratSettlementResult[]): boolean => {
+    return data.some(result => result.tie);
 };
 
 
@@ -98,4 +130,20 @@ export const calculateBaccaratBetCounts = (roundHistory: Round<BaccaratResult, B
             bankerPair: counts.bankerPair + (hasBankerPairDetected ? 1 : 0),
         };
     }, initialCounts);
+};
+
+export const getDisplayTextKey = (variant: BaccaratWinner | "playerPair" | "bankerPair"): string => {
+    switch (variant) {
+        case Winner.PLAYER:
+            return "short_player";
+        case Winner.BANKER:
+            return "short_banker";
+        case Winner.TIE:
+            return "short_tie";
+        case "playerPair":
+        case "bankerPair":
+            return "";
+        default:
+            return "";
+    }
 };

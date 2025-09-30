@@ -2,7 +2,7 @@ import Image from "next/image";
 import { BaccaratSettlementResult } from "../baccarat-multiplayer-constants";
 import styles from "./scoreboard-elements.module.scss";
 import { BigRoadRound } from "@shared/components/game-components/round-history/scoreboard/elements";
-import { isBankerWin, getTieCount } from "./utils";
+import { getTieCount, getActualWinner, getCombinedTieData, hasTies } from "./utils";
 import dotStyles from '@shared/components/game-components/round-history/dot/dot.module.scss';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -58,8 +58,10 @@ export interface BigRoadIconProps {
 
 const getEnrichedData = (data: BaccaratSettlementResult[]): BaccaratSettlementResult | null => data?.[0] || null;
 
-const getWinnerImage = (round: BigRoadRound<BaccaratSettlementResult>) =>
-    isBankerWin(round.data) ? SCOREBOARD_IMAGES.banker : SCOREBOARD_IMAGES.player;
+const getWinnerImage = (round: BigRoadRound<BaccaratSettlementResult>) => {
+    const actualWinner = getActualWinner(round.data);
+    return actualWinner === 'banker' ? SCOREBOARD_IMAGES.banker : SCOREBOARD_IMAGES.player;
+};
 
 const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) => {
     if (isBlink) {
@@ -70,14 +72,28 @@ const BigRoadIcon: React.FC<BigRoadIconProps> = ({ round, isBlink, isEmpty }) =>
     }
 
     const enrichedData = getEnrichedData(round.data);
-    const imagePath = getWinnerImage(round);
+    const hasTiesInRound = hasTies(round.data);
     const tieCount = getTieCount(round.data);
 
-    const { natural, playerPair, bankerPair } = enrichedData || {};
+    const combinedTieData = hasTiesInRound ? getCombinedTieData(round.data) : null;
+    const sourceData = combinedTieData || enrichedData;
+
+    const { natural, playerPair, bankerPair } = sourceData || {};
+
+    const actualWinner = getActualWinner(round.data);
+    const shouldShowWinnerImage = actualWinner !== null;
 
     return (
         <div className={styles["dot-image"]}>
-            <Image src={imagePath} alt={imagePath.includes("banker") ? "Banker" : "Player"} width={14} height={14} priority />
+            {shouldShowWinnerImage && (
+                <Image
+                    src={getWinnerImage(round)}
+                    alt={actualWinner}
+                    width={14}
+                    height={14}
+                    priority
+                />
+            )}
 
             {natural && <Image className={styles["natural-image"]} src={SCOREBOARD_IMAGES.natural} alt="Natural" width={12} height={12} />}
 
