@@ -92,7 +92,7 @@ const CanvasBallLayout = React.forwardRef<CanvasBallLayoutRef, BallLayoutProps>(
         // Prevent rapid successive ball drops (auto-dropping protection)
         const lastSpawnTimeRef = useRef<number>(0);
         const minSpawnInterval = 500; // Minimum 500ms between ball spawns
-        
+
         // Track removed balls to prevent collision processing
         const removedBallsRef = useRef<Set<number>>(new Set());
 
