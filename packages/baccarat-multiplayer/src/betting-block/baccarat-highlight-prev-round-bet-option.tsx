@@ -15,7 +15,7 @@ export const BaccaratHighlightPrevRoundBetOption = ({ choice }: { choice: string
     const getImagePath = (choice: string): string => {
         switch (choice) {
             case Winner.PLAYER:
-                return `${basePath}/static/images/highlight-winning/highlight-winning-player.png`;
+                return `${basePath}/static/images/highlight-winning/highlight-winning-player.webp`;
             case Winner.BANKER:
                 return `${basePath}/static/images/highlight-winning/highlight-winning-banker.webp`;
             case Winner.TIE:
@@ -28,9 +28,13 @@ export const BaccaratHighlightPrevRoundBetOption = ({ choice }: { choice: string
     };
 
     const imagePath = getImagePath(choice);
+    const shadowClass = choice === "player" ? styles.playerPrevShadow : choice === "banker" ? styles.bankerPrevShadow : choice === "tie" ? styles.tiePrevShadow : choice === "anyPair" ? styles.anyPairPrevShadow : "";
 
     return true && imagePath ? (
+
         <div className={`${styles["highlight"]} ${styles[choice]}`}>
+            {shadowClass && <div className={shadowClass}></div>}
+            
             <Image
                 src={imagePath}
                 alt={`highlight-winning-${choice}`}
