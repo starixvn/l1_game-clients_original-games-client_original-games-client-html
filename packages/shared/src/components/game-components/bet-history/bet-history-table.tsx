@@ -107,27 +107,6 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     const isInitialized = useRef(false);
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
-    // Calculate dynamic max height based on 10 rows
-    const calculateDynamicMaxHeight = useCallback(() => {
-        if (!tableBodyRef.current) {
-            return "640px";
-        }
-
-        const tableBody = tableBodyRef.current;
-        const allRows = Array.from(tableBody.querySelectorAll("tr"));
-
-        // Sum the heights of the first 10 rows (or fewer if less data)
-        const rowsHeight = allRows.slice(0, 10).reduce((sum, row) => sum + row.getBoundingClientRect().height, 0);
-
-        const buffer = 1;
-
-        const totalHeight = rowsHeight + buffer;
-
-        const minHeight = 300;
-
-        return `${Math.max(totalHeight, minHeight)}px`;
-    }, []);
-
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
             const handler = new BetHistoryHandler({ gameMessageHandler, gameId });
@@ -180,24 +159,27 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     const displayedBetLogs = isExpanded ? betLogs : betLogs.slice(0, 10);
     const tableData = transformBetLogsToDisplayData(displayedBetLogs);
 
-    // Update dynamic max height when data changes or window resizes
-    useLayoutEffect(() => {
-        if (displayedBetLogs.length === 0) {
-            return () => {};
+    // Calculate dynamic max height based on CSS breakpoints and row count
+    const calculateDynamicMaxHeight = useCallback(() => {
+        const minHeight = 300;
+        const rowCount = Math.min(displayedBetLogs.length, 10);
+        
+        if (rowCount === 0) {
+            return `${minHeight}px`;
         }
 
+        // This matches the h-[60px] class used in table cells
+        const baseRowHeight = 60;
+        const buffer = 1;
+        const calculatedHeight = baseRowHeight * rowCount + buffer;
+
+        return `${Math.max(calculatedHeight, minHeight)}px`;
+    }, [displayedBetLogs.length]);
+
+    // Update dynamic max height when data changes
+    useLayoutEffect(() => {
         const newHeight = calculateDynamicMaxHeight();
         setDynamicMaxHeight(newHeight);
-
-        // Re-calculate on window resize
-        const handleResize = () => {
-            setDynamicMaxHeight(calculateDynamicMaxHeight());
-        };
-
-        window.addEventListener("resize", handleResize);
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
     }, [displayedBetLogs, calculateDynamicMaxHeight]);
 
     // Handle toggle expand/collapse
