@@ -163,6 +163,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Update multipliers from service configs - disabled since gameConfigs is not provided by shared system
     // Plinko uses hardcoded multipliers for now
 
+    // Test function to spawn a ball with predefined path for testing
+    const spawnTestBall = () => {
+        console.log('🎯 Spawning test ball with predefined path');
+        // Spawn a ball with a path that will hit the center multiplier (index 4)
+        const testPath = [0, 1, 0, 1, 0, 1, 0, 1, 0]; // Path to center slot
+        const finalSlot = 4; // Center multiplier slot
+        const multiplier = 2; // 2x multiplier
+
+        ballLayoutRef.current?.spawnBallWithPath(100, testPath, finalSlot, multiplier);
+    };
+
     // Handle ball collision with multiplier slots
     const handleBallHit = (multiplier: number, betValue: number) => {
         const payout = betValue * multiplier;
@@ -253,56 +264,114 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         </div>
                     )}
                     {gameState.activeTab === 'Manual' ? (
-                        // Manual Bet Button
-                        <button
-                            className="span-bet"
-                            disabled={!localGameInitialized || !isConnected || !isAuthenticated || isBetting}
-                            onClick={async () => {
-                                if (isConnected && isAuthenticated && localGameInitialized) {
-                                    // Manual bet mode - place single bet
-                                    const gameModeMap: Record<string, number> = {
-                                        'Low': 0,
-                                        'Medium': 1,
-                                        'High': 2,
-                                        'Lightning': 0 // Default to Low for Lightning
-                                    };
-                                    const gameMode = gameModeMap[gameState.gameMode] ?? 0;
+                        <>
+                            {/* Manual Bet Button */}
+                            <button
+                                className="span-bet"
+                                disabled={!localGameInitialized || !isConnected || !isAuthenticated || isBetting}
+                                onClick={async () => {
+                                    if (isConnected && isAuthenticated && localGameInitialized) {
+                                        // Manual bet mode - place single bet
+                                        const gameModeMap: Record<string, number> = {
+                                            'Low': 0,
+                                            'Medium': 1,
+                                            'High': 2,
+                                            'Lightning': 0 // Default to Low for Lightning
+                                        };
+                                        const gameMode = gameModeMap[gameState.gameMode] ?? 0;
 
-                                    logger.info('Placing manual bet', {
-                                        betAmount: gameState.betAmount,
-                                        gameMode: gameState.gameMode,
-                                        gameModeIndex: gameMode,
-                                        rows: gameState.rows,
-                                        clientSeed: clientSeed, // From shared PF system
-                                        balance: gameState.balance
-                                    });
+                                        logger.info('Placing manual bet', {
+                                            betAmount: gameState.betAmount,
+                                            gameMode: gameState.gameMode,
+                                            gameModeIndex: gameMode,
+                                            rows: gameState.rows,
+                                            clientSeed: clientSeed, // From shared PF system
+                                            balance: gameState.balance
+                                        });
 
-                                    placeBet(gameState.betAmount, gameMode, gameState.rows);
+                                        placeBet(gameState.betAmount, gameMode, gameState.rows);
 
-                                    // Ball will be spawned with service-determined path when results are received
-                                } else {
-                                    logger.warn('Cannot place bet - game not ready', {
-                                        isConnected,
-                                        isAuthenticated,
-                                        isGameInitialized
-                                    });
-                                }
-                            }}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: 'inherit',
-                                fontSize: 'inherit',
-                                fontWeight: 'inherit',
-                                cursor: 'pointer',
-                                padding: 0
-                            }}
-                        >
-                            BET (${gameState.betAmount})
-                            {!isConnected && ' (Connecting...)'}
-                            {isConnected && !isAuthenticated && ' (Authenticating...)'}
-                            {isBetting && ' (Betting...)'}
-                        </button>
+                                        // Ball will be spawned with service-determined path when results are received
+                                    } else {
+                                        logger.warn('Cannot place bet - game not ready', {
+                                            isConnected,
+                                            isAuthenticated,
+                                            isGameInitialized
+                                        });
+                                    }
+                                }}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'inherit',
+                                    fontSize: 'inherit',
+                                    fontWeight: 'inherit',
+                                    cursor: 'pointer',
+                                    padding: 0
+                                }}
+                            >
+                                BET (${gameState.betAmount})
+                                {!isConnected && ' (Connecting...)'}
+                                {isConnected && !isAuthenticated && ' (Authenticating...)'}
+                                {isBetting && ' (Betting...)'}
+                            </button>
+
+                            {/* Test Button for Ball Spawn */}
+                            <button
+                                className="span-bet"
+                                onClick={spawnTestBall}
+                                style={{
+                                    marginLeft: '10px',
+                                    background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
+                                    border: '2px solid #cc4545',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase',
+                                    boxShadow: '0 4px 8px rgba(255, 107, 107, 0.3)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                🎯 TEST BALL
+                            </button>
+
+                            {/* Direct Spawn Test Button */}
+                            <button
+                                className="span-bet"
+                                onClick={() => {
+                                    console.log('🎯 DIRECT SPAWN TEST clicked');
+                                    if (ballLayoutRef.current) {
+                                        console.log('✅ ballLayoutRef exists, calling spawnBallWithPath directly');
+                                        const testPath = [0, 1, 0, 1, 0, 1, 0, 1]; // 8 steps for 9 rows
+                                        const finalSlot = 4;
+                                        const multiplier = 2;
+                                        ballLayoutRef.current.spawnBallWithPath(100, testPath, finalSlot, multiplier);
+                                        console.log('✅ Direct spawn call completed');
+                                    } else {
+                                        console.error('❌ ballLayoutRef.current is null');
+                                    }
+                                }}
+                                style={{
+                                    marginLeft: '10px',
+                                    background: 'linear-gradient(135deg, #4CAF50, #45a049)',
+                                    border: '2px solid #3d8b40',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    padding: '6px 12px',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase',
+                                    boxShadow: '0 4px 8px rgba(76, 175, 80, 0.3)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                DIRECT SPAWN
+                            </button>
+                        </>
                     ) : (
                         // Auto Bet Button - moved from AutoBetPanel
                         <button
