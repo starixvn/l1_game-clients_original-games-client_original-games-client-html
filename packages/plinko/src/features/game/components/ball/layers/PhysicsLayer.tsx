@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Bodies, Body, Composite, Engine, Events, Render, Runner, World } from 'matter-js';
+import { Bodies, Body, Composite, Engine, Events, Runner, World } from 'matter-js';
 import { BallLayoutProps } from '../../../../../shared/types';
 
 // Ball Path Trail Layer Component
@@ -124,6 +124,103 @@ import {
     type SlotLayout
 } from '../../../../../lib/physics';
 
+// Ball Layer Component
+interface BallLayerProps {
+    ballPositions: Map<number, { x: number, y: number, radius: number, betValue: number }>;
+    width: number;
+    height: number;
+    boardDimensions: {
+        topMargin: number;
+        bottomMargin: number;
+        leftMargin: number;
+        rightMargin: number;
+        boardWidth: number;
+        boardHeight: number;
+        boardX: number;
+    } | null;
+    className?: string;
+}
+
+const BallLayer: React.FC<BallLayerProps> = ({
+    ballPositions,
+    width,
+    height,
+    boardDimensions,
+    className = 'ball-layer'
+}) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Only render if we have board dimensions for clipping
+        if (!boardDimensions) return;
+
+        ctx.save();
+
+        // Apply the same triangular clipping as physics layer
+        const { topMargin, boardWidth, boardHeight, boardX } = boardDimensions;
+        ctx.beginPath();
+        ctx.moveTo(boardX + boardWidth / 2, topMargin);
+        ctx.lineTo(boardX + boardWidth * 0.1, topMargin + boardHeight * 0.9);
+        ctx.lineTo(boardX + boardWidth * 0.9, topMargin + boardHeight * 0.9);
+        ctx.closePath();
+        ctx.clip();
+
+        // Draw balls using physics positions
+        ballPositions.forEach((ballData) => {
+            const { x, y, radius, betValue } = ballData;
+
+            // Color coding based on bet value (similar to physics layer)
+            const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
+
+            // Draw ball with glow effect
+            ctx.fillStyle = ballColor;
+            ctx.strokeStyle = '#FFD700'; // Gold outline
+            ctx.lineWidth = Math.max(1, radius * 0.1);
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Add inner highlight for 3D effect
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.arc(x - radius * 0.3, y - radius * 0.3, radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.restore();
+
+    }, [ballPositions, width, height, boardDimensions]);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            width={width}
+            height={height}
+            className={className}
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 5, // Above ball path layer
+                pointerEvents: 'none'
+            }}
+        />
+    );
+};
+
 export interface PhysicsLayerRef {
     spawnBall: (betValue?: number) => void;
     spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => void;
@@ -164,14 +261,14 @@ interface PhysicsLayerProps extends BallLayoutProps {
     } | null;
     ballPaths: Map<number, Array<{ x: number, y: number, timestamp: number }>>;
     setBallPaths: React.Dispatch<React.SetStateAction<Map<number, Array<{ x: number, y: number, timestamp: number }>>>>;
+    onBallPositionsUpdate?: (ballPositions: Map<number, { x: number, y: number, radius: number, betValue: number }>) => void;
 }
 
 const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
-    ({ rows, multipliers = [], probabilities: _probabilities = [], betAmount = 100, onBallHit, boardDimensions, ballPaths: _ballPaths, setBallPaths }, ref) => {
+    ({ rows, multipliers = [], probabilities: _probabilities = [], betAmount = 100, onBallHit, boardDimensions, ballPaths: _ballPaths, setBallPaths, onBallPositionsUpdate }, ref) => {
 
         const canvasRef = useRef<HTMLDivElement>(null);
         const engineRef = useRef<Engine | null>(null);
-        const renderRef = useRef<Render | null>(null);
         const runnerRef = useRef<Runner | null>(null);
         const [isInitialized, setIsInitialized] = useState(false);
 
@@ -192,14 +289,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                 if (runnerRef.current) {
                     Runner.stop(runnerRef.current);
                     runnerRef.current = null;
-                }
-                if (renderRef.current) {
-                    Render.stop(renderRef.current);
-                    if (renderRef.current.canvas) {
-                        renderRef.current.canvas.remove();
-                    }
-                    renderRef.current.textures = {};
-                    renderRef.current = null;
                 }
                 if (engineRef.current) {
                     World.clear(engineRef.current.world, true);
@@ -255,66 +344,9 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                     multipliers: [...effectiveMultipliers]
                 };
 
-                // Create Matter.js renderer with triangular clipping
-                const render = Render.create({
-                    element: element,
-                    bounds: {
-                        max: {
-                            y: boardTopMargin + boardHeight * 0.9,
-                            x: boardX + boardWidth * 0.9
-                        },
-                        min: {
-                            y: boardTopMargin,
-                            x: boardX + boardWidth * 0.1
-                        }
-                    },
-                    options: {
-                        background: 'transparent',
-                        hasBounds: true,
-                        width: canvasWidth,
-                        height: canvasHeight,
-                        wireframes: false
-                    },
-                    engine
-                });
-
-                // Apply triangular clipping to the renderer
-                const originalAfterRender = render.afterRender;
-                render.afterRender = () => {
-                    if (originalAfterRender) {
-                        originalAfterRender();
-                    }
-
-                    // Apply triangular clipping mask
-                    const ctx = render.canvas.getContext('2d');
-                    if (ctx) {
-                        ctx.save();
-                        ctx.globalCompositeOperation = 'destination-in';
-                        ctx.beginPath();
-                        ctx.moveTo(boardX + boardWidth / 2, boardTopMargin);
-                        ctx.lineTo(boardX + boardWidth * 0.1, boardTopMargin + boardHeight * 0.9);
-                        ctx.lineTo(boardX + boardWidth * 0.9, boardTopMargin + boardHeight * 0.9);
-                        ctx.closePath();
-                        ctx.fill();
-                        ctx.restore();
-                    }
-                };
-
-                renderRef.current = render;
-
-                // Ensure canvas is in the DOM and visible
-                if (render.canvas && render.canvas.parentNode) {
-                    render.canvas.style.width = '100%';
-                    render.canvas.style.height = '100%';
-                    render.canvas.style.position = 'absolute';
-                    render.canvas.style.top = '0';
-                    render.canvas.style.left = '0';
-                }
-
                 const runner = Runner.create();
                 runnerRef.current = runner;
                 Runner.run(runner, engine);
-                Render.run(render);
 
                 // Add all physics bodies to the world
                 Composite.add(engine.world, [...pins, ...multipliersBodies, ...walls]);
@@ -322,7 +354,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                 // Set up collision detection
                 setupCollisionDetection();
 
-                // Track ball positions for path visualization
+                // Track ball positions for path visualization and ball rendering
                 Events.on(engine, 'afterUpdate', () => {
                     const balls = Composite.allBodies(engine.world).filter(body => body.label?.includes('ball'));
 
@@ -354,6 +386,21 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
                         return newPaths;
                     });
+
+                    // Provide ball positions for visual rendering
+                    if (onBallPositionsUpdate) {
+                        const ballPositions = new Map<number, { x: number, y: number, radius: number, betValue: number }>();
+                        balls.forEach(ball => {
+                            const ballExtension = ball as Body & BallBodyExtension;
+                            ballPositions.set(ball.id, {
+                                x: ball.position.x,
+                                y: ball.position.y,
+                                radius: ball.circleRadius || 5,
+                                betValue: ballExtension.betValue || 100
+                            });
+                        });
+                        onBallPositionsUpdate(ballPositions);
+                    }
                 });
 
                 // Set up collision detection with triangular boundary enforcement
@@ -433,7 +480,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                 clearTimeout(initTimeout);
                 cleanupPhysics();
             };
-        }, [rows, multipliers, onBallHit, boardDimensions]);
+        }, [rows, multipliers, onBallHit, boardDimensions, onBallPositionsUpdate]);
 
         // Method to spawn physics ball
         const spawnBall = (betValue: number = 1) => {
@@ -556,5 +603,5 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
 PhysicsLayer.displayName = 'PhysicsLayer';
 
-export { BallPathLayer };
+export { BallPathLayer, BallLayer };
 export default PhysicsLayer;

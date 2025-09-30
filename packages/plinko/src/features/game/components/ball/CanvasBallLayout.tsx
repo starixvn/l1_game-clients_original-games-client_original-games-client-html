@@ -1,3 +1,8 @@
+// DEPRECATED: This file contains duplicate physics functionality.
+// The layered architecture with PhysicsLayer.tsx is now used instead.
+// This file is kept only for reference and should be removed.
+// DO NOT USE THIS COMPONENT - use LayeredCanvasBallLayout instead.
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Bodies, Body, Composite, Engine, Events, Render, Runner, World } from 'matter-js';
 import { BallLayoutProps } from '../../../../shared/types';

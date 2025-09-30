@@ -5,17 +5,6 @@ import LayeredCanvasBallLayout, { LayeredCanvasBallLayoutRef } from './LayeredCa
 // BallLayout now uses the new layered architecture for better separation of concerns
 const BallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ rows, ballsPerRow, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
-        console.log('🎯 BallLayout component rendering with props:', {
-            rows,
-            ballsPerRow,
-            multipliersLength: multipliers.length,
-            multipliers,
-            probabilitiesLength: probabilities.length,
-            betAmount,
-            hasOnBallHit: !!onBallHit,
-            hasRef: !!ref
-        });
-
         return (
             <LayeredCanvasBallLayout
                 ref={ref}

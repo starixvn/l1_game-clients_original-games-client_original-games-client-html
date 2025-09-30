@@ -9,8 +9,8 @@ const WinMessage: React.FC<WinMessageProps> = ({
     betAmount, // eslint-disable-line @typescript-eslint/no-unused-vars
     onAnimationEnd // eslint-disable-line @typescript-eslint/no-unused-vars
 }) => {
-    // Temporarily hidden - CanvasBallLayout now handles winning messages
-    // All win message display is managed by the CanvasBallLayout component
+    // Temporarily hidden - Win messages are now handled by the layered PhysicsLayer
+    // All win message display is managed by the PhysicsLayer component
     return null;
 };
 

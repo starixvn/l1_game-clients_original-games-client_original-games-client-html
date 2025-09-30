@@ -189,7 +189,7 @@ export function createPhysicsBodies(
 }
 
 /**
- * Set up basic physics world (collision detection is handled by CanvasBallLayout)
+ * Set up basic physics world (collision detection is handled by layered PhysicsLayer)
  */
 export function setupCollisionDetection(): {
     lastLogTimeRef: { current: number };
@@ -197,7 +197,7 @@ export function setupCollisionDetection(): {
     pegCollisionTracker: Set<string>;
 } {
     // Physics engine now only handles setup, not collision detection
-    // Collision detection is handled by CanvasBallLayout.tsx for cleaner separation
+    // Collision detection is handled by layered PhysicsLayer.tsx for cleaner separation
     const lastLogTimeRef = { current: 0 };
     const animationState = new Map<string, { offsetY: number; startTime: number; duration: number; type: 'slotBounce' }>();
     const pegCollisionTracker = new Set<string>();

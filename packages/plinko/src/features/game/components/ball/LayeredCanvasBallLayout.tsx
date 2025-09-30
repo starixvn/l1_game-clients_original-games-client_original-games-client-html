@@ -4,7 +4,7 @@ import { BallLayoutProps } from '../../../../shared/types';
 // Import layer components
 import BackgroundLayer from './layers/BackgroundLayer';
 import BoardLayer from './layers/BoardLayer';
-import PhysicsLayer, { PhysicsLayerRef, BallPathLayer } from './layers/PhysicsLayer';
+import PhysicsLayer, { PhysicsLayerRef, BallPathLayer, BallLayer } from './layers/PhysicsLayer';
 
 export interface LayeredCanvasBallLayoutRef {
     spawnBall: (betValue?: number) => void;
@@ -38,6 +38,12 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         } | null>(null);
 
         const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number, y: number, timestamp: number }>>>(new Map());
+        const [ballPositions, setBallPositions] = useState<Map<number, { x: number, y: number, radius: number, betValue: number }>>(new Map());
+
+        // Callback for ball position updates from physics layer
+        const handleBallPositionsUpdate = useCallback((positions: Map<number, { x: number, y: number, radius: number, betValue: number }>) => {
+            setBallPositions(positions);
+        }, []);
 
         // Hover tooltip state
         const [hoveredMultiplier, setHoveredMultiplier] = useState<{
@@ -290,10 +296,22 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                         boardDimensions={boardDimensions}
                         ballPaths={ballPaths}
                         setBallPaths={setBallPaths}
+                        onBallPositionsUpdate={handleBallPositionsUpdate}
                     />
                 )}
 
-                {/* Layer 4: Ball Path Trails (Above Physics) */}
+                {/* Layer 4: Ball Rendering (Above Physics) */}
+                {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
+                    <BallLayer
+                        ballPositions={ballPositions}
+                        width={containerSize.width}
+                        height={containerSize.height}
+                        boardDimensions={boardDimensions}
+                        className="ball-layer"
+                    />
+                )}
+
+                {/* Layer 5: Ball Path Trails (Above Balls) */}
                 {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (
                     <BallPathLayer
                         ballPaths={ballPaths}
@@ -304,7 +322,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     />
                 )}
 
-                {/* Layer 5: UI Overlays */}
+                {/* Layer 6: UI Overlays */}
 
                 {/* Loading Indicator */}
                 {!isInitialized && (
