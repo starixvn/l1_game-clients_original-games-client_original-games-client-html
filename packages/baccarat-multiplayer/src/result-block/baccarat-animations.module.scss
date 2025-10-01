@@ -233,12 +233,17 @@
 @keyframes floatIn {
     0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1.3) scaleY(1);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
     }
 }
 
@@ -251,7 +256,9 @@
     justify-content: center;
     z-index: 101;
     pointer-events: none;
-    animation: floatIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: floatIn 0.3s ease-in-out forwards;
+
+    mask: url("data:image/svg+xml,%3csvg width='307' height='44' viewBox='0 0 307 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cmask id='path-1-inside-1_192_22035' fill='white'%3e%3cpath d='M0 0H307V44H0V0Z'/%3e%3c/mask%3e%3cpath d='M0 0H307V44H0V0Z' fill='url(%23paint0_linear_192_22035)'/%3e%3cpath d='M0 0V2H307V0V-2H0V0ZM307 44V42H0V44V46H307V44Z' fill='url(%23paint1_linear_192_22035)' mask='url(%23path-1-inside-1_192_22035)'/%3e%3cdefs%3e%3clinearGradient id='paint0_linear_192_22035' x1='0' y1='21.2414' x2='307' y2='21.2414' gradientUnits='userSpaceOnUse'%3e%3cstop stop-opacity='0'/%3e%3cstop offset='0.11961' stop-color='%231290C9' stop-opacity='0.3'/%3e%3cstop offset='0.3' stop-color='%231290C9'/%3e%3cstop offset='0.5' stop-color='%231290C9'/%3e%3cstop offset='0.75' stop-color='%231290C9'/%3e%3cstop offset='0.9' stop-color='%231290C9' stop-opacity='0.3'/%3e%3cstop offset='1' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='paint1_linear_192_22035' x1='0' y1='22' x2='307' y2='22' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white' stop-opacity='0'/%3e%3cstop offset='0.5' stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e") no-repeat 50% 50%;
 
     // Player win background (blue)
     &.winner-player {
@@ -266,6 +273,57 @@
     // Tie win background (green)
     &.winner-tie {
         background: url("data:image/svg+xml,%3csvg width='307' height='44' viewBox='0 0 307 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cmask id='path-1-inside-1_192_22041' fill='white'%3e%3cpath d='M0 0H307V44H0V0Z'/%3e%3c/mask%3e%3cpath d='M0 0H307V44H0V0Z' fill='url(%23paint0_linear_192_22041)'/%3e%3cpath d='M0 0V2H307V0V-2H0V0ZM307 44V42H0V44V46H307V44Z' fill='url(%23paint1_linear_192_22041)' mask='url(%23path-1-inside-1_192_22041)'/%3e%3cdefs%3e%3clinearGradient id='paint0_linear_192_22041' x1='0' y1='21.2414' x2='307' y2='21.2414' gradientUnits='userSpaceOnUse'%3e%3cstop stop-opacity='0'/%3e%3cstop offset='0.11961' stop-color='%23219A33' stop-opacity='0.3'/%3e%3cstop offset='0.3' stop-color='%23219A33'/%3e%3cstop offset='0.5' stop-color='%2332EA4D'/%3e%3cstop offset='0.75' stop-color='%23219A33'/%3e%3cstop offset='0.9' stop-color='%23219A33' stop-opacity='0.3'/%3e%3cstop offset='1' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='paint1_linear_192_22041' x1='0' y1='22' x2='307' y2='22' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white' stop-opacity='0'/%3e%3cstop offset='0.5' stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e") center center / cover no-repeat;
+    }
+}
+
+.winner-blink-area {
+    transform: rotate(60deg) scale(0.8);
+    width: 307px;
+    height: 44px;
+    z-index: 1;
+    position: absolute;
+    top: 0px;
+    opacity: 1;
+    animation: scoreBlinkWinner 0.3s ease-in-out forwards;
+
+    // Player win blink background (blue)
+    &.winner-player {
+        background: url('data:image/svg+xml,<svg width="307" height="44" viewBox="0 0 307 44" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="path-1-inside-1_192_22035" fill="white"><path d="M0 0H307V44H0V0Z"/></mask><path d="M0 0H307V44H0V0Z" fill="url(%23paint0_linear_192_22035)"/><path d="M0 0V2H307V0V-2H0V0ZM307 44V42H0V44V46H307V44Z" fill="url(%23paint1_linear_192_22035)" mask="url(%23path-1-inside-1_192_22035)"/><defs><linearGradient id="paint0_linear_192_22035" x1="0" y1="21.2414" x2="307" y2="21.2414" gradientUnits="userSpaceOnUse"><stop stop-opacity="0"/><stop offset="0.11961" stop-color="%231290C9" stop-opacity="0.3"/><stop offset="0.3" stop-color="%231290C9"/><stop offset="0.5" stop-color="%231290C9"/><stop offset="0.75" stop-color="%231290C9"/><stop offset="0.9" stop-color="%231290C9" stop-opacity="0.3"/><stop offset="1" stop-opacity="0"/></linearGradient><linearGradient id="paint1_linear_192_22035" x1="0" y1="22" x2="307" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0"/><stop offset="0.5" stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg>');
+    }
+
+    // Banker win blink background (red)
+    &.winner-banker {
+        background: url('data:image/svg+xml,<svg width="307" height="44" viewBox="0 0 307 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="307" height="44" fill="url(%23paint0_linear_224_17321)"/><defs><linearGradient id="paint0_linear_224_17321" x1="0" y1="21.2414" x2="307" y2="21.2414" gradientUnits="userSpaceOnUse"><stop stop-color="%23EE0B3C"/><stop offset="0.11961" stop-color="%23EE0B3C"/><stop offset="0.3" stop-color="%23EE0B3C"/><stop offset="0.5" stop-color="%23EE0B3C"/><stop offset="0.75" stop-color="%23EE0B3C"/><stop offset="0.9" stop-color="%23EE0B3C"/><stop offset="1" stop-color="%23EE0B3C"/></linearGradient></defs></svg>');
+    }
+
+    // Tie win blink background (green)
+    &.winner-tie {
+        background: url('data:image/svg+xml,<svg width="307" height="44" viewBox="0 0 307 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="307" height="44" fill="url(%23paint0_linear_224_17324)"/><defs><linearGradient id="paint0_linear_224_17324" x1="0" y1="21.2414" x2="307" y2="21.2414" gradientUnits="userSpaceOnUse"><stop stop-color="%2332EA4D"/><stop offset="0.11961" stop-color="%2332EA4D"/><stop offset="0.3" stop-color="%2332EA4D"/><stop offset="0.5" stop-color="%2332EA4D"/><stop offset="0.75" stop-color="%2332EA4D"/><stop offset="0.9" stop-color="%2332EA4D"/><stop offset="1" stop-color="%2332EA4D"/></linearGradient></defs></svg>');
+    }
+}
+
+@keyframes scoreBlinkWinner {
+    0% {
+        opacity: 0;
+        filter: brightness(1) blur(30px);
+        top: 0;
+        left: -110px;
+    }
+    25% {
+        filter: brightness(1.3) blur(25px);
+    }
+    50% {
+        opacity: 1;
+        filter: brightness(12) blur(10px);
+    }
+    75% {
+        filter: brightness(1.3) blur(25px);
+    }
+    100% {
+        opacity: 0;
+        filter: brightness(1) blur(30px);
+        top: 0;
+        left: 110px;
     }
 }
 

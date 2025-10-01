@@ -15,6 +15,7 @@ interface CardSectionProps {
     isHideAllCards: boolean;
     isGetResult?: boolean;
     onAnimationComplete?: () => void;
+    blinkScore?: boolean;
 }
 
 export const CardSection: React.FC<CardSectionProps> = ({
@@ -25,7 +26,8 @@ export const CardSection: React.FC<CardSectionProps> = ({
     isShowResult,
     isHideAllCards,
     isGetResult = false,
-    onAnimationComplete
+    onAnimationComplete,
+    blinkScore = false
 }) => {
     const [visibleScores, setVisibleScores] = useState<{ [key: number]: boolean }>({});
     const [cardContainerAnimClass, setCardContainerAnimClass] = useState('');
@@ -107,6 +109,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
                             }, 0)}
                             type={type}
                             visible={Object.values(visibleScores).some(visible => visible)}
+                            blink={blinkScore}
                         />
                     </div>
                 )}

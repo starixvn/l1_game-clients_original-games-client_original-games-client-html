@@ -24,6 +24,8 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     const [showWinner, setShowWinner] = useState(false);
     const [playerAnimationComplete, setPlayerAnimationComplete] = useState(false);
     const [bankerAnimationComplete, setBankerAnimationComplete] = useState(false);
+    const [blinkScores, setBlinkScores] = useState(false);
+    const [blinkWinner, setBlinkWinner] = useState(false);
 
     const playerCards = useMemo(() => result ? GetPlayerCardsResult(result) : [], [result]);
     const bankerCards = useMemo(() => result ? GetBankerCardsResult(result) : [], [result]);
@@ -49,6 +51,8 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
             setShowWinner(false);
             setPlayerAnimationComplete(false);
             setBankerAnimationComplete(false);
+            setBlinkScores(false);
+            setBlinkWinner(false);
         }
     }, [isShowResult, result]);
 
@@ -71,6 +75,26 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
             return () => clearTimeout(winnerTimer);
         }
     }, [isGetResult, playResultAnimation, isShowResult, playerAnimationComplete, bankerAnimationComplete, showWinner, result]);
+
+    // Trigger score blinking when winner is shown
+    useEffect(() => {
+        if (showWinner && !blinkScores) {
+            // Trigger blink animation when winner appears
+            setBlinkScores(true);
+        }
+    }, [showWinner, blinkScores]);
+
+    // Trigger winner blinking after floatIn animation completes
+    useEffect(() => {
+        if (showWinner && !blinkWinner) {
+            // Wait for floatIn animation (0.3s) to complete before starting blink
+            const blinkTimer = setTimeout(() => {
+                setBlinkWinner(true);
+            }, 300);
+
+            return () => clearTimeout(blinkTimer);
+        }
+    }, [showWinner, blinkWinner]);
 
     const handlePlayerAnimationComplete = useCallback(() => {
         setPlayerAnimationComplete(true);
@@ -114,6 +138,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 isHideAllCards={shouldHideCards}
                 isGetResult={isGetResult}
                 onAnimationComplete={!isGetResult ? handlePlayerAnimationComplete : undefined}
+                blinkScore={blinkScores}
             />
 
             <CardSection
@@ -125,12 +150,14 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
                 isHideAllCards={shouldHideCards}
                 isGetResult={isGetResult}
                 onAnimationComplete={!isGetResult ? handleBankerAnimationComplete : undefined}
+                blinkScore={blinkScores}
             />
 
             {isShouldShowResult(showWinner, result) && (
                 <div className="col-span-2 flex items-center justify-center relative top-[49px]">
                     <div className={`${styles["winner-display"]} ${styles["winner-" + result.winner]}`}>
                         <p className={styles["winner-text"]}>{t(getWinnerText())}</p>
+                        {blinkWinner && <div className={`${styles["winner-blink-area"]} ${styles["winner-" + result.winner]}`}></div>}
                     </div>
                 </div>
             )}

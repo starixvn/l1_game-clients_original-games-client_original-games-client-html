@@ -5,9 +5,10 @@ interface ScoreDisplayProps {
     score: number;
     type: 'player' | 'banker';
     visible: boolean;
+    blink?: boolean;
 }
 
-export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, type, visible }) => {
+export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, type, visible, blink = false }) => {
     if (!visible) {
         return null;
     }
@@ -17,6 +18,7 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, type, visible
     return (
         <div className={`${styles.score} ${styles[scoreClassName]}`}>
             <span className={styles['score-number']}>{score}</span>
+            {blink && <div className={`${styles["blink-area"]} ${styles[`blink-${type}`]}`}></div>}
         </div>
     );
 };
