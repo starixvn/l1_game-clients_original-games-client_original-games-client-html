@@ -253,6 +253,7 @@
     "splash_connection_lost": "連接不穩定，請檢查。",
     "splash_login_failed": "無法加載遊戲數據。請關閉當前窗口並重試。",
     "stake": "賭注",
+    "start": "開始",
     "start_auto_bet": "開始自動投注",
     "start_in": "投注時間：{time}秒",
     "stop_on_loss": "輸時停止",

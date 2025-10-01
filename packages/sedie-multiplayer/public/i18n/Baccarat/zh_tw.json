@@ -18,5 +18,6 @@
     "player_win": "閒家獲勝",
     "short_banker": "莊",
     "short_player": "閒",
+    "short_tie": "三",
     "tie_win": "和"
 }

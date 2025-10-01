@@ -253,6 +253,7 @@
     "splash_connection_lost": "Koneksi tidak stabil, silakan periksa.",
     "splash_login_failed": "Gagal memuat data game. Harap tutup jendela saat ini dan coba lagi.",
     "stake": "Taruhan",
+    "start": "Mulai",
     "start_auto_bet": "Mulai Taruhan Otomatis",
     "start_in": "Waktu taruhan: {time}s",
     "stop_on_loss": "Berhenti saat Kalah",

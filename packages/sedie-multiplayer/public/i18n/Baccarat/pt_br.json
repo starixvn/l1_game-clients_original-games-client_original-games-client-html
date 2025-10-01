@@ -18,5 +18,6 @@
     "player_win": "VITÓRIA DO JOGADOR",
     "short_banker": "G",
     "short_player": "P",
+    "short_tie": "T",
     "tie_win": "EMPATE"
 }

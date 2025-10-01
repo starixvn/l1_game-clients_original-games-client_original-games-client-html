@@ -253,6 +253,7 @@
     "splash_connection_lost": "Mất kết nối hoặc kết nối không ổn định. Vui lòng kiểm tra và thử lại.",
     "splash_login_failed": "Đăng nhập thất bại, bạn hãy làm lại thao tác đăng nhập từ đầu.",
     "stake": "Cược",
+    "start": "Bắt Đầu",
     "start_auto_bet": "Bắt đầu cược tự động",
     "start_in": "Thời gian đặt cược: {time}s",
     "stop_on_loss": "Dừng khi thua",

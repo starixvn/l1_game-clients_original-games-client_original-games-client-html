@@ -1,6 +1,6 @@
 import useSound from "use-sound";
 import { buildVersion } from "../constants";
-import { StorageHelper, formatVolume, localStorageKeys, objectMap } from "../helpers";
+import { formatVolume, objectMap } from "../helpers";
 import { useSettingStore } from "@shared/stores/setting-store";
 import { useUserGesture } from "./use-user-gesture";
 import { useShallow } from "zustand/react/shallow";
@@ -21,7 +21,7 @@ const mp3File = {
 
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
 
-export const usePlaySound = (resource: string) => {
+export const usePlaySound = (resource: string, forcePlay = false) => {
     const [playSound, { sound: ctx }] = useSound(resource, {});
     const { volumeSFX, enabledSound } = useSettingStore(useShallow((state) => ({
         volumeSFX: state.volumeSFX,
@@ -31,7 +31,7 @@ export const usePlaySound = (resource: string) => {
     const isUserGesture = useUserGesture();
 
     return () => {
-        if (document.visibilityState === "visible" && ctx && isUserGesture) {
+        if (document.visibilityState === "visible" && ctx && (isUserGesture || forcePlay)) {
             const enable = enabledSound;
             ctx.volume(formatVolume(volumeSFX));
             if (volumeSFX && enable) {
@@ -80,7 +80,7 @@ export const useBlockBetSound = () => {
 };
 
 export const usePopUpWinningSound = () => {
-    return usePlaySound(resourceMp3.popUpWinning);
+    return usePlaySound(resourceMp3.popUpWinning, true);
 };
 
 export const useDiceShakingRollingSound = () => {

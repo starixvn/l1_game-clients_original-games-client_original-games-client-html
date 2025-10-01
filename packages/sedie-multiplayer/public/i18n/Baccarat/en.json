@@ -18,5 +18,6 @@
     "player_win": "PLAYER WIN",
     "short_banker": "B",
     "short_player": "P",
+    "short_tie": "T",
     "tie_win": "TIE"
 }
