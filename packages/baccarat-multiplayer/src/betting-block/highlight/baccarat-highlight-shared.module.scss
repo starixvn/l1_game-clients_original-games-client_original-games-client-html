@@ -7,6 +7,16 @@
     pointer-events: none;
 }
 
+
+@keyframes blinkOpacity {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
 .prev-highlight {
     position: absolute;
     inset: 0;
@@ -29,6 +39,10 @@
     @extend %highlight-option;
     width: 183px;
     height: 169px;
+
+    &.withAnimation {
+        animation: blinkOpacity 0.4s ease-in-out infinite;
+    }
 
     @media (width >= 48rem) {
         width: 220px;
@@ -155,4 +169,3 @@
     width: 113px;
     height: 81px;
 }
-

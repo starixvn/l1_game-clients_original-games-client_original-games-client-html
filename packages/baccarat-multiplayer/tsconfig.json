@@ -31,7 +31,7 @@
     "**/*.js",
     "src/**/*",
     "next.config.js"
-  ],
+, "../shared/src/react-hooks/use-is-desktop.ts"  ],
   "exclude": [
     "node_modules",
     "dist",

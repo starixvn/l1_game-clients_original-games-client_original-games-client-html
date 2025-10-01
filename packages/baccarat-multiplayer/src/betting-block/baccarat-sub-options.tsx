@@ -1,13 +1,13 @@
 import BetChoice from "@shared/components/game-components/bet-option/bet-choice";
 import dynamic from "next/dynamic";
 import styles from "./baccarat-bet-options.module.scss";
-import BaccaratHighlightBetOption from "./baccarat-highlight-bet-option";
+import BaccaratHighlightBetOption from "./highlight/baccarat-highlight-bet-option";
+import { RoundState } from "@shared/components/game-base/type";
 const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
 const RippleButton = dynamic(() => import("@shared/components/game-components/bet-option/ripple-button"));
 const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-option/chip-effect"));
-const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./baccarat-highlight-prev-round-bet-option"), { ssr: false });
-import { RoundState } from "@shared/components/game-base/type";
+const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./highlight/baccarat-highlight-prev-round-bet-option"), { ssr: false });
 
     const SubBet = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
     const themeClass = choice === "tie" ? styles.tieTheme : choice === "anyPair" ? styles.anyPairTheme : "";

@@ -17,3 +17,4 @@ export * from "./use-sound";
 export * from "./use-translator";
 export * from "./use-theme";
 export * from "./use-translator";
+export * from "./use-is-desktop";
