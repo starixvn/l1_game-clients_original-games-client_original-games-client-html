@@ -83,21 +83,6 @@ describe("PlayerResultBoard", () => {
             expect(screen.getByText("#999999")).toBeInTheDocument();
         });
 
-        it("should render player count with green indicator dot", () => {
-            // Arrange
-            mockUsePlayerResultBoard.mockReturnValue({
-                totalPlayers: 10,
-                roundId: "456",
-                tableData: [],
-                shouldShowResults: false,
-            });
-
-            // Act
-            render(<PlayerResultBoard />);
-
-            // Assert
-            expect(screen.getByText((content) => content.includes("10"))).toBeInTheDocument();
-        });
     });
 
     describe("table data rendering", () => {

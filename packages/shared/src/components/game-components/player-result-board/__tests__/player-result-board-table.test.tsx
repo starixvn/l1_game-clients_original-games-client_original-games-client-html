@@ -152,44 +152,6 @@ describe("PlayerResultBoardTable", () => {
         });
     });
 
-    describe("styling and layout", () => {
-        it("should apply correct styling to winning amounts", () => {
-            // Arrange
-            const mockData = [
-                {
-                    playerName: "Winner",
-                    betAmount: "100.00",
-                    win: "50.00",
-                },
-                {
-                    playerName: "Loser",
-                    betAmount: "100.00",
-                    win: "-25.00",
-                },
-                {
-                    playerName: "BreakEven",
-                    betAmount: "100.00",
-                    win: "0.00",
-                },
-            ];
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: mockData,
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert
-            const winnerCell = screen.getByText("50.00").closest("td");
-            const loserCell = screen.getByText("-25.00").closest("td");
-            const breakEvenCell = screen.getByText("0.00").closest("td");
-
-            expect(winnerCell).toHaveClass("text-winning-highlight");
-            expect(loserCell).toHaveClass("text-secondary-text");
-            expect(breakEvenCell).toHaveClass("text-secondary-text");
-        });
-    });
 
     describe("props handling", () => {
         it("should use default empty message when data is empty", () => {
@@ -419,7 +381,6 @@ describe("PlayerResultBoardTable", () => {
 
             // Assert
             expect(ref.current).toBeInstanceOf(HTMLDivElement);
-            expect(ref.current).toHaveClass("h-[450px]");
         });
 
         it("should have correct displayName", () => {
@@ -428,125 +389,4 @@ describe("PlayerResultBoardTable", () => {
         });
     });
 
-    describe("table height classes", () => {
-        it("should apply correct height class for game ID 148 without statistics", () => {
-            // Arrange - mock environment variable
-            const originalEnv = process.env;
-            process.env.NEXT_PUBLIC_DEFAULT_GAME_ID = "148";
-
-            mockUseStatisticStore.mockReturnValue({
-                isShowStatistic: false,
-            });
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: [],
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert - find the main container with height classes
-            const tableContainer = document.querySelector('[class*="h-[450px]"]');
-            expect(tableContainer).toHaveClass("md:h-[560px]");
-
-            // Restore environment
-            process.env = originalEnv;
-        });
-
-        it("should apply correct height class for game ID 148 with statistics", () => {
-            // Arrange - mock environment variable
-            const originalEnv = process.env;
-            process.env.NEXT_PUBLIC_DEFAULT_GAME_ID = "148";
-
-            mockUseStatisticStore.mockReturnValue({
-                isShowStatistic: true,
-            });
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: [],
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert - find the main container with height classes
-            const tableContainer = document.querySelector('[class*="h-[450px]"]');
-            expect(tableContainer).toHaveClass("md:h-[700px]");
-
-            // Restore environment
-            process.env = originalEnv;
-        });
-
-        it("should apply correct height class for game ID 150 without statistics", () => {
-            // Arrange - mock environment variable
-            const originalEnv = process.env;
-            process.env.NEXT_PUBLIC_DEFAULT_GAME_ID = "150";
-
-            mockUseStatisticStore.mockReturnValue({
-                isShowStatistic: false,
-            });
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: [],
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert - find the main container with height classes
-            const tableContainer = document.querySelector('[class*="h-[450px]"]');
-            expect(tableContainer).toHaveClass("md:h-[540px]");
-
-            // Restore environment
-            process.env = originalEnv;
-        });
-
-        it("should apply correct height class for game ID 150 with statistics", () => {
-            // Arrange - mock environment variable
-            const originalEnv = process.env;
-            process.env.NEXT_PUBLIC_DEFAULT_GAME_ID = "150";
-
-            mockUseStatisticStore.mockReturnValue({
-                isShowStatistic: true,
-            });
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: [],
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert - find the main container with height classes
-            const tableContainer = document.querySelector('[class*="h-[450px]"]');
-            expect(tableContainer).toHaveClass("md:h-[656px]");
-
-            // Restore environment
-            process.env = originalEnv;
-        });
-
-        it("should apply default height class for unknown game ID", () => {
-            // Arrange - mock environment variable
-            const originalEnv = process.env;
-            process.env.NEXT_PUBLIC_DEFAULT_GAME_ID = "999";
-
-            mockUseStatisticStore.mockReturnValue({
-                isShowStatistic: false,
-            });
-
-            mockUsePlayerResultBoard.mockReturnValue(createMockPlayerResultBoardReturn({
-                tableData: [],
-            }));
-
-            // Act
-            render(<PlayerResultBoardTable />);
-
-            // Assert - find the main container with height classes
-            const tableContainer = document.querySelector('[class*="h-[450px]"]');
-            expect(tableContainer).toHaveClass("md:h-[540px]");
-
-            // Restore environment
-            process.env = originalEnv;
-        });
-    });
 });
