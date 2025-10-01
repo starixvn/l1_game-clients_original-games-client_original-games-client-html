@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BetAmountInput, BetAmountControls, GameModeSelector, RowsSelector } from "../index";
-import styles from "./AutoBetPanel.module.scss";
-import { logger } from "../../../../services";
+import { BetAmountControls, GameModeSelector, RowsSelector } from "../index";
 import AutoBetControl from "./auto-bet-control";
 // Configuration interfaces for cleaner props
 export interface SharedConfig {
@@ -21,7 +19,7 @@ export interface AutoBetConfig {
 }
 
 // Section 4.6 - Auto Bet: When switching between Manual & Auto Bet, keep all current configurations (Bet Amount, Game Mode, Rows)
-export interface AutoBetPanelProps {
+export interface BetControlProps {
     sharedConfig: SharedConfig;
     autoConfig: AutoBetConfig;
     activeTab: "Manual" | "Auto";
@@ -36,7 +34,7 @@ export interface AutoBetPanelProps {
     onBetResult?: (result: { win: boolean; payout: number; betAmount: number }) => void;
 }
 
-const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
+const BetControl: React.FC<BetControlProps> = ({
     sharedConfig,
     autoConfig,
     activeTab,
@@ -186,127 +184,37 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
         [manualConfigs, autoConfigs, onSharedConfigChange, onAutoConfigChange, onTabChange, panelTab]
     );
 
-    const renderPanelContent = () => {
-        const isManualTab = panelTab === "Manual";
-        const isAutoTab = panelTab === "Auto";
-        const manualTabClass = isManualTab ? styles.manual : styles.auto;
-        const autoTabClass = isAutoTab ? styles.manual : styles.auto;
-
-        if (panelTab === "Manual") {
-            return (
-                <div className={styles.manualPanel}>
-                    <div className={styles.manualControls}>
-                        <div style={{ width: "357px", maxWidth: "100%" }}>
-                            <BetAmountInput betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
-                        </div>
-
-                        <div style={{ width: "357px", maxWidth: "100%" }}>
-                            <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
-                        </div>
-
-                        <div style={{ width: "357px", maxWidth: "100%" }}>
-                            <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
-                        </div>
-
-                        {/* Tab Navigation - below Rows Selector in Manual mode */}
-                        <div className={styles.tabUIMobile}>
-                            <div
-                                className={manualTabClass}
-                                onClick={() => handlePanelTabChange("Manual")}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") {
-                                        e.preventDefault();
-                                        handlePanelTabChange("Manual");
-                                    }
-                                }}
-                                aria-pressed={isManualTab}
-                            >
-                                <span className={styles.tabUIMobileE0}>Manual</span>
-                            </div>
-                            <div
-                                className={autoTabClass}
-                                onClick={() => handlePanelTabChange("Auto")}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") {
-                                        e.preventDefault();
-                                        handlePanelTabChange("Auto");
-                                    }
-                                }}
-                                aria-pressed={isAutoTab}
-                            >
-                                <span className={styles.tabUIMobileE0}>Auto</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        return (
-            <div className={styles.autoPanel}>
-                <div className={styles.autoControls}>
-                    <BetAmountControls betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
-
-                    {/* Game Mode Selector */}
-                    <div style={{ width: "357px", maxWidth: "100%" }}>
-                        <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
-                    </div>
-
-                    {/* Rows Selection */}
-                    <div style={{ width: "357px", maxWidth: "100%" }}>
-                        <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
-                    </div>
-
-                    <AutoBetControl />
-
-                    {/* Tab Navigation - below Stop on Loss in Auto mode */}
-                    <div className={styles.tabUIMobile}>
-                        <div
-                            className={manualTabClass}
-                            onClick={() => handlePanelTabChange("Manual")}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    handlePanelTabChange("Manual");
-                                }
-                            }}
-                            aria-pressed={isManualTab}
-                        >
-                            <span className={styles.tabUIMobileE0}>Manual</span>
-                        </div>
-                        <div
-                            className={autoTabClass}
-                            onClick={() => handlePanelTabChange("Auto")}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    handlePanelTabChange("Auto");
-                                }
-                            }}
-                            aria-pressed={isAutoTab}
-                        >
-                            <span className={styles.tabUIMobileE0}>Auto</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
+    const isAutoTab = panelTab === "Auto";
+    const tabs = ["Manual", "Auto"];
     return (
-        <div className={styles.autoBetPanel}>
-            {/* Tab Content */}
-            <div className={styles.panelContent}>{renderPanelContent()}</div>
+        <div className="flex flex-col md:flex-col-reverse">
+            <div className="md:rounded-none border-stroke rounded-b-none before:rounded-b-none p-4 gap-4">
+                {/* Tab Content */}
+                <BetAmountControls betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
+                <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
+                <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
+
+                {isAutoTab && <AutoBetControl />}
+
+                {/* Tab Navigation - below Stop on Loss in Auto mode */}
+            </div>
+            <div className="flex bg-primary-bg">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => handlePanelTabChange(tab as "Manual" | "Auto")}
+                        className={`flex-1 px-4 py-3 text-sm relative text-white ${
+                            panelTab === tab
+                                ? "after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-green-500"
+                                : ""
+                        }`}
+                    >
+                        {tab}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
 
-export default AutoBetPanel;
+export default BetControl;

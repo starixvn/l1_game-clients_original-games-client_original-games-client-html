@@ -1,9 +1,9 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { MultiplierDisplay, BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { performDirectSpawnTest } from "../../features/game/components/ball/ball-test-utils";
 import { LoggerControls } from "../../features/ui/components";
-import { AutoBetPanel, BetsTable } from "../../features/betting/components";
+import { BetControl, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
 import { useBettingStore, useGameStore } from "@shared/stores";
@@ -14,31 +14,31 @@ import { messageEventType } from "@shared/components/game-base/handlers";
 const defaultGameState: GameState = {
     currentWin: 106,
     betAmount: 100,
-    gameMode: 'Lightning',
+    gameMode: "Lightning",
     rows: 9,
     numberOfBets: 20000,
-    onWinAction: 'Reset',
+    onWinAction: "Reset",
     onWinPercentage: 0,
-    onLossAction: 'Reset',
+    onLossAction: "Reset",
     onLossPercentage: 0,
     stopOnWin: 0,
     stopOnLoss: 0,
-    activeTab: 'Manual',
+    activeTab: "Manual",
     soundEnabled: true,
     balance: 10000, // Default balance for demo
     bets: [
-        { player: 'A***nnie', betAmount: 100, payout: 100 },
-        { player: 'A***nnie', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.99 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
+        { player: "A***nnie", betAmount: 100, payout: 100 },
+        { player: "A***nnie", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.99 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
     ],
-    betsTab: 'All'
+    betsTab: "All",
 };
 
 interface PlinkoGameProps {
@@ -87,7 +87,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
         // Register handler for endBet message (contains the finish object with result path)
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
-            logger.info('🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path', action);
+            logger.info("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
 
             if (action?.finish?.result) {
                 const resultPath = action.finish.result;
@@ -96,13 +96,13 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
 
-                logger.info('🎯 [PLINKO GAME] Spawning ball with server result path', {
+                logger.info("🎯 [PLINKO GAME] Spawning ball with server result path", {
                     resultPath,
                     pathLength: resultPath.length,
                     slotIndex,
                     multiplier,
                     betAmount,
-                    winAmount
+                    winAmount,
                 });
 
                 // Function to attempt spawning with retry logic
@@ -112,21 +112,20 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     if (ballLayoutRef.current?.spawnBallWithPath) {
                         try {
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
-                            logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
+                            logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path");
                             return true; // Success
                         } catch (error) {
-                            console.error('❌ HANDLER: Error calling spawnBallWithPath:', error);
-                            logger.error('❌ [PLINKO GAME] Error spawning ball', { error });
+                            console.error("❌ HANDLER: Error calling spawnBallWithPath:", error);
+                            logger.error("❌ [PLINKO GAME] Error spawning ball", { error });
                             return false; // Failed
                         }
                     } else {
-
                         if (retryCount < maxRetries) {
                             // Retry after 100ms
                             setTimeout(() => attemptSpawnBall(retryCount + 1), 100);
                         } else {
-                            logger.error('❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning');
-                            console.error('❌ HANDLER: ballLayoutRef not ready after max retries');
+                            logger.error("❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning");
+                            console.error("❌ HANDLER: ballLayoutRef not ready after max retries");
                         }
                         return false; // Still not ready, will retry
                     }
@@ -135,7 +134,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 // Start attempting to spawn the ball
                 attemptSpawnBall();
             } else {
-                logger.warn('⚠️ [PLINKO GAME] EndBet message received but no result path found', action);
+                logger.warn("⚠️ [PLINKO GAME] EndBet message received but no result path found", action);
             }
         });
 
@@ -168,7 +167,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated since we're in the game
     const isBetting = false; // Plinko manages its own betting state
 
-
     // Send bets directly with clientSeed (compatible with PF system)
     const placeBet = (amount: number, gameMode: number, rows: number, clientSeedParam: string) => {
         if (socket?.connected) {
@@ -176,7 +174,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 amount,
                 gameMode,
                 numberOfRows: rows,
-                clientSeed: clientSeedParam
+                clientSeed: clientSeedParam,
             };
             socket.emit("bet", betData);
         }
@@ -186,13 +184,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     };
 
     // Ball layout configuration - dynamic based on rows (memoized to prevent re-renders)
-    const ballsPerRow = useMemo(() =>
-        Array.from({ length: gameState.rows }, (_, i) => i + 3),
-        [gameState.rows]
-    );
+    const ballsPerRow = useMemo(() => Array.from({ length: gameState.rows }, (_, i) => i + 3), [gameState.rows]);
 
     // Legacy multipliers for the game (keeping for backward compatibility)
-    const multipliers = ['0.5x', '0.2x', '1.4x', '190x', '1.60x', '1.8x', '190x', '1.5x', '1.60x'];
+    const multipliers = ["0.5x", "0.2x", "1.4x", "190x", "1.60x", "1.8x", "190x", "1.5x", "1.60x"];
 
     // Socket connection is now handled by shared InitSocketIO in page.tsx
 
@@ -221,19 +216,19 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             isVisible: true,
             multiplier,
             betAmount: betValue,
-            message
+            message,
         });
 
         // Update game state with win amount
-        setGameState(prev => ({
+        setGameState((prev) => ({
             ...prev,
-            currentWin: payout
+            currentWin: payout,
         }));
     };
 
     // Handle win message animation end
     const handleWinMessageEnd = () => {
-        setWinMessage(prev => ({ ...prev, isVisible: false }));
+        setWinMessage((prev) => ({ ...prev, isVisible: false }));
         clearBetResult(); // Clear the bet result after win message
     };
 
@@ -241,34 +236,36 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Plinko handles bet results through its own internal logic
 
     // Convert service player bets to UI format
-    const convertedBets: BetRecord[] = useMemo(() =>
-        Object.entries(ownBets).map(([choice, amount]) => ({
-            player: 'You', // Since ownBets is for the current player
-            betAmount: amount,
-            payout: 0 // Shared system doesn't provide payout info
-        })),
+    const convertedBets: BetRecord[] = useMemo(
+        () =>
+            Object.entries(ownBets).map(([choice, amount]) => ({
+                player: "You", // Since ownBets is for the current player
+                betAmount: amount,
+                payout: 0, // Shared system doesn't provide payout info
+            })),
         [ownBets]
     );
 
     const updateGameState = (updates: Partial<GameState>) => {
-        setGameState(prev => ({ ...prev, ...updates }));
+        setGameState((prev) => ({ ...prev, ...updates }));
     };
 
     return (
-        <div className="main-container">
+        <div className="w-full">
             {/* Logger Controls - positioned outside game-info to avoid clipping */}
-            <div style={{
-                position: 'absolute',
-                top: '10px',
-                left: '10px',
-                right: '10px',
-                zIndex: 10000
-            }}>
+            <div
+                style={{
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    right: "10px",
+                    zIndex: 10000,
+                }}
+            >
                 <LoggerControls className="w-full" />
             </div>
 
             <div className="game-info">
-
                 <div className="frame-game">
                     <div className="frame-2">
                         <MultiplierDisplay multipliers={multipliers} />
@@ -296,12 +293,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 </div>
 
                 <div id="button-bet" className="button-bet">
-                    {!localGameInitialized && (
-                        <div className="game-initializing">
-                            Initializing game...
-                        </div>
-                    )}
-                    {gameState.activeTab === 'Manual' ? (
+                    {!localGameInitialized && <div className="game-initializing">Initializing game...</div>}
+                    {gameState.activeTab === "Manual" ? (
                         <>
                             {/* Manual Bet Button */}
                             <button
@@ -311,10 +304,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                     if (isConnected && isAuthenticated && localGameInitialized) {
                                         // Manual bet mode - place single bet
                                         const gameModeMap: Record<string, number> = {
-                                            'Low': 0,
-                                            'Medium': 1,
-                                            'High': 2,
-                                            'Lightning': 0 // Default to Low for Lightning
+                                            Low: 0,
+                                            Medium: 1,
+                                            High: 2,
+                                            Lightning: 0, // Default to Low for Lightning
                                         };
                                         const gameMode = gameModeMap[gameState.gameMode] ?? 0;
 
@@ -324,10 +317,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                     }
                                 }}
                             >
-                                BET (${gameState.betAmount})
-                                {!isConnected && ' (Connecting...)'}
-                                {isConnected && !isAuthenticated && ' (Authenticating...)'}
-                                {isBetting && ' (Betting...)'}
+                                BET (${gameState.betAmount}){!isConnected && " (Connecting...)"}
+                                {isConnected && !isAuthenticated && " (Authenticating...)"}
+                                {isBetting && " (Betting...)"}
                             </button>
 
                             {/* Test Button for Ball Spawn */}
@@ -335,18 +327,18 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 className="span-bet"
                                 onClick={spawnTestBall}
                                 style={{
-                                    marginLeft: '10px',
-                                    background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
-                                    border: '2px solid #cc4545',
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase',
-                                    boxShadow: '0 4px 8px rgba(255, 107, 107, 0.3)',
-                                    transition: 'all 0.3s ease'
+                                    marginLeft: "10px",
+                                    background: "linear-gradient(135deg, #ff6b6b, #ee5a52)",
+                                    border: "2px solid #cc4545",
+                                    color: "white",
+                                    fontSize: "14px",
+                                    padding: "8px 16px",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    textTransform: "uppercase",
+                                    boxShadow: "0 4px 8px rgba(255, 107, 107, 0.3)",
+                                    transition: "all 0.3s ease",
                                 }}
                             >
                                 🎯 TEST BALL
@@ -356,31 +348,31 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                             <button
                                 className="span-bet"
                                 onClick={() => {
-                                    logger.info('🎯 DIRECT SPAWN TEST clicked - using ball test utilities');
+                                    logger.info("🎯 DIRECT SPAWN TEST clicked - using ball test utilities");
 
                                     // Use the test utilities from @ball/ folder
                                     const testConfig = {
                                         rows: gameState.rows,
                                         betAmount: gameState.betAmount,
                                         multipliers: payoutMultipliers,
-                                        payoutProbabilities: payoutProbabilities
+                                        payoutProbabilities: payoutProbabilities,
                                     };
 
                                     performDirectSpawnTest(ballLayoutRef.current, testConfig);
                                 }}
                                 style={{
-                                    marginLeft: '10px',
-                                    background: 'linear-gradient(135deg, #4CAF50, #45a049)',
-                                    border: '2px solid #3d8b40',
-                                    color: 'white',
-                                    fontSize: '12px',
-                                    padding: '6px 12px',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase',
-                                    boxShadow: '0 4px 8px rgba(76, 175, 80, 0.3)',
-                                    transition: 'all 0.3s ease'
+                                    marginLeft: "10px",
+                                    background: "linear-gradient(135deg, #4CAF50, #45a049)",
+                                    border: "2px solid #3d8b40",
+                                    color: "white",
+                                    fontSize: "12px",
+                                    padding: "6px 12px",
+                                    borderRadius: "6px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    textTransform: "uppercase",
+                                    boxShadow: "0 4px 8px rgba(76, 175, 80, 0.3)",
+                                    transition: "all 0.3s ease",
                                 }}
                             >
                                 DIRECT SPAWN
@@ -389,7 +381,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     ) : (
                         // Auto Bet Button - moved from AutoBetPanel
                         <button
-                            className={`button-bet-auto ${isAutoBetRunning ? 'running' : ''}`}
+                            className={`button-bet-auto ${isAutoBetRunning ? "running" : ""}`}
                             disabled={!localGameInitialized || !isConnected || !isAuthenticated}
                             onClick={async () => {
                                 if (isAutoBetRunning) {
@@ -399,17 +391,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 } else {
                                     // Validate before starting
                                     if (gameState.balance < gameState.betAmount) {
-                                        toast.error('Insufficient balance');
+                                        toast.error("Insufficient balance");
                                         return;
                                     }
                                     if (gameState.numberOfBets < 1) {
-                                        toast.error('Number of bets must be at least 1');
+                                        toast.error("Number of bets must be at least 1");
                                         return;
                                     }
 
                                     // Create AutoBetHandler instance if not exists
                                     if (!autoBetHandlerRef.current) {
-                                        const { AutoBetHandler } = await import('../../services/autoBetHandler');
+                                        const { AutoBetHandler } = await import("../../services/autoBetHandler");
 
                                         const config = {
                                             numberOfBets: gameState.numberOfBets,
@@ -422,14 +414,14 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                             initialBetAmount: gameState.betAmount,
                                             gameMode: (() => {
                                                 const gameModeMap: Record<string, number> = {
-                                                    'Low': 0,
-                                                    'Medium': 1,
-                                                    'High': 2,
-                                                    'Lightning': 0 // Default to Low for Lightning
+                                                    Low: 0,
+                                                    Medium: 1,
+                                                    High: 2,
+                                                    Lightning: 0, // Default to Low for Lightning
                                                 };
                                                 return gameModeMap[gameState.gameMode] ?? 0;
                                             })(),
-                                            numberOfRows: gameState.rows
+                                            numberOfRows: gameState.rows,
                                         };
 
                                         const callbacks = {
@@ -444,10 +436,15 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                             },
                                             onBalanceUpdate: (newBalance: number) => {
                                                 updateGameState({ balance: newBalance });
-                                            }
+                                            },
                                         };
 
-                                        autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
+                                        autoBetHandlerRef.current = new AutoBetHandler(
+                                            config,
+                                            gameState.balance,
+                                            (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed),
+                                            callbacks
+                                        );
                                     }
 
                                     setIsAutoBetRunning(true);
@@ -455,16 +452,16 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 }
                             }}
                         >
-                            {isAutoBetRunning ? 'STOP AUTO BET' : 'START AUTO BET'}
+                            {isAutoBetRunning ? "STOP AUTO BET" : "START AUTO BET"}
                         </button>
                     )}
                 </div>
 
-                <AutoBetPanel
+                <BetControl
                     sharedConfig={{
                         betAmount: gameState.betAmount,
                         gameMode: gameState.gameMode,
-                        rows: gameState.rows
+                        rows: gameState.rows,
                     }}
                     autoConfig={{
                         numberOfBets: gameState.numberOfBets,
@@ -473,7 +470,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         onLossAction: gameState.onLossAction,
                         onLossPercentage: gameState.onLossPercentage,
                         stopOnWin: gameState.stopOnWin,
-                        stopOnLoss: gameState.stopOnLoss
+                        stopOnLoss: gameState.stopOnLoss,
                     }}
                     activeTab={gameState.activeTab}
                     onSharedConfigChange={(config) => updateGameState(config)}
@@ -493,6 +490,3 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 };
 
 export default PlinkoGame;
-
-
-
