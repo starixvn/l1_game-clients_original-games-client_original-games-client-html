@@ -1,4 +1,4 @@
-import { ReactNode, memo, useRef } from "react";
+import { ReactNode, memo, useRef, useEffect } from "react";
 import { Round } from '@shared/components/game-base/type';
 import { SwitchableScoreboard, SlidableScoreboard } from '@shared/components/game-components/round-history/scoreboard';
 import {
@@ -23,10 +23,15 @@ export type ScoreboardComponentProps = {
 
 const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, isShowBlink, playResultAnimation, onSwiperReady, onSlideChange }) => {
     const scoreboardColumnsRef = useRef(17);
+    const scrollTriggerRef = useRef(0);
 
     const updateScoreboardColumns = (actualColumns: number) => {
         scoreboardColumnsRef.current = actualColumns;
     };
+
+    useEffect(() => {
+        scrollTriggerRef.current = Date.now();
+    }, [roundHistory]);
 
     const renderBigRoad = (): ReactNode => {
         const settlements = [...roundHistory].map((round) => ({
@@ -43,6 +48,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
         return (
             <div className={cn(Styles["scoreboard-full"], "py-1 px-[2px]")} id="big-road">
                 <SwitchableScoreboard
+                    key={`big-road-${scrollTriggerRef.current}`}
                     rounds={settlements as any}
                     scoreboards={[
                         {
@@ -54,7 +60,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: true,
+                            scrollToRight: playResultAnimation,
                             columnWidth: 16
                         },
                     ]}
@@ -69,6 +75,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
         return (
             <div className={cn(Styles["scoreboard-full-bead-road"], "py-1 px-0")} id="bead-road">
                 <SwitchableScoreboard
+                    key={`bead-road-${scrollTriggerRef.current}`}
                     rounds={rounds}
                     scoreboards={[
                         {
@@ -80,7 +87,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: true,
+                            scrollToRight: playResultAnimation,
                             columnWidth: 16
                         },
                     ]}

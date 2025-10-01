@@ -14,10 +14,17 @@ export type ScoreboardComponentProps = {
 
 class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
     private scoreboardColumns = 20;
+    private scrollTrigger = 0;
 
     updateScoreboardColumns = (actualColumns: number) => {
         this.scoreboardColumns = actualColumns;
     };
+
+    componentDidUpdate(prevProps: ScoreboardComponentProps) {
+        if (prevProps.roundHistory !== this.props.roundHistory) {
+            this.scrollTrigger = Date.now();
+        }
+    }
 
     render(): ReactNode {
         const { roundHistory, isShowBlink, playResultAnimation } = this.props;
@@ -62,6 +69,7 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         return (
             <div className={Styles["scoreboard-full-big-road"]} id="big-road">
                 <SwitchableScoreboard
+                    key={`sedie-big-road-${this.scrollTrigger}`}
                     rounds={settlementsWithIdx as any}
                     scoreboards={[
                         {
