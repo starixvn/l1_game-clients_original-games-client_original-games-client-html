@@ -1,24 +1,7 @@
 import React from 'react';
 import { MultiplierDisplayProps } from '../../../../shared/types';
-import { logger } from '../../../../services';
 
 const MultiplierDisplay: React.FC<MultiplierDisplayProps> = ({ multipliers }) => {
-    const handleStylesLog = (element: HTMLElement | null, componentName: string) => {
-        if (element) {
-            const styles = window.getComputedStyle(element);
-            logger.info(`MultiplierDisplay ${componentName} computed styles`, {
-                width: styles.width,
-                height: styles.height,
-                position: styles.position,
-                display: styles.display,
-                fontSize: styles.fontSize,
-                color: styles.color,
-                background: styles.background,
-                className: element.className
-            });
-        }
-    };
-
     const baseClasses = [
         'multifiler-no-medium',
         'multifiler-no-medium-3',
@@ -46,7 +29,6 @@ const MultiplierDisplay: React.FC<MultiplierDisplayProps> = ({ multipliers }) =>
     return (
         <div
             className="multifiler"
-            ref={(el) => handleStylesLog(el, 'main container')}
         >
             {multipliers.map((multiplier, index) => (
                 <div key={`multiplier-${index}`} className={baseClasses[index] || baseClasses[0]}>
