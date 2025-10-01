@@ -80,14 +80,6 @@ export function createPhysicsBodies(
     const availableHeight = canvasHeight - topMargin - bottomMargin;
     const verticalSpacing = availableHeight / (rows + 1); // Distribute rows evenly
 
-    console.log('Pin layout calculations:', {
-        topMargin,
-        bottomMargin,
-        availableHeight,
-        verticalSpacing,
-        totalRows: rows
-    });
-
     // Create pins in proper triangular layout (2, 3, 4, 5, 6, 7, 8, 9, 10 pegs per row)
     for (let l = 0; l < rows; l++) {
         // Classic triangular pattern: row 0 has 2 pins, row 1 has 3 pins, etc.
@@ -103,13 +95,6 @@ export function createPhysicsBodies(
 
         // Center this row horizontally
         const rowStartX = (canvasWidth - lineWidth) / 2;
-
-        console.log(`Row ${l}:`, {
-            linePins,
-            lineWidth: lineWidth.toFixed(1),
-            pinSpacing: pinSpacing.toFixed(1),
-            rowStartX: rowStartX.toFixed(1)
-        });
 
         for (let i = 0; i < linePins; i++) {
             const pinX = rowStartX + i * pinSpacing;
@@ -244,8 +229,6 @@ export function spawnBall(
         return;
     }
 
-    console.log('✅ Ball spawned! betAmount:', betAmount, 'Time:', new Date(now).toISOString(), 'Time since last spawn:', timeSinceLastSpawn + 'ms');
-
     // Update last spawn time
     lastSpawnTimeRef.current = now;
 
@@ -273,18 +256,6 @@ export function spawnBall(
     const finalBallX = ballX + randomOffset;
 
     const ballColor = betAmount <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
-
-    console.log('Spawning ball from middle position:', {
-        middlePosition: ballX.toFixed(1),
-        randomOffset: randomOffset.toFixed(1),
-        finalPosition: finalBallX.toFixed(1),
-        ballRadius: ballRadius.toFixed(1),
-        rows,
-        canvasScaleFactor: canvasScaleFactor.toFixed(2),
-        physicsTweaks,
-        canvasWidth,
-        canvasHeight
-    });
 
     const ball = Bodies.circle(finalBallX, 30, ballRadius, {
         restitution: physicsTweaks.restitution, // Dynamic bounce based on size
@@ -319,43 +290,28 @@ export function spawnBallWithPath(
     serviceData: ServiceGuidedBallData,
     rows: number
 ): void {
-    console.log('🎯 SPAWNING BALL WITH SERVICE PATH:', {
-        betValue: serviceData.betValue,
-        path: serviceData.path,
-        finalSlot: serviceData.finalSlot,
-        multiplier: serviceData.multiplier,
-        pathLength: serviceData.path.length,
-        expectedRows: rows,
-        expectedFinalSlot: serviceData.path.filter(p => p === 1).length,
-        engineExists: !!engine.world,
-        canvasExists: !!canvasRef.current
-    });
 
     // Validate service data consistency
     const calculatedSlot = serviceData.path.filter(p => p === 1).length;
     if (calculatedSlot !== serviceData.finalSlot) {
-        console.warn(`⚠️ Slot mismatch! Path suggests slot ${calculatedSlot}, service says ${serviceData.finalSlot}`);
+        // Slot mismatch validation (silenced)
     }
 
     // Validate path matches expected rows
     if (serviceData.path.length !== rows) {
-        console.warn(`⚠️ Path length (${serviceData.path.length}) doesn't match expected rows (${rows})`);
+        // Path length validation (silenced)
     }
 
     try {
         const ball = createBallWithServicePath(engine, serviceData, canvasRef, rows);
-        console.log('✅ Ball created:', { id: ball.id, label: ball.label, position: ball.position });
 
         // Add ball to physics world
         if (engine.world) {
             Composite.add(engine.world, ball);
             (ball as Body & BallBodyExtension).world = engine.world;
-            console.log('✅ Ball added to physics world - now falling!');
-        } else {
-            console.error('❌ No physics world available');
         }
     } catch (error) {
-        console.error('❌ Error creating/spawning ball:', error);
+        // Error handling (silenced)
     }
 }
 
@@ -407,16 +363,6 @@ function createBallWithServicePath(
     ballExtension.betValue = serviceData.betValue;
     ballExtension.isServiceGuided = true;
     ballExtension.createdAt = Date.now(); // Track creation time
-
-    console.log('🎯 Ball created with service path:', {
-        path: serviceData.path.join(''),
-        pathArray: serviceData.path,
-        finalSlot: serviceData.finalSlot,
-        multiplier: serviceData.multiplier,
-        startX: ballX,
-        pathLength: serviceData.path.length,
-        expectedCollisions: serviceData.path.length
-    });
 
     return ball;
 }

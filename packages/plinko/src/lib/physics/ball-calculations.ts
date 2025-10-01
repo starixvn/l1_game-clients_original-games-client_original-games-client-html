@@ -22,12 +22,6 @@ export interface BallPhysicsTweaks {
  * @returns Calculated ball radius for Matter.js physics
  */
 export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): number {
-    logger.debug('🔢 [BALL_CALCULATIONS] Starting ball size calculation', {
-        inputRows: rows,
-        canvasScaleFactor: canvasScaleFactor.toFixed(2),
-        timestamp: new Date().toISOString()
-    });
-
     // Validate input
     if (!rows || rows < 1) {
         logger.warn('🔢 [BALL_CALCULATIONS] Invalid rows count, using minimum rows', {
@@ -147,8 +141,8 @@ export function getBallPhysicsTweaks(ballRadius: number): BallPhysicsTweaks {
  * Useful for development and tuning the dynamic sizing system
  */
 export function demoBallSizing(): void {
-    logger.info('🎯 Plinko Ball Sizing Demo');
-    logger.info('='.repeat(50));
+    
+    
 
     const testCases = [
         { rows: 1, description: 'Minimum rows (max ball size)' },
@@ -166,14 +160,14 @@ export function demoBallSizing(): void {
         const diameter = radius * 2;
         const physics = getBallPhysicsTweaks(radius);
 
-        logger.info(`${description} (${rows} rows):`);
-        logger.info(`  Diameter: ${diameter.toFixed(1)}px, Radius: ${radius.toFixed(1)}px`);
-        logger.info(`  Physics: Bounce ${physics.restitution.toFixed(2)}, Air Resistance ${physics.frictionAir.toFixed(3)}, Density ${physics.density.toFixed(5)}`);
-        logger.info('');
+        
+        
+        
+        
     });
 
-    logger.info('Configuration:');
-    logger.info(`  Base Rows: ${ballSizingConfig.baseRows}, Base Diameter: ${ballSizingConfig.baseDiameter}px`);
-    logger.info(`  Size Range: ${ballSizingConfig.minDiameter}px - ${ballSizingConfig.maxDiameter}px`);
-    logger.info(`  Scale Factor: ${ballSizingConfig.sizeScaleFactor}`);
+    
+    
+    
+    
 }

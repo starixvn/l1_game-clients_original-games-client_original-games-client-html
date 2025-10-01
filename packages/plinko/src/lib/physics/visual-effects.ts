@@ -5,8 +5,6 @@ import { logger } from '../../services/logger';
  * Handles all visual effects, particles, and animations for the Plinko game
  */
 
-logger.info('✨ [VISUAL_EFFECTS] Visual effects module loaded');
-
 /**
  * Create a floating text particle showing the win amount
  * @param winAmount - The amount won

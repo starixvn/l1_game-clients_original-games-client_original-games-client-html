@@ -6,8 +6,6 @@ import { logger } from '../../services/logger';
  * Handles all collision detection and response logic for the Plinko game
  */
 
-logger.info('💥 [COLLISION_HANDLERS] Collision handlers module loaded');
-
 // Extend Body interface to include custom properties
 interface ExtendedBody extends Body {
     isRemoved?: boolean;
@@ -51,45 +49,14 @@ export interface CollisionHandlerOptions {
  * @param deflectionStrength - How strong the random deflection should be (0.1-0.3 recommended)
  */
 export function applyRandomPegDeflection(ballBody: Body, deflectionStrength: number = 0.2): void {
-    logger.debug('💥 [COLLISION_HANDLERS] Applying random peg deflection', {
-        ballId: ballBody.id,
-        ballLabel: ballBody.label,
-        ballPosition: {
-            x: ballBody.position.x.toFixed(1),
-            y: ballBody.position.y.toFixed(1)
-        },
-        deflectionStrength: deflectionStrength.toFixed(3)
-    });
-
     // Add random horizontal velocity component
     const randomDirection = Math.random() < 0.5 ? -1 : 1; // 50% left, 50% right
     const randomForce = randomDirection * deflectionStrength * (Math.random() * 0.5 + 0.75); // 0.75-1.25x strength
-
-    logger.debug('💥 [COLLISION_HANDLERS] Random deflection parameters calculated', {
-        ballId: ballBody.id,
-        randomDirection: randomDirection > 0 ? 'right' : 'left',
-        randomDirectionValue: randomDirection,
-        randomForce: randomForce.toFixed(3),
-        deflectionStrength: deflectionStrength.toFixed(3),
-        forceMultiplier: (Math.random() * 0.5 + 0.75).toFixed(3),
-        calculation: `${randomDirection} * ${deflectionStrength.toFixed(3)} * ${(Math.random() * 0.5 + 0.75).toFixed(3)} = ${randomForce.toFixed(3)}`
-    });
 
     // Apply the random force perpendicular to gravity (horizontal)
     Body.applyForce(ballBody, ballBody.position, {
         x: randomForce,
         y: 0 // No vertical force, let gravity handle falling
-    });
-
-    logger.info('💥 [COLLISION_HANDLERS] Random peg deflection applied', {
-        ballId: ballBody.id,
-        ballLabel: ballBody.label,
-        direction: randomDirection > 0 ? 'right' : 'left',
-        force: randomForce.toFixed(3),
-        ballPosition: {
-            x: ballBody.position.x.toFixed(1),
-            y: ballBody.position.y.toFixed(1)
-        }
     });
 }
 
@@ -106,21 +73,6 @@ export function handleBallPayoutCollision(
     engine: Engine,
     options: CollisionHandlerOptions = {}
 ): void {
-    logger.info('💥 [COLLISION_HANDLERS] Ball payout collision detected', {
-        ballId: ballBody.id,
-        ballLabel: ballBody.label,
-        slotId: slotBody.label,
-        ballPosition: {
-            x: ballBody.position.x.toFixed(1),
-            y: ballBody.position.y.toFixed(1)
-        },
-        slotPosition: {
-            x: slotBody.position.x.toFixed(1),
-            y: slotBody.position.y.toFixed(1)
-        },
-        timestamp: new Date().toISOString()
-    });
-
     // Extract collision data from physics body labels
     const multiplierValue = parseFloat(slotBody.label.split('-')[1]);
     const ballValue = parseFloat(ballBody.label.split('-')[1]) || 1;
