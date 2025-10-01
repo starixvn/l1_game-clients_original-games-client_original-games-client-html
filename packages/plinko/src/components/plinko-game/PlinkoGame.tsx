@@ -86,10 +86,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         });
 
         // Register handler for endBet message (contains the finish object with result path)
-        console.log('🎯 Registering endBet handler...');
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
             logger.info('🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path', action);
-            console.log('🎯 ENDBET HANDLER CALLED with action:', action);
 
             if (action?.finish?.result) {
                 const resultPath = action.finish.result;
@@ -97,10 +95,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 const multiplier = action.finish.settlementResult?.multiplier || 1;
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
-
-                console.log('🎯 HANDLER: Processing result path:', resultPath, 'slotIndex:', slotIndex, 'multiplier:', multiplier);
-                console.log('🎯 HANDLER: ballLayoutRef.current exists:', !!ballLayoutRef.current);
-                console.log('🎯 HANDLER: ballLayoutRef.current.spawnBallWithPath exists:', !!ballLayoutRef.current?.spawnBallWithPath);
 
                 logger.info('🎯 [PLINKO GAME] Spawning ball with server result path', {
                     resultPath,
@@ -116,11 +110,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     const maxRetries = 10; // Try for up to ~1 second (10 * 100ms)
 
                     if (ballLayoutRef.current?.spawnBallWithPath) {
-                        console.log('🎯 HANDLER: Calling spawnBallWithPath with params:', betAmount, resultPath, slotIndex, multiplier);
                         try {
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
                             logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
-                            console.log('✅ HANDLER: spawnBallWithPath call completed');
                             return true; // Success
                         } catch (error) {
                             console.error('❌ HANDLER: Error calling spawnBallWithPath:', error);
@@ -128,10 +120,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                             return false; // Failed
                         }
                     } else {
-                        console.log(`❌ HANDLER: ballLayoutRef not ready (attempt ${retryCount + 1}/${maxRetries + 1}):`, {
-                            ref: ballLayoutRef.current,
-                            hasSpawnMethod: !!ballLayoutRef.current?.spawnBallWithPath
-                        });
 
                         if (retryCount < maxRetries) {
                             // Retry after 100ms
@@ -216,7 +204,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     // Test function to spawn a ball with predefined path for testing
     const spawnTestBall = () => {
-        console.log('🎯 Spawning test ball with predefined path');
         // Spawn a ball with a path that will hit the center multiplier (index 4)
         const testPath = [0, 1, 0, 1, 0, 1, 0, 1, 0]; // Path to center slot
         const finalSlot = 4; // Center multiplier slot
@@ -369,7 +356,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                             <button
                                 className="span-bet"
                                 onClick={() => {
-                                    console.log('🎯 DIRECT SPAWN BUTTON CLICKED - Starting test using @ball/ test utilities');
                                     logger.info('🎯 DIRECT SPAWN TEST clicked - using ball test utilities');
 
                                     // Use the test utilities from @ball/ folder

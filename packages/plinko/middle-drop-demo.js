@@ -7,11 +7,11 @@
 
 // Configuration (copied from the main component)
 const ballSizingConfig = {
-  baseRows: 10, // Reference row count for base sizing
-  baseDiameter: 20, // Base ball diameter in pixels at baseRows
-  minDiameter: 8, // Minimum ball diameter to prevent invisibility
-  maxDiameter: 35, // Maximum ball diameter to prevent overcrowding
-  sizeScaleFactor: 0.8, // Additional scaling factor for peg gap consideration
+    baseRows: 10, // Reference row count for base sizing
+    baseDiameter: 20, // Base ball diameter in pixels at baseRows
+    minDiameter: 8, // Minimum ball diameter to prevent invisibility
+    maxDiameter: 35, // Maximum ball diameter to prevent overcrowding
+    sizeScaleFactor: 0.8, // Additional scaling factor for peg gap consideration
 };
 
 /**
@@ -19,17 +19,17 @@ const ballSizingConfig = {
  * Returns the X coordinates for each of the 9 drop zones
  */
 function calculateDropPositions(canvasWidth, multipliers) {
-  const numPositions = 9; // Always 9 drop positions as per spec
-  const spawnMargin = canvasWidth * 0.05; // 5% margin from edges
-  const availableWidth = canvasWidth - spawnMargin * 2;
-  const positionSpacing = availableWidth / (numPositions - 1);
+    const numPositions = 9; // Always 9 drop positions as per spec
+    const spawnMargin = canvasWidth * 0.05; // 5% margin from edges
+    const availableWidth = canvasWidth - spawnMargin * 2;
+    const positionSpacing = availableWidth / (numPositions - 1);
 
-  const positions = [];
-  for (let i = 0; i < numPositions; i++) {
-    positions.push(spawnMargin + i * positionSpacing);
-  }
+    const positions = [];
+    for (let i = 0; i < numPositions; i++) {
+        positions.push(spawnMargin + i * positionSpacing);
+    }
 
-  return positions;
+    return positions;
 }
 
 /**
@@ -37,58 +37,38 @@ function calculateDropPositions(canvasWidth, multipliers) {
  * This ensures the ball always starts from the center for fair, unpredictable outcomes
  */
 function getMiddleDropPosition(canvasWidth, multipliers) {
-  const positions = calculateDropPositions(canvasWidth, multipliers);
-  const middleIndex = 4; // 0-based index, 5th position (middle of 9)
+    const positions = calculateDropPositions(canvasWidth, multipliers);
+    const middleIndex = 4; // 0-based index, 5th position (middle of 9)
 
-  if (positions.length > middleIndex) {
-    return positions[middleIndex];
-  }
+    if (positions.length > middleIndex) {
+        return positions[middleIndex];
+    }
 
-  // Fallback to center if calculation fails
-  console.warn("Could not calculate middle drop position, using canvas center");
-  return canvasWidth / 2;
+    // Fallback to center if calculation fails
+    console.warn("Could not calculate middle drop position, using canvas center");
+    return canvasWidth / 2;
 }
 
 /**
  * Demo function to test drop position calculations and middle position selection
  */
 function demoDropPositions() {
-  console.log("📍 Plinko Drop Positions Demo");
-  console.log("=".repeat(50));
+    const testCanvasWidths = [400, 600, 800];
+    const mockMultipliers = [100, 15.6, 2, 0.9, 0.5, 0.4, 0.5, 0.9, 2, 15.6, 100];
 
-  const testCanvasWidths = [400, 600, 800];
-  const mockMultipliers = [100, 15.6, 2, 0.9, 0.5, 0.4, 0.5, 0.9, 2, 15.6, 100];
-
-  testCanvasWidths.forEach((canvasWidth) => {
-    console.log(`Canvas Width: ${canvasWidth}px`);
-    const positions = calculateDropPositions(canvasWidth, mockMultipliers);
-    const middlePos = getMiddleDropPosition(canvasWidth, mockMultipliers);
-
-    console.log("Drop Positions:");
-    positions.forEach((pos, index) => {
-      const marker = index === 4 ? " ← MIDDLE" : "";
-      console.log(`  ${index + 1}: ${pos.toFixed(1)}px${marker}`);
+    testCanvasWidths.forEach((canvasWidth) => {
+        const positions = calculateDropPositions(canvasWidth, mockMultipliers);
+        const middlePos = getMiddleDropPosition(canvasWidth, mockMultipliers);
     });
-    console.log(`Middle Position: ${middlePos.toFixed(1)}px`);
-    console.log("");
-  });
 
-  // Simulate ball spawning with minimal random offset
-  console.log("Ball Spawning Simulation:");
-  const canvasWidth = 600;
-  const baseMiddlePos = getMiddleDropPosition(canvasWidth, mockMultipliers);
+    // Simulate ball spawning with minimal random offset
+    const canvasWidth = 600;
+    const baseMiddlePos = getMiddleDropPosition(canvasWidth, mockMultipliers);
 
-  for (let i = 0; i < 5; i++) {
-    const randomOffset = (Math.random() - 0.5) * 4; // -2px to +2px
-    const finalPos = baseMiddlePos + randomOffset;
-    console.log(
-      `Drop ${i + 1}: Base ${baseMiddlePos.toFixed(
-        1
-      )}px + Offset ${randomOffset.toFixed(1)}px = Final ${finalPos.toFixed(
-        1
-      )}px`
-    );
-  }
+    for (let i = 0; i < 5; i++) {
+        const randomOffset = (Math.random() - 0.5) * 4; // -2px to +2px
+        const finalPos = baseMiddlePos + randomOffset;
+    }
 }
 
 // Run the demo

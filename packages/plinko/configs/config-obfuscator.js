@@ -4,9 +4,8 @@ const fsPromise = require("fs").promises;
 const writeFile = async (fileName, content) => {
     try {
         await fsPromise.writeFile(fileName, content, { encoding: "utf8", flag: "w" });
-        console.log(`Done: ${fileName}`);
     } catch (e) {
-        console.log(e);
+        // Error writing file
     }
 };
 
@@ -27,7 +26,7 @@ const obfuscate = async (fileName, content, outputDir) => {
 
         writeFile(outputDir + fileName.replace("configs", "c"), uglyCode.toString());
     } catch (e) {
-        console.log(e);
+        // Obfuscation error
     }
 };
 
@@ -54,7 +53,7 @@ const runObfuscationProcess = async (dirNames) => {
             await fsPromise.mkdir(outputDir);
             await doObfuscationDirectory(dirName, outputDir);
         } catch (ex) {
-            console.log(`Dir ${dirName}, ${JSON.stringify(ex)}`);
+            // Directory obfuscation error
         }
     }
 };

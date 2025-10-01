@@ -6,8 +6,6 @@ interface LoggerControlsProps {
 }
 
 const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
-  console.log('LoggerControls component rendering', { logCount: logger.getLogCount(), className });
-
   const [logCount, setLogCount] = useState(logger.getLogCount());
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentLogs, setRecentLogs] = useState<string[]>([]);

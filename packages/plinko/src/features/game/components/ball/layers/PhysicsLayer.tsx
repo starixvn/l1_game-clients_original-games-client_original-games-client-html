@@ -564,8 +564,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
         // Method to spawn ball with service-determined path
         const spawnBallWithPath = (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-            console.log('🔧 Physics Layer: spawnBallWithPath called with:', { betValue, path, finalSlot, multiplier });
-
             if (!engineRef.current || !canvasRef.current) {
                 return;
             }
@@ -581,25 +579,6 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
             const ballX = getMiddleDropPosition(canvasWidth);
             const ballY = ballRadius + 10; // Spawn position from top
             const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
-
-            console.log('📍 Physics Layer: Spawn Position Details', {
-                canvasWidth: canvasWidth.toFixed(1),
-                canvasHeight: canvasHeight.toFixed(1),
-                canvasScaleFactor: canvasScaleFactor.toFixed(3),
-                ballX: ballX.toFixed(1),
-                ballY: ballY.toFixed(1),
-                ballRadius: ballRadius.toFixed(2),
-                middleDropPosition: ballX.toFixed(1),
-                boardDimensions: boardDimensions ? {
-                    boardWidth: boardDimensions.boardWidth.toFixed(1),
-                    boardHeight: boardDimensions.boardHeight.toFixed(1),
-                    boardX: boardDimensions.boardX.toFixed(1),
-                    triangleTopX: boardDimensions.triangleTopX.toFixed(1),
-                    triangleTopY: boardDimensions.triangleTopY.toFixed(1),
-                    triangleBottomLeftX: boardDimensions.triangleBottomLeftX.toFixed(1),
-                    triangleBottomRightX: boardDimensions.triangleBottomRightX.toFixed(1)
-                } : 'Not available'
-            });
 
             const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
                 restitution: physicsTweaks.restitution,

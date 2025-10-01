@@ -12,11 +12,6 @@ const path = require("path");
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "145";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-145";
 
-console.log(`Building plinko with:`);
-console.log(`  Game ID: ${gameId}`);
-console.log(`  Base Path: ${basePath}`);
-console.log("");
-
 // Set environment variables for the build process
 const env = {
     ...process.env,
@@ -27,8 +22,6 @@ const env = {
 // Run the build command
 const buildCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const buildArgs = ["run", "build:standalone"];
-
-console.log(`Running: ${buildCommand} ${buildArgs.join(" ")}`);
 
 const child = spawn(buildCommand, buildArgs, {
     stdio: "inherit",

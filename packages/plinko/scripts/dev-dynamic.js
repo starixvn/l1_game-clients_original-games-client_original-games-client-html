@@ -12,11 +12,6 @@ const path = require("path");
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "145";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-145";
 
-console.log(`Starting plinko development server with:`);
-console.log(`  Game ID: ${gameId}`);
-console.log(`  Base Path: ${basePath}`);
-console.log("");
-
 // Set environment variables for the dev process
 const env = {
     ...process.env,
@@ -27,8 +22,6 @@ const env = {
 // Run the dev command
 const devCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const devArgs = ["run", "dev"];
-
-console.log(`Running: ${devCommand} ${devArgs.join(" ")}`);
 
 const child = spawn(devCommand, devArgs, {
     stdio: "inherit",

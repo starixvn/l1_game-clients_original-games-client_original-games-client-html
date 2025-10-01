@@ -16,8 +16,7 @@ class Logger {
             logEntry += ` | Data: ${JSON.stringify(data, null, 2)}`;
         }
 
-        // Also log to console for immediate feedback
-        console.log(logEntry);
+        // Console logging removed
 
         // Store in memory
         this.logs.push(logEntry);
