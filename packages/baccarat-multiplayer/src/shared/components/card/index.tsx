@@ -3,6 +3,8 @@ import Styles from "./card.module.scss";
 import { Props } from "./type";
 import { convertRank, suffixNameMapping } from "./utils/card-utils";
 import { buildVersion } from "@shared/constants";
+import { CachedImage } from "@shared/components/game-components/cached-image";
+import { BgCachedImage } from "@shared/components/game-components/cached-image/bg-cached-image";
 
 export const EmptyCardIndex = -1;
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -50,10 +52,30 @@ const Card: React.FC<Props> = (props) => {
         const suitImageUrl = cardImages[`${suffixNameMapping[result?.type]}`];
         return (
             <div className={Styles['card-front-box']}>
-                <div className={Styles['card-front']}>
-                    <img src={rankImageUrl} className={Styles['card-rank']} width="20" height="20" alt={`card rank ${convertRank(result?.card)}`} />
-                    <img src={suitImageUrl} className={Styles['card-suit']} width="20" height="20" alt={`card suit ${suffixNameMapping[result?.type]}`} />
-                </div>
+                <BgCachedImage
+                    pathImage={`${basePath}/static/images/baccarat/cards/card-front.webp?v=${buildVersion}`}
+                    className={Styles['card-front']}
+                    backgroundSize="100% 100%"
+                    backgroundPosition="center"
+                    backgroundRepeat="no-repeat"
+                >
+                    <CachedImage
+                        src={rankImageUrl}
+                        className={Styles['card-rank']}
+                        width={20}
+                        height={20}
+                        alt={`card rank ${convertRank(result?.card)}`}
+                        priority
+                    />
+                    <CachedImage
+                        src={suitImageUrl}
+                        className={Styles['card-suit']}
+                        width={20}
+                        height={20}
+                        alt={`card suit ${suffixNameMapping[result?.type]}`}
+                        priority
+                    />
+                </BgCachedImage>
             </div>
         );
     };

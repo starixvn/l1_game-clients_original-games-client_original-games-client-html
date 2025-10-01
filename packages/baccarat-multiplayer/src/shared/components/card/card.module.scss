@@ -29,22 +29,12 @@
     width: 100%;
     height: 100%;
     position: relative;
-
-    background-image: url("#{$base-path}/static/images/baccarat/cards/card-front.webp?v=#{$version-image}");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 .card-back {
     width: 100%;
     height: 100%;
     position: relative;
-
-    background-image: url("#{$base-path}/static/images/baccarat/cards/card-back.webp?v=#{$version-image}");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 .card-rank {
