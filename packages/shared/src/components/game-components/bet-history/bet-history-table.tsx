@@ -163,7 +163,7 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     const calculateDynamicMaxHeight = useCallback(() => {
         const minHeight = 300;
         const rowCount = Math.min(displayedBetLogs.length, 10);
-        
+
         if (rowCount === 0) {
             return `${minHeight}px`;
         }
@@ -212,8 +212,8 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     }
 
     return (
-            <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`)}>
-                {/* Sticky Header Table */}
+        <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`)}>
+            {/* Sticky Header Table */}
             <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
                 <TableHeader>{renderBetHistoryHeader(headerColumns)}</TableHeader>
             </Table>
@@ -264,7 +264,11 @@ function renderToggleButton(
             {isLoading ? (
                 <BouncingDotsLoader />
             ) : (
-                <button className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`} onClick={handleToggleExpand} disabled={isLoading}>
+                <button
+                    className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`}
+                    onClick={handleToggleExpand}
+                    disabled={isLoading}
+                >
                     {isExpanded ? t("show_less") : t("show_more")}
                 </button>
             )}

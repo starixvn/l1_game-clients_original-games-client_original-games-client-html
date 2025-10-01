@@ -1,14 +1,18 @@
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "@shared/components/game-base/type";
 import styles from "./baccarat-highlight-bet-option.module.scss";
-import { BET_OPTION_SHAPES, BET_OPTION_SHAPES_DESKTOP } from "./bet-option-shapes";
 import { useEffect, useState } from "react";
+import { Winner } from "@/baccarat-multiplayer-constants";
+import { cn } from "@shared";
+import Image from "next/image";
 
 export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
     const { showResultInfo, settlementResult, roundState } = useGameStateContext();
+    
     const [isDesktop, setIsDesktop] = useState(false);
 
-    // Track viewport size for responsive shapes
     useEffect(() => {
         const checkViewport = () => {
             setIsDesktop(window.innerWidth >= 768);
@@ -20,36 +24,61 @@ export const BaccaratHighlightBetOption = ({ choice }: { choice: string }) => {
         return () => window.removeEventListener("resize", checkViewport);
     }, []);
 
-    // Get shape path from shared constants based on viewport
-    const shapes = isDesktop ? BET_OPTION_SHAPES_DESKTOP : BET_OPTION_SHAPES;
-    const shapePath =
-        choice === "banker" ? shapes.banker : choice === "tie" ? shapes.tie : choice === "anyPair" ? shapes.anyPair : shapes.player;
 
-    // Generate SVG mask for the shape
-    const generateShapeMask = () => {
-        const svgString = `
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <path d="${shapePath}" fill="none" stroke="white" stroke-width="2"/>
-            </svg>
-        `;
-        return `url("data:image/svg+xml,${encodeURIComponent(svgString)}")`;
+    // Get image path based on choice
+    const getImagePath = (choice: string): string => {
+        switch (choice) {
+            case Winner.PLAYER:
+                return `${basePath}/static/images/highlight-winning/${isDesktop ? "desktop" : "mobile"}/highlight-winning-player.webp`;
+            case Winner.BANKER:
+                return `${basePath}/static/images/highlight-winning/${isDesktop ? "desktop" : "mobile"}/highlight-winning-banker.webp`;
+            case Winner.TIE:
+                return `${basePath}/static/images/highlight-winning/${isDesktop ? "desktop" : "mobile"}/highlight-winning-tie.webp`;
+            case Winner.ANY_PAIR:
+                return `${basePath}/static/images/highlight-winning/${isDesktop ? "desktop" : "mobile"}/highlight-winning-anypair.webp`;
+            default:
+                return "";
+        }
     };
+
+    const imagePath = getImagePath(choice);
+
+    // Get shadow class based on choice and viewport
+    const getShadowClass = (choice: string): string => {
+        const suffix = isDesktop ? "Desktop" : "Mobile";
+
+        switch (choice) {
+            case Winner.PLAYER:
+                return styles[`playerPrevShadow${suffix}`];
+            case Winner.BANKER:
+                return styles[`bankerPrevShadow${suffix}`];
+            case Winner.TIE:
+                return styles[`tiePrevShadow${suffix}`];
+            case Winner.ANY_PAIR:
+                return styles[`anyPairPrevShadow${suffix}`];
+            default:
+                return "";
+        }
+    };
+
+    const shadowClass = getShadowClass(choice);
+
+    
     return (
         [RoundState.None, RoundState.DisplayResult].includes(roundState) &&
         showResultInfo &&
         settlementResult[choice] && (
-            <div className={`${styles["highlight"]} ${styles[choice]}`}>
-                {/* Background glow effect */}
-                <div className={`${styles["bg"]} ${styles[choice]}`}></div>
-                {/* Glowing border effect */}
-                <div
-                    className={`${styles["border"]} ${styles[choice]}`}
-                    style={{
-                        maskImage: generateShapeMask(),
-                        WebkitMaskImage: generateShapeMask(),
-                    }}
-                ></div>
-            </div>
+            <div className={cn(`${styles["highlight"]} ${styles[choice]}`)}>
+            {shadowClass && <div className={shadowClass}></div>}
+            <Image
+                src={imagePath}
+                alt={`highlight-winning-${choice}`}
+                width={199}
+                height={185}
+                className="w-full h-full object-contain"
+                priority
+            />
+        </div>
         )
     );
 };
