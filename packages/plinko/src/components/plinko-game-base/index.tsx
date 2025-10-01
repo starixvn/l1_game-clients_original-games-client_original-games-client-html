@@ -14,6 +14,9 @@ import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/componen
 import { PlinkoGameRoundDataHandler, PlinkoGameSoundHandler, PlinkoStateHandler } from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
 import { logger } from "../../services/logger";
+import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
+import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
+import { PlayerResultBoardTable } from "@shared/components/game-components/player-result-board/player-result-board-table";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
@@ -115,6 +118,11 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderMoreMenuIcon(): JSX.Element {
         // Plinko can customize menu icons if needed
         return <></>;
+    }
+
+    renderBetHistoryTable(): JSX.Element {
+        // Plinko handles its own bet history table within the PlinkoGame component
+        return <BetHistoryControl defaultTab={"all-bets"} children={[ <PlayerResultBoardTable/>, <BetHistoryTable gameId={this.props.id?.toString()} />]} />;
     }
 }
 

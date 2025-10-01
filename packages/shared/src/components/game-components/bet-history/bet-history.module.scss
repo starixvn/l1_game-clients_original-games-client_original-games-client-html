@@ -97,33 +97,57 @@
 // Tab control styles
 .tab-header {
     display: flex;
-    gap: 4px;
+    position: relative;
+    border-radius: 0;
     margin-bottom: 16px;
+    height: 48px; // h-12
+    border-bottom: 2px solid var(--input, #2B3648);
+    overflow: hidden;
 }
 
 .tab-button {
     flex: 1;
-    padding: 8px 12px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 8px;
-    border: 1px solid transparent;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 0 12px; // px-3
+    transition: all 250ms ease;
+    border-radius: 6px; // rounded-md
+    background: none;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 0; // Allow flex items to shrink below content size
-    white-space: nowrap; // Prevent text wrapping
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     
     &:hover {
-        opacity: 0.9;
+        opacity: 0.8;
     }
     
-    // Ensure text is always visible
-    &:focus {
+    &:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        box-shadow: none;
     }
+    
+    &[aria-selected="true"] {
+        color: var(--primary, #ffffff);
+    }
+    
+    &[aria-selected="false"] {
+        color: var(--secondary, #ffffff);
+    }
+}
+
+.tab-slider {
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+    background: #3FEC83;
+    z-index: 10;
+    left: 0;
+    will-change: transform;
 }
 
 .tab-content {
