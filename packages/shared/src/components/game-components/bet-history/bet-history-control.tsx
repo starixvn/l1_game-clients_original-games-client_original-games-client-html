@@ -3,7 +3,7 @@ import { useCommonTranslate, useClickSound } from "@shared/react-hooks";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import styles from "./bet-history.module.scss";
 
-export type BetHistoryTab = "all" | "my" | "high-roller";
+export type BetHistoryTab = "all-bets" | "my-bets" | "high-roller";
 
 export interface BetHistoryControlProps {
     defaultTab?: BetHistoryTab | null;
@@ -12,7 +12,7 @@ export interface BetHistoryControlProps {
 }
 
 export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({
-    defaultTab = "all",
+    defaultTab = "all-bets",
     children,
     className
 }) => {
@@ -24,8 +24,8 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({
     
     // Initialize active tab - ensure it's valid based on available tabs
     const [activeTab, setActiveTab] = useState<BetHistoryTab>(() => {
-        const availableTabs = ["all", "my", "high-roller"].slice(0, children.length) as BetHistoryTab[];
-        const defaultTabKey = defaultTab || "all";
+        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, children.length) as BetHistoryTab[];
+        const defaultTabKey: BetHistoryTab = defaultTab || "all-bets";
         return availableTabs.includes(defaultTabKey) ? defaultTabKey : availableTabs[0];
     });
     
@@ -33,11 +33,11 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({
     const tabs = useMemo(() => {
         const allTabs = [
             {
-                key: "all" as BetHistoryTab,
+                key: "all-bets" as BetHistoryTab,
                 label: `${translateCommon("all")} ${translateCommon("bet_history")}`,
             },
             {
-                key: "my" as BetHistoryTab,
+                key: "my-bets" as BetHistoryTab,
                 label: translateCommon("my_bets"),
             },
             {
@@ -52,7 +52,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({
     
     // Update active tab when children length changes
     useEffect(() => {
-        const availableTabs = ["all", "my", "high-roller"].slice(0, children.length);
+        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, children.length);
         if (!availableTabs.includes(activeTab)) {
             setActiveTab(availableTabs[0] as BetHistoryTab);
         }
