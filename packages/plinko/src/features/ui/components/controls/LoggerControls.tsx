@@ -55,7 +55,8 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
       border: '4px solid #eab308',
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       overflow: 'hidden',
-      minHeight: '60px',
+      minHeight: '50px',
+      maxWidth: '400px',
       zIndex: 9999,
       position: 'relative'
     }} className={className}>
@@ -65,7 +66,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '16px',
+          padding: '8px 12px',
           cursor: 'pointer',
           transition: 'background-color 0.2s'
         }}
@@ -73,7 +74,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(55, 65, 81, 0.3)'}
         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', fontWeight: 'bold' }}>
             <span style={{
               width: '16px',
@@ -84,19 +85,19 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
               boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
               border: '2px solid white'
             }}></span>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: 'white' }}>🚨 LOGGER CONTROLS - VISIBLE TEST 🚨</span>
+            <span style={{ fontSize: '16px', fontWeight: 'bold', color: 'white' }}>🚨 LOGGER</span>
           </div>
           <div style={{
-            padding: '8px 12px',
+            padding: '4px 8px',
             background: '#eab308',
             color: 'black',
-            fontSize: '14px',
+            fontSize: '12px',
             fontWeight: 'bold',
             borderRadius: '9999px',
-            border: '2px solid #ca8a04',
+            border: '1px solid #ca8a04',
             boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
           }}>
-            📊 {logCount} LOGS 📊
+            {logCount}
           </div>
         </div>
 
@@ -108,18 +109,18 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
             }}
             disabled={logCount === 0}
             style={{
-              padding: '6px 12px',
+              padding: '4px 8px',
               background: logCount === 0 ? '#6b7280' : 'linear-gradient(to right, #2563eb, #1d4ed8)',
               color: 'white',
-              fontSize: '12px',
+              fontSize: '11px',
               fontWeight: '500',
-              borderRadius: '6px',
+              borderRadius: '4px',
               border: 'none',
               cursor: logCount === 0 ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '4px',
               boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
               opacity: logCount === 0 ? 0.5 : 1
             }}
@@ -137,8 +138,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
               }
             }}
           >
-            <span style={{ fontSize: '14px' }}>📥</span>
-            Download
+            <span style={{ fontSize: '14px' }}>📥</span> Download
           </button>
 
           <button
@@ -148,18 +148,18 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
             }}
             disabled={logCount === 0}
             style={{
-              padding: '6px 12px',
+              padding: '4px 8px',
               background: logCount === 0 ? '#6b7280' : 'linear-gradient(to right, #dc2626, #b91c1c)',
               color: 'white',
-              fontSize: '12px',
+              fontSize: '11px',
               fontWeight: '500',
-              borderRadius: '6px',
+              borderRadius: '4px',
               border: 'none',
               cursor: logCount === 0 ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '4px',
               boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
               opacity: logCount === 0 ? 0.5 : 1
             }}
@@ -177,8 +177,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
               }
             }}
           >
-            <span style={{ fontSize: '14px' }}>🗑️</span>
-            Clear
+            <span style={{ fontSize: '14px' }}>🗑️</span> Clear
           </button>
 
           <div style={{

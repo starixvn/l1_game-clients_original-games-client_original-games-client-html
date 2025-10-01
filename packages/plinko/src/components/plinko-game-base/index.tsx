@@ -18,7 +18,6 @@ import { logger } from "../../services/logger";
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
 const Menu = dynamic(() => import("@shared/components/game-components/menu/menu"), { ssr: false });
-const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
@@ -61,7 +60,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 minHeight: '100vh'
             }}>
                 <Background gameId={this.props.id} />
-                <Header />
 
                 {/* Plinko specific game content */}
                 <div style={{
