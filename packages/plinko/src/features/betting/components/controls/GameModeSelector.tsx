@@ -44,21 +44,6 @@ const GameModeSelector: React.FC<GameModeSelectorProps> = ({
     return (
         <div
             className={styles['span-game-mode']}
-            ref={(el) => {
-                if (el) {
-                    const styles = window.getComputedStyle(el);
-                    logger.info('GameModeSelector main container computed styles', {
-                        width: styles.width,
-                        height: styles.height,
-                        position: styles.position,
-                        display: styles.display,
-                        padding: styles.padding,
-                        margin: styles.margin,
-                        border: styles.border,
-                        className: el.className
-                    });
-                }
-            }}
         >
             <span className={styles['span-title-ab']}>Game Mode</span>
             <div className={styles['input-ac']}>

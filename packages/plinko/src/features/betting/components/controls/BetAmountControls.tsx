@@ -10,21 +10,6 @@ const BetAmountControls: React.FC<BetAmountControlsProps> = ({
     return (
         <div
             className="title"
-            ref={(el) => {
-                if (el) {
-                    const styles = window.getComputedStyle(el);
-                    logger.info('BetAmountControls main container computed styles', {
-                        width: styles.width,
-                        height: styles.height,
-                        position: styles.position,
-                        display: styles.display,
-                        padding: styles.padding,
-                        margin: styles.margin,
-                        border: styles.border,
-                        className: el.className
-                    });
-                }
-            }}
         >
             <div className="span-title">
                 <span className="span-round-id">Bet Amount</span>

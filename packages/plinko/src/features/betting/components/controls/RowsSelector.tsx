@@ -18,21 +18,6 @@ const RowsSelector: React.FC<RowsSelectorProps> = ({
     return (
         <div
             className={`div-setting-row ${disabled ? 'disabled' : ''}`}
-            ref={(el) => {
-                if (el) {
-                    const styles = window.getComputedStyle(el);
-                    logger.info('RowsSelector main container computed styles', {
-                        width: styles.width,
-                        height: styles.height,
-                        position: styles.position,
-                        display: styles.display,
-                        padding: styles.padding,
-                        margin: styles.margin,
-                        border: styles.border,
-                        className: el.className
-                    });
-                }
-            }}
         >
             <span className="span-title-b1">Rows</span>
             <div className="div-setting-row-b2">

@@ -69,27 +69,19 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
-            logger.warn('gameMessageHandler not available, cannot register handlers');
             return;
         }
 
-        logger.info('🎮 [PLINKO GAME] Registering Plinko-specific handlers');
-
         // Register handler for SIGNED_IN to send inGame message
         const signedInHandlerId = gameMessageHandler.register(messageEventType.SIGNED_IN, (action) => {
-            logger.info('🎮 [PLINKO GAME] SIGNED_IN received, sending inGame for Plinko', action);
             if (socket?.connected) {
                 // Plinko service expects inGame without parameters (based on integration tests)
                 socket.emit("inGame");
-                logger.info('Sent inGame event to Plinko service');
-            } else {
-                logger.warn('Socket not connected, cannot send inGame');
             }
         });
 
         // Register handler for gameConfigs response to mark game as initialized
         const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
-            logger.info('🎮 [PLINKO GAME] Game initialized with configs', action);
             setLocalGameInitialized(true);
         });
 
@@ -119,24 +111,41 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     winAmount
                 });
 
-                // Spawn ball with the server-provided path
-                if (ballLayoutRef.current && ballLayoutRef.current.spawnBallWithPath) {
-                    console.log('🎯 HANDLER: Calling spawnBallWithPath with params:', betAmount, resultPath, slotIndex, multiplier);
-                    try {
-                        ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
-                        logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
-                        console.log('✅ HANDLER: spawnBallWithPath call completed');
-                    } catch (error) {
-                        console.error('❌ HANDLER: Error calling spawnBallWithPath:', error);
-                        logger.error('❌ [PLINKO GAME] Error spawning ball', { error });
+                // Function to attempt spawning with retry logic
+                const attemptSpawnBall = (retryCount = 0) => {
+                    const maxRetries = 10; // Try for up to ~1 second (10 * 100ms)
+
+                    if (ballLayoutRef.current?.spawnBallWithPath) {
+                        console.log('🎯 HANDLER: Calling spawnBallWithPath with params:', betAmount, resultPath, slotIndex, multiplier);
+                        try {
+                            ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
+                            logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
+                            console.log('✅ HANDLER: spawnBallWithPath call completed');
+                            return true; // Success
+                        } catch (error) {
+                            console.error('❌ HANDLER: Error calling spawnBallWithPath:', error);
+                            logger.error('❌ [PLINKO GAME] Error spawning ball', { error });
+                            return false; // Failed
+                        }
+                    } else {
+                        console.log(`❌ HANDLER: ballLayoutRef not ready (attempt ${retryCount + 1}/${maxRetries + 1}):`, {
+                            ref: ballLayoutRef.current,
+                            hasSpawnMethod: !!ballLayoutRef.current?.spawnBallWithPath
+                        });
+
+                        if (retryCount < maxRetries) {
+                            // Retry after 100ms
+                            setTimeout(() => attemptSpawnBall(retryCount + 1), 100);
+                        } else {
+                            logger.error('❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning');
+                            console.error('❌ HANDLER: ballLayoutRef not ready after max retries');
+                        }
+                        return false; // Still not ready, will retry
                     }
-                } else {
-                    console.error('❌ HANDLER: ballLayoutRef not ready:', {
-                        ref: ballLayoutRef.current,
-                        hasSpawnMethod: !!ballLayoutRef.current?.spawnBallWithPath
-                    });
-                    logger.error('❌ [PLINKO GAME] ballLayoutRef not available for spawning');
-                }
+                };
+
+                // Start attempting to spawn the ball
+                attemptSpawnBall();
             } else {
                 logger.warn('⚠️ [PLINKO GAME] EndBet message received but no result path found', action);
             }
@@ -144,7 +153,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
         // Check if socket is already connected and signed in, send inGame if needed
         if (socket?.connected) {
-            logger.info('🎮 [PLINKO GAME] Socket already connected, sending inGame');
             socket.emit("inGame");
         }
 
@@ -175,13 +183,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     // Send bets directly with clientSeed (compatible with PF system)
     const placeBet = (amount: number, gameMode: number, rows: number, clientSeedParam: string) => {
-        logger.info('🎮 [PLINKO GAME] Placing bet', {
-            amount,
-            gameMode,
-            rows,
-            clientSeed: clientSeedParam
-        });
-
         if (socket?.connected) {
             const betData = {
                 amount,
@@ -190,9 +191,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 clientSeed: clientSeedParam
             };
             socket.emit("bet", betData);
-            logger.info('✅ [PLINKO GAME] Bet message sent to socket');
-        } else {
-            logger.error('❌ [PLINKO GAME] Socket not connected, cannot send bet');
         }
     };
     const clearBetResult = () => {
@@ -320,7 +318,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         <>
                             {/* Manual Bet Button */}
                             <button
-                                className="span-bet"
+                                className="button-bet-manual"
                                 disabled={!localGameInitialized || !isConnected || !isAuthenticated || isBetting}
                                 onClick={async () => {
                                     if (isConnected && isAuthenticated && localGameInitialized) {
@@ -333,40 +331,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                         };
                                         const gameMode = gameModeMap[gameState.gameMode] ?? 0;
 
-                                        logger.info('Placing manual bet', {
-                                            betAmount: gameState.betAmount,
-                                            gameMode: gameState.gameMode,
-                                            gameModeIndex: gameMode,
-                                            rows: gameState.rows,
-                                            clientSeed: clientSeed, // From shared PF system
-                                            balance: gameState.balance
-                                        });
-
                                         placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
 
                                         // Ball will be spawned with service-determined path when results are received
-                                    } else {
-                                        console.error('❌ Cannot place bet - conditions not met:', {
-                                            isConnected,
-                                            isAuthenticated,
-                                            localGameInitialized,
-                                            socketConnected: socket?.connected
-                                        });
-                                        logger.warn('Cannot place bet - game not ready', {
-                                            isConnected,
-                                            isAuthenticated,
-                                            isGameInitialized
-                                        });
                                     }
-                                }}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'inherit',
-                                    fontSize: 'inherit',
-                                    fontWeight: 'inherit',
-                                    cursor: 'pointer',
-                                    padding: 0
                                 }}
                             >
                                 BET (${gameState.betAmount})
@@ -435,34 +403,20 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     ) : (
                         // Auto Bet Button - moved from AutoBetPanel
                         <button
-                            className="span-bet"
+                            className={`button-bet-auto ${isAutoBetRunning ? 'running' : ''}`}
                             disabled={!localGameInitialized || !isConnected || !isAuthenticated}
                             onClick={async () => {
                                 if (isAutoBetRunning) {
-                                    logger.info('Stopping auto bet');
                                     // Stop the AutoBetHandler
                                     autoBetHandlerRef.current?.stop();
                                     setIsAutoBetRunning(false);
                                 } else {
-                                    logger.info('Starting auto bet validation', {
-                                        balance: gameState.balance,
-                                        betAmount: gameState.betAmount,
-                                        numberOfBets: gameState.numberOfBets
-                                    });
-
                                     // Validate before starting
                                     if (gameState.balance < gameState.betAmount) {
-                                        logger.warn('Auto bet validation failed - insufficient balance', {
-                                            balance: gameState.balance,
-                                            betAmount: gameState.betAmount
-                                        });
                                         toast.error('Insufficient balance');
                                         return;
                                     }
                                     if (gameState.numberOfBets < 1) {
-                                        logger.warn('Auto bet validation failed - invalid number of bets', {
-                                            numberOfBets: gameState.numberOfBets
-                                        });
                                         toast.error('Number of bets must be at least 1');
                                         return;
                                     }
@@ -494,13 +448,12 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
                                         const callbacks = {
                                             onBetPlaced: (betAmount: number) => {
-                                                console.log(`Auto bet placed: $${betAmount}`);
+                                                // Auto bet placed callback
                                             },
                                             onBetResult: () => {
                                                 // Forward to parent if needed
                                             },
                                             onAutoBetComplete: (reason: string) => {
-                                                console.log('Auto bet completed:', reason);
                                                 setIsAutoBetRunning(false);
                                             },
                                             onBalanceUpdate: (newBalance: number) => {
@@ -511,31 +464,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                         autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
                                     }
 
-                                    logger.info('Starting auto bet', {
-                                        config: {
-                                            numberOfBets: gameState.numberOfBets,
-                                            onWinAction: gameState.onWinAction,
-                                            onWinPercentage: gameState.onWinPercentage,
-                                            onLossAction: gameState.onLossAction,
-                                            onLossPercentage: gameState.onLossPercentage,
-                                            stopOnWin: gameState.stopOnWin,
-                                            stopOnLoss: gameState.stopOnLoss,
-                                            initialBetAmount: gameState.betAmount
-                                        }
-                                    });
-
                                     setIsAutoBetRunning(true);
                                     autoBetHandlerRef.current.start();
                                 }
-                            }}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: 'inherit',
-                                fontSize: 'inherit',
-                                fontWeight: 'inherit',
-                                cursor: 'pointer',
-                                padding: 0
                             }}
                         >
                             {isAutoBetRunning ? 'STOP AUTO BET' : 'START AUTO BET'}

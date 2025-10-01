@@ -6,7 +6,12 @@
 }
 
 .main-container {
-  overflow: hidden;
+  position: relative;
+  width: 393px;
+  height: 852px;
+  margin: 0 auto;
+  background: #000000;
+  overflow: hidden auto;
 }
 
 .main-container,
@@ -19,15 +24,6 @@ select,
 textarea,
 button {
   outline: 0;
-}
-
-.main-container {
-  position: relative;
-  width: 393px;
-  height: 852px;
-  margin: 0 auto;
-  background: #000000;
-  overflow: hidden auto;
 }
 .game-info {
   display: flex;
@@ -1974,6 +1970,86 @@ button {
   background: linear-gradient(270deg, #1fdc13, #1d9c05);
   z-index: 202;
   border-radius: 12px;
+}
+
+.button-bet-manual {
+  margin-left: 10px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: 2px solid #3d8b40;
+  color: white;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+  }
+
+  &:disabled {
+    background: linear-gradient(135deg, #666666, #555555);
+    border: 2px solid #555555;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+.button-bet-auto {
+  margin-left: 10px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border: 2px solid #1565C0;
+  color: white;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1976D2, #1565C0);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);
+  }
+
+  &:disabled {
+    background: linear-gradient(135deg, #666666, #555555);
+    border: 2px solid #555555;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  &.running {
+    background: linear-gradient(135deg, #F44336, #D32F2F);
+    border: 2px solid #B71C1C;
+    animation: pulse 2s infinite;
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #D32F2F, #B71C1C);
+      box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
+    }
+  }
 }
 .span-bet {
   flex-shrink: 0;

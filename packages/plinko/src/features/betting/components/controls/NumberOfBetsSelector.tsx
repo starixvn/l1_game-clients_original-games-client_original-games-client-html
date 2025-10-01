@@ -142,12 +142,6 @@ const NumberOfBetsSelector: React.FC<NumberOfBetsSelectorProps> = ({
     return (
         <div
             className="div-number-of-bets"
-            ref={(el) => {
-                if (el) {
-                    console.log('NumberOfBetsSelector INTERNAL CONTAINER:', el.offsetWidth, 'x', el.offsetHeight);
-                    console.log('NumberOfBetsSelector INTERNAL computed styles:', window.getComputedStyle(el));
-                }
-            }}
         >
             <span className="span-title-b4">Number of Bets</span>
             <div className="input-b5">

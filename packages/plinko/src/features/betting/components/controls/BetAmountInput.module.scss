@@ -244,6 +244,7 @@
 }
 
 .errorMessage {
+  display: flex;
   align-self: flex-start;
   position: relative;
   padding: 4px 8px;

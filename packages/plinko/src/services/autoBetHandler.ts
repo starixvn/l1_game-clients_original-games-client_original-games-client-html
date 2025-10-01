@@ -51,9 +51,7 @@ export class AutoBetHandler {
     }
 
     start(): void {
-        console.log('AutoBetHandler: start() called', { isRunning: this.isRunning });
         if (this.isRunning) {
-            console.log('AutoBetHandler: Already running, returning');
             return;
         }
 
@@ -61,13 +59,6 @@ export class AutoBetHandler {
         this.remainingBets = this.config.numberOfBets;
         this.totalNetProfit = 0;
         this.currentBetAmount = this.config.initialBetAmount;
-
-        console.log('AutoBetHandler: Starting auto bet session:', {
-            numberOfBets: this.config.numberOfBets,
-            initialBetAmount: this.config.initialBetAmount,
-            gameMode: this.config.gameMode,
-            numberOfRows: this.config.numberOfRows
-        });
 
         this.placeNextBet();
     }
@@ -78,7 +69,6 @@ export class AutoBetHandler {
         }
 
         this.isRunning = false;
-        console.log('Auto bet stopped manually');
         this.callbacks.onAutoBetComplete('stopped_manually');
     }
 
@@ -94,15 +84,6 @@ export class AutoBetHandler {
         this.totalNetProfit += netProfit;
         this.currentBalance += netProfit;
         this.callbacks.onBalanceUpdate(this.currentBalance);
-
-        console.log('Bet result processed:', {
-            win,
-            payout,
-            betAmount,
-            netProfit,
-            totalNetProfit: this.totalNetProfit,
-            remainingBets: this.remainingBets - 1
-        });
 
         // Check stop conditions
         const shouldStopOnWin = this.config.stopOnWin > 0 && this.totalNetProfit >= this.config.stopOnWin;
@@ -180,26 +161,14 @@ export class AutoBetHandler {
     }
 
     private placeNextBet(): void {
-        console.log('AutoBetHandler: placeNextBet() called', { isRunning: this.isRunning, remainingBets: this.remainingBets });
-
         if (!this.isRunning || this.remainingBets <= 0) {
-            console.log('AutoBetHandler: Not placing bet - stopping condition met', { isRunning: this.isRunning, remainingBets: this.remainingBets });
             return;
         }
-
-        console.log(`AutoBetHandler: Placing auto bet ${this.config.numberOfBets - this.remainingBets + 1}/${this.config.numberOfBets}:`, {
-            amount: this.currentBetAmount,
-            gameMode: this.config.gameMode,
-            numberOfRows: this.config.numberOfRows,
-            remainingBets: this.remainingBets,
-            clientSeed: 'handled-by-pf-system' // clientSeed is now handled by shared PF system
-        });
 
         // Notify that bet is being placed
         this.callbacks.onBetPlaced(this.currentBetAmount);
 
         // Place the bet (clientSeed is handled by shared PF system)
-        console.log('AutoBetHandler: Calling placeBetFn');
         this.placeBetFn(this.currentBetAmount, this.config.gameMode, this.config.numberOfRows);
     }
 

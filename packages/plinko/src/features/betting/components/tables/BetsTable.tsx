@@ -4,19 +4,6 @@ import { BetsTableHeader, BetsTableRow } from '../index';
 import { logger } from '../../../../services';
 
 const BetsTable: React.FC<BetsTableProps> = ({ bets, activeTab, onTabChange }) => {
-    const handleStylesLog = (element: HTMLElement | null, componentName: string) => {
-        if (element) {
-            const styles = window.getComputedStyle(element);
-            logger.info(`BetsTable ${componentName} computed styles`, {
-                width: styles.width,
-                height: styles.height,
-                position: styles.position,
-                display: styles.display,
-                overflow: styles.overflow,
-                className: element.className
-            });
-        }
-    };
 
     // Generate table rows based on active tab
     const getFilteredBets = () => {
@@ -29,7 +16,6 @@ const BetsTable: React.FC<BetsTableProps> = ({ bets, activeTab, onTabChange }) =
     return (
         <div
             className="my-bets"
-            ref={(el) => handleStylesLog(el, 'main container')}
         >
             <BetsTableHeader
                 activeTab={activeTab}

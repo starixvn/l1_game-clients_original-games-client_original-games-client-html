@@ -131,22 +131,14 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
 
     // Handle panel tab change with config persistence
     const handlePanelTabChange = useCallback((tab: 'Manual' | 'Auto') => {
-        logger.info(`Switching to ${tab} tab`, {
-            previousTab: panelTab,
-            newTab: tab,
-            timestamp: new Date().toISOString()
-        });
-
         if (tab === 'Manual') {
             // Restore manual configurations
             onSharedConfigChange(manualConfigs);
-            logger.info('Restored Manual tab configurations', manualConfigs);
         } else {
             // Restore auto configurations
             const { numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss, ...sharedFromAuto } = autoConfigs;
             onSharedConfigChange(sharedFromAuto);
             onAutoConfigChange({ numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss });
-            logger.info('Restored Auto tab configurations', autoConfigs);
         }
         setPanelTab(tab);
         // Update parent activeTab state

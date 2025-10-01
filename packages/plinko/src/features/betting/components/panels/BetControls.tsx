@@ -36,25 +36,10 @@ const BetControls: React.FC<BetControlsProps> = ({
     onStopOnWinChange,
     onStopOnLossChange,
 }) => {
-    const handleStylesLog = (element: HTMLElement | null, componentName: string) => {
-        if (element) {
-            const styles = window.getComputedStyle(element);
-            logger.info(`BetControls ${componentName} computed styles`, {
-                width: styles.width,
-                height: styles.height,
-                position: styles.position,
-                display: styles.display,
-                flexDirection: styles.flexDirection,
-                alignItems: styles.alignItems,
-                className: element.className
-            });
-        }
-    };
 
     return (
         <div
             className="setting-bet-amount"
-            ref={(el) => handleStylesLog(el, 'main container')}
         >
             <div className={styles.betControlsHeader}>
                 <div className={`${styles.modeIndicator} ${styles[activeTab.toLowerCase()]}`}>

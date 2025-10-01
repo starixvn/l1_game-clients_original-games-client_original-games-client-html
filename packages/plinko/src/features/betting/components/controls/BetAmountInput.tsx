@@ -94,21 +94,6 @@ const BetAmountInput: React.FC<BetAmountInputProps> = ({
     return (
         <div
             className={styles.betAmountInput}
-            ref={(el) => {
-                if (el) {
-                    const styles = window.getComputedStyle(el);
-                    logger.info('BetAmountInput main container computed styles', {
-                        width: styles.width,
-                        height: styles.height,
-                        position: styles.position,
-                        display: styles.display,
-                        padding: styles.padding,
-                        margin: styles.margin,
-                        border: styles.border,
-                        className: el.className
-                    });
-                }
-            }}
         >
             <div className={styles.title}>
                 <div className={styles.spanTitle}>
