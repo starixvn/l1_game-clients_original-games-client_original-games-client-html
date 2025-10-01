@@ -1,0 +1,136 @@
+# Plinko Game - Specific Rules
+
+## Game Overview
+
+This is the Plinko game built as part of the monorepo structure.
+
+## Game Specifications
+
+### Game Flow
+
+1. **Betting Phase**: Players place bets and configure auto-bet settings
+2. **Drop Phase**: Ball drops through pegs with physics simulation
+3. **Result Phase**: Ball lands in multiplier slot, winnings calculated
+4. **Statistics**: Display previous round results and payout history
+
+### Key Components
+
+-   **PlinkoGame**: Main game component with physics simulation
+-   **BetAmountControls**: Bet configuration and input controls
+-   **AutoBetPanel**: Automated betting functionality
+-   **BallLayout**: Physics-based ball dropping with visual effects
+-   **PayoutsDisplay**: Multiplier and payout information
+
+## Plinko-Specific Patterns
+
+### Component Structure
+
+```typescript
+// Plinko game components
+const PlinkoGame: React.FC<PlinkoGameProps> = () => {
+    const gameState = useGameStore((state) => state.gameState);
+    const bettingState = useBettingStore((state) => state.bettingState);
+
+    return <div className="plinko-game-container">{/* Game content */}</div>;
+};
+```
+
+### Physics Integration
+
+```typescript
+// Plinko physics integration
+const handleBallDrop = (ballConfig: BallConfig) => {
+    const physicsEngine = new PhysicsEngine();
+    const result = physicsEngine.simulateDrop(ballConfig);
+
+    // Update game state with result
+    updateGameResult(result);
+};
+```
+
+### Auto-Bet Logic
+
+```typescript
+// Plinko auto-bet functionality
+const autoBetHandler = new AutoBetHandler({
+    onWin: (result) => {
+        // Handle win conditions
+        if (result.multiplier >= winThreshold) {
+            // Execute on-win strategy
+        }
+    },
+    onLoss: (result) => {
+        // Handle loss conditions
+        if (result.streak >= lossThreshold) {
+            // Execute on-loss strategy
+        }
+    },
+});
+```
+
+## Plinko-Specific Rules
+
+### File Naming
+
+-   Components: `Plinko*.tsx` (e.g., `PlinkoGame.tsx`, `PlinkoStatistics.tsx`)
+-   Physics: `physics-*.ts`, `ball-*.ts`
+-   Betting: `bet-*.ts`, `auto-bet-*.ts`
+-   Types: `PlinkoTypes.ts`
+
+### Import Patterns
+
+```typescript
+// Plinko-specific imports
+import { PlinkoGame } from "./components/plinko-game";
+import { PhysicsEngine } from "./lib/physics/physics-engine";
+import { useAutoBet } from "./hooks/use-auto-bet";
+import { PlinkoTypes } from "./shared/types/plinko-types";
+```
+
+### State Management
+
+-   Use `useGameStore` for game physics and ball state
+-   Use `useBettingStore` for betting configuration
+-   Store physics results in `GameResultSlice`
+-   Use `registerGameConfigEvent` for websocket updates
+
+### Physics Engine
+
+-   Ball physics simulation with collision detection
+-   Peg collision handling with bounce physics
+-   Multiplier slot detection and result calculation
+-   Visual effects for ball trails and impacts
+
+### Auto-Bet Features
+
+-   Configurable win/loss strategies
+-   Stop conditions (on win amount, on loss streak)
+-   Percentage-based bet increases/decreases
+-   Number of bets limitation
+
+## Common Plinko Issues
+
+### Physics Not Working
+
+-   Check Matter.js integration
+-   Verify collision handlers are registered
+-   Ensure physics config values are correct
+
+### Auto-Bet Not Functioning
+
+-   Check auto-bet handler initialization
+-   Verify stop conditions logic
+-   Ensure betting store updates trigger handlers
+
+### Ball Not Dropping
+
+-   Check physics engine initialization
+-   Verify drop position calculations
+-   Ensure game state allows dropping
+
+## Development Notes
+
+-   Plinko uses Matter.js for physics simulation
+-   Complex auto-bet logic with multiple strategies
+-   Real-time physics visualization
+-   Multiplier-based payout system
