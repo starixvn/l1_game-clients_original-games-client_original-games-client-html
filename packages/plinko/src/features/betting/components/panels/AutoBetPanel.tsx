@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BetAmountInput, BetAmountControls, GameModeSelector, RowsSelector, NumberOfBetsSelector, OnWinControls, OnLossControls, StopOnWinControls, StopOnLossControls } from '../index';
-import styles from './AutoBetPanel.module.scss';
-import { logger } from '../../../../services';
-
+import React, { useState, useEffect, useCallback } from "react";
+import { BetAmountInput, BetAmountControls, GameModeSelector, RowsSelector } from "../index";
+import styles from "./AutoBetPanel.module.scss";
+import { logger } from "../../../../services";
+import AutoBetControl from "./auto-bet-control";
 // Configuration interfaces for cleaner props
 export interface SharedConfig {
     betAmount: number;
-    gameMode: 'Lightning' | 'Low' | 'Medium' | 'High';
+    gameMode: "Lightning" | "Low" | "Medium" | "High";
     rows: number;
 }
 
 export interface AutoBetConfig {
     numberOfBets: number;
-    onWinAction: 'Reset' | 'Increase';
+    onWinAction: "Reset" | "Increase";
     onWinPercentage: number;
-    onLossAction: 'Reset' | 'Increase';
+    onLossAction: "Reset" | "Increase";
     onLossPercentage: number;
     stopOnWin: number;
     stopOnLoss: number;
@@ -24,12 +24,12 @@ export interface AutoBetConfig {
 export interface AutoBetPanelProps {
     sharedConfig: SharedConfig;
     autoConfig: AutoBetConfig;
-    activeTab: 'Manual' | 'Auto';
+    activeTab: "Manual" | "Auto";
 
     // Event handlers
     onSharedConfigChange: (config: Partial<SharedConfig>) => void;
     onAutoConfigChange: (config: Partial<AutoBetConfig>) => void;
-    onTabChange?: (tab: 'Manual' | 'Auto') => void;
+    onTabChange?: (tab: "Manual" | "Auto") => void;
 
     // Auto bet specific handlers
     onBalanceUpdate?: (newBalance: number) => void;
@@ -47,62 +47,92 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
     // Provide default values if props are undefined for backward compatibility
     const safeSharedConfig = sharedConfig || {
         betAmount: 100,
-        gameMode: 'Lightning' as const,
-        rows: 9
+        gameMode: "Lightning" as const,
+        rows: 9,
     };
     const safeAutoConfig = autoConfig || {
         numberOfBets: 20000,
-        onWinAction: 'Reset' as const,
+        onWinAction: "Reset" as const,
         onWinPercentage: 0,
-        onLossAction: 'Reset' as const,
+        onLossAction: "Reset" as const,
         onLossPercentage: 0,
         stopOnWin: 0,
-        stopOnLoss: 0
+        stopOnLoss: 0,
     };
 
     const { betAmount, gameMode, rows } = safeSharedConfig;
     const { numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss } = safeAutoConfig;
 
     // Wrapper functions for individual component props
-    const handleBetAmountChange = useCallback((amount: number) => {
-        onSharedConfigChange({ betAmount: amount });
-    }, [onSharedConfigChange]);
+    const handleBetAmountChange = useCallback(
+        (amount: number) => {
+            onSharedConfigChange({ betAmount: amount });
+        },
+        [onSharedConfigChange]
+    );
 
-    const handleGameModeChange = useCallback((mode: typeof gameMode) => {
-        onSharedConfigChange({ gameMode: mode });
-    }, [onSharedConfigChange]);
+    const handleGameModeChange = useCallback(
+        (mode: typeof gameMode) => {
+            onSharedConfigChange({ gameMode: mode });
+        },
+        [onSharedConfigChange]
+    );
 
-    const handleRowsChange = useCallback((newRows: number) => {
-        onSharedConfigChange({ rows: newRows });
-    }, [onSharedConfigChange]);
+    const handleRowsChange = useCallback(
+        (newRows: number) => {
+            onSharedConfigChange({ rows: newRows });
+        },
+        [onSharedConfigChange]
+    );
 
-    const handleNumberOfBetsChange = useCallback((bets: number) => {
-        onAutoConfigChange({ numberOfBets: bets });
-    }, [onAutoConfigChange]);
+    const handleNumberOfBetsChange = useCallback(
+        (bets: number) => {
+            onAutoConfigChange({ numberOfBets: bets });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleWinActionChange = useCallback((action: typeof onWinAction) => {
-        onAutoConfigChange({ onWinAction: action });
-    }, [onAutoConfigChange]);
+    const handleWinActionChange = useCallback(
+        (action: typeof onWinAction) => {
+            onAutoConfigChange({ onWinAction: action });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleWinPercentageChange = useCallback((percentage: number) => {
-        onAutoConfigChange({ onWinPercentage: percentage });
-    }, [onAutoConfigChange]);
+    const handleWinPercentageChange = useCallback(
+        (percentage: number) => {
+            onAutoConfigChange({ onWinPercentage: percentage });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleLossActionChange = useCallback((action: typeof onLossAction) => {
-        onAutoConfigChange({ onLossAction: action });
-    }, [onAutoConfigChange]);
+    const handleLossActionChange = useCallback(
+        (action: typeof onLossAction) => {
+            onAutoConfigChange({ onLossAction: action });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleLossPercentageChange = useCallback((percentage: number) => {
-        onAutoConfigChange({ onLossPercentage: percentage });
-    }, [onAutoConfigChange]);
+    const handleLossPercentageChange = useCallback(
+        (percentage: number) => {
+            onAutoConfigChange({ onLossPercentage: percentage });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleStopOnWinChange = useCallback((amount: number) => {
-        onAutoConfigChange({ stopOnWin: amount });
-    }, [onAutoConfigChange]);
+    const handleStopOnWinChange = useCallback(
+        (amount: number) => {
+            onAutoConfigChange({ stopOnWin: amount });
+        },
+        [onAutoConfigChange]
+    );
 
-    const handleStopOnLossChange = useCallback((amount: number) => {
-        onAutoConfigChange({ stopOnLoss: amount });
-    }, [onAutoConfigChange]);
+    const handleStopOnLossChange = useCallback(
+        (amount: number) => {
+            onAutoConfigChange({ stopOnLoss: amount });
+        },
+        [onAutoConfigChange]
+    );
 
     // Section 4.6: Configuration persistence when switching tabs
     const [manualConfigs, setManualConfigs] = useState(sharedConfig);
@@ -110,7 +140,7 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
     const [autoConfigs, setAutoConfigs] = useState({ ...sharedConfig, ...autoConfig });
 
     // Internal panel tab state - auto-sync with main tab
-    const [panelTab, setPanelTab] = useState<'Manual' | 'Auto'>(activeTab);
+    const [panelTab, setPanelTab] = useState<"Manual" | "Auto">(activeTab);
 
     // Auto-sync panel tab with main tab
     useEffect(() => {
@@ -119,10 +149,9 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
 
     // Note: Auto bet progression state is now managed in the main component
 
-
     // Update configs when props change
     useEffect(() => {
-        if (panelTab === 'Manual') {
+        if (panelTab === "Manual") {
             setManualConfigs(sharedConfig);
         } else {
             setAutoConfigs({ ...sharedConfig, ...autoConfig });
@@ -130,65 +159,66 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
     }, [panelTab, sharedConfig, autoConfig]);
 
     // Handle panel tab change with config persistence
-    const handlePanelTabChange = useCallback((tab: 'Manual' | 'Auto') => {
-        if (tab === 'Manual') {
-            // Restore manual configurations
-            onSharedConfigChange(manualConfigs);
-        } else {
-            // Restore auto configurations
-            const { numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss, ...sharedFromAuto } = autoConfigs;
-            onSharedConfigChange(sharedFromAuto);
-            onAutoConfigChange({ numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss });
-        }
-        setPanelTab(tab);
-        // Update parent activeTab state
-        onTabChange?.(tab);
-    }, [manualConfigs, autoConfigs, onSharedConfigChange, onAutoConfigChange, onTabChange, panelTab]);
-
-
+    const handlePanelTabChange = useCallback(
+        (tab: "Manual" | "Auto") => {
+            if (tab === "Manual") {
+                // Restore manual configurations
+                onSharedConfigChange(manualConfigs);
+            } else {
+                // Restore auto configurations
+                const {
+                    numberOfBets,
+                    onWinAction,
+                    onWinPercentage,
+                    onLossAction,
+                    onLossPercentage,
+                    stopOnWin,
+                    stopOnLoss,
+                    ...sharedFromAuto
+                } = autoConfigs;
+                onSharedConfigChange(sharedFromAuto);
+                onAutoConfigChange({ numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss });
+            }
+            setPanelTab(tab);
+            // Update parent activeTab state
+            onTabChange?.(tab);
+        },
+        [manualConfigs, autoConfigs, onSharedConfigChange, onAutoConfigChange, onTabChange, panelTab]
+    );
 
     const renderPanelContent = () => {
-        const isManualTab = panelTab === 'Manual';
-        const isAutoTab = panelTab === 'Auto';
+        const isManualTab = panelTab === "Manual";
+        const isAutoTab = panelTab === "Auto";
         const manualTabClass = isManualTab ? styles.manual : styles.auto;
         const autoTabClass = isAutoTab ? styles.manual : styles.auto;
 
-        if (panelTab === 'Manual') {
+        if (panelTab === "Manual") {
             return (
                 <div className={styles.manualPanel}>
                     <div className={styles.manualControls}>
-                        <div style={{ width: '357px', maxWidth: '100%' }}>
-                            <BetAmountInput
-                                betAmount={betAmount}
-                                onBetAmountChange={handleBetAmountChange}
-                            />
+                        <div style={{ width: "357px", maxWidth: "100%" }}>
+                            <BetAmountInput betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
                         </div>
 
-                        <div style={{ width: '357px', maxWidth: '100%' }}>
-                            <GameModeSelector
-                                gameMode={gameMode}
-                                onGameModeChange={handleGameModeChange}
-                            />
+                        <div style={{ width: "357px", maxWidth: "100%" }}>
+                            <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
                         </div>
 
-                        <div style={{ width: '357px', maxWidth: '100%' }}>
-                            <RowsSelector
-                                rows={rows}
-                                onRowsChange={handleRowsChange}
-                            />
+                        <div style={{ width: "357px", maxWidth: "100%" }}>
+                            <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
                         </div>
 
                         {/* Tab Navigation - below Rows Selector in Manual mode */}
                         <div className={styles.tabUIMobile}>
                             <div
                                 className={manualTabClass}
-                                onClick={() => handlePanelTabChange('Manual')}
+                                onClick={() => handlePanelTabChange("Manual")}
                                 role="button"
                                 tabIndex={0}
                                 onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
+                                    if (e.key === "Enter" || e.key === " ") {
                                         e.preventDefault();
-                                        handlePanelTabChange('Manual');
+                                        handlePanelTabChange("Manual");
                                     }
                                 }}
                                 aria-pressed={isManualTab}
@@ -197,13 +227,13 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
                             </div>
                             <div
                                 className={autoTabClass}
-                                onClick={() => handlePanelTabChange('Auto')}
+                                onClick={() => handlePanelTabChange("Auto")}
                                 role="button"
                                 tabIndex={0}
                                 onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
+                                    if (e.key === "Enter" || e.key === " ") {
                                         e.preventDefault();
-                                        handlePanelTabChange('Auto');
+                                        handlePanelTabChange("Auto");
                                     }
                                 }}
                                 aria-pressed={isAutoTab}
@@ -219,85 +249,31 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
         return (
             <div className={styles.autoPanel}>
                 <div className={styles.autoControls}>
-                    {/* Bet Amount Display */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <BetAmountControls
-                            betAmount={betAmount}
-                            onBetAmountChange={handleBetAmountChange}
-                        />
-                    </div>
+                    <BetAmountControls betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
 
                     {/* Game Mode Selector */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <GameModeSelector
-                            gameMode={gameMode}
-                            onGameModeChange={handleGameModeChange}
-                        />
+                    <div style={{ width: "357px", maxWidth: "100%" }}>
+                        <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
                     </div>
 
                     {/* Rows Selection */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <RowsSelector
-                            rows={rows}
-                            onRowsChange={handleRowsChange}
-                        />
+                    <div style={{ width: "357px", maxWidth: "100%" }}>
+                        <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
                     </div>
 
-                    {/* Number of Bets */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <NumberOfBetsSelector
-                            numberOfBets={numberOfBets}
-                            onNumberOfBetsChange={handleNumberOfBetsChange}
-                        />
-                    </div>
-
-                    {/* On Win */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <OnWinControls
-                            onWinAction={onWinAction}
-                            onWinPercentage={onWinPercentage}
-                            onWinActionChange={handleWinActionChange}
-                            onWinPercentageChange={handleWinPercentageChange}
-                        />
-                    </div>
-
-                    {/* On Loss */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <OnLossControls
-                            onLossAction={onLossAction}
-                            onLossPercentage={onLossPercentage}
-                            onLossActionChange={handleLossActionChange}
-                            onLossPercentageChange={handleLossPercentageChange}
-                        />
-                    </div>
-
-                    {/* Stop on Win */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <StopOnWinControls
-                            stopOnWin={stopOnWin}
-                            onStopOnWinChange={handleStopOnWinChange}
-                        />
-                    </div>
-
-                    {/* Stop on Loss */}
-                    <div style={{ width: '357px', maxWidth: '100%' }}>
-                        <StopOnLossControls
-                            stopOnLoss={stopOnLoss}
-                            onStopOnLossChange={handleStopOnLossChange}
-                        />
-                    </div>
+                    <AutoBetControl />
 
                     {/* Tab Navigation - below Stop on Loss in Auto mode */}
                     <div className={styles.tabUIMobile}>
                         <div
                             className={manualTabClass}
-                            onClick={() => handlePanelTabChange('Manual')}
+                            onClick={() => handlePanelTabChange("Manual")}
                             role="button"
                             tabIndex={0}
                             onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
+                                if (e.key === "Enter" || e.key === " ") {
                                     e.preventDefault();
-                                    handlePanelTabChange('Manual');
+                                    handlePanelTabChange("Manual");
                                 }
                             }}
                             aria-pressed={isManualTab}
@@ -306,13 +282,13 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
                         </div>
                         <div
                             className={autoTabClass}
-                            onClick={() => handlePanelTabChange('Auto')}
+                            onClick={() => handlePanelTabChange("Auto")}
                             role="button"
                             tabIndex={0}
                             onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
+                                if (e.key === "Enter" || e.key === " ") {
                                     e.preventDefault();
-                                    handlePanelTabChange('Auto');
+                                    handlePanelTabChange("Auto");
                                 }
                             }}
                             aria-pressed={isAutoTab}
@@ -328,9 +304,7 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
     return (
         <div className={styles.autoBetPanel}>
             {/* Tab Content */}
-            <div className={styles.panelContent}>
-                {renderPanelContent()}
-            </div>
+            <div className={styles.panelContent}>{renderPanelContent()}</div>
         </div>
     );
 };
