@@ -2,7 +2,7 @@ import { ResourceTypes } from "@shared/resources";
 import { useTranslator } from "@shared/react-hooks/use-translator";
 import { BaccaratResult, BaccaratSettlementResult, BaccaratWinner } from "../baccarat-multiplayer-constants";
 import { hasPlayerPair, hasBankerPair, getWinnerFromSettlement, getScoreboardImagePath, getDisplayTextKey } from "../scoreboard/utils";
-import Image from "next/image";
+import { CachedImage } from "@shared/components/game-components/cached-image";
 
 const Dot = ({ color, position }: { color: string; position: string }) => (
     <div className={`absolute w-[7px] h-[7px] rounded-full z-[1] ${color} ${position}`} />
@@ -53,7 +53,13 @@ const RoundHistoryItem = ({ variant, playerPair, bankerPair }: RoundHistoryItemP
 
     return (
         <div className="relative w-[18px] h-[18px] flex items-center justify-center">
-            <Image src={getScoreboardImagePath(variant)} alt={variant} width={18} height={18} className="w-[18px] h-[18px]" />
+            <CachedImage
+                src={getScoreboardImagePath(variant)}
+                alt={variant}
+                width={18}
+                height={18}
+                className="w-[18px] h-[18px]"
+            />
 
             <span className="absolute inset-0 flex items-center justify-center text-white text-center text-[11px] font-semibold tracking-[0.44px] capitalize z-[1]">
                 {displayText}

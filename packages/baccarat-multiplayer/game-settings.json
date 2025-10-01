@@ -26,7 +26,8 @@
                 "/static/images/baccarat/cards"
             ],
             "cachePaths": [
-                "/static/images/baccarat/cards/"
+                "/static/images/baccarat/cards/",
+                "/static/images/baccarat-multiplayer/scoreboard/bead-road/"
             ]
         }
     }
