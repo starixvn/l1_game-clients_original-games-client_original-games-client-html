@@ -175,17 +175,22 @@ html[data-theme="light"] {
         }
     }
 
-.scrollbar-hide-on-idle {
-    overflow-y: auto;
-  }
-  
-  .scrollbar-hide-on-idle::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-  }
-  
-  .scrollbar-hide-on-idle:hover::-webkit-scrollbar {
-    width: 3px;
-  }
-  
+    .scrollbar-hide-on-idle {
+        overflow-y: hidden;
+    }
+
+    @media (min-width: 768px) {
+        .scrollbar-hide-on-idle {
+            overflow-y: auto;
+        }
+
+        .scrollbar-hide-on-idle::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        .scrollbar-hide-on-idle:hover::-webkit-scrollbar {
+            width: 3px;
+        }
+    }
 }
