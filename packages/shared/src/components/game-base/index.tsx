@@ -38,6 +38,7 @@ import PreloadResources from "@shared/helpers/preload-resources";
 import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
 import ChipControlPanel from "../game-components/chip-slider";
 import useGameStore from "@shared/stores/game-store/game-store";
+import BetHistoryControl from "../game-components/bet-history/bet-history-control";
 const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
 const PFSettingModal = dynamic(() => import("../game-components/provably-fair/pf-setting"), { ssr: false });
 const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false });
@@ -659,7 +660,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetHistoryTable() {
-        return <BetHistoryTable gameId={this.props.id?.toString()} />;
+        return <BetHistoryControl defaultTab={"all"} children={[<BetHistoryTable gameId={this.props.id?.toString()} />]} />;
     }
 
     renderBetDetailModal() {

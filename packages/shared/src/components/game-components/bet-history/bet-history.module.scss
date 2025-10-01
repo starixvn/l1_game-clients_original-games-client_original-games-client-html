@@ -93,3 +93,39 @@
         opacity: 0.9;
     }
 }
+
+// Tab control styles
+.tab-header {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 0; // Allow flex items to shrink below content size
+    white-space: nowrap; // Prevent text wrapping
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    &:hover {
+        opacity: 0.9;
+    }
+    
+    // Ensure text is always visible
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    }
+}
+
+.tab-content {
+    width: 100%;
+}

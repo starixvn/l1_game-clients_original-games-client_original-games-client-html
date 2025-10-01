@@ -212,8 +212,8 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     }
 
     return (
-        <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`)}>
-            {/* Sticky Header Table */}
+            <>
+                {/* Sticky Header Table */}
             <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
                 <TableHeader>{renderBetHistoryHeader(headerColumns)}</TableHeader>
             </Table>
@@ -242,7 +242,7 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
             </div>
 
             {renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
-        </div>
+        </>
     );
 };
 
