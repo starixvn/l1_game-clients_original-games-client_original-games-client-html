@@ -464,7 +464,7 @@ const SplashScreen: React.FC = () => {
                 </div>
             </div>
 
-            <LoggerControls className="fixed top-4 right-4 z-50" />
+            {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
 
             {isDoneLoadConfig && currentGameId >= 0 && (
                 <>

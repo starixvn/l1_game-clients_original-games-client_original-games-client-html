@@ -24,7 +24,7 @@ const GameApp = ({ Component, pageProps }: AppProps) => {
                 <AppTitle gameConfig={gameConfig} />
                 <Component {...pageProps} />
                 <GoogleAnalytic />
-                <LoggerControls className="fixed top-4 right-4 z-50" />
+                {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
             </TolgeeProvider>
         </ThemeProvider>
     );

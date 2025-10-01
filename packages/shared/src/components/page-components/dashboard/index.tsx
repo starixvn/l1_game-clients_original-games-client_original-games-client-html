@@ -357,7 +357,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
                         {<MusicPlayer />}
 
-                        <LoggerControls className="fixed top-4 right-4 z-50" />
+                        {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
                     </div>
                 </BalanceSyncProvider>
             </PlayerContextProvider>
