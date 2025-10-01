@@ -52,12 +52,29 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         logger.debug('🎮 [PLINKO GAME BASE] Rendering game frame');
 
         return (
-            <div className="flex flex-col items-center justify-center relative min-h-screen">
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                minHeight: '100vh'
+            }}>
                 <Background gameId={this.props.id} />
                 <Header />
 
                 {/* Plinko specific game content */}
-                <div className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4">
+                <div style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    maxWidth: '72rem',
+                    margin: '0 auto',
+                    padding: '0 16px'
+                }}>
                     <PlinkoGame />
                 </div>
 

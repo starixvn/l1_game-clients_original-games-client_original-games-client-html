@@ -50,33 +50,94 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
   }, [isExpanded]);
 
   return (
-    <div className={`bg-red-500 border-4 border-yellow-400 shadow-xl overflow-hidden ${className}`} style={{ minHeight: '60px', zIndex: 9999, position: 'relative' }}>
+    <div style={{
+      background: '#ef4444',
+      border: '4px solid #eab308',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      overflow: 'hidden',
+      minHeight: '60px',
+      zIndex: 9999,
+      position: 'relative'
+    }} className={className}>
       {/* Header */}
       <div
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-700/30 transition-colors duration-200"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '16px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s'
+        }}
         onClick={toggleExpanded}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(55, 65, 81, 0.3)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
       >
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-white font-bold">
-            <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse shadow-lg border-2 border-white"></span>
-            <span className="text-lg font-bold text-white">🚨 LOGGER CONTROLS - VISIBLE TEST 🚨</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', fontWeight: 'bold' }}>
+            <span style={{
+              width: '16px',
+              height: '16px',
+              background: '#10b981',
+              borderRadius: '50%',
+              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+              border: '2px solid white'
+            }}></span>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: 'white' }}>🚨 LOGGER CONTROLS - VISIBLE TEST 🚨</span>
           </div>
-          <div className="px-3 py-2 bg-yellow-400 text-black text-sm font-bold rounded-full border-2 border-yellow-600 shadow-lg">
+          <div style={{
+            padding: '8px 12px',
+            background: '#eab308',
+            color: 'black',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            borderRadius: '9999px',
+            border: '2px solid #ca8a04',
+            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+          }}>
             📊 {logCount} LOGS 📊
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleDownloadLogs();
             }}
             disabled={logCount === 0}
-            className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1.5 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
+            style={{
+              padding: '6px 12px',
+              background: logCount === 0 ? '#6b7280' : 'linear-gradient(to right, #2563eb, #1d4ed8)',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: '500',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: logCount === 0 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+              opacity: logCount === 0 ? 0.5 : 1
+            }}
             title="Download logs as text file"
+            onMouseEnter={(e) => {
+              if (logCount > 0) {
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (logCount > 0) {
+                e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
           >
-            <span className="text-sm">📥</span>
+            <span style={{ fontSize: '14px' }}>📥</span>
             Download
           </button>
 
@@ -86,43 +147,97 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
               handleClearLogs();
             }}
             disabled={logCount === 0}
-            className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white text-xs font-medium rounded-md transition-all duration-200 flex items-center gap-1.5 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
+            style={{
+              padding: '6px 12px',
+              background: logCount === 0 ? '#6b7280' : 'linear-gradient(to right, #dc2626, #b91c1c)',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: '500',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: logCount === 0 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+              opacity: logCount === 0 ? 0.5 : 1
+            }}
             title="Clear all logs"
+            onMouseEnter={(e) => {
+              if (logCount > 0) {
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (logCount > 0) {
+                e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
           >
-            <span className="text-sm">🗑️</span>
+            <span style={{ fontSize: '14px' }}>🗑️</span>
             Clear
           </button>
 
-          <div className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
-            <span className="text-gray-400 text-sm">▼</span>
+          <div style={{
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s'
+          }}>
+            <span style={{ color: '#9ca3af', fontSize: '14px' }}>▼</span>
           </div>
         </div>
       </div>
 
       {/* Expandable Content */}
       {isExpanded && (
-        <div className="border-t border-gray-700 bg-gray-900/50">
-          <div className="p-4">
-            <div className="mb-3">
-              <h4 className="text-gray-300 text-sm font-medium mb-2">Recent Logs</h4>
-              <div className="bg-black/30 rounded-md border border-gray-600 max-h-48 overflow-y-auto">
+        <div style={{
+          borderTop: '1px solid #374151',
+          background: 'rgba(17, 24, 39, 0.5)'
+        }}>
+          <div style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <h4 style={{ color: '#d1d5db', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>Recent Logs</h4>
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '6px',
+                border: '1px solid #4b5563',
+                maxHeight: '192px',
+                overflowY: 'auto'
+              }}>
                 {recentLogs.length > 0 ? (
-                  <div className="p-3 space-y-1 font-mono text-xs">
+                  <div style={{ padding: '12px', fontFamily: 'monospace', fontSize: '12px' }}>
                     {recentLogs.map((log, index) => (
-                      <div key={index} className="text-gray-300 hover:bg-gray-800/50 px-2 py-1 rounded">
+                      <div key={index} style={{
+                        color: '#d1d5db',
+                        padding: '8px 4px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.1s'
+                      }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(55, 65, 81, 0.5)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
                         {log}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="p-4 text-center text-gray-500 text-sm">
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>
                     No logs available
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-gray-400">
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '12px',
+              color: '#9ca3af'
+            }}>
               <span>Auto-updates every 5 seconds</span>
               <span>Max 10,000 entries</span>
             </div>

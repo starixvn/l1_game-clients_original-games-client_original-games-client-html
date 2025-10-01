@@ -379,3 +379,31 @@
   }
 }
 
+// Additional classes for layout fixes
+.manualPanel {
+  width: 100%;
+  padding: 24px;
+}
+
+.manualControls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.autoPanel {
+  width: 100%;
+  padding: 24px;
+}
+
+.autoControls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panelContent {
+  width: 100%;
+  height: 100%;
+}
+

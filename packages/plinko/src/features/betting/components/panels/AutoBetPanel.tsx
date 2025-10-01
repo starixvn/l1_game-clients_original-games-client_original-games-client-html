@@ -163,8 +163,8 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
 
         if (panelTab === 'Manual') {
             return (
-                <div className="w-full p-6">
-                    <div className="space-y-4">
+                <div className={styles.manualPanel}>
+                    <div className={styles.manualControls}>
                         <div style={{ width: '357px', maxWidth: '100%' }}>
                             <BetAmountInput
                                 betAmount={betAmount}
@@ -225,8 +225,8 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
         }
 
         return (
-        <div className="w-full p-6">
-            <div className="space-y-6">
+            <div className={styles.autoPanel}>
+                <div className={styles.autoControls}>
                     {/* Bet Amount Display */}
                     <div style={{ width: '357px', maxWidth: '100%' }}>
                         <BetAmountControls
@@ -334,13 +334,9 @@ const AutoBetPanel: React.FC<AutoBetPanelProps> = ({
     };
 
     return (
-        <div
-            className="w-[357px] flex-shrink-0 h-full bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-2xl"
-        >
+        <div className={styles.autoBetPanel}>
             {/* Tab Content */}
-            <div
-                className="w-full h-full"
-            >
+            <div className={styles.panelContent}>
                 {renderPanelContent()}
             </div>
         </div>
