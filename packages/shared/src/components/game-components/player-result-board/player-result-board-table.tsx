@@ -1,23 +1,14 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
-import { useCommonTranslate } from "@shared/react-hooks";
+import { useCommonTranslate, usePlayerResultBoard } from "@shared/react-hooks";
 import { useStatisticStore } from "@shared/stores";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../table";
 import { useShallow } from "zustand/shallow";
 
-interface PlayerData {
-    playerName: string;
-    betAmount: string;
-    win: string;
-}
 
-interface PlayerResultBoardTableProps {
-    data: PlayerData[];
-    emptyMessage?: string;
-}
-
-const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoardTableProps>(({ data }, ref) => {
+const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, ref) => {
     const { t: translateCommon } = useCommonTranslate();
+    const { tableData } = usePlayerResultBoard();
 
     const { isShowStatistic } = useStatisticStore(
         useShallow((state) => ({
@@ -64,7 +55,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
     };
 
     const renderTableBody = () => {
-        if (!data || data.length === 0) {
+        if (!tableData || tableData.length === 0) {
             return (
                 <TableBody>
                     <TableRow>
@@ -77,7 +68,7 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement, PlayerResultBoar
         } else {
             return (
                 <TableBody>
-                    {data.map((row, index) => (
+                    {tableData.map((row, index) => (
                         <TableRow
                             key={index}
                             className="text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors"

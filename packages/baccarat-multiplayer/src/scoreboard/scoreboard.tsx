@@ -54,7 +54,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: playResultAnimation,
+                            scrollToRight: true,
                             columnWidth: 16
                         },
                     ]}
@@ -80,7 +80,7 @@ const ScoreboardBaccarat: React.FC<ScoreboardComponentProps> = ({ roundHistory, 
                             className: Styles["big-bead-road-override"],
                             blockClassName: Styles["big-bead-road-block"],
                             elementClassName: Styles["big-bead-road-item"],
-                            scrollToRight: playResultAnimation,
+                            scrollToRight: true,
                             columnWidth: 16
                         },
                     ]}

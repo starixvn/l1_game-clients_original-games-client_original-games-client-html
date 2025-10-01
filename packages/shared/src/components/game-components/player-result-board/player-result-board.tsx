@@ -3,7 +3,7 @@ import { usePlayerResultBoard, useCommonTranslate } from "@shared/react-hooks";
 import { PlayerResultBoardTable } from "./player-result-board-table";
 
 export const PlayerResultBoard: FC = () => {
-    const { totalPlayers, roundId, tableData } = usePlayerResultBoard();
+    const { totalPlayers, roundId } = usePlayerResultBoard();
     const { t: translateCommon } = useCommonTranslate();
 
     const renderPlayerCount = () => (
@@ -28,7 +28,7 @@ export const PlayerResultBoard: FC = () => {
 
     const renderTable = () => (
         <div className="">
-            <PlayerResultBoardTable data={tableData} />
+            <PlayerResultBoardTable/>
         </div>
     );
 
