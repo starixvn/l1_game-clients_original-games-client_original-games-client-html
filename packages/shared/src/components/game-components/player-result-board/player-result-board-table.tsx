@@ -95,13 +95,13 @@ const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, ref) => 
     };
 
     return (
-        <div ref={ref} className={cn("h-[450px] w-full overflow-hidden flex flex-col", getTableHeightClassName())}>
-            <div className="flex-shrink-0 mb-1">
-                <Table className="w-full table-fixed">{renderTableHeader()}</Table>
+        <div ref={ref} className={cn("h-[450px] w-full overflow-hidden md:overflow-y-auto flex flex-col", getTableHeightClassName())}>
+            <div className="flex-shrink-0 mb-1 overflow-x-hidden">
+                <Table className="w-full table-fixed min-w-0">{renderTableHeader()}</Table>
             </div>
 
-            <div className="flex-1 overflow-y-auto scrollbar-hide-on-idle">
-                <Table className="w-full table-fixed">{renderTableBody()}</Table>
+            <div className="flex-1 md:overflow-y-auto overflow-x-hidden scrollbar-hide-on-idle">
+                <Table className="w-full table-fixed min-w-0">{renderTableBody()}</Table>
             </div>
         </div>
     );
