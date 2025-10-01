@@ -81,7 +81,7 @@ export const getCombinedTieData = (data: BaccaratSettlementResult[]): { natural:
         return null;
     }
 
-    return tieRounds.reduce(
+    return data.reduce(
         (acc, round) => ({
             natural: acc.natural || !!round.natural,
             playerPair: acc.playerPair || !!round.playerPair,
@@ -94,7 +94,6 @@ export const getCombinedTieData = (data: BaccaratSettlementResult[]): { natural:
 export const hasTies = (data: BaccaratSettlementResult[]): boolean => {
     return data.some(result => result.tie);
 };
-
 
 export interface BaccaratBetCounts {
     player: number;
