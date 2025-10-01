@@ -253,6 +253,7 @@
     "splash_connection_lost": "A conexão está instável, verifique por favor.",
     "splash_login_failed": "Falha ao carregar os dados do jogo. Por favor, feche as janelas atuais e tente novamente.",
     "stake": "Aposta",
+    "start": "Começar",
     "start_auto_bet": "Iniciar Aposta Automática",
     "start_in": "Começa em {time}s",
     "stop_on_loss": "Parar ao Perder",

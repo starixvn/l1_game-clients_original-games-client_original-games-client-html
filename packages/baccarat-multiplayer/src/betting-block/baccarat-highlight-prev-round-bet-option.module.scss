@@ -38,7 +38,7 @@
         width: 106px;
         height: 76px;
         @media (width >= 48rem) {
-            width: 106px;
+            width: 139px;
         }
     }
 
@@ -46,59 +46,113 @@
         width: 105px;
         height: 73px;
         @media (width >= 48rem) {
-            width: 105px;
+            width: 139px;
         }
     }
 }
 
 .playerPrevShadow {
     position: absolute;
-    top: -8px;
-    left: -8px;
-    width: 199px;
-    height: 185px;
-    background-image: url("/static/images/highlight-winning/highlight-winning-player-box-shadow.webp");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     z-index: 0;
+}
+
+.playerPrevShadowDesktop {
+    @extend .playerPrevShadow;
+    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-player-box-shadow.webp");
+    top: -8px;
+    left: -8px;
+    width: 236px;
+    height: 185px;
+}
+
+.playerPrevShadowMobile {
+    @extend .playerPrevShadow;
+    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-player-box-shadow.webp");
+    top: -8px;
+    left: -8px;
+    width: 199px;
+    height: 185px;
 }
 
 .bankerPrevShadow {
     position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+.bankerPrevShadowDesktop {
+    @extend .bankerPrevShadow;
+    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-banker-box-shadow.webp");
+    top: -8px;
+    left: -8px;
+    width: 236px;
+    height: 185px;
+
+}
+
+.bankerPrevShadowMobile {
+    @extend .bankerPrevShadow;
+    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-banker-box-shadow.webp");
     top: -8px;
     left: -8px;
     width: 199px;
     height: 185px;
-    background-image: url("/static/images/highlight-winning/highlight-winning-banker-box-shadow.webp");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index: 0;
 }
 
 .tiePrevShadow {
     position: absolute;
-    top: -4px;
-    left: -4px;
-    width: 114px;
-    height: 84px;
-    background-image: url("/static/images/highlight-winning/highlight-winning-tie-box-shadow.webp");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     z-index: 0;
 }
 
-.anyPairPrevShadow {
-    position: absolute;
+.tiePrevShadowDesktop {
+    @extend .tiePrevShadow;
+    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-tie-box-shadow.webp");
     top: -4px;
     left: -4px;
-    width: 113px;
-    height: 81px;
-    background-image: url("/static/images/highlight-winning/highlight-winning-anypair-box-shadow.webp");
+    width: 147px;
+    height: 84px;
+}
+
+.tiePrevShadowMobile {
+    @extend .tiePrevShadow;
+    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-tie-box-shadow.webp");
+    top: -4px;
+    left: -4px;
+    width: 114px;
+    height: 84px;
+}
+
+.anyPairPrevShadow {
+    position: absolute;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     z-index: 0;
 }
+
+.anyPairPrevShadowDesktop {
+    @extend .anyPairPrevShadow;
+    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-anypair-box-shadow.webp");
+    top: -4px;
+    left: -4px;
+    width: 148px;
+    height: 81px;
+}
+
+.anyPairPrevShadowMobile {
+    @extend .anyPairPrevShadow;
+    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-anypair-box-shadow.webp");
+    top: -4px;
+    left: -4px;
+    width: 113px;
+    height: 81px;
+}
+

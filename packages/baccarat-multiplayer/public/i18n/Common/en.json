@@ -253,6 +253,7 @@
     "splash_connection_lost": "The connection is unstable, please check.",
     "splash_login_failed": "Failed to load game data. Please close the current windows and try again.",
     "stake": "Stake",
+    "start": "Start",
     "start_auto_bet": "Start Auto Bet",
     "start_in": "Betting time: {time}s",
     "stop_on_loss": "Stop on Loss",

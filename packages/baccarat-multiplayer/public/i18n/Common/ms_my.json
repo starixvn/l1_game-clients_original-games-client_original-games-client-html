@@ -247,6 +247,7 @@
     "splash_connection_lost": "Sambungan tidak stabil, sila periksa.",
     "splash_login_failed": "Gagal memuatkan data permainan. Sila tutup tetingkap semasa dan cuba lagi.",
     "stake": "Stake",
+    "start": "Mula",
     "start_auto_bet": "Mula Pertaruhan Auto",
     "start_in": "Masa pertaruhan: {time}s",
     "stop_on_loss": "Berhenti Jika Rugi",

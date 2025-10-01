@@ -253,6 +253,7 @@
     "splash_connection_lost": "연결이 불안정합니다. 확인해 주십시오.",
     "splash_login_failed": "게임 데이터를 로드하지 못했습니다. 현재 창을 닫고 다시 시도해 주십시오.",
     "stake": "판돈",
+    "start": "시작",
     "start_auto_bet": "자동 베팅 시작",
     "start_in": "{time} 후에 시작",
     "stop_on_loss": "손실 시 중단",

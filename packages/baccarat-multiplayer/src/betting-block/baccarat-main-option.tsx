@@ -9,21 +9,23 @@ const ChipEffect = dynamic(() => import("@shared/components/game-components/bet-
 const BaccaratHighlightBetOption = dynamic(() => import("./baccarat-highlight-bet-option"), { ssr: false });
 const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./baccarat-highlight-prev-round-bet-option"), { ssr: false });
 import { RoundState } from "@shared/components/game-base/type";
+import { Winner } from "@/baccarat-multiplayer-constants";
+import { cn } from "@shared";
 
 export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
     const buttonId = `${tolgeeNamespace}-choice-${choice}`;
 
-    const themeClass = choice === "player" ? styles.playerTheme : styles.bankerTheme;
-    const shadowClass = choice === "player" ? styles.playerShadow : styles.bankerShadow;
-    const textColorClass = choice === "player" ? "text-[#15B9FF]" : "text-[#FF262A]";
-    const shadowColorClass = choice === "player" ? "drop-shadow-[0_0px_10px_rgba(36,196,255,0.4)]" : "drop-shadow-[0_0px_10px_rgba(255,126,126,0.4)]";
-    const positionClass = choice === "player" ? "self-start" : "self-end";
+    const themeClass = choice === Winner.PLAYER ? styles.playerTheme : styles.bankerTheme;
+    const shadowClass = choice === Winner.PLAYER ? styles.playerShadow : styles.bankerShadow;
+    const textColorClass = choice === Winner.PLAYER ? "text-[#15B9FF]" : "text-[#FF262A]";
+    const shadowColorClass = choice === Winner.PLAYER ? "drop-shadow-[0_0px_10px_rgba(36,196,255,0.4)]" : "drop-shadow-[0_0px_10px_rgba(255,126,126,0.4)]";
+    const positionClass = choice === Winner.PLAYER ? "self-start" : "self-end";
 
     const getShapeClass = () => {
-        if (choice === "player") {
+        if (choice === Winner.PLAYER) {
             return styles["playerShape"];
         }
-        if (choice === "banker") {
+        if (choice === Winner.BANKER) {
             return styles["bankerShape"];
         }
         return "";
@@ -35,21 +37,21 @@ export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { to
         <div className="relative">
             {shadowClass && <div className={shadowClass}></div>}
 
-            <div className={`text-white relative w-[183px] h-[169px] md:w-[220px] md:h-[169px] flex flex-col ${themeClass}`}>
-                <div className={`w-32 md:w-[148px] ${positionClass}`}>
-                    <TotalBet choice={choice} className={"h-10 flex items-center justify-center"} tolgeeNamespace={tolgeeNamespace} />
+            <div className={cn(`text-white relative w-[183px] h-[169px] md:w-[220px] md:h-[169px] flex flex-col ${themeClass}`)}>
+                <div className={cn(`w-32 md:w-[148px] ${positionClass}`)}>
+                    <TotalBet choice={choice} className="h-10 flex items-center justify-center" tolgeeNamespace={tolgeeNamespace} />
                 </div>
                 <div className={`w-32 md:w-[148px] h-[107px] flex flex-col justify-center ${positionClass}`}>
                     <BetChoice tolgeeNamespace={tolgeeNamespace} choice={choice} className={`${textColorClass} text-xl md:text-2xl font-semibold ${shadowColorClass}`} />
                     <Odds choice={choice} tolgeeNamespace={tolgeeNamespace} isFormatOddsAuto={true} className={"text-lg font-light"} />
                 </div>
-                <div className={`w-32 md:w-[148px] ${positionClass} pb-4 absolute bottom-0`}>
+                <div className={cn(`w-32 md:w-[148px] ${positionClass} pb-4 absolute bottom-0`)}>
                     {roundState !== RoundState.BeforePlaceBet && <OwnBet choice={choice} tolgeeNamespace={tolgeeNamespace} className="text-lg leading-none font-medium" />}
                 </div>
             </div>
 
-            <div className={`${styles["clickableShape"]} ${shapeClass}`}>
-                <RippleButton className={`${styles["btnRipple"]}`} id={buttonId} choice={choice} />
+            <div className={cn(`${styles["clickableShape"]} ${shapeClass}`)}>
+                <RippleButton className={cn(`${styles["btnRipple"]}`)} id={buttonId} choice={choice} />
             </div>
             <ChipEffect choice={choice} />
             <BaccaratHighlightBetOption choice={choice} />
