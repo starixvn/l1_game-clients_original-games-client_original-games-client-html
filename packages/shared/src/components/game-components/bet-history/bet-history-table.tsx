@@ -206,11 +206,6 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
         { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
     ];
 
-    // Show loading spinner for initial load
-    if (isLoading && displayedBetLogs.length === 0) {
-        return <LoadingSpinner />;
-    }
-
     return (
             <>
                 {/* Sticky Header Table */}
