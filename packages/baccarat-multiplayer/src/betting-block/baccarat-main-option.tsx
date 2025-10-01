@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import styles from "./baccarat-bet-options.module.scss";
 import { RoundState } from "@shared/components/game-base/type";
-import { Winner } from "@/baccarat-multiplayer-constants";
+import { BaccaratBetOptions } from "@/baccarat-multiplayer-constants";
 import { cn } from "@shared";
 const Odds = dynamic(() => import("@shared/components/game-components/bet-option/odds"));
 const OwnBet = dynamic(() => import("@shared/components/game-components/bet-option/own-bet"));
@@ -15,17 +15,17 @@ const BaccaratHighlightPrevRoundBetOption = dynamic(() => import("./highlight/ba
 export const BaccaratMainOption = ({ tolgeeNamespace, choice, roundState }: { tolgeeNamespace: string; choice: string; roundState: RoundState }) => {
     const buttonId = `${tolgeeNamespace}-choice-${choice}`;
 
-    const themeClass = choice === Winner.PLAYER ? styles.playerTheme : styles.bankerTheme;
-    const shadowClass = choice === Winner.PLAYER ? styles.playerShadow : styles.bankerShadow;
-    const textColorClass = choice === Winner.PLAYER ? "text-[#15B9FF]" : "text-[#FF262A]";
-    const shadowColorClass = choice === Winner.PLAYER ? "drop-shadow-[0_0px_10px_rgba(36,196,255,0.4)]" : "drop-shadow-[0_0px_10px_rgba(255,126,126,0.4)]";
-    const positionClass = choice === Winner.PLAYER ? "self-start" : "self-end";
+    const themeClass = choice === BaccaratBetOptions.PLAYER ? styles.playerTheme : styles.bankerTheme;
+    const shadowClass = choice === BaccaratBetOptions.PLAYER ? styles.playerShadow : styles.bankerShadow;
+    const textColorClass = choice === BaccaratBetOptions.PLAYER ? "text-[#15B9FF]" : "text-[#FF262A]";
+    const shadowColorClass = choice === BaccaratBetOptions.PLAYER ? "drop-shadow-[0_0px_10px_rgba(36,196,255,0.4)]" : "drop-shadow-[0_0px_10px_rgba(255,126,126,0.4)]";
+    const positionClass = choice === BaccaratBetOptions.PLAYER ? "self-start" : "self-end";
 
     const getShapeClass = () => {
-        if (choice === Winner.PLAYER) {
+        if (choice === BaccaratBetOptions.PLAYER) {
             return styles["playerShape"];
         }
-        if (choice === Winner.BANKER) {
+        if (choice === BaccaratBetOptions.BANKER) {
             return styles["bankerShape"];
         }
         return "";
