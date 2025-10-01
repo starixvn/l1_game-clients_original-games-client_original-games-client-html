@@ -7,6 +7,10 @@ export class PlinkoGameSoundHandler extends RoundGameSoundHandler implements IGa
     }
 
     handleSound(newRoundState: RoundState) {
+        // TEMPORARY: Sound disabled for Plinko game
+        // TODO: Re-enable sound when ready
+        return;
+
         // Plinko uses continuous sounds rather than round-based sounds
         // We can customize this for plinko-specific sounds
         super.handleSound(newRoundState);
