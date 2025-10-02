@@ -1,7 +1,6 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
-import { formatNumber, calculateTotalWinFromTable } from "@shared/components/game-components/bet-history/bet-detail-utils";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 
 interface BetDetailRow {
@@ -14,8 +13,6 @@ interface BetDetailRow {
 
 interface BetDetailTableProps {
     data: BetDetailRow[];
-    totalStake: number;
-    netProfit: number;
     emptyMessage: string;
 }
 
@@ -49,6 +46,8 @@ const mapGameMode = (gameMode: number) => {
             return "mode_medium";
         case 2:
             return "mode_high";
+        default:
+            return "";
     }
 };
 
@@ -80,29 +79,27 @@ const renderBetDetailHeader = (translateCommon: any) => {
 };
 
 const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
-    return data.map((row, index) => {
-        const rowData = createBetDetailRowData(row);
-        return (
-            <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
-                {rowData.map((cell, cellIndex) => (
-                    <TableCell
-                        key={cellIndex}
-                        className={cn(
-                            "w-1/4 text-sm md:text-base text-secondary-text p-3",
-                            cell.className || "text-center",
-                            cell.isWinningBet && "text-winning-highlight font-normal",
-                            cell.isWinningBet && cellIndex === 1 && "font-semibold"
-                        )}
-                    >
-                        {translateCommon(cell.content)}
-                    </TableCell>
-                ))}
-            </TableRow>
-        );
-    });
+    const rowData = createBetDetailRowData(data[0]);
+    return (
+        <TableRow className={cn("border-none bg-bet-detail-row-1")}>
+            {rowData.map((cell, cellIndex) => (
+                <TableCell
+                    key={cellIndex}
+                    className={cn(
+                        "w-1/4 text-sm md:text-base text-secondary-text p-3",
+                        cell.className || "text-center",
+                        cell.isWinningBet && "text-winning-highlight font-normal",
+                        cell.isWinningBet && cellIndex === 1 && "font-semibold"
+                    )}
+                >
+                    {translateCommon(cell.content)}
+                </TableCell>
+            ))}
+        </TableRow>
+    );
 };
 
-const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, totalStake, netProfit, emptyMessage }, ref) => {
+const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, emptyMessage }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
 
     if (!data || data.length === 0) {

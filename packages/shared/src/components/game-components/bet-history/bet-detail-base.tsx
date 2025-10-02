@@ -1,4 +1,4 @@
-import { numberWithCommas, separateDateTime, sortedCollectionByTime } from "@shared/helpers";
+import { numberWithCommas, separateDateTime } from "@shared/helpers";
 import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import { useBetDetailStore } from "@shared/stores/bet-detail-store";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
@@ -16,7 +16,6 @@ const BetDetailBase: FC<{
     isEnableProvablyFair?: boolean;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice, isEnableProvablyFair }) => {
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
-    console.log("ZEPHYR LOG BET DETAIL DATA IN BET DETAIL BASE::: ", betDetailData);
 
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
     const { drawInfo, betLogDetails } = betDetailData || {};

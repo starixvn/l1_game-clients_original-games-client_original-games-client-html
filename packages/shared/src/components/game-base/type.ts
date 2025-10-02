@@ -224,7 +224,7 @@ export interface DrawInfo {
     roundId: number;
     result: any;
     settlementResult: any;
-    odds: any;
+    odds?: any;
     pfResult: PFResult;
     clientSeed: string;
 }

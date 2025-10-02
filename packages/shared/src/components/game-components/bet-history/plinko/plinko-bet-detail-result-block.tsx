@@ -1,10 +1,7 @@
 import { FC } from "react";
-import Image from "next/image";
-import { useGameContext } from "@shared/react-contexts";
-import { useCommonTranslate, useTranslator } from "@shared/react-hooks";
+import { useCommonTranslate } from "@shared/react-hooks";
 import { DrawInfo } from "@shared/components/game-base/type";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export type PlinkoSettlementResult = {
     slotIndex: number;
@@ -18,16 +15,9 @@ export interface RoundInfoPlinko extends DrawInfo {
               balls?: Array<number>;
           }
         | Record<string, boolean>;
-    odds: Record<string, number>;
     settlementResult: PlinkoSettlementResult;
     numberOfRows?: number;
 }
-
-const IMAGE_SIZE = 30;
-
-const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
-    return isWin ? amount * odds : 0;
-};
 
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
@@ -52,17 +42,11 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ round
     );
 };
 
-export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoPlinko) => {
-    const win = item.win;
-    console.log("ZEPHYR LOG WIN::: ", win);
-    
-    console.log("ZEPHYR LOG ITEM AND DRAW INFO::: ", drawInfo);
+export const produceDataBetDetailRow = (item: any) => {
     return {
         gameMode: item.gameMode,
         amount: item.amount,
         choice: item.choice,
-        odds: drawInfo.settlementResult?.multiplier,
-        win,
-        hightlight: drawInfo.settlementResult?.[item.choice],
+        win: item.win,
     };
 };

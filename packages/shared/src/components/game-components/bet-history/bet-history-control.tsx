@@ -92,7 +92,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
                 aria-orientation="horizontal"
                 className={cn(
                     styles["tab-header"],
-                    "relative flex items-center w-full bg-layer4 overflow-hidden flex-shrink-0 rounded-none h-12 top-0 z-[100] border-b border-input sticky rounded-b-none mb-4"
+                    "flex items-center w-full bg-layer4 overflow-hidden flex-shrink-0 rounded-none h-12 top-0 z-[100] border-b border-input sticky rounded-b-none mb-4"
                 )}
             >
                 {tabs.map((tab, index) => (

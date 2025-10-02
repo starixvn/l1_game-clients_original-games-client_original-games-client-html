@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useLayoutEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { useGameContext } from "@shared/react-contexts";
-import { LoadingSpinner } from "../game-loading/loading-spinner";
 import { useCommonTranslate, useClickSound } from "@shared/react-hooks";
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
@@ -131,7 +130,6 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
             let betDetailData: BetDetailData = null;
             console.log("row", row);
             if (currentGameId === "145") {
-                console.log("ZEPHYR LOG ROW IN BET HISTORY TABLE::: ", row);
                 betDetailData = {
                     drawInfo: {
                         roundId: roundId,
@@ -162,8 +160,6 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
                         },
                     ],
                 };
-
-                console.log("ZEPHYR LOG BET DETAIL DATA IN BET HISTORY TABLE::: ", betDetailData);
             } else {
                 betDetailData = {
                     drawInfo: {

@@ -6,8 +6,6 @@ import { FC, ReactNode, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { DrawInfo } from "@shared/components/game-base/type";
 import {
-    calculateTotalStake,
-    calculateTotalWinFromTable,
     displayWinAmount,
 } from "@shared/components/game-components/bet-history/bet-detail-utils";
 import { PlinkoBetDetailTable } from "./plinko-bet-detail-table";
@@ -16,38 +14,30 @@ const PlinkoBetDetailBase: FC<{
     isTurnBase: boolean;
     renderBetDetailResultBlock: (drawInfo: DrawInfo) => ReactNode;
     produceDataBetDetailRow: Function;
-    renderBetChoice?: (choice: any) => ReactNode;
     isEnableProvablyFair?: boolean;
-}> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice, isEnableProvablyFair }) => {
+}> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, isEnableProvablyFair }) => {
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
 
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
-    console.log("ZEPHYR LOG BET DETAIL DATA IN PLINKO BET DETAIL BASE::: ", betDetailData);
     
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
-
 
     const tableData = useMemo(() => {
         if (!drawInfo || !betLogDetails) {
             return [];
         }
         return betLogDetails.map((betLogDetail) => {
-            console.log("ZEPHYR LOG BET LOG DETAIL IN PLINKO BET DETAIL BASE::: ", betLogDetail);
-            console.log("ZEPHYR LOG DRAW INFO IN PLINKO BET DETAIL BASE::: ", drawInfo);
-            const { gameMode, amount, choice, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
-            console.log("ZEPHYR LOG GAME MODE, AMOUNT, CHOICE, WIN IN PLINKO BET DETAIL BASE::: ", gameMode, amount, choice, win);
-
             return {
-                gameMode: gameMode,
-                betChoice: choice,
-                stake: numberWithCommas(amount, 2) ?? 0,
-                win: displayWinAmount(win),
-                isWinningBet: win > 0,
+                gameMode: betLogDetail.gameMode,
+                betChoice: betLogDetail.choice,
+                stake: numberWithCommas(betLogDetail.amount, 2) ?? 0,
+                win: displayWinAmount(betLogDetail.win),
+                isWinningBet: betLogDetail.win > 0,
             };
         });
-    }, [betLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice]);
+    }, [betLogDetails, drawInfo]);
     if (!drawInfo || !betLogDetails) {
         return null;
     }
@@ -87,10 +77,6 @@ const PlinkoBetDetailBase: FC<{
             <div className="min-h-0">
                 <PlinkoBetDetailTable
                     data={tableData}
-                    totalStake={calculateTotalStake(betLogDetails, produceDataBetDetailRow, drawInfo)}
-                    netProfit={
-                        calculateTotalWinFromTable(tableData) - calculateTotalStake(betLogDetails, produceDataBetDetailRow, drawInfo)
-                    }
                     emptyMessage={translateCommon("no_data")}
                 />
             </div>
