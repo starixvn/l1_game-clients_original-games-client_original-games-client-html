@@ -54,7 +54,7 @@ export const customStartup = async (
 };
 
 export function onStartupError(error: Error): void {
-    console.error("[SplashScreen] startup error:", error);
+    //console.error("[SplashScreen] startup error:", error);
     Sentry.captureException(error);
 
     globalThis.location.pathname = "timeout";
@@ -87,8 +87,8 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 const SplashScreen: React.FC = () => {
     const { token, language } = useContext(URLContext);
 
-    console.log("[SplashScreen] URL Context values:", { token, language });
-    console.log("[SplashScreen] Loading game registry...");
+    //console.log("[SplashScreen] URL Context values:", { token, language });
+    //console.log("[SplashScreen] Loading game registry...");
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -202,7 +202,7 @@ const SplashScreen: React.FC = () => {
                     await customStartup(session, lang, router, player, authorizeInfo);
                     setIsDoneLoadConfig(true);
                 } catch (error) {
-                    console.error("[SplashScreen] custom startup error:", error);
+                    //console.error("[SplashScreen] custom startup error:", error);
                     onStartupError(error);
                 }
             }

@@ -16,6 +16,7 @@
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },
     "dependencies": {
+        "@openreplay/tracker": "^16.4.9",
         "@sentry/nextjs": "^9.41.0",
         "@tolgee/format-icu": "^5.28.6",
         "@tolgee/react": "^5.28.6",
@@ -55,10 +56,10 @@
     },
     "devDependencies": {
         "@next/bundle-analyzer": "^14.2.31",
+        "concurrently": "^8.2.2",
         "rimraf": "^5.0.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.0.0",
-        "concurrently": "^8.2.2"
+        "typescript": "^5.0.0"
     },
     "resolutions": {
         "axios": "^0.30.0",

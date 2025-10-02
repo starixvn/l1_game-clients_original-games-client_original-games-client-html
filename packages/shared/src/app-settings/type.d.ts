@@ -1,4 +1,4 @@
-import { GameSettings } from '@shared/components/game-base/type';
+import { GameSettings } from "@shared/components/game-base/type";
 
 interface ProxySetting {
     ssl: string;
@@ -11,11 +11,21 @@ interface SentryOptions {
     environment: string;
 }
 
+interface OpenReplayOptions {
+    projectKey: string;
+    ingestPoint?: string;
+    disableSecureMode: boolean;
+    defaultInputMode: number;
+    obscureTextNumbers: boolean;
+    obscureTextEmails: boolean;
+}
+
 export default interface AppSettings {
     serverDomainMapper: Array<string>;
     socketGatewayPath: string;
     proxy: ProxySetting;
     sentry: SentryOptions;
+    openreplay?: OpenReplayOptions;
     gameSettings: { [id: string]: GameSettings };
     subGuideDomain: string;
     googleAnalyticId: string;

@@ -11,6 +11,13 @@ import { buildVersion, Themes } from "@shared/constants";
 import { tolgee } from "@shared/tolgee";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "@shared/components/page-components/google-analytics";
+import dynamic from "next/dynamic";
+
+// Dynamic import for OpenReplay to prevent SSR issues
+const OpenReplayTracker = dynamic(
+    () => import("@shared/components/page-components/open-replay").then((mod) => ({ default: mod.OpenReplayTracker })),
+    { ssr: false }
+);
 import { getGameConfig } from "@shared/game-config";
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
@@ -23,6 +30,7 @@ const GameApp = ({ Component, pageProps }: AppProps) => {
                 <AppTitle gameConfig={gameConfig} />
                 <Component {...pageProps} />
                 <GoogleAnalytic />
+                <OpenReplayTracker />
             </TolgeeProvider>
         </ThemeProvider>
     );

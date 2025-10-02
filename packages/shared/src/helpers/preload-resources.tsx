@@ -100,7 +100,7 @@ class PreloadManager {
     }
 
     async startPreload(gameId: number, onComplete: () => void, onProgress?: (progress: number) => void): Promise<void> {
-        console.log(`[PreloadManager:startPreload] Starting preload for gameId: ${gameId}`);
+        //console.log(`[PreloadManager:startPreload] Starting preload for gameId: ${gameId}`);
         const preloadKey = gameId.toString();
 
         // Register callback
@@ -108,19 +108,19 @@ class PreloadManager {
 
         // If preload is already active, wait for it
         if (this.activePreloads.has(preloadKey)) {
-            console.log(`[PreloadManager:startPreload] Preload already active for gameId: ${gameId}, waiting...`);
+            //console.log(`[PreloadManager:startPreload] Preload already active for gameId: ${gameId}, waiting...`);
             await this.activePreloads.get(preloadKey);
             return;
         }
 
-        console.log(`[PreloadManager:startPreload] Starting new preload process for gameId: ${gameId}`);
+        //console.log(`[PreloadManager:startPreload] Starting new preload process for gameId: ${gameId}`);
         // Start new preload
         const preloadPromise = this.executePreload(gameId, preloadKey, onProgress);
         this.activePreloads.set(preloadKey, preloadPromise);
 
         try {
             await preloadPromise;
-            console.log(`[PreloadManager:startPreload] Preload completed successfully for gameId: ${gameId}`);
+            //console.log(`[PreloadManager:startPreload] Preload completed successfully for gameId: ${gameId}`);
         } finally {
             this.cleanupPreload(preloadKey);
         }
@@ -135,14 +135,14 @@ class PreloadManager {
 
     private async executePreload(gameId: number, preloadKey: string, onProgress?: (progress: number) => void): Promise<void> {
         try {
-            console.log(`[PreloadManager:executePreload] Starting preload for gameId: ${gameId}, preloadKey: ${preloadKey}`);
+           //console.log(`[PreloadManager:executePreload] Starting preload for gameId: ${gameId}, preloadKey: ${preloadKey}`);
             const imagePaths = await this.fetchImagesFromAPI(gameId);
-            console.log(`[PreloadManager:executePreload] Received imagePaths from API:`, imagePaths);
-            console.log(`[PreloadManager:executePreload] imagePaths type:`, typeof imagePaths);
-            console.log(`[PreloadManager:executePreload] imagePaths is array:`, Array.isArray(imagePaths));
-            console.log(`[PreloadManager:executePreload] About to call loadImagesProgressive`);
+           //console.log(`[PreloadManager:executePreload] Received imagePaths from API:`, imagePaths);
+           //console.log(`[PreloadManager:executePreload] imagePaths type:`, typeof imagePaths);
+           //console.log(`[PreloadManager:executePreload] imagePaths is array:`, Array.isArray(imagePaths));
+           //console.log(`[PreloadManager:executePreload] About to call loadImagesProgressive`);
             await this.loadImagesProgressive(imagePaths, gameId, onProgress);
-            console.log(`[PreloadManager:executePreload] Successfully completed preload for gameId: ${gameId}`);
+           //console.log(`[PreloadManager:executePreload] Successfully completed preload for gameId: ${gameId}`);
         } catch (error) {
             console.error(`[PreloadManager:executePreload] Preload failed for key: ${preloadKey}:`, error);
             throw error;
@@ -150,51 +150,51 @@ class PreloadManager {
     }
 
     private async fetchImagesFromAPI(gameId: number): Promise<string[]> {
-        console.log(`[PreloadManager:fetchImagesFromAPI] Starting for gameId: ${gameId}`);
+       //console.log(`[PreloadManager:fetchImagesFromAPI] Starting for gameId: ${gameId}`);
         const globalState = GlobalPreloadState.getInstance();
 
         // Check for existing request
         const existingRequest = globalState.getActiveRequest(gameId);
         if (existingRequest) {
-            console.log(`[PreloadManager:fetchImagesFromAPI] Found existing request for gameId: ${gameId}`);
+           //console.log(`[PreloadManager:fetchImagesFromAPI] Found existing request for gameId: ${gameId}`);
             return existingRequest;
         }
 
-        console.log(`[PreloadManager:fetchImagesFromAPI] No existing request, creating new one for gameId: ${gameId}`);
+       //console.log(`[PreloadManager:fetchImagesFromAPI] No existing request, creating new one for gameId: ${gameId}`);
         globalState.cleanupOldRequests();
 
         // Create new request
         const requestPromise = this.createImageRequest(gameId);
         globalState.setActiveRequest(gameId, requestPromise);
-        console.log(`[PreloadManager:fetchImagesFromAPI] Created request promise for gameId: ${gameId}`);
+       //console.log(`[PreloadManager:fetchImagesFromAPI] Created request promise for gameId: ${gameId}`);
 
         try {
             const result = await requestPromise;
-            console.log(`[PreloadManager:fetchImagesFromAPI] Request completed successfully for gameId: ${gameId}, result:`, result);
+           //console.log(`[PreloadManager:fetchImagesFromAPI] Request completed successfully for gameId: ${gameId}, result:`, result);
             return result;
         } finally {
-            console.log(`[PreloadManager:fetchImagesFromAPI] Cleaning up request for gameId: ${gameId}`);
+           //console.log(`[PreloadManager:fetchImagesFromAPI] Cleaning up request for gameId: ${gameId}`);
             globalState.cleanupRequest(gameId);
         }
     }
 
     private async createImageRequest(gameId: number): Promise<string[]> {
         try {
-            console.log(`[PreloadManager:createImageRequest] Starting request for gameId: ${gameId}`);
-            console.log(`[PreloadManager:createImageRequest] API URL: ${basePath}/api/preload-images`);
-            console.log(`[PreloadManager:createImageRequest] Request payload: { gameId: ${gameId} }`);
+           //console.log(`[PreloadManager:createImageRequest] Starting request for gameId: ${gameId}`);
+           //console.log(`[PreloadManager:createImageRequest] API URL: ${basePath}/api/preload-images`);
+           //console.log(`[PreloadManager:createImageRequest] Request payload: { gameId: ${gameId} }`);
 
             const response = await axios.post(`${basePath}/api/preload-images`, { gameId }, { timeout: REQUEST_TIMEOUT });
 
-            console.log(`[PreloadManager:createImageRequest] Raw response:`, response);
-            console.log(`[PreloadManager:createImageRequest] Response data:`, response?.data);
-            console.log(`[PreloadManager:createImageRequest] Response data type:`, typeof response?.data);
+           //console.log(`[PreloadManager:createImageRequest] Raw response:`, response);
+           //console.log(`[PreloadManager:createImageRequest] Response data:`, response?.data);
+           //console.log(`[PreloadManager:createImageRequest] Response data type:`, typeof response?.data);
 
             // API returns { status: "ok", data: string[] }, so extract the data array
             const responseData = response?.data;
             if (responseData && typeof responseData === 'object' && 'data' in responseData && Array.isArray(responseData.data)) {
-                console.log(`[PreloadManager:createImageRequest] Successfully extracted data array:`, responseData.data);
-                console.log(`[PreloadManager:createImageRequest] Array length: ${responseData.data.length}`);
+               //console.log(`[PreloadManager:createImageRequest] Successfully extracted data array:`, responseData.data);
+               //console.log(`[PreloadManager:createImageRequest] Array length: ${responseData.data.length}`);
                 return responseData.data;
             } else {
                 console.warn(`[PreloadManager:createImageRequest] Unexpected response format, returning empty array`);
@@ -210,21 +210,21 @@ class PreloadManager {
     }
 
     private async loadImagesProgressive(imagePaths: string[], gameId: number, onProgress?: (progress: number) => void): Promise<void> {
-        console.log(`[PreloadManager:loadImagesProgressive] Starting for gameId: ${gameId}`);
-        console.log(`[PreloadManager:loadImagesProgressive] imagePaths type:`, typeof imagePaths);
-        console.log(`[PreloadManager:loadImagesProgressive] imagePaths is array:`, Array.isArray(imagePaths));
-        console.log(`[PreloadManager:loadImagesProgressive] imagePaths value:`, imagePaths);
-        console.log(`[PreloadManager:loadImagesProgressive] imagePaths length:`, imagePaths?.length);
+        //console.log(`[PreloadManager:loadImagesProgressive] Starting for gameId: ${gameId}`);
+        //console.log(`[PreloadManager:loadImagesProgressive] imagePaths type:`, typeof imagePaths);
+        //console.log(`[PreloadManager:loadImagesProgressive] imagePaths is array:`, Array.isArray(imagePaths));
+        //console.log(`[PreloadManager:loadImagesProgressive] imagePaths value:`, imagePaths);
+        //console.log(`[PreloadManager:loadImagesProgressive] imagePaths length:`, imagePaths?.length);
 
         if (imagePaths.length === 0) {
-            console.log(`[PreloadManager:loadImagesProgressive] No images to load, returning early`);
+            //console.log(`[PreloadManager:loadImagesProgressive] No images to load, returning early`);
             return;
         }
 
         const totalImages = imagePaths.length;
         let loadedImages = 0;
 
-        console.log(`[PreloadManager:loadImagesProgressive] Starting to load ${totalImages} images`);
+        //console.log(`[PreloadManager:loadImagesProgressive] Starting to load ${totalImages} images`);
 
         const updateProgress = () => {
             const progress = Math.min((loadedImages / totalImages) * 100, 100);
@@ -235,22 +235,22 @@ class PreloadManager {
         updateProgress();
 
         const memoriedImages = this.getMemoriedImages(gameId);
-        console.log(`[PreloadManager:loadImagesProgressive] Memoried images:`, memoriedImages);
+        //console.log(`[PreloadManager:loadImagesProgressive] Memoried images:`, memoriedImages);
 
         await Promise.all(
             imagePaths.map(async (path) => {
-                console.log(`[PreloadManager:loadImagesProgressive] Loading image: ${path}`);
-                console.log(`[PreloadManager:loadImagesProgressive] Path starts with '/static/': ${path.startsWith('/static/')}`);
-                console.log(`[PreloadManager:loadImagesProgressive] BASE_PATH: "${basePath}"`);
-                console.log(`[PreloadManager:loadImagesProgressive] Path starts with BASE_PATH: ${path.startsWith(basePath)}`);
+                //console.log(`[PreloadManager:loadImagesProgressive] Loading image: ${path}`);
+                //console.log(`[PreloadManager:loadImagesProgressive] Path starts with '/static/': ${path.startsWith('/static/')}`);
+                //console.log(`[PreloadManager:loadImagesProgressive] BASE_PATH: "${basePath}"`);
+                //console.log(`[PreloadManager:loadImagesProgressive] Path starts with BASE_PATH: ${path.startsWith(basePath)}`);
                 await this.loadAndCacheImage(path, memoriedImages);
                 loadedImages++;
-                console.log(`[PreloadManager:loadImagesProgressive] Loaded ${loadedImages}/${totalImages} images`);
+                //console.log(`[PreloadManager:loadImagesProgressive] Loaded ${loadedImages}/${totalImages} images`);
                 updateProgress();
             })
         );
 
-        console.log(`[PreloadManager:loadImagesProgressive] Successfully loaded all ${totalImages} images for gameId ${gameId}`);
+        //console.log(`[PreloadManager:loadImagesProgressive] Successfully loaded all ${totalImages} images for gameId ${gameId}`);
 
         GlobalPreloadState.getInstance().setGameLoaded(gameId);
     }
@@ -263,13 +263,13 @@ class PreloadManager {
     }
 
     private async loadAndCacheImage(path: string, memoriedImages: string[]): Promise<void> {
-        console.log(`[PreloadManager:loadAndCacheImage] Starting to load image: ${path}`);
+       //console.log(`[PreloadManager:loadAndCacheImage] Starting to load image: ${path}`);
         const globalState = GlobalPreloadState.getInstance();
 
         // Check if already cached
         const existingPromise = globalState.getImageLoadingPromise(path);
         if (existingPromise) {
-            console.log(`[PreloadManager:loadAndCacheImage] Image already loading/cached: ${path}`);
+           //console.log(`[PreloadManager:loadAndCacheImage] Image already loading/cached: ${path}`);
             await existingPromise;
             return;
         }
@@ -279,7 +279,7 @@ class PreloadManager {
 
         try {
             await loadingPromise;
-            console.log(`[PreloadManager:loadAndCacheImage] ✅ Successfully loaded image: ${path}`);
+           //console.log(`[PreloadManager:loadAndCacheImage] ✅ Successfully loaded image: ${path}`);
         } catch (error) {
             console.warn(`[PreloadManager:loadAndCacheImage] ❌ Failed to load image: ${path}`, error);
             throw error;
@@ -294,7 +294,7 @@ class PreloadManager {
         return new Promise<void>((resolve) => {
             const img = new Image();
             img.onload = () => {
-                console.log(`[PreloadManager:createImageLoadingPromise] ✅ Image loaded successfully: ${path}`);
+               //console.log(`[PreloadManager:createImageLoadingPromise] ✅ Image loaded successfully: ${path}`);
                 resolve();
             };
             img.onerror = () => {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import "./string-helper";
-import { BASE_PATH } from '@shared/constants/base-path';
+import { BASE_PATH } from "@shared/constants/base-path";
 
 // Enhanced image cache with memory management
 interface CacheEntry {
@@ -91,22 +91,22 @@ const calculateBase64Size = (base64: string): number => {
 
 const loadPromise = new Map<string, Promise<any>>();
 export const downloadAndCacheImage = async (path: string): Promise<{ path: string; valid: boolean; imageBase64: string }> => {
-    console.log(`[downloadAndCacheImage] Input path: "${path}"`);
-    console.log(`[downloadAndCacheImage] BASE_PATH: "${BASE_PATH}"`);
-    console.log(`[downloadAndCacheImage] process.env.NEXT_PUBLIC_BASE_PATH: "${process.env.NEXT_PUBLIC_BASE_PATH}"`);
-    console.log(`[downloadAndCacheImage] path.startsWith('/static/'): ${path.startsWith('/static/')}`);
-    console.log(`[downloadAndCacheImage] path.startsWith(BASE_PATH): ${path.startsWith(BASE_PATH)}`);
+    // console.log(`[downloadAndCacheImage] Input path: "${path}"`);
+    // console.log(`[downloadAndCacheImage] BASE_PATH: "${BASE_PATH}"`);
+    // console.log(`[downloadAndCacheImage] process.env.NEXT_PUBLIC_BASE_PATH: "${process.env.NEXT_PUBLIC_BASE_PATH}"`);
+    // console.log(`[downloadAndCacheImage] path.startsWith('/static/'): ${path.startsWith('/static/')}`);
+    // console.log(`[downloadAndCacheImage] path.startsWith(BASE_PATH): ${path.startsWith(BASE_PATH)}`);
 
     // Ensure path has basePath prepended if it's a relative static path
     let fullPath = path;
-    if (path.startsWith('/static/') && !path.startsWith(BASE_PATH)) {
+    if (path.startsWith("/static/") && !path.startsWith(BASE_PATH)) {
         fullPath = `${BASE_PATH}${path}`;
-        console.log(`[downloadAndCacheImage] Added BASE_PATH, fullPath: "${fullPath}"`);
+        // console.log(`[downloadAndCacheImage] Added BASE_PATH, fullPath: "${fullPath}"`);
     } else {
-        console.log(`[downloadAndCacheImage] Did not add BASE_PATH, fullPath: "${fullPath}"`);
+        // console.log(`[downloadAndCacheImage] Did not add BASE_PATH, fullPath: "${fullPath}"`);
     }
     const cleanPath = fullPath.removeBuildVersion();
-    console.log(`[downloadAndCacheImage] Final cleanPath: "${cleanPath}"`);
+    // console.log(`[downloadAndCacheImage] Final cleanPath: "${cleanPath}"`);
 
     // Check cache first
     if (imageCache[cleanPath]) {

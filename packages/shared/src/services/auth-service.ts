@@ -1,7 +1,8 @@
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 
-import { AnalyticsHelper, localStorageKeys, StorageHelper } from '@shared/helpers';
+import { AnalyticsHelper, localStorageKeys, StorageHelper } from "@shared/helpers";
 import { UserClientCommunication } from "./user-client-communication";
+import { setOpenReplayUserID } from "../components/page-components/open-replay/openreplay-utils";
 
 const authService = UserClientCommunication?.getUserClientInstance()?.auth;
 const lobbyService = UserClientCommunication?.getUserClientInstance()?.lobby;
@@ -11,6 +12,7 @@ export const sso = async (token: string, appType: number): Promise<SSOResponse> 
 
     if (userSession?.isAuthenticated) {
         StorageHelper.set(localStorageKeys.session, userSession);
+        setOpenReplayUserID(userSession.username);
     }
 
     return userSession;
@@ -32,6 +34,7 @@ export const verifySession = async (): Promise<SSOResponse> => {
         if (verifySessionResponse.isSuccessful) {
             StorageHelper.set(localStorageKeys.session, userSession);
             AnalyticsHelper.setPlayerSession(userSession);
+            setOpenReplayUserID(userSession.username);
         }
     }
 

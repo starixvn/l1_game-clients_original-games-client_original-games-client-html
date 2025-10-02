@@ -2077,6 +2077,22 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@openreplay/network-proxy@^1.2.0":
+  version "1.2.0"
+  resolved "https://npm.lumigame.com/@openreplay/network-proxy/-/network-proxy-1.2.0.tgz#58b3667baaea00290beb994212031b83c313e7e9"
+  integrity sha512-vIOzBWVKn+7/Dk4qFmRxR1fdOEnLt1hXkEYtc3m7eIA2nVwz+BSGW4Hbs/ygFLnNS0HkcBwuRgmXAwRMK5HCrQ==
+
+"@openreplay/tracker@^16.4.9":
+  version "16.4.9"
+  resolved "https://npm.lumigame.com/@openreplay/tracker/-/tracker-16.4.9.tgz#5f53f0d471f3b899ea1c00076d2d1ac6b7373375"
+  integrity sha512-ASpDzMlq+e8TgVEzYPxSu9bLlb9LtAjl7Fy2QOPtJbVqhugJYzzpyMmFdoSQPkWrFBvdq2KkgTqaQehiXfY2ZQ==
+  dependencies:
+    "@openreplay/network-proxy" "^1.2.0"
+    error-stack-parser "^2.1.4"
+    error-stack-parser-es "^0.1.5"
+    fflate "^0.8.2"
+    web-vitals "^4.2.4"
+
 "@opentelemetry/api-logs@0.57.2":
   version "0.57.2"
   resolved "http://npm.lumigame.com/@opentelemetry/api-logs/-/api-logs-0.57.2.tgz"
@@ -3385,7 +3401,7 @@ any-promise@^1.0.0:
 
 anymatch@^3.0.3, anymatch@^3.1.1, anymatch@~3.1.2:
   version "3.1.3"
-  resolved "http://npm.lumigame.com/anymatch/-/anymatch-3.1.3.tgz#790c58b19ba1720a84205b57c618d5ad8524973e"
+  resolved "https://npm.lumigame.com/anymatch/-/anymatch-3.1.3.tgz#790c58b19ba1720a84205b57c618d5ad8524973e"
   integrity sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==
   dependencies:
     normalize-path "^3.0.0"
@@ -4763,6 +4779,18 @@ error-ex@^1.3.1:
   dependencies:
     is-arrayish "^0.2.1"
 
+error-stack-parser-es@^0.1.5:
+  version "0.1.5"
+  resolved "https://npm.lumigame.com/error-stack-parser-es/-/error-stack-parser-es-0.1.5.tgz#15b50b67bea4b6ed6596976ee07c7867ae25bb1c"
+  integrity sha512-xHku1X40RO+fO8yJ8Wh2f2rZWVjqyhb1zgq1yZ8aZRQkv6OOKhKWRUaht3eSCUbAOBaKIgM+ykwFLE+QUxgGeg==
+
+error-stack-parser@^2.1.4:
+  version "2.1.4"
+  resolved "https://npm.lumigame.com/error-stack-parser/-/error-stack-parser-2.1.4.tgz#229cb01cdbfa84440bfa91876285b94680188286"
+  integrity sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==
+  dependencies:
+    stackframe "^1.3.4"
+
 es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.1, es-abstract@^1.23.2:
   version "1.23.3"
   resolved "http://npm.lumigame.com/es-abstract/-/es-abstract-1.23.3.tgz"
@@ -5354,7 +5382,7 @@ fastq@^1.6.0:
 
 fb-watchman@^2.0.0, fb-watchman@^2.0.1:
   version "2.0.2"
-  resolved "http://npm.lumigame.com/fb-watchman/-/fb-watchman-2.0.2.tgz#e9524ee6b5c77e9e5001af0f85f3adbb8623255c"
+  resolved "https://npm.lumigame.com/fb-watchman/-/fb-watchman-2.0.2.tgz#e9524ee6b5c77e9e5001af0f85f3adbb8623255c"
   integrity sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==
   dependencies:
     bser "2.1.1"
@@ -5363,6 +5391,11 @@ fdir@^6.2.0:
   version "6.4.6"
   resolved "http://npm.lumigame.com/fdir/-/fdir-6.4.6.tgz"
   integrity sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==
+
+fflate@^0.8.2:
+  version "0.8.2"
+  resolved "https://npm.lumigame.com/fflate/-/fflate-0.8.2.tgz#fc8631f5347812ad6028bbe4a2308b2792aa1dea"
+  integrity sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==
 
 file-entry-cache@^6.0.1:
   version "6.0.1"
@@ -8959,7 +8992,7 @@ safe-regex-test@^1.0.3:
 
 sane@^4.0.3, sane@^5.0.0:
   version "5.0.1"
-  resolved "http://npm.lumigame.com/sane/-/sane-5.0.1.tgz#ae94cb06acf5ad158242ff23f563d8cbe0ec1e4b"
+  resolved "https://npm.lumigame.com/sane/-/sane-5.0.1.tgz#ae94cb06acf5ad158242ff23f563d8cbe0ec1e4b"
   integrity sha512-9/0CYoRz0MKKf04OMCO3Qk3RQl1PAwWAhPSQSym4ULiLpTZnrY1JoZU0IEikHu8kdk2HvKT/VwQMq/xFZ8kh1Q==
   dependencies:
     "@cnakazawa/watch" "^1.0.3"
@@ -9368,6 +9401,11 @@ stack-utils@^2.0.2, stack-utils@^2.0.3:
   integrity sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==
   dependencies:
     escape-string-regexp "^2.0.0"
+
+stackframe@^1.3.4:
+  version "1.3.4"
+  resolved "https://npm.lumigame.com/stackframe/-/stackframe-1.3.4.tgz#b881a004c8c149a5e8efef37d51b16e412943310"
+  integrity sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==
 
 stacktrace-parser@^0.1.10:
   version "0.1.11"
@@ -10270,6 +10308,11 @@ walker@^1.0.7, walker@^1.0.8, walker@~1.0.5:
   integrity sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==
   dependencies:
     makeerror "1.0.12"
+
+web-vitals@^4.2.4:
+  version "4.2.4"
+  resolved "https://npm.lumigame.com/web-vitals/-/web-vitals-4.2.4.tgz#1d20bc8590a37769bd0902b289550936069184b7"
+  integrity sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

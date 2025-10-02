@@ -17,6 +17,13 @@ window.envConfig = {
         dsn: "",
         environment: "DEV",
     },
+    openreplay: {
+        // projectKey: "G23SscSi4ivPFNNnyhVm",
+        disableSecureMode: true,
+        defaultInputMode: 2,
+        obscureTextNumbers: false,
+        obscureTextEmails: false,
+    },
     enableSourceMap: true,
     subGuideDomain: "l2-guide-1",
     enableMsgpackParser: false,
