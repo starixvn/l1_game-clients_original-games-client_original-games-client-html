@@ -44,7 +44,7 @@ export const physicsConfig: PhysicsConfig = {
         ballSize: 12 // Base radius for 10 rows (dynamically scaled for other row counts)
     },
     engine: {
-        engineGravity: 1.0
+        engineGravity: 1.8
     },
     world: {
         width: 480,  // Matches payout display width: 9 slots × 50px min-width + 8 × 2px gaps = 466px, rounded up
