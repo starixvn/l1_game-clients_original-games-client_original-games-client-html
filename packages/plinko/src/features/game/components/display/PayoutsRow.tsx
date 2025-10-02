@@ -1,6 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { PayoutsRowProps } from '../../../../shared/types';
+import { getOddsForMode } from '../../../../game-odds-config';
+
+// Map string game mode values to numeric values expected by getOddsForMode
+const mapGameModeToNumber = (gameMode: PayoutsRowProps['gameMode']): number => {
+    switch (gameMode) {
+        case 'Low':
+            return 0;
+        case 'Medium':
+            return 1;
+        case 'High':
+            return 2;
+        case 'Lightning':
+            return 2; // Assuming Lightning maps to HIGH (2)
+        default:
+            return 1; // Default to MEDIUM
+    }
+};
 
 // Interface for payout data from API
 interface PayoutData {
@@ -82,38 +99,23 @@ const Tooltip = styled.div<{ $visible: boolean }>`
 
 // Section 3: PayoutsRow Component - Displays bottom row slots with multipliers and hover tooltips
 const PayoutsRow: React.FC<PayoutsRowProps> = ({ gameMode, rows, betAmount }) => {
-    const [payoutData, setPayoutData] = useState<PayoutData | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
 
-    // Fetch payouts when mode or rows change - Section 3 requirement
-    useEffect(() => {
-        const fetchPayouts = async () => {
-            setLoading(true);
-            setError(null);
-
-            try {
-                const response = await fetch(`/api/generate-payouts?mode=${gameMode}&rows=${rows}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    setPayoutData({
-                        multipliers: data.multipliers,
-                        probabilities: data.probabilities,
-                    });
-                } else {
-                    setError(data.error || 'Failed to fetch payouts');
-                }
-            } catch (err) {
-                setError('Network error while fetching payouts');
-                console.error('Error fetching payouts:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPayouts();
+    // Get payout data from odds config
+    const payoutData = useMemo(() => {
+        try {
+            const numericGameMode = mapGameModeToNumber(gameMode);
+            const multipliers = getOddsForMode(numericGameMode, rows);
+            // Generate equal probabilities for all multipliers (this could be improved with actual probability calculations)
+            const probabilities = multipliers.map(() => 1 / multipliers.length);
+            return {
+                multipliers,
+                probabilities,
+            };
+        } catch (error) {
+            console.error('Failed to get odds for mode:', { gameMode, rows, error });
+            return null;
+        }
     }, [gameMode, rows]);
 
     // Calculate estimated winning amount for tooltip - Section 3 requirement
@@ -126,22 +128,6 @@ const PayoutsRow: React.FC<PayoutsRowProps> = ({ gameMode, rows, betAmount }) =>
     const formatProbability = (probability: number): string => {
         return (probability * 100).toFixed(2);
     };
-
-    if (loading) {
-        return (
-            <PayoutsContainer>
-                <div>Loading payouts...</div>
-            </PayoutsContainer>
-        );
-    }
-
-    if (error) {
-        return (
-            <PayoutsContainer>
-                <div style={{ color: 'red' }}>Error: {error}</div>
-            </PayoutsContainer>
-        );
-    }
 
     if (!payoutData || !payoutData.multipliers || !payoutData.probabilities) {
         return (
@@ -162,7 +148,7 @@ const PayoutsRow: React.FC<PayoutsRowProps> = ({ gameMode, rows, betAmount }) =>
                     {multiplier.toFixed(1)}x
                     <Tooltip $visible={hoveredSlot === index}>
                         <div>Win: ${calculateEstimatedWin(multiplier)}</div>
-                        <div>Probability: {formatProbability(payoutData.probabilities[index])}%</div>
+                        <div>Probability: {formatProbability(payoutData?.probabilities?.[index] || 0)}%</div>
                     </Tooltip>
                 </PayoutSlot>
             ))}

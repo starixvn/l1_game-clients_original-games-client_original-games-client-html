@@ -67,6 +67,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             }))
         );
 
+
         const containerRef = useRef<HTMLDivElement>(null);
         const canvasRef = useRef<HTMLCanvasElement>(null);
         const engineRef = useRef<Engine | null>(null);
@@ -105,7 +106,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         // Fixed canvas dimensions - canvas stays at original size regardless of container resize
         const CANVAS_WIDTH = 600;
-        const CANVAS_HEIGHT = 480;
+        const CANVAS_HEIGHT = 550;
 
         // Handle container resize without changing canvas size
         useEffect(() => {
@@ -155,70 +156,61 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             const pins: Body[] = [];
             const multipliersBodies: Body[] = [];
 
-            // Simplified board layout for 600x600 canvas
-            const pegRadius = 8; // Smaller pegs for better fit
-            const mapGap = 3; // Same as visual rendering
-            const pegGap = 45; // Gap between peg centers
-            const initialColumns = 3;
-            const boardTopMargin = 60; // Space from top for ball drop
+            // Scale physics elements based on number of rows
+            const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / numberOfRows));
+            const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
+            const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
+            const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
 
             // Create pins in triangular layout
             for (let row = 1; row <= numberOfRows; row++) {
-                const columnsInRow = initialColumns + (row - 1);
+                const columnsInRow = 3 + (row - 1); // Start with 3 columns, increase by 1 each row
                 const rowWidth = (columnsInRow - 1) * pegGap;
                 const startX = (canvasWidth - rowWidth) / 2;
                 const y = boardTopMargin + (row - 1) * pegGap;
 
                 for (let col = 0; col < columnsInRow; col++) {
                     const x = startX + col * pegGap;
-
-                    const pin = Bodies.circle(x, y, pegRadius, {
+                    pins.push(Bodies.circle(x, y, pegRadius, {
                         label: `pin-${row}-${col}`,
                         render: { fillStyle: physicsConfig.colors.pin },
                         isStatic: true
-                    });
-                    pins.push(pin);
+                    }));
                 }
             }
 
-            // Create invisible walls
-            const wallThickness = 20;
+            // Create walls
             const walls = [
-                Bodies.rectangle(-wallThickness / 2, canvasHeight / 2, wallThickness, canvasHeight * 2, {
-                    render: { visible: false },
-                    isStatic: true
-                }),
-                Bodies.rectangle(canvasWidth + wallThickness / 2, canvasHeight / 2, wallThickness, canvasHeight * 2, {
-                    render: { visible: false },
-                    isStatic: true
-                }),
-                Bodies.rectangle(canvasWidth / 2, canvasHeight + wallThickness / 2, canvasWidth * 2, wallThickness, {
-                    render: { visible: false },
-                    isStatic: true
-                })
+                Bodies.rectangle(-10, canvasHeight / 2, 20, canvasHeight * 2, { render: { visible: false }, isStatic: true }),
+                Bodies.rectangle(canvasWidth + 10, canvasHeight / 2, 20, canvasHeight * 2, { render: { visible: false }, isStatic: true }),
+                Bodies.rectangle(canvasWidth / 2, canvasHeight + 10, canvasWidth * 2, 20, { render: { visible: false }, isStatic: true })
             ];
 
-            // Create multiplier slots aligned with physics board slots
-            const numberOfSlots = numberOfRows + 1;
-            const gap = pegRadius * 2 * mapGap; // Same gap as pegs: 48
-            const space = (canvasWidth - gap * numberOfSlots) / 2;
-            const boardHeight = boardTopMargin + (numberOfRows - 1) * pegGap; // Bottom of the peg board
-            const slotWidth = gap - 8; // Slightly wider for better proportions: 48 - 8 = 40
-            const slotHeight = 5; // Thin physics bodies
-            const slotY = boardHeight + 25; // Position slots 25px below the last peg row
+            // Create multiplier slots positioned at the same level as the last row, centered between pegs
+            const lastRowColumns = numberOfRows; // Last row has numberOfRows pegs
+            const lastRowWidth = (lastRowColumns - 1) * pegGap;
+            const lastRowStartX = (canvasWidth - lastRowWidth) / 2;
+            const lastRowY = boardTopMargin + (numberOfRows - 1) * pegGap; // Y position of last row pegs
 
-            multipliers.forEach((multiplier, index) => {
-                const col = index + 1; // Slots are 1-indexed
-                const x = space + col * gap - pegRadius * mapGap;
+            // Create slots including edges: left of first peg, between pegs, and right of last peg
+            const numberOfSlots = numberOfRows + 1; // Traditional Plinko: N pegs = N+1 slots
+            const slotsToCreate = Math.min(multipliers.length, numberOfSlots);
 
-                const multiplierBody = Bodies.rectangle(x, slotY, slotWidth, slotHeight, {
-                    label: `multiplier-${multiplier}-${index}`,
+            for (let i = 0; i < slotsToCreate; i++) {
+                const multiplier = multipliers[i];
+                // Position slots between pegs: left of first, between all pairs, right of last
+                const slotX = lastRowStartX + (i - 0.5) * pegGap; // Center between peg positions
+                // FIX: Position slots BELOW the physics board, not at the same level
+                const slotY = lastRowY + pegGap * 0.8; // Position below last row by 80% of peg gap
+                const slotWidth = Math.max(8, Math.min(50, pegGap - 8 * scaleFactor));
+
+                multipliersBodies.push(Bodies.rectangle(slotX, slotY, slotWidth, 5, {
+                    label: `multiplier-${multiplier}-${i}`,
                     isStatic: true,
                     isSensor: true,
                     render: { fillStyle: getMultiplierColor(multiplier) }
-                });
-                multipliersBodies.push(multiplierBody);
-            });
+                }));
+            }
 
             return { pins, multipliersBodies, walls };
         }, []);
@@ -271,195 +263,149 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             });
         }, [onBallHit]);
 
-        // Helper function to extract multiplier data
-        const extractMultiplierData = useCallback((obstacleBody: Body) => {
-            const labelParts = obstacleBody.label.split("-");
-            return {
-                multiplier: parseFloat(labelParts[1]) || 1,
-                finalSlot: parseInt(labelParts[2]) || 0
-            };
-        }, []);
-
-        // Helper function to mark ball as removed
-        const markBallAsRemoved = useCallback((ballBody: Body) => {
-            ballBody.isSensor = true;
-            ballBody.isStatic = true;
-            removedBallsRef.current.add(ballBody.id);
-        }, []);
-
-        // Helper to trigger win callback
-        const triggerWinCallback = useCallback((winMultiplier: number, winBetValue: number) => {
-            if (onBallHit) {
-                onBallHit(winMultiplier, winBetValue);
-            }
-        }, [onBallHit]);
-
-        // Helper to remove ball and trigger win
-        const removeBallAndTriggerWin = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            winMultiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            World.remove(engine.world, ballBody);
-            if (!ballExtension.hasTriggeredWin) {
-                ballExtension.hasTriggeredWin = true;
-                triggerWinCallback(winMultiplier, betValue);
-            }
-        }, [triggerWinCallback]);
-
-        // Handle correct slot hit for service-guided balls
-        const handleCorrectSlotHit = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            removeBallAndTriggerWin(ballBody, ballExtension, multiplier, betValue, engine);
-        }, [removeBallAndTriggerWin]);
-
-        // Handle wrong slot hit for service-guided balls
-        const handleWrongSlotHit = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
-            // For service-guided balls, remove immediately on any multiplier hit
-            // The win is only triggered if wrongSlotHits >= 3
-            World.remove(engine.world, ballBody);
-            if (ballExtension.wrongSlotHits >= 3) {
-                if (!ballExtension.hasTriggeredWin) {
-                    ballExtension.hasTriggeredWin = true;
-                    triggerWinCallback(ballExtension.multiplier || multiplier, betValue);
-                }
-            }
-        }, [triggerWinCallback]);
-
-        // Handle service-guided ball collision
-        const handleServiceGuidedCollision = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            finalSlot: number,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            if (finalSlot === ballExtension.expectedFinalSlot) {
-                handleCorrectSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
-            } else {
-                handleWrongSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
-            }
-        }, [handleCorrectSlotHit, handleWrongSlotHit]);
-
-        // Handle regular ball collision
-        const handleRegularBallCollision = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            World.remove(engine.world, ballBody);
-            if (!ballExtension.hasTriggeredWin) {
-                ballExtension.hasTriggeredWin = true;
-                if (onBallHit) {
-                    onBallHit(multiplier, betValue);
-                }
-            }
-        }, [onBallHit]);
-
-        // Handle multiplier collision - simplified
+        // Handle multiplier collision
         const handleMultiplierCollision = useCallback((
             ballBody: Body,
             ballExtension: BallBodyExtension,
             obstacleBody: Body,
             engine: Engine
         ) => {
-            const { multiplier, finalSlot } = extractMultiplierData(obstacleBody);
+            // Extract multiplier data from label
+            const labelParts = obstacleBody.label.split("-");
+            const multiplier = parseFloat(labelParts[1]) || 1;
+            const finalSlot = parseInt(labelParts[2]) || 0;
             const betValue = ballExtension.betValue || 100;
 
             // Mark ball as removed
             ballExtension.isRemoved = true;
-            markBallAsRemoved(ballBody);
+            ballBody.isSensor = true;
+            ballBody.isStatic = true;
+            removedBallsRef.current.add(ballBody.id);
 
-            if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
-                handleServiceGuidedCollision(ballBody, ballExtension, finalSlot, multiplier, betValue, engine);
-            } else {
-                handleRegularBallCollision(ballBody, ballExtension, multiplier, betValue, engine);
+            // Handle win logic
+            World.remove(engine.world, ballBody);
+            if (!ballExtension.hasTriggeredWin) {
+                ballExtension.hasTriggeredWin = true;
+
+                if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
+                    // Service-guided ball logic
+                    if (finalSlot === ballExtension.expectedFinalSlot) {
+                        onBallHit?.(multiplier, betValue);
+                    } else {
+                        ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
+                        if (ballExtension.wrongSlotHits >= 3) {
+                            onBallHit?.(ballExtension.multiplier || multiplier, betValue);
+                        }
+                    }
+                } else {
+                    // Regular ball
+                    onBallHit?.(multiplier, betValue);
+                }
             }
-        }, [extractMultiplierData, markBallAsRemoved, handleServiceGuidedCollision, handleRegularBallCollision]);
+        }, [onBallHit]);
 
         // Handle pin collision
         const handlePinCollision = useCallback((ballBody: Body, ballExtension: BallBodyExtension) => {
-            const servicePath = ballExtension.servicePath;
-            const currentPathIndex = ballExtension.currentPathIndex || 0;
-
-            if (ballExtension.isServiceGuided && servicePath && currentPathIndex < servicePath.length) {
+            if (ballExtension.isServiceGuided && ballExtension.servicePath && ballExtension.currentPathIndex < ballExtension.servicePath.length) {
                 // Service-guided ball following path
-                const direction = servicePath[currentPathIndex];
-                const forceMagnitude = 0.15;
-                const forceX = direction === 1 ? forceMagnitude : -forceMagnitude;
-
+                const direction = ballExtension.servicePath[ballExtension.currentPathIndex];
+                const forceX = direction === 1 ? 0.15 : -0.15;
                 Body.setVelocity(ballBody, { x: forceX * 2, y: ballBody.velocity.y });
                 Body.applyForce(ballBody, ballBody.position, { x: forceX, y: 0 });
-                ballExtension.currentPathIndex = currentPathIndex + 1;
+                ballExtension.currentPathIndex++;
             } else {
                 // Random deflection for regular balls
                 const ballRadius = ballBody.circleRadius || 5;
                 const deflectionStrength = Math.max(0.1, Math.min(0.3, 0.25 / (ballRadius / 5)));
-                const randomDirection = Math.random() < 0.5 ? -1 : 1;
-                const randomForce = randomDirection * deflectionStrength * (Math.random() * 0.5 + 0.75);
+                const randomForce = (Math.random() < 0.5 ? -1 : 1) * deflectionStrength * (Math.random() * 0.5 + 0.75);
                 Body.applyForce(ballBody, ballBody.position, { x: randomForce, y: 0 });
             }
         }, []);
+
+        // Memoize expensive layout calculations to avoid recalculating every frame
+        const layoutData = useMemo(() => {
+            const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / numberOfRows));
+            const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
+            const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
+            const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
+
+            const lastRowY = boardTopMargin + (numberOfRows - 1) * pegGap;
+            const lastRowColumns = numberOfRows;
+            const lastRowWidth = (lastRowColumns - 1) * pegGap;
+            const lastRowStartX = (CANVAS_WIDTH - lastRowWidth) / 2;
+            const visualSlotHeight = Math.max(15, Math.min(40, (pegGap - 8 * scaleFactor) * 1.5));
+            const slotWidth = Math.max(8, Math.min(50, pegGap - 8 * scaleFactor));
+            const numberOfSlots = numberOfRows + 1;
+
+            return {
+                scaleFactor,
+                pegRadius,
+                pegGap,
+                boardTopMargin,
+                lastRowY,
+                lastRowStartX,
+                visualSlotHeight,
+                slotWidth,
+                numberOfSlots
+            };
+        }, [numberOfRows]);
+
+        // Memoize slot rendering data
+        const slotRenderData = useMemo(() => {
+            const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
+            const slotsToDraw = Math.min(effectiveMultipliers.length, layoutData.numberOfSlots);
+
+            return effectiveMultipliers.map((multiplier, i) => {
+                if (i >= slotsToDraw) return null;
+
+                const slotX = layoutData.lastRowStartX + (i - 0.5) * layoutData.pegGap - layoutData.slotWidth / 2;
+                // FIX: Position visual slots BELOW the physics board to match physics positioning
+                const slotY = layoutData.lastRowY + layoutData.pegGap * 0.8;
+
+                return {
+                    multiplier,
+                    slotX,
+                    slotY,
+                    slotWidth: layoutData.slotWidth,
+                    slotHeight: layoutData.visualSlotHeight,
+                    color: getSlotColor(multiplier)
+                };
+            }).filter(Boolean);
+        }, [multipliers, layoutData]);
 
         // Start render loop
         const startRenderLoop = useCallback((
             ctx: CanvasRenderingContext2D,
             engine: Engine,
             containerSize: { width: number; height: number },
-            effectiveMultipliers: number[],
+            multipliers: number[],
             pins: Body[],
             numberOfRows: number
         ) => {
             const render = () => {
                 if (!ctx || !engine) return;
 
-                // Clear canvas (only the fixed canvas area)
                 ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                // Triangular board background is now handled by container CSS
+                // Draw multiplier slots using pre-calculated data
+                slotRenderData.forEach((slot, index) => {
+                    if (!slot) return;
 
-                // Draw multiplier slots aligned with physics board slots
-                const boardHeight = 60 + (numberOfRows - 1) * 45; // Same calculation as physics: boardTopMargin + (rows - 1) * pegGap
-                const numberOfSlots = numberOfRows + 1;
-                const gap = 8 * 2 * 3; // Same as physics: pegRadius * 2 * mapGap = 48
-                const space = (CANVAS_WIDTH - gap * numberOfSlots) / 2;
-                const slotWidth = gap - 8; // Same as physics: gap - 8 = 40
-                const slotHeight = gap - 8; // Make slots square: same as width = 40
-                const slotY = boardHeight + 25 + slotHeight / 2; // Position 25px below board, centered on slot height
+                    const { multiplier, slotX, slotY, slotWidth, slotHeight, color } = slot;
 
-                effectiveMultipliers.forEach((multiplier, index) => {
-                    const col = index + 1; // Slots are 1-indexed
-                    const physicsCenterX = space + col * gap - 8 * 3; // Physics slot center
-                    const slotX = physicsCenterX - slotWidth / 2; // Center visual slot on physics center
-                    const slotColor = getSlotColor(multiplier);
-
+                    // Draw slot background
                     const slotGradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
-                    slotGradient.addColorStop(0, slotColor);
+                    slotGradient.addColorStop(0, color);
                     slotGradient.addColorStop(1, '#1a252f');
                     ctx.fillStyle = slotGradient;
                     ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
 
+                    // Draw slot border
                     ctx.strokeStyle = '#34495e';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
 
+                    // Draw multiplier text
                     ctx.fillStyle = '#ffffff';
                     ctx.font = `bold ${Math.max(12, Math.min(16, slotWidth / 3))}px Arial`;
                     ctx.textAlign = 'center';
@@ -468,17 +414,16 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 });
 
                 // Draw pins
-                pins.forEach((pin) => {
+                pins.forEach((pin, index) => {
                     const bounds = pin.bounds;
                     const centerX = (bounds.min.x + bounds.max.x) / 2;
                     const centerY = (bounds.min.y + bounds.max.y) / 2;
-                    const pinRadius = 8; // Match physics pegRadius
 
                     ctx.fillStyle = '#F5DCFF';
                     ctx.strokeStyle = '#E0E0E0';
-                    ctx.lineWidth = 0.5;
+                    ctx.lineWidth = Math.max(0.3, Math.min(1, 0.5 * layoutData.scaleFactor));
                     ctx.beginPath();
-                    ctx.arc(centerX, centerY, pinRadius, 0, Math.PI * 2);
+                    ctx.arc(centerX, centerY, layoutData.pegRadius, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
                 });
@@ -522,13 +467,14 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             };
 
             render();
-        }, []);
+        }, [slotRenderData, layoutData]);
 
         // Initialize physics engine
         useEffect(() => {
             if (!canvasRef.current) {
                 return;
             }
+
 
             if (isInitialized) {
                 cleanupPhysics();
@@ -554,6 +500,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
                 // Create physics bodies using fixed canvas dimensions
                 const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
+
                 const { pins, multipliersBodies, walls } = createPhysicsBodies(
                     CANVAS_WIDTH,
                     CANVAS_HEIGHT,
@@ -572,7 +519,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 setupCollisionDetection(engine);
 
                 // Start render loop with fixed canvas dimensions
-                startRenderLoop(ctx, engine, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }, effectiveMultipliers, pins, numberOfRows);
+                startRenderLoop(ctx, engine, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }, multipliers, pins, numberOfRows);
                 setIsInitialized(true);
             }, 100);
 
@@ -592,63 +539,67 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             }
         }, [onBallHit, isInitialized, setupCollisionDetection]);
 
-        // Throttled mouse event handling to prevent excessive re-renders
+
+        // Optimized mouse event handling with better throttling
         const mouseThrottleRef = useRef({
             lastUpdate: 0,
             lastHoveredIndex: -1,
-            lastPosition: { x: 0, y: 0 }
+            lastPosition: { x: 0, y: 0 },
+            rafId: null as number | null
         });
 
-        // Memoized slot calculation data to avoid recalculating on every mouse move
+        // Memoized slot calculation data using layoutData for consistency
         const slotCalculationData = useMemo(() => {
             if (multipliers.length === 0) return null;
 
-            // Calculate slot positions to match physics/visual alignment
-            const canvasWidth = containerSize.width;
-            const numberOfSlots = numberOfRows + 1;
-            const gap = 8 * 2 * 3; // Same as physics: pegRadius * 2 * mapGap = 48
-
-            const boardHeight = 60 + (numberOfRows - 1) * 45; // Same as visual calculation
-            const slotHeight = gap - 8; // Same as visual slotHeight (square)
-            const slotAreaTop = boardHeight + 25; // 25px below board, same as visual calculation
-            const slotAreaBottom = slotAreaTop + slotHeight;
-            const space = (canvasWidth - gap * numberOfSlots) / 2;
-            const slotWidth = gap - 8; // Same as physics: gap - 8 = 40
+            const slotHeight = Math.max(15, Math.min(40, (layoutData.pegGap - 8 * layoutData.scaleFactor) * 1.5));
+            // FIX: Use the same Y position as visual slots for hover detection
+            const slotY = layoutData.lastRowY + layoutData.pegGap * 0.8;
+            const slotAreaTop = slotY - slotHeight / 2;
+            const slotAreaBottom = slotY + slotHeight / 2;
 
             return {
                 slotAreaTop,
                 slotAreaBottom,
-                space,
-                gap,
-                slotWidth,
+                lastRowStartX: layoutData.lastRowStartX,
+                pegGap: layoutData.pegGap,
+                slotWidth: layoutData.slotWidth,
                 slotHeight,
                 multipliers,
                 probabilities,
-                betAmount
+                betAmount,
+                numberOfSlots: layoutData.numberOfSlots
             };
-        }, [containerSize, multipliers, probabilities, betAmount, numberOfRows]);
+        }, [layoutData, multipliers, probabilities, betAmount]);
 
-        // Helper function to find slot index from mouse position (aligned with physics slots)
-        const findSlotIndex = (mouseX: number, space: number, gap: number, slotWidth: number, multipliersLength: number) => {
-            // Use same positioning logic as visual slots (centered on physics centers)
-            for (let i = 0; i < multipliersLength; i++) {
-                const col = i + 1; // Slots are 1-indexed
-                const physicsCenterX = space + col * gap - 8 * 3; // Physics slot center
-                const slotX = physicsCenterX - slotWidth / 2; // Visual slot left edge
+        // Memoized helper functions to prevent recreation on every render
+        const findSlotIndex = useCallback((mouseX: number, lastRowStartX: number, pegGap: number, slotWidth: number, numberOfSlots: number) => {
+            // Use same positioning logic as visual slots (between pegs)
+            for (let i = 0; i < numberOfSlots; i++) {
+                const slotCenterX = lastRowStartX + (i - 0.5) * pegGap; // Center between peg positions
+                const slotX = slotCenterX - slotWidth / 2; // Visual slot left edge
                 if (mouseX >= slotX && mouseX < slotX + slotWidth) {
                     return i;
                 }
             }
             return -1;
-        };
+        }, []);
 
-        // Helper function to update hover state
-        const updateHoverState = (slotIndex: number, now: number, event: MouseEvent) => {
-            if (mouseThrottleRef.current.lastHoveredIndex !== slotIndex) {
+
+        // Optimized hover state update with RAF throttling
+        const updateHoverState = useCallback((slotIndex: number, event: MouseEvent) => {
+            if (mouseThrottleRef.current.lastHoveredIndex === slotIndex) return;
+
+            // Cancel previous RAF if exists
+            if (mouseThrottleRef.current.rafId) {
+                cancelAnimationFrame(mouseThrottleRef.current.rafId);
+            }
+
+            mouseThrottleRef.current.rafId = requestAnimationFrame(() => {
                 mouseThrottleRef.current.lastHoveredIndex = slotIndex;
-                mouseThrottleRef.current.lastUpdate = now;
+                mouseThrottleRef.current.rafId = null;
 
-                if (slotIndex >= 0) {
+                if (slotIndex >= 0 && slotCalculationData) {
                     const multiplier = slotCalculationData.multipliers[slotIndex];
                     const probability = slotCalculationData.probabilities[slotIndex] || 0;
                     const winAmount = slotCalculationData.betAmount * multiplier;
@@ -663,21 +614,17 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 } else {
                     setHoveredMultiplier(null);
                 }
-            }
-        };
+            });
+        }, [slotCalculationData]);
 
-        // Handle mouse events for hover tooltips - throttled to prevent excessive re-renders
+        // Optimized mouse event handling with passive listeners and RAF throttling
         useEffect(() => {
             if (!slotCalculationData) return;
 
-            const { slotAreaTop, slotAreaBottom, space, gap, slotWidth, multipliers } = slotCalculationData;
+            const { slotAreaTop, slotAreaBottom, lastRowStartX, pegGap, slotWidth, numberOfSlots } = slotCalculationData;
 
             const handleMouseMove = (event: MouseEvent) => {
                 if (!containerRef.current) return;
-
-                const now = Date.now();
-                // Throttle to 30fps (33ms) to reduce re-render frequency
-                if (now - mouseThrottleRef.current.lastUpdate < 33) return;
 
                 const rect = containerRef.current.getBoundingClientRect();
                 const mouseX = event.clientX - rect.left;
@@ -685,64 +632,69 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
                 // Check if mouse is over payout slot area
                 const isOverSlotArea = mouseY >= slotAreaTop && mouseY <= slotAreaBottom;
-                const slotIndex = isOverSlotArea ? findSlotIndex(mouseX, space, gap, slotWidth, multipliers.length) : -1;
+                const slotIndex = isOverSlotArea ? findSlotIndex(mouseX, lastRowStartX, pegGap, slotWidth, numberOfSlots) : -1;
 
-                updateHoverState(slotIndex, now, event);
+                updateHoverState(slotIndex, event);
             };
 
             const handleMouseLeave = () => {
-                if (mouseThrottleRef.current.lastHoveredIndex !== -1) {
-                    mouseThrottleRef.current.lastHoveredIndex = -1;
-                    setHoveredMultiplier(null);
+                if (mouseThrottleRef.current.rafId) {
+                    cancelAnimationFrame(mouseThrottleRef.current.rafId);
+                    mouseThrottleRef.current.rafId = null;
                 }
+                mouseThrottleRef.current.lastHoveredIndex = -1;
+                setHoveredMultiplier(null);
             };
 
             if (containerRef.current) {
-                containerRef.current.addEventListener("mousemove", handleMouseMove);
-                containerRef.current.addEventListener("mouseleave", handleMouseLeave);
+                // Use passive listeners for better performance
+                containerRef.current.addEventListener("mousemove", handleMouseMove, { passive: true });
+                containerRef.current.addEventListener("mouseleave", handleMouseLeave, { passive: true });
             }
 
             return () => {
+                if (mouseThrottleRef.current.rafId) {
+                    cancelAnimationFrame(mouseThrottleRef.current.rafId);
+                    mouseThrottleRef.current.rafId = null;
+                }
                 if (containerRef.current) {
                     containerRef.current.removeEventListener("mousemove", handleMouseMove);
                     containerRef.current.removeEventListener("mouseleave", handleMouseLeave);
                 }
             };
-        }, [slotCalculationData]); // Only depend on memoized calculation data
+        }, [slotCalculationData, updateHoverState]);
 
-        // Spawn ball method
-        const spawnBall = useCallback((betValue: number = 1) => {
-            const now = Date.now();
-            const timeSinceLastSpawn = now - lastSpawnTimeRef.current;
-
-            if (lastSpawnTimeRef.current > 0 && timeSinceLastSpawn < minSpawnInterval) {
-                return;
-            }
-
-            lastSpawnTimeRef.current = now;
-            removedBallsRef.current.clear();
-
-            if (!engineRef.current || !canvasRef.current) return;
-
-            const canvasScaleFactor = 1; // Canvas is now fixed at 600x480
+        // Memoized ball creation parameters
+        const ballCreationParams = useMemo(() => {
+            const canvasScaleFactor = 1;
             const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
-
             const ballX = getMiddleDropPosition(CANVAS_WIDTH);
-            const randomOffset = (Math.random() - 0.5) * 4;
-            const finalBallX = ballX + randomOffset;
 
+            return {
+                ballRadius,
+                physicsTweaks,
+                ballX
+            };
+        }, [numberOfRows]);
+
+        // Helper to create ball with physics properties
+        const createBall = useCallback((betValue: number, isServiceGuided = false, startY = 30) => {
+            const { ballRadius, physicsTweaks, ballX } = ballCreationParams;
             const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
-            const ball = Bodies.circle(finalBallX, 30, ballRadius, {
+            const ball = Bodies.circle(ballX, startY, ballRadius, {
                 restitution: physicsTweaks.restitution,
-                friction: 0.6,
-                label: `ball-${betValue}`,
-                id: new Date().getTime(),
+                friction: isServiceGuided ? 0.1 : 0.6,
                 frictionAir: physicsTweaks.frictionAir,
                 density: physicsTweaks.density,
                 collisionFilter: { group: -1 },
-                render: { fillStyle: ballColor },
+                render: isServiceGuided ? {
+                    fillStyle: ballColor,
+                    strokeStyle: "#FFD700",
+                    lineWidth: 1,
+                } : { fillStyle: ballColor },
+                label: isServiceGuided ? "service-guided-ball" : `ball-${betValue}`,
                 isStatic: false,
             });
 
@@ -750,70 +702,62 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ballExtension.createdAt = Date.now();
             ballExtension.world = engineRef.current.world;
             ballExtension.betValue = betValue;
+            ballExtension.isServiceGuided = isServiceGuided;
+
+            return { ball };
+        }, [ballCreationParams]);
+
+        // Memoized spawn methods to prevent unnecessary re-renders
+        const spawnBall = useCallback((betValue: number = 1) => {
+            const now = Date.now();
+            if (now - lastSpawnTimeRef.current < minSpawnInterval) return;
+
+            lastSpawnTimeRef.current = now;
+            removedBallsRef.current.clear();
+
+            if (!engineRef.current) return;
+
+            const { ball } = createBall(betValue);
+            ball.position.x += (Math.random() - 0.5) * 4; // Add random offset
 
             Composite.add(engineRef.current.world, ball);
-        }, [numberOfRows]);
+        }, [createBall]);
 
-        // Spawn ball with path method
         const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-            if (!engineRef.current || !canvasRef.current) return;
+            if (!engineRef.current) return;
 
-            const canvasScaleFactor = 1; // Canvas is now fixed at 600x480
-            const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
-            const physicsTweaks = getBallPhysicsTweaks(ballRadius);
-
-            const ballX = getMiddleDropPosition(CANVAS_WIDTH);
-            const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
-
-            const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
-                restitution: physicsTweaks.restitution,
-                friction: 0.1,
-                frictionAir: physicsTweaks.frictionAir,
-                density: physicsTweaks.density,
-                render: {
-                    fillStyle: ballColor,
-                    strokeStyle: "#FFD700",
-                    lineWidth: 1,
-                },
-                label: "service-guided-ball",
-                isStatic: false,
-            });
-
+            const { ball } = createBall(betValue, true, 40); // Start slightly lower for service balls
             const ballExtension = ball as unknown as BallBodyExtension;
             ballExtension.servicePath = path;
             ballExtension.currentPathIndex = 0;
             ballExtension.expectedFinalSlot = finalSlot;
             ballExtension.multiplier = multiplier;
-            ballExtension.betValue = betValue;
-            ballExtension.isServiceGuided = true;
             ballExtension.wrongSlotHits = 0;
             ballExtension.pinCollisions = [];
 
             Composite.add(engineRef.current.world, ball);
-        }, [numberOfRows]);
+        }, [createBall]);
 
-        // Expose methods for external use
-        useImperativeHandle(
-            ref,
-            () => ({
-                spawnBall: (betValue?: number) => {
-                    if (isInitialized && engineRef.current) {
-                        spawnBall(betValue || 1);
-                    } else {
-                        console.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
-                    }
-                },
-                spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                    if (isInitialized && engineRef.current) {
-                        spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                    } else {
-                        console.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
-                    }
-                },
-                isReady: () => isInitialized && !!engineRef.current,
-            }),
-            [isInitialized, spawnBall, spawnBallWithPath]
-        );
+        // Memoized imperative handle to prevent unnecessary re-renders
+        const imperativeHandle = useMemo(() => ({
+            spawnBall: (betValue?: number) => {
+                if (isInitialized && engineRef.current) {
+                    spawnBall(betValue || 1);
+                } else {
+                    console.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
+                }
+            },
+            spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                if (isInitialized && engineRef.current) {
+                    spawnBallWithPath(betValue, path, finalSlot, multiplier);
+                } else {
+                    console.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
+                }
+            },
+            isReady: () => isInitialized && !!engineRef.current,
+        }), [isInitialized, spawnBall, spawnBallWithPath]);
+
+        useImperativeHandle(ref, () => imperativeHandle, [imperativeHandle]);
 
         return (
             <div
@@ -822,7 +766,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 style={{
                     width: "100%",
                     height: "100%",
-                    minHeight: "480px",
+                    minHeight: "550px",
                     position: "relative",
                     overflow: "hidden",
                     background: "linear-gradient(to bottom, #0f1419 0%, #1a2332 30%, #0f1419 100%)",

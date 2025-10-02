@@ -8,6 +8,8 @@ import { useBettingStore, useGameStore } from "@shared/stores";
 import { useClientSeedPF } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers";
+import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
+import { getOddsForMode } from "../../game-odds-config";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -48,6 +50,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Shared game context and betting store
     const { ownBets } = useBettingStore();
     const { socket } = useGameStore();
+    const { gameMode, numberOfRows } = usePlinkoGameStore();
 
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { clientSeed } = useClientSeedPF();
@@ -158,15 +161,21 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         setLocalGameInitialized(isGameInitialized);
     }, [isGameInitialized]);
 
-    // Default values for plinko multipliers (since shared system doesn't provide these)
-    // Multipliers from service or defaults
-    const [payoutMultipliers] = useState<number[]>([0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6]);
+    // Get multipliers from odds config based on current game mode and rows
+    const payoutMultipliers = useMemo(() => {
+        try {
+            return getOddsForMode(gameMode, numberOfRows);
+        } catch (error) {
+            console.warn('Failed to get odds for mode, using fallback multipliers', { gameMode, numberOfRows, error });
+            // Fallback multipliers if config is invalid
+            return [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6];
+        }
+    }, [gameMode, numberOfRows]);
+
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
 
-    // Update multipliers from service configs (similar to standalone project)
+    // Update probabilities based on multipliers
     useEffect(() => {
-        // For now, keep default multipliers since the shared system may not provide odds
-        // In a real implementation, this would come from gameConfigs.odds
         const defaultProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length);
         setPayoutProbabilities(defaultProbabilities);
     }, [payoutMultipliers]);
