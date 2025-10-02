@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect, useMemo } from "react";
 import { Bodies, Body, Composite, Engine, Events, Runner, World } from "matter-js";
 import { BallLayoutProps } from "../../../../shared/types";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from "../../../../lib/physics";
 
@@ -12,7 +12,7 @@ export interface SimplifiedCanvasBallLayoutRef {
 }
 
 interface BallBodyExtension {
-    world?: Engine['world'];
+    world?: Engine["world"];
     isServiceGuided?: boolean;
     expectedFinalSlot?: number;
     multiplier?: number;
@@ -30,12 +30,12 @@ interface BallBodyExtension {
  * Helper function to get slot color based on multiplier
  */
 function getSlotColor(multiplier: number): string {
-    if (multiplier >= 100) return '#8e44ad';
-    if (multiplier >= 15) return '#9b59b6';
-    if (multiplier >= 2) return '#3498db';
-    if (multiplier >= 0.9) return '#2980b9';
-    if (multiplier >= 0.5) return '#1f4e79';
-    return '#2c3e50';
+    if (multiplier >= 100) return "#8e44ad";
+    if (multiplier >= 15) return "#9b59b6";
+    if (multiplier >= 2) return "#3498db";
+    if (multiplier >= 0.9) return "#2980b9";
+    if (multiplier >= 0.5) return "#1f4e79";
+    return "#2c3e50";
 }
 
 /**
@@ -46,12 +46,12 @@ function getMultiplierColor(multiplier: number): string {
     if (multiplier >= 5) return physicsConfig.colors.multiplierMedium;
     if (multiplier >= 2) return physicsConfig.colors.multiplierLow;
     if (multiplier >= 1) return physicsConfig.colors.multiplierLoss;
-    return '#333';
+    return "#333";
 }
 
 /**
  * Simplified Canvas Ball Layout Component
- * 
+ *
  * This replaces the complex 6-layer system with a single optimized canvas that:
  * - Renders everything in one place to eliminate layer synchronization issues
  * - Uses efficient rendering with minimal re-renders
@@ -60,7 +60,7 @@ function getMultiplierColor(multiplier: number): string {
  */
 const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, BallLayoutProps>(
     ({ multipliers = [], probabilities = [], onBallHit }, ref) => {
-        const { rows, betAmount } = usePlinkoBetStore(
+        const { rows, betAmount } = usePlinkoGameStore(
             useShallow((state) => ({
                 rows: state.numberOfRows,
                 betAmount: state.betAmount,
@@ -146,12 +146,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         }, []);
 
         // Create physics bodies for the Plinko board
-        const createPhysicsBodies = useCallback((
-            canvasWidth: number,
-            canvasHeight: number,
-            rows: number,
-            multipliers: number[]
-        ) => {
+        const createPhysicsBodies = useCallback((canvasWidth: number, canvasHeight: number, rows: number, multipliers: number[]) => {
             const pins: Body[] = [];
             const multipliersBodies: Body[] = [];
 
@@ -176,7 +171,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     const pin = Bodies.circle(pinX, pinY, 2, {
                         label: `pin-${l}-${i}`,
                         render: { fillStyle: physicsConfig.colors.pin },
-                        isStatic: true
+                        isStatic: true,
                     });
                     pins.push(pin);
                 }
@@ -187,20 +182,20 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             const walls = [
                 Bodies.rectangle(-wallThickness / 2, canvasHeight / 2, wallThickness, canvasHeight * 2, {
                     render: { visible: false },
-                    isStatic: true
+                    isStatic: true,
                 }),
                 Bodies.rectangle(canvasWidth + wallThickness / 2, canvasHeight / 2, wallThickness, canvasHeight * 2, {
                     render: { visible: false },
-                    isStatic: true
+                    isStatic: true,
                 }),
                 Bodies.rectangle(canvasWidth / 2, canvasHeight + wallThickness / 2, canvasWidth * 2, wallThickness, {
                     render: { visible: false },
-                    isStatic: true
-                })
+                    isStatic: true,
+                }),
             ];
 
             // Create multiplier slots
-            const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
+            const slotWidth = Math.max(25, Math.min(60, (canvasWidth / multipliers.length) * 0.85));
             const slotHeight = Math.max(20, Math.min(40, canvasHeight * 0.08));
             const totalSlotWidth = slotWidth * multipliers.length;
             const triangleBoardWidth = canvasWidth * 0.85;
@@ -215,8 +210,8 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     label: `multiplier-${multiplier}-${index}`,
                     isStatic: true,
                     render: {
-                        fillStyle: getMultiplierColor(multiplier)
-                    }
+                        fillStyle: getMultiplierColor(multiplier),
+                    },
                 });
                 multipliersBodies.push(multiplierBody);
             });
@@ -243,41 +238,44 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         }, []);
 
         // Setup collision detection
-        const setupCollisionDetection = useCallback((engine: Engine) => {
-            Events.on(engine, "collisionActive", (event) => {
-                const pairs = event.pairs;
+        const setupCollisionDetection = useCallback(
+            (engine: Engine) => {
+                Events.on(engine, "collisionActive", (event) => {
+                    const pairs = event.pairs;
 
-                for (const pair of pairs) {
-                    const { bodyA, bodyB } = pair;
-                    const ballBody = bodyB.label?.includes("ball") ? bodyB : bodyA;
-                    const obstacleBody = ballBody === bodyA ? bodyB : bodyA;
+                    for (const pair of pairs) {
+                        const { bodyA, bodyB } = pair;
+                        const ballBody = bodyB.label?.includes("ball") ? bodyB : bodyA;
+                        const obstacleBody = ballBody === bodyA ? bodyB : bodyA;
 
-                    if (!ballBody?.label?.includes("ball")) continue;
+                        if (!ballBody?.label?.includes("ball")) continue;
 
-                    const ballExtension = ballBody as Body & BallBodyExtension;
+                        const ballExtension = ballBody as Body & BallBodyExtension;
 
-                    if (ballExtension.isRemoved || removedBallsRef.current.has(ballBody.id)) {
-                        continue;
+                        if (ballExtension.isRemoved || removedBallsRef.current.has(ballBody.id)) {
+                            continue;
+                        }
+
+                        // Handle multiplier collisions
+                        if (obstacleBody.label?.includes("multiplier")) {
+                            handleMultiplierCollision(ballBody, ballExtension, obstacleBody, engine);
+                        }
+                        // Handle pin collisions
+                        else if (obstacleBody.label?.includes("pin")) {
+                            handlePinCollision(ballBody, ballExtension);
+                        }
                     }
-
-                    // Handle multiplier collisions
-                    if (obstacleBody.label?.includes("multiplier")) {
-                        handleMultiplierCollision(ballBody, ballExtension, obstacleBody, engine);
-                    }
-                    // Handle pin collisions
-                    else if (obstacleBody.label?.includes("pin")) {
-                        handlePinCollision(ballBody, ballExtension);
-                    }
-                }
-            });
-        }, [onBallHit]);
+                });
+            },
+            [onBallHit]
+        );
 
         // Helper function to extract multiplier data
         const extractMultiplierData = useCallback((obstacleBody: Body) => {
             const labelParts = obstacleBody.label.split("-");
             return {
                 multiplier: parseFloat(labelParts[1]) || 1,
-                finalSlot: parseInt(labelParts[2]) || 0
+                finalSlot: parseInt(labelParts[2]) || 0,
             };
         }, []);
 
@@ -289,111 +287,96 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         }, []);
 
         // Helper to trigger win callback
-        const triggerWinCallback = useCallback((winMultiplier: number, winBetValue: number) => {
-            if (onBallHit) {
-                onBallHit(winMultiplier, winBetValue);
-            }
-        }, [onBallHit]);
+        const triggerWinCallback = useCallback(
+            (winMultiplier: number, winBetValue: number) => {
+                if (onBallHit) {
+                    onBallHit(winMultiplier, winBetValue);
+                }
+            },
+            [onBallHit]
+        );
 
         // Helper to remove ball and trigger win
-        const removeBallAndTriggerWin = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            winMultiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            World.remove(engine.world, ballBody);
-            if (!ballExtension.hasTriggeredWin) {
-                ballExtension.hasTriggeredWin = true;
-                triggerWinCallback(winMultiplier, betValue);
-            }
-        }, [triggerWinCallback]);
-
-        // Handle correct slot hit for service-guided balls
-        const handleCorrectSlotHit = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            removeBallAndTriggerWin(ballBody, ballExtension, multiplier, betValue, engine);
-        }, [removeBallAndTriggerWin]);
-
-        // Handle wrong slot hit for service-guided balls
-        const handleWrongSlotHit = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
-            // For service-guided balls, remove immediately on any multiplier hit
-            // The win is only triggered if wrongSlotHits >= 3
-            World.remove(engine.world, ballBody);
-            if (ballExtension.wrongSlotHits >= 3) {
+        const removeBallAndTriggerWin = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, winMultiplier: number, betValue: number, engine: Engine) => {
+                World.remove(engine.world, ballBody);
                 if (!ballExtension.hasTriggeredWin) {
                     ballExtension.hasTriggeredWin = true;
-                    triggerWinCallback(ballExtension.multiplier || multiplier, betValue);
+                    triggerWinCallback(winMultiplier, betValue);
                 }
-            }
-        }, [triggerWinCallback]);
+            },
+            [triggerWinCallback]
+        );
+
+        // Handle correct slot hit for service-guided balls
+        const handleCorrectSlotHit = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, multiplier: number, betValue: number, engine: Engine) => {
+                removeBallAndTriggerWin(ballBody, ballExtension, multiplier, betValue, engine);
+            },
+            [removeBallAndTriggerWin]
+        );
+
+        // Handle wrong slot hit for service-guided balls
+        const handleWrongSlotHit = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, multiplier: number, betValue: number, engine: Engine) => {
+                ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
+                // For service-guided balls, remove immediately on any multiplier hit
+                // The win is only triggered if wrongSlotHits >= 3
+                World.remove(engine.world, ballBody);
+                if (ballExtension.wrongSlotHits >= 3) {
+                    if (!ballExtension.hasTriggeredWin) {
+                        ballExtension.hasTriggeredWin = true;
+                        triggerWinCallback(ballExtension.multiplier || multiplier, betValue);
+                    }
+                }
+            },
+            [triggerWinCallback]
+        );
 
         // Handle service-guided ball collision
-        const handleServiceGuidedCollision = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            finalSlot: number,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            if (finalSlot === ballExtension.expectedFinalSlot) {
-                handleCorrectSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
-            } else {
-                handleWrongSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
-            }
-        }, [handleCorrectSlotHit, handleWrongSlotHit]);
+        const handleServiceGuidedCollision = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, finalSlot: number, multiplier: number, betValue: number, engine: Engine) => {
+                if (finalSlot === ballExtension.expectedFinalSlot) {
+                    handleCorrectSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
+                } else {
+                    handleWrongSlotHit(ballBody, ballExtension, multiplier, betValue, engine);
+                }
+            },
+            [handleCorrectSlotHit, handleWrongSlotHit]
+        );
 
         // Handle regular ball collision
-        const handleRegularBallCollision = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            multiplier: number,
-            betValue: number,
-            engine: Engine
-        ) => {
-            World.remove(engine.world, ballBody);
-            if (!ballExtension.hasTriggeredWin) {
-                ballExtension.hasTriggeredWin = true;
-                if (onBallHit) {
-                    onBallHit(multiplier, betValue);
+        const handleRegularBallCollision = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, multiplier: number, betValue: number, engine: Engine) => {
+                World.remove(engine.world, ballBody);
+                if (!ballExtension.hasTriggeredWin) {
+                    ballExtension.hasTriggeredWin = true;
+                    if (onBallHit) {
+                        onBallHit(multiplier, betValue);
+                    }
                 }
-            }
-        }, [onBallHit]);
+            },
+            [onBallHit]
+        );
 
         // Handle multiplier collision - simplified
-        const handleMultiplierCollision = useCallback((
-            ballBody: Body,
-            ballExtension: BallBodyExtension,
-            obstacleBody: Body,
-            engine: Engine
-        ) => {
-            const { multiplier, finalSlot } = extractMultiplierData(obstacleBody);
-            const betValue = ballExtension.betValue || 100;
+        const handleMultiplierCollision = useCallback(
+            (ballBody: Body, ballExtension: BallBodyExtension, obstacleBody: Body, engine: Engine) => {
+                const { multiplier, finalSlot } = extractMultiplierData(obstacleBody);
+                const betValue = ballExtension.betValue || 100;
 
-            // Mark ball as removed
-            ballExtension.isRemoved = true;
-            markBallAsRemoved(ballBody);
+                // Mark ball as removed
+                ballExtension.isRemoved = true;
+                markBallAsRemoved(ballBody);
 
-            if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
-                handleServiceGuidedCollision(ballBody, ballExtension, finalSlot, multiplier, betValue, engine);
-            } else {
-                handleRegularBallCollision(ballBody, ballExtension, multiplier, betValue, engine);
-            }
-        }, [extractMultiplierData, markBallAsRemoved, handleServiceGuidedCollision, handleRegularBallCollision]);
+                if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
+                    handleServiceGuidedCollision(ballBody, ballExtension, finalSlot, multiplier, betValue, engine);
+                } else {
+                    handleRegularBallCollision(ballBody, ballExtension, multiplier, betValue, engine);
+                }
+            },
+            [extractMultiplierData, markBallAsRemoved, handleServiceGuidedCollision, handleRegularBallCollision]
+        );
 
         // Handle pin collision
         const handlePinCollision = useCallback((ballBody: Body, ballExtension: BallBodyExtension) => {
@@ -420,114 +403,119 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         }, []);
 
         // Start render loop
-        const startRenderLoop = useCallback((
-            ctx: CanvasRenderingContext2D,
-            engine: Engine,
-            containerSize: { width: number; height: number },
-            effectiveMultipliers: number[],
-            pins: Body[],
-            rows: number
-        ) => {
-            const render = () => {
-                if (!ctx || !engine) return;
+        const startRenderLoop = useCallback(
+            (
+                ctx: CanvasRenderingContext2D,
+                engine: Engine,
+                containerSize: { width: number; height: number },
+                effectiveMultipliers: number[],
+                pins: Body[],
+                rows: number
+            ) => {
+                const render = () => {
+                    if (!ctx || !engine) return;
 
-                // Clear canvas (only the fixed canvas area)
-                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    // Clear canvas (only the fixed canvas area)
+                    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                // Triangular board background is now handled by container CSS
+                    // Triangular board background is now handled by container CSS
 
-                // Calculate board layout using fixed canvas dimensions
-                const triangleTopMargin = CANVAS_HEIGHT * 0.08;
-                const triangleBottomMargin = CANVAS_HEIGHT * 0.15;
-                const triangleBoardHeight = CANVAS_HEIGHT - triangleTopMargin - triangleBottomMargin;
-                const triangleBoardWidth = CANVAS_WIDTH * 0.85;
-                const triangleBoardX = (CANVAS_WIDTH - triangleBoardWidth) / 2;
+                    // Calculate board layout using fixed canvas dimensions
+                    const triangleTopMargin = CANVAS_HEIGHT * 0.08;
+                    const triangleBottomMargin = CANVAS_HEIGHT * 0.15;
+                    const triangleBoardHeight = CANVAS_HEIGHT - triangleTopMargin - triangleBottomMargin;
+                    const triangleBoardWidth = CANVAS_WIDTH * 0.85;
+                    const triangleBoardX = (CANVAS_WIDTH - triangleBoardWidth) / 2;
 
-                // Draw multiplier slots
-                const slotWidth = Math.max(25, Math.min(60, CANVAS_WIDTH / effectiveMultipliers.length * 0.85));
-                const slotHeight = Math.max(20, Math.min(40, CANVAS_HEIGHT * 0.08));
-                const slotGap = Math.max(2, Math.min(8, CANVAS_WIDTH * 0.01)); // Gap between slots
-                const totalSlotWidth = slotWidth * effectiveMultipliers.length + slotGap * (effectiveMultipliers.length - 1);
-                const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2;
-                const slotY = triangleTopMargin + triangleBoardHeight + slotHeight / 2;
+                    // Draw multiplier slots
+                    const slotWidth = Math.max(25, Math.min(60, (CANVAS_WIDTH / effectiveMultipliers.length) * 0.85));
+                    const slotHeight = Math.max(20, Math.min(40, CANVAS_HEIGHT * 0.08));
+                    const slotGap = Math.max(2, Math.min(8, CANVAS_WIDTH * 0.01)); // Gap between slots
+                    const totalSlotWidth = slotWidth * effectiveMultipliers.length + slotGap * (effectiveMultipliers.length - 1);
+                    const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2;
+                    const slotY = triangleTopMargin + triangleBoardHeight + slotHeight / 2;
 
-                effectiveMultipliers.forEach((multiplier, index) => {
-                    const slotX = startX + index * (slotWidth + slotGap);
-                    const slotColor = getSlotColor(multiplier);
+                    effectiveMultipliers.forEach((multiplier, index) => {
+                        const slotX = startX + index * (slotWidth + slotGap);
+                        const slotColor = getSlotColor(multiplier);
 
-                    const slotGradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
-                    slotGradient.addColorStop(0, slotColor);
-                    slotGradient.addColorStop(1, '#1a252f');
-                    ctx.fillStyle = slotGradient;
-                    ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+                        const slotGradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
+                        slotGradient.addColorStop(0, slotColor);
+                        slotGradient.addColorStop(1, "#1a252f");
+                        ctx.fillStyle = slotGradient;
+                        ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
 
-                    ctx.strokeStyle = '#34495e';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+                        ctx.strokeStyle = "#34495e";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
 
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = `bold ${Math.max(10, Math.min(16, slotWidth / 4))}px Arial`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(multiplier.toFixed(1), slotX + slotWidth / 2, slotY);
-                });
+                        ctx.fillStyle = "#ffffff";
+                        ctx.font = `bold ${Math.max(10, Math.min(16, slotWidth / 4))}px Arial`;
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        ctx.fillText(multiplier.toFixed(1), slotX + slotWidth / 2, slotY);
+                    });
 
-                // Draw pins
-                pins.forEach((pin) => {
-                    const bounds = pin.bounds;
-                    const centerX = (bounds.min.x + bounds.max.x) / 2;
-                    const centerY = (bounds.min.y + bounds.max.y) / 2;
-                    const pinRadius = Math.max(2, Math.min(8, 48 / rows));
+                    // Draw pins
+                    pins.forEach((pin) => {
+                        const bounds = pin.bounds;
+                        const centerX = (bounds.min.x + bounds.max.x) / 2;
+                        const centerY = (bounds.min.y + bounds.max.y) / 2;
+                        const pinRadius = Math.max(2, Math.min(8, 48 / rows));
 
-                    ctx.fillStyle = '#F5DCFF';
-                    ctx.strokeStyle = '#E0E0E0';
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, pinRadius, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
-                });
+                        ctx.fillStyle = "#F5DCFF";
+                        ctx.strokeStyle = "#E0E0E0";
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, pinRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    });
 
-                // Draw balls
-                const allBodies = Composite.allBodies(engine.world);
-                const balls = allBodies.filter((body) => {
-                    if (!body.label?.includes("ball")) return false;
-                    const ballExtension = body as unknown as BallBodyExtension;
-                    return !ballExtension.isRemoved && !removedBallsRef.current.has(body.id);
-                });
+                    // Draw balls
+                    const allBodies = Composite.allBodies(engine.world);
+                    const balls = allBodies.filter((body) => {
+                        if (!body.label?.includes("ball")) return false;
+                        const ballExtension = body as unknown as BallBodyExtension;
+                        return !ballExtension.isRemoved && !removedBallsRef.current.has(body.id);
+                    });
 
-                balls.forEach((ball) => {
-                    const ballExtension = ball as unknown as BallBodyExtension;
-                    const ballColor = ballExtension.betValue && ballExtension.betValue <= 0 ?
-                        physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
+                    balls.forEach((ball) => {
+                        const ballExtension = ball as unknown as BallBodyExtension;
+                        const ballColor =
+                            ballExtension.betValue && ballExtension.betValue <= 0
+                                ? physicsConfig.colors.multiplierLoss
+                                : physicsConfig.colors.ball;
 
-                    ctx.fillStyle = ballColor;
-                    ctx.strokeStyle = "#FFD700";
-                    ctx.lineWidth = Math.max(1, (ball.circleRadius || 5) * 0.1);
+                        ctx.fillStyle = ballColor;
+                        ctx.strokeStyle = "#FFD700";
+                        ctx.lineWidth = Math.max(1, (ball.circleRadius || 5) * 0.1);
 
-                    ctx.beginPath();
-                    ctx.arc(ball.position.x, ball.position.y, ball.circleRadius || 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                        ctx.beginPath();
+                        ctx.arc(ball.position.x, ball.position.y, ball.circleRadius || 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
 
-                    // Add inner highlight
-                    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-                    ctx.beginPath();
-                    ctx.arc(
-                        ball.position.x - (ball.circleRadius || 5) * 0.3,
-                        ball.position.y - (ball.circleRadius || 5) * 0.3,
-                        (ball.circleRadius || 5) * 0.4,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.fill();
-                });
+                        // Add inner highlight
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                        ctx.beginPath();
+                        ctx.arc(
+                            ball.position.x - (ball.circleRadius || 5) * 0.3,
+                            ball.position.y - (ball.circleRadius || 5) * 0.3,
+                            (ball.circleRadius || 5) * 0.4,
+                            0,
+                            Math.PI * 2
+                        );
+                        ctx.fill();
+                    });
 
-                animationFrameRef.current = requestAnimationFrame(render);
-            };
+                    animationFrameRef.current = requestAnimationFrame(render);
+                };
 
-            render();
-        }, []);
+                render();
+            },
+            []
+        );
 
         // Initialize physics engine
         useEffect(() => {
@@ -544,7 +532,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 if (!canvasRef.current) return;
 
                 const canvas = canvasRef.current;
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext("2d");
                 if (!ctx) return;
 
                 // Set canvas to fixed original dimensions
@@ -559,12 +547,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
                 // Create physics bodies using fixed canvas dimensions
                 const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
-                const { pins, multipliersBodies, walls } = createPhysicsBodies(
-                    CANVAS_WIDTH,
-                    CANVAS_HEIGHT,
-                    rows,
-                    effectiveMultipliers
-                );
+                const { pins, multipliersBodies, walls } = createPhysicsBodies(CANVAS_WIDTH, CANVAS_HEIGHT, rows, effectiveMultipliers);
 
                 const runner = Runner.create();
                 runnerRef.current = runner;
@@ -601,7 +584,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         const mouseThrottleRef = useRef({
             lastUpdate: 0,
             lastHoveredIndex: -1,
-            lastPosition: { x: 0, y: 0 }
+            lastPosition: { x: 0, y: 0 },
         });
 
         // Memoized slot calculation data to avoid recalculating on every mouse move
@@ -628,7 +611,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 slotWidth,
                 multipliers,
                 probabilities,
-                betAmount
+                betAmount,
             };
         }, [containerSize, multipliers, probabilities, betAmount]);
 
@@ -708,86 +691,92 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         }, [slotCalculationData]); // Only depend on memoized calculation data
 
         // Spawn ball method
-        const spawnBall = useCallback((betValue: number = 1) => {
-            const now = Date.now();
-            const timeSinceLastSpawn = now - lastSpawnTimeRef.current;
+        const spawnBall = useCallback(
+            (betValue: number = 1) => {
+                const now = Date.now();
+                const timeSinceLastSpawn = now - lastSpawnTimeRef.current;
 
-            if (lastSpawnTimeRef.current > 0 && timeSinceLastSpawn < minSpawnInterval) {
-                return;
-            }
+                if (lastSpawnTimeRef.current > 0 && timeSinceLastSpawn < minSpawnInterval) {
+                    return;
+                }
 
-            lastSpawnTimeRef.current = now;
-            removedBallsRef.current.clear();
+                lastSpawnTimeRef.current = now;
+                removedBallsRef.current.clear();
 
-            if (!engineRef.current || !canvasRef.current) return;
+                if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
-            const ballRadius = calculateBallSize(rows, canvasScaleFactor);
-            const physicsTweaks = getBallPhysicsTweaks(ballRadius);
+                const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
+                const ballRadius = calculateBallSize(rows, canvasScaleFactor);
+                const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
-            const ballX = getMiddleDropPosition(CANVAS_WIDTH);
-            const randomOffset = (Math.random() - 0.5) * 4;
-            const finalBallX = ballX + randomOffset;
+                const ballX = getMiddleDropPosition(CANVAS_WIDTH);
+                const randomOffset = (Math.random() - 0.5) * 4;
+                const finalBallX = ballX + randomOffset;
 
-            const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
+                const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
-            const ball = Bodies.circle(finalBallX, 30, ballRadius, {
-                restitution: physicsTweaks.restitution,
-                friction: 0.6,
-                label: `ball-${betValue}`,
-                id: new Date().getTime(),
-                frictionAir: physicsTweaks.frictionAir,
-                density: physicsTweaks.density,
-                collisionFilter: { group: -1 },
-                render: { fillStyle: ballColor },
-                isStatic: false,
-            });
+                const ball = Bodies.circle(finalBallX, 30, ballRadius, {
+                    restitution: physicsTweaks.restitution,
+                    friction: 0.6,
+                    label: `ball-${betValue}`,
+                    id: new Date().getTime(),
+                    frictionAir: physicsTweaks.frictionAir,
+                    density: physicsTweaks.density,
+                    collisionFilter: { group: -1 },
+                    render: { fillStyle: ballColor },
+                    isStatic: false,
+                });
 
-            const ballExtension = ball as unknown as BallBodyExtension;
-            ballExtension.createdAt = Date.now();
-            ballExtension.world = engineRef.current.world;
-            ballExtension.betValue = betValue;
+                const ballExtension = ball as unknown as BallBodyExtension;
+                ballExtension.createdAt = Date.now();
+                ballExtension.world = engineRef.current.world;
+                ballExtension.betValue = betValue;
 
-            Composite.add(engineRef.current.world, ball);
-        }, [rows]);
+                Composite.add(engineRef.current.world, ball);
+            },
+            [rows]
+        );
 
         // Spawn ball with path method
-        const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-            if (!engineRef.current || !canvasRef.current) return;
+        const spawnBallWithPath = useCallback(
+            (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
-            const ballRadius = calculateBallSize(rows, canvasScaleFactor);
-            const physicsTweaks = getBallPhysicsTweaks(ballRadius);
+                const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
+                const ballRadius = calculateBallSize(rows, canvasScaleFactor);
+                const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
-            const ballX = getMiddleDropPosition(CANVAS_WIDTH);
-            const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
+                const ballX = getMiddleDropPosition(CANVAS_WIDTH);
+                const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
-            const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
-                restitution: physicsTweaks.restitution,
-                friction: 0.1,
-                frictionAir: physicsTweaks.frictionAir,
-                density: physicsTweaks.density,
-                render: {
-                    fillStyle: ballColor,
-                    strokeStyle: "#FFD700",
-                    lineWidth: 1,
-                },
-                label: "service-guided-ball",
-                isStatic: false,
-            });
+                const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
+                    restitution: physicsTweaks.restitution,
+                    friction: 0.1,
+                    frictionAir: physicsTweaks.frictionAir,
+                    density: physicsTweaks.density,
+                    render: {
+                        fillStyle: ballColor,
+                        strokeStyle: "#FFD700",
+                        lineWidth: 1,
+                    },
+                    label: "service-guided-ball",
+                    isStatic: false,
+                });
 
-            const ballExtension = ball as unknown as BallBodyExtension;
-            ballExtension.servicePath = path;
-            ballExtension.currentPathIndex = 0;
-            ballExtension.expectedFinalSlot = finalSlot;
-            ballExtension.multiplier = multiplier;
-            ballExtension.betValue = betValue;
-            ballExtension.isServiceGuided = true;
-            ballExtension.wrongSlotHits = 0;
-            ballExtension.pinCollisions = [];
+                const ballExtension = ball as unknown as BallBodyExtension;
+                ballExtension.servicePath = path;
+                ballExtension.currentPathIndex = 0;
+                ballExtension.expectedFinalSlot = finalSlot;
+                ballExtension.multiplier = multiplier;
+                ballExtension.betValue = betValue;
+                ballExtension.isServiceGuided = true;
+                ballExtension.wrongSlotHits = 0;
+                ballExtension.pinCollisions = [];
 
-            Composite.add(engineRef.current.world, ball);
-        }, [rows]);
+                Composite.add(engineRef.current.world, ball);
+            },
+            [rows]
+        );
 
         // Expose methods for external use
         useImperativeHandle(
@@ -797,14 +786,14 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     if (isInitialized && engineRef.current) {
                         spawnBall(betValue || 1);
                     } else {
-                        console.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
+                        console.warn("Cannot spawn ball: engine not ready", { isInitialized, hasEngine: !!engineRef.current });
                     }
                 },
                 spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
                     if (isInitialized && engineRef.current) {
                         spawnBallWithPath(betValue, path, finalSlot, multiplier);
                     } else {
-                        console.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engineRef.current });
+                        console.warn("Cannot spawn guided ball: engine not ready", { isInitialized, hasEngine: !!engineRef.current });
                     }
                 },
                 isReady: () => isInitialized && !!engineRef.current,
@@ -926,9 +915,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                             border: "1px solid rgba(255, 255, 255, 0.2)",
                         }}
                     >
-                        <div style={{ marginBottom: "4px", color: "#ffd700" }}>
-                            Win: ${hoveredMultiplier.winAmount.toFixed(0)}
-                        </div>
+                        <div style={{ marginBottom: "4px", color: "#ffd700" }}>Win: ${hoveredMultiplier.winAmount.toFixed(0)}</div>
                         <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.8)" }}>
                             Chance: {(hoveredMultiplier.probability * 100).toFixed(1)}%
                         </div>

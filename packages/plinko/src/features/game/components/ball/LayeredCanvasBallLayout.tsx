@@ -5,7 +5,7 @@ import { BallLayoutProps } from "../../../../shared/types";
 import BackgroundLayer from "./layers/BackgroundLayer";
 import BoardLayer from "./layers/BoardLayer";
 import PhysicsLayer, { PhysicsLayerRef, BallPathLayer, BallLayer } from "./layers/PhysicsLayer";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 
 export interface LayeredCanvasBallLayoutRef {
@@ -27,7 +27,7 @@ export interface LayeredCanvasBallLayoutRef {
  */
 const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
     ({ multipliers = [], probabilities = [], onBallHit }, ref) => {
-        const { rows, betAmount } = usePlinkoBetStore(
+        const { rows, betAmount } = usePlinkoGameStore(
             useShallow((state) => ({
                 rows: state.numberOfRows,
                 betAmount: state.betAmount,
@@ -54,12 +54,8 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         } | null>(null);
 
         // Use refs for frequently changing physics data to prevent re-renders
-        const ballPathsRef = useRef<Map<number, Array<{ x: number; y: number; timestamp: number; radius?: number }>>>(
-            new Map()
-        );
-        const ballPositionsRef = useRef<Map<number, { x: number; y: number; radius: number; betValue: number }>>(
-            new Map()
-        );
+        const ballPathsRef = useRef<Map<number, Array<{ x: number; y: number; timestamp: number; radius?: number }>>>(new Map());
+        const ballPositionsRef = useRef<Map<number, { x: number; y: number; radius: number; betValue: number }>>(new Map());
 
         // State for triggering re-renders only when needed
         const [physicsUpdateTrigger, setPhysicsUpdateTrigger] = useState(0);
@@ -70,7 +66,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 ballPositionsRef.current = positions;
                 // Only trigger re-render every few frames to reduce frequency
                 if (physicsUpdateTrigger % 3 === 0) {
-                    setPhysicsUpdateTrigger(prev => prev + 1);
+                    setPhysicsUpdateTrigger((prev) => prev + 1);
                 }
             },
             [physicsUpdateTrigger]
@@ -191,7 +187,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         const mouseThrottleRef = useRef({
             lastUpdate: 0,
             lastHoveredIndex: -1,
-            lastPosition: { x: 0, y: 0 }
+            lastPosition: { x: 0, y: 0 },
         });
 
         // Memoized slot calculation data to avoid recalculating on every mouse move
@@ -218,7 +214,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 slotWidth,
                 multipliers,
                 probabilities,
-                betAmount
+                betAmount,
             };
         }, [containerSize, multipliers, probabilities, betAmount]);
 
@@ -390,13 +386,13 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     boardDimensions={boardDimensions}
                     ballPaths={ballPathsRef.current}
                     setBallPaths={(paths) => {
-                        if (typeof paths === 'function') {
+                        if (typeof paths === "function") {
                             ballPathsRef.current = paths(ballPathsRef.current);
                         } else {
                             ballPathsRef.current = paths;
                         }
                         // Throttle re-renders for ball paths
-                        setPhysicsUpdateTrigger(prev => prev + 1);
+                        setPhysicsUpdateTrigger((prev) => prev + 1);
                     }}
                     onBallPositionsUpdate={handleBallPositionsUpdate}
                 />

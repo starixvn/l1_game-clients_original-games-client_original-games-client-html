@@ -1,11 +1,11 @@
 import React from "react";
 import { Label } from "./label";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { NUMBER_OF_ROWS } from "@/constants";
 
 export const RowsSelector = () => {
-    const { numberOfRows, setNumberOfRows } = usePlinkoBetStore(
+    const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             numberOfRows: state.numberOfRows,
             setNumberOfRows: state.actions.setNumberOfRows,

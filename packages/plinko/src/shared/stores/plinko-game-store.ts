@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { GAME_MODES, NUMBER_OF_ROWS } from "@/constants";
 
-export type PlinkoBetStore = {
+export type PlinkoGameStore = {
     betAmount: number;
     gameMode: number;
     numberOfRows: number;
@@ -13,7 +13,7 @@ export type PlinkoBetStore = {
     };
 };
 
-export const usePlinkoBetStore = create<PlinkoBetStore>()(
+export const usePlinkoGameStore = create<PlinkoGameStore>()(
     subscribeWithSelector((set) => {
         return {
             betAmount: 1,
@@ -38,8 +38,4 @@ export const usePlinkoBetStore = create<PlinkoBetStore>()(
     })
 );
 
-export const usePlinkoBetStoreActions = () => {
-    return usePlinkoBetStore((state) => state.actions);
-};
-
-export default usePlinkoBetStore;
+export default usePlinkoGameStore;

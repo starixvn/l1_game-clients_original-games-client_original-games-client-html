@@ -9,8 +9,8 @@ interface PercentageControlProps {
 
 export const PercentageControl: React.FC<PercentageControlProps> = ({ isIncreaseOn, setIsIncreaseOn, percentage, setPercentage }) => {
     return (
-        <div className="grid grid-cols-2 gap-2">
-            <div className="col-span-1 flex items-center input p-1 gap-1 rounded-lg h-11">
+        <div className="flex flex-row gap-2">
+            <div className="flex flex-1 items-center input p-1 gap-1 rounded-lg h-11">
                 <button
                     className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none disabled:opacity-40 focus-visible:!outline-none focus-visible:!outline-0 
                             rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full"
@@ -28,7 +28,7 @@ export const PercentageControl: React.FC<PercentageControlProps> = ({ isIncrease
                     Increase by
                 </button>
             </div>
-            <div className="col-span-1 relative">
+            <div className="flex-1 relative">
                 <input
                     type="number"
                     step={1}

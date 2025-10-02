@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Label } from "./label";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 
 export const BetAmountControl = ({ handleBetAmountChange }: { handleBetAmountChange: (amount: number) => void }) => {
     const { gameConfigs, userStakeLevel } = useGameStore(
@@ -18,7 +18,7 @@ export const BetAmountControl = ({ handleBetAmountChange }: { handleBetAmountCha
         return 0;
     }, [gameConfigs?.maxBet, userStakeLevel]);
 
-    const betAmount = usePlinkoBetStore((state) => state.betAmount);
+    const betAmount = usePlinkoGameStore((state) => state.betAmount);
 
     return (
         <div>

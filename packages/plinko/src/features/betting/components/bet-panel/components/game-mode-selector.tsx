@@ -1,7 +1,7 @@
 import React from "react";
 import { Label } from "./label";
 import { useShallow } from "zustand/shallow";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { GAME_MODES } from "@/constants";
 
 const gameModes = [
@@ -20,7 +20,7 @@ const gameModes = [
 ] as const;
 
 export const GameModeSelector = () => {
-    const { gameMode, setGameMode } = usePlinkoBetStore(
+    const { gameMode, setGameMode } = usePlinkoGameStore(
         useShallow((state) => ({
             gameMode: state.gameMode,
             setGameMode: state.actions.setGameMode,
