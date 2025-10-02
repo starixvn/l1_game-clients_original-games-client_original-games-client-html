@@ -103,16 +103,29 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             updateSize();
         }, []);
 
-        // Handle container resize
+        // Fixed canvas dimensions - canvas stays at original size regardless of container resize
+        const CANVAS_WIDTH = 400;
+        const CANVAS_HEIGHT = 400;
+
+        // Handle container resize without changing canvas size
         useEffect(() => {
-            const updateSize = () => {
+            const handleResize = () => {
                 if (containerRef.current) {
                     const rect = containerRef.current.getBoundingClientRect();
-                    setContainerSize({ width: rect.width, height: rect.height });
+                    const width = rect.width;
+                    const height = rect.height;
+
+                    if (width > 0 && height > 0) {
+                        // Only update container size, canvas stays fixed
+                        setContainerSize({ width, height });
+                    }
                 }
             };
 
-            updateSize();
+            // Initial setup
+            handleResize();
+
+            // Set up ResizeObserver for container sizing
             const resizeObserver = new ResizeObserver((entries) => {
                 const entry = entries[0];
                 if (entry) {
@@ -418,58 +431,28 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             const render = () => {
                 if (!ctx || !engine) return;
 
-                // Clear canvas
-                ctx.clearRect(0, 0, containerSize.width, containerSize.height);
+                // Clear canvas (only the fixed canvas area)
+                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                // Draw background
-                const gradient = ctx.createLinearGradient(0, 0, 0, containerSize.height);
-                gradient.addColorStop(0, '#0f1419');
-                gradient.addColorStop(0.3, '#1a2332');
-                gradient.addColorStop(1, '#0f1419');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, containerSize.width, containerSize.height);
+                // Triangular board background is now handled by container CSS
 
-                // Draw light rays
-                ctx.save();
-                ctx.globalAlpha = 0.4;
-                const lightGradient = ctx.createRadialGradient(
-                    containerSize.width / 2, 0, 0,
-                    containerSize.width / 2, 0, containerSize.height * 0.6
-                );
-                lightGradient.addColorStop(0, '#4a90e2');
-                lightGradient.addColorStop(0.5, '#2c5aa0');
-                lightGradient.addColorStop(1, 'transparent');
-                ctx.fillStyle = lightGradient;
-                ctx.fillRect(0, 0, containerSize.width, containerSize.height * 0.7);
-                ctx.restore();
-
-                // Draw triangular board background
-                const triangleTopMargin = containerSize.height * 0.08;
-                const triangleBottomMargin = containerSize.height * 0.15;
-                const triangleBoardHeight = containerSize.height - triangleTopMargin - triangleBottomMargin;
-                const triangleBoardWidth = containerSize.width * 0.85;
-                const triangleBoardX = (containerSize.width - triangleBoardWidth) / 2;
-
-                ctx.save();
-                ctx.globalAlpha = 0.1;
-                ctx.fillStyle = '#4a90e2';
-                ctx.beginPath();
-                ctx.moveTo(containerSize.width / 2, triangleTopMargin);
-                ctx.lineTo(triangleBoardX, triangleTopMargin + triangleBoardHeight);
-                ctx.lineTo(triangleBoardX + triangleBoardWidth, triangleTopMargin + triangleBoardHeight);
-                ctx.closePath();
-                ctx.fill();
-                ctx.restore();
+                // Calculate board layout using fixed canvas dimensions
+                const triangleTopMargin = CANVAS_HEIGHT * 0.08;
+                const triangleBottomMargin = CANVAS_HEIGHT * 0.15;
+                const triangleBoardHeight = CANVAS_HEIGHT - triangleTopMargin - triangleBottomMargin;
+                const triangleBoardWidth = CANVAS_WIDTH * 0.85;
+                const triangleBoardX = (CANVAS_WIDTH - triangleBoardWidth) / 2;
 
                 // Draw multiplier slots
-                const slotWidth = Math.max(25, Math.min(60, containerSize.width / effectiveMultipliers.length * 0.85));
-                const slotHeight = Math.max(20, Math.min(40, containerSize.height * 0.08));
-                const totalSlotWidth = slotWidth * effectiveMultipliers.length;
+                const slotWidth = Math.max(25, Math.min(60, CANVAS_WIDTH / effectiveMultipliers.length * 0.85));
+                const slotHeight = Math.max(20, Math.min(40, CANVAS_HEIGHT * 0.08));
+                const slotGap = Math.max(2, Math.min(8, CANVAS_WIDTH * 0.01)); // Gap between slots
+                const totalSlotWidth = slotWidth * effectiveMultipliers.length + slotGap * (effectiveMultipliers.length - 1);
                 const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2;
                 const slotY = triangleTopMargin + triangleBoardHeight + slotHeight / 2;
 
                 effectiveMultipliers.forEach((multiplier, index) => {
-                    const slotX = startX + index * slotWidth;
+                    const slotX = startX + index * (slotWidth + slotGap);
                     const slotColor = getSlotColor(multiplier);
 
                     const slotGradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
@@ -548,7 +531,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         // Initialize physics engine
         useEffect(() => {
-            if (!canvasRef.current || !containerSize.width || !containerSize.height) {
+            if (!canvasRef.current) {
                 return;
             }
 
@@ -564,9 +547,9 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return;
 
-                // Set canvas size
-                canvas.width = containerSize.width;
-                canvas.height = containerSize.height;
+                // Set canvas to fixed original dimensions
+                canvas.width = CANVAS_WIDTH;
+                canvas.height = CANVAS_HEIGHT;
 
                 // Create physics engine
                 const engine = Engine.create();
@@ -574,11 +557,11 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 engine.gravity.y = physicsConfig.engine.engineGravity * scaleFactor;
                 engineRef.current = engine;
 
-                // Create physics bodies
+                // Create physics bodies using fixed canvas dimensions
                 const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
                 const { pins, multipliersBodies, walls } = createPhysicsBodies(
-                    containerSize.width,
-                    containerSize.height,
+                    CANVAS_WIDTH,
+                    CANVAS_HEIGHT,
                     rows,
                     effectiveMultipliers
                 );
@@ -593,8 +576,8 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 // Set up collision detection
                 setupCollisionDetection(engine);
 
-                // Start render loop
-                startRenderLoop(ctx, engine, containerSize, effectiveMultipliers, pins, rows);
+                // Start render loop with fixed canvas dimensions
+                startRenderLoop(ctx, engine, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }, effectiveMultipliers, pins, rows);
                 setIsInitialized(true);
             }, 100);
 
@@ -602,7 +585,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 clearTimeout(initTimeout);
                 cleanupPhysics();
             };
-        }, [containerSize.width, containerSize.height, rows, multipliers]); // Only depend on essential values
+        }, [rows, multipliers]); // Physics now uses fixed canvas dimensions
 
         // Update collision detection when onBallHit callback changes
         useEffect(() => {
@@ -738,11 +721,11 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
             if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = Math.min(containerSize.width / 400, containerSize.height / 400);
+            const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
             const ballRadius = calculateBallSize(rows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
-            const ballX = getMiddleDropPosition(containerSize.width);
+            const ballX = getMiddleDropPosition(CANVAS_WIDTH);
             const randomOffset = (Math.random() - 0.5) * 4;
             const finalBallX = ballX + randomOffset;
 
@@ -766,17 +749,17 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ballExtension.betValue = betValue;
 
             Composite.add(engineRef.current.world, ball);
-        }, [containerSize, rows]);
+        }, [rows]);
 
         // Spawn ball with path method
         const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
             if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = Math.min(containerSize.width / 400, containerSize.height / 400);
+            const canvasScaleFactor = 1; // Canvas is now fixed at 400x400
             const ballRadius = calculateBallSize(rows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
-            const ballX = getMiddleDropPosition(containerSize.width);
+            const ballX = getMiddleDropPosition(CANVAS_WIDTH);
             const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
             const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
@@ -804,7 +787,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ballExtension.pinCollisions = [];
 
             Composite.add(engineRef.current.world, ball);
-        }, [containerSize, rows]);
+        }, [rows]);
 
         // Expose methods for external use
         useImperativeHandle(
@@ -839,7 +822,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     minHeight: "400px",
                     position: "relative",
                     overflow: "hidden",
-                    backgroundColor: "#0f0f23",
+                    background: "linear-gradient(to bottom, #0f1419 0%, #1a2332 30%, #0f1419 100%)",
                     borderRadius: "8px",
                     boxSizing: "border-box",
                     transition: "all 0.5s ease",
@@ -850,10 +833,11 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     ref={canvasRef}
                     style={{
                         position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: `${CANVAS_WIDTH}px`,
+                        height: `${CANVAS_HEIGHT}px`,
                         zIndex: 1,
                     }}
                 />
