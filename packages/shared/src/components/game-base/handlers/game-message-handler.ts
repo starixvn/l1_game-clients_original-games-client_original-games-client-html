@@ -43,6 +43,7 @@ export const messageEventType = {
     PLAYER_RESULT_BOARD: "playerResultBoard",
     PF: "pf",
     END_PLACE_BET: "epb",
+    PLAYER_BET: "playerBet",
 };
 
 export class GameMessageHandler {

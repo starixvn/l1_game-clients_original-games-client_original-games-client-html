@@ -253,6 +253,7 @@ export interface PlayerInPlayerResultBoard {
     name: string;
     betAmount: number;
     winAmount: number | null;
+    multiplier: number | null;
 }
 
 export interface PlayerResultBoard {

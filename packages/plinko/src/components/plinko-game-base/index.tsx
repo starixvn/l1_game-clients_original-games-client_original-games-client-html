@@ -16,7 +16,8 @@ import PlinkoGame from "../plinko-game/PlinkoGame";
 import { logger } from "../../services/logger";
 import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
 import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
-import { PlayerResultBoardTable } from "@shared/components/game-components/player-result-board/player-result-board-table";
+import { PlayerResultBoardTable } from "@/features/betting/components/player-result-board/player-result-board-table";
+import PlinkoBetDetailModal from "../plinko-game/history";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
@@ -112,7 +113,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBetDetailModal(): JSX.Element {
         // Plinko handles its own modals within the PlinkoGame component
-        return <></>;
+        return <PlinkoBetDetailModal />;
     }
 
     renderMoreMenuIcon(): JSX.Element {
