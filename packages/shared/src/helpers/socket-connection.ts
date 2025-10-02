@@ -25,7 +25,6 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
         useGameStore.getState().setSocket(socket);
 
         socket.off(gameName).on(gameName, (message) => {
-            logger.debug('Received game message', { gameName, messageType: Object.keys(message)[0] });
             gameMessageHandler.broadcastGameEvent(message);
             useGameStore.getState().registerEvent(message);
             useBettingStore.getState().registerEvent(message);
