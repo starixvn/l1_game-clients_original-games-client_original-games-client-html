@@ -5,7 +5,6 @@ import { BigRoadElement } from '@shared/components/game-components/round-history
 import { SeDieBigRoadConverter, SeDieBigRoadElement } from "./scoreboard-elements";
 import Styles from "./scoreboard.module.scss";
 import { SeDieResult, SeDieSettlementResult } from "../sedie-multiplayer-constants";
-import LoggerControls from "../features/ui/components/controls/LoggerControls";
 
 export type ScoreboardComponentProps = {
     roundHistory: Round<SeDieResult, SeDieSettlementResult>[];
@@ -68,27 +67,25 @@ class ScoreboardSeDie extends Component<ScoreboardComponentProps> {
         const arrangeWithLogs = (rounds: any[], scoreboard: any) => arrange(rounds, scoreboard) as any[];
 
         return (
-            <>
-                <div className={Styles["scoreboard-full-big-road"]} id="big-road">
-                    <SwitchableScoreboard
-                        rounds={settlementsWithIdx as any}
-                        scoreboards={[
-                            {
-                                element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
-                                arrange: arrangeWithLogs as any,
-                                column: this.scoreboardColumns,
-                                row: 6,
-                                updateScoreboardColumns: this.updateScoreboardColumns,
-                                className: Styles["big-road-override"],
-                                blockClassName: Styles["big-road-block"],
-                                elementClassName: Styles["big-road-item"],
-                                scrollToRight: playResultAnimation
-                            },
-                        ]}
-                    />
-                </div>
-                <LoggerControls className="fixed top-4 right-4 z-50" />
-            </>
+            <div className={Styles["scoreboard-full-big-road"]} id="big-road">
+                <SwitchableScoreboard
+                    key={`sedie-big-road-${this.scrollTrigger}`}
+                    rounds={settlementsWithIdx as any}
+                    scoreboards={[
+                        {
+                            element: SeDieBigRoadElement as unknown as React.ComponentType<any>,
+                            arrange: arrangeWithLogs as any,
+                            column: this.scoreboardColumns,
+                            row: 6,
+                            updateScoreboardColumns: this.updateScoreboardColumns,
+                            className: Styles["big-road-override"],
+                            blockClassName: Styles["big-road-block"],
+                            elementClassName: Styles["big-road-item"],
+                            scrollToRight: playResultAnimation
+                        },
+                    ]}
+                />
+            </div>
         );
     }
 }

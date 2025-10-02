@@ -7,7 +7,6 @@ import PFClientSeedInfoModal from "@shared/components/game-components/provably-f
 import PFVerificationModal from "@shared/components/game-components/provably-fair/pf-verify/pf-verification-modal";
 import { PFVerification, makeFileNameExport, renderPFVerifyResultBlock } from "../provably-fair";
 import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "./sedie-multiplayer-bet-detail-result-block";
-import LoggerControls from "../features/ui/components/controls/LoggerControls";
 
 const SeDieMultiplayerBetDetailModal: FC = () => {
     return (
@@ -24,7 +23,6 @@ const SeDieMultiplayerBetDetailModal: FC = () => {
             <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
             <PFClientSeedInfoModal fileNameExport={makeFileNameExport} renderResultBlock={renderPFVerifyResultBlock} />
             <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
-            <LoggerControls className="fixed top-4 right-4 z-50" />
         </>
     );
 };
