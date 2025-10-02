@@ -127,6 +127,46 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 0.25rem;
+    background: linear-gradient(
+        to right,
+        var(--green-400, #05df72) var(--input-range-progress, 0%),
+        var(--opacity-white-20, #ffffff33) var(--input-range-progress, 0%)
+    );
+    cursor: pointer;
+    border-radius: 0.5rem;
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none; /* Remove default WebKit thumb appearance */
+        height: 1.25rem;
+        width: 1.25rem;
+        background: var(--green-400, #05df72);
+        border-radius: 50%;
+        border: 1px solid var(--green-200, #8eff77);
+    }
+
+    /* Styling for Mozilla Firefox */
+    &::-moz-range-thumb {
+        height: 1.25rem;
+        width: 1.25rem;
+        background: var(--green-400, #05df72);
+        border-radius: 50%;
+        border: 1px solid var(--green-200, #8eff77);
+    }
+
+    /* Styling for Microsoft Internet Explorer */
+    &::-ms-thumb {
+        height: 1.25rem;
+        width: 1.25rem;
+        background: var(--green-400, #05df72);
+        border-radius: 50%;
+        border: 1px solid var(--green-200, #8eff77);
+    }
+}
+
 .game-header {
     height: 50px;
     position: relative;

@@ -2,7 +2,6 @@ import React, { useState, useRef, useMemo, useEffect, useCallback } from "react"
 import { toast } from "react-toastify";
 import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
-import { BetControl, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
 import { useBettingStore, useGameStore } from "@shared/stores";
@@ -177,18 +176,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated since we're in the game
     const isBetting = false; // Plinko manages its own betting state
 
-    // Send bets directly with clientSeed (compatible with PF system)
-    const placeBet = (amount: number, gameMode: number, rows: number) => {
-        if (socket?.connected) {
-            const betData = {
-                amount,
-                gameMode,
-                numberOfRows: rows,
-                clientSeed,
-            };
-            socket.emit("bet", betData);
-        }
-    };
     const clearBetResult = () => {
         // Plinko handles clearing results internally
     };
@@ -261,7 +248,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         : "";
 
     return (
-        <div className="main-container">
+        <div className="">
             {/* Logger Controls - positioned outside game-info to avoid clipping */}
             <div
                 style={{
@@ -304,14 +291,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         onAnimationEnd={handleWinMessageEnd}
                     />
                 </div>
-
-                <BetControl onPlaceBet={placeBet} />
-
-                <BetsTable
-                    bets={convertedBets.length > 0 ? convertedBets : gameState.bets}
-                    activeTab={gameState.betsTab}
-                    onTabChange={(tab) => updateGameState({ betsTab: tab })}
-                />
             </div>
         </div>
     );

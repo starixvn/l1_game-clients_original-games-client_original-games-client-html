@@ -2,6 +2,12 @@ import { useState } from "react";
 import { PercentageControl } from "./components/percentage-control";
 import { Label } from "./components/label";
 
+const BUTTONS_NUMBER_OF_BETS = [
+    { text: "∞", value: Infinity },
+    { text: "10", value: 10 },
+    { text: "100", value: 100 },
+];
+
 const AutoBetControl = () => {
     const [numberOfBets, setNumberOfBets] = useState(100);
     const [isIncreaseOnWin, setIsIncreaseOnWin] = useState(false);
@@ -29,15 +35,15 @@ const AutoBetControl = () => {
                     />
                     {numberOfBets === Infinity && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-white">∞</span>}
                     <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
-                        <button className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg" onClick={() => setNumberOfBets(Infinity)}>
-                            ∞
-                        </button>
-                        <button className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg" onClick={() => setNumberOfBets(10)}>
-                            10
-                        </button>
-                        <button className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg" onClick={() => setNumberOfBets(100)}>
-                            100
-                        </button>
+                        {BUTTONS_NUMBER_OF_BETS.map((button, index) => (
+                            <button
+                                className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg"
+                                onClick={() => setNumberOfBets(button.value)}
+                                key={index}
+                            >
+                                {button.text}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -66,7 +72,7 @@ const AutoBetControl = () => {
                     step={1}
                     pattern="[0-9]*"
                     value={stopOnWin}
-                    onChange={(e) => setStopOnWin(parseInt(e.target.value))}
+                    onChange={(e) => setStopOnWin(Number((+e.target.value).toFixed(2)))}
                     inputMode="numeric"
                     className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11"
                 />
@@ -78,7 +84,7 @@ const AutoBetControl = () => {
                     step={1}
                     pattern="[0-9]*"
                     value={stopOnLoss}
-                    onChange={(e) => setStopOnLoss(parseInt(e.target.value))}
+                    onChange={(e) => setStopOnLoss(Number((+e.target.value).toFixed(2)))}
                     inputMode="numeric"
                     className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11"
                 />

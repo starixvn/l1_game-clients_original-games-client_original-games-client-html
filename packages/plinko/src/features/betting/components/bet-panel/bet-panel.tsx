@@ -4,18 +4,17 @@ import AutoBetControl from "./auto-bet-control";
 import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
+import { useClientSeedPF } from "@shared/react-hooks";
 
-export interface BetControlProps {
-    onPlaceBet?: (amount: number, gameMode: number, rows: number) => void;
-}
-
-const BetControl: React.FC<BetControlProps> = ({ onPlaceBet }) => {
-    const { gameConfigs, userStakeLevel } = useGameStore(
+const BetControl = () => {
+    const { gameConfigs, userStakeLevel, socket } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
             userStakeLevel: state.userStakeLevel,
+            socket: state.socket,
         }))
     );
+    const { clientSeed } = useClientSeedPF();
     const { minBet, maxBet } = useMemo(() => {
         if (gameConfigs && userStakeLevel) {
             const maxBet = Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
@@ -49,18 +48,22 @@ const BetControl: React.FC<BetControlProps> = ({ onPlaceBet }) => {
     const tabs = ["Manual", "Auto"];
 
     const handleBetClick = () => {
-        onPlaceBet(betAmount, gameMode, numberOfRows);
+        if (socket?.connected) {
+            socket.emit("bet", { amount: betAmount, gameMode, numberOfRows, clientSeed });
+        }
     };
 
     return (
-        <div className="flex flex-col md:flex-col-reverse">
-            <button
-                className="text-sm font-bold w-full h-11 rounded-xl mb-4 bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-                onClick={handleBetClick}
-            >
-                Bet
-            </button>
-            <div className="flex flex-col gap-4 p-4 md:rounded-none border-stroke rounded-b-none before:rounded-b-none">
+        <div className="flex flex-col md:flex-col-reverse px-3">
+            <div>
+                <button
+                    className="text-sm font-bold w-full h-11 rounded-xl mb-4 bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                    onClick={handleBetClick}
+                >
+                    Bet
+                </button>
+            </div>
+            <div className="flex flex-col gap-4 p-4 md:p-0 md:rounded-none border-stroke before:rounded-b-none">
                 <BetAmountControl handleBetAmountChange={handleBetAmountChange} />
                 <GameModeSelector />
                 <RowsSelector />

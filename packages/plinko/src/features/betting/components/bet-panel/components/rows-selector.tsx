@@ -12,14 +12,6 @@ export const RowsSelector = () => {
         }))
     );
 
-    const createClassThumb = (target: string) => {
-        const classThumb = "w-5 h-5 bg-green-400 rounded-full border-1 border-green-200 appearance-none shadow-[0_2px_4px_rgba(0,0,0,0.2)]";
-        return classThumb
-            .split(" ")
-            .map((cls) => `[&${target}]:${cls}`)
-            .join(" ");
-    };
-
     return (
         <div className={`div-setting-row`}>
             <Label title="Rows" />
@@ -33,16 +25,14 @@ export const RowsSelector = () => {
                     max={NUMBER_OF_ROWS.MAX}
                     value={numberOfRows}
                     onChange={(e) => setNumberOfRows(parseInt(e.target.value))}
-                    className={`w-full h-1 bg-[#FFFFFF33] rounded-lg appearance-none cursor-pointer
-                    ${createClassThumb("::-webkit-slider-thumb")}
-                    ${createClassThumb("::-moz-range-thumb")}`}
-                    style={{
-                        background: `linear-gradient(to right, #00C950 0%, #00C950 ${
-                            ((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
-                        }%, #FFFFFF33 ${
-                            ((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
-                        }%, #FFFFFF33 100%)`,
-                    }}
+                    className="w-full"
+                    style={
+                        {
+                            "--input-range-progress": `${
+                                ((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
+                            }%`,
+                        } as React.CSSProperties
+                    }
                 />
             </div>
         </div>

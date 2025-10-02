@@ -18,13 +18,13 @@ import BetHistoryControl from "@shared/components/game-components/bet-history/be
 import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
 import { PlayerResultBoardTable } from "@/features/betting/components/player-result-board/player-result-board-table";
 import PlinkoBetDetailModal from "../plinko-game/history";
+import BetPanel from "@/features/betting/components/bet-panel/bet-panel";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
 const Menu = dynamic(() => import("@shared/components/game-components/menu/menu"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
-
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
@@ -36,52 +36,40 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         };
         super(props, gameBaseHandlers);
 
-        logger.info('🏠 [PLINKO GAME BASE] PlinkoGameBase initialized', {
+        logger.info("🏠 [PLINKO GAME BASE] PlinkoGameBase initialized", {
             gameId: props.id,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         });
     }
 
-
     componentDidMount() {
         super.componentDidMount();
-        logger.info('🚀 [PLINKO GAME BASE] Component mounted');
+        logger.info("🚀 [PLINKO GAME BASE] Component mounted");
 
         // Game initialization will be handled by the gameConfigs message handler
         // No need for setTimeout since we properly wait for the service response
     }
 
     renderGameFrame(): JSX.Element {
-        logger.debug('🎮 [PLINKO GAME BASE] Rendering game frame');
+        logger.debug("🎮 [PLINKO GAME BASE] Rendering game frame");
 
         return (
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                minHeight: '100vh'
-            }}>
+            <div>
                 <Background gameId={this.props.id} />
-
-                {/* Plinko specific game content */}
-                <div style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                    maxWidth: '72rem',
-                    margin: '0 auto',
-                    padding: '0 16px'
-                }}>
-                    <PlinkoGame />
-                </div>
-
+                <PlinkoGame />
                 {this.renderNotice()}
-                <Menu />
+            </div>
+        );
+    }
+
+    renderLeftSide() {
+        return (
+            <div className="col-span-12">
+                <div className="flex flex-col md:flex-row-reverse">
+                    <div className="w-full md:w-8/12">{this.renderGameFrame()}</div>
+                    <div className="w-full md:w-4/12">{this.renderBetControl()}</div>
+                </div>
+                {this.renderMenu()}
             </div>
         );
     }
@@ -102,8 +90,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderBetControl(): JSX.Element {
-        // Plinko handles its own bet controls within the PlinkoGame component
-        return <></>;
+        return <BetPanel />;
     }
 
     renderRightSide(): JSX.Element {
@@ -123,7 +110,12 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBetHistoryTable(): JSX.Element {
         // Plinko handles its own bet history table within the PlinkoGame component
-        return <BetHistoryControl defaultTab={"all-bets"} children={[ <PlayerResultBoardTable/>, <BetHistoryTable gameId={this.props.id?.toString()} />]} />;
+        return (
+            <BetHistoryControl
+                defaultTab={"all-bets"}
+                children={[<PlayerResultBoardTable />, <BetHistoryTable gameId={this.props.id?.toString()} />]}
+            />
+        );
     }
 }
 
