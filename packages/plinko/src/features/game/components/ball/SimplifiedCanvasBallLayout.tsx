@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect, useMemo } from "react";
 import { Bodies, Body, Composite, Engine, Events, Runner, World } from "matter-js";
 import { BallLayoutProps } from "../../../../shared/types";
-import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from "../../../../lib/physics";
 
@@ -60,9 +60,9 @@ function getMultiplierColor(multiplier: number): string {
  */
 const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, BallLayoutProps>(
     ({ multipliers = [], probabilities = [], onBallHit }, ref) => {
-        const { rows, betAmount } = usePlinkoBetStore(
+        const { numberOfRows, betAmount } = usePlinkoGameStore(
             useShallow((state) => ({
-                rows: state.numberOfRows,
+                numberOfRows: state.numberOfRows,
                 betAmount: state.betAmount,
             }))
         );
@@ -149,7 +149,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         const createPhysicsBodies = useCallback((
             canvasWidth: number,
             canvasHeight: number,
-            rows: number,
+            numberOfRows: number,
             multipliers: number[]
         ) => {
             const pins: Body[] = [];
@@ -163,7 +163,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             const boardTopMargin = 60; // Space from top for ball drop
 
             // Create pins in triangular layout
-            for (let row = 1; row <= rows; row++) {
+            for (let row = 1; row <= numberOfRows; row++) {
                 const columnsInRow = initialColumns + (row - 1);
                 const rowWidth = (columnsInRow - 1) * pegGap;
                 const startX = (canvasWidth - rowWidth) / 2;
@@ -199,10 +199,10 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ];
 
             // Create multiplier slots aligned with physics board slots
-            const numberOfSlots = rows + 1;
+            const numberOfSlots = numberOfRows + 1;
             const gap = pegRadius * 2 * mapGap; // Same gap as pegs: 48
             const space = (canvasWidth - gap * numberOfSlots) / 2;
-            const boardHeight = boardTopMargin + (rows - 1) * pegGap; // Bottom of the peg board
+            const boardHeight = boardTopMargin + (numberOfRows - 1) * pegGap; // Bottom of the peg board
             const slotWidth = gap - 8; // Slightly wider for better proportions: 48 - 8 = 40
             const slotHeight = 5; // Thin physics bodies
             const slotY = boardHeight + 25; // Position slots 25px below the last peg row
@@ -425,7 +425,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             containerSize: { width: number; height: number },
             effectiveMultipliers: number[],
             pins: Body[],
-            rows: number
+            numberOfRows: number
         ) => {
             const render = () => {
                 if (!ctx || !engine) return;
@@ -436,8 +436,8 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 // Triangular board background is now handled by container CSS
 
                 // Draw multiplier slots aligned with physics board slots
-                const boardHeight = 60 + (rows - 1) * 45; // Same calculation as physics: boardTopMargin + (rows - 1) * pegGap
-                const numberOfSlots = rows + 1;
+                const boardHeight = 60 + (numberOfRows - 1) * 45; // Same calculation as physics: boardTopMargin + (rows - 1) * pegGap
+                const numberOfSlots = numberOfRows + 1;
                 const gap = 8 * 2 * 3; // Same as physics: pegRadius * 2 * mapGap = 48
                 const space = (CANVAS_WIDTH - gap * numberOfSlots) / 2;
                 const slotWidth = gap - 8; // Same as physics: gap - 8 = 40
@@ -557,7 +557,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 const { pins, multipliersBodies, walls } = createPhysicsBodies(
                     CANVAS_WIDTH,
                     CANVAS_HEIGHT,
-                    rows,
+                    numberOfRows,
                     effectiveMultipliers
                 );
 
@@ -572,7 +572,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 setupCollisionDetection(engine);
 
                 // Start render loop with fixed canvas dimensions
-                startRenderLoop(ctx, engine, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }, effectiveMultipliers, pins, rows);
+                startRenderLoop(ctx, engine, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }, effectiveMultipliers, pins, numberOfRows);
                 setIsInitialized(true);
             }, 100);
 
@@ -580,7 +580,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 clearTimeout(initTimeout);
                 cleanupPhysics();
             };
-        }, [rows, multipliers]); // Physics now uses fixed canvas dimensions
+        }, [numberOfRows, multipliers]); // Physics now uses fixed canvas dimensions
 
         // Update collision detection when onBallHit callback changes
         useEffect(() => {
@@ -605,10 +605,10 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
             // Calculate slot positions to match physics/visual alignment
             const canvasWidth = containerSize.width;
-            const numberOfSlots = rows + 1;
+            const numberOfSlots = numberOfRows + 1;
             const gap = 8 * 2 * 3; // Same as physics: pegRadius * 2 * mapGap = 48
 
-            const boardHeight = 60 + (rows - 1) * 45; // Same as visual calculation
+            const boardHeight = 60 + (numberOfRows - 1) * 45; // Same as visual calculation
             const slotHeight = gap - 8; // Same as visual slotHeight (square)
             const slotAreaTop = boardHeight + 25; // 25px below board, same as visual calculation
             const slotAreaBottom = slotAreaTop + slotHeight;
@@ -626,7 +626,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 probabilities,
                 betAmount
             };
-        }, [containerSize, multipliers, probabilities, betAmount, rows]);
+        }, [containerSize, multipliers, probabilities, betAmount, numberOfRows]);
 
         // Helper function to find slot index from mouse position (aligned with physics slots)
         const findSlotIndex = (mouseX: number, space: number, gap: number, slotWidth: number, multipliersLength: number) => {
@@ -725,7 +725,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             if (!engineRef.current || !canvasRef.current) return;
 
             const canvasScaleFactor = 1; // Canvas is now fixed at 600x600
-            const ballRadius = calculateBallSize(rows, canvasScaleFactor);
+            const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
             const ballX = getMiddleDropPosition(CANVAS_WIDTH);
@@ -752,14 +752,14 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ballExtension.betValue = betValue;
 
             Composite.add(engineRef.current.world, ball);
-        }, [rows]);
+        }, [numberOfRows]);
 
         // Spawn ball with path method
         const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
             if (!engineRef.current || !canvasRef.current) return;
 
             const canvasScaleFactor = 1; // Canvas is now fixed at 600x600
-            const ballRadius = calculateBallSize(rows, canvasScaleFactor);
+            const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
             const ballX = getMiddleDropPosition(CANVAS_WIDTH);
@@ -790,7 +790,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             ballExtension.pinCollisions = [];
 
             Composite.add(engineRef.current.world, ball);
-        }, [rows]);
+        }, [numberOfRows]);
 
         // Expose methods for external use
         useImperativeHandle(
@@ -830,7 +830,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     boxSizing: "border-box",
                     transition: "all 0.5s ease",
                 }}
-                aria-label={`Simplified Plinko game with ${rows} rows and ${multipliers.length} multiplier slots`}
+                aria-label={`Simplified Plinko game with ${numberOfRows} rows and ${multipliers.length} multiplier slots`}
             >
                 <canvas
                     ref={canvasRef}
@@ -863,7 +863,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                         Loading Simplified Plinko Physics...
                         <br />
                         <small>
-                            Rows: {rows} | Slots: {multipliers.length}
+                            Rows: {numberOfRows} | Slots: {multipliers.length}
                         </small>
                     </div>
                 )}
@@ -886,7 +886,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                             boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                         }}
                     >
-                        {rows} Rows
+                        {numberOfRows} Rows
                     </div>
                 )}
 
@@ -905,7 +905,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                             zIndex: 100,
                         }}
                     >
-                        Simplified: {rows}×{multipliers.length}
+                        Simplified: {numberOfRows}×{multipliers.length}
                     </div>
                 )}
 
