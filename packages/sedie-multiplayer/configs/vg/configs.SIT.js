@@ -8,6 +8,13 @@ window.envConfig = {
         dsn: "https://eb5f1c92d1da4cb6a059fa40c1276a9d@sentry.lumigame.com/48",
         environment: "SIT",
     },
+    openreplay: {
+        projectKey: "SIT_PROJECT_KEY_HERE",
+        disableSecureMode: true,
+        defaultInputMode: 2,
+        obscureTextNumbers: false,
+        obscureTextEmails: true,
+    },
     enableSourceMap: false,
     subGuideDomain: "sit-guide",
     enableMsgpackParser: true,

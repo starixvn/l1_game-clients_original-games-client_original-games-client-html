@@ -8,6 +8,13 @@ window.envConfig = {
         dsn: "https://2af29bdacdbf4d9ba2db6600b450541f@sentry.lumigame.com/28",
         environment: "LOCAL3",
     },
+    openreplay: {
+        projectKey: "G23SscSi4ivPFNNnyhVm",
+        disableSecureMode: true,
+        defaultInputMode: 2,
+        obscureTextNumbers: false,
+        obscureTextEmails: false,
+    },
     enableSourceMap: true,
     subGuideDomain: "l3-guide",
     enableMsgpackParser: false,

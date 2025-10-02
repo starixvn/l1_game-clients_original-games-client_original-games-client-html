@@ -12,6 +12,13 @@
         "environment": "",
         "tracesSampleRate": 1
     },
+    "openreplay": {
+        "projectKey": "G23SscSi4ivPFNNnyhVm",
+        "disableSecureMode": true,
+        "defaultInputMode": 2,
+        "obscureTextNumbers": false,
+        "obscureTextEmails": true
+    },
     "enableSourceMap": true,
     "subGuideDomain": "l2-guide-1",
     "enableMsgpackParser": false,

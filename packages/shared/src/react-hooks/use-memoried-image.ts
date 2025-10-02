@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { downloadAndCacheImage, imageCache } from "../helpers/image-cache-controller";
 
 export const useMemoriedImage = (path: string) => {
-    console.log(`[useMemoriedImage] Received path: "${path}"`);
+    //console.log(`[useMemoriedImage] Received path: "${path}"`);
     const [data, setData] = useState<string | null>(imageCache[path]?.data || null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);

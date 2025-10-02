@@ -8,6 +8,13 @@ window.envConfig = {
         dsn: "https://eb5f1c92d1da4cb6a059fa40c1276a9d@sentry.sabagame.com/48",
         environment: "PROD",
     },
+    openreplay: {
+        projectKey: "PROD_PROJECT_KEY_HERE",
+        disableSecureMode: false,
+        defaultInputMode: 2,
+        obscureTextNumbers: true,
+        obscureTextEmails: true,
+    },
     enableSourceMap: false,
     subGuideDomain: "guides",
     enableMsgpackParser: true,

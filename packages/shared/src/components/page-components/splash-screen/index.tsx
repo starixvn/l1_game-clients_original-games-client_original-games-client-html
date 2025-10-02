@@ -90,7 +90,7 @@ export function onStartupError(error: Error): void {
         stack: error.stack,
         name: error.name
     });
-    console.error("[SplashScreen] startup error:", error);
+    //console.error("[SplashScreen] startup error:", error);
     Sentry.captureException(error);
 
     logger.warn('🔄 [SPLASH] Redirecting to timeout page due to startup error');
@@ -174,8 +174,8 @@ const SplashScreen: React.FC = () => {
         timestamp: new Date().toISOString()
     });
 
-    console.log("[SplashScreen] URL Context values:", { token, language });
-    console.log("[SplashScreen] Loading game registry...");
+    //console.log("[SplashScreen] URL Context values:", { token, language });
+    //console.log("[SplashScreen] Loading game registry...");
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -386,7 +386,7 @@ const SplashScreen: React.FC = () => {
                         error: error.message,
                         stack: error.stack
                     });
-                    console.error("[SplashScreen] custom startup error:", error);
+                    //console.error("[SplashScreen] custom startup error:", error);
                     onStartupError(error);
                 }
             } else {
