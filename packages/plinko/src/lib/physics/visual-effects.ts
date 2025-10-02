@@ -1,5 +1,3 @@
-import { logger } from '../../services/logger';
-
 /**
  * Visual Effects Module
  * Handles all visual effects, particles, and animations for the Plinko game
@@ -12,15 +10,6 @@ import { logger } from '../../services/logger';
  * @param y - Y position to display the text
  */
 export function createWinTextParticle(winAmount: number, x: number, y: number): void {
-    logger.info('✨ [VISUAL_EFFECTS] Creating win text particle', {
-        winAmount: winAmount.toFixed(2),
-        position: {
-            x: x.toFixed(1),
-            y: y.toFixed(1)
-        },
-        timestamp: new Date().toISOString()
-    });
-
     // Create a temporary DOM element for the win text
     const winText = document.createElement('div');
     winText.textContent = `+$${winAmount.toFixed(0)}`;
@@ -36,21 +25,6 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
         z-index: 1000;
         animation: winTextFloat 2s ease-out forwards;
     `;
-
-    logger.debug('✨ [VISUAL_EFFECTS] Win text element created', {
-        winAmount: winAmount.toFixed(2),
-        textContent: `+$${winAmount.toFixed(0)}`,
-        position: {
-            x: x.toFixed(1),
-            y: y.toFixed(1)
-        },
-        styles: {
-            color: '#ffd700',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            zIndex: 1000
-        }
-    });
 
     // Add custom keyframes for floating animation
     const style = document.createElement('style');
@@ -75,20 +49,10 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
     // Find the canvas container and add the text
     const canvasContainer = document.querySelector('.canvas-ball-layout');
     if (canvasContainer) {
-        logger.debug('✨ [VISUAL_EFFECTS] Canvas container found, adding win text', {
-            winAmount: winAmount.toFixed(2),
-            containerClass: '.canvas-ball-layout'
-        });
-
         canvasContainer.appendChild(winText);
 
         // Remove the text after animation completes
         setTimeout(() => {
-            logger.debug('✨ [VISUAL_EFFECTS] Removing win text after animation', {
-                winAmount: winAmount.toFixed(2),
-                animationDuration: '2000ms'
-            });
-
             if (winText.parentNode) {
                 winText.parentNode.removeChild(winText);
             }
@@ -96,20 +60,7 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
                 style.parentNode.removeChild(style);
             }
         }, 2000);
-
-        logger.info('✨ [VISUAL_EFFECTS] Win text particle added to DOM', {
-            winAmount: winAmount.toFixed(2),
-            position: {
-                x: x.toFixed(1),
-                y: y.toFixed(1)
-            },
-            animationDuration: '2000ms'
-        });
     } else {
-        logger.warn('✨ [VISUAL_EFFECTS] Canvas container not found, cannot add win text', {
-            winAmount: winAmount.toFixed(2),
-            containerClass: '.canvas-ball-layout'
-        });
     }
 }
 
@@ -118,30 +69,13 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
  * @param multiplier - The multiplier value to determine sound type
  */
 export function playCollisionSound(multiplier: number): void {
-    logger.debug('✨ [VISUAL_EFFECTS] Playing collision sound effect', {
-        multiplier: multiplier.toFixed(1)
-    });
-
     // Sound effect hooks - implement based on your audio system
     const soundType = multiplier >= 10 ? 'jackpot' :
         multiplier >= 5 ? 'big_win' :
             multiplier >= 2 ? 'win' : 'small_win';
 
-    logger.info('✨ [VISUAL_EFFECTS] Sound effect determined', {
-        multiplier: multiplier.toFixed(1),
-        soundType,
-        soundCategory: multiplier >= 10 ? 'jackpot' :
-            multiplier >= 5 ? 'big_win' :
-                multiplier >= 2 ? 'win' : 'small_win'
-    });
-
     // Example: playSound(`${soundType}.mp3`);
     // Example: AudioManager.play('bounce.mp3', { volume: 0.7 });
-
-    logger.info('✨ [VISUAL_EFFECTS] Sound effect played', {
-        multiplier: multiplier.toFixed(1),
-        soundType
-    });
 }
 
 /**

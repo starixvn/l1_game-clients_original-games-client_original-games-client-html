@@ -1,5 +1,4 @@
 import { Body, Engine } from 'matter-js';
-import { logger } from '../../services/logger';
 
 /**
  * Collision Handlers Module
@@ -79,63 +78,22 @@ export function handleBallPayoutCollision(
     const winAmount = ballValue * multiplierValue;
     const slotId = slotBody.label; // Use full label as unique identifier
 
-    logger.debug('💥 [COLLISION_HANDLERS] Collision data extracted', {
-        ballId: ballBody.id,
-        slotId,
-        multiplierValue: multiplierValue.toFixed(1),
-        ballValue: ballValue.toFixed(2),
-        winAmount: winAmount.toFixed(2),
-        calculation: `${ballValue.toFixed(2)} * ${multiplierValue.toFixed(1)} = ${winAmount.toFixed(2)}`
-    });
-
     // Call the callback to notify parent component about the win
     if (options.onBallHit) {
-        logger.debug('💥 [COLLISION_HANDLERS] Calling onBallHit callback', {
-            ballId: ballBody.id,
-            multiplierValue: multiplierValue.toFixed(1),
-            ballValue: ballValue.toFixed(2),
-            winAmount: winAmount.toFixed(2)
-        });
         options.onBallHit(multiplierValue, ballValue);
-    } else {
-        logger.warn('💥 [COLLISION_HANDLERS] No onBallHit callback provided', {
-            ballId: ballBody.id,
-            multiplierValue: multiplierValue.toFixed(1),
-            ballValue: ballValue.toFixed(2)
-        });
     }
 
     // Log the collision (throttled to prevent spam)
     if (options.collisionTime && options.lastLogTimeRef && options.collisionTime - options.lastLogTimeRef.current > 200) {
-        logger.info('💥 [COLLISION_HANDLERS] Ball payout collision (throttled log)', {
-            ballId: ballBody.id,
-            ballValue: `$${ballValue.toFixed(2)}`,
-            multiplierValue: `${multiplierValue.toFixed(1)}x`,
-            winAmount: `$${winAmount.toFixed(2)}`,
-            collisionTime: options.collisionTime,
-            lastLogTime: options.lastLogTimeRef.current
-        });
         options.lastLogTimeRef.current = options.collisionTime;
     }
 
     // === BALL REMOVAL ===
     // Immediately remove ball after hitting payout (no bounce animation)
-    logger.info('💥 [COLLISION_HANDLERS] Starting ball removal process', {
-        ballId: ballBody.id,
-        multiplier: multiplierValue.toFixed(1),
-        winAmount: winAmount.toFixed(2),
-        slotId,
-        worldBodiesBefore: engine.world.bodies.length
-    });
 
     // Mark ball as removed to prevent re-processing
     const ballExtension = ballBody as Body & BallBodyExtension;
     ballExtension.isRemoved = true;
-
-    logger.debug('💥 [COLLISION_HANDLERS] Ball marked as removed', {
-        ballId: ballBody.id,
-        isRemoved: ballExtension.isRemoved
-    });
 
     // Make ball completely invisible and remove from physics immediately
     ballBody.render.visible = false;
@@ -143,56 +101,20 @@ export function handleBallPayoutCollision(
     ballBody.isSensor = true; // Make it not collide with anything
     ballBody.isStatic = true; // Stop it from moving
 
-    logger.debug('💥 [COLLISION_HANDLERS] Ball made invisible and static', {
-        ballId: ballBody.id,
-        visible: ballBody.render.visible,
-        opacity: ballBody.render.opacity,
-        isSensor: ballBody.isSensor,
-        isStatic: ballBody.isStatic
-    });
-
     // Note: Ball removal from physics world is handled immediately in collision detection
     // to prevent collision loops. This function only handles visual effects and cleanup.
 
     // Force Matter.js to update its internal state immediately
     Engine.update(engine, 16.666); // Update for ~60fps
 
-    logger.debug('💥 [COLLISION_HANDLERS] Physics engine updated', {
-        ballId: ballBody.id,
-        updateTime: '16.666ms'
-    });
-
     // Force clear any cached references to prevent collision loops
     if (ballBody.parts) {
         ballBody.parts.length = 0;
-        logger.debug('💥 [COLLISION_HANDLERS] Ball parts cleared', {
-            ballId: ballBody.id,
-            partsLength: ballBody.parts.length
-        });
     }
-
-    logger.info('💥 [COLLISION_HANDLERS] Ball removal completed', {
-        ballId: ballBody.id,
-        worldBodiesAfter: engine.world.bodies.length,
-        ballStillInWorld: engine.world.bodies.some(b => b.id === ballBody.id),
-        ballVisible: ballBody.render.visible,
-        ballOpacity: ballBody.render.opacity,
-        ballRemoved: ballExtension.isRemoved
-    });
 
     // Double-check removal by logging all remaining bodies
     if (engine.world && typeof engine.world.bodies !== 'undefined') {
         const remainingBalls = engine.world.bodies.filter(b => b.label && b.label.includes('ball'));
-        logger.debug('💥 [COLLISION_HANDLERS] Remaining balls in world', {
-            ballId: ballBody.id,
-            remainingBallsCount: remainingBalls.length,
-            remainingBalls: remainingBalls.map(b => ({
-                id: b.id,
-                label: b.label,
-                position: { x: Math.round(b.position.x), y: Math.round(b.position.y) },
-                isRemoved: (b as ExtendedBody).isRemoved
-            }))
-        });
     }
 
     // === SLOT VISUAL BOUNCE ANIMATION ===

@@ -1,5 +1,3 @@
-import { logger } from '../../services/logger';
-
 /**
  * Drop Positions Module
  * Handles all drop position calculations for the Plinko board

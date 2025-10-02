@@ -3,7 +3,6 @@ import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig } from './physics-config';
 import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
 import { getMiddleDropPosition } from './drop-positions';
-import { logger } from '../../services/logger';
 
 /**
  * Physics Engine Module
@@ -216,21 +215,6 @@ export function createPhysicsBodies(
         const triangleBoardHeight = canvasHeight - (canvasHeight * 0.08) - triangleBottomMargin; // triangleTopMargin is canvasHeight * 0.08
         const slotY = (canvasHeight * 0.08) + triangleBoardHeight + slotHeight / 2; // At bottom of triangle
 
-        // Debug logging for physics slot positions
-        logger.info(`🔧 [PHYSICS SLOT] Slot ${index}:`, {
-            slotX: slotX.toFixed(1),
-            slotY: slotY.toFixed(1),
-            slotWidth: slotWidth.toFixed(1),
-            slotHeight: slotHeight.toFixed(1),
-            multiplier,
-            index,
-            canvasWidth,
-            canvasHeight,
-            triangleBoardWidth: triangleBoardWidth.toFixed(1),
-            triangleBoardX: triangleBoardX.toFixed(1),
-            startX: startX.toFixed(1),
-            totalSlotWidth: totalSlotWidth.toFixed(1)
-        });
 
         const multiplierBody = Bodies.rectangle(
             slotX,
