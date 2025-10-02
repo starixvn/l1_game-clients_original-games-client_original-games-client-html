@@ -22,7 +22,10 @@ import BetPanel from "@/features/betting/components/bet-panel/bet-panel";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
-const Menu = dynamic(() => import("@shared/components/game-components/menu/menu"), { ssr: false });
+const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
+const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
+const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
+const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     constructor(props: GameBaseProps) {
@@ -103,9 +106,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return <PlinkoBetDetailModal />;
     }
 
-    renderMoreMenuIcon(): JSX.Element {
-        // Plinko can customize menu icons if needed
-        return <></>;
+    renderMenuIcons() {
+        return <MenuIconWrapper items={[<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
     }
 
     renderBetHistoryTable(): JSX.Element {

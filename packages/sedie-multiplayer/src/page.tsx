@@ -26,6 +26,9 @@ const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own
 const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
 const AutoRebetIcon = dynamic(() => import("@shared/components/game-components/rebet/auto-rebet-icon"), { ssr: false });
 const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
+const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
+const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
+const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;
@@ -108,6 +111,10 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
 
     renderMoreMenuIcon() {
         return <PFIcon />;
+    }
+
+    renderMenuIcons() {
+        return <MenuIconWrapper items={[<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
     }
 
     renderRightSide() {
