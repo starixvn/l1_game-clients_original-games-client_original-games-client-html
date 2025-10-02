@@ -1,15 +1,15 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useClickSound, useCommonTranslate, useSNTranslate } from '@shared/react-hooks';
+import { useClickSound, useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
 import Styles from "../provably-fair.module.scss";
 import CopyableTextInput from "../copyable-text-input";
-import { AnalyticsHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
+import { AnalyticsHelper, TrackingAction, TrackingFunction } from "@shared/helpers";
 import { Section } from "../pf-form-components";
 import { useShallow } from "zustand/react/shallow";
-import { useGameContext } from '@shared/react-contexts/game-context/game-context';
+import { useGameContext } from "@shared/react-contexts/game-context/game-context";
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
-import { usePopupStore } from '@shared/stores/popup-store/popup-store';
-import { useBetDetailStore } from '@shared/stores/bet-detail-store/bet-detail-store';
+import { usePopupStore } from "@shared/stores/popup-store/popup-store";
+import { useBetDetailStore } from "@shared/stores/bet-detail-store/bet-detail-store";
 import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
 
@@ -18,7 +18,8 @@ const PFResultMessage = "roundPFResult";
 
 const PFVerifyModal: FC<{
     renderResultBlock: Function;
-}> = ({ renderResultBlock }) => {
+    isMergeClientSeed?: boolean;
+}> = ({ renderResultBlock, isMergeClientSeed = true }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { isShowPFVerify, togglePFVerify } = usePopupStore(
         useShallow((state) => ({
@@ -46,7 +47,7 @@ const PFVerifyModal: FC<{
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
             >
-                <PFVerify renderResultBlock={renderResultBlock} />
+                <PFVerify renderResultBlock={renderResultBlock} isMergeClientSeed={isMergeClientSeed} />
             </ModalContainer>,
             document.getElementById("dashboard")
         )
@@ -72,7 +73,7 @@ const useClickOutside = (callback: Function) => {
     return ref;
 };
 
-const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) => {
+const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> = ({ renderResultBlock, isMergeClientSeed }) => {
     const { betDetailData, updateBetDetail } = useBetDetailStore(
         useShallow((state) => ({
             betDetailData: state.betDetailData,
@@ -158,7 +159,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
             gameMessageHandler.removeHandler(pfResultHandler);
         };
     }, []);
-console.log("betDetailData in pf", betDetailData);
+   
     return (
         <div className={Styles["pf-setting-container"]}>
             <div className="result-block">{renderResultBlock(betDetailData.drawInfo)}</div>
@@ -176,25 +177,39 @@ console.log("betDetailData in pf", betDetailData);
             </ClientSeedForm>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_client_seed")}>
-                    <div className={Styles["tooltip-container"]}>
-                        <button className={Styles["btn-pf-intro"]} onClick={handleClickTooltip} id="btn-tooltip-client-seed">
-                            <span className="icon-info" />
-                        </button>
-                        <div className={`${Styles["hide"]} ${Styles["pf-tooltip"]} break`} ref={clickOutSideClientSeedTooltip}>
-                            {translateSNGames("pf_client_seed_tooltip")}
-                        </div>
-                    </div>
+                    {isMergeClientSeed ?? (
+                        <>
+                            <div className={Styles["tooltip-container"]}>
+                                <button className={Styles["btn-pf-intro"]} onClick={handleClickTooltip} id="btn-tooltip-client-seed">
+                                    <span className="icon-info" />
+                                </button>
+
+                                <div className={`${Styles["hide"]} ${Styles["pf-tooltip"]} break`} ref={clickOutSideClientSeedTooltip}>
+                                    {translateSNGames("pf_client_seed_tooltip")}
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </Section>
-                <div className="relative">
-                    <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-5">
-                        <span className={Styles["link-detail"]} onClick={handleOnClickClientSeedInfo}>
-                            {translateSNGames("pf_provably_fair_details")}
-                        </span>
-                    </Section>
-                </div>
-                <div className="input-group width-full">
-                    <CopyableTextInput value={betDetailData.drawInfo.pfResult?.mergeClientSeed} id="merge-client-seed" />
-                </div>
+                {isMergeClientSeed ? (
+                    <>
+                        <div className="relative">
+                            <Section title={translateCommon("pf_ header_merge_client_seed")} customTitleStyles="mt-5">
+                                <span className={Styles["link-detail"]} onClick={handleOnClickClientSeedInfo}>
+                                    {translateSNGames("pf_provably_fair_details")}
+                                </span>
+                            </Section>
+                        </div>
+
+                        <div className="input-group width-full">
+                            <CopyableTextInput value={betDetailData.drawInfo.pfResult?.mergeClientSeed} id="merge-client-seed" />
+                        </div>
+                    </>
+                ) : (
+                    <div className="input-group width-full">
+                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.clientSeeds[0]?.clientSeed} id="merge-client-seed" />
+                    </div>
+                )}
             </ClientSeedForm>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_combined_sha512_hash")}>

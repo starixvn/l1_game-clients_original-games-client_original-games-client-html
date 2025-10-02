@@ -44,7 +44,6 @@ const PlinkoBetDetailBase: FC<{
 
     const handleClickProvablyFair = () => {
         togglePFVerify(true);
-        console.log("togglePFVerify");
         clickSound();
     };
 

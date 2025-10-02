@@ -18,8 +18,7 @@ const PlinkoBetDetailModal: FC = () => {
                     isEnableProvablyFair={true}
                 />
             </BetDetailModal>
-            <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock}></PFVerifyModal>
-            <PFClientSeedInfoModal fileNameExport={makeFileNameExport} renderResultBlock={renderPFVerifyResultBlock} />
+            <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock} isMergeClientSeed={false}></PFVerifyModal>
             <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
         </>
     );

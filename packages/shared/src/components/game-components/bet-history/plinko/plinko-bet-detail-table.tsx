@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
+import { gameModeMap } from "@shared/helpers/plinko";
 
 interface BetDetailRow {
     gameMode: number;
@@ -19,7 +20,7 @@ interface BetDetailTableProps {
 const createBetDetailRowData = (row: BetDetailRow) => {
     return [
         {
-            content: mapGameMode(row.gameMode),
+            content: gameModeMap[row.gameMode],
             isWinningBet: false,
         },
         {
@@ -38,18 +39,6 @@ const createBetDetailRowData = (row: BetDetailRow) => {
     ];
 };
 
-const mapGameMode = (gameMode: number) => {
-    switch (gameMode) {
-        case 0:
-            return "mode_low";
-        case 1:
-            return "mode_medium";
-        case 2:
-            return "mode_high";
-        default:
-            return "";
-    }
-};
 
 const renderBetDetailHeader = (translateCommon: any) => {
     const headerColumns = [

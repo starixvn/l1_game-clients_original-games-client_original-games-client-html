@@ -19,4 +19,22 @@ export default class PfRoundBaseHelper {
             severSeedRemain,
         };
     }
+
+    static buildVerifyInfoPlinko({ pfResult, combinedHash, dicesEachRound }) {
+        const serverSeed = pfResult?.serverSeed || "{}";
+        const randomNumbers = (serverSeed?.random || "").split(";").map((x: string) => +x) as number[];
+        const rawDigits = combinedHash.match(/.{2}/g);
+        const convertNumber = Array.from(Array(dicesEachRound), (_, index) => finalHashToNumbers(combinedHash, index));
+        const diceIndexes = randomNumbers.map((x, index) => (x + convertNumber[index]) % 2);
+        const severSeedRemain = (serverSeed?.remain || "2;2").split(";");
+        console.log("serverSeed", serverSeed);
+
+        return {
+            randomNumbers,
+            rawDigits,
+            convertNumber,
+            diceIndexes,
+            severSeedRemain,
+        };
+    }
 }
