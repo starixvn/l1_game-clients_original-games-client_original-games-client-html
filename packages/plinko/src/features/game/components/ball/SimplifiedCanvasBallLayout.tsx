@@ -76,6 +76,8 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         const [isInitialized, setIsInitialized] = useState(false);
         const [containerSize, setContainerSize] = useState({ width: 400, height: 400 });
+        const [canvasScale, setCanvasScale] = useState(1);
+
 
         // Prevent rapid successive ball drops
         const lastSpawnTimeRef = useRef<number>(0);
@@ -108,7 +110,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         const CANVAS_WIDTH = 600;
         const CANVAS_HEIGHT = 550;
 
-        // Handle container resize without changing canvas size
+        // Handle container resize and calculate canvas scaling
         useEffect(() => {
             const handleResize = () => {
                 if (containerRef.current) {
@@ -117,8 +119,15 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     const height = rect.height;
 
                     if (width > 0 && height > 0) {
-                        // Only update container size, canvas stays fixed
+                        // Update container size
                         setContainerSize({ width, height });
+
+                        // Calculate scale factor - scale to fit container proportionally
+                        const scaleX = width / CANVAS_WIDTH;
+                        const scaleY = height / CANVAS_HEIGHT;
+                        const scale = Math.min(scaleX, scaleY);
+
+                        setCanvasScale(scale);
                     }
                 }
             };
@@ -137,12 +146,20 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 }
             });
 
+            // Also listen to window resize as fallback
+            const handleWindowResize = () => {
+                handleResize();
+            };
+
+            window.addEventListener('resize', handleWindowResize);
+
             if (containerRef.current) {
                 resizeObserver.observe(containerRef.current);
             }
 
             return () => {
                 resizeObserver.disconnect();
+                window.removeEventListener('resize', handleWindowResize);
             };
         }, []);
 
@@ -627,12 +644,17 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 if (!containerRef.current) return;
 
                 const rect = containerRef.current.getBoundingClientRect();
-                const mouseX = event.clientX - rect.left;
-                const mouseY = event.clientY - rect.top;
+                // Adjust mouse coordinates for canvas scaling
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rawMouseX = event.clientX - rect.left;
+                const rawMouseY = event.clientY - rect.top;
+                const scaledMouseX = (rawMouseX - centerX) / canvasScale + centerX;
+                const scaledMouseY = (rawMouseY - centerY) / canvasScale + centerY;
 
                 // Check if mouse is over payout slot area
-                const isOverSlotArea = mouseY >= slotAreaTop && mouseY <= slotAreaBottom;
-                const slotIndex = isOverSlotArea ? findSlotIndex(mouseX, lastRowStartX, pegGap, slotWidth, numberOfSlots) : -1;
+                const isOverSlotArea = scaledMouseY >= slotAreaTop && scaledMouseY <= slotAreaBottom;
+                const slotIndex = isOverSlotArea ? findSlotIndex(scaledMouseX, lastRowStartX, pegGap, slotWidth, numberOfSlots) : -1;
 
                 updateHoverState(slotIndex, event);
             };
@@ -662,7 +684,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     containerRef.current.removeEventListener("mouseleave", handleMouseLeave);
                 }
             };
-        }, [slotCalculationData, updateHoverState]);
+        }, [slotCalculationData, updateHoverState, canvasScale]);
 
         // Memoized ball creation parameters
         const ballCreationParams = useMemo(() => {
@@ -782,10 +804,11 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                         position: "absolute",
                         top: "50%",
                         left: "50%",
-                        transform: "translate(-50%, -50%)",
+                        transform: `translate(-50%, -50%) scale(${canvasScale})`,
                         width: `${CANVAS_WIDTH}px`,
                         height: `${CANVAS_HEIGHT}px`,
                         zIndex: 1,
+                        transformOrigin: "center center",
                     }}
                 />
 
