@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BetAmountControls, GameModeSelector, RowsSelector } from "../index";
+import { BetAmountControl, GameModeSelector, RowsSelector } from "./components";
 import AutoBetControl from "./auto-bet-control";
 // Configuration interfaces for cleaner props
 export interface SharedConfig {
@@ -34,7 +34,7 @@ export interface BetControlProps {
     onBetResult?: (result: { win: boolean; payout: number; betAmount: number }) => void;
 }
 
-const BetControl: React.FC<BetControlProps> = ({
+const BetPanel: React.FC<BetControlProps> = ({
     sharedConfig,
     autoConfig,
     activeTab,
@@ -48,18 +48,8 @@ const BetControl: React.FC<BetControlProps> = ({
         gameMode: "Lightning" as const,
         rows: 9,
     };
-    const safeAutoConfig = autoConfig || {
-        numberOfBets: 20000,
-        onWinAction: "Reset" as const,
-        onWinPercentage: 0,
-        onLossAction: "Reset" as const,
-        onLossPercentage: 0,
-        stopOnWin: 0,
-        stopOnLoss: 0,
-    };
 
     const { betAmount, gameMode, rows } = safeSharedConfig;
-    const { numberOfBets, onWinAction, onWinPercentage, onLossAction, onLossPercentage, stopOnWin, stopOnLoss } = safeAutoConfig;
 
     // Wrapper functions for individual component props
     const handleBetAmountChange = useCallback(
@@ -81,55 +71,6 @@ const BetControl: React.FC<BetControlProps> = ({
             onSharedConfigChange({ rows: newRows });
         },
         [onSharedConfigChange]
-    );
-
-    const handleNumberOfBetsChange = useCallback(
-        (bets: number) => {
-            onAutoConfigChange({ numberOfBets: bets });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleWinActionChange = useCallback(
-        (action: typeof onWinAction) => {
-            onAutoConfigChange({ onWinAction: action });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleWinPercentageChange = useCallback(
-        (percentage: number) => {
-            onAutoConfigChange({ onWinPercentage: percentage });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleLossActionChange = useCallback(
-        (action: typeof onLossAction) => {
-            onAutoConfigChange({ onLossAction: action });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleLossPercentageChange = useCallback(
-        (percentage: number) => {
-            onAutoConfigChange({ onLossPercentage: percentage });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleStopOnWinChange = useCallback(
-        (amount: number) => {
-            onAutoConfigChange({ stopOnWin: amount });
-        },
-        [onAutoConfigChange]
-    );
-
-    const handleStopOnLossChange = useCallback(
-        (amount: number) => {
-            onAutoConfigChange({ stopOnLoss: amount });
-        },
-        [onAutoConfigChange]
     );
 
     // Section 4.6: Configuration persistence when switching tabs
@@ -188,15 +129,15 @@ const BetControl: React.FC<BetControlProps> = ({
     const tabs = ["Manual", "Auto"];
     return (
         <div className="flex flex-col md:flex-col-reverse">
-            <div className="md:rounded-none border-stroke rounded-b-none before:rounded-b-none p-4 gap-4">
-                {/* Tab Content */}
-                <BetAmountControls betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
+            <button className="text-sm font-bold w-full h-11 rounded-xl mb-4 bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                Bet
+            </button>
+            <div className="flex flex-col gap-4 p-4 md:rounded-none border-stroke rounded-b-none before:rounded-b-none">
+                <BetAmountControl betAmount={betAmount} onBetAmountChange={handleBetAmountChange} />
                 <GameModeSelector gameMode={gameMode} onGameModeChange={handleGameModeChange} />
                 <RowsSelector rows={rows} onRowsChange={handleRowsChange} />
 
                 {isAutoTab && <AutoBetControl />}
-
-                {/* Tab Navigation - below Stop on Loss in Auto mode */}
             </div>
             <div className="flex bg-primary-bg">
                 {tabs.map((tab) => (
@@ -217,4 +158,4 @@ const BetControl: React.FC<BetControlProps> = ({
     );
 };
 
-export default BetControl;
+export default BetPanel;

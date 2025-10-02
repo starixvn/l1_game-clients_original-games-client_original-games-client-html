@@ -1,11 +1,11 @@
 import React from "react";
-import { BetAmountControlsProps } from "../../../../shared/types";
-import { BET_CONFIG } from "./bet-config";
+import { Label } from "./label";
 
-const BetAmountControls: React.FC<BetAmountControlsProps> = ({ betAmount, onBetAmountChange }) => {
+export const BetAmountControl = ({ betAmount, onBetAmountChange }: { betAmount: number; onBetAmountChange: (amount: number) => void }) => {
+    // todo: min max bet amount
     return (
         <div>
-            <div className="text-sm md:text-base mb-2 font-semibold">Bet Amount</div>
+            <Label title="Bet Amount" />
             <div className="relative">
                 <input
                     type="number"
@@ -19,20 +19,17 @@ const BetAmountControls: React.FC<BetAmountControlsProps> = ({ betAmount, onBetA
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
                     <button
                         className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg"
-                        onClick={() => onBetAmountChange(Math.max(BET_CONFIG.MIN_BET, betAmount / 2))}
+                        onClick={() => onBetAmountChange(betAmount / 2)}
                     >
                         1/2
                     </button>
                     <button
                         className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg"
-                        onClick={() => onBetAmountChange(Math.min(BET_CONFIG.MAX_BET, betAmount * 2))}
+                        onClick={() => onBetAmountChange(betAmount * 2)}
                     >
                         2x
                     </button>
-                    <button
-                        className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg"
-                        onClick={() => onBetAmountChange(BET_CONFIG.MAX_BET)}
-                    >
+                    <button className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg" onClick={() => onBetAmountChange(3000)}>
                         Max
                     </button>
                 </div>
@@ -40,5 +37,3 @@ const BetAmountControls: React.FC<BetAmountControlsProps> = ({ betAmount, onBetA
         </div>
     );
 };
-
-export default BetAmountControls;

@@ -7,7 +7,7 @@ interface PercentageControlProps {
     setPercentage: (percentage: number) => void;
 }
 
-const PercentageControl: React.FC<PercentageControlProps> = ({ isIncreaseOn, setIsIncreaseOn, percentage, setPercentage }) => {
+export const PercentageControl: React.FC<PercentageControlProps> = ({ isIncreaseOn, setIsIncreaseOn, percentage, setPercentage }) => {
     return (
         <div className="grid grid-cols-2 gap-2">
             <div className="col-span-1 flex items-center input p-1 gap-1 rounded-lg h-11">
@@ -51,5 +51,3 @@ const PercentageControl: React.FC<PercentageControlProps> = ({ isIncreaseOn, set
         </div>
     );
 };
-
-export default PercentageControl;

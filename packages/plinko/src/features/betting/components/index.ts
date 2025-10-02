@@ -1,12 +1,7 @@
 // Betting feature components
 
 // Panel components
-export { default as BetControl } from "./panels/bet-control";
-
-// Control components
-export { default as BetAmountControls } from "./controls/bet-amount-control";
-export { default as GameModeSelector } from "./controls/game-mode-selector";
-export { default as RowsSelector } from "./controls/rows-selector";
+export { default as BetControl } from "./bet-panel/bet-panel";
 
 // Table components
 export { default as BetsTable } from "./tables/BetsTable";

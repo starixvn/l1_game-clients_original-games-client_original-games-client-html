@@ -1,11 +1,17 @@
 import React from "react";
-import { GameModeSelectorProps } from "../../../../shared/types";
+import { Label } from "./label";
 
-const GameModeSelector: React.FC<GameModeSelectorProps> = ({ gameMode, onGameModeChange }) => {
+export const GameModeSelector = ({
+    gameMode,
+    onGameModeChange,
+}: {
+    gameMode: "Lightning" | "Low" | "Medium" | "High";
+    onGameModeChange: (mode: "Lightning" | "Low" | "Medium" | "High") => void;
+}) => {
     const gameModes = ["Lightning", "Low", "Medium", "High"] as const;
 
     // Handle mode change with Lightning mode placeholder logic (Section 4.3)
-    const handleModeChange = (mode: GameModeSelectorProps["gameMode"]) => {
+    const handleModeChange = (mode: "Lightning" | "Low" | "Medium" | "High") => {
         onGameModeChange(mode);
 
         // Section 4.3: Lightning mode is TBD - log placeholder warning
@@ -16,7 +22,7 @@ const GameModeSelector: React.FC<GameModeSelectorProps> = ({ gameMode, onGameMod
 
     return (
         <div className="span-game-mode">
-            <div className="text-sm md:text-base mb-2 font-semibold">Game Mode</div>
+            <Label title="Game Mode" />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
                 {gameModes.map((mode) => (
                     <button
@@ -34,5 +40,3 @@ const GameModeSelector: React.FC<GameModeSelectorProps> = ({ gameMode, onGameMod
         </div>
     );
 };
-
-export default GameModeSelector;

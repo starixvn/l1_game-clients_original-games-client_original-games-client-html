@@ -1,5 +1,6 @@
 import { useState } from "react";
-import PercentageControl from "../controls/percentage-control";
+import { PercentageControl } from "./components/percentage-control";
+import { Label } from "./components/label";
 
 const AutoBetControl = () => {
     const [numberOfBets, setNumberOfBets] = useState(100);
@@ -7,13 +8,13 @@ const AutoBetControl = () => {
     const [onWinPercentage, setOnWinPercentage] = useState(0);
     const [isIncreaseOnLoss, setIsIncreaseOnLoss] = useState(false);
     const [onLossPercentage, setOnLossPercentage] = useState(0);
-    const [stopOnWin, setStopOnWin] = useState(100);
-    const [stopOnLoss, setStopOnLoss] = useState(100);
+    const [stopOnWin, setStopOnWin] = useState(0);
+    const [stopOnLoss, setStopOnLoss] = useState(0);
 
     return (
         <div className="flex flex-col gap-4">
             <div>
-                <div className="text-sm md:text-base mb-2 font-semibold">Number of Bets</div>
+                <Label title="Number of Bets" />
                 <div className="relative">
                     <input
                         type="number"
@@ -41,7 +42,7 @@ const AutoBetControl = () => {
                 </div>
             </div>
             <div>
-                <div className="text-sm md:text-base mb-2 font-semibold">On Win</div>
+                <Label title="On Win" />
                 <PercentageControl
                     isIncreaseOn={isIncreaseOnWin}
                     setIsIncreaseOn={setIsIncreaseOnWin}
@@ -50,7 +51,7 @@ const AutoBetControl = () => {
                 />
             </div>
             <div>
-                <div className="text-sm md:text-base mb-2 font-semibold">On Loss</div>
+                <Label title="On Loss" />
                 <PercentageControl
                     isIncreaseOn={isIncreaseOnLoss}
                     setIsIncreaseOn={setIsIncreaseOnLoss}
@@ -59,7 +60,7 @@ const AutoBetControl = () => {
                 />
             </div>
             <div>
-                <div className="text-sm md:text-base mb-2 font-semibold">Stop On Win</div>
+                <Label title="Stop On Win" />
                 <input
                     type="number"
                     step={1}
@@ -71,7 +72,7 @@ const AutoBetControl = () => {
                 />
             </div>
             <div>
-                <div className="text-sm md:text-base mb-2 font-semibold">Stop On Loss</div>
+                <Label title="Stop On Loss" />
                 <input
                     type="number"
                     step={1}

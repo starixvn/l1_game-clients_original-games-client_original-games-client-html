@@ -1,7 +1,15 @@
 import React from "react";
-import { RowsSelectorProps } from "../../../../shared/types";
+import { Label } from "./label";
 
-const RowsSelector: React.FC<RowsSelectorProps> = ({ rows, onRowsChange, disabled = false }) => {
+export const RowsSelector = ({
+    rows,
+    onRowsChange,
+    disabled = false,
+}: {
+    rows: number;
+    onRowsChange: (rows: number) => void;
+    disabled?: boolean;
+}) => {
     const handleRowsChange = (newRows: number) => {
         if (!disabled && newRows >= 8 && newRows <= 16) {
             onRowsChange(newRows);
@@ -18,7 +26,7 @@ const RowsSelector: React.FC<RowsSelectorProps> = ({ rows, onRowsChange, disable
 
     return (
         <div className={`div-setting-row ${disabled ? "disabled" : ""}`}>
-            <div className="text-sm md:text-base mb-2 font-semibold">Rows</div>
+            <Label title="Rows" />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
                 <div className="mx-2">
                     <span className="text-sm text-white">{rows}</span>
@@ -43,5 +51,3 @@ const RowsSelector: React.FC<RowsSelectorProps> = ({ rows, onRowsChange, disable
         </div>
     );
 };
-
-export default RowsSelector;
