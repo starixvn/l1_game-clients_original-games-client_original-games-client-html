@@ -9,6 +9,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
   const [logCount, setLogCount] = useState(logger.getLogCount());
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentLogs, setRecentLogs] = useState<string[]>([]);
+  const [isLoggingEnabled, setIsLoggingEnabled] = useState(false); // Start with logging disabled
 
   const handleDownloadLogs = () => {
     logger.downloadLogs();
@@ -20,6 +21,16 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
     logger.clear();
     setLogCount(0);
     setRecentLogs([]);
+  };
+
+  const handleStartLogging = () => {
+    logger.start();
+    setIsLoggingEnabled(true);
+  };
+
+  const handleStopLogging = () => {
+    logger.stop();
+    setIsLoggingEnabled(false);
   };
 
   const toggleExpanded = () => {
@@ -77,13 +88,15 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
             <span style={{
               width: '16px',
               height: '16px',
-              background: '#10b981',
+              background: isLoggingEnabled ? '#10b981' : '#ef4444',
               borderRadius: '50%',
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              animation: isLoggingEnabled ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
               boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
               border: '2px solid white'
             }}></span>
-            <span style={{ fontSize: '16px', fontWeight: 'bold', color: 'white' }}>🚨 LOGGER</span>
+            <span style={{ fontSize: '16px', fontWeight: 'bold', color: 'white' }}>
+              🚨 LOGGER {isLoggingEnabled ? '(ON)' : '(OFF)'}
+            </span>
           </div>
           <div style={{
             padding: '4px 8px',
@@ -100,6 +113,39 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              isLoggingEnabled ? handleStopLogging() : handleStartLogging();
+            }}
+            style={{
+              padding: '4px 8px',
+              background: isLoggingEnabled ? 'linear-gradient(to right, #dc2626, #b91c1c)' : 'linear-gradient(to right, #16a34a, #15803d)',
+              color: 'white',
+              fontSize: '11px',
+              fontWeight: '500',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            title={isLoggingEnabled ? 'Stop logging' : 'Start logging'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <span style={{ fontSize: '14px' }}>{isLoggingEnabled ? '⏸️' : '▶️'}</span> {isLoggingEnabled ? 'Stop' : 'Start'}
+          </button>
+
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -2,6 +2,7 @@
 class Logger {
   private logs: string[] = [];
   private maxLogs: number = 10000; // Prevent memory issues
+  private isEnabled: boolean = false; // Logging starts disabled by default
 
   constructor() {
     // Initialize with a header
@@ -9,6 +10,11 @@ class Logger {
   }
 
   log(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
+    // Don't log if disabled
+    if (!this.isEnabled) {
+      return;
+    }
+
     const timestamp = new Date().toISOString();
     let logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
 
@@ -79,6 +85,29 @@ class Logger {
   // Get log count
   getLogCount(): number {
     return this.logs.length;
+  }
+
+  // Check if logging is enabled
+  isLoggingEnabled(): boolean {
+    return this.isEnabled;
+  }
+
+  // Start logging
+  start() {
+    if (!this.isEnabled) {
+      this.isEnabled = true;
+      // Don't log here to avoid recursion if logging is disabled
+      console.log('[LOGGER] Logging started');
+    }
+  }
+
+  // Stop logging
+  stop() {
+    if (this.isEnabled) {
+      this.isEnabled = false;
+      // Don't log here to avoid recursion since logging is now disabled
+      console.log('[LOGGER] Logging stopped');
+    }
   }
 }
 
