@@ -1,7 +1,6 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
+import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { toast } from 'react-toastify';
 import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
-import { performDirectSpawnTest } from "../../features/game/components/ball/ball-test-utils";
 import { LoggerControls } from "../../features/ui/components";
 import { BetControl, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
@@ -228,15 +227,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Update multipliers from service configs - disabled since gameConfigs is not provided by shared system
     // Plinko uses hardcoded multipliers for now
 
-    // Test function to spawn a ball with predefined path for testing
-    const spawnTestBall = () => {
-        // Spawn a ball with a path that will hit the center multiplier (index 4)
-        const testPath = [0, 1, 0, 1, 0, 1, 0, 1, 0]; // Path to center slot
-        const finalSlot = 4; // Center multiplier slot
-        const multiplier = 2; // 2x multiplier
-
-        ballLayoutRef.current?.spawnBallWithPath(100, testPath, finalSlot, multiplier);
-    };
 
     // Handle ball collision with multiplier slots
     const handleBallHit = (multiplier: number, betValue: number) => {
@@ -279,6 +269,92 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const updateGameState = (updates: Partial<GameState>) => {
         setGameState(prev => ({ ...prev, ...updates }));
     };
+
+    // Bet placement handlers for BetControl
+    const handlePlaceBet = useCallback(() => {
+        if (isConnected && isAuthenticated && localGameInitialized) {
+            // Manual bet mode - place single bet
+            const gameModeMap: Record<string, number> = {
+                'Low': 0,
+                'Medium': 1,
+                'High': 2,
+                'Lightning': 0 // Default to Low for Lightning
+            };
+            const gameMode = gameModeMap[gameState.gameMode] ?? 0;
+
+            placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
+        }
+    }, [isConnected, isAuthenticated, localGameInitialized, gameState.betAmount, gameState.gameMode, gameState.rows, clientSeed, placeBet]);
+
+    const handleStartAutoBet = useCallback(async () => {
+        // Validate before starting
+        if (gameState.balance < gameState.betAmount) {
+            toast.error('Insufficient balance');
+            return;
+        }
+        if (gameState.numberOfBets < 1) {
+            toast.error('Number of bets must be at least 1');
+            return;
+        }
+
+        // Create AutoBetHandler instance if not exists
+        if (!autoBetHandlerRef.current) {
+            const { AutoBetHandler } = await import('../../services/autoBetHandler');
+
+            const config = {
+                numberOfBets: gameState.numberOfBets,
+                onWinAction: gameState.onWinAction,
+                onWinPercentage: gameState.onWinPercentage,
+                onLossAction: gameState.onLossAction,
+                onLossPercentage: gameState.onLossPercentage,
+                stopOnWin: gameState.stopOnWin,
+                stopOnLoss: gameState.stopOnLoss,
+                initialBetAmount: gameState.betAmount,
+                gameMode: (() => {
+                    const gameModeMap: Record<string, number> = {
+                        'Low': 0,
+                        'Medium': 1,
+                        'High': 2,
+                        'Lightning': 0 // Default to Low for Lightning
+                    };
+                    return gameModeMap[gameState.gameMode] ?? 0;
+                })(),
+                numberOfRows: gameState.rows
+            };
+
+            const callbacks = {
+                onBetPlaced: (betAmount: number) => {
+                    // Auto bet placed callback
+                },
+                onBetResult: () => {
+                    // Forward to parent if needed
+                },
+                onAutoBetComplete: (reason: string) => {
+                    setIsAutoBetRunning(false);
+                },
+                onBalanceUpdate: (newBalance: number) => {
+                    updateGameState({ balance: newBalance });
+                }
+            };
+
+            autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
+        }
+
+        setIsAutoBetRunning(true);
+        autoBetHandlerRef.current.start();
+    }, [gameState.balance, gameState.betAmount, gameState.numberOfBets, gameState.onWinAction, gameState.onWinPercentage, gameState.onLossAction, gameState.onLossPercentage, gameState.stopOnWin, gameState.stopOnLoss, gameState.gameMode, gameState.rows, clientSeed, placeBet, updateGameState]);
+
+    const handleStopAutoBet = useCallback(() => {
+        // Stop the AutoBetHandler
+        autoBetHandlerRef.current?.stop();
+        setIsAutoBetRunning(false);
+    }, []);
+
+    // Determine disabled state and message
+    const isBetDisabled = !localGameInitialized || !isConnected || !isAuthenticated;
+    const disabledMessage = !isConnected ? '(Connecting...)' :
+        !isAuthenticated ? '(Authenticating...)' :
+            !localGameInitialized ? '(Initializing...)' : '';
 
     return (
         <div className="main-container">
@@ -327,171 +403,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     />
                 </div>
 
-                <div id="button-bet" className="button-bet">
-                    {!localGameInitialized && (
-                        <div className="game-initializing">
-                            Initializing game...
-                        </div>
-                    )}
-                    {gameState.activeTab === 'Manual' ? (
-                        <>
-                            {/* Manual Bet Button */}
-                            <button
-                                className="button-bet-manual"
-                                disabled={!localGameInitialized || !isConnected || !isAuthenticated || isBetting}
-                                onClick={async () => {
-                                    if (isConnected && isAuthenticated && localGameInitialized) {
-                                        // Manual bet mode - place single bet
-                                        const gameModeMap: Record<string, number> = {
-                                            'Low': 0,
-                                            'Medium': 1,
-                                            'High': 2,
-                                            'Lightning': 0 // Default to Low for Lightning
-                                        };
-                                        const gameMode = gameModeMap[gameState.gameMode] ?? 0;
-
-                                        placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
-
-                                        // Ball will be spawned with service-determined path when results are received
-                                    }
-                                }}
-                            >
-                                BET (${gameState.betAmount})
-                                {!isConnected && ' (Connecting...)'}
-                                {isConnected && !isAuthenticated && ' (Authenticating...)'}
-                                {isBetting && ' (Betting...)'}
-                            </button>
-
-                            {/* Test Button for Ball Spawn */}
-                            <button
-                                className="span-bet"
-                                onClick={spawnTestBall}
-                                style={{
-                                    marginLeft: '10px',
-                                    background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
-                                    border: '2px solid #cc4545',
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase',
-                                    boxShadow: '0 4px 8px rgba(255, 107, 107, 0.3)',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                🎯 TEST BALL
-                            </button>
-
-                            {/* Direct Spawn Test Button */}
-                            <button
-                                className="span-bet"
-                                onClick={() => {
-                                    logger.info('🎯 DIRECT SPAWN TEST clicked - using ball test utilities');
-
-                                    // Use the test utilities from @ball/ folder
-                                    const testConfig = {
-                                        rows: gameState.rows,
-                                        betAmount: gameState.betAmount,
-                                        multipliers: payoutMultipliers,
-                                        payoutProbabilities: payoutProbabilities
-                                    };
-
-                                    performDirectSpawnTest(ballLayoutRef.current, testConfig);
-                                }}
-                                style={{
-                                    marginLeft: '10px',
-                                    background: 'linear-gradient(135deg, #4CAF50, #45a049)',
-                                    border: '2px solid #3d8b40',
-                                    color: 'white',
-                                    fontSize: '12px',
-                                    padding: '6px 12px',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase',
-                                    boxShadow: '0 4px 8px rgba(76, 175, 80, 0.3)',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                DIRECT SPAWN
-                            </button>
-                        </>
-                    ) : (
-                        // Auto Bet Button - moved from AutoBetPanel
-                        <button
-                            className={`button-bet-auto ${isAutoBetRunning ? 'running' : ''}`}
-                            disabled={!localGameInitialized || !isConnected || !isAuthenticated}
-                            onClick={async () => {
-                                if (isAutoBetRunning) {
-                                    // Stop the AutoBetHandler
-                                    autoBetHandlerRef.current?.stop();
-                                    setIsAutoBetRunning(false);
-                                } else {
-                                    // Validate before starting
-                                    if (gameState.balance < gameState.betAmount) {
-                                        toast.error('Insufficient balance');
-                                        return;
-                                    }
-                                    if (gameState.numberOfBets < 1) {
-                                        toast.error('Number of bets must be at least 1');
-                                        return;
-                                    }
-
-                                    // Create AutoBetHandler instance if not exists
-                                    if (!autoBetHandlerRef.current) {
-                                        const { AutoBetHandler } = await import('../../services/autoBetHandler');
-
-                                        const config = {
-                                            numberOfBets: gameState.numberOfBets,
-                                            onWinAction: gameState.onWinAction,
-                                            onWinPercentage: gameState.onWinPercentage,
-                                            onLossAction: gameState.onLossAction,
-                                            onLossPercentage: gameState.onLossPercentage,
-                                            stopOnWin: gameState.stopOnWin,
-                                            stopOnLoss: gameState.stopOnLoss,
-                                            initialBetAmount: gameState.betAmount,
-                                            gameMode: (() => {
-                                                const gameModeMap: Record<string, number> = {
-                                                    'Low': 0,
-                                                    'Medium': 1,
-                                                    'High': 2,
-                                                    'Lightning': 0 // Default to Low for Lightning
-                                                };
-                                                return gameModeMap[gameState.gameMode] ?? 0;
-                                            })(),
-                                            numberOfRows: gameState.rows
-                                        };
-
-                                        const callbacks = {
-                                            onBetPlaced: (betAmount: number) => {
-                                                // Auto bet placed callback
-                                            },
-                                            onBetResult: () => {
-                                                // Forward to parent if needed
-                                            },
-                                            onAutoBetComplete: (reason: string) => {
-                                                setIsAutoBetRunning(false);
-                                            },
-                                            onBalanceUpdate: (newBalance: number) => {
-                                                updateGameState({ balance: newBalance });
-                                            }
-                                        };
-
-                                        autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
-                                    }
-
-                                    setIsAutoBetRunning(true);
-                                    autoBetHandlerRef.current.start();
-                                }
-                            }}
-                        >
-                            {isAutoBetRunning ? 'STOP AUTO BET' : 'START AUTO BET'}
-                        </button>
-                    )}
-                </div>
-
                 <BetControl
                     sharedConfig={{
                         betAmount: gameState.betAmount,
@@ -512,6 +423,12 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     onAutoConfigChange={(config) => updateGameState(config)}
                     onTabChange={(tab) => updateGameState({ activeTab: tab })}
                     onBalanceUpdate={(newBalance) => updateGameState({ balance: newBalance })}
+                    onPlaceBet={handlePlaceBet}
+                    onStartAutoBet={handleStartAutoBet}
+                    onStopAutoBet={handleStopAutoBet}
+                    isAutoBetRunning={isAutoBetRunning}
+                    isDisabled={isBetDisabled}
+                    disabledMessage={disabledMessage}
                 />
 
                 <BetsTable
