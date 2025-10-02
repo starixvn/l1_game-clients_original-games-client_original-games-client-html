@@ -1,4 +1,3 @@
-import { logger } from '../../services/logger';
 
 /**
  * Physics Configuration for Plinko Ball Layout
@@ -42,7 +41,7 @@ export const physicsConfig: PhysicsConfig = {
         pinGap: 20
     },
     ball: {
-        ballSize: 8 // Base radius for 10 rows (dynamically scaled for other row counts)
+        ballSize: 12 // Base radius for 10 rows (dynamically scaled for other row counts)
     },
     engine: {
         engineGravity: 1.0
@@ -68,8 +67,8 @@ export const physicsConfig: PhysicsConfig = {
  */
 export const ballSizingConfig = {
     baseRows: 10,           // Reference row count for base sizing
-    baseDiameter: 14,       // REDUCED: Base ball diameter in pixels at baseRows (narrowed pegs need smaller balls)
-    minDiameter: 5,         // REDUCED: Minimum ball diameter to prevent invisibility
-    maxDiameter: 24,        // REDUCED: Maximum ball diameter to prevent overcrowding
-    sizeScaleFactor: 0.75   // REDUCED: Additional scaling factor for peg gap consideration (narrower pegs)
+    baseDiameter: 18,       // INCREASED: Base ball diameter in pixels at baseRows (wider peg area allows larger balls for better collision)
+    minDiameter: 7,         // INCREASED: Minimum ball diameter to prevent invisibility
+    maxDiameter: 30,        // INCREASED: Maximum ball diameter to prevent overcrowding
+    sizeScaleFactor: 0.9    // INCREASED: Additional scaling factor for peg gap consideration (wider peg area)
 };

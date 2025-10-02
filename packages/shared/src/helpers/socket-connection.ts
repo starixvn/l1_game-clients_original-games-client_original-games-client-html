@@ -48,6 +48,15 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
             useGameStore.getState().registerEvent(message);
         });
 
+        // Handle game-event messages (used by Plinko and other games)
+        socket.off("game-event").on("game-event", (message) => {
+            logger.debug('Received game-event message', { gameName, messageType: Object.keys(message)[0] });
+            console.log('🎯 SOCKET: Received message through game-event:', message);
+            gameMessageHandler.broadcastGameEvent(message);
+            useGameStore.getState().registerEvent(message);
+            useBettingStore.getState().registerEvent(message);
+        });
+
         socket.on(messageEventType.SOCKET_CONNECTED, () => {
             logger.info('Socket connected, sending signin', { gameName, username: session?.username });
             socket.emit("signin", session);

@@ -3,6 +3,7 @@ import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig } from './physics-config';
 import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
 import { getMiddleDropPosition } from './drop-positions';
+import { logger } from '../../services/logger';
 
 /**
  * Physics Engine Module
@@ -85,9 +86,9 @@ export function createPhysicsBodies(
         // Classic triangular pattern: row 0 has 2 pins, row 1 has 3 pins, etc.
         const linePins = l + 2; // 2, 3, 4, 5, 6, 7, 8, 9, 10 for rows 0-8
 
-        // Calculate pin spacing to create proper triangular shape - NARROWED for more collisions
+        // Calculate pin spacing to create proper triangular shape - 85% width for consistency
         const maxPinsInBottomRow = rows + 1; // 10 pins in bottom row for 9 rows
-        const maxLineWidth = canvasWidth * 0.45; // NARROWED: Use only 45% of canvas width for pin area (was 85%)
+        const maxLineWidth = canvasWidth * 0.85; // 85% width to match triangular background
         const pinSpacing = maxLineWidth / (maxPinsInBottomRow - 1); // Even spacing based on bottom row
 
         // Calculate the width of this specific row
@@ -146,25 +147,90 @@ export function createPhysicsBodies(
         }
     );
 
-    const walls = [leftWall, rightWall, floor];
+    // Create triangular boundary walls using strategic wall placements
+    const triangleTopMargin = canvasHeight * 0.08;
+    const triangleBottomMargin = canvasHeight * 0.15;
+    const triangleBoardHeight = canvasHeight - triangleTopMargin - triangleBottomMargin;
+    const triangleBoardWidth = canvasWidth * 0.85; // Match the board width (85%)
+    const triangleBoardX = (canvasWidth - triangleBoardWidth) / 2;
 
-    // Create multiplier slots
+    // Calculate triangular boundaries (matching the visual board)
+    const triangleCenterX = canvasWidth / 2; // Top point
+    const triangleTopYPos = triangleTopMargin;
+    const triangleBottomYPos = triangleTopMargin + triangleBoardHeight;
+
+    // Create boundary walls at key positions to contain balls within triangle
+    const triangularWalls: Body[] = [];
+
+    // Create walls at progressive widths to form triangular shape
+    const wallLevels = 6; // Number of wall levels from top to bottom
+    for (let level = 0; level < wallLevels; level++) {
+        const t = level / (wallLevels - 1); // 0 to 1
+        const currentY = triangleTopYPos + t * (triangleBottomYPos - triangleTopYPos);
+        const currentWidth = (1 - t) * 10 + t * triangleBoardWidth; // Narrow at top, wide at bottom
+        const currentX = triangleCenterX - currentWidth / 2;
+
+        // Left wall segment
+        const leftWallSegment = Bodies.rectangle(
+            currentX - 5,
+            currentY,
+            10, // Thickness
+            triangleBoardHeight / wallLevels, // Segment height
+            {
+                render: { visible: false },
+                isStatic: true,
+                label: `triangle-left-wall-${level}`
+            }
+        );
+
+        // Right wall segment
+        const rightWallSegment = Bodies.rectangle(
+            currentX + currentWidth + 5,
+            currentY,
+            10, // Thickness
+            triangleBoardHeight / wallLevels, // Segment height
+            {
+                render: { visible: false },
+                isStatic: true,
+                label: `triangle-right-wall-${level}`
+            }
+        );
+
+        triangularWalls.push(leftWallSegment, rightWallSegment);
+    }
+
+    const walls = [leftWall, rightWall, floor, ...triangularWalls];
+
+    // Create multiplier slots - position them within the triangular board area
     const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
     const slotHeight = Math.max(20, Math.min(40, canvasHeight * 0.08));
     const totalSlotWidth = slotWidth * multipliers.length;
-    const startX = (canvasWidth - totalSlotWidth) / 2; // Center the slots
+    // Use the same board dimensions as the triangular walls above
+    const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2; // Center within board area
 
-    // console.log('Multiplier slot layout:', {
-    //     slotWidth,
-    //     slotHeight,
-    //     totalSlotWidth,
-    //     startX,
-    //     multipliersCount: multipliers.length
-    // });
 
     multipliers.forEach((multiplier, index) => {
         const slotX = startX + index * slotWidth + slotWidth / 2; // Center each slot
-        const slotY = canvasHeight - bottomMargin + slotHeight / 2; // Position in bottom margin area
+        // Position at the bottom of the triangular board area
+        const triangleBottomMargin = canvasHeight * 0.15;
+        const triangleBoardHeight = canvasHeight - (canvasHeight * 0.08) - triangleBottomMargin; // triangleTopMargin is canvasHeight * 0.08
+        const slotY = (canvasHeight * 0.08) + triangleBoardHeight + slotHeight / 2; // At bottom of triangle
+
+        // Debug logging for physics slot positions
+        logger.info(`🔧 [PHYSICS SLOT] Slot ${index}:`, {
+            slotX: slotX.toFixed(1),
+            slotY: slotY.toFixed(1),
+            slotWidth: slotWidth.toFixed(1),
+            slotHeight: slotHeight.toFixed(1),
+            multiplier,
+            index,
+            canvasWidth,
+            canvasHeight,
+            triangleBoardWidth: triangleBoardWidth.toFixed(1),
+            triangleBoardX: triangleBoardX.toFixed(1),
+            startX: startX.toFixed(1),
+            totalSlotWidth: totalSlotWidth.toFixed(1)
+        });
 
         const multiplierBody = Bodies.rectangle(
             slotX,
@@ -221,11 +287,6 @@ export function spawnBall(
 
     // Prevent rapid successive ball drops (anti-spam protection)
     if (lastSpawnTimeRef.current > 0 && timeSinceLastSpawn < minSpawnInterval) {
-        // console.warn('🚫 Ball spawn blocked - too frequent!', {
-        //     timeSinceLastSpawn: timeSinceLastSpawn + 'ms',
-        //     minInterval: minSpawnInterval + 'ms',
-        //     betAmount
-        // });
         return;
     }
 

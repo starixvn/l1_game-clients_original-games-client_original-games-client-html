@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
 import { BallLayoutProps } from '../../../../shared/types';
+import { logger } from '../../../../services/logger';
 
 // Import layer components
 import BackgroundLayer from './layers/BackgroundLayer';
@@ -9,6 +10,7 @@ import PhysicsLayer, { PhysicsLayerRef, BallPathLayer, BallLayer } from './layer
 export interface LayeredCanvasBallLayoutRef {
     spawnBall: (betValue?: number) => void;
     spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => void;
+    isReady: () => boolean;
 }
 
 /**
@@ -27,7 +29,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         const containerRef = useRef<HTMLDivElement>(null);
         const physicsLayerRef = useRef<PhysicsLayerRef>(null);
         const [containerSize, setContainerSize] = useState({ width: 400, height: 400 }); // Start with defaults
-        const [isInitialized] = useState(true); // Start as initialized
+        const [isInitialized, setIsInitialized] = useState(false); // Wait for physics layer to be ready
         const [boardDimensions, setBoardDimensions] = useState<{
             topMargin: number;
             bottomMargin: number;
@@ -163,16 +165,69 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 const mouseX = event.clientX - rect.left;
                 const mouseY = event.clientY - rect.top;
 
-                // Check if mouse is over payout slot area
-                const slotAreaTop = containerSize.height * 0.85; // Bottom 15% of container
+                // Check if mouse is over payout slot area (match integrated triangular board slots)
+                // Use same calculation as BackgroundLayer: triangleTopMargin + triangleBoardHeight - slotHeight/2
+                const triangleTopMargin = containerSize.height * 0.08;
+                const triangleBottomMargin = containerSize.height * 0.15;
+                const triangleBoardHeight = containerSize.height - triangleTopMargin - triangleBottomMargin;
+                const slotHeight = Math.max(20, Math.min(40, containerSize.height * 0.08));
+                const slotAreaTop = triangleTopMargin + triangleBoardHeight - slotHeight; // Integrated slots area
                 if (mouseY > slotAreaTop && multipliers.length > 0) {
-                    const slotWidth = Math.max(25, Math.min(60, containerSize.width / multipliers.length * 0.85));
-                    const slotIndex = Math.floor(mouseX / slotWidth);
+                    // Use EXACT same calculations as physics engine for perfect alignment
+                    const canvasWidth = containerSize.width;
+                    const triangleBoardWidth = canvasWidth * 0.8; // Match physics board width from PhysicsLayer
+                    const triangleBoardX = (canvasWidth - triangleBoardWidth) / 2;
+                    const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
+                    const totalSlotWidth = slotWidth * multipliers.length;
+                    const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2; // Center within board area
 
-                    if (slotIndex >= 0 && slotIndex < multipliers.length) {
+                    // Calculate which slot the mouse is over (relative to board positioning)
+                    const relativeMouseX = mouseX - startX;
+                    const slotIndex = Math.floor(relativeMouseX / slotWidth);
+
+                    // Ensure mouse is within the actual slot area bounds
+                    const isWithinSlotArea = mouseX >= startX && mouseX < (startX + totalSlotWidth);
+
+                    // Debug logging for position tracking
+                    logger.info('🎯 [CANVAS HOVER] Position Details (Integrated Slots):', {
+                        mouseX: mouseX.toFixed(1),
+                        mouseY: mouseY.toFixed(1),
+                        containerWidth: containerSize.width,
+                        containerHeight: containerSize.height,
+                        triangleTopMargin: triangleTopMargin.toFixed(1),
+                        triangleBottomMargin: triangleBottomMargin.toFixed(1),
+                        triangleBoardHeight: triangleBoardHeight.toFixed(1),
+                        triangleBoardWidth: triangleBoardWidth.toFixed(1),
+                        triangleBoardX: triangleBoardX.toFixed(1),
+                        slotWidth: slotWidth.toFixed(1),
+                        slotHeight: slotHeight.toFixed(1),
+                        totalSlotWidth: totalSlotWidth.toFixed(1),
+                        startX: startX.toFixed(1),
+                        endX: (startX + totalSlotWidth).toFixed(1),
+                        relativeMouseX: relativeMouseX.toFixed(1),
+                        calculatedSlotIndex: slotIndex,
+                        isWithinSlotArea,
+                        slotAreaTop: slotAreaTop.toFixed(1),
+                        slotAreaBottom: containerSize.height.toFixed(1),
+                        multipliersCount: multipliers.length
+                    });
+
+                    if (slotIndex >= 0 && slotIndex < multipliers.length && isWithinSlotArea) {
                         const multiplier = multipliers[slotIndex];
                         const probability = probabilities[slotIndex] || 0;
                         const winAmount = betAmount * multiplier;
+
+                        // Debug logging for hover tooltip activation
+                        logger.info('💡 [CANVAS HOVER] Tooltip activated for slot:', {
+                            slotIndex,
+                            multiplier,
+                            winAmount: winAmount.toFixed(2),
+                            probability: (probability * 100).toFixed(1) + '%',
+                            mouseX: mouseX.toFixed(1),
+                            relativeMouseX: relativeMouseX.toFixed(1),
+                            slotStartX: (startX + slotIndex * slotWidth).toFixed(1),
+                            slotEndX: (startX + (slotIndex + 1) * slotWidth).toFixed(1)
+                        });
 
                         setHoveredMultiplier({
                             multiplier,
@@ -209,20 +264,51 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         // Expose methods for external use
         useImperativeHandle(ref, () => ({
             spawnBall: (betValue?: number) => {
+                logger.info('🎯 [BALL LAYOUT] spawnBall called:', { betValue, physicsLayerExists: !!physicsLayerRef.current, isInitialized });
                 if (physicsLayerRef.current && isInitialized) {
                     physicsLayerRef.current.spawnBall(betValue);
+                } else {
+                    logger.info('❌ [BALL LAYOUT] Cannot spawn ball - physics layer not ready');
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                if (physicsLayerRef.current && physicsLayerRef.current.isReady()) {
+                logger.info('🎯 [BALL LAYOUT] spawnBallWithPath called:', { betValue, path, finalSlot, multiplier, physicsLayerExists: !!physicsLayerRef.current, isReady: physicsLayerRef.current?.isReady?.(), isInitialized });
+                if (physicsLayerRef.current?.isReady()) {
                     physicsLayerRef.current.spawnBallWithPath(betValue, path, finalSlot, multiplier);
+                } else {
+                    logger.info('❌ [BALL LAYOUT] Cannot spawn ball with path - physics layer not ready');
                 }
-            }
+            },
+            isReady: () => isInitialized && physicsLayerRef.current?.isReady()
         }), [isInitialized]);
 
 
-        // Force initialization on mount
+        // Check physics layer readiness
         useEffect(() => {
+            logger.info('🎯 [BALL LAYOUT] Starting physics readiness check');
+            let checkCount = 0;
+            const maxChecks = 50; // Max 5 seconds of checking
+
+            const checkPhysicsReady = () => {
+                checkCount++;
+                const isReady = physicsLayerRef.current?.isReady();
+                logger.info(`🎯 [BALL LAYOUT] Checking physics readiness (${checkCount}/${maxChecks}):`, { isReady, hasRef: !!physicsLayerRef.current });
+
+                if (isReady) {
+                    logger.info('✅ [BALL LAYOUT] Physics layer is ready, setting initialized to true');
+                    setIsInitialized(true);
+                } else if (checkCount >= maxChecks) {
+                    logger.info('❌ [BALL LAYOUT] Physics layer failed to initialize after max checks, forcing initialization');
+                    setIsInitialized(true); // Force initialization to prevent infinite loading
+                } else {
+                    logger.info('⏳ [BALL LAYOUT] Physics layer not ready yet, checking again in 100ms');
+                    // Check again in 100ms
+                    setTimeout(checkPhysicsReady, 100);
+                }
+            };
+
+            // Start checking after a short delay to allow physics layer to mount
+            setTimeout(checkPhysicsReady, 50);
         }, []);
 
         return (
@@ -247,6 +333,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     <BackgroundLayer
                         width={containerSize.width}
                         height={containerSize.height}
+                        rows={rows}
                         multipliers={multipliers}
                         className="background-layer"
                     />
@@ -265,20 +352,18 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 )}
 
                 {/* Layer 3: Physics Simulation (Clipped to Board) */}
-                {isInitialized && (
-                    <PhysicsLayer
-                        ref={physicsLayerRef}
-                        rows={rows}
-                        multipliers={multipliers}
-                        probabilities={probabilities}
-                        betAmount={betAmount}
-                        onBallHit={onBallHit}
-                        boardDimensions={boardDimensions}
-                        ballPaths={ballPaths}
-                        setBallPaths={setBallPaths}
-                        onBallPositionsUpdate={handleBallPositionsUpdate}
-                    />
-                )}
+                <PhysicsLayer
+                    ref={physicsLayerRef}
+                    rows={rows}
+                    multipliers={multipliers}
+                    probabilities={probabilities}
+                    betAmount={betAmount}
+                    onBallHit={onBallHit}
+                    boardDimensions={boardDimensions}
+                    ballPaths={ballPaths}
+                    setBallPaths={setBallPaths}
+                    onBallPositionsUpdate={handleBallPositionsUpdate}
+                />
 
                 {/* Layer 4: Ball Rendering (Above Physics) */}
                 {isInitialized && containerSize.width > 0 && containerSize.height > 0 && (

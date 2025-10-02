@@ -84,6 +84,9 @@ export class GameMessageHandler {
     };
 
     broadcastGameEvent = (message) => {
+        if (message.endBet || message.finish) {
+            console.log('🎯 GameMessageHandler broadcastGameEvent called with endBet/finish:', message);
+        }
         this.messageTransmitter.broadcast(message);
     };
 

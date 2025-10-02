@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Bodies, Body, Composite, Engine, Events, Runner, World } from 'matter-js';
 import { BallLayoutProps } from '../../../../../shared/types';
+import { logger } from '../../../../../services/logger';
 
 // Ball Path Trail Layer Component
 interface BallPathLayerProps {
@@ -254,6 +255,8 @@ interface BallBodyExtension {
     currentPathIndex?: number;
     isRemoved?: boolean;
     createdAt?: number;
+    wrongSlotHits?: number;
+    pinCollisions?: string[];
 }
 
 /**
@@ -327,7 +330,11 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
             }
 
             const initTimeout = setTimeout(() => {
-                if (!canvasRef.current) return;
+                logger.info('🎯 [PHYSICS LAYER] Starting initialization, canvas available:', !!canvasRef.current);
+                if (!canvasRef.current) {
+                    logger.info('❌ [PHYSICS LAYER] Canvas not available, skipping initialization');
+                    return;
+                }
 
                 const element = canvasRef.current;
                 const containerRect = element.getBoundingClientRect();
@@ -378,7 +385,8 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
                 // Track ball positions for path visualization and ball rendering
                 Events.on(engine, 'afterUpdate', () => {
-                    const balls = Composite.allBodies(engine.world).filter(body => body.label?.includes('ball'));
+                    const allBodies = Composite.allBodies(engine.world);
+                    const balls = allBodies.filter(body => body.label?.includes('ball'));
 
                     setBallPaths(prevPaths => {
                         const newPaths = new Map(prevPaths);
@@ -429,6 +437,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                                 betValue: ballExtension.betValue || 100
                             });
                         });
+
                         onBallPositionsUpdate(ballPositions);
                     }
                 });
@@ -457,29 +466,110 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                             const betValue = ballExtension.betValue || 100;
                             const finalSlot = parseInt(obstacleBody.label.split('-')[2]) || 0;
 
-                            ballExtension.isRemoved = true;
-                            ballBody.isSensor = true;
-                            ballBody.isStatic = true;
-                            removedBallsRef.current.add(ballBody.id);
-
-                            // Clean up ball path when ball is removed
-                            setBallPaths(prevPaths => {
-                                const newPaths = new Map(prevPaths);
-                                newPaths.delete(ballBody.id);
-                                return newPaths;
+                            // Debug logging for collision tracking
+                            logger.info('🎯 [PHYSICS COLLISION] Ball hit multiplier slot:', {
+                                label: obstacleBody.label,
+                                multiplier,
+                                finalSlot,
+                                betValue,
+                                ballPosition: { x: ballBody.position.x.toFixed(1), y: ballBody.position.y.toFixed(1) },
+                                obstaclePosition: { x: obstacleBody.position.x.toFixed(1), y: obstacleBody.position.y.toFixed(1) },
+                                isServiceGuided: ballExtension.isServiceGuided,
+                                expectedFinalSlot: ballExtension.expectedFinalSlot
                             });
 
-                            World.remove(engine.world, ballBody);
+                            // For service-guided balls, only remove if they hit the CORRECT final slot
+                            if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
+                                if (finalSlot === ballExtension.expectedFinalSlot) {
+                                    logger.info('🎯 [PHYSICS LAYER] Service-guided ball reached correct final slot', { finalSlot, expectedFinalSlot: ballExtension.expectedFinalSlot });
+                                    ballExtension.isRemoved = true;
+                                    ballBody.isSensor = true;
+                                    ballBody.isStatic = true;
+                                    removedBallsRef.current.add(ballBody.id);
 
-                            if (!ballExtension.hasTriggeredWin) {
-                                ballExtension.hasTriggeredWin = true;
+                                    // Clean up ball path when ball is removed
+                                    setBallPaths(prevPaths => {
+                                        const newPaths = new Map(prevPaths);
+                                        newPaths.delete(ballBody.id);
+                                        return newPaths;
+                                    });
 
-                                if (onBallHit) {
-                                    onBallHit(multiplier, betValue);
+                                    World.remove(engine.world, ballBody);
+
+                                    if (!ballExtension.hasTriggeredWin) {
+                                        ballExtension.hasTriggeredWin = true;
+
+                                        if (onBallHit) {
+                                            onBallHit(multiplier, betValue);
+                                        }
+
+                                        createWinTextParticle(betValue * multiplier, ballBody.position.x, ballBody.position.y);
+                                        playCollisionSound(multiplier);
+                                    }
+                                } else {
+                                    // Track wrong slot hits to prevent infinite loops
+                                    ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
+
+                                    if (ballExtension.wrongSlotHits >= 3) {
+                                        // Too many wrong collisions - force the ball to finish at the correct slot
+                                        logger.info('🎯 [PHYSICS LAYER] Service-guided ball hit too many wrong slots, forcing to correct slot:', ballExtension.expectedFinalSlot);
+
+                                        // Remove the ball and trigger win at correct slot
+                                        ballExtension.isRemoved = true;
+                                        ballBody.isSensor = true;
+                                        ballBody.isStatic = true;
+                                        removedBallsRef.current.add(ballBody.id);
+
+                                        // Clean up ball path when ball is removed
+                                        setBallPaths(prevPaths => {
+                                            const newPaths = new Map(prevPaths);
+                                            newPaths.delete(ballBody.id);
+                                            return newPaths;
+                                        });
+
+                                        World.remove(engine.world, ballBody);
+
+                                        if (!ballExtension.hasTriggeredWin) {
+                                            ballExtension.hasTriggeredWin = true;
+
+                                            if (onBallHit) {
+                                                onBallHit(ballExtension.multiplier || multiplier, betValue);
+                                            }
+
+                                            createWinTextParticle(betValue * (ballExtension.multiplier || multiplier), ballBody.position.x, ballBody.position.y);
+                                            playCollisionSound(ballExtension.multiplier || multiplier);
+                                        }
+                                    } else {
+                                        logger.info(`🎯 [PHYSICS LAYER] Service-guided ball hit wrong slot: ${finalSlot} (attempt ${ballExtension.wrongSlotHits}/3), Expected: ${ballExtension.expectedFinalSlot} - Continuing...`);
+                                        // Don't remove, let the ball continue following its service path
+                                    }
                                 }
+                            } else {
+                                // Regular balls - remove immediately
+                                ballExtension.isRemoved = true;
+                                ballBody.isSensor = true;
+                                ballBody.isStatic = true;
+                                removedBallsRef.current.add(ballBody.id);
 
-                                createWinTextParticle(betValue * multiplier, ballBody.position.x, ballBody.position.y);
-                                playCollisionSound(multiplier);
+                                // Clean up ball path when ball is removed
+                                setBallPaths(prevPaths => {
+                                    const newPaths = new Map(prevPaths);
+                                    newPaths.delete(ballBody.id);
+                                    return newPaths;
+                                });
+
+                                World.remove(engine.world, ballBody);
+
+                                if (!ballExtension.hasTriggeredWin) {
+                                    ballExtension.hasTriggeredWin = true;
+
+                                    if (onBallHit) {
+                                        onBallHit(multiplier, betValue);
+                                    }
+
+                                    createWinTextParticle(betValue * multiplier, ballBody.position.x, ballBody.position.y);
+                                    playCollisionSound(multiplier);
+                                }
                             }
                         }
                         // Handle pin collisions
@@ -490,12 +580,30 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
 
                             if (ballExtension.isServiceGuided && servicePath && currentPathIndex < servicePath.length) {
                                 const direction = servicePath[currentPathIndex];
-                                const forceMagnitude = 0.08;
+                                const forceMagnitude = 0.15; // Increased from 0.08 to make forces stronger
                                 const forceX = direction === 1 ? forceMagnitude : -forceMagnitude;
 
+                                // Track pin collision sequence
+                                ballExtension.pinCollisions = ballExtension.pinCollisions || [];
+                                ballExtension.pinCollisions.push(obstacleBody.label);
+
+                                logger.info(`🎯 [PHYSICS LAYER] Pin collision - Path step ${currentPathIndex}/${servicePath.length}: direction=${direction}, forceX=${forceX}, pin=${obstacleBody.label}, ballPos=(${ballBody.position.x.toFixed(1)}, ${ballBody.position.y.toFixed(1)}), collisionSequence=[${ballExtension.pinCollisions.join(',')}]`);
+
+                                // Apply stronger force and also set velocity for more reliable guidance
+                                Body.setVelocity(ballBody, { x: forceX * 2, y: ballBody.velocity.y });
                                 Body.applyForce(ballBody, ballBody.position, { x: forceX, y: 0 });
                                 ballExtension.currentPathIndex = currentPathIndex + 1;
+
+                                // Log remaining path
+                                if (currentPathIndex + 1 < servicePath.length) {
+                                    logger.info(`🎯 [PHYSICS LAYER] Remaining path: [${servicePath.slice(currentPathIndex + 1).join(',')}]`);
+                                } else {
+                                    logger.info(`✅ [PHYSICS LAYER] Path completed! Final collision sequence: [${ballExtension.pinCollisions.join(',')}]`);
+                                }
                             } else {
+                                if (ballExtension.isServiceGuided) {
+                                    logger.info(`⚠️ [PHYSICS LAYER] Service-guided ball hit pin but no path available: index=${currentPathIndex}, pathLength=${servicePath?.length}`);
+                                }
                                 const ballRadius = ballBody.circleRadius || 5;
                                 const deflectionStrength = Math.max(0.1, Math.min(0.3, 0.25 / (ballRadius / 5)));
 
@@ -506,6 +614,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                 });
 
                 setIsInitialized(true);
+                logger.info('✅ [PHYSICS LAYER] Initialization completed successfully');
 
             }, 100);
 
@@ -513,7 +622,7 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
                 clearTimeout(initTimeout);
                 cleanupPhysics();
             };
-        }, [rows, multipliers, onBallHit, boardDimensions, onBallPositionsUpdate]);
+        }, [rows]); // Only re-initialize when rows change, not when boardDimensions or other props change
 
         // Method to spawn physics ball
         const spawnBall = (betValue: number = 1) => {
@@ -601,21 +710,35 @@ const PhysicsLayer = forwardRef<PhysicsLayerRef, PhysicsLayerProps>(
             ballExtension.multiplier = multiplier;
             ballExtension.betValue = betValue;
             ballExtension.isServiceGuided = true;
+            ballExtension.wrongSlotHits = 0; // Track wrong slot collisions to prevent infinite loops
+            ballExtension.pinCollisions = []; // Track pin collision sequence for debugging
+
+            logger.info(`🎯 [PHYSICS LAYER] Ball spawned with service path: [${path.join(',')}], expectedSlot=${finalSlot}, multiplier=${multiplier}`);
 
             Composite.add(engineRef.current.world, ball);
         };
 
         // Expose methods for external use
         useImperativeHandle(ref, () => ({
-            isReady: () => isInitialized && !!engineRef.current,
+            isReady: () => {
+                const ready = isInitialized && !!engineRef.current;
+                logger.info('🎯 [PHYSICS LAYER] isReady called:', { isInitialized, hasEngine: !!engineRef.current, ready });
+                return ready;
+            },
             spawnBall: (betValue?: number) => {
+                logger.info('🎯 [PHYSICS LAYER] spawnBall called:', { betValue, isInitialized, hasEngine: !!engineRef.current });
                 if (isInitialized && engineRef.current) {
                     spawnBall(betValue);
+                } else {
+                    logger.info('❌ [PHYSICS LAYER] Cannot spawn ball - not ready');
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                logger.info('🎯 [PHYSICS LAYER] spawnBallWithPath called:', { betValue, path, finalSlot, multiplier, isInitialized, hasEngine: !!engineRef.current });
                 if (isInitialized && engineRef.current) {
                     spawnBallWithPath(betValue, path, finalSlot, multiplier);
+                } else {
+                    logger.info('❌ [PHYSICS LAYER] Cannot spawn ball with path - not ready');
                 }
             }
         }), [isInitialized]);

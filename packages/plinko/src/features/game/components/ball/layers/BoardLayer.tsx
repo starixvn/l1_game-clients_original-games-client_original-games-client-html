@@ -26,10 +26,10 @@ export interface BoardLayerProps {
 
 /**
  * Layer 2: Pin Visualization
- * Renders the pin visualization within the triangular area
+ * Renders the pin visualization within the triangular board area
  * - Pin visualization (white circles representing pegs)
- * Note: Triangular board area is defined by pin placement and ball clipping
- * Note: Payout slots are rendered in BackgroundLayer (Layer 1)
+ * - Uses same triangular board dimensions as BackgroundLayer for perfect alignment
+ * - Payout slots are integrated within the triangular board (BackgroundLayer)
  */
 const BoardLayer: React.FC<BoardLayerProps> = ({
     width,
@@ -62,47 +62,43 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
         // Save context state
         ctx.save();
 
-        // Use the same calculations as physics bodies to ensure proper alignment
+        // Use the same triangular board dimensions as BackgroundLayer for perfect alignment
+        // Calculate triangular board dimensions (matching BackgroundLayer exactly)
+        const triangleTopMargin = height * 0.08;
+        const triangleBottomMargin = height * 0.15;
+        const triangleBoardHeight = height - triangleTopMargin - triangleBottomMargin;
+        const triangleBoardWidth = width * 0.8; // Match physics board width
+        const triangleBoardX = (width - triangleBoardWidth) / 2;
+
+        // Use the same calculations as physics bodies to get pin positions
         // If multipliers is empty, use default multipliers for board calculation
         const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
 
         const { pins } = createPhysicsBodies(width, height, rows, effectiveMultipliers);
 
-        // Calculate board dimensions based on actual pin positions
+        // Calculate board dimensions based on triangular board area (not pin bounds)
         if (pins.length === 0) {
             return;
         }
 
-        // Find the bounds of all pins to determine board area
-        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-
-        pins.forEach((pin, index) => {
-            const bounds = pin.bounds;
-            minX = Math.min(minX, bounds.min.x);
-            maxX = Math.max(maxX, bounds.max.x);
-            minY = Math.min(minY, bounds.min.y);
-            maxY = Math.max(maxY, bounds.max.y);
-        });
-
-        // Add padding around the pin matrix
-        const padding = 20;
-        const boardTopMargin = minY - padding;
-        const boardBottomMargin = height * 0.15; // Keep bottom margin for slots
-        const boardLeftMargin = minX - padding;
-        const boardRightMargin = maxX + padding;
+        // Use triangular board dimensions for consistent layout
+        const boardTopMargin = triangleTopMargin;
+        const boardBottomMargin = triangleBottomMargin;
+        const boardLeftMargin = triangleBoardX;
+        const boardRightMargin = triangleBoardX + triangleBoardWidth;
 
         // Calculate board dimensions
-        const boardWidth = boardRightMargin - boardLeftMargin;
-        const boardHeight = maxY - boardTopMargin + padding;
-        const boardX = boardLeftMargin;
+        const boardWidth = triangleBoardWidth;
+        const boardHeight = triangleBoardHeight;
+        const boardX = triangleBoardX;
 
-        // Calculate triangular coordinates (same as used for drawing)
-        const triangleTopX = boardX + boardWidth / 2;
-        const triangleTopY = boardTopMargin;
-        const triangleBottomLeftX = boardX - padding;
-        const triangleBottomLeftY = maxY + padding;
-        const triangleBottomRightX = boardX + boardWidth + padding;
-        const triangleBottomRightY = maxY + padding;
+        // Calculate triangular coordinates (matching BackgroundLayer)
+        const triangleTopX = width / 2; // Center of canvas
+        const triangleTopY = triangleTopMargin;
+        const triangleBottomLeftX = triangleBoardX;
+        const triangleBottomLeftY = triangleTopMargin + triangleBoardHeight;
+        const triangleBottomRightX = triangleBoardX + triangleBoardWidth;
+        const triangleBottomRightY = triangleTopMargin + triangleBoardHeight;
 
         // Notify parent component about calculated board dimensions
         if (onBoardDimensionsCalculated) {
@@ -128,13 +124,14 @@ const BoardLayer: React.FC<BoardLayerProps> = ({
         }
 
         // 1. Draw pins as small white circles using actual physics body positions
-        // The triangular board area is defined by pin placement and ball clipping
+        // Pins are positioned within the triangular board area (matching BackgroundLayer)
 
         pins.forEach((pin, index) => {
             const bounds = pin.bounds;
             const centerX = (bounds.min.x + bounds.max.x) / 2;
             const centerY = (bounds.min.y + bounds.max.y) / 2;
-            const pinRadius = Math.max(2, Math.min(4, (bounds.max.x - bounds.min.x) / 2));
+            // Dynamic pin radius based on row count - larger pegs for fewer rows, smaller for more rows
+            const pinRadius = Math.max(2, Math.min(8, 48 / rows));
 
             // Draw pin with white fill and subtle border
             ctx.fillStyle = '#F5DCFF'; // Light gray-white

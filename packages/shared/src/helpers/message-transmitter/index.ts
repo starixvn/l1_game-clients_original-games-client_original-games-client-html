@@ -25,6 +25,9 @@ export default function messageTransmitter() {
     const broadcast = (message: any) => {
         for (const listener of listeners) {
             if (message[listener.messageKey] != null) {
+                if (listener.messageKey === 'endBet') {
+                    console.log('🎯 MessageTransmitter: Calling endBet handler with message:', message);
+                }
                 listener.handleMessage(message);
             }
         }

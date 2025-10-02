@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 export interface BackgroundLayerProps {
     width: number;
     height: number;
+    rows: number;
     multipliers?: number[];
     className?: string;
 }
@@ -13,12 +14,14 @@ export interface BackgroundLayerProps {
  * - Background gradient (full canvas)
  * - Light effects (full canvas)
  * - Decorative elements (sides)
- * - Payout slots (bottom, outside triangular area)
+ * - Triangular board area (with integrated payout slots)
+ * - Payout slots (integrated within triangular board at bottom)
  * - Multiplier text (on slots)
  */
 const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
     width,
     height,
+    rows,
     multipliers = [],
     className = 'background-layer'
 }) => {
@@ -97,21 +100,53 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
         ctx.fill();
         ctx.restore();
 
-        // 4. Payout slots at the bottom with proper colors (full canvas - bottom area)
+        // 4. Triangular board area with integrated payout slots
         if (multipliers.length > 0) {
-            const slotWidth = Math.max(25, Math.min(60, width / multipliers.length * 0.85));
-            const slotHeight = Math.max(20, Math.min(40, height * 0.08));
-            const totalSlotWidth = slotWidth * multipliers.length;
-            const startX = (width - totalSlotWidth) / 2;
-            const slotY = height - height * 0.15 + slotHeight / 2; // Position below triangular area
+            // Calculate triangular board dimensions (full width background)
+            const triangleTopMargin = height * 0.08;
+            const triangleBottomMargin = height * 0.15;
+            const triangleBoardHeight = height - triangleTopMargin - triangleBottomMargin;
+            const triangleBoardWidth = width * 1.0; // FULL WIDTH: Span entire canvas
+            const triangleBoardX = (width - triangleBoardWidth) / 2;
 
-            multipliers.forEach((multiplier, index) => {
-                const slotX = startX + index * slotWidth;
+            // Draw triangular board background
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = '#4a90e2';
 
-                // Color coding based on multiplier value
+            // Create triangular path
+            ctx.beginPath();
+            ctx.moveTo(width / 2, triangleTopMargin); // Top point (center)
+            ctx.lineTo(triangleBoardX, triangleTopMargin + triangleBoardHeight); // Bottom left
+            ctx.lineTo(triangleBoardX + triangleBoardWidth, triangleTopMargin + triangleBoardHeight); // Bottom right
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Calculate payout slots within the triangular board (based on rows + 1)
+            const numSlots = Math.max(rows + 1, multipliers.length); // Use rows+1 or multipliers length, whichever is larger
+            const slotHeight = Math.max(20, Math.min(40, height * 0.08)); // DECREASED: More modest slot height
+            const slotGap = Math.max(2, Math.min(6, width * 0.005)); // Smaller gap for more slots
+
+            // Calculate slot width based on available triangular board width to prevent overflow
+            const availableWidth = triangleBoardWidth;
+            const totalGapWidth = slotGap * (numSlots - 1);
+            const availableSlotWidth = Math.max(availableWidth - totalGapWidth, numSlots * 15); // Minimum 15px per slot
+            const slotWidth = Math.max(15, Math.min(50, availableSlotWidth / numSlots)); // Fit within available space
+
+            const totalSlotWidth = slotWidth * numSlots + slotGap * (numSlots - 1); // Recalculate total width
+            const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2; // Center within board area
+            const slotY = triangleTopMargin + triangleBoardHeight + slotHeight / 2; // Below the triangular background
+
+            // Draw slots for each position (rows + 1 slots total)
+            for (let index = 0; index < numSlots; index++) {
+                const slotX = startX + index * (slotWidth + slotGap);
+                const multiplier = multipliers[index] || 1.0; // Default multiplier if not enough provided
+
+                // Color coding based on multiplier value (matching expected image)
                 let slotColor = '#2c3e50'; // Default dark blue
                 if (multiplier >= 100) {
-                    slotColor = '#8e44ad'; // Purple for highest multipliers
+                    slotColor = '#8e44ad'; // Purple for highest multipliers (like 190.0)
                 } else if (multiplier >= 15) {
                     slotColor = '#9b59b6'; // Light purple
                 } else if (multiplier >= 2) {
@@ -122,14 +157,25 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
                     slotColor = '#1f4e79'; // Darkest blue
                 }
 
-                // Draw slot background
-                ctx.fillStyle = slotColor;
+                // Draw slot background with 3D effect
+                const gradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
+                gradient.addColorStop(0, slotColor);
+                gradient.addColorStop(1, '#1a252f');
+                ctx.fillStyle = gradient;
                 ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
 
-                // Draw slot border
+                // Draw slot border with highlight
                 ctx.strokeStyle = '#34495e';
                 ctx.lineWidth = 1;
                 ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+
+                // Add subtle highlight on top edge
+                ctx.strokeStyle = '#4a90e2';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(slotX, slotY - slotHeight / 2);
+                ctx.lineTo(slotX + slotWidth, slotY - slotHeight / 2);
+                ctx.stroke();
 
                 // Draw multiplier text
                 ctx.fillStyle = '#ffffff';
@@ -141,7 +187,7 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
                     slotX + slotWidth / 2,
                     slotY
                 );
-            });
+            }
         } else {
             // No multipliers provided, skipping payout slots
         }
@@ -149,7 +195,7 @@ const BackgroundLayer: React.FC<BackgroundLayerProps> = ({
         // Restore context state
         ctx.restore();
 
-    }, [width, height, multipliers]);
+    }, [width, height, rows, multipliers]);
 
     return (
         <canvas
