@@ -158,7 +158,7 @@ const PFVerify: FC<{ renderResultBlock: Function }> = ({ renderResultBlock }) =>
             gameMessageHandler.removeHandler(pfResultHandler);
         };
     }, []);
-
+console.log("betDetailData in pf", betDetailData);
     return (
         <div className={Styles["pf-setting-container"]}>
             <div className="result-block">{renderResultBlock(betDetailData.drawInfo)}</div>

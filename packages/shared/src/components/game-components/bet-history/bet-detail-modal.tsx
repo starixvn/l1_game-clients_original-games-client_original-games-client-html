@@ -13,7 +13,7 @@ const BetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
             toggleBetDetail: state.toggleBetDetail,
         }))
     );
-    console.log("isShowBetDetail", isShowBetDetail);
+
     const dashboardElement = useMemo(() => {
         return document.getElementById("dashboard");
     }, []);
