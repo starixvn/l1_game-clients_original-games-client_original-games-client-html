@@ -75,11 +75,8 @@ export interface MultiplierDisplayProps {
 }
 
 export interface BallLayoutProps {
-    rows: number;
-    ballsPerRow?: number[];
     multipliers?: number[];
     probabilities?: number[];
-    betAmount?: number;
     onBallHit?: (multiplier: number, betValue: number) => void;
 }
 
@@ -98,31 +95,31 @@ export interface WinMessageProps {
 
 export interface BetControlsProps {
     betAmount: number;
-    gameMode: 'Lightning' | 'Low' | 'Medium' | 'High';
+    gameMode: "Lightning" | "Low" | "Medium" | "High";
     rows: number;
     numberOfBets: number;
-    onWinAction: 'Reset' | 'Increase';
+    onWinAction: "Reset" | "Increase";
     onWinPercentage: number;
-    onLossAction: 'Reset' | 'Increase';
+    onLossAction: "Reset" | "Increase";
     onLossPercentage: number;
     stopOnWin: number;
     stopOnLoss: number;
-    activeTab: 'Manual' | 'Auto';
+    activeTab: "Manual" | "Auto";
     onBetAmountChange: (amount: number) => void;
-    onGameModeChange: (mode: BetControlsProps['gameMode']) => void;
+    onGameModeChange: (mode: BetControlsProps["gameMode"]) => void;
     onRowsChange: (rows: number) => void;
     onNumberOfBetsChange: (bets: number) => void;
-    onWinActionChange: (action: BetControlsProps['onWinAction']) => void;
+    onWinActionChange: (action: BetControlsProps["onWinAction"]) => void;
     onWinPercentageChange: (percentage: number) => void;
-    onLossActionChange: (action: BetControlsProps['onLossAction']) => void;
+    onLossActionChange: (action: BetControlsProps["onLossAction"]) => void;
     onLossPercentageChange: (percentage: number) => void;
     onStopOnWinChange: (amount: number) => void;
     onStopOnLossChange: (amount: number) => void;
 }
 
 export interface GameTabsProps {
-    activeTab: 'Manual' | 'Auto';
-    onTabChange: (tab: 'Manual' | 'Auto') => void;
+    activeTab: "Manual" | "Auto";
+    onTabChange: (tab: "Manual" | "Auto") => void;
     soundEnabled: boolean;
     onSoundToggle: () => void;
 }
@@ -140,12 +137,12 @@ export interface BetRecord {
 
 export interface BetsTableProps {
     bets: BetRecord[];
-    activeTab: 'All' | 'My' | 'HighRoller';
-    onTabChange: (tab: BetsTableProps['activeTab']) => void;
+    activeTab: "All" | "My" | "HighRoller";
+    onTabChange: (tab: BetsTableProps["activeTab"]) => void;
 }
 
 export interface PayoutsRowProps {
-    gameMode: BetControlsProps['gameMode'];
+    gameMode: BetControlsProps["gameMode"];
     rows: number;
     betAmount: number;
 }
@@ -164,8 +161,8 @@ export interface BetAmountInputProps {
 }
 
 export interface GameModeSelectorProps {
-    gameMode: BetControlsProps['gameMode'];
-    onGameModeChange: (mode: BetControlsProps['gameMode']) => void;
+    gameMode: BetControlsProps["gameMode"];
+    onGameModeChange: (mode: BetControlsProps["gameMode"]) => void;
 }
 
 export interface RowsSelectorProps {
@@ -180,16 +177,16 @@ export interface NumberOfBetsSelectorProps {
 }
 
 export interface OnWinControlsProps {
-    onWinAction: BetControlsProps['onWinAction'];
+    onWinAction: BetControlsProps["onWinAction"];
     onWinPercentage: number;
-    onWinActionChange: (action: BetControlsProps['onWinAction']) => void;
+    onWinActionChange: (action: BetControlsProps["onWinAction"]) => void;
     onWinPercentageChange: (percentage: number) => void;
 }
 
 export interface OnLossControlsProps {
-    onLossAction: BetControlsProps['onLossAction'];
+    onLossAction: BetControlsProps["onLossAction"];
     onLossPercentage: number;
-    onLossActionChange: (action: BetControlsProps['onLossAction']) => void;
+    onLossActionChange: (action: BetControlsProps["onLossAction"]) => void;
     onLossPercentageChange: (percentage: number) => void;
 }
 
@@ -218,8 +215,8 @@ export interface BallRowProps {
 
 // Sub-component interfaces for BetsTable
 export interface BetsTableHeaderProps {
-    activeTab: BetsTableProps['activeTab'];
-    onTabChange: (tab: BetsTableProps['activeTab']) => void;
+    activeTab: BetsTableProps["activeTab"];
+    onTabChange: (tab: BetsTableProps["activeTab"]) => void;
 }
 
 export interface BetsTableRowProps {
@@ -229,8 +226,8 @@ export interface BetsTableRowProps {
 
 // Sub-component interfaces for GameTabs
 export interface TabNavigationProps {
-    activeTab: GameTabsProps['activeTab'];
-    onTabChange: (tab: GameTabsProps['activeTab']) => void;
+    activeTab: GameTabsProps["activeTab"];
+    onTabChange: (tab: GameTabsProps["activeTab"]) => void;
 }
 
 export interface IconControlsProps {
@@ -241,19 +238,8 @@ export interface IconControlsProps {
 // Main game state interface
 export interface GameState {
     currentWin: number;
-    betAmount: number;
-    gameMode: BetControlsProps['gameMode'];
-    rows: number;
-    numberOfBets: number;
-    onWinAction: BetControlsProps['onWinAction'];
-    onWinPercentage: number;
-    onLossAction: BetControlsProps['onLossAction'];
-    onLossPercentage: number;
-    stopOnWin: number;
-    stopOnLoss: number;
-    activeTab: GameTabsProps['activeTab'];
     soundEnabled: boolean;
     balance: number;
     bets: BetRecord[];
-    betsTab: BetsTableProps['activeTab'];
+    betsTab: BetsTableProps["activeTab"];
 }

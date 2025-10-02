@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { BetControl, BetsTable } from "../../features/betting/components";
@@ -12,32 +12,21 @@ import { messageEventType } from "@shared/components/game-base/handlers";
 
 const defaultGameState: GameState = {
     currentWin: 106,
-    betAmount: 100,
-    gameMode: 'Lightning',
-    rows: 9,
-    numberOfBets: 20000,
-    onWinAction: 'Reset',
-    onWinPercentage: 0,
-    onLossAction: 'Reset',
-    onLossPercentage: 0,
-    stopOnWin: 0,
-    stopOnLoss: 0,
-    activeTab: 'Manual',
     soundEnabled: true,
     balance: 10000, // Default balance for demo
     bets: [
-        { player: 'A***nnie', betAmount: 100, payout: 100 },
-        { player: 'A***nnie', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.99 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 4444.30 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
-        { player: 'john_smith92', betAmount: 100, payout: 100 },
+        { player: "A***nnie", betAmount: 100, payout: 100 },
+        { player: "A***nnie", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.99 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
+        { player: "john_smith92", betAmount: 100, payout: 100 },
     ],
-    betsTab: 'All'
+    betsTab: "All",
 };
 
 interface PlinkoGameProps {
@@ -86,14 +75,14 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
         // Register handler for endBet message (contains the finish object with result path)
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
-            console.log('🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path', action);
-            console.log('🎯 [PLINKO GAME] Ball layout ref status:', {
+            console.log("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
+            console.log("🎯 [PLINKO GAME] Ball layout ref status:", {
                 exists: !!ballLayoutRef.current,
                 isReady: ballLayoutRef.current?.isReady?.(),
                 type: typeof ballLayoutRef.current,
-                current: ballLayoutRef.current
+                current: ballLayoutRef.current,
             });
-            logger.info('🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path', action);
+            logger.info("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
 
             if (action?.finish?.result) {
                 const resultPath = action.finish.result;
@@ -102,42 +91,34 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
 
-                console.log('🎯 [PLINKO GAME] Server result path details:', {
+                console.log("🎯 [PLINKO GAME] Server result path details:", {
                     resultPath,
                     pathLength: resultPath.length,
                     expectedSlot: slotIndex,
-                    rows: gameState.rows,
-                    expectedSteps: gameState.rows - 1,
                     pathSum: resultPath.reduce((sum, val) => sum + val, 0), // Count of 1s
-                    pathBreakdown: resultPath.join(''),
-                    isValidLength: resultPath.length === gameState.rows - 1
+                    pathBreakdown: resultPath.join(""),
                 });
 
-                // Validate path length
-                if (resultPath.length !== gameState.rows - 1) {
-                    console.warn(`⚠️ [PLINKO GAME] Path length mismatch! Expected ${gameState.rows - 1} steps for ${gameState.rows} rows, got ${resultPath.length} steps`);
-                }
-                logger.info('🎯 [PLINKO GAME] Spawning ball with server result path', {
+                logger.info("🎯 [PLINKO GAME] Spawning ball with server result path", {
                     resultPath,
                     pathLength: resultPath.length,
                     slotIndex,
                     multiplier,
                     betAmount,
-                    winAmount
+                    winAmount,
                 });
 
                 // Function to attempt spawning with retry logic
                 const attemptSpawnBall = (retryCount = 0) => {
                     const maxRetries = 10; // Try for up to ~1 second (10 * 100ms)
 
-
                     if (ballLayoutRef.current?.spawnBallWithPath) {
                         try {
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
-                            logger.info('✅ [PLINKO GAME] Ball spawned successfully with server path');
+                            logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path");
                             return true; // Success
                         } catch (error) {
-                            logger.error('❌ [PLINKO GAME] Error spawning ball', { error });
+                            logger.error("❌ [PLINKO GAME] Error spawning ball", { error });
                             return false; // Failed
                         }
                     } else {
@@ -145,7 +126,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                             // Retry after 100ms
                             setTimeout(() => attemptSpawnBall(retryCount + 1), 100);
                         } else {
-                            logger.error('❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning');
+                            logger.error("❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning");
                         }
                         return false; // Still not ready, will retry
                     }
@@ -154,7 +135,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 // Start attempting to spawn the ball
                 attemptSpawnBall();
             } else {
-                logger.warn('⚠️ [PLINKO GAME] EndBet message received but no result path found', action);
+                logger.warn("⚠️ [PLINKO GAME] EndBet message received but no result path found", action);
             }
         });
 
@@ -196,15 +177,14 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated since we're in the game
     const isBetting = false; // Plinko manages its own betting state
 
-
     // Send bets directly with clientSeed (compatible with PF system)
-    const placeBet = (amount: number, gameMode: number, rows: number, clientSeedParam: string) => {
+    const placeBet = (amount: number, gameMode: number, rows: number) => {
         if (socket?.connected) {
             const betData = {
                 amount,
                 gameMode,
                 numberOfRows: rows,
-                clientSeed: clientSeedParam
+                clientSeed,
             };
             socket.emit("bet", betData);
         }
@@ -213,12 +193,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         // Plinko handles clearing results internally
     };
 
-    // Ball layout configuration - dynamic based on rows (memoized to prevent re-renders)
-    const ballsPerRow = useMemo(() =>
-        Array.from({ length: gameState.rows }, (_, i) => i + 3),
-        [gameState.rows]
-    );
-
     // Socket connection is now handled by shared InitSocketIO in page.tsx
 
     // Handle bet results for auto bet - disabled since lastBetResult is not provided by shared system
@@ -226,7 +200,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     // Update multipliers from service configs - disabled since gameConfigs is not provided by shared system
     // Plinko uses hardcoded multipliers for now
-
 
     // Handle ball collision with multiplier slots
     const handleBallHit = (multiplier: number, betValue: number) => {
@@ -237,19 +210,19 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             isVisible: true,
             multiplier,
             betAmount: betValue,
-            message
+            message,
         });
 
         // Update game state with win amount
-        setGameState(prev => ({
+        setGameState((prev) => ({
             ...prev,
-            currentWin: payout
+            currentWin: payout,
         }));
     };
 
     // Handle win message animation end
     const handleWinMessageEnd = () => {
-        setWinMessage(prev => ({ ...prev, isVisible: false }));
+        setWinMessage((prev) => ({ ...prev, isVisible: false }));
         clearBetResult(); // Clear the bet result after win message
     };
 
@@ -257,92 +230,19 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Plinko handles bet results through its own internal logic
 
     // Convert service player bets to UI format
-    const convertedBets: BetRecord[] = useMemo(() =>
-        Object.entries(ownBets).map(([choice, amount]) => ({
-            player: 'You', // Since ownBets is for the current player
-            betAmount: amount,
-            payout: 0 // Shared system doesn't provide payout info
-        })),
+    const convertedBets: BetRecord[] = useMemo(
+        () =>
+            Object.entries(ownBets).map(([choice, amount]) => ({
+                player: "You", // Since ownBets is for the current player
+                betAmount: amount,
+                payout: 0, // Shared system doesn't provide payout info
+            })),
         [ownBets]
     );
 
     const updateGameState = (updates: Partial<GameState>) => {
-        setGameState(prev => ({ ...prev, ...updates }));
+        setGameState((prev) => ({ ...prev, ...updates }));
     };
-
-    // Bet placement handlers for BetControl
-    const handlePlaceBet = useCallback(() => {
-        if (isConnected && isAuthenticated && localGameInitialized) {
-            // Manual bet mode - place single bet
-            const gameModeMap: Record<string, number> = {
-                'Low': 0,
-                'Medium': 1,
-                'High': 2,
-                'Lightning': 0 // Default to Low for Lightning
-            };
-            const gameMode = gameModeMap[gameState.gameMode] ?? 0;
-
-            placeBet(gameState.betAmount, gameMode, gameState.rows, clientSeed);
-        }
-    }, [isConnected, isAuthenticated, localGameInitialized, gameState.betAmount, gameState.gameMode, gameState.rows, clientSeed, placeBet]);
-
-    const handleStartAutoBet = useCallback(async () => {
-        // Validate before starting
-        if (gameState.balance < gameState.betAmount) {
-            toast.error('Insufficient balance');
-            return;
-        }
-        if (gameState.numberOfBets < 1) {
-            toast.error('Number of bets must be at least 1');
-            return;
-        }
-
-        // Create AutoBetHandler instance if not exists
-        if (!autoBetHandlerRef.current) {
-            const { AutoBetHandler } = await import('../../services/autoBetHandler');
-
-            const config = {
-                numberOfBets: gameState.numberOfBets,
-                onWinAction: gameState.onWinAction,
-                onWinPercentage: gameState.onWinPercentage,
-                onLossAction: gameState.onLossAction,
-                onLossPercentage: gameState.onLossPercentage,
-                stopOnWin: gameState.stopOnWin,
-                stopOnLoss: gameState.stopOnLoss,
-                initialBetAmount: gameState.betAmount,
-                gameMode: (() => {
-                    const gameModeMap: Record<string, number> = {
-                        'Low': 0,
-                        'Medium': 1,
-                        'High': 2,
-                        'Lightning': 0 // Default to Low for Lightning
-                    };
-                    return gameModeMap[gameState.gameMode] ?? 0;
-                })(),
-                numberOfRows: gameState.rows
-            };
-
-            const callbacks = {
-                onBetPlaced: (betAmount: number) => {
-                    // Auto bet placed callback
-                },
-                onBetResult: () => {
-                    // Forward to parent if needed
-                },
-                onAutoBetComplete: (reason: string) => {
-                    setIsAutoBetRunning(false);
-                },
-                onBalanceUpdate: (newBalance: number) => {
-                    updateGameState({ balance: newBalance });
-                }
-            };
-
-            autoBetHandlerRef.current = new AutoBetHandler(config, gameState.balance, (amount, gameMode, rows) => placeBet(amount, gameMode, rows, clientSeed), callbacks);
-        }
-
-        setIsAutoBetRunning(true);
-        autoBetHandlerRef.current.start();
-    }, [gameState.balance, gameState.betAmount, gameState.numberOfBets, gameState.onWinAction, gameState.onWinPercentage, gameState.onLossAction, gameState.onLossPercentage, gameState.stopOnWin, gameState.stopOnLoss, gameState.gameMode, gameState.rows, clientSeed, placeBet, updateGameState]);
 
     const handleStopAutoBet = useCallback(() => {
         // Stop the AutoBetHandler
@@ -352,36 +252,38 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     // Determine disabled state and message
     const isBetDisabled = !localGameInitialized || !isConnected || !isAuthenticated;
-    const disabledMessage = !isConnected ? '(Connecting...)' :
-        !isAuthenticated ? '(Authenticating...)' :
-            !localGameInitialized ? '(Initializing...)' : '';
+    const disabledMessage = !isConnected
+        ? "(Connecting...)"
+        : !isAuthenticated
+        ? "(Authenticating...)"
+        : !localGameInitialized
+        ? "(Initializing...)"
+        : "";
 
     return (
         <div className="main-container">
             {/* Logger Controls - positioned outside game-info to avoid clipping */}
-            <div style={{
-                position: 'absolute',
-                top: '10px',
-                left: '10px',
-                right: '10px',
-                zIndex: 10000
-            }}>
+            <div
+                style={{
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    right: "10px",
+                    zIndex: 10000,
+                }}
+            >
                 <LoggerControls className="w-full" />
             </div>
 
             <div className="game-info">
-
                 <div className="frame-game">
                     <div className="frame-2">
                         <div className="game-layout-container">
                             <div className="ball-layout-wrapper">
                                 <BallLayout
                                     ref={ballLayoutRef}
-                                    rows={gameState.rows}
-                                    ballsPerRow={ballsPerRow}
                                     multipliers={payoutMultipliers}
                                     probabilities={payoutProbabilities}
-                                    betAmount={gameState.betAmount}
                                     onBallHit={handleBallHit}
                                 />
                             </div>
@@ -403,33 +305,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     />
                 </div>
 
-                <BetControl
-                    sharedConfig={{
-                        betAmount: gameState.betAmount,
-                        gameMode: gameState.gameMode,
-                        rows: gameState.rows
-                    }}
-                    autoConfig={{
-                        numberOfBets: gameState.numberOfBets,
-                        onWinAction: gameState.onWinAction,
-                        onWinPercentage: gameState.onWinPercentage,
-                        onLossAction: gameState.onLossAction,
-                        onLossPercentage: gameState.onLossPercentage,
-                        stopOnWin: gameState.stopOnWin,
-                        stopOnLoss: gameState.stopOnLoss
-                    }}
-                    activeTab={gameState.activeTab}
-                    onSharedConfigChange={(config) => updateGameState(config)}
-                    onAutoConfigChange={(config) => updateGameState(config)}
-                    onTabChange={(tab) => updateGameState({ activeTab: tab })}
-                    onBalanceUpdate={(newBalance) => updateGameState({ balance: newBalance })}
-                    onPlaceBet={handlePlaceBet}
-                    onStartAutoBet={handleStartAutoBet}
-                    onStopAutoBet={handleStopAutoBet}
-                    isAutoBetRunning={isAutoBetRunning}
-                    isDisabled={isBetDisabled}
-                    disabledMessage={disabledMessage}
-                />
+                <BetControl onPlaceBet={placeBet} />
 
                 <BetsTable
                     bets={convertedBets.length > 0 ? convertedBets : gameState.bets}
@@ -442,6 +318,3 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 };
 
 export default PlinkoGame;
-
-
-

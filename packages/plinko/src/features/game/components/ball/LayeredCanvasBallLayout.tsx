@@ -1,10 +1,12 @@
-import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
-import { BallLayoutProps } from '../../../../shared/types';
+import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
+import { BallLayoutProps } from "../../../../shared/types";
 
 // Import layer components
-import BackgroundLayer from './layers/BackgroundLayer';
-import BoardLayer from './layers/BoardLayer';
-import PhysicsLayer, { PhysicsLayerRef, BallPathLayer, BallLayer } from './layers/PhysicsLayer';
+import BackgroundLayer from "./layers/BackgroundLayer";
+import BoardLayer from "./layers/BoardLayer";
+import PhysicsLayer, { PhysicsLayerRef, BallPathLayer, BallLayer } from "./layers/PhysicsLayer";
+import usePlinkoBetStore from "@/shared/stores/plinko-bet-store";
+import { useShallow } from "zustand/shallow";
 
 export interface LayeredCanvasBallLayoutRef {
     spawnBall: (betValue?: number) => void;
@@ -24,7 +26,13 @@ export interface LayeredCanvasBallLayoutRef {
  * - Layer 6: UI Overlays (loading indicators, debug info, hover tooltips)
  */
 const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayoutProps>(
-    ({ rows, multipliers = [], probabilities = [], betAmount = 100, onBallHit }, ref) => {
+    ({ multipliers = [], probabilities = [], onBallHit }, ref) => {
+        const { rows, betAmount } = usePlinkoBetStore(
+            useShallow((state) => ({
+                rows: state.numberOfRows,
+                betAmount: state.betAmount,
+            }))
+        );
         const containerRef = useRef<HTMLDivElement>(null);
         const physicsLayerRef = useRef<PhysicsLayerRef>(null);
         const [containerSize, setContainerSize] = useState({ width: 400, height: 400 }); // Start with defaults
@@ -45,13 +53,20 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             triangleBottomRightY: number;
         } | null>(null);
 
-        const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number, y: number, timestamp: number, radius?: number }>>>(new Map());
-        const [ballPositions, setBallPositions] = useState<Map<number, { x: number, y: number, radius: number, betValue: number }>>(new Map());
+        const [ballPaths, setBallPaths] = useState<Map<number, Array<{ x: number; y: number; timestamp: number; radius?: number }>>>(
+            new Map()
+        );
+        const [ballPositions, setBallPositions] = useState<Map<number, { x: number; y: number; radius: number; betValue: number }>>(
+            new Map()
+        );
 
         // Callback for ball position updates from physics layer
-        const handleBallPositionsUpdate = useCallback((positions: Map<number, { x: number, y: number, radius: number, betValue: number }>) => {
-            setBallPositions(positions);
-        }, []);
+        const handleBallPositionsUpdate = useCallback(
+            (positions: Map<number, { x: number; y: number; radius: number; betValue: number }>) => {
+                setBallPositions(positions);
+            },
+            []
+        );
 
         // Hover tooltip state
         const [hoveredMultiplier, setHoveredMultiplier] = useState<{
@@ -63,43 +78,48 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
         } | null>(null);
 
         // Memoized callback for board dimensions
-        const handleBoardDimensionsCalculated = useCallback((dimensions: {
-            topMargin: number;
-            bottomMargin: number;
-            leftMargin: number;
-            rightMargin: number;
-            boardWidth: number;
-            boardHeight: number;
-            boardX: number;
-            triangleTopX: number;
-            triangleTopY: number;
-            triangleBottomLeftX: number;
-            triangleBottomLeftY: number;
-            triangleBottomRightX: number;
-            triangleBottomRightY: number;
-        }) => {
-            // Only update if dimensions actually changed
-            setBoardDimensions(prev => {
-                if (!prev ||
-                    prev.topMargin !== dimensions.topMargin ||
-                    prev.bottomMargin !== dimensions.bottomMargin ||
-                    prev.leftMargin !== dimensions.leftMargin ||
-                    prev.rightMargin !== dimensions.rightMargin ||
-                    prev.boardWidth !== dimensions.boardWidth ||
-                    prev.boardHeight !== dimensions.boardHeight ||
-                    prev.boardX !== dimensions.boardX ||
-                    prev.triangleTopX !== dimensions.triangleTopX ||
-                    prev.triangleTopY !== dimensions.triangleTopY ||
-                    prev.triangleBottomLeftX !== dimensions.triangleBottomLeftX ||
-                    prev.triangleBottomLeftY !== dimensions.triangleBottomLeftY ||
-                    prev.triangleBottomRightX !== dimensions.triangleBottomRightX ||
-                    prev.triangleBottomRightY !== dimensions.triangleBottomRightY) {
-                    return dimensions;
-                }
+        const handleBoardDimensionsCalculated = useCallback(
+            (dimensions: {
+                topMargin: number;
+                bottomMargin: number;
+                leftMargin: number;
+                rightMargin: number;
+                boardWidth: number;
+                boardHeight: number;
+                boardX: number;
+                triangleTopX: number;
+                triangleTopY: number;
+                triangleBottomLeftX: number;
+                triangleBottomLeftY: number;
+                triangleBottomRightX: number;
+                triangleBottomRightY: number;
+            }) => {
+                // Only update if dimensions actually changed
+                setBoardDimensions((prev) => {
+                    if (
+                        !prev ||
+                        prev.topMargin !== dimensions.topMargin ||
+                        prev.bottomMargin !== dimensions.bottomMargin ||
+                        prev.leftMargin !== dimensions.leftMargin ||
+                        prev.rightMargin !== dimensions.rightMargin ||
+                        prev.boardWidth !== dimensions.boardWidth ||
+                        prev.boardHeight !== dimensions.boardHeight ||
+                        prev.boardX !== dimensions.boardX ||
+                        prev.triangleTopX !== dimensions.triangleTopX ||
+                        prev.triangleTopY !== dimensions.triangleTopY ||
+                        prev.triangleBottomLeftX !== dimensions.triangleBottomLeftX ||
+                        prev.triangleBottomLeftY !== dimensions.triangleBottomLeftY ||
+                        prev.triangleBottomRightX !== dimensions.triangleBottomRightX ||
+                        prev.triangleBottomRightY !== dimensions.triangleBottomRightY
+                    ) {
+                        return dimensions;
+                    }
 
-                return prev;
-            });
-        }, []);
+                    return prev;
+                });
+            },
+            []
+        );
 
         // Try to get container size as early as possible
         useLayoutEffect(() => {
@@ -176,7 +196,7 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     const canvasWidth = containerSize.width;
                     const triangleBoardWidth = canvasWidth * 0.8; // Match physics board width from PhysicsLayer
                     const triangleBoardX = (canvasWidth - triangleBoardWidth) / 2;
-                    const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
+                    const slotWidth = Math.max(25, Math.min(60, (canvasWidth / multipliers.length) * 0.85));
                     const totalSlotWidth = slotWidth * multipliers.length;
                     const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2; // Center within board area
 
@@ -185,21 +205,19 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                     const slotIndex = Math.floor(relativeMouseX / slotWidth);
 
                     // Ensure mouse is within the actual slot area bounds
-                    const isWithinSlotArea = mouseX >= startX && mouseX < (startX + totalSlotWidth);
-
+                    const isWithinSlotArea = mouseX >= startX && mouseX < startX + totalSlotWidth;
 
                     if (slotIndex >= 0 && slotIndex < multipliers.length && isWithinSlotArea) {
                         const multiplier = multipliers[slotIndex];
                         const probability = probabilities[slotIndex] || 0;
                         const winAmount = betAmount * multiplier;
 
-
                         setHoveredMultiplier({
                             multiplier,
                             winAmount,
                             probability,
                             x: event.clientX,
-                            y: event.clientY
+                            y: event.clientY,
                         });
                     } else {
                         setHoveredMultiplier(null);
@@ -214,33 +232,36 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
             };
 
             if (containerRef.current) {
-                containerRef.current.addEventListener('mousemove', handleMouseMove);
-                containerRef.current.addEventListener('mouseleave', handleMouseLeave);
+                containerRef.current.addEventListener("mousemove", handleMouseMove);
+                containerRef.current.addEventListener("mouseleave", handleMouseLeave);
             }
 
             return () => {
                 if (containerRef.current) {
-                    containerRef.current.removeEventListener('mousemove', handleMouseMove);
-                    containerRef.current.removeEventListener('mouseleave', handleMouseLeave);
+                    containerRef.current.removeEventListener("mousemove", handleMouseMove);
+                    containerRef.current.removeEventListener("mouseleave", handleMouseLeave);
                 }
             };
         }, [containerSize, multipliers, probabilities, betAmount]);
 
         // Expose methods for external use
-        useImperativeHandle(ref, () => ({
-            spawnBall: (betValue?: number) => {
-                if (physicsLayerRef.current && isInitialized) {
-                    physicsLayerRef.current.spawnBall(betValue);
-                }
-            },
-            spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                if (physicsLayerRef.current?.isReady()) {
-                    physicsLayerRef.current.spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                }
-            },
-            isReady: () => isInitialized && physicsLayerRef.current?.isReady()
-        }), [isInitialized]);
-
+        useImperativeHandle(
+            ref,
+            () => ({
+                spawnBall: (betValue?: number) => {
+                    if (physicsLayerRef.current && isInitialized) {
+                        physicsLayerRef.current.spawnBall(betValue);
+                    }
+                },
+                spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                    if (physicsLayerRef.current?.isReady()) {
+                        physicsLayerRef.current.spawnBallWithPath(betValue, path, finalSlot, multiplier);
+                    }
+                },
+                isReady: () => isInitialized && physicsLayerRef.current?.isReady(),
+            }),
+            [isInitialized]
+        );
 
         // Check physics layer readiness
         useEffect(() => {
@@ -270,15 +291,15 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
                 ref={containerRef}
                 className="layered-canvas-ball-layout"
                 style={{
-                    width: '100%',
-                    height: '100%',
-                    minHeight: '400px',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    backgroundColor: '#0f0f23',
-                    borderRadius: '8px',
-                    boxSizing: 'border-box',
-                    transition: 'all 0.5s ease'
+                    width: "100%",
+                    height: "100%",
+                    minHeight: "400px",
+                    position: "relative",
+                    overflow: "hidden",
+                    backgroundColor: "#0f0f23",
+                    borderRadius: "8px",
+                    boxSizing: "border-box",
+                    transition: "all 0.5s ease",
                 }}
                 aria-label={`Layered Plinko game with ${rows} rows and ${multipliers.length} multiplier slots`}
             >
@@ -345,82 +366,90 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
 
                 {/* Loading Indicator */}
                 {!isInitialized && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        color: 'white',
-                        fontSize: '14px',
-                        textAlign: 'center',
-                        zIndex: 10,
-                        animation: 'pulse 1.5s ease-in-out infinite'
-                    }}>
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            color: "white",
+                            fontSize: "14px",
+                            textAlign: "center",
+                            zIndex: 10,
+                            animation: "pulse 1.5s ease-in-out infinite",
+                        }}
+                    >
                         Loading Layered Plinko Physics...
                         <br />
-                        <small>Rows: {rows} | Slots: {multipliers.length}</small>
+                        <small>
+                            Rows: {rows} | Slots: {multipliers.length}
+                        </small>
                     </div>
                 )}
 
                 {/* Row Count Badge */}
                 {isInitialized && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        backgroundColor: 'rgba(255, 107, 107, 0.9)',
-                        color: 'white',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        zIndex: 100,
-                        animation: 'fadeInScale 0.3s ease-out',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }}>
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            backgroundColor: "rgba(255, 107, 107, 0.9)",
+                            color: "white",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            zIndex: 100,
+                            animation: "fadeInScale 0.3s ease-out",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                        }}
+                    >
                         {rows} Rows
                     </div>
                 )}
 
                 {/* Debug Info Overlay (Development Mode) */}
-                {process.env.NODE_ENV === 'development' && isInitialized && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '5px',
-                        left: '5px',
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        color: 'white',
-                        fontSize: '10px',
-                        padding: '2px 5px',
-                        borderRadius: '3px',
-                        zIndex: 100
-                    }}>
+                {process.env.NODE_ENV === "development" && isInitialized && (
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "5px",
+                            left: "5px",
+                            backgroundColor: "rgba(0,0,0,0.7)",
+                            color: "white",
+                            fontSize: "10px",
+                            padding: "2px 5px",
+                            borderRadius: "3px",
+                            zIndex: 100,
+                        }}
+                    >
                         Layered: {rows}×{multipliers.length}
                     </div>
                 )}
 
                 {/* Hover Tooltip */}
                 {hoveredMultiplier && (
-                    <div style={{
-                        position: 'fixed',
-                        left: hoveredMultiplier.x + 10,
-                        top: hoveredMultiplier.y - 10,
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                        color: 'white',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        whiteSpace: 'nowrap',
-                        zIndex: 1000,
-                        pointerEvents: 'none',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)'
-                    }}>
-                        <div style={{ marginBottom: '4px', color: '#ffd700' }}>
-                            Win: ${hoveredMultiplier.winAmount.toFixed(0)}
-                        </div>
-                        <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <div
+                        style={{
+                            position: "fixed",
+                            left: hoveredMultiplier.x + 10,
+                            top: hoveredMultiplier.y - 10,
+                            backgroundColor: "rgba(0, 0, 0, 0.9)",
+                            color: "white",
+                            padding: "8px 12px",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            whiteSpace: "nowrap",
+                            zIndex: 1000,
+                            pointerEvents: "none",
+                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
+                        }}
+                    >
+                        <div style={{ marginBottom: "4px", color: "#ffd700" }}>Win: ${hoveredMultiplier.winAmount.toFixed(0)}</div>
+                        <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.8)" }}>
                             Chance: {(hoveredMultiplier.probability * 100).toFixed(1)}%
                         </div>
                     </div>
@@ -430,6 +459,6 @@ const LayeredCanvasBallLayout = forwardRef<LayeredCanvasBallLayoutRef, BallLayou
     }
 );
 
-LayeredCanvasBallLayout.displayName = 'LayeredCanvasBallLayout';
+LayeredCanvasBallLayout.displayName = "LayeredCanvasBallLayout";
 
 export default LayeredCanvasBallLayout;
