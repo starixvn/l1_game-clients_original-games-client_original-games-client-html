@@ -1,9 +1,9 @@
-// BallLayout is now a direct alias for LayeredCanvasBallLayout
-// This provides backward compatibility while simplifying the architecture
+// BallLayout now uses the simplified single-canvas implementation
+// This provides better performance and eliminates re-rendering issues
 
 // Export the main component
-export { default } from './LayeredCanvasBallLayout';
-export type { LayeredCanvasBallLayoutRef } from './LayeredCanvasBallLayout';
+export { default } from './SimplifiedCanvasBallLayout';
+export type { SimplifiedCanvasBallLayoutRef } from './SimplifiedCanvasBallLayout';
 
 // Export test utilities for testing ball spawning
 export * from './ball-test-utils';

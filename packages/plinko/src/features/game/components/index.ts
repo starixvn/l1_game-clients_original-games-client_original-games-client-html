@@ -2,7 +2,7 @@
 
 // Ball components
 export { default as BallLayout } from './ball/BallLayout';
-export type { LayeredCanvasBallLayoutRef } from './ball/BallLayout';
+export type { SimplifiedCanvasBallLayoutRef } from './ball/BallLayout';
 
 // Ball test utilities
 export { performDirectSpawnTest, USER_SPECIFIED_COLLISION_PATH } from './ball/ball-test-utils';

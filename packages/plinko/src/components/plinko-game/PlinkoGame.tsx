@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
+import { BallLayout, SimplifiedCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
@@ -42,7 +42,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     }>({ isVisible: false });
     const [isAutoBetRunning, setIsAutoBetRunning] = useState(false);
     const [localGameInitialized, setLocalGameInitialized] = useState(isGameInitialized);
-    const ballLayoutRef = useRef<LayeredCanvasBallLayoutRef>(null);
+    const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
     const autoBetHandlerRef = useRef(null);
 
     // Shared game context and betting store
@@ -176,6 +176,31 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const isAuthenticated = true; // Assume authenticated since we're in the game
     const isBetting = false; // Plinko manages its own betting state
 
+    // Send bets directly with clientSeed (compatible with PF system)
+    const placeBet = (amount: number, gameMode: number, rows: number) => {
+        // Immediately spawn ball for visual feedback
+        if (ballLayoutRef.current?.isReady?.()) {
+            console.log("🎯 [PLINKO GAME] Placing bet and spawning ball immediately", { amount, gameMode, rows });
+            ballLayoutRef.current.spawnBall(amount);
+        } else {
+            console.warn("🎯 [PLINKO GAME] Ball layout not ready for immediate spawn", {
+                hasRef: !!ballLayoutRef.current,
+                isReady: ballLayoutRef.current?.isReady?.(),
+            });
+        }
+
+        // Send bet to server for validation and potential server-guided path
+        if (socket?.connected) {
+            const betData = {
+                amount,
+                gameMode,
+                numberOfRows: rows,
+                clientSeed,
+            };
+            socket.emit("bet", betData);
+        }
+    };
+
     const clearBetResult = () => {
         // Plinko handles clearing results internally
     };
@@ -242,10 +267,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const disabledMessage = !isConnected
         ? "(Connecting...)"
         : !isAuthenticated
-        ? "(Authenticating...)"
-        : !localGameInitialized
-        ? "(Initializing...)"
-        : "";
+            ? "(Authenticating...)"
+            : !localGameInitialized
+                ? "(Initializing...)"
+                : "";
 
     return (
         <div className="">
@@ -281,6 +306,24 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 rows={gameState.rows}
                                 className="payouts-below-ball-layout"
                             /> */}
+
+                            {/* Temporary bet button for testing */}
+                            {/* <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 100 }}>
+                                <button
+                                    onClick={() => placeBet(100, 1, 9)}
+                                    style={{
+                                        padding: '10px 20px',
+                                        backgroundColor: '#4CAF50',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '16px'
+                                    }}
+                                >
+                                    Place Bet ($100)
+                                </button>
+                            </div> */}
                         </div>
                     </div>
                     <WinMessage
