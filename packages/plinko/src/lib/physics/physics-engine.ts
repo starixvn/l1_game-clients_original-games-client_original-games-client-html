@@ -75,36 +75,36 @@ export function createPhysicsBodies(
     const pins: Body[] = [];
     const multipliersBodies: Body[] = [];
 
-    const topMargin = canvasHeight * 0.08; // 8% top margin
-    const bottomMargin = canvasHeight * 0.15; // 15% bottom margin for multiplier slots
-    const availableHeight = canvasHeight - topMargin - bottomMargin;
-    const verticalSpacing = availableHeight / (rows + 1); // Distribute rows evenly
+    /**
+     * Helper function to get multiplier color for physics bodies
+     */
+    function getMultiplierColor(multiplier: number): string {
+        if (multiplier >= 10) return physicsConfig.colors.multiplierHigh;
+        if (multiplier >= 5) return physicsConfig.colors.multiplierMedium;
+        if (multiplier >= 2) return physicsConfig.colors.multiplierLow;
+        if (multiplier >= 1) return physicsConfig.colors.multiplierLoss;
+        return '#333';
+    }
 
-    // Create pins in proper triangular layout (2, 3, 4, 5, 6, 7, 8, 9, 10 pegs per row)
-    for (let l = 0; l < rows; l++) {
-        // Classic triangular pattern: row 0 has 2 pins, row 1 has 3 pins, etc.
-        const linePins = l + 2; // 2, 3, 4, 5, 6, 7, 8, 9, 10 for rows 0-8
+    // Board dimensions based on plinko demo (1100x1100 canvas)
+    // Using similar calculations to match the demo layout
+    const pegRadius = 10;
+    const mapGap = 3;
+    const initialColumns = 3;
 
-        // Calculate pin spacing to create proper triangular shape - 85% width for consistency
-        const maxPinsInBottomRow = rows + 1; // 10 pins in bottom row for 9 rows
-        const maxLineWidth = canvasWidth * 0.85; // 85% width to match triangular background
-        const pinSpacing = maxLineWidth / (maxPinsInBottomRow - 1); // Even spacing based on bottom row
+    // Create pins in triangular layout (matching plinko demo)
+    for (let row = 1; row <= rows; row++) {
+        const columnsInRow = initialColumns + (row - 1);
+        const gap = pegRadius * 2 * mapGap; // 10 * 2 * 3 = 60
+        const space = (canvasWidth - gap * columnsInRow) / 2;
 
-        // Calculate the width of this specific row
-        const lineWidth = (linePins - 1) * pinSpacing;
+        for (let col = 1; col <= columnsInRow; col++) {
+            const x = space + col * gap - pegRadius * mapGap;
+            const y = row * gap; // row * 60
 
-        // Center this row horizontally
-        const rowStartX = (canvasWidth - lineWidth) / 2;
-
-        for (let i = 0; i < linePins; i++) {
-            const pinX = rowStartX + i * pinSpacing;
-            const pinY = topMargin + (l + 1) * verticalSpacing;
-
-            const pin = Bodies.circle(pinX, pinY, 2, {
-                label: `pin-${l}-${i}`,
-                render: {
-                    fillStyle: physicsConfig.colors.pin
-                },
+            const pin = Bodies.circle(x, y, pegRadius, {
+                label: `pin-${row}-${col}`,
+                render: { fillStyle: physicsConfig.colors.pin },
                 isStatic: true
             });
             pins.push(pin);
@@ -151,7 +151,6 @@ export function createPhysicsBodies(
     const triangleBottomMargin = canvasHeight * 0.15;
     const triangleBoardHeight = canvasHeight - triangleTopMargin - triangleBottomMargin;
     const triangleBoardWidth = canvasWidth * 0.85; // Match the board width (85%)
-    const triangleBoardX = (canvasWidth - triangleBoardWidth) / 2;
 
     // Calculate triangular boundaries (matching the visual board)
     const triangleCenterX = canvasWidth / 2; // Top point
@@ -200,35 +199,29 @@ export function createPhysicsBodies(
 
     const walls = [leftWall, rightWall, floor, ...triangularWalls];
 
-    // Create multiplier slots - position them within the triangular board area
-    const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
-    const slotHeight = Math.max(20, Math.min(40, canvasHeight * 0.08));
-    const totalSlotWidth = slotWidth * multipliers.length;
-    // Use the same board dimensions as the triangular walls above
-    const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2; // Center within board area
-
+    // Create multiplier slots (matching plinko demo slot layout)
+    const numberOfSlots = rows + 1;
+    const gap = pegRadius * 2 * mapGap; // Same gap as pegs: 60
+    const space = (canvasWidth - gap * numberOfSlots) / 2;
+    const y = numberOfSlots * pegRadius * 2 * 3 - 40; // 11 * 10 * 2 * 3 - 40 = 620 for 10 rows
+    const slotWidth = gap - 6; // gap - 6 = 54
+    const slotHeight = 1; // Thin slot like demo
 
     multipliers.forEach((multiplier, index) => {
-        const slotX = startX + index * slotWidth + slotWidth / 2; // Center each slot
-        // Position at the bottom of the triangular board area
-        const triangleBottomMargin = canvasHeight * 0.15;
-        const triangleBoardHeight = canvasHeight - (canvasHeight * 0.08) - triangleBottomMargin; // triangleTopMargin is canvasHeight * 0.08
-        const slotY = (canvasHeight * 0.08) + triangleBoardHeight + slotHeight / 2; // At bottom of triangle
-
+        const col = index + 1; // Slots are 1-indexed in demo
+        const x = space + col * gap - pegRadius * mapGap;
 
         const multiplierBody = Bodies.rectangle(
-            slotX,
-            slotY,
+            x,
+            y,
             slotWidth,
             slotHeight,
             {
                 label: `multiplier-${multiplier}-${index}`,
                 isStatic: true,
+                isSensor: true, // Like demo slots
                 render: {
-                    fillStyle: multiplier >= 10 ? physicsConfig.colors.multiplierHigh :
-                        multiplier >= 5 ? physicsConfig.colors.multiplierMedium :
-                            multiplier >= 2 ? physicsConfig.colors.multiplierLow :
-                                multiplier >= 1 ? physicsConfig.colors.multiplierLoss : '#333'
+                    fillStyle: getMultiplierColor(multiplier)
                 }
             }
         );

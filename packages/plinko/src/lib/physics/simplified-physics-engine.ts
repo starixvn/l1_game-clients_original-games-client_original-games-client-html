@@ -51,27 +51,24 @@ export function createSimplifiedPhysicsBodies(
     const pins: Body[] = [];
     const multipliersBodies: Body[] = [];
 
-    // Simplified board dimensions
-    const topMargin = canvasHeight * 0.08;
-    const bottomMargin = canvasHeight * 0.15;
-    const availableHeight = canvasHeight - topMargin - bottomMargin;
-    const verticalSpacing = availableHeight / (rows + 1);
+    // Board dimensions based on plinko demo (1100x1100 canvas)
+    // Using similar calculations to match the demo layout
+    const pegRadius = 10;
+    const mapGap = 3;
+    const initialColumns = 3;
 
-    // Create pins in triangular layout
-    for (let l = 0; l < rows; l++) {
-        const linePins = l + 2;
-        const maxPinsInBottomRow = rows + 1;
-        const maxLineWidth = canvasWidth * 0.85;
-        const pinSpacing = maxLineWidth / (maxPinsInBottomRow - 1);
-        const lineWidth = (linePins - 1) * pinSpacing;
-        const rowStartX = (canvasWidth - lineWidth) / 2;
+    // Create pins in triangular layout (matching plinko demo)
+    for (let row = 1; row <= rows; row++) {
+        const columnsInRow = initialColumns + (row - 1);
+        const gap = pegRadius * 2 * mapGap; // 10 * 2 * 3 = 60
+        const space = (canvasWidth - gap * columnsInRow) / 2;
 
-        for (let i = 0; i < linePins; i++) {
-            const pinX = rowStartX + i * pinSpacing;
-            const pinY = topMargin + (l + 1) * verticalSpacing;
+        for (let col = 1; col <= columnsInRow; col++) {
+            const x = space + col * gap - pegRadius * mapGap;
+            const y = row * gap; // row * 60
 
-            const pin = Bodies.circle(pinX, pinY, 2, {
-                label: `pin-${l}-${i}`,
+            const pin = Bodies.circle(x, y, pegRadius, {
+                label: `pin-${row}-${col}`,
                 render: { fillStyle: physicsConfig.colors.pin },
                 isStatic: true
             });
@@ -96,27 +93,35 @@ export function createSimplifiedPhysicsBodies(
         })
     ];
 
-    // Create multiplier slots
-    const slotWidth = Math.max(25, Math.min(60, canvasWidth / multipliers.length * 0.85));
-    const slotHeight = Math.max(20, Math.min(40, canvasHeight * 0.08));
-    const totalSlotWidth = slotWidth * multipliers.length;
-    const triangleBoardWidth = canvasWidth * 0.85;
-    const triangleBoardX = (canvasWidth - triangleBoardWidth) / 2;
-    const startX = triangleBoardX + (triangleBoardWidth - totalSlotWidth) / 2;
+    // Create multiplier slots (matching plinko demo slot layout)
+    const numberOfSlots = rows + 1;
+    const gap = pegRadius * 2 * mapGap; // Same gap as pegs: 60
+    const space = (canvasWidth - gap * numberOfSlots) / 2;
+    const y = numberOfSlots * pegRadius * 2 * 3 - 40; // 11 * 10 * 2 * 3 - 40 = 620 for 10 rows
+    const slotWidth = gap - 6; // gap - 6 = 54
+    const slotHeight = 1; // Thin slot like demo
 
     multipliers.forEach((multiplier, index) => {
-        const slotX = startX + index * slotWidth + slotWidth / 2;
-        const slotY = topMargin + (canvasHeight - topMargin - bottomMargin) + slotHeight / 2;
+        const col = index + 1; // Slots are 1-indexed in demo
+        const x = space + col * gap - pegRadius * mapGap;
 
-        const multiplierBody = Bodies.rectangle(slotX, slotY, slotWidth, slotHeight, {
+        // Calculate slot color based on multiplier value
+        let fillStyle = '#333'; // default
+        if (multiplier >= 10) {
+            fillStyle = physicsConfig.colors.multiplierHigh;
+        } else if (multiplier >= 5) {
+            fillStyle = physicsConfig.colors.multiplierMedium;
+        } else if (multiplier >= 2) {
+            fillStyle = physicsConfig.colors.multiplierLow;
+        } else if (multiplier >= 1) {
+            fillStyle = physicsConfig.colors.multiplierLoss;
+        }
+
+        const multiplierBody = Bodies.rectangle(x, y, slotWidth, slotHeight, {
             label: `multiplier-${multiplier}-${index}`,
             isStatic: true,
-            render: {
-                fillStyle: multiplier >= 10 ? physicsConfig.colors.multiplierHigh :
-                    multiplier >= 5 ? physicsConfig.colors.multiplierMedium :
-                        multiplier >= 2 ? physicsConfig.colors.multiplierLow :
-                            multiplier >= 1 ? physicsConfig.colors.multiplierLoss : '#333'
-            }
+            isSensor: true, // Like demo slots
+            render: { fillStyle }
         });
         multipliersBodies.push(multiplierBody);
     });
@@ -173,10 +178,9 @@ export function spawnSimplifiedBall(
     });
 
     // Add ball extension properties
-    const ballExtension = ball as Body & BallBodyExtension;
-    ballExtension.createdAt = Date.now();
-    ballExtension.world = engine.world;
-    ballExtension.betValue = betAmount;
+    (ball as Body & BallBodyExtension).createdAt = Date.now();
+    (ball as Body & BallBodyExtension).world = engine.world;
+    (ball as Body & BallBodyExtension).betValue = betAmount;
 
     Composite.add(engine.world, ball);
 }
@@ -217,15 +221,14 @@ export function spawnSimplifiedBallWithPath(
     });
 
     // Add service path information
-    const ballExtension = ball as Body & BallBodyExtension;
-    ballExtension.servicePath = serviceData.path;
-    ballExtension.currentPathIndex = 0;
-    ballExtension.expectedFinalSlot = serviceData.finalSlot;
-    ballExtension.multiplier = serviceData.multiplier;
-    ballExtension.betValue = serviceData.betValue;
-    ballExtension.isServiceGuided = true;
-    ballExtension.wrongSlotHits = 0;
-    ballExtension.pinCollisions = [];
+    (ball as Body & BallBodyExtension).servicePath = serviceData.path;
+    (ball as Body & BallBodyExtension).currentPathIndex = 0;
+    (ball as Body & BallBodyExtension).expectedFinalSlot = serviceData.finalSlot;
+    (ball as Body & BallBodyExtension).multiplier = serviceData.multiplier;
+    (ball as Body & BallBodyExtension).betValue = serviceData.betValue;
+    (ball as Body & BallBodyExtension).isServiceGuided = true;
+    (ball as Body & BallBodyExtension).wrongSlotHits = 0;
+    (ball as Body & BallBodyExtension).pinCollisions = [];
 
     Composite.add(engine.world, ball);
 }
@@ -251,7 +254,7 @@ export function setupSimplifiedCollisionDetection(
             const ballExtension = ballBody as Body & BallBodyExtension;
 
             // Skip if ball is already removed
-            if (ballExtension.isRemoved || (removedBallsRef && removedBallsRef.current.has(ballBody.id))) {
+            if (ballExtension.isRemoved || removedBallsRef?.current.has(ballBody.id)) {
                 continue;
             }
 
