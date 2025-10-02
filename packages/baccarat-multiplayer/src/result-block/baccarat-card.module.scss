@@ -18,7 +18,7 @@
             position: absolute;
             left: -59px;
             top: 7.5px;
-            transform: rotate(90deg) rotateY(0deg);
+            transform: rotateZ(90deg) rotateY(0deg);
             z-index: 2;
             opacity: 0;
 
@@ -30,7 +30,7 @@
             // Intermediate state: visible back card before flipping (dynamic entrance)
             &.entrance {
                 opacity: 1;
-                transform: rotate(90deg) rotateY(0deg) scale(1);
+                transform: rotateZ(90deg) rotateY(0deg) scale(1);
                 animation: slideInCard5 0.3s cubic-bezier(0.59,0.19,0.72,0.97),
                 rotateCard5 0.3s cubic-bezier(0.59,0.19,0.72,0.97);
 
@@ -52,7 +52,7 @@
             position: absolute;
             right: -59px;
             top: 7.5px;
-            transform: rotate(-90deg) rotateY(0deg);
+            transform: rotateZ(-90deg) rotateY(0deg);
             z-index: 2;
             opacity: 0;
 
@@ -64,7 +64,7 @@
             // Intermediate state: visible back card before flipping (dynamic entrance)
             &.entrance {
                 opacity: 1;
-                transform: rotate(-90deg) rotateY(0deg) scale(1);
+                transform: rotateZ(-90deg) rotateY(0deg) scale(1);
                 animation: slideInCard6 0.3s cubic-bezier(0.59,0.19,0.72,0.97),
                 rotateCard6 0.3s cubic-bezier(0.59,0.19,0.72,0.97);
 
@@ -133,44 +133,44 @@
     @keyframes rotateCard5 {
         0% {
             opacity: 0;
-            transform: rotate(0deg) scale(0);
+            transform: rotateZ(0deg) scale(0);
         }
 
         10% {
             opacity: 0.3;
-            transform: rotate(0deg) scale(0.1);
+            transform: rotateZ(0deg) scale(0.1);
         }
 
         50% {
             opacity: 0.6;
-            transform: rotate(0deg) scale(0.6);
+            transform: rotateZ(0deg) scale(0.6);
         }
         
         100% {
             opacity: 1;
-            transform: rotate(90deg) scale(1);
+            transform: rotateZ(90deg) scale(1);
         }
     }
 
     @keyframes rotateCard6 {
         0% {
             opacity: 0;
-            transform: rotate(0deg) scale(0);
+            transform: rotateZ(0deg) scale(0);
         }
 
         10% {
             opacity: 0.3;
-            transform: rotate(0deg) scale(0.1);
+            transform: rotateZ(0deg) scale(0.1);
         }
 
         50% {
             opacity: 0.6;
-            transform: rotate(0deg) scale(0.6);
+            transform: rotateZ(0deg) scale(0.6);
         }
 
         100% {
             opacity: 1;
-            transform: rotate(-90deg) scale(1);
+            transform: rotateZ(-90deg) scale(1);
         }
     }
 
@@ -212,29 +212,29 @@
 
     @keyframes flipAndScalePlayer {
         0% {
-            transform: rotate(90deg) rotateY(0deg) scale(1);
+            transform: rotateZ(90deg) rotateY(0deg) scale(1);
         }
 
         95% {
-            transform: rotate(90deg) rotateY(-180deg) scale(1.05);
+            transform: rotateZ(90deg) rotateY(-180deg) scale(1.05);
         }
 
         100% {
-            transform: rotate(90deg) rotateY(-180deg) scale(1);
+            transform: rotateZ(90deg) rotateY(-180deg) scale(1);
         }
     }
 
     @keyframes flipAndScaleBanker {
         0% {
-            transform: rotate(-90deg) rotateY(0deg) scale(1);
+            transform: rotateZ(-90deg) rotateY(0deg) scale(1);
         }
 
         95% {
-            transform: rotate(-90deg) rotateY(-180deg) scale(1.05);
+            transform: rotateZ(-90deg) rotateY(-180deg) scale(1.05);
         }
 
         100% {
-            transform: rotate(-90deg) rotateY(-180deg) scale(1);
+            transform: rotateZ(-90deg) rotateY(-180deg) scale(1);
         }
     }
 }

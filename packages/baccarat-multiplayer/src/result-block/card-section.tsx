@@ -52,7 +52,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
         else {
             setCardContainerAnimClass('');
         }
-    }, [isHideAllCards, isShowResult, playResultAnimation]);
+    }, [isHideAllCards, isShowResult, playResultAnimation, isGetResult]);
 
     const handleCardFlip = useCallback(
         (card: CardOrderWithTiming, accumulatedScore: number) => {
