@@ -3,18 +3,31 @@ class Logger {
   private logs: string[] = [];
   private maxLogs: number = 10000; // Prevent memory issues
   private isEnabled: boolean = false; // Logging starts disabled by default
+  private isCollapsed: boolean = true; // Logger starts collapsed by default
 
   constructor() {
-    // Initialize with a header
-    this.log('info', 'Logger initialized');
+    // Initialize quietly when collapsed
+    if (!this.isCollapsed) {
+      this.log('info', 'Logger initialized');
+    }
   }
 
   log(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
-    // Don't log if disabled
-    if (!this.isEnabled) {
+    // Always log errors regardless of state
+    if (level === 'error') {
+      this.doLog(level, message, data);
       return;
     }
 
+    // Don't log if disabled or collapsed (except for errors)
+    if (!this.isEnabled || this.isCollapsed) {
+      return;
+    }
+
+    this.doLog(level, message, data);
+  }
+
+  private doLog(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
     const timestamp = new Date().toISOString();
     let logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
 
@@ -22,8 +35,10 @@ class Logger {
       logEntry += ` | Data: ${JSON.stringify(data, null, 2)}`;
     }
 
-    // Also log to console for immediate feedback
-    // console.log(logEntry);
+    // Log to console when not collapsed
+    if (!this.isCollapsed) {
+      console.log(logEntry);
+    }
 
     // Store in memory
     this.logs.push(logEntry);
@@ -59,7 +74,9 @@ class Logger {
   // Clear all logs
   clear() {
     this.logs = [];
-    this.log('info', 'Logger cleared');
+    if (!this.isCollapsed) {
+      this.log('info', 'Logger cleared');
+    }
   }
 
   // Download logs as a text file
@@ -79,7 +96,10 @@ class Logger {
     // Clean up the URL object
     URL.revokeObjectURL(downloadLink.href);
 
-    this.log('info', 'Logs downloaded', { filename: downloadLink.download });
+    // Only log if not collapsed
+    if (!this.isCollapsed) {
+      this.log('info', 'Logs downloaded', { filename: downloadLink.download });
+    }
   }
 
   // Get log count
@@ -90,6 +110,20 @@ class Logger {
   // Check if logging is enabled
   isLoggingEnabled(): boolean {
     return this.isEnabled;
+  }
+
+  // Check if logger is collapsed
+  isCollapsedState(): boolean {
+    return this.isCollapsed;
+  }
+
+  // Get logger status
+  getStatus(): { enabled: boolean; collapsed: boolean; logCount: number } {
+    return {
+      enabled: this.isEnabled,
+      collapsed: this.isCollapsed,
+      logCount: this.logs.length
+    };
   }
 
   // Start logging
@@ -107,6 +141,32 @@ class Logger {
       this.isEnabled = false;
       // Don't log here to avoid recursion since logging is now disabled
       console.log('[LOGGER] Logging stopped');
+    }
+  }
+
+  // Expand logger (show full functionality)
+  expand() {
+    if (this.isCollapsed) {
+      this.isCollapsed = false;
+      console.log('[LOGGER] Logger expanded - full functionality available');
+      this.log('info', 'Logger expanded');
+    }
+  }
+
+  // Collapse logger (minimal interface)
+  collapse() {
+    if (!this.isCollapsed) {
+      this.isCollapsed = true;
+      console.log('[LOGGER] Logger collapsed - minimal interface active');
+    }
+  }
+
+  // Toggle collapsed/expanded state
+  toggle() {
+    if (this.isCollapsed) {
+      this.expand();
+    } else {
+      this.collapse();
     }
   }
 }

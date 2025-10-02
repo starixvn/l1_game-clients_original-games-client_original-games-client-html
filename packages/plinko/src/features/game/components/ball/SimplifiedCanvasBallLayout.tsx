@@ -105,7 +105,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         // Fixed canvas dimensions - canvas stays at original size regardless of container resize
         const CANVAS_WIDTH = 600;
-        const CANVAS_HEIGHT = 600;
+        const CANVAS_HEIGHT = 480;
 
         // Handle container resize without changing canvas size
         useEffect(() => {
@@ -724,7 +724,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
             if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = 1; // Canvas is now fixed at 600x600
+            const canvasScaleFactor = 1; // Canvas is now fixed at 600x480
             const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
@@ -758,7 +758,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
             if (!engineRef.current || !canvasRef.current) return;
 
-            const canvasScaleFactor = 1; // Canvas is now fixed at 600x600
+            const canvasScaleFactor = 1; // Canvas is now fixed at 600x480
             const ballRadius = calculateBallSize(numberOfRows, canvasScaleFactor);
             const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
@@ -822,7 +822,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 style={{
                     width: "100%",
                     height: "100%",
-                    minHeight: "600px",
+                    minHeight: "480px",
                     position: "relative",
                     overflow: "hidden",
                     background: "linear-gradient(to bottom, #0f1419 0%, #1a2332 30%, #0f1419 100%)",
