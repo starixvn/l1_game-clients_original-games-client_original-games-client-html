@@ -50,7 +50,7 @@ export const CardSection: React.FC<CardSectionProps> = ({
             setCardContainerAnimClass(styles['show-static-cards']);
         }
         else {
-            setCardContainerAnimClass('');
+            setCardContainerAnimClass(styles['show-static-cards']);
         }
     }, [isHideAllCards, isShowResult, playResultAnimation, isGetResult]);
 

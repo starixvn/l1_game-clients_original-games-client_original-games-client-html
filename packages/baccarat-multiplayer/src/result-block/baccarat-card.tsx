@@ -24,6 +24,7 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
 }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [flipAnimationClass, setFlipAnimationClass] = useState('');
+    const [doneFlipped, setDoneFlipped] = useState(false);
     const [animationPhase, setAnimationPhase] = useState<'entrance' | 'flip'>('entrance');
     const flipScheduledRef = useRef(false); // Track if we've already scheduled a flip
 
@@ -42,10 +43,11 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
             }
         } else if (isFlipped) {
             // Historical data: immediate flip without animation
-            setFlipAnimationClass(`${styles['flip']} ${styles['no-animation']}`);
+            setFlipAnimationClass(`${styles['flip']}`);
         } else {
             // Not flipped: show back card
             setFlipAnimationClass('');
+            setDoneFlipped(false);
         }
     }, [isFlipped, playResultAnimation, animationPhase, card.order]);
 
@@ -96,16 +98,26 @@ export const BaccaratCard: React.FC<BaccaratCardProps> = ({
         return cleanup;
     }, [isShowResult, card.order, onCardFlip, playResultAnimation]); // Optimized dependency array
 
+    // Handle end of animation → add .flipped
+    const handleAnimationEnd = () => {
+        if (animationPhase === 'flip') {
+        setDoneFlipped(true);
+        }
+    };
+    
     const cardOrderClass = styles[`card${card.order}`] || '';
-    const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${className || ''}`;
+    const cardFlippedClass = doneFlipped ? styles['flipped'] : '';
+    const cardClassName = `${styles.card} ${styles[type]} ${cardOrderClass} ${flipAnimationClass} ${cardFlippedClass} ${className || ''}`;
 
     return (
-        <div className={cardClassName} data-card-order={card.order}>
-            <div className={styles['baccarat-card-back']}>
-                <CardBack />
-            </div>
-            <div className={styles['baccarat-card-front']}>
-                <Card result={{ card: card.value.rank, type: card.value.suit }} />
+        <div className={styles['card-container']} data-card-order={card.order}>
+            <div className={cardClassName} onAnimationEnd={handleAnimationEnd}>
+                <div className={styles['baccarat-card-back']}>
+                    <CardBack />
+                </div>
+                <div className={styles['baccarat-card-front']}>
+                    <Card result={{ card: card.value.rank, type: card.value.suit }} />
+                </div>
             </div>
         </div>
     );

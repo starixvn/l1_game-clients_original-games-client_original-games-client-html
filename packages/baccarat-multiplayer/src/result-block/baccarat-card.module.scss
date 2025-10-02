@@ -1,4 +1,11 @@
 // Baccarat Card Styles
+.card-container {
+    perspective: 1000px;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+}
+
 .card {
     position: relative;
     width: 48px;
@@ -7,16 +14,14 @@
     background: transparent;
     transform-style: preserve-3d;
     margin: 0 1.5px;
-    perspective: 1000px;
     opacity: 1;
-    transition: transform 0.6s ease-in-out;
 
     // Positioning for 3rd cards based on player/banker type, not order number
     &.player {
         // Player third card positioning
         &.card5 {
             position: absolute;
-            left: -59px;
+            left: -161px;
             top: 7.5px;
             transform: rotateZ(90deg) rotateY(0deg);
             z-index: 2;
@@ -91,6 +96,10 @@
         backface-visibility: hidden;
         background: transparent;
         transform: rotateY(0deg);
+
+        -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        will-change: transform;
     }
 
     .baccarat-card-front {
@@ -101,32 +110,32 @@
         transform: rotateY(180deg);
         background: transparent;
         border-radius: 4px;
-    }
 
-    &.no-animation {
-        transition: transform 0.3s ease-in-out;
+        -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        will-change: transform;
     }
 
     // 3rd card dynamic entrance animations
     @keyframes slideInCard5 {
         0% {
             top: -80px;
-            left: 100px
+            left: -2px
         }
 
         50% {
             top: -55px;
-            left: -20px;
+            left: -122px;
         }
 
         80% {
             top: -20px;
-            left: -65px;
+            left: -167px;
         }
 
         100% {
             top: 7.5px;
-            left: -59px;
+            left: -161px;
         }
     }
 
@@ -202,11 +211,11 @@
         }
 
         95% {
-            transform: rotateY(-180deg) scale(1.05);
+            transform: rotateY(180deg) scale(1.05);
         }
 
         100% {
-            transform: rotateY(-180deg) scale(1);
+            transform: rotateY(180deg) scale(1);
         }
     }
 
@@ -216,11 +225,11 @@
         }
 
         95% {
-            transform: rotateZ(90deg) rotateY(-180deg) scale(1.05);
+            transform: rotateZ(90deg) rotateY(180deg) scale(1.05);
         }
 
         100% {
-            transform: rotateZ(90deg) rotateY(-180deg) scale(1);
+            transform: rotateZ(90deg) rotateY(180deg) scale(1);
         }
     }
 
@@ -230,12 +239,46 @@
         }
 
         95% {
-            transform: rotateZ(-90deg) rotateY(-180deg) scale(1.05);
+            transform: rotateZ(-90deg) rotateY(180deg) scale(1.05);
         }
 
         100% {
-            transform: rotateZ(-90deg) rotateY(-180deg) scale(1);
+            transform: rotateZ(-90deg) rotateY(180deg) scale(1);
         }
     }
+}
+
+/* ------------------------------------------------------------------
+   Flipped card state – keep final transform after flip so the card does
+   not revert to the back face and re-animate. These rules override the
+   animation state with a static transform and force the fill-mode.
+   ------------------------------------------------------------------ */
+.card.player.card5.flipped {
+    transform: rotateZ(90deg) rotateY(180deg);
+}
+
+.card.banker.card5.flipped,
+.card.banker.card6.flipped {
+    transform: rotateZ(-90deg) rotateY(180deg);
+}
+
+/* ------------------------------------------------------------------
+   iOS WebKit safety – keep final transform after flip so the card does
+   not revert to the back face and re-animate. These rules override the
+   animation state with a static transform and force the fill-mode.
+   ------------------------------------------------------------------ */
+.card5.player.flip {
+    transform: rotateZ(90deg) rotateY(180deg);
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+.card5.banker.flip,
+.card6.banker.flip {
+    transform: rotateZ(-90deg) rotateY(180deg);
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+    animation-iteration-count: 1;
 }
 
