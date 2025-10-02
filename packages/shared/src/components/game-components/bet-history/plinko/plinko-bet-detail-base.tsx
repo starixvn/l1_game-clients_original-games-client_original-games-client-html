@@ -1,11 +1,15 @@
-import { numberWithCommas, separateDateTime, sortedCollectionByTime } from "@shared/helpers";
+import { numberWithCommas } from "@shared/helpers";
 import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import { useBetDetailStore } from "@shared/stores/bet-detail-store";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
 import { FC, ReactNode, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { DrawInfo } from "@shared/components/game-base/type";
-import { calculateTotalStake, calculateTotalWinFromTable, displayWinAmount } from "@shared/components/game-components/bet-history/bet-detail-utils";
+import {
+    calculateTotalStake,
+    calculateTotalWinFromTable,
+    displayWinAmount,
+} from "@shared/components/game-components/bet-history/bet-detail-utils";
 import { PlinkoBetDetailTable } from "./plinko-bet-detail-table";
 
 const PlinkoBetDetailBase: FC<{
@@ -18,29 +22,32 @@ const PlinkoBetDetailBase: FC<{
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
 
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
+    console.log("ZEPHYR LOG BET DETAIL DATA IN PLINKO BET DETAIL BASE::: ", betDetailData);
+    
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
-    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
 
     const tableData = useMemo(() => {
         if (!drawInfo || !betLogDetails) {
             return [];
         }
-        return preprocessedBetLogDetails.map((betLogDetail) => {
+        return betLogDetails.map((betLogDetail) => {
+            console.log("ZEPHYR LOG BET LOG DETAIL IN PLINKO BET DETAIL BASE::: ", betLogDetail);
+            console.log("ZEPHYR LOG DRAW INFO IN PLINKO BET DETAIL BASE::: ", drawInfo);
             const { gameMode, amount, choice, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
+            console.log("ZEPHYR LOG GAME MODE, AMOUNT, CHOICE, WIN IN PLINKO BET DETAIL BASE::: ", gameMode, amount, choice, win);
 
             return {
                 gameMode: gameMode,
-                betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
+                betChoice: choice,
                 stake: numberWithCommas(amount, 2) ?? 0,
                 win: displayWinAmount(win),
                 isWinningBet: win > 0,
             };
         });
-    }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice, betLogDetails]);
-console.log("tableData", tableData);
+    }, [betLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice]);
     if (!drawInfo || !betLogDetails) {
         return null;
     }
@@ -73,7 +80,7 @@ console.log("tableData", tableData);
                 {translateCommon("bet_detail_note").capitalizeFirstLetter()}
             </div>
 
-            {drawInfo.result && <div>{renderBetDetailResultBlock(drawInfo)}</div>}
+            {drawInfo.settlementResult && <div>{renderBetDetailResultBlock(drawInfo)}</div>}
 
             {renderButtonProvablyFair()}
 

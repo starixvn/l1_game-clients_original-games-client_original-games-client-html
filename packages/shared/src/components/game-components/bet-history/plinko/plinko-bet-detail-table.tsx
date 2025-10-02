@@ -82,7 +82,6 @@ const renderBetDetailHeader = (translateCommon: any) => {
 const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
     return data.map((row, index) => {
         const rowData = createBetDetailRowData(row);
-console.log("rowData", rowData);
         return (
             <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
                 {rowData.map((cell, cellIndex) => (
@@ -92,7 +91,7 @@ console.log("rowData", rowData);
                             "w-1/4 text-sm md:text-base text-secondary-text p-3",
                             cell.className || "text-center",
                             cell.isWinningBet && "text-winning-highlight font-normal",
-                            cell.isWinningBet && cellIndex === 1 && "font-semibold",
+                            cell.isWinningBet && cellIndex === 1 && "font-semibold"
                         )}
                     >
                         {translateCommon(cell.content)}
@@ -116,7 +115,9 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
                     <Table className="w-full">
                         <TableBody>
                             <TableRow className="border-none bg-bet-detail-row-1">
-                                <TableCell className="w-1/4 text-sm md:text-base text-secondary-text text-center p-3">{emptyMessage}</TableCell>
+                                <TableCell className="w-1/4 text-sm md:text-base text-secondary-text text-center p-3">
+                                    {emptyMessage}
+                                </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

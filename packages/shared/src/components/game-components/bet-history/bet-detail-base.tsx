@@ -16,19 +16,19 @@ const BetDetailBase: FC<{
     isEnableProvablyFair?: boolean;
 }> = ({ renderBetDetailResultBlock, produceDataBetDetailRow, renderBetChoice, isEnableProvablyFair }) => {
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
+    console.log("ZEPHYR LOG BET DETAIL DATA IN BET DETAIL BASE::: ", betDetailData);
 
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
-    const preprocessedBetLogDetails = useMemo(() => sortedCollectionByTime(betLogDetails || []), [betLogDetails]);
 
     const tableData = useMemo(() => {
         if (!drawInfo || !betLogDetails) {
             return [];
         }
-        return preprocessedBetLogDetails.map((betLogDetail) => {
+        return betLogDetails.map((betLogDetail) => {
             console.log("betLogDetail", betLogDetail);
             const { rawTime, amount, choice, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
             const { time } = separateDateTime(rawTime);
@@ -41,7 +41,7 @@ const BetDetailBase: FC<{
                 isWinningBet: win > 0,
             };
         });
-    }, [preprocessedBetLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice, betLogDetails]);
+    }, [betLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice]);
 console.log("tableData", tableData);
     if (!drawInfo || !betLogDetails) {
         return null;

@@ -14,19 +14,16 @@ export type PlinkoSettlementResult = {
 export interface RoundInfoPlinko extends DrawInfo {
     roundId: number;
     result:
-    | {
-        balls?: Array<number>;
-    }
-    | Record<string, boolean>;
+        | {
+              balls?: Array<number>;
+          }
+        | Record<string, boolean>;
     odds: Record<string, number>;
     settlementResult: PlinkoSettlementResult;
     numberOfRows?: number;
 }
 
-
-
 const IMAGE_SIZE = 30;
-
 
 const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
     return isWin ? amount * odds : 0;
@@ -35,7 +32,7 @@ const calculateWin = (isWin: boolean, amount: number, odds: number): number => {
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { roundId, settlementResult } = drawInfo;
-console.log("settlementResult", settlementResult);
+    console.log("settlementResult", settlementResult);
     return (
         <div className="flex justify-between text-secondary-text text-sm md:text-base mt-2">
             <div className="flex items-center gap-1.5 font-medium">
@@ -56,8 +53,10 @@ console.log("settlementResult", settlementResult);
 };
 
 export const produceDataBetDetailRow = (item: any, drawInfo: RoundInfoPlinko) => {
-    const win = calculateWin(true, item.amount, drawInfo.odds[item.choice]);
-console.log("item", item, drawInfo);
+    const win = item.win;
+    console.log("ZEPHYR LOG WIN::: ", win);
+    
+    console.log("ZEPHYR LOG ITEM AND DRAW INFO::: ", drawInfo);
     return {
         gameMode: item.gameMode,
         amount: item.amount,
@@ -67,4 +66,3 @@ console.log("item", item, drawInfo);
         hightlight: drawInfo.settlementResult?.[item.choice],
     };
 };
-

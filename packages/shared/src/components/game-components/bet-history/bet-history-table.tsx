@@ -129,67 +129,67 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
             const roundId = row.originalBetLog?.roundId;
             const currentGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
             let betDetailData: BetDetailData = null;
-console.log("row", row);
-            switch (currentGameId) {
-                case "145":
-                    betDetailData = {
-                        drawInfo: {
-                            roundId: roundId,
-                            result: row.originalBetLog?.result,
-                            odds: row.originalBetLog?.odds,
-                            settlementResult: row.originalBetLog?.settlementResult,
-                            pfResult: {
-                                roundId: row.originalBetLog?.roundId,
-                                serverSeedHash: "",
-                                serverSeed: "",
-                                clientSeeds: [],
-                                mergeSeed: "",
-                                mergeClientSeed: "",
-                                roundResult: [],
-                                finalHash: "",
-                                clientSeed: row.originalBetLog?.clientSeed || "",
-                                editedMergeClientSeed: "",
-                            },
-                            clientSeed: row.originalBetLog?.clientSeed,
+            console.log("row", row);
+            if (currentGameId === "145") {
+                console.log("ZEPHYR LOG ROW IN BET HISTORY TABLE::: ", row);
+                betDetailData = {
+                    drawInfo: {
+                        roundId: roundId,
+                        result: row.originalBetLog?.result,
+                        odds: row.originalBetLog?.odds,
+                        settlementResult: row.originalBetLog?.settlementResult,
+                        pfResult: {
+                            roundId: row.originalBetLog?.roundId,
+                            serverSeedHash: "",
+                            serverSeed: "",
+                            clientSeeds: [],
+                            mergeSeed: "",
+                            mergeClientSeed: "",
+                            roundResult: [],
+                            finalHash: "",
+                            clientSeed: row.originalBetLog?.clientSeed || "",
+                            editedMergeClientSeed: "",
                         },
-                        betLogDetails: [{
+                        clientSeed: row.originalBetLog?.clientSeed,
+                    },
+                    betLogDetails: [
+                        {
                             rawTime: row.originalBetLog?.time,
                             amount: row.originalBetLog?.amount,
                             choice: row.originalBetLog?.numberOfRows,
                             win: row.originalBetLog?.betWin,
                             gameMode: row.originalBetLog?.gameMode,
-                        }],
-                    };
-                    break;
-                default:
-                    betDetailData = {
-                        drawInfo: {
-                            roundId: roundId,
-                            result: row.originalBetLog?.result,
-                            odds: row.originalBetLog?.odds,
-                            settlementResult: row.originalBetLog?.settlementResult,
-                            pfResult: {
-                                roundId: row.originalBetLog?.roundId,
-                                serverSeedHash: "",
-                                serverSeed: "",
-                                clientSeeds: [],
-                                mergeSeed: "",
-                                mergeClientSeed: "",
-                                roundResult: [],
-                                finalHash: "",
-                                clientSeed: row.originalBetLog?.clientSeed || "",
-                                editedMergeClientSeed: "",
-                            },
-                            clientSeed: row.originalBetLog?.clientSeed,
                         },
-                        betLogDetails: row.originalBetLog?.betLogDetails || [],
-                    };
-                    
-                    break;
+                    ],
+                };
+
+                console.log("ZEPHYR LOG BET DETAIL DATA IN BET HISTORY TABLE::: ", betDetailData);
+            } else {
+                betDetailData = {
+                    drawInfo: {
+                        roundId: roundId,
+                        result: row.originalBetLog?.result,
+                        odds: row.originalBetLog?.odds,
+                        settlementResult: row.originalBetLog?.settlementResult,
+                        pfResult: {
+                            roundId: row.originalBetLog?.roundId,
+                            serverSeedHash: "",
+                            serverSeed: "",
+                            clientSeeds: [],
+                            mergeSeed: "",
+                            mergeClientSeed: "",
+                            roundResult: [],
+                            finalHash: "",
+                            clientSeed: row.originalBetLog?.clientSeed || "",
+                            editedMergeClientSeed: "",
+                        },
+                        clientSeed: row.originalBetLog?.clientSeed,
+                    },
+                    betLogDetails: row.originalBetLog?.betLogDetails || [],
+                };
             }
-            
+
             console.log("row", row);
-            console.log("betDetailData", betDetailData);
             updateBetDetail(betDetailData);
             toggleBetDetail(true);
         }
@@ -247,8 +247,8 @@ console.log("row", row);
     ];
 
     return (
-            <>
-                {/* Sticky Header Table */}
+        <>
+            {/* Sticky Header Table */}
             <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
                 <TableHeader>{renderBetHistoryHeader(headerColumns)}</TableHeader>
             </Table>
