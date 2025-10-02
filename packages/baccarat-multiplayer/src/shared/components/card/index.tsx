@@ -1,6 +1,6 @@
 import React from "react";
 import Styles from "./card.module.scss";
-import { Props } from "./type";
+import { Props } from "./types";
 import { convertRank, suffixNameMapping } from "./utils/card-utils";
 import { buildVersion } from "@shared/constants";
 import { CachedImage } from "@shared/components/game-components/cached-image";
