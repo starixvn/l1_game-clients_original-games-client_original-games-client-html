@@ -1,9 +1,9 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { toast } from 'react-toastify';
-import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage, PayoutsDisplay } from "../../features/game/components";
+import { BallLayout, LayeredCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { performDirectSpawnTest } from "../../features/game/components/ball/ball-test-utils";
 import { LoggerControls } from "../../features/ui/components";
-import { AutoBetPanel, BetsTable } from "../../features/betting/components";
+import { BetControl, BetsTable } from "../../features/betting/components";
 import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
 import { useBettingStore, useGameStore } from "@shared/stores";
@@ -492,7 +492,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     )}
                 </div>
 
-                <AutoBetPanel
+                <BetControl
                     sharedConfig={{
                         betAmount: gameState.betAmount,
                         gameMode: gameState.gameMode,

@@ -34,7 +34,7 @@ export interface BetControlProps {
     onBetResult?: (result: { win: boolean; payout: number; betAmount: number }) => void;
 }
 
-const BetPanel: React.FC<BetControlProps> = ({
+const BetControl: React.FC<BetControlProps> = ({
     sharedConfig,
     autoConfig,
     activeTab,
@@ -144,11 +144,10 @@ const BetPanel: React.FC<BetControlProps> = ({
                     <button
                         key={tab}
                         onClick={() => handlePanelTabChange(tab as "Manual" | "Auto")}
-                        className={`flex-1 px-4 py-3 text-sm relative text-white ${
-                            panelTab === tab
+                        className={`flex-1 px-4 py-3 text-sm relative text-white ${panelTab === tab
                                 ? "after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-green-500"
                                 : ""
-                        }`}
+                            }`}
                     >
                         {tab}
                     </button>
@@ -158,4 +157,4 @@ const BetPanel: React.FC<BetControlProps> = ({
     );
 };
 
-export default BetPanel;
+export default BetControl;
