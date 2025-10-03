@@ -301,10 +301,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 <div className="frame-game">
                     <div className="frame-2">
                         <div className="game-layout-container">
-                            {/* Round Multiplier History */}
-                            <div style={{ marginTop: "16px", maxWidth: "100%" }}>
-                                <RoundMultiplierHistory />
-                            </div>
+                            <RoundMultiplierHistory />
                             <div className="ball-layout-wrapper">
                                 <BallLayout
                                     ref={ballLayoutRef}
