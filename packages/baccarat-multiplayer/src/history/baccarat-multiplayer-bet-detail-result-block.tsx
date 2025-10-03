@@ -8,7 +8,7 @@ import Card from "../shared/components/card";
 export interface RoundInfoBaccaratMultiplayer extends DrawInfo {
     roundId: number;
     result: BaccaratResult;
-    odds: Record<string, number>;
+    odds?: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
 

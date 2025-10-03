@@ -14,7 +14,7 @@ export interface RoundInfoSeDie extends DrawInfo {
         balls?: Array<number>;
     }
     | Record<string, boolean>;
-    odds: Record<string, number>;
+    odds?: Record<string, number>;
     settlementResult: Record<string, boolean>;
 }
 
