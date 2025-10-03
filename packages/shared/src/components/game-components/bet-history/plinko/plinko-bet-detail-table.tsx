@@ -3,6 +3,7 @@ import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 import { gameModeMap } from "@shared/helpers/plinko";
+import { numberWithCommas } from "@shared/helpers";
 
 interface BetDetailRow {
     gameMode: number;
@@ -10,6 +11,8 @@ interface BetDetailRow {
     stake: React.ReactNode;
     win: React.ReactNode;
     isWinningBet?: boolean;
+    reachMaxWin?: boolean;
+    maxWinAmount?: number;
 }
 
 interface BetDetailTableProps {
@@ -92,6 +95,10 @@ const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
 const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, emptyMessage }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
 
+    // Check if any row reached max win
+    const maxWinRow = data.find(row => row.reachMaxWin);
+    const { reachMaxWin, maxWinAmount } = maxWinRow || {};
+
     if (!data || data.length === 0) {
         return (
             <div ref={ref} className="flex flex-col h-full min-h-0 w-full">
@@ -124,6 +131,14 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
                     <TableBody>{renderBetDetailRows(data, translateCommon)}</TableBody>
                 </Table>
             </div>
+
+            {reachMaxWin && (
+                <div className="font-semibold py-3 text-sm md:text-base">
+                    <span>
+                        You reached the max win: {numberWithCommas(maxWinAmount, 2)}
+                    </span>
+                </div>
+            )}
         </div>
     );
 });
