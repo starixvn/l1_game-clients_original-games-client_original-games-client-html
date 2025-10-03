@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Label } from "./label";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
@@ -17,16 +17,22 @@ export const BetAmountControl = ({
             userStakeLevel: state.userStakeLevel,
         }))
     );
-    const maxBet = useMemo(() => {
+    const { minBet, maxBet } = useMemo(() => {
         if (gameConfigs && userStakeLevel) {
-            return Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
+            const minBet = Math.max(userStakeLevel.minBet, gameConfigs.minBet);
+            const maxBet = Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
+
+            return { minBet, maxBet };
         }
-        return 0;
-    }, [gameConfigs?.maxBet, userStakeLevel]);
-
+        return { minBet: 0, maxBet: 0 };
+    }, [gameConfigs?.maxBet, gameConfigs?.minBet, userStakeLevel]);
     const betAmount = usePlinkoGameStore((state) => state.betAmount);
-
+    const [amount, setAmount] = useState<number | string>(minBet);
     const buttonClass = "h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50";
+
+    useEffect(() => {
+        setAmount(betAmount);
+    }, [betAmount]);
 
     return (
         <div>
@@ -36,17 +42,23 @@ export const BetAmountControl = ({
                     type="number"
                     step={1}
                     pattern="[0-9]*"
-                    value={betAmount}
-                    onChange={(e) => handleBetAmountChange(+e.target.value)}
+                    value={amount}
+                    onChange={(e) => {
+                        setAmount(e.target.value);
+                    }}
+                    onBlur={() => {
+                        handleBetAmountChange(amount ? +amount : minBet);
+                        setAmount(betAmount);
+                    }}
                     inputMode="numeric"
                     className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
                     disabled={isDisabled}
                 />
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
-                    <button className={buttonClass} onClick={() => handleBetAmountChange(betAmount / 2)} disabled={isDisabled}>
+                    <button className={buttonClass} onClick={() => handleBetAmountChange(+amount / 2)} disabled={isDisabled}>
                         1/2
                     </button>
-                    <button className={buttonClass} onClick={() => handleBetAmountChange(betAmount * 2)} disabled={isDisabled}>
+                    <button className={buttonClass} onClick={() => handleBetAmountChange(+amount * 2)} disabled={isDisabled}>
                         2x
                     </button>
                     <button className={buttonClass} onClick={() => handleBetAmountChange(maxBet)} disabled={isDisabled}>
