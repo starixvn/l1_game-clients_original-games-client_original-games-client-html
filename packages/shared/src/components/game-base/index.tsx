@@ -22,6 +22,7 @@ import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler, RoundGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
     GameDisableHandler,
+    GameEndBetHandler,
     GameErrorHandler,
     GameFinishHandler,
     GameMessageHandler,
@@ -62,6 +63,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     private readonly playerHandler: PlayerHandler;
     private readonly placeBetHandler: PlaceBetHandler;
     private readonly gameFinishHandler?: GameFinishHandler;
+    private readonly gameEndBetHandler?: GameEndBetHandler;
     private readonly gameDisabledHandler?: GameDisableHandler;
     private readonly gameRoundHistoryHandler?: GameRoundHistoryHandler;
     private readonly gameSoundHandler: IGameSoundHandler;
@@ -82,6 +84,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             playerHandler,
             placeBetHandler,
             gameFinishHandler,
+            gameEndBetHandler,
             gameDisabledHandler,
             gameRoundHistoryHandler,
             gameSoundHandler,
@@ -135,6 +138,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 gameStateContextModel: this.getGameStateContext.bind(this),
                 gameRoundDataHandler: this.gameRoundDataHandler,
             });
+
+        this.gameEndBetHandler = gameEndBetHandler;
 
         this.gameDisabledHandler =
             gameDisabledHandler ??
@@ -203,7 +208,8 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     clearGameTimeoutAndInterval = () => {
         clearInterval(this.gameCronInterval);
-        this.gameFinishHandler.clearTimeout();
+        this.gameFinishHandler?.clearTimeout();
+        this.gameEndBetHandler?.clearTimeout();
         this.placeBetHandler.clearRetryInterval();
     };
 
@@ -300,7 +306,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.gameMessageHandler.register(messageEventType.UNDER_MAINTENANCE, this.handleUM.bind(this));
         this.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.gameMessageHandler.register(messageEventType.ROUND_HISTORY, this.handleRoundHistory.bind(this));
-        this.gameFinishHandler.registerEvents();
+        
+        // Register either gameFinishHandler (multiplayer) or gameEndBetHandler (single-player)
+        if (this.gameEndBetHandler) {
+            this.gameEndBetHandler.registerEvents();
+        } else if (this.gameFinishHandler) {
+            this.gameFinishHandler.registerEvents();
+        }
+        
         this.gameMessageHandler.register(messageEventType.GAME_DESTROY, this.onDestroy.bind(this));
         this.gameMessageHandler.register(messageEventType.CLEAR_GAME_TIMEOUT_AND_INTERVAL, this.clearGameTimeoutAndInterval.bind(this));
         this.gameMessageHandler.register(messageEventType.SEND_SOCKET_MESSAGE, this.sendSocketMessage.bind(this));

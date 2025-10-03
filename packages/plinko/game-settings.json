@@ -18,7 +18,7 @@
             "switchRoundAnimation": 0,
             "startNewRoundAnim": 0
         },
-        "numberOfRoundHistory": 50,
+        "numberOfRoundHistory": 10,
         "gamePath": "plinko",
         "gameResourceConfigs": {
             "path": "plinko",

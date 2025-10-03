@@ -6,6 +6,7 @@ import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
     GameDisableHandler,
+    GameEndBetHandler,
     GameErrorHandler,
     GameFinishHandler,
     GameRoundHistoryHandler,
@@ -243,6 +244,7 @@ export type GameBaseHandlers = {
     playerHandler?: PlayerHandler;
     placeBetHandler?: PlaceBetHandler;
     gameFinishHandler?: GameFinishHandler;
+    gameEndBetHandler?: GameEndBetHandler;
     gameDisabledHandler?: GameDisableHandler;
     gameRoundHistoryHandler?: GameRoundHistoryHandler;
     gameSoundHandler?: IGameSoundHandler;

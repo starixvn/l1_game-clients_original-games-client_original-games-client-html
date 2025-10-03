@@ -56,6 +56,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
 
+    const roundHistory = useGameStore((state) => state.roundHistory);
+
+    console.log("ZEPHYR LOG - PLINKO GAME - roundHistory::: ", roundHistory);
+
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {

@@ -9,7 +9,7 @@ import {
 } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from "@shared/react-hooks";
 import GameBase from "@shared/components/game-base/";
-import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
+import { GameEndBetHandler, GameMessageHandler } from "@shared/components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
 import { PlinkoGameRoundDataHandler, PlinkoGameSoundHandler, PlinkoStateHandler } from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
@@ -31,11 +31,23 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
+        const gameRoundDataHandler = new PlinkoGameRoundDataHandler();
+        
         const gameBaseHandlers: GameBaseHandlers = {
             roundStateHandler: new PlinkoStateHandler(),
             gameMessageHandler: gameMessageHandler,
-            gameRoundDataHandler: new PlinkoGameRoundDataHandler(),
+            gameRoundDataHandler: gameRoundDataHandler,
             gameSoundHandler: new PlinkoGameSoundHandler({ gameSound: () => props.gameSound }),
+            // Plinko is single-player, use GameEndBetHandler instead of GameFinishHandler
+            gameEndBetHandler: new GameEndBetHandler({
+                dispatch: props.dispatch,
+                gameMessageHandler: gameMessageHandler,
+                roundStateHandler: new PlinkoStateHandler(),
+                runGame: () => {}, // Will be set by GameBase
+                gameId: props.id,
+                gameStateContextModel: () => props.gameStateContextModel,
+                gameRoundDataHandler: gameRoundDataHandler,
+            }),
         };
         super(props, gameBaseHandlers);
 
