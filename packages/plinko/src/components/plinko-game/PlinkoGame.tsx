@@ -10,6 +10,7 @@ import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
 import { getOddsForMode } from "../../game-odds-config";
+import RoundMultiplierHistory from "@shared/components/game-components/round-multiplier-history/round-multiplier-history";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -55,10 +56,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
-
-    const roundHistory = useGameStore((state) => state.roundHistory);
-
-    console.log("ZEPHYR LOG - PLINKO GAME - roundHistory::: ", roundHistory);
 
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
@@ -170,7 +167,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         try {
             return getOddsForMode(gameMode, numberOfRows);
         } catch (error) {
-            console.warn('Failed to get odds for mode, using fallback multipliers', { gameMode, numberOfRows, error });
+            console.warn("Failed to get odds for mode, using fallback multipliers", { gameMode, numberOfRows, error });
             // Fallback multipliers if config is invalid
             return [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6];
         }
@@ -280,10 +277,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const disabledMessage = !isConnected
         ? "(Connecting...)"
         : !isAuthenticated
-            ? "(Authenticating...)"
-            : !localGameInitialized
-                ? "(Initializing...)"
-                : "";
+        ? "(Authenticating...)"
+        : !localGameInitialized
+        ? "(Initializing...)"
+        : "";
 
     return (
         <div className="">
@@ -304,6 +301,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 <div className="frame-game">
                     <div className="frame-2">
                         <div className="game-layout-container">
+                            {/* Round Multiplier History */}
+                            <div style={{ marginTop: "16px", maxWidth: "100%" }}>
+                                <RoundMultiplierHistory />
+                            </div>
                             <div className="ball-layout-wrapper">
                                 <BallLayout
                                     ref={ballLayoutRef}
@@ -312,6 +313,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                     onBallHit={handleBallHit}
                                 />
                             </div>
+
                             {/* <PayoutsDisplay
                                 multipliers={payoutMultipliers}
                                 probabilities={payoutProbabilities}

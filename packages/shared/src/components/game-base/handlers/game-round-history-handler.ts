@@ -12,8 +12,6 @@ export class GameRoundHistoryHandler {
     constructor(private readonly props: GameRoundHistorydHandlerProps) {}
 
     handleRoundHistory({ roundHistory, roundId, newRoundState }) {
-        console.log("ZEPHYR LOG - GAME ROUND HISTORY HANDLER - roundID::: ", roundId, "\n newRoundState::: ", newRoundState, " \nroundHistory::: ", roundHistory);
-        
         const { roundState, isUMInFirstLoad } = this.props.gameStateContextModel();
         let verifiedRoundState = roundState;
 

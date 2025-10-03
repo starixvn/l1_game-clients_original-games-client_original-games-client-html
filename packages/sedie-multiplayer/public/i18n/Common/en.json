@@ -176,7 +176,7 @@
     "name_invalid": "The entered nickname is invalid, please try again",
     "nickname_requirement": "Note:\n      + Nickname must be between 3 and 14 characters long.\n      + Cannot contain spaces, special characters, and non-English characters. \n      + Cannot change the nickname after submitting.",
     "no_data": "No data available",
-    "non_winning_payline": "Non-winning Paylines",
+    "non_winning_payline": "No Winning Paylines",
     "not_enough_money": "Your account has insufficient funds.",
     "notice": "notice",
     "number_of_bet": "Number of Bets",

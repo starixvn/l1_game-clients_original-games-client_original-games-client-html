@@ -6,11 +6,6 @@ export class PlinkoGameRoundDataHandler extends GameRoundDataHandler {
     }
 
     buildGameRoundDataAfterReceiveFinishEvent(previousRoundData: any, result: any, roundId: number): any {
-
-        console.log("ZEPHYR LOG - PLINKO GAME ROUND DATA HANDLER - \npreviousRoundData:: ", previousRoundData, "\nresult:: ", result, "\n roundId:: ", roundId);
-        
-
-        // For Plinko, each "round" is a single ball drop
         const resultRoundData = {
             roundId: roundId,
             path: result,

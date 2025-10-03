@@ -39,10 +39,6 @@ export class GameEndBetHandler {
 
     handleEndBetEvent(message) {
         const { endBet, finish } = message;
-
-        console.log("ZEPHYR LOG - GAME END BET HANDLER - handleEndBetEvent - message::: ", message);
-        
-
         if (endBet === -1) {
             return;
         }
@@ -65,11 +61,7 @@ export class GameEndBetHandler {
         }
 
         const { result, settlementResult, roundId, winAmount } = finish;
-        console.log("ZEPHYR LOG - GAME END BET HANDLER - result:: ", result, "\n settlementResult:: ", settlementResult, "\n roundId:: ", roundId, "\n winAmount:: ", winAmount);
-        
-
         const { dispatch, gameMessageHandler, gameRoundDataHandler, gameStateContextModel } = this.props;
-        console.log("ZEPHYR LOG - GAME END BET HANDLER - gameStateContextModel:: ", gameStateContextModel().roundData);
         this._finish = finish;
         this._betWin = winAmount || 0;
 
@@ -78,8 +70,6 @@ export class GameEndBetHandler {
             result,
             roundId
         );
-
-        console.log("ZEPHYR LOG - GAME END BET HANDLER - handleFinishResult - roundData::: ", roundData);
 
         dispatch({
             type: GameEventActionType.FINISH,
@@ -124,8 +114,6 @@ export class GameEndBetHandler {
             isShowBlink: false, 
             showResultInfo: true 
         });
-
-        console.log("ZEPHYR LOG - GAME END BET HANDLER - handleRoundHistory - roundHistoryClone::: ", roundHistoryClone);
 
         this.props.dispatch({
             type: GameEventActionType.SHOW_RESULT_INFO_TIME_OUT,
