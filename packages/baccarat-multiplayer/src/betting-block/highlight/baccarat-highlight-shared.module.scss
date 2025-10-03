@@ -1,3 +1,4 @@
+@import "./constants/base-path.scss";
 %highlight-option {
     --animation-duration: 2s;
     position: absolute;
@@ -75,7 +76,7 @@
 
 .playerPrevShadowDesktop {
     @extend .playerPrevShadow;
-    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-player-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/desktop/highlight-winning-player-box-shadow.webp?v=#{$version-image}");
     top: -8px;
     left: -8px;
     width: 236px;
@@ -84,7 +85,7 @@
 
 .playerPrevShadowMobile {
     @extend .playerPrevShadow;
-    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-player-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/mobile/highlight-winning-player-box-shadow.webp?v=#{$version-image}");
     top: -8px;
     left: -8px;
     width: 199px;
@@ -101,7 +102,7 @@
 
 .bankerPrevShadowDesktop {
     @extend .bankerPrevShadow;
-    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-banker-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/desktop/highlight-winning-banker-box-shadow.webp?v=#{$version-image}");
     top: -8px;
     left: -8px;
     width: 236px;
@@ -111,7 +112,7 @@
 
 .bankerPrevShadowMobile {
     @extend .bankerPrevShadow;
-    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-banker-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/mobile/highlight-winning-banker-box-shadow.webp?v=#{$version-image}");
     top: -8px;
     left: -8px;
     width: 199px;
@@ -128,7 +129,7 @@
 
 .tiePrevShadowDesktop {
     @extend .tiePrevShadow;
-    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-tie-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/desktop/highlight-winning-tie-box-shadow.webp?v=#{$version-image}");
     top: -4px;
     left: -4px;
     width: 147px;
@@ -137,7 +138,7 @@
 
 .tiePrevShadowMobile {
     @extend .tiePrevShadow;
-    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-tie-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/mobile/highlight-winning-tie-box-shadow.webp?v=#{$version-image}");
     top: -4px;
     left: -4px;
     width: 114px;
@@ -154,7 +155,7 @@
 
 .anyPairPrevShadowDesktop {
     @extend .anyPairPrevShadow;
-    background-image: url("/static/images/highlight-winning/desktop/highlight-winning-anypair-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/desktop/highlight-winning-anypair-box-shadow.webp?v=#{$version-image}");
     top: -4px;
     left: -4px;
     width: 148px;
@@ -163,7 +164,7 @@
 
 .anyPairPrevShadowMobile {
     @extend .anyPairPrevShadow;
-    background-image: url("/static/images/highlight-winning/mobile/highlight-winning-anypair-box-shadow.webp");
+    background-image: url("#{$base-path}/static/images/highlight-winning/mobile/highlight-winning-anypair-box-shadow.webp?v=#{$version-image}");
     top: -4px;
     left: -4px;
     width: 113px;

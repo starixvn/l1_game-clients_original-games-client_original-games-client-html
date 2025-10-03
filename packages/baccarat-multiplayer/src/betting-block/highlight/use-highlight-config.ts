@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Winner } from "@/baccarat-multiplayer-constants";
+import { buildVersion } from "@shared";
 
 const DEVICE_MODE = {
     DESKTOP: "desktop",
@@ -13,10 +14,10 @@ export const useHighlightConfig = (choice: string, isDesktop: boolean) => {
 
     return useMemo(() => {
         const imageMap: Record<string, string> = {
-            [Winner.PLAYER]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-player.webp`,
-            [Winner.BANKER]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-banker.webp`,
-            [Winner.TIE]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-tie.webp`,
-            [Winner.ANY_PAIR]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-anypair.webp`,
+            [Winner.PLAYER]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-player.webp?v=${buildVersion}`,
+            [Winner.BANKER]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-banker.webp?v=${buildVersion}`,
+            [Winner.TIE]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-tie.webp?v=${buildVersion}`,
+            [Winner.ANY_PAIR]: `${basePath}/static/images/highlight-winning/${device}/highlight-winning-anypair.webp?v=${buildVersion}`,
         };
 
         const shadowClassMap: Record<string, string> = {
