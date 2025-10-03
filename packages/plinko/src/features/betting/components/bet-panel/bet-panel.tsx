@@ -81,18 +81,13 @@ const BetControl = () => {
                     </button>
                 )}
             </div>
-            <div className="md:rounded-none border-stroke before:rounded-b-none">
+            <div className="flex flex-col md:flex-col-reverse gap-3 rounded-t-xl bg-primary-bg">
                 <BetControls
                     isManualTab={isManualTab}
                     numberOfBets={numberOfBets}
                     setNumberOfBets={setNumberOfBets}
                     isDisabled={isProcessing || isAutoBet}
                 />
-                <div className="md:hidden flex">
-                    <TabControl activeTab={isManualTab} onTabChange={setIsManualTab} isDisabled={isProcessing || isAutoBet} />
-                </div>
-            </div>
-            <div className="bg-primary-bg hidden md:flex">
                 <TabControl activeTab={isManualTab} onTabChange={setIsManualTab} isDisabled={isProcessing || isAutoBet} />
             </div>
         </div>
