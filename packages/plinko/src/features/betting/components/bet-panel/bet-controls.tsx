@@ -8,7 +8,17 @@ import { useEffect, useMemo } from "react";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useCallback } from "react";
 
-export const BetControls = ({ isManualTab }: { isManualTab: boolean }) => {
+export const BetControls = ({
+    isManualTab,
+    numberOfBets,
+    setNumberOfBets,
+    isDisabled,
+}: {
+    isManualTab: boolean;
+    numberOfBets: number;
+    isDisabled: boolean;
+    setNumberOfBets: (numberOfBets: number) => void;
+}) => {
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
@@ -42,12 +52,12 @@ export const BetControls = ({ isManualTab }: { isManualTab: boolean }) => {
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-4 p-4 md:p-0 md:rounded-none border-stroke before:rounded-b-none">
-            <BetAmountControl handleBetAmountChange={handleBetAmountChange} />
-            <GameModeSelector />
-            <RowsSelector />
+        <div className="flex flex-col gap-3 p-4 md:p-0">
+            <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
+            <GameModeSelector isDisabled={isDisabled} />
+            <RowsSelector isDisabled={isDisabled} />
 
-            {!isManualTab && <AutoBetControl />}
+            {!isManualTab && <AutoBetControl numberOfBets={numberOfBets} isDisabled={isDisabled} setNumberOfBets={setNumberOfBets} />}
         </div>
     );
 };

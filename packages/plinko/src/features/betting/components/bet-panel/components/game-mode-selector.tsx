@@ -19,7 +19,7 @@ const gameModes = [
     },
 ] as const;
 
-export const GameModeSelector = () => {
+export const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { gameMode, setGameMode } = usePlinkoGameStore(
         useShallow((state) => ({
             gameMode: state.gameMode,
@@ -35,10 +35,11 @@ export const GameModeSelector = () => {
                     <button
                         key={`mode-${mode.value}`}
                         className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none disabled:opacity-40 focus-visible:!outline-none focus-visible:!outline-0 
-                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full"
+                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
                         type="button"
                         onClick={() => setGameMode(mode.value)}
                         aria-pressed={gameMode === mode.value}
+                        disabled={isDisabled}
                     >
                         <span>{mode.text}</span>
                     </button>

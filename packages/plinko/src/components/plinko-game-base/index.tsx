@@ -79,8 +79,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderLeftSide() {
         return (
-            <div className="col-span-12">
-                <div className="flex flex-col md:flex-row-reverse">
+            <div className="col-span-12 mb-3">
+                <div className="flex flex-col md:flex-row-reverse md:mx-3">
                     <div className="w-full md:w-8/12">{this.renderGameFrame()}</div>
                     <div className="w-full md:w-4/12">{this.renderBetControl()}</div>
                 </div>
@@ -91,11 +91,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBetOptions(): JSX.Element {
         // Plinko handles its own bet options within the PlinkoGame component
-        return <></>;
-    }
-
-    renderBettingBlock(): JSX.Element {
-        // Plinko handles its own betting block within the PlinkoGame component
         return <></>;
     }
 
@@ -119,7 +114,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<PFIcon />,<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
+        return <MenuIconWrapper items={[<PFIcon />, <SoundIcon />, <GuideIcon />, <PFIcon />]} />;
     }
 
     renderBetHistoryTable(): JSX.Element {

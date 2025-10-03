@@ -4,7 +4,7 @@ import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { NUMBER_OF_ROWS } from "@/constants";
 
-export const RowsSelector = () => {
+export const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             numberOfRows: state.numberOfRows,
@@ -25,7 +25,8 @@ export const RowsSelector = () => {
                     max={NUMBER_OF_ROWS.MAX}
                     value={numberOfRows}
                     onChange={(e) => setNumberOfRows(parseInt(e.target.value))}
-                    className="w-full"
+                    disabled={isDisabled}
+                    className="w-full disabled:opacity-50"
                     style={
                         {
                             "--input-range-progress": `${
