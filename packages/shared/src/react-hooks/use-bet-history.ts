@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameContext } from '../react-contexts';
 import useBetHistoryStore from '../stores/bet-history-store/bet-history-store';
+import { createBetHistoryHandler } from '@shared/components/game-base/handlers/bet-history-handler-factory';
 import { BetHistoryHandler } from '@shared/components/game-base/handlers/bet-history-handler';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -37,7 +38,7 @@ export function useBetHistory(gameId?: string) {
     // Initialize bet history handler
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
-            const handler = new BetHistoryHandler({ gameMessageHandler, gameId });
+            const handler = createBetHistoryHandler({ gameMessageHandler, gameId });
             setBetHistoryHandler(handler);
             isInitialized.current = true;
 

@@ -4,12 +4,14 @@ import { useGameContext } from "@shared/react-contexts";
 import { useCommonTranslate, useClickSound } from "@shared/react-hooks";
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
+import { createBetHistoryHandler } from "../../game-base/handlers/bet-history-handler-factory";
 import { BetHistoryHandler } from "../../game-base/handlers/bet-history-handler";
 import { transformBetLogsToDisplayData, getWinValueColorClass, scrollBetHistoryToTop, BetHistoryDisplayData } from "./bet-history-utils";
 import styles from "./bet-history.module.scss";
 import useBetDetailStore, { BetDetailData } from "@shared/stores/bet-detail-store";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BouncingDotsLoader from "./bouncing-dots-loader";
+import { createBetDetailData } from "./bet-detail-factory";
 
 // Function to create row data for bet history table
 const createBetHistoryRowData = (
@@ -108,7 +110,7 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
 
     useEffect(() => {
         if (!isInitialized.current && gameMessageHandler) {
-            const handler = new BetHistoryHandler({ gameMessageHandler, gameId });
+            const handler = createBetHistoryHandler({ gameMessageHandler, gameId });
             setBetHistoryHandler(handler);
             handler.requestHistory(1);
             isInitialized.current = true;
@@ -127,65 +129,10 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
             // Update bet detail data in store
             const roundId = row.originalBetLog?.roundId;
             const currentGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
-            let betDetailData: BetDetailData = null;
-            console.log("row", row);
-            if (currentGameId === "145") {
-                betDetailData = {
-                    drawInfo: {
-                        roundId: roundId,
-                        result: row.originalBetLog?.result,
-                        odds: row.originalBetLog?.odds,
-                        settlementResult: row.originalBetLog?.settlementResult,
-                        pfResult: {
-                            roundId: row.originalBetLog?.roundId,
-                            serverSeedHash: "",
-                            serverSeed: "",
-                            clientSeeds: [],
-                            mergeSeed: "",
-                            mergeClientSeed: "",
-                            roundResult: [],
-                            finalHash: "",
-                            clientSeed: row.originalBetLog?.clientSeed || "",
-                            editedMergeClientSeed: "",
-                        },
-                        clientSeed: row.originalBetLog?.clientSeed,
-                    },
-                    betLogDetails: [
-                        {
-                            rawTime: row.originalBetLog?.time,
-                            amount: row.originalBetLog?.amount,
-                            choice: row.originalBetLog?.numberOfRows,
-                            win: row.originalBetLog?.betWin,
-                            gameMode: row.originalBetLog?.gameMode,
-                        },
-                    ],
-                };
-            } else {
-                betDetailData = {
-                    drawInfo: {
-                        roundId: roundId,
-                        result: row.originalBetLog?.result,
-                        odds: row.originalBetLog?.odds,
-                        settlementResult: row.originalBetLog?.settlementResult,
-                        pfResult: {
-                            roundId: row.originalBetLog?.roundId,
-                            serverSeedHash: "",
-                            serverSeed: "",
-                            clientSeeds: [],
-                            mergeSeed: "",
-                            mergeClientSeed: "",
-                            roundResult: [],
-                            finalHash: "",
-                            clientSeed: row.originalBetLog?.clientSeed || "",
-                            editedMergeClientSeed: "",
-                        },
-                        clientSeed: row.originalBetLog?.clientSeed,
-                    },
-                    betLogDetails: row.originalBetLog?.betLogDetails || [],
-                };
-            }
 
-            console.log("row", row);
+            // Use centralized factory to create bet detail data
+            const betDetailData = createBetDetailData(currentGameId, roundId, row);
+
             updateBetDetail(betDetailData);
             toggleBetDetail(true);
         }

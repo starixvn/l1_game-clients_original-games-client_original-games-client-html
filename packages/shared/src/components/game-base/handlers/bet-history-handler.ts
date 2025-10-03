@@ -17,19 +17,19 @@ interface BetResultData {
 }
 
 export class BetHistoryHandler {
-    private readonly GET_HISTORY = "getHistory";
-    private readonly HISTORY_EVENT = "history";
-    private handlerIds: string[] = [];
-    private lastRoundState: RoundState | null = null;
-    private latestOdds: Record<string, number> = {};
-    private latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
-    private gameId: string;
+    protected readonly GET_HISTORY = "getHistory";
+    protected readonly HISTORY_EVENT = "history";
+    protected handlerIds: string[] = [];
+    protected lastRoundState: RoundState | null = null;
+    protected latestOdds: Record<string, number> = {};
+    protected latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
+    protected gameId: string;
 
-    private shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
+    protected shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
         return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
     }
 
-    private calculateBetWin(pendingDetails: any[], resultData: BetResultData): number {
+    protected calculateBetWin(pendingDetails: any[], resultData: BetResultData): number {
         // Use game-specific calculator from registry
         const calculator = BetWinCalculatorRegistry.getCalculator(this.gameId);
         if (calculator) {
@@ -48,7 +48,7 @@ export class BetHistoryHandler {
         return betwin;
     }
 
-    private createBetLog(
+    protected createBetLog(
         roundId: number,
         totalAmount: number,
         betwin: number,
@@ -96,12 +96,12 @@ export class BetHistoryHandler {
         });
     }
 
-    constructor(private readonly props: BetHistoryHandlerProps) {
+    constructor(protected readonly props: BetHistoryHandlerProps) {
         this.gameId = props.gameId || 'generic';
         this.registerHistoryEvents();
     }
 
-    private registerHistoryEvents() {
+    protected registerHistoryEvents() {
         const events = [
             [this.HISTORY_EVENT, this.handleHistoryResponse],
             [messageEventType.ROUND_STATE, this.handleRoundState],
@@ -181,7 +181,7 @@ export class BetHistoryHandler {
         }
     }
 
-    private handleFinish({ finish }: any) {
+    protected handleFinish({ finish }: any) {
         if (!finish) {
             return;
         }
@@ -190,7 +190,7 @@ export class BetHistoryHandler {
         this.latestFinish = { roundId, result, settlementResult };
     }
 
-    private flushLocalBetLogIfAny() {
+    protected flushLocalBetLogIfAny() {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
 
@@ -236,7 +236,7 @@ export class BetHistoryHandler {
         this.resetPendingLocalCache();
     }
 
-    private resetPendingLocalCache() {
+    protected resetPendingLocalCache() {
         this.latestFinish = null;
     }
 

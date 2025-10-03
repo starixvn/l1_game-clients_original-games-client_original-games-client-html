@@ -44,6 +44,12 @@
             ],
             "@baccarat-multiplayer/*": [
                 "packages/baccarat-multiplayer/src/*"
+            ],
+            "@plinko": [
+                "packages/plinko/src"
+            ],
+            "@plinko/*": [
+                "packages/plinko/src/*"
             ]
         }
     },

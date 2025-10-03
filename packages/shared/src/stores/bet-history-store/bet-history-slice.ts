@@ -180,18 +180,23 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             state.setIsLoading(false);
 
             if (history.betLogs?.length > 0) {
+                const normalizedBetLogs = history.betLogs.map((log: any) => ({
+                    ...log,
+                    betwin: log.betWin || log.betwin || 0, // Handle both betWin and betwin
+                }));
+
                 if (history.page === 1) {
                     if (state.isExpanded && state.betLogs.length > 0) {
                         const existingLogs = state.betLogs;
-                        const page1Logs = history.betLogs;
+                        const page1Logs = normalizedBetLogs;
                         const page1Ids = new Set(page1Logs.map((log: any) => getRoundKey(log)));
                         const merged = [...page1Logs, ...existingLogs.filter((log: any) => !page1Ids.has(getRoundKey(log)))];
                         state.setBetLogs(sortByRoundDesc(merged));
                     } else {
-                        state.setBetLogs(sortByRoundDesc(history.betLogs));
+                        state.setBetLogs(sortByRoundDesc(normalizedBetLogs));
                     }
                 } else {
-                    state.appendBetLogs(sortByRoundDesc(history.betLogs), {
+                    state.appendBetLogs(sortByRoundDesc(normalizedBetLogs), {
                         updatePagination: false,
                         source: "server_page"
                     });
