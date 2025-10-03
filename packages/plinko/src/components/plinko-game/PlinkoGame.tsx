@@ -49,14 +49,14 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const autoBetHandlerRef = useRef(null);
 
     // Shared game context and betting store
-    const { ownBets } = useBettingStore();
+    const ownBets = useGameStore((state) => state.ownBets);
+    const endBet = useGameStore((state) => state.endBet);
     const { socket } = useGameStore();
     const { gameMode, numberOfRows } = usePlinkoGameStore();
 
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
-
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
@@ -211,8 +211,15 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         }
     };
 
+    useEffect(() => {
+        if(endBet == 1) {
+            useGameStore.getState().resetBettingInfo();
+        }
+    }, [endBet])
+
     const clearBetResult = () => {
         // Plinko handles clearing results internally
+        useGameStore.getState().resetBettingInfo();
     };
 
     // Socket connection is now handled by shared InitSocketIO in page.tsx

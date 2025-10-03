@@ -19,6 +19,8 @@ import { BetHistoryTable } from "@shared/components/game-components/bet-history/
 import { PlayerResultBoardTable } from "@/features/betting/components/player-result-board/player-result-board-table";
 import PlinkoBetDetailModal from "../plinko-game/history";
 import BetPanel from "@/features/betting/components/bet-panel/bet-panel";
+import { PFSettingModal } from "@shared/components/game-components/provably-fair";
+import { createPortal } from "react-dom";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
@@ -115,6 +117,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderMenuIcons() {
         return <MenuIconWrapper items={[<PFIcon />, <SoundIcon />, <GuideIcon />, <PFIcon />]} />;
+    }
+
+    renderPFSettingModal() {
+        return createPortal(<PFSettingModal isSinglePlayer={true} />, document.getElementById("dashboard"));
     }
 
     renderBetHistoryTable(): JSX.Element {

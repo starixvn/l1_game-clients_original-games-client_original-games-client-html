@@ -32,13 +32,14 @@ const handleOnKeyDown = (event: any) => {
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo }) => {
-    const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting } = usePFStore(
+const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: boolean}> = ({ customClientSeedInfo, isSinglePlayer = false }) => {
+    const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting, serverSeedHash } = usePFStore(
         useShallow((state: any) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
             updatePFClientSeedSetting: state.updatePFClientSeedSetting,
             isShowPFSetting: state.isShowPFSetting,
             togglePFSetting: state.togglePFSetting,
+            serverSeedHash: state.serverSeedHash,
         }))
     );
 
@@ -79,6 +80,20 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string }> = ({ customClientSee
         const { pfClientSeedSetting } = message[messageEventType.SAVE_PF_SETTING];
         updatePFClientSeedSetting(pfClientSeedSetting);
     };
+
+    useEffect(() => {
+        if(isSinglePlayer) {
+            if(serverSeedHash) {
+                handleSavePFSetting({
+                    [messageEventType.SAVE_PF_SETTING]: {
+                        pfClientSeedSetting: {
+                            randomClientSeed: randomNumberSeries(4),
+                        },
+                    },
+                });
+            }
+        }
+    }, [serverSeedHash]);
 
     const handleSavePFSettingFromTurnIdHandler = (message) => {
         const { roundId } = message[messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER];
@@ -146,7 +161,6 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     const { t: translateCommon } = useCommonTranslate();
     const { gameMessageHandler } = useGameContext();
     const { t: translateSNGames } = useSNTranslate();
-
     const updatePFSetting = (pfSetting: Object) => {
         gameMessageHandler.broadcastGameEvent({
             [messageEventType.SAVE_PF_SETTING]: {
@@ -163,7 +177,6 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
 
 
     useEffect(() => {
-        console.log("serverSeedHash", serverSeedHash);
         if (!serverSeedHash) {
             gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId } },
