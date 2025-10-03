@@ -94,16 +94,6 @@
     }
 }
 
-// Tab control styles
-.tab-header {
-    display: flex;
-    position: relative;
-    border-radius: 0;
-    margin-bottom: 16px;
-    height: 48px; // h-12
-    border-bottom: 2px solid var(--input, #2B3648);
-    overflow: hidden;
-}
 
 .tab-button {
     flex: 1;
@@ -122,9 +112,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     
-    &:hover {
-        opacity: 0.8;
-    }
     
     &:focus-visible {
         outline: none;
@@ -138,18 +125,4 @@
     &[aria-selected="false"] {
         color: var(--secondary, #ffffff);
     }
-}
-
-.tab-slider {
-    position: absolute;
-    bottom: -1px;
-    height: 2px;
-    background: #3FEC83;
-    z-index: 10;
-    left: 0;
-    will-change: transform;
-}
-
-.tab-content {
-    width: 100%;
 }

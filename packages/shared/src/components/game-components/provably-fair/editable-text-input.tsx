@@ -52,7 +52,7 @@ const EditableTextInput: FC<{ handleOnChangeValue: (event: React.ChangeEvent<HTM
     return (
         <div id="merge-client-seed-group-editable" className="input-group width-full mb-3">
             <input
-                className="form-control"
+                className="form-control text-sm md:text-base"
                 type="text"
                 name="merge-client-seed-verification"
                 id="merge-client-seed-verification"

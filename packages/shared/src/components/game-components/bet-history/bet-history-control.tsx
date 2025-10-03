@@ -80,19 +80,18 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
     const mapperTranslateX = useMemo(() => {
         const tabIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
-        const translateX = tabIndex * 100; // Each tab is 100% width apart
+        const translateX = tabIndex * 100;
         return translateX;
     }, [tabs, activeTab]);
 
     return (
-        <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`, className)}>
+        <div className="flex flex-col items-center justify-center w-full">
             {/* Tab Header with Slider */}
             <div
                 role="tablist"
                 aria-orientation="horizontal"
                 className={cn(
-                    styles["tab-header"],
-                    "flex items-center w-full bg-layer4 overflow-hidden flex-shrink-0 rounded-none h-12 top-0 z-[100] border-b border-input sticky rounded-b-none mb-4"
+                    "bg-primary max-w-[600px] rounded-[12px] border-stroke flex items-center justify-center w-full overflow-hidden  h-12 top-0 z-[100]  border-input sticky mb-4"
                 )}
             >
                 {tabs.map((tab, index) => (
@@ -100,20 +99,17 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
                         key={tab.key}
                         id={`tabs-bet-history-trigger-${tab.key}`}
                         role="tab"
-                        aria-selected={activeTab === tab.key}
                         data-key={tab.key}
                         data-orientation="horizontal"
                         type="button"
                         onClick={() => handleTabClick(tab.key)}
                         className={cn(
                             styles["tab-button"],
-                            "text-sm md:text-base h-full inline-flex items-center justify-center whitespace-nowrap px-3 font-medium transition-all disabled:pointer-events-none disabled:opacity-40 focus-visible:!outline-none focus-visible:!outline-0 rounded-md bg-none flex-1",
-                            activeTab === tab.key ? "text-primary" : "text-secondary"
+                            "z-[10] text-sm md:text-base  inline-flex items-center justify-center whitespace-nowrap font-medium transition-all disabled:pointer-events-none disabled:opacity-40 rounded-md bg-none flex-1",
+       
                         )}
                         tabIndex={activeTab === tab.key ? 0 : -1}
                         aria-controls={`tabs-bet-history-content-${tab.key}`}
-                        data-selected={activeTab === tab.key ? "" : undefined}
-                        data-highlighted={activeTab === tab.key ? "" : undefined}
                     >
                         {tab.label}
                     </button>
@@ -124,8 +120,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
                     role="presentation"
                     data-orientation="horizontal"
                     className={cn(
-                        styles["tab-slider"],
-                        "absolute data-[orientation=horizontal]:bottom-[-1px] data-[orientation=vertical]:right-[-1px] data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-0.5 data-[disabled]:opacity-40 slider-track-active"
+                        "absolute rounded-[12px] h-[80%] z-[1] left-0 bg-[#0990FF]"
                     )}
                     style={{
                         width: `${100 / tabs.length}%`,
@@ -136,7 +131,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
             </div>
 
             {/* Tab Content */}
-            <div className={styles["tab-content"]}>{getCurrentContent()}</div>
+            <div className={cn(`${styles["bet-history-container"]} w-full rounded-xl p-2 border-stroke`)}>{getCurrentContent()}</div>
         </div>
     );
 };

@@ -26,6 +26,7 @@ export const usePFStore = create<PFStore>()(
 
                 registerEvent: (message) => {
                     pfBetsSlice.registerPFBetsEvent(message);
+                    pfSettingsSlice.registerPFSettingsEvent(message);
                 },
 
                 initializePF: (gameId, uid) => {
@@ -34,7 +35,7 @@ export const usePFStore = create<PFStore>()(
             };
         },
         {
-            name: localStorageKeys.pfStore,
+            name: localStorageKeys?.pfStore,
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 pfClientSeedSetting: state.pfClientSeedSetting,

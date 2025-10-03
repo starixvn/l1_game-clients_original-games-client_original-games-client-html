@@ -163,6 +163,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
 
 
     useEffect(() => {
+        console.log("serverSeedHash", serverSeedHash);
         if (!serverSeedHash) {
             gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId } },

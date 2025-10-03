@@ -30,14 +30,14 @@ const PFVerification: FC = () => {
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
     const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
-    const DICES_EACH_ROUND = 4; // Updated for Sedie Multi Player
+    const NUMBER_OF_ROWS = betDetailData.betLogDetails[0].choice;
 
     const verifyInfo = useMemo(
         () =>
             PfRoundBaseHelper.buildVerifyInfoPlinko({
                 pfResult: betDetailData.drawInfo.pfResult,
                 combinedHash,
-                dicesEachRound: DICES_EACH_ROUND,
+                numberOfRows: NUMBER_OF_ROWS,
             }),
         [combinedHash]
     );
@@ -105,9 +105,7 @@ const PFVerification: FC = () => {
                             );
                         })}
                     </p>
-                    <div className="mt-2 flex flex-col gap-1 font-semibold">
-                        {t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}:{betDetailData.drawInfo.settlementResult.slotIndex}
-                    </div>
+                    
                 </Section>
             </div>
         </div>

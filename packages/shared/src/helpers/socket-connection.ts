@@ -6,6 +6,7 @@ import { SocketInfo } from "@shared/components/game-base/type";
 import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
 import useGameStore from "../stores/game-store/game-store";
 import useBettingStore from "../stores/betting-store/betting-store";
+import usePFStore from "@shared/stores/pf-store/pf-store";
 
 export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: string, gameMessageHandler: GameMessageHandler) {
     const { proxy, enableMsgpackParser } = getAppSettings();
@@ -28,6 +29,7 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
             gameMessageHandler.broadcastGameEvent(message);
             useGameStore.getState().registerEvent(message);
             useBettingStore.getState().registerEvent(message);
+            usePFStore.getState().registerEvent(message);
         });
         socket.off("message").on("message", (message) => {
             gameMessageHandler.broadcastGameMessage(message);

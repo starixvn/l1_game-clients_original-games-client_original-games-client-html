@@ -17,7 +17,12 @@ export interface PFSettingsSlice {
     updateServerSeedHash: (hash: string) => void;
     toggleExpandGuideFirst: (isExpand: boolean) => void;
     initializePFSettings: (gameId: number, uid: number) => void;
+    registerPFSettingsEvent: (message: any) => void;
 }
+
+const EVENT_TYPE = {
+    PF: "pf",
+};
 
 export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) => ({
     // Initial state
@@ -34,6 +39,19 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
     uid: 0,
 
     // Actions
+    registerPFSettingsEvent: (message) => {
+        console.log("message", message);
+        Object.values(EVENT_TYPE).forEach((event) => {
+            if (message[event] !== undefined) {
+                if(event === EVENT_TYPE.PF) {
+                    set({ serverSeedHash: message[event].serverSeedHash });
+                } else {
+                    set({ [event]: message[event] });
+                }
+            }
+        });
+    },
+
     togglePFSetting: (isShow) => {
         const { gameId, uid } = get();
         if (isShow) {
