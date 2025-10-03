@@ -82,7 +82,7 @@ const PFVerification: FC = () => {
                         title={t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
                         customTitleStyles={`m-0 ${Styles["title-fix-width"]}`}
                     ></Section>
-                    <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.slotIndex}x</div>
+                    <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
                     {t(`${ResourceTypes.PLINKO}.game_mode`).capitalizeFirstLetter()}: {t(gameModeMap[betDetailData.betLogDetails[0].gameMode])}

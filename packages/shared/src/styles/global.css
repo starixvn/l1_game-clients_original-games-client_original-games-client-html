@@ -23,8 +23,8 @@
     --table-header: #233046;
     --bet-history-row-1: #182130;
     --bet-history-row-2: #1f2a3b;
-    --bet-detail-row-1: #1f2a3b;
-    --bet-detail-row-2: #182130;
+    --bet-detail-row-1: #182130;
+    --bet-detail-row-2: #1F2A3B;
 
     --modal-text-color: #e6e6e6;
     --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
@@ -59,8 +59,8 @@ html[data-theme="dark"] {
     --text-content-color: #ced8e6;
 
     --table-header: #233046;
-    --bet-detail-row-1: #1f2a3b;
-    --bet-detail-row-2: #182130;
+    --bet-detail-row-1: #182130;
+    --bet-detail-row-2: #1F2A3B;
 
     --modal-text-color: #e6e6e6;
     --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);

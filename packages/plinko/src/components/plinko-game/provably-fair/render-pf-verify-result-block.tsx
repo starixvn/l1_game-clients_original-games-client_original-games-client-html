@@ -21,7 +21,7 @@ const PFVerifyResultBlock = () => {
                         {betDetailData.drawInfo?.settlementResult ? (
                             <span className="flex items-center gap-1.5">
                                 <div className="text-[var(--text-content-color)] font-[400]"> {t(`${ResourceTypes.COMMON}.result`)}:</div>
-                                <div>{betDetailData.drawInfo?.settlementResult.slotIndex}x</div>
+                                <div>{betDetailData.drawInfo?.settlementResult.multiplier}x</div>
                             </span>
                         ) : (
                             <span aria-label="no result">—</span>

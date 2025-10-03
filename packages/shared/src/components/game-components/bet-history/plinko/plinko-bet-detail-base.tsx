@@ -34,7 +34,7 @@ const PlinkoBetDetailBase: FC<{
                 betChoice: betLogDetail.choice,
                 stake: numberWithCommas(betLogDetail.amount, 2) ?? 0,
                 win: displayWinAmount(betLogDetail.win),
-                isWinningBet: betLogDetail.win > 0,
+                isWinningBet: betLogDetail.win > betLogDetail.amount,
             };
         });
     }, [betLogDetails, drawInfo]);

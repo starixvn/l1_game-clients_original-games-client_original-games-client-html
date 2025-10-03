@@ -32,7 +32,7 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ round
                 {settlementResult ? (
                     <span className="flex items-center gap-1.5">
                         <span className="text-secondary-text">{translateCommon("result")}</span>
-                        <div>{settlementResult.multiplier}</div>
+                        <div className="text-winning-highlight">{settlementResult.multiplier}x</div>
                     </span>
                 ) : (
                     <span aria-label="no result">—</span>
