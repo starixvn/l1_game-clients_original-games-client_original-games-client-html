@@ -58,10 +58,11 @@ export function formatWinValue(totalWin: number): string {
 /**
  * Gets the appropriate CSS class for win value coloring
  */
-export function getWinValueColorClass(winValue: string): string {
-    const numericValue = parseFloat(winValue.replace(/[+,]/g, ''));
+export function getWinValueColorClass(winValue: string, betAmount?: string): string {
+    const winNumericValue = parseFloat(winValue.replace(/[+,]/g, ''));
+    const betNumericValue = betAmount ? parseFloat(betAmount.replace(/[+,]/g, '')) : 0;
 
-    if (numericValue > 0) {
+    if (winNumericValue > betNumericValue) {
         return "text-winning-highlight font-normal";
     }
     return "";

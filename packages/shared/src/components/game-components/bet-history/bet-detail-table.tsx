@@ -80,6 +80,7 @@ const renderBetDetailRows = (data: BetDetailRow[]) => {
                         className={cn(
                             "w-1/4 text-sm md:text-base text-secondary-text p-3",
                             cell.className || "text-center",
+                            cellIndex === 1 && "font-semibold",
                             cell.isWinningBet && "text-winning-highlight font-normal",
                             cell.isWinningBet && cellIndex === 1 && "font-semibold",
                         )}
@@ -100,7 +101,7 @@ const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: 
                     {translateCommon("total")}
                 </TableCell>
                 <TableCell className="w-1/4 text-center p-3 px-0 font-normal">{formatNumber(totalStake)}</TableCell>
-                <TableCell className="w-1/4 text-winning-highlight font-normal text-right p-3 px-0 pr-3">
+                <TableCell className={cn("w-1/4 font-normal text-right p-3 px-0 pr-3", calculateTotalWinFromTable(data) > 0 && "text-winning-highlight")}>
                     {formatNumber(calculateTotalWinFromTable(data))}
                 </TableCell>
             </TableRow>

@@ -18,7 +18,7 @@ const createBetHistoryRowData = (
     row: BetHistoryDisplayData,
     rowIndex: number,
     handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
-    getWinValueColorClass: (win: string) => string
+    getWinValueColorClass: (win: string, betAmount?: string) => string
 ) => {
     return [
         {
@@ -33,7 +33,7 @@ const createBetHistoryRowData = (
             content: row.betAmount,
         },
         {
-            content: <div className={getWinValueColorClass(row.win)}>{row.win}</div>,
+            content: <div className={getWinValueColorClass(row.win, row.betAmount)}>{row.win}</div>,
             className: "text-right",
         },
     ];
@@ -43,7 +43,7 @@ const createBetHistoryRowData = (
 const renderBetHistoryRows = (
     tableData: any[],
     handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
-    getWinValueColorClass: (win: string) => string
+    getWinValueColorClass: (win: string, betAmount?: string) => string
 ) => {
     return tableData.map((row, rowIndex) => {
         const rowData = createBetHistoryRowData(row, rowIndex, handleCellClick, getWinValueColorClass);
@@ -75,7 +75,7 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
                 <TableHead
                     key={column.key}
                     className={cn(
-                        "text-primary-text p-2 lg:p-3 h-full font-semibold text-sm md:text-base",
+                        "text-primary-text p-2 md:p-3 h-full font-semibold text-sm md:text-base",
                         column.align === "right" ? "text-right" : "text-center",
                         index === 0 && "rounded-tl-lg rounded-bl-lg",
                         index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"

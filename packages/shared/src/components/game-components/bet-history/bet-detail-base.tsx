@@ -37,7 +37,7 @@ const BetDetailBase: FC<{
                 betChoice: renderBetChoice ? renderBetChoice(choice) : choice,
                 stake: numberWithCommas(amount, 2) ?? 0,
                 win: displayWinAmount(win),
-                isWinningBet: win > 0,
+                isWinningBet: win > amount,
             };
         });
     }, [betLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice]);

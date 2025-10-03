@@ -86,7 +86,7 @@ export const BetChoice: FC<{ choice: string }> = ({ choice }) => {
     const isOddOrEven = choice === SeDieBetOptions.ODD || choice === SeDieBetOptions.EVEN;
 
     return (
-        <span className="font-text flex justify-center items-center">
+        <span className="font-text flex justify-center items-center font-semibold">
             {isOddOrEven ? (
                 t(`glossary_${choice}`)
             ) : (
