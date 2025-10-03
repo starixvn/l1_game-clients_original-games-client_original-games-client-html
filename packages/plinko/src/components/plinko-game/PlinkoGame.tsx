@@ -11,6 +11,10 @@ import { messageEventType } from "@shared/components/game-base/handlers";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
 import { getOddsForMode } from "../../game-odds-config";
 import RoundMultiplierHistory from "@shared/components/game-components/round-multiplier-history/round-multiplier-history";
+import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
+import { RoundState } from "@shared/components/game-base/type";
+import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
+import { useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
 
 const defaultGameState: GameState = {
     currentWin: 106,
@@ -57,6 +61,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
+    const dispatch = useGameStatesDispatch();
+
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
@@ -74,6 +80,12 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         // Register handler for gameConfigs response to mark game as initialized
         const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
             setLocalGameInitialized(true);
+            dispatch({
+                type: GameEventActionType.UPDATE_ROUND_STATE,
+                payload: {
+                    roundState: RoundState.InRound,
+                },
+            });
         });
 
         // Register handler for endBet message (contains the finish object with result path)

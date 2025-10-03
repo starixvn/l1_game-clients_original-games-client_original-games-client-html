@@ -255,6 +255,13 @@ function handleActiveScoreBoardTabAction(state: GameStateContextModel, isScorebo
     };
 }
 
+function handleUpdateRoundStateAction(state: GameStateContextModel, roundState: RoundState): GameStateContextModel {
+    return {
+        ...state,
+        roundState,
+    };
+}
+
 function gameStateReducer(state: GameStateContextModel, action: GameEventAction) {
     const { type, payload } = action;
 
@@ -336,6 +343,9 @@ function gameStateReducer(state: GameStateContextModel, action: GameEventAction)
 
         case GameEventActionType.ACTIVE_SCORE_BOARD_TAB:
             return handleActiveScoreBoardTabAction(state, payload.isScoreboardTab);
+
+        case GameEventActionType.UPDATE_ROUND_STATE:
+            return handleUpdateRoundStateAction(state, payload.roundState);
 
         default: {
             console.warn(JSON.stringify(action));
