@@ -138,7 +138,6 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     );
     const ownBets = useGameStore((state) => state.ownBets);
     const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
-    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isManualMode, setIsManualMode] = useState<boolean>(pfClientSeedSetting?.useManualClientSeed || false);
     const [manualClientSeed, setManualClientSeed] = useState<string>(pfClientSeedSetting?.manualClientSeed || "");
@@ -162,42 +161,33 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         setIsManualMode(pfClientSeedSetting?.useManualClientSeed || false);
     }, [pfClientSeedSetting]);
 
-    useEffect(() => {
-        setIsFirstFetch(true);
-    }, [roundId]);
 
     useEffect(() => {
-        if (isFirstFetch) {
+        if (!serverSeedHash) {
             gameMessageHandler.broadcastGameEvent({
                 [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId } },
             });
-            setIsFirstFetch(false);
+            setIsLoading(true);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, TIME_OUT);
         }
-    }, [isFirstFetch]);
+    }, []);
 
     useEffect(() => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-        }, TIME_OUT);
 
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
             updateServerSeedHash(pfServerSeed.serverSeedHash);
+            setIsLoading(false);
         };
 
-        const publishPFSeverSeedHandler = gameMessageHandler.register(PFPublishMessage, ({ pf }) => {
-            handleServerSeed(pf);
-            setIsLoading(false);
-        });
 
         const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {
             handleServerSeed(roundPFResult);
-            setIsLoading(false);
         });
 
         return () => {
             gameMessageHandler.removeHandler(pfResultHandler);
-            gameMessageHandler.removeHandler(publishPFSeverSeedHandler);
         };
     }, []);
 

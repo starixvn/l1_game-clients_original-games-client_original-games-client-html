@@ -22,7 +22,7 @@ export interface RoundInfoPlinko extends DrawInfo {
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ roundInfo: drawInfo }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { roundId, settlementResult } = drawInfo;
-    console.log("settlementResult", settlementResult);
+
     return (
         <div className="flex justify-between text-secondary-text text-sm md:text-base mt-2">
             <div className="flex items-center gap-1.5 font-medium">

@@ -107,7 +107,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
+        return <MenuIconWrapper items={[<PFIcon />,<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
     }
 
     renderBetHistoryTable(): JSX.Element {

@@ -2,6 +2,7 @@ import { GameEventActionType } from '@shared/react-contexts/game-state-context/g
 import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
 import { GameDurations, RoundState } from "../game-base/type";
 import { GameMessageHandler, messageEventType } from "../game-base/handlers/game-message-handler";
+import { usePFStore } from '@shared/stores';
 
 export type RoundIdHandlerProps = {
     dispatch: Function;
@@ -56,7 +57,9 @@ export class RoundIdHandler {
 
     handlePF = ({ pf }) => {
         this.roundId = pf?.roundId;
-
+        usePFStore.setState({
+            serverSeedHash: pf?.serverSeedHash,
+        });
         if (!this.isInDisplayResultState()) {
             this.dispatchRoundId(this.roundId);
             this.dispatchClientSeed(this.roundId);

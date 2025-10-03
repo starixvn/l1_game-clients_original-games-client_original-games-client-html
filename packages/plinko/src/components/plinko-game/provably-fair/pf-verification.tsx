@@ -30,7 +30,6 @@ const PFVerification: FC = () => {
     const { t: translateInGame } = useTranslator([tolgeeNamespace]);
     const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
-    const IMAGE_SIZE = 36;
     const DICES_EACH_ROUND = 4; // Updated for Sedie Multi Player
 
     const verifyInfo = useMemo(
@@ -86,7 +85,7 @@ const PFVerification: FC = () => {
                     <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.slotIndex}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {t(`${ResourceTypes.PLINKO}.game_mode`).capitalizeFirstLetter()}: {gameModeMap[betDetailData.betLogDetails[0].gameMode]}
+                    {t(`${ResourceTypes.PLINKO}.game_mode`).capitalizeFirstLetter()}: {t(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
                     <div className="flex gap-2 items-center">
                         {t(`${ResourceTypes.PLINKO}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
                     </div>

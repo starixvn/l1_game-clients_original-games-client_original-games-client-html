@@ -177,7 +177,7 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
             </ClientSeedForm>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_client_seed")}>
-                    {isMergeClientSeed ?? (
+                    {isMergeClientSeed ? (
                         <>
                             <div className={Styles["tooltip-container"]}>
                                 <button className={Styles["btn-pf-intro"]} onClick={handleClickTooltip} id="btn-tooltip-client-seed">
@@ -189,7 +189,7 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
                                 </div>
                             </div>
                         </>
-                    )}
+                    ) : null}
                 </Section>
                 {isMergeClientSeed ? (
                     <>
