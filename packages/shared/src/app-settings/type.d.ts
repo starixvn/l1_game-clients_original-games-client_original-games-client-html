@@ -18,6 +18,15 @@ interface OpenReplayOptions {
     defaultInputMode: number;
     obscureTextNumbers: boolean;
     obscureTextEmails: boolean;
+    captureCSS?: boolean;
+    disableCSSAnimation?: boolean;
+    css?: {
+        scanInMemoryCSS?: boolean;
+        checkCssInterval?: number;
+        checkLimit?: number;
+    };
+    capturePerformance?: boolean;
+    longTasks?: boolean;
 }
 
 export default interface AppSettings {

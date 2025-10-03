@@ -19,7 +19,8 @@ const baseAppSettings = createAppSettings(configs);
 
 const nextConfig = {
     publicRuntimeConfig: baseAppSettings,
-    productionBrowserSourceMaps: false,
+    // TEMPORARY: Enable source maps for OpenReplay testing - DISABLE IN PRODUCTION FOR SECURITY
+    productionBrowserSourceMaps: true,
     pageExtensions: ["tsx", "ts", "jsx", "js"],
     generateBuildId: async () => uuidv4(),
     async rewrites() {
@@ -51,7 +52,12 @@ const nextConfig = {
     },
     transpilePackages: ["@shared/merged"],
     webpack: (config, { isServer }) => {
-        config.devtool = false;
+        // TEMPORARY: Enable source maps for OpenReplay testing - DISABLE IN PRODUCTION FOR SECURITY
+        if (isServer) {
+            config.devtool = false; // Keep server-side source maps disabled for security
+        } else {
+            config.devtool = "source-map"; // Enable client-side source maps for OpenReplay testing
+        }
         config.resolve.alias = {
             ...config.resolve.alias,
             "@shared": path.resolve(__dirname, "../shared/src"),

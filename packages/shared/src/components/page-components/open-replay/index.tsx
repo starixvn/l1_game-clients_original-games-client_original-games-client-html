@@ -22,6 +22,18 @@ const getOpenReplayConfig = (): OpenReplayConfig | null => {
     defaultInputMode: (openreplayConfig?.defaultInputMode as 0 | 1 | 2) || 2,
     obscureTextNumbers: openreplayConfig?.obscureTextNumbers ?? false,
     obscureTextEmails: openreplayConfig?.obscureTextEmails ?? true,
+    // Enable CSS and animation capture for debugging
+    captureCSS: (openreplayConfig as any)?.captureCSS ?? true,
+    disableCSSAnimation: (openreplayConfig as any)?.disableCSSAnimation ?? false,
+    // Enhanced CSS support for emotion-js and dynamic styles (from OpenReplay docs)
+    css: {
+      scanInMemoryCSS: (openreplayConfig as any)?.css?.scanInMemoryCSS ?? true, // Better support for emotion-js
+      checkCssInterval: (openreplayConfig as any)?.css?.checkCssInterval ?? 200, // How often to scan stylesheets
+      checkLimit: (openreplayConfig as any)?.css?.checkLimit ?? 0, // Disabled by default
+    },
+    // Performance monitoring for animations
+    capturePerformance: (openreplayConfig as any)?.capturePerformance ?? true, // Capture framerate, CPU, memory
+    longTasks: (openreplayConfig as any)?.longTasks ?? true, // Capture long animation frames
   };
 };
 
