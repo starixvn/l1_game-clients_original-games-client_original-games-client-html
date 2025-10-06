@@ -1,6 +1,5 @@
 import { useRef, useCallback, useMemo } from 'react';
 import { Composite, Engine } from 'matter-js';
-import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';

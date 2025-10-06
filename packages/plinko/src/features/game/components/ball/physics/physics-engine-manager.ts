@@ -131,7 +131,7 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
             body.label?.includes('ball')
         );
         balls.forEach(ball => {
-            const extension = ball as any;
+            const extension = ball;
             if (extension.isRemoved && !extension.loggedRemoval) {
                 logger.debug('🗑️ [PHYSICS] Ball removed from world:', {
                     id: ball.id,

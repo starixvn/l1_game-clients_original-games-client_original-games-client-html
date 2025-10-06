@@ -69,39 +69,3 @@ export function getBallPhysicsTweaks(ballRadius: number): BallPhysicsTweaks {
 
     return physicsTweaks;
 }
-
-/**
- * Demo function to test ball sizing calculations across different row configurations
- * Useful for development and tuning the dynamic sizing system
- */
-export function demoBallSizing(): void {
-
-
-
-    const testCases = [
-        { rows: 1, description: 'Minimum rows (max ball size)' },
-        { rows: 5, description: 'Low risk setting' },
-        { rows: 8, description: 'Low-medium risk' },
-        { rows: 10, description: 'Base reference (normal size)' },
-        { rows: 12, description: 'Medium-high risk' },
-        { rows: 16, description: 'High risk setting' },
-        { rows: 20, description: 'Very high risk (min ball size)' },
-        { rows: 25, description: 'Extreme volatility' }
-    ];
-
-    testCases.forEach(({ rows, description }) => {
-        const radius = calculateBallSize(rows);
-        const diameter = radius * 2;
-        const physics = getBallPhysicsTweaks(radius);
-
-
-
-
-
-    });
-
-
-
-
-
-}

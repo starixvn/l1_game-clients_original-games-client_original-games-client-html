@@ -83,7 +83,6 @@ export function createMultiplierBodies(
 
     // Scale physics elements based on number of rows
     const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / rows));
-    const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));
     const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
     const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
 
@@ -164,57 +163,6 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
             isStatic: true
         }
     );
-
-    // Create triangular boundary walls using strategic wall placements
-    const triangleTopMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_TOP;
-    const triangleBottomMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOTTOM;
-    const triangleBoardHeight = canvasHeight - triangleTopMargin - triangleBottomMargin;
-    const triangleBoardWidth = canvasWidth * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOARD_WIDTH; // Match the board width (85%)
-
-    // Calculate triangular boundaries (matching the visual board)
-    const triangleCenterX = canvasWidth / 2; // Top point
-    const triangleTopYPos = triangleTopMargin;
-    const triangleBottomYPos = triangleTopMargin + triangleBoardHeight;
-
-    // Create boundary walls at key positions to contain balls within triangle
-    const triangularWalls: Body[] = [];
-
-    // Create walls at progressive widths to form triangular shape
-    const wallLevels = LAYOUT_CONSTANTS.BOARD.WALL_LEVELS; // Number of wall levels from top to bottom
-    for (let level = 0; level < wallLevels; level++) {
-        const t = level / (wallLevels - 1); // 0 to 1
-        const currentY = triangleTopYPos + t * (triangleBottomYPos - triangleTopYPos);
-        const currentWidth = (1 - t) * triangleBoardWidth * 0.8 + t * triangleBoardWidth; // Wide at top, full width at bottom
-        const currentX = triangleCenterX - currentWidth / 2;
-
-        // Left wall segment - position outside the play area
-        const leftWallSegment = Bodies.rectangle(
-            currentX - LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET, // Move further left
-            currentY,
-            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
-            triangleBoardHeight / wallLevels, // Segment height
-            {
-                render: { visible: false },
-                isStatic: true,
-                label: `triangle-left-wall-${level}`
-            }
-        );
-
-        // Right wall segment - position outside the play area
-        const rightWallSegment = Bodies.rectangle(
-            currentX + currentWidth + LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET, // Move further right
-            currentY,
-            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
-            triangleBoardHeight / wallLevels, // Segment height
-            {
-                render: { visible: false },
-                isStatic: true,
-                label: `triangle-right-wall-${level}`
-            }
-        );
-
-        triangularWalls.push(leftWallSegment, rightWallSegment);
-    }
 
     // Temporarily disable triangular walls to see if they interfere with ball path
     return [leftWall, rightWall, floor]; // , ...triangularWalls

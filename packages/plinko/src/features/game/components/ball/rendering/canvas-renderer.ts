@@ -146,7 +146,7 @@ export namespace CanvasRenderer {
      * Main rendering orchestration function
      */
     export function renderFrame(renderContext: RenderContext): void {
-        const { ctx, engine, multipliers, pins, numberOfRows, removedBallsRef, layoutData, slotRenderData } = renderContext;
+        const { ctx, engine, pins, removedBallsRef, layoutData, slotRenderData } = renderContext;
 
         // Clear canvas
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);

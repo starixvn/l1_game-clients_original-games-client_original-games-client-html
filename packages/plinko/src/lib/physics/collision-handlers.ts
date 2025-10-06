@@ -1,5 +1,5 @@
 import { Body, Engine } from 'matter-js';
-import { BallBodyExtension, ExtendedBody, SlotLayout, AnimationState, CollisionHandlerOptions } from '../../types/physics';
+import { BallBodyExtension, CollisionHandlerOptions } from '../../types/physics';
 import { COLLISION_CONSTANTS } from './constants/collision-constants';
 import { ANIMATION_CONSTANTS } from './constants/animation-constants';
 

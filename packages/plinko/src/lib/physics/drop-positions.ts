@@ -48,18 +48,3 @@ export function getMiddleDropPosition(canvasWidth: number): number {
     return fallbackPosition;
 }
 
-/**
- * Demo function to test drop position calculations and middle position selection
- * Useful for verifying the 9-drop-zone layout and middle spawning behavior
- */
-export function demoDropPositions(): void {
-    const testCanvasWidths = [400, 600, 800];
-    const mockMultipliers = [100, 15.6, 2, 0.9, 0.5, 0.4, 0.5, 0.9, 2, 15.6, 100]; // eslint-disable-line @typescript-eslint/no-unused-vars
-
-    testCanvasWidths.forEach((canvasWidth, index) => {
-        const positions = calculateDropPositions(canvasWidth);
-        const middlePos = getMiddleDropPosition(canvasWidth);
-
-        // Demo function body (logs removed)
-    });
-}

@@ -89,7 +89,7 @@ export function handleServiceGuidedWin(
     betValue: number,
     options: CollisionHandlerOptions
 ): void {
-    const expectedFinalSlot = ballExtension.expectedFinalSlot!;
+    const expectedFinalSlot = ballExtension.expectedFinalSlot;
     const expectedMultiplier = ballExtension.multiplier;
 
     if (finalSlot === expectedFinalSlot) {
