@@ -76,6 +76,8 @@ const AutoBetGroup = ({
         setTotalNetProfit(newTotalNetProfit);
         const newNumberOfBets = numberOfBets - 1;
         setNumberOfBets(newNumberOfBets);
+        // Note: Ball spawning is controlled by MIN_SPAWN_INTERVAL_AUTO_BET (1500ms) in ball-constants.ts
+        // This prevents physics engine overload during rapid auto-betting
         if (newNumberOfBets <= 0) {
             setNumberOfBets(Infinity);
             setIsAutoBet(false);

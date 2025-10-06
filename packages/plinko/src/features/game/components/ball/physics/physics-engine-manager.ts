@@ -10,6 +10,7 @@ import { createPhysicsBodies } from './body-factory';
 import { processCollision, CollisionHandlerOptions } from './collision-handler';
 import { logger } from '../../../../../services/logger';
 import { RENDERING_CONSTANTS } from '@/lib/physics/constants/rendering-constants';
+import { CANVAS_CONSTANTS } from '@/lib/physics/constants/canvas-constants';
 
 export interface PhysicsEngineState {
     engine: Engine | null;
@@ -126,6 +127,9 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
     });
 
     Events.on(engine, 'afterUpdate', () => {
+        // Check for balls that have fallen outside canvas bounds and remove them
+        checkAndRemoveOutOfBoundsBalls(engine);
+
         // Log ball removals
         const balls = Composite.allBodies(engine.world).filter(body =>
             body.label?.includes('ball')
@@ -142,6 +146,91 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
             }
         });
     });
+}
+
+/**
+ * Check for balls that have fallen outside canvas bounds or are stuck, and remove them
+ * Prevents accumulation of problematic balls that can interfere with active physics
+ */
+function checkAndRemoveOutOfBoundsBalls(engine: Engine): void {
+    const balls = Composite.allBodies(engine.world).filter(body =>
+        body.label?.includes('ball') && !body.isStatic
+    );
+
+    // Define reasonable bounds (with some margin beyond canvas)
+    const canvasWidth = engine.world.bounds?.max?.x || CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_WIDTH;
+    const canvasHeight = engine.world.bounds?.max?.y || CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_HEIGHT;
+
+    const bounds = {
+        maxX: canvasWidth * 1.5,
+        maxY: canvasHeight * 1.5,
+        minX: -canvasWidth * 0.5,
+        minY: -canvasHeight * 0.5
+    };
+
+    balls.forEach(ball => {
+        if (isBallOutOfBounds(ball, bounds)) {
+            removeBallFromWorld(ball, 'outside bounds');
+        } else if (isBallStuck(ball, canvasHeight)) {
+            handleStuckBall(ball);
+        } else {
+            resetStuckTimer(ball);
+        }
+    });
+}
+
+function isBallOutOfBounds(ball: any, bounds: any): boolean {
+    const { x, y } = ball.position;
+    return x < bounds.minX || x > bounds.maxX || y < bounds.minY || y > bounds.maxY;
+}
+
+function isBallStuck(ball: any, canvasHeight: number): boolean {
+    const velocity = ball.velocity;
+    const speed = velocity ? Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y) : 0;
+    return speed < 0.1 && ball.position.y < canvasHeight * 0.8;
+}
+
+function handleStuckBall(ball: any): void {
+    if (ball.isRemoved) return;
+
+    if (!ball.stuckTime) {
+        ball.stuckTime = Date.now();
+    } else if (Date.now() - ball.stuckTime > 3000) {
+        logger.warn('🚨 [PHYSICS] Ball appears stuck - nudging:', {
+            id: ball.id,
+            position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+            label: ball.label
+        });
+
+        // Give the ball a nudge
+        if (ball.velocity) {
+            ball.velocity.x += (Math.random() - 0.5) * 2;
+            ball.velocity.y += 0.5;
+        }
+
+        ball.stuckTime = Date.now(); // Reset timer
+    }
+}
+
+function resetStuckTimer(ball: any): void {
+    if (ball.stuckTime) {
+        ball.stuckTime = undefined;
+    }
+}
+
+function removeBallFromWorld(ball: any, reason: string): void {
+    if (ball.isRemoved) return;
+
+    logger.warn(`🚨 [PHYSICS] Ball ${reason} - removing:`, {
+        id: ball.id,
+        position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+        label: ball.label
+    });
+
+    ball.isRemoved = true;
+    ball.isSensor = true;
+    ball.isStatic = true;
+    World.remove(ball.world || ball.engine?.world, ball);
 }
 
 /**

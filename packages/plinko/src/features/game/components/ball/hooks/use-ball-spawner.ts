@@ -3,6 +3,7 @@ import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
+import { BALL_CONSTANTS } from '../../../../../lib/physics/constants/ball-constants';
 
 interface UseBallSpawnerProps {
     numberOfRows: number;
@@ -27,7 +28,7 @@ export const useBallSpawner = ({
 }: UseBallSpawnerProps): UseBallSpawnerReturn => {
     // Prevent rapid successive ball drops
     const lastSpawnTimeRef = useRef<number>(0);
-    const minSpawnInterval = 500;
+    const minSpawnInterval = BALL_CONSTANTS.SPAWN.MIN_SPAWN_INTERVAL_AUTO_BET; // Increased to prevent physics engine overload with auto-bets
     const removedBallsRef = useRef<Set<number>>(new Set());
 
     // Memoize ball creation parameters to avoid recalculating on every spawn

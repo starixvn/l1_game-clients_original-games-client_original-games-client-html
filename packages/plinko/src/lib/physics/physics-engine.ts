@@ -106,7 +106,10 @@ export function createPhysicsBodies(
             const pin = Bodies.circle(x, y, pegRadius, {
                 label: `pin-${row}-${col}`,
                 render: { fillStyle: physicsConfig.colors.pin },
-                isStatic: true
+                isStatic: true,
+                collisionFilter: {
+                    category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT
+                }
             });
             pins.push(pin);
         }
@@ -221,6 +224,9 @@ export function createPhysicsBodies(
                 label: `multiplier-${multiplier}-${index}`,
                 isStatic: true,
                 isSensor: true, // Like demo slots
+                collisionFilter: {
+                    category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER
+                },
                 render: {
                     fillStyle: getMultiplierColor(multiplier)
                 }
@@ -304,7 +310,8 @@ export function spawnBall(
         frictionAir: physicsTweaks.frictionAir, // Dynamic air resistance for fall speed
         density: physicsTweaks.density, // Dynamic mass for realistic physics
         collisionFilter: {
-            group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP
+            group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP,
+            mask: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT | PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER // Only collide with pins and slots, not other balls
         },
         render: {
             fillStyle: ballColor
@@ -384,6 +391,10 @@ function createBallWithServicePath(
         friction: PHYSICS_CONSTANTS.BALL.FRICTION_SERVICE,
         frictionAir: physicsTweaks.frictionAir,
         density: physicsTweaks.density,
+        collisionFilter: {
+            group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP,
+            mask: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT | PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER // Only collide with pins and slots, not other balls
+        },
         render: {
             fillStyle: ballColor,
             strokeStyle: RENDERING_CONSTANTS.BALL.BALL_STROKE,

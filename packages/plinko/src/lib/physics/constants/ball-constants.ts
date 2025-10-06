@@ -9,6 +9,7 @@ export const BALL_CONSTANTS = {
         Y_POSITION: 30,
         SERVICE_Y_OFFSET: 10,
         MIN_SPAWN_INTERVAL: 0, // Will be set by caller
+        MIN_SPAWN_INTERVAL_AUTO_BET: 1500, // Increased interval for auto-betting to prevent physics overload
         RANDOM_OFFSET_RANGE: 4, // -2px to +2px
         RANDOM_OFFSET_MULTIPLIER: 0.5
     },

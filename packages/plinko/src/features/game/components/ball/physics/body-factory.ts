@@ -164,8 +164,32 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
         }
     );
 
-    // Temporarily disable triangular walls to see if they interfere with ball path
-    return [leftWall, rightWall, floor]; // , ...triangularWalls
+    // Add stronger side walls to prevent horizontal escape
+    const extendedLeftWall = Bodies.rectangle(
+        -wallThickness * 2, // Further left
+        canvasHeight / 2,
+        wallThickness,
+        canvasHeight * 3, // Much taller
+        {
+            render: { visible: false },
+            isStatic: true,
+            label: 'extended-left-wall'
+        }
+    );
+
+    const extendedRightWall = Bodies.rectangle(
+        canvasWidth + wallThickness * 2, // Further right
+        canvasHeight / 2,
+        wallThickness,
+        canvasHeight * 3, // Much taller
+        {
+            render: { visible: false },
+            isStatic: true,
+            label: 'extended-right-wall'
+        }
+    );
+
+    return [leftWall, rightWall, floor, extendedLeftWall, extendedRightWall];
 }
 
 /**
