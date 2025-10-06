@@ -3,6 +3,6 @@
  * Central export point for all rendering-related modules
  */
 
-export * from './CanvasRenderer';
-export * from './LayoutCalculator';
-export * from './DrawingUtils';
+export * from './canvas-renderer';
+export * from './layout-calculator';
+export * from './drawing-utils';

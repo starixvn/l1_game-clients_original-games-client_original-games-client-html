@@ -1,8 +1,8 @@
 import { renderHook, act } from '@testing-library/react';
-import { useCanvas } from '../src/features/game/components/ball/hooks/useCanvas';
-import { usePhysicsEngine } from '../src/features/game/components/ball/hooks/usePhysicsEngine';
-import { useBallSpawner } from '../src/features/game/components/ball/hooks/useBallSpawner';
-import { useBallRenderer } from '../src/features/game/components/ball/hooks/useBallRenderer';
+import { useCanvas } from '../src/features/game/components/ball/hooks/use-canvas';
+import { usePhysicsEngine } from '../src/features/game/components/ball/hooks/use-physics-engine';
+import { useBallSpawner } from '../src/features/game/components/ball/hooks/use-ball-spawner';
+import { useBallRenderer } from '../src/features/game/components/ball/hooks/use-ball-renderer';
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({

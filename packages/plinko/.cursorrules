@@ -70,12 +70,22 @@ const autoBetHandler = new AutoBetHandler({
 
 ## Plinko-Specific Rules
 
-### File Naming
+### File Naming Convention
+
+**IMPORTANT: Use kebab-case naming convention for ALL new files**
+
+-   ✅ **Correct**: `new-file.tsx`, `ball-calculations.ts`, `physics-engine-manager.ts`
+-   ❌ **Incorrect**: `newFile.tsx`, `ballCalculations.ts`, `physicsEngineManager.ts`
+
+### File Naming Patterns
 
 -   Components: `Plinko*.tsx` (e.g., `PlinkoGame.tsx`, `PlinkoStatistics.tsx`)
--   Physics: `physics-*.ts`, `ball-*.ts`
+-   Physics: `physics-*.ts`, `ball-*.ts`, `collision-*.ts`
 -   Betting: `bet-*.ts`, `auto-bet-*.ts`
--   Types: `PlinkoTypes.ts`
+-   Rendering: `canvas-*.ts`, `drawing-*.ts`, `layout-*.ts`
+-   Hooks: `use-*.ts` (e.g., `use-ball-spawner.ts`, `use-physics-engine.ts`)
+-   Tests: `*.test.ts`, `*.test.tsx`
+-   Types: `PlinkoTypes.ts`, `physics-types.ts`
 
 ### Import Patterns
 

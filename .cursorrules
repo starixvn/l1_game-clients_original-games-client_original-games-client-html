@@ -144,11 +144,41 @@ const useGameHook = () => {
 
 ## File Naming Conventions
 
--   Components: PascalCase (GameComponent.tsx)
--   Hooks: camelCase with use prefix (useGameHook.ts)
--   Stores: camelCase (game-store.ts)
--   Utilities: camelCase (game-helper.ts)
--   Types: PascalCase (GameTypes.ts)
+**IMPORTANT: Use kebab-case naming convention for ALL new files**
+
+-   ✅ **Correct**: `new-file.tsx`, `ball-calculations.ts`, `physics-engine-manager.ts`, `use-game-hook.ts`
+-   ❌ **Incorrect**: `newFile.tsx`, `ballCalculations.ts`, `physicsEngineManager.ts`, `useGameHook.ts`
+
+### Specific Naming Patterns:
+
+-   **Components**: PascalCase (GameComponent.tsx, PlinkoGame.tsx)
+-   **Hooks**: kebab-case with use prefix (use-game-hook.ts, use-ball-spawner.ts)
+-   **Stores**: kebab-case (game-store.ts, plinko-game-store.ts)
+-   **Utilities**: kebab-case (game-helper.ts, physics-config.ts)
+-   **Types**: kebab-case (game-types.ts, physics-types.ts)
+-   **Test files**: kebab-case (ball-calculations.test.ts, physics-engine.test.ts)
+-   **Directories**: kebab-case (ball-calculations/, physics-engine/)
+
+### Examples:
+
+```
+src/
+├── components/
+│   ├── game-component.tsx
+│   └── ball-layout.tsx
+├── hooks/
+│   ├── use-game-hook.ts
+│   └── use-physics-engine.ts
+├── stores/
+│   ├── game-store.ts
+│   └── betting-store.ts
+├── types/
+│   ├── game-types.ts
+│   └── physics-types.ts
+└── utils/
+    ├── physics-config.ts
+    └── colors-util.ts
+```
 
 ## Import Patterns
 

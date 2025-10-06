@@ -6,8 +6,8 @@
 
 import { Engine, Runner, World, Events, Composite } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
-import { createPhysicsBodies } from './BodyFactory';
-import { processCollision, CollisionHandlerOptions } from './CollisionHandler';
+import { createPhysicsBodies } from './body-factory';
+import { processCollision, CollisionHandlerOptions } from './collision-handler';
 import { logger } from '../../../../../services/logger';
 
 export interface PhysicsEngineState {

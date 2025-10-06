@@ -3,6 +3,6 @@
  * Central export point for all physics-related modules
  */
 
-export * from './BodyFactory';
-export * from './CollisionHandler';
-export * from './PhysicsEngineManager';
+export * from './body-factory';
+export * from './collision-handler';
+export * from './physics-engine-manager';

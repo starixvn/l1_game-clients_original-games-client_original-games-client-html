@@ -1,8 +1,8 @@
 // Game feature components
 
 // Ball components
-export { default as BallLayout } from './ball/BallLayout';
-export type { SimplifiedCanvasBallLayoutRef } from './ball/BallLayout';
+export { default as BallLayout } from './ball/ball-layout';
+export type { SimplifiedCanvasBallLayoutRef } from './ball/ball-layout';
 
 // Ball test utilities
 export { performDirectSpawnTest, USER_SPECIFIED_COLLISION_PATH } from './ball/ball-test-utils';

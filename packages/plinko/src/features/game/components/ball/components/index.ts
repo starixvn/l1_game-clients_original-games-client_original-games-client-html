@@ -3,8 +3,8 @@
  * Central export point for all ball-related components
  */
 
-export * from './HoverManager';
-export * from './EventHandler';
-export * from './CanvasContainer';
-export * from './LoadingIndicator';
-export * from './GameOverlay';
+export * from './hover-manager';
+export * from './event-handler';
+export * from './canvas-container';
+export * from './loading-indicator';
+export * from './game-overlay';

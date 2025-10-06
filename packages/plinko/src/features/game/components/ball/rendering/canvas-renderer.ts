@@ -6,8 +6,8 @@
 
 import { Composite } from 'matter-js';
 import { BallBodyExtension } from '../../../../../types/physics';
-import * as DrawingUtils from './DrawingUtils';
-import { LayoutData, SlotRenderData } from './LayoutCalculator';
+import * as DrawingUtils from './drawing-utils';
+import { LayoutData, SlotRenderData } from './layout-calculator';
 import { logger } from '../../../../../services/logger';
 
 // Export namespace for better organization

@@ -7,8 +7,8 @@ import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 import {
     calculateLayoutData,
     calculateSlotRenderData
-} from '../rendering/LayoutCalculator';
-import { CanvasRenderer } from '../rendering/CanvasRenderer';
+} from '../rendering/layout-calculator';
+import { CanvasRenderer } from '../rendering/canvas-renderer';
 
 interface UseBallRendererProps {
     numberOfRows: number;
