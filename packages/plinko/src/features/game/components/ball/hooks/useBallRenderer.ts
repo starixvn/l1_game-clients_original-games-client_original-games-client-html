@@ -4,26 +4,12 @@ import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
-
-/**
- * Helper function to draw rounded rectangles for slot styling
- */
-function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, options: { fill?: boolean; stroke?: boolean } = {}): void {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-
-    if (options.fill) ctx.fill();
-    if (options.stroke) ctx.stroke();
-}
+import {
+    CanvasRenderer,
+    LayoutCalculator,
+    calculateLayoutData,
+    calculateSlotRenderData
+} from '../rendering';
 
 interface UseBallRendererProps {
     numberOfRows: number;
@@ -66,58 +52,19 @@ export const useBallRenderer = ({
 }: UseBallRendererProps): UseBallRendererReturn => {
     const animationFrameRef = useRef<number | null>(null);
 
-    // Memoize expensive layout calculations to avoid recalculating every frame
-    const layoutData = useMemo(() => {
-        const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / numberOfRows));
-        const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
-        const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
-        const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
+    // Use the modular layout calculator for layout data
+    const layoutData = useMemo(() =>
+        calculateLayoutData(numberOfRows, canvasWidth, canvasHeight),
+        [numberOfRows, canvasWidth, canvasHeight]
+    );
 
-        const lastRowY = boardTopMargin + (numberOfRows - 1) * pegGap;
-        const lastRowColumns = numberOfRows;
-        const lastRowWidth = (lastRowColumns - 1) * pegGap;
-        const lastRowStartX = (canvasWidth - lastRowWidth) / 2;
-        const visualSlotHeight = Math.max(15, Math.min(40, (pegGap - 8 * scaleFactor) * 1.5));
-        const slotWidth = Math.max(8, Math.min(50, pegGap - 8 * scaleFactor));
-        const numberOfSlots = numberOfRows + 1;
+    // Use the modular slot render data calculator
+    const slotRenderData = useMemo(() =>
+        calculateSlotRenderData(multipliers, layoutData, gameMode, getMultiplierColor),
+        [multipliers, layoutData, gameMode]
+    );
 
-        return {
-            scaleFactor,
-            pegRadius,
-            pegGap,
-            boardTopMargin,
-            lastRowY,
-            lastRowStartX,
-            visualSlotHeight,
-            slotWidth,
-            numberOfSlots
-        };
-    }, [numberOfRows, canvasWidth]);
-
-    // Memoize slot rendering data
-    const slotRenderData = useMemo(() => {
-        const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
-        const slotsToDraw = Math.min(effectiveMultipliers.length, layoutData.numberOfSlots);
-
-        return effectiveMultipliers.map((multiplier, i) => {
-            if (i >= slotsToDraw) return null;
-
-            const slotX = layoutData.lastRowStartX + (i - 0.5) * layoutData.pegGap - layoutData.slotWidth / 2;
-            // FIX: Position visual slots BELOW the physics board to match physics positioning
-            const slotY = layoutData.lastRowY + layoutData.pegGap * 0.8;
-
-            return {
-                multiplier,
-                slotX,
-                slotY,
-                slotWidth: layoutData.slotWidth,
-                slotHeight: layoutData.visualSlotHeight,
-                color: getMultiplierColor(i, gameMode, numberOfRows)
-            };
-        }).filter(Boolean);
-    }, [multipliers, layoutData, gameMode, numberOfRows]);
-
-    // Start render loop
+    // Start render loop using the modular CanvasRenderer
     const startRenderLoop = useCallback((
         ctx: CanvasRenderingContext2D,
         engine: Engine,
@@ -129,111 +76,40 @@ export const useBallRenderer = ({
         const render = () => {
             if (!ctx || !engine) return;
 
-            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-            // Draw multiplier slots using pre-calculated data
-            slotRenderData.forEach((slot, index) => {
-                if (!slot) return;
-
-                const { multiplier, slotX, slotY, slotWidth, slotHeight, color } = slot;
-
-                // Draw slot background with rounded corners to match history items
-                const radius = 6; // Match rounded-[6px] from history items
-                const x = slotX;
-                const y = slotY - slotHeight / 2;
-                const width = slotWidth;
-                const height = slotHeight;
-
-                // Draw background with rounded corners
-                const slotGradient = ctx.createLinearGradient(x, y, x, y + height);
-                slotGradient.addColorStop(0, color);
-                slotGradient.addColorStop(1, '#1a252f');
-                ctx.fillStyle = slotGradient;
-                drawRoundedRect(ctx, x, y, width, height, radius, { fill: true });
-
-                // Draw slot border with rounded corners
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Match border-[rgba(255,255,255,0.2)]
-                ctx.lineWidth = 1;
-                drawRoundedRect(ctx, x, y, width, height, radius, { stroke: true });
-
-                // Draw multiplier text
-                ctx.fillStyle = '#ffffff';
-                ctx.font = `bold ${Math.max(12, Math.min(16, slotWidth / 3))}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(multiplier.toFixed(1), slotX + slotWidth / 2, slotY);
+            // Use the modular renderer to render the entire frame
+            CanvasRenderer.renderFrame({
+                ctx,
+                engine,
+                multipliers,
+                pins,
+                numberOfRows,
+                removedBallsRef,
+                layoutData,
+                slotRenderData
             });
 
-            // Draw pins
-            pins.forEach((pin, index) => {
-                const bounds = pin.bounds;
-                let centerX, centerY;
-                if (!bounds?.min || !bounds?.max) {
-                    // Fallback to position if bounds are not available
-                    centerX = pin.position.x;
-                    centerY = pin.position.y;
-                } else {
-                    centerX = (bounds.min.x + bounds.max.x) / 2;
-                    centerY = (bounds.min.y + bounds.max.y) / 2;
-                }
-
-                ctx.fillStyle = '#F5DCFF';
-                ctx.strokeStyle = '#E0E0E0';
-                ctx.lineWidth = Math.max(0.3, Math.min(1, 0.5 * layoutData.scaleFactor));
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, layoutData.pegRadius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-            });
-
-            // Draw balls
-            const allBodies = Composite.allBodies(engine.world);
-            const balls = allBodies.filter((body) => {
-                if (!body.label?.includes("ball")) return false;
-                const ballExtension = body as unknown as BallBodyExtension;
-                return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
-            });
-
-            // Only log ball rendering info in development mode and much less frequently
-            if (process.env.NODE_ENV === 'development' && balls.length > 0 && Math.random() < 0.002) { // ~1/500 frames
-                logger.debug('🎨 [RENDER] Active balls:', {
-                    count: balls.length,
-                    totalBodies: allBodies.length
+            // Log ball rendering info in development mode (less frequently)
+            if (process.env.NODE_ENV === 'development') {
+                const allBodies = Composite.allBodies(engine.world);
+                const balls = allBodies.filter((body) => {
+                    if (!body.label?.includes("ball")) return false;
+                    const ballExtension = body as unknown as BallBodyExtension;
+                    return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
                 });
+
+                if (balls.length > 0 && Math.random() < 0.002) { // ~1/500 frames
+                    logger.debug('🎨 [RENDER] Active balls:', {
+                        count: balls.length,
+                        totalBodies: allBodies.length
+                    });
+                }
             }
-
-            balls.forEach((ball) => {
-                const ballExtension = ball as unknown as BallBodyExtension;
-                const ballColor = ballExtension.betValue && ballExtension.betValue <= 0 ?
-                    physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
-
-                ctx.fillStyle = ballColor;
-                ctx.strokeStyle = "#FFD700";
-                ctx.lineWidth = Math.max(1, (ball.circleRadius || 5) * 0.1);
-
-                ctx.beginPath();
-                ctx.arc(ball.position.x, ball.position.y, ball.circleRadius || 5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-
-                // Add inner highlight
-                ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-                ctx.beginPath();
-                ctx.arc(
-                    ball.position.x - (ball.circleRadius || 5) * 0.3,
-                    ball.position.y - (ball.circleRadius || 5) * 0.3,
-                    (ball.circleRadius || 5) * 0.4,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.fill();
-            });
 
             animationFrameRef.current = requestAnimationFrame(render);
         };
 
         render();
-    }, [slotRenderData, layoutData, canvasWidth, canvasHeight, removedBallsRef]);
+    }, [layoutData, slotRenderData, removedBallsRef]);
 
     return {
         startRenderLoop,
