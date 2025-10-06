@@ -32,7 +32,7 @@ export function handleMultiplierCollision(result: CollisionResult, options: Coll
     const finalSlot = parseInt(labelParts[2]) || 0;
     const betValue = ballExtension.betValue || 100;
 
-    console.log('🎯 [COLLISION] Ball hit multiplier - REMOVING BALL:', {
+    logger.info('🎯 [COLLISION] Ball hit multiplier - REMOVING BALL:', {
         ballId: ballBody.id,
         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
         multiplier,
@@ -216,7 +216,7 @@ export function processCollision(
         engine
     };
 
-    console.log('🎯 [COLLISION] Processing collision', {
+    logger.debug('🎯 [COLLISION] Processing collision', {
         ballId: ballBody.id,
         ballLabel: ballBody.label,
         obstacleLabel: obstacleBody.label,

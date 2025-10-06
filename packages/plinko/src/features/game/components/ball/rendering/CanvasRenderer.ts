@@ -8,6 +8,7 @@ import { Composite } from 'matter-js';
 import { BallBodyExtension } from '../../../../../types/physics';
 import * as DrawingUtils from './DrawingUtils';
 import { LayoutData, SlotRenderData } from './LayoutCalculator';
+import { logger } from '../../../../../services/logger';
 
 // Export namespace for better organization
 export namespace CanvasRenderer {
@@ -158,7 +159,7 @@ export namespace CanvasRenderer {
 
         // Log rendering occasionally
         if (balls.length > 0 && Math.random() < 0.005) { // Log ~0.5% of frames
-            console.log('🎨 [RENDER] Rendering frame with balls:', balls.map(ball => ({
+            logger.debug('🎨 [RENDER] Rendering frame with balls:', balls.map(ball => ({
                 id: ball.id,
                 position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
                 label: ball.label

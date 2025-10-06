@@ -77,7 +77,7 @@ export const useBallRenderer = ({
 
             // Log render loop occasionally
             if (Math.random() < 0.001) { // Log ~0.1% of frames
-                console.log('🔄 [RENDER LOOP] Frame rendered');
+                logger.debug('🔄 [RENDER LOOP] Frame rendered');
             }
 
             // Use the modular renderer to render the entire frame

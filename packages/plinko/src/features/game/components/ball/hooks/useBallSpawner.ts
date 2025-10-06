@@ -120,7 +120,7 @@ export const useBallSpawner = ({
             const walls = allBodies.filter(body => body.label?.includes('wall'));
             const multipliers = allBodies.filter(body => body.label?.includes('multiplier'));
 
-            console.log('✅ [HOOK] Ball added to physics world:', {
+            logger.info('✅ [HOOK] Ball added to physics world:', {
                 id: ball.id,
                 position: { x: ball.position.x, y: ball.position.y },
                 velocity: { x: ball.velocity.x, y: ball.velocity.y },

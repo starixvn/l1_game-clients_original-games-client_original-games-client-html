@@ -7,6 +7,7 @@
 import { Bodies, Body } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
+import { logger } from '../../../../../services/logger';
 
 export interface PhysicsBody {
     pins: Body[];
@@ -57,7 +58,7 @@ export function createPinBodies(
 
             // Log first few pins for debugging
             if (pins.length <= 5) {
-                console.log(`📍 [PIN] Created pin-${row}-${col} at x:${Math.round(x)}, y:${Math.round(y)}`);
+                logger.debug(`📍 [PIN] Created pin-${row}-${col} at x:${Math.round(x)}, y:${Math.round(y)}`);
             }
         }
     }

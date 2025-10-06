@@ -5,6 +5,7 @@
  */
 
 import React, { useRef, useEffect } from 'react';
+import { logger } from '../../../../../services/logger';
 
 export interface CanvasContainerProps {
     canvasWidth: number;
@@ -57,14 +58,16 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({
         canvas.height = canvasHeight;
 
         // Start render loop with fixed canvas dimensions
-        console.log('🎨 [CANVAS] Starting render loop:', {
-            canvasWidth,
-            canvasHeight,
-            canvasScale,
-            pinsCount: pins.length,
-            multipliersCount: multipliers.length,
-            engineReady: !!engine.current
-        });
+        if (process.env.NODE_ENV === 'development') {
+            logger.info('🎨 [CANVAS] Starting render loop:', {
+                canvasWidth,
+                canvasHeight,
+                canvasScale,
+                pinsCount: pins.length,
+                multipliersCount: multipliers.length,
+                engineReady: !!engine.current
+            });
+        }
         startRenderLoop(ctx, engine.current, { width: canvasWidth, height: canvasHeight }, multipliers, pins, numberOfRows);
     }, [isInitialized, engine, startRenderLoop, multipliers, pins, numberOfRows, canvasWidth, canvasHeight]);
 
