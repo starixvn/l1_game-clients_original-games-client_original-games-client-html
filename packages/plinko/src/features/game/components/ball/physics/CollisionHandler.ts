@@ -32,6 +32,16 @@ export function handleMultiplierCollision(result: CollisionResult, options: Coll
     const finalSlot = parseInt(labelParts[2]) || 0;
     const betValue = ballExtension.betValue || 100;
 
+    console.log('🎯 [COLLISION] Ball hit multiplier - REMOVING BALL:', {
+        ballId: ballBody.id,
+        ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        multiplier,
+        finalSlot,
+        expectedSlot: ballExtension.expectedFinalSlot,
+        isServiceGuided: ballExtension.isServiceGuided,
+        label: obstacleBody.label
+    });
+
     // Mark ball as removed
     ballExtension.isRemoved = true;
     ballBody.isSensor = true;
@@ -205,6 +215,14 @@ export function processCollision(
         obstacleBody,
         engine
     };
+
+    console.log('🎯 [COLLISION] Processing collision', {
+        ballId: ballBody.id,
+        ballLabel: ballBody.label,
+        obstacleLabel: obstacleBody.label,
+        isServiceGuided: ballExtension.isServiceGuided,
+        position: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) }
+    });
 
     // Route to appropriate collision handler
     if (obstacleBody.label?.includes("multiplier")) {

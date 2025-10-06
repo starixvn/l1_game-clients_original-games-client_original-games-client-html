@@ -92,7 +92,12 @@ export function setupCollisionDetection(
  */
 export function addBodiesToWorld(engine: Engine, pins: any[], multipliersBodies: any[], walls: any[]): void {
     const allBodies = [...pins, ...multipliersBodies, ...walls];
+    console.log(`🏗️ [PHYSICS] Adding bodies to world: pins=${pins.length}, multipliers=${multipliersBodies.length}, walls=${walls.length}, total=${allBodies.length}`);
     Composite.add(engine.world, allBodies);
+
+    // Verify bodies were added
+    const worldBodies = Composite.allBodies(engine.world);
+    console.log(`✅ [PHYSICS] World now has ${worldBodies.length} bodies`);
 }
 
 /**
@@ -100,7 +105,41 @@ export function addBodiesToWorld(engine: Engine, pins: any[], multipliersBodies:
  * Side effect function - starts the runner
  */
 export function startPhysicsRunner(runner: Runner, engine: Engine): void {
+    console.log('🚀 [PHYSICS] Starting physics runner');
     Runner.run(runner, engine);
+
+    // Add logging for engine updates
+    Events.on(engine, 'beforeUpdate', () => {
+        const balls = Composite.allBodies(engine.world).filter(body =>
+            body.label?.includes('ball')
+        );
+        if (balls.length > 0 && Math.random() < 0.01) { // Log ~1% of updates to avoid spam
+            console.log('⚡ [PHYSICS] Engine update - active balls:', balls.map(ball => ({
+                id: ball.id,
+                position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+                velocity: { x: Math.round(ball.velocity.x * 100) / 100, y: Math.round(ball.velocity.y * 100) / 100 },
+                label: ball.label
+            })));
+        }
+    });
+
+    Events.on(engine, 'afterUpdate', () => {
+        // Log ball removals
+        const balls = Composite.allBodies(engine.world).filter(body =>
+            body.label?.includes('ball')
+        );
+        balls.forEach(ball => {
+            const extension = ball as any;
+            if (extension.isRemoved && !extension.loggedRemoval) {
+                console.log('🗑️ [PHYSICS] Ball removed from world:', {
+                    id: ball.id,
+                    position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+                    label: ball.label
+                });
+                extension.loggedRemoval = true;
+            }
+        });
+    });
 }
 
 /**

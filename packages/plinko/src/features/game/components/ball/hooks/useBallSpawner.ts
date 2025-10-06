@@ -53,7 +53,6 @@ export const useBallSpawner = ({
             friction: isServiceGuided ? 0.1 : 0.6,
             frictionAir: physicsTweaks.frictionAir,
             density: physicsTweaks.density,
-            collisionFilter: { group: -1 },
             render: isServiceGuided ? {
                 fillStyle: ballColor,
                 strokeStyle: "#FFD700",
@@ -94,7 +93,8 @@ export const useBallSpawner = ({
             logger.info('🎯 [HOOK] Spawning service-guided ball:', {
                 betValue,
                 finalSlot,
-                multiplier
+                multiplier,
+                pathLength: path.length
             });
         }
 
@@ -104,7 +104,7 @@ export const useBallSpawner = ({
         }
 
         try {
-            const { ball } = createBall(betValue, true, 40); // Start slightly lower for service balls
+            const { ball } = createBall(betValue, true, 30); // Start higher for service balls to ensure collision
             const ballExtension = ball as unknown as BallBodyExtension;
             ballExtension.servicePath = path;
             ballExtension.currentPathIndex = 0;
@@ -115,8 +115,36 @@ export const useBallSpawner = ({
 
             Composite.add(engine.current.world, ball);
 
+            const allBodies = Composite.allBodies(engine.current.world);
+            const pins = allBodies.filter(body => body.label?.includes('pin'));
+            const walls = allBodies.filter(body => body.label?.includes('wall'));
+            const multipliers = allBodies.filter(body => body.label?.includes('multiplier'));
+
+            console.log('✅ [HOOK] Ball added to physics world:', {
+                id: ball.id,
+                position: { x: ball.position.x, y: ball.position.y },
+                velocity: { x: ball.velocity.x, y: ball.velocity.y },
+                label: ball.label,
+                isServiceGuided: ballExtension.isServiceGuided,
+                servicePath: ballExtension.servicePath,
+                expectedFinalSlot: ballExtension.expectedFinalSlot,
+                totalBodiesInWorld: allBodies.length,
+                pinsCount: pins.length,
+                wallsCount: walls.length,
+                multipliersCount: multipliers.length,
+                samplePin: pins[0] ? { label: pins[0].label, position: { x: Math.round(pins[0].position.x), y: Math.round(pins[0].position.y) } } : 'no pins',
+                sampleWall: walls[0] ? { label: walls[0].label, position: { x: Math.round(walls[0].position.x), y: Math.round(walls[0].position.y) } } : 'no walls'
+            });
+
             if (process.env.NODE_ENV === 'development') {
-                logger.debug('✅ [HOOK] Service-guided ball spawned', { id: ball.id });
+                logger.info('✅ [HOOK] Service-guided ball added to world:', {
+                    id: ball.id,
+                    position: { x: ball.position.x, y: ball.position.y },
+                    label: ball.label,
+                    isServiceGuided: ballExtension.isServiceGuided,
+                    servicePath: ballExtension.servicePath,
+                    expectedFinalSlot: ballExtension.expectedFinalSlot
+                });
             }
         } catch (error) {
             logger.error('❌ [HOOK] Error spawning service-guided ball:', error);

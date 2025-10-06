@@ -148,6 +148,23 @@ export namespace CanvasRenderer {
         // Clear canvas
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+        // Get ball count for logging
+        const allBodies = Composite.allBodies(engine.world);
+        const balls = allBodies.filter((body) => {
+            if (!body.label?.includes("ball")) return false;
+            const ballExtension = body as unknown as BallBodyExtension;
+            return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
+        });
+
+        // Log rendering occasionally
+        if (balls.length > 0 && Math.random() < 0.005) { // Log ~0.5% of frames
+            console.log('🎨 [RENDER] Rendering frame with balls:', balls.map(ball => ({
+                id: ball.id,
+                position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+                label: ball.label
+            })));
+        }
+
         // Render game elements in order
         renderSlots(ctx, slotRenderData);
         renderPins(ctx, pins, layoutData);

@@ -48,11 +48,17 @@ export function createPinBodies(
 
         for (let col = 0; col < columnsInRow; col++) {
             const x = startX + col * pegGap;
-            pins.push(Bodies.circle(x, y, pegRadius, {
+            const pin = Bodies.circle(x, y, pegRadius, {
                 label: `pin-${row}-${col}`,
                 render: { fillStyle: physicsConfig.colors.pin },
                 isStatic: true
-            }));
+            });
+            pins.push(pin);
+
+            // Log first few pins for debugging
+            if (pins.length <= 5) {
+                console.log(`📍 [PIN] Created pin-${row}-${col} at x:${Math.round(x)}, y:${Math.round(y)}`);
+            }
         }
     }
 
@@ -175,12 +181,12 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
     for (let level = 0; level < wallLevels; level++) {
         const t = level / (wallLevels - 1); // 0 to 1
         const currentY = triangleTopYPos + t * (triangleBottomYPos - triangleTopYPos);
-        const currentWidth = (1 - t) * 10 + t * triangleBoardWidth; // Narrow at top, wide at bottom
+        const currentWidth = (1 - t) * triangleBoardWidth * 0.8 + t * triangleBoardWidth; // Wide at top, full width at bottom
         const currentX = triangleCenterX - currentWidth / 2;
 
-        // Left wall segment
+        // Left wall segment - position outside the play area
         const leftWallSegment = Bodies.rectangle(
-            currentX - 5,
+            currentX - 15, // Move further left
             currentY,
             10, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
@@ -191,9 +197,9 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
             }
         );
 
-        // Right wall segment
+        // Right wall segment - position outside the play area
         const rightWallSegment = Bodies.rectangle(
-            currentX + currentWidth + 5,
+            currentX + currentWidth + 15, // Move further right
             currentY,
             10, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
@@ -207,7 +213,8 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
         triangularWalls.push(leftWallSegment, rightWallSegment);
     }
 
-    return [leftWall, rightWall, floor, ...triangularWalls];
+    // Temporarily disable triangular walls to see if they interfere with ball path
+    return [leftWall, rightWall, floor]; // , ...triangularWalls
 }
 
 /**
