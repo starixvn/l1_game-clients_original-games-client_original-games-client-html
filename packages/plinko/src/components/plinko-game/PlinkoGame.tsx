@@ -224,7 +224,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     };
 
     useEffect(() => {
-        if(endBet == 1) {
+        if(endBet != -1) {
             useGameStore.getState().resetBettingInfo();
         }
     }, [endBet])

@@ -28,7 +28,6 @@ const BetDetailBase: FC<{
             return [];
         }
         return betLogDetails.map((betLogDetail) => {
-            console.log("betLogDetail", betLogDetail);
             const { rawTime, amount, choice, win } = produceDataBetDetailRow(betLogDetail, drawInfo);
             const { time } = separateDateTime(rawTime);
 
@@ -41,7 +40,7 @@ const BetDetailBase: FC<{
             };
         });
     }, [betLogDetails, produceDataBetDetailRow, drawInfo, renderBetChoice]);
-console.log("tableData", tableData);
+
     if (!drawInfo || !betLogDetails) {
         return null;
     }
