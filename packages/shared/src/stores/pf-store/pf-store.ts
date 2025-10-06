@@ -4,6 +4,18 @@ import { PFSettingsSlice, createPFSettingsSlice } from "./pf-settings-slice";
 import { PFVerificationSlice, createPFVerificationSlice } from "./pf-verification-slice";
 import { PFBetsSlice, createPFBetsSlice } from "./pf-bets-slice";
 import { localStorageKeys } from "../../helpers";
+import { getAppSettings } from "@shared/app-settings";
+
+function getPFStoreKey(): string {
+    try {
+        return localStorageKeys.pfStore;
+    } catch (error) {
+        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname 
+            ? globalThis.location.hostname 
+            : 'localhost';
+        return `${hostname}.pf-store.${getAppSettings().appType}`;
+    }
+}
 
 export type PFStore = {
     registerEvent: (message: any) => void;
@@ -35,7 +47,7 @@ export const usePFStore = create<PFStore>()(
             };
         },
         {
-            name: localStorageKeys?.pfStore,
+            name: getPFStoreKey(),
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 pfClientSeedSetting: state.pfClientSeedSetting,

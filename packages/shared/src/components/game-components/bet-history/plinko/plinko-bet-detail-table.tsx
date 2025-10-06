@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
-import { useCommonTranslate } from "@shared/react-hooks";
+import { useCommonTranslate, usePlinkoTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 import { gameModeMap } from "@shared/helpers/plinko";
 import useBetDetailStore from "@shared/stores/bet-detail-store";
@@ -43,10 +43,10 @@ const createBetDetailRowData = (row: BetDetailRow) => {
 };
 
 
-const renderBetDetailHeader = (translateCommon: any) => {
+const renderBetDetailHeader = (translateCommon: any, translatePlinko: any) => {
     const headerColumns = [
-        { key: "gameMode", label: translateCommon("mode").capitalizeFirstLetter() },
-        { key: "bet_choice", label: translateCommon("row").capitalizeFirstLetter() },
+        { key: "gameMode", label: translatePlinko("mode").capitalizeFirstLetter() },
+        { key: "bet_choice", label: translatePlinko("row").capitalizeFirstLetter() },
         { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
         { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
     ];
@@ -96,6 +96,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
     const { t: translateCommon } = useCommonTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
     const { drawInfo } = betDetailData || {};
+    const { t: translatePlinko } = usePlinkoTranslate();
 
     // Check if any row reached max win (server-side) or if drawInfo has max win (client-side)
     const maxWinRow = data.find(row => row.reachMaxWin);
@@ -106,7 +107,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
         return (
             <div ref={ref} className="flex flex-col h-full min-h-0 w-full">
                 <div className="bg-table-header rounded-t-lg flex-shrink-0">
-                    <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
+                    <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon, translatePlinko)}</Table>
                 </div>
                 <div className="flex-1 min-h-0 overflow-y-auto w-full">
                     <Table className="w-full">
@@ -126,12 +127,12 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
     return (
         <div ref={ref} className="flex flex-col h-full w-full">
             <div className="bg-table-header rounded-t-lg shrink-0 pr-3">
-                <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
+                <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon, translatePlinko)}</Table>
             </div>
 
             <div className="w-full">
                 <Table className="w-full pr-3">
-                    <TableBody>{renderBetDetailRows(data, translateCommon)}</TableBody>
+                    <TableBody>{renderBetDetailRows(data, translatePlinko)}</TableBody>
                 </Table>
             </div>
 

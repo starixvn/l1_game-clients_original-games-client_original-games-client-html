@@ -120,10 +120,11 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
                     role="presentation"
                     data-orientation="horizontal"
                     className={cn(
-                        "absolute rounded-[12px] h-[80%] z-[1] left-0 bg-[#0990FF]"
+                        "absolute rounded-[12px] h-[80%] z-[1] bg-[#0990FF]"
                     )}
                     style={{
-                        width: `${100 / tabs.length}%`,
+                        left: "5px",
+                        width: `calc(${100 / tabs.length}% - 5px)`,
                         transform: `translateX(${mapperTranslateX}%)`,
                         transition: "transform 300ms ease-in-out",
                     }}

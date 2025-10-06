@@ -85,9 +85,9 @@ const PFVerification: FC = () => {
                     <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {t(`${ResourceTypes.PLINKO}.game_mode`).capitalizeFirstLetter()}: {t(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
+                    {translateInGame(`mode`).capitalizeFirstLetter()}: {translateInGame(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
                     <div className="flex gap-2 items-center">
-                        {t(`${ResourceTypes.PLINKO}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
+                        {translateInGame(`row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
                     </div>
                 </div>
                 <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-2">

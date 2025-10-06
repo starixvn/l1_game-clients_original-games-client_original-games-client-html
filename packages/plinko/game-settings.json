@@ -2,7 +2,7 @@
     "145": {
         "id": 145,
         "gameName": "Plinko",
-        "tolgeeNamespace": "Common",
+        "tolgeeNamespace": "Plinko",
         "socketInfo": {
             "namespace": "plinko",
             "path": "plinko"

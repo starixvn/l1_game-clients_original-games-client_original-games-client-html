@@ -4,6 +4,18 @@ import { AudioSettingsSlice, createAudioSettingsSlice } from './audio-settings-s
 import { UISettingsSlice, createUISettingsSlice } from './ui-settings-slice';
 import { GameSettingsSlice, createGameSettingsSlice } from './game-settings-slice';
 import { localStorageKeys } from '@shared/helpers';
+import { getAppSettings } from "@shared/app-settings";
+
+function getSettingStoreKey(): string {
+    try {
+        return localStorageKeys.settingStore;
+    } catch (error) {
+        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname 
+            ? globalThis.location.hostname 
+            : 'localhost';
+        return `${hostname}.setting-store.${getAppSettings().appType}`;
+    }
+}
 
 export type SettingStore = {
     // Global actions
@@ -31,7 +43,7 @@ export const useSettingStore = create<SettingStore>()(
             };
         },
         {
-            name: localStorageKeys?.settingStore,
+            name: getSettingStoreKey(),
             // Only persist audio settings
             partialize: (state) => ({
                 enabledMusic: state.enabledMusic,
