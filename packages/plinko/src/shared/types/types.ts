@@ -243,3 +243,14 @@ export interface GameState {
     bets: BetRecord[];
     betsTab: BetsTableProps["activeTab"];
 }
+
+export type PlinkoFinish = {
+    amount: number;
+    result: number[];
+    settlementResult: SettlementResult;
+    roundId: number;
+    winAmount: number;
+    reachMaxWin: boolean;
+    gameMode: number;
+    numberOfRows: number;
+};

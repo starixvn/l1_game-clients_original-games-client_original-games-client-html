@@ -1,3 +1,4 @@
+import { memo } from "react";
 const tabs = [
     {
         text: "Manual",
@@ -9,7 +10,7 @@ const tabs = [
     },
 ];
 
-export const TabControl = ({
+const TabNavigation = ({
     activeTab,
     onTabChange,
     isDisabled,
@@ -35,3 +36,5 @@ export const TabControl = ({
         </div>
     );
 };
+
+export default memo(TabNavigation);

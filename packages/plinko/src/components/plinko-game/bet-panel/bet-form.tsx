@@ -1,23 +1,20 @@
-import { BetAmountControl } from "./components/bet-amount-control";
-import { GameModeSelector } from "./components/game-mode-selector";
-import { RowsSelector } from "./components/rows-selector";
-import AutoBetControl from "./auto-bet-control";
-import { useGameStore } from "@shared/stores/game-store/game-store";
+import { useEffect, useMemo, useCallback, memo } from "react";
 import { useShallow } from "zustand/shallow";
-import { useEffect, useMemo } from "react";
+import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
-import { useCallback } from "react";
+import AutoBetGroup from "./auto-bet-group";
+import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
 
-export const BetControls = ({
+const BetForm = ({
     isManualTab,
-    numberOfBets,
-    setNumberOfBets,
     isDisabled,
+    isAutoBet,
+    setIsAutoBet,
 }: {
     isManualTab: boolean;
-    numberOfBets: number;
     isDisabled: boolean;
-    setNumberOfBets: (numberOfBets: number) => void;
+    isAutoBet: boolean;
+    setIsAutoBet: (isAutoBet: boolean) => void;
 }) => {
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
@@ -57,7 +54,17 @@ export const BetControls = ({
             <GameModeSelector isDisabled={isDisabled} />
             <RowsSelector isDisabled={isDisabled} />
 
-            {!isManualTab && <AutoBetControl numberOfBets={numberOfBets} isDisabled={isDisabled} setNumberOfBets={setNumberOfBets} />}
+            {!isManualTab && (
+                <AutoBetGroup
+                    isDisabled={isDisabled}
+                    isAutoBet={isAutoBet}
+                    setIsAutoBet={setIsAutoBet}
+                    handleBetAmountChange={handleBetAmountChange}
+                    maxBet={maxBet}
+                />
+            )}
         </div>
     );
 };
+
+export default memo(BetForm);

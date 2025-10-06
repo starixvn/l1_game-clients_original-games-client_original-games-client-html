@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
 import { useClientSeedPF } from "@shared/react-hooks";
-import { BetControls } from "./bet-controls";
-import { TabControl } from "./tab-control";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
+import TabNavigation from "./tab-navigation";
+import BetForm from "./bet-form";
 
 const BetControl = () => {
-    const { socket } = useGameStore(useShallow((state) => ({ socket: state.socket })));
+    const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
     const { betAmount, gameMode, numberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -22,7 +22,6 @@ const BetControl = () => {
 
     const [isManualTab, setIsManualTab] = useState(true);
     const [isAutoBet, setIsAutoBet] = useState(false);
-    const [numberOfBets, setNumberOfBets] = useState(Infinity);
     const [isProcessing, setIsProcessing] = useState(false);
 
     const handleBetClick = useCallback(() => {
@@ -32,38 +31,24 @@ const BetControl = () => {
         }
     }, [socket, betAmount, gameMode, numberOfRows, clientSeed]);
 
-    const handleEndBet = useCallback(() => {
-        setIsProcessing(false);
-        if (isAutoBet) {
-            const newNumberOfBets = numberOfBets - 1;
-            setNumberOfBets(newNumberOfBets);
-            handleBetClick();
-            if (newNumberOfBets <= 0) {
-                setIsAutoBet(false);
-                setNumberOfBets(Infinity);
-            }
-        }
-    }, [isAutoBet, handleBetClick, numberOfBets]);
-
     useEffect(() => {
         const endBetHandlerId = gameMessageHandler?.register(messageEventType.END_BET, () => {
-            handleEndBet();
+            setIsProcessing(false);
         });
         return () => {
             gameMessageHandler?.removeHandler(endBetHandlerId);
         };
-    }, [gameMessageHandler, handleEndBet]);
+    }, [gameMessageHandler]);
 
     const handleAutoBetClick = useCallback(() => {
         if (isAutoBet) {
             setIsAutoBet(false);
             return;
-        }
-        if (numberOfBets > 0) {
+        } else {
             setIsAutoBet(true);
             handleBetClick();
         }
-    }, [isAutoBet, handleBetClick, numberOfBets]);
+    }, [isAutoBet, handleBetClick]);
 
     const buttonClass =
         "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50";
@@ -82,16 +67,16 @@ const BetControl = () => {
                 )}
             </div>
             <div className="flex flex-col md:flex-col-reverse gap-3 rounded-t-xl bg-primary-bg">
-                <BetControls
+                <BetForm
                     isManualTab={isManualTab}
-                    numberOfBets={numberOfBets}
-                    setNumberOfBets={setNumberOfBets}
                     isDisabled={isProcessing || isAutoBet}
+                    isAutoBet={isAutoBet}
+                    setIsAutoBet={setIsAutoBet}
                 />
-                <TabControl activeTab={isManualTab} onTabChange={setIsManualTab} isDisabled={isProcessing || isAutoBet} />
+                <TabNavigation activeTab={isManualTab} onTabChange={setIsManualTab} isDisabled={isProcessing || isAutoBet} />
             </div>
         </div>
     );
 };
 
-export default BetControl;
+export default memo(BetControl);

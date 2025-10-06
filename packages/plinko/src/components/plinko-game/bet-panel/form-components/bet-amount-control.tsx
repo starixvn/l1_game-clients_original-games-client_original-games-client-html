@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Label } from "./label";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import Label from "./label";
 
-export const BetAmountControl = ({
+const BetAmountControl = ({
     handleBetAmountChange,
     isDisabled,
 }: {
@@ -69,3 +69,5 @@ export const BetAmountControl = ({
         </div>
     );
 };
+
+export default memo(BetAmountControl);

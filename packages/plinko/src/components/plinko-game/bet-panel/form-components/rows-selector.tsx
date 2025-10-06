@@ -1,10 +1,10 @@
-import React from "react";
-import { Label } from "./label";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import React, { memo } from "react";
 import { useShallow } from "zustand/shallow";
+import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { NUMBER_OF_ROWS } from "@/constants";
+import Label from "./label";
 
-export const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
+const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             numberOfRows: state.numberOfRows,
@@ -39,3 +39,5 @@ export const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         </div>
     );
 };
+
+export default memo(RowsSelector);

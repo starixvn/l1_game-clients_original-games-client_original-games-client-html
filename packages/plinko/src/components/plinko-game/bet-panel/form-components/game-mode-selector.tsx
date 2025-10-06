@@ -1,8 +1,8 @@
-import React from "react";
-import { Label } from "./label";
+import React, { memo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { GAME_MODES } from "@/constants";
+import Label from "./label";
 
 const gameModes = [
     {
@@ -19,7 +19,7 @@ const gameModes = [
     },
 ] as const;
 
-export const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
+const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { gameMode, setGameMode } = usePlinkoGameStore(
         useShallow((state) => ({
             gameMode: state.gameMode,
@@ -48,3 +48,5 @@ export const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         </div>
     );
 };
+
+export default memo(GameModeSelector);

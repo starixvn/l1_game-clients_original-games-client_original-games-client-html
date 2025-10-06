@@ -9,16 +9,16 @@ import {
 } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from "@shared/react-hooks";
 import GameBase from "@shared/components/game-base/";
-import { GameEndBetHandler, GameFinishHandler, GameMessageHandler } from "@shared/components/game-base/handlers";
+import { GameMessageHandler } from "@shared/components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
-import { PlinkoGameRoundDataHandler, PlinkoGameSoundHandler, PlinkoStateHandler } from "./handlers";
+import { PlinkoGameFinishHandler, PlinkoGameRoundDataHandler, PlinkoGameSoundHandler, PlinkoStateHandler } from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
 import { logger } from "../../services/logger";
 import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
 import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
-import { PlayerResultBoardTable } from "@/features/betting/components/player-result-board/player-result-board-table";
+import { PlayerResultBoardTable } from "@/components/plinko-game/player-result-board/player-result-board-table";
 import PlinkoBetDetailModal from "../plinko-game/history";
-import BetPanel from "@/features/betting/components/bet-panel/bet-panel";
+import BetPanel from "@/components/plinko-game/bet-panel/bet-panel";
 import { PFSettingModal } from "@shared/components/game-components/provably-fair";
 import { createPortal } from "react-dom";
 
@@ -34,12 +34,23 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
         const gameRoundDataHandler = new PlinkoGameRoundDataHandler();
-        
+        const roundStateHandler = new PlinkoStateHandler();
+
         const gameBaseHandlers: GameBaseHandlers = {
-            roundStateHandler: new PlinkoStateHandler(),
+            roundStateHandler,
             gameMessageHandler: gameMessageHandler,
             gameRoundDataHandler: gameRoundDataHandler,
-            gameSoundHandler: new PlinkoGameSoundHandler({ gameSound: () => props.gameSound })
+            gameSoundHandler: new PlinkoGameSoundHandler({ gameSound: () => props.gameSound }),
+            gameFinishHandler: new PlinkoGameFinishHandler({
+                dispatch: props.dispatch,
+                gameMessageHandler: gameMessageHandler,
+                durations: props.durations,
+                roundStateHandler,
+                runGame: () => {}, // Will be set by GameBase
+                gameId: props.id,
+                gameStateContextModel: () => props.gameStateContextModel,
+                gameRoundDataHandler: gameRoundDataHandler,
+            }),
         };
         super(props, gameBaseHandlers);
 
