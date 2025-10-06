@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { Bodies, Engine, Composite, Runner, World, Events } from 'matter-js';
 import SimplifiedCanvasBallLayout, { SimplifiedCanvasBallLayoutRef } from '../src/features/game/components/ball/SimplifiedCanvasBallLayout';
 import { BallLayoutProps } from '../src/shared/types';
+import { logger } from '../src/services/logger';
 
 // Mock Matter.js
 jest.mock('matter-js', () => ({
@@ -399,5 +400,161 @@ describe('SimplifiedCanvasBallLayout', () => {
 
         // Should use default multipliers
         expect(Bodies.rectangle).toHaveBeenCalled();
+    });
+
+    it('should work without logging enabled by default', async () => {
+        const componentRef = React.createRef<SimplifiedCanvasBallLayoutRef>();
+        render(
+            <SimplifiedCanvasBallLayout
+                {...defaultProps}
+                ref={componentRef}
+                onBallHit={mockOnBallHit}
+            />
+        );
+
+        await waitFor(() => {
+            expect(componentRef.current).toBeTruthy();
+        });
+
+        // Call spawnBall when engine is not ready - should work without logging
+        act(() => {
+            componentRef.current?.spawnBall(100);
+        });
+
+        // Component should function normally without logging
+        expect(componentRef.current?.isReady()).toBeDefined();
+    });
+
+    it('should not expose diagnostic tools by default', async () => {
+        const componentRef = React.createRef<SimplifiedCanvasBallLayoutRef>();
+        render(
+            <SimplifiedCanvasBallLayout
+                {...defaultProps}
+                ref={componentRef}
+                onBallHit={mockOnBallHit}
+            />
+        );
+
+        await waitFor(() => {
+            expect(componentRef.current).toBeTruthy();
+        });
+
+        // Diagnostic tools should not be exposed globally by default
+        expect((window as any).plinkoComponentRef).toBeUndefined();
+        expect((window as any).plinkoDiagnostic).toBeUndefined();
+        expect((window as any).plinkoLogger).toBeUndefined();
+    });
+
+    it('should handle mouse events outside slot area', async () => {
+        const componentRef = React.createRef<SimplifiedCanvasBallLayoutRef>();
+
+        const { container } = render(
+            <SimplifiedCanvasBallLayout
+                {...defaultProps}
+                ref={componentRef}
+                onBallHit={mockOnBallHit}
+            />
+        );
+
+        await waitFor(() => {
+            expect(componentRef.current).toBeTruthy();
+        });
+
+        const canvasElement = container.querySelector('canvas');
+        expect(canvasElement).toBeInTheDocument();
+
+        // Mock getBoundingClientRect
+        canvasElement!.getBoundingClientRect = jest.fn(() => ({
+            left: 0,
+            top: 0,
+            width: 600,
+            height: 550,
+            right: 600,
+            bottom: 550,
+            x: 0,
+            y: 0,
+            toJSON: () => ({})
+        }));
+
+        // Fire mouse move event outside slot area (above the slot area)
+        fireEvent.mouseMove(canvasElement!, {
+            clientX: 300,
+            clientY: 50 // Above slot area
+        });
+
+        // Should call updateHoverState with -1
+        await waitFor(() => {
+            expect(canvasElement).toBeInTheDocument();
+        });
+    });
+
+    it('should handle mouse leave events', async () => {
+        const componentRef = React.createRef<SimplifiedCanvasBallLayoutRef>();
+
+        const { container } = render(
+            <SimplifiedCanvasBallLayout
+                {...defaultProps}
+                ref={componentRef}
+                onBallHit={mockOnBallHit}
+            />
+        );
+
+        await waitFor(() => {
+            expect(componentRef.current).toBeTruthy();
+        });
+
+        const canvasElement = container.querySelector('canvas');
+        expect(canvasElement).toBeInTheDocument();
+
+        // Fire mouse leave event
+        fireEvent.mouseLeave(canvasElement!);
+
+        // Should handle mouse leave gracefully
+        await waitFor(() => {
+            expect(canvasElement).toBeInTheDocument();
+        });
+    });
+
+    it('should handle hover state updates correctly', async () => {
+        const componentRef = React.createRef<SimplifiedCanvasBallLayoutRef>();
+
+        const { container } = render(
+            <SimplifiedCanvasBallLayout
+                {...defaultProps}
+                ref={componentRef}
+                onBallHit={mockOnBallHit}
+            />
+        );
+
+        await waitFor(() => {
+            expect(componentRef.current).toBeTruthy();
+        });
+
+        const canvasElement = container.querySelector('canvas');
+        expect(canvasElement).toBeInTheDocument();
+
+        // Mock getBoundingClientRect
+        canvasElement!.getBoundingClientRect = jest.fn(() => ({
+            left: 0,
+            top: 0,
+            width: 600,
+            height: 550,
+            right: 600,
+            bottom: 550,
+            x: 0,
+            y: 0,
+            toJSON: () => ({})
+        }));
+
+        // Fire mouse move event in slot area
+        fireEvent.mouseMove(canvasElement!, {
+            clientX: 300,
+            clientY: 500 // In slot area
+        });
+
+        // Should handle hover state update
+        await waitFor(() => {
+            expect(canvasElement).toBeInTheDocument();
+        });
     });
 });

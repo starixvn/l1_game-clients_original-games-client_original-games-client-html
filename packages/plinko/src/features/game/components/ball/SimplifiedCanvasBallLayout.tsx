@@ -37,10 +37,10 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             }))
         );
 
-        // Enable logging for debugging
-        useEffect(() => {
-            enableLogging();
-        }, []);
+        // Logging disabled by default - enable manually in development if needed
+        // useEffect(() => {
+        //     enableLogging();
+        // }, []);
 
         // Run diagnostic when component is ready (moved after variable declarations)
 
@@ -258,14 +258,14 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         useImperativeHandle(ref, () => imperativeHandle, [imperativeHandle]);
 
-        // Make diagnostic tool available globally for manual debugging
-        useEffect(() => {
-            if (isInitialized) {
-                // Make the component ref available globally for debugging
-                (window as any).plinkoComponentRef = { current: imperativeHandle };
-                (window as any).plinkoDiagnostic = diagnosticTool;
-            }
-        }, [isInitialized, imperativeHandle]);
+        // Diagnostic tool disabled by default - enable manually in development if needed
+        // useEffect(() => {
+        //     if (isInitialized) {
+        //         // Make the component ref available globally for debugging
+        //         (window as any).plinkoComponentRef = { current: imperativeHandle };
+        //         (window as any).plinkoDiagnostic = diagnosticTool;
+        //     }
+        // }, [isInitialized, imperativeHandle]);
 
         return (
             <div
