@@ -3,18 +3,20 @@ import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { GAME_MODES } from "@/constants";
 import Label from "./label";
+import { useTranslate } from "@tolgee/react";
+import { ResourceTypes } from "@shared/resources";
 
 const gameModes = [
     {
-        text: "Low",
+        text: "mode_low",
         value: GAME_MODES.LOW,
     },
     {
-        text: "Medium",
+        text: "mode_medium",
         value: GAME_MODES.MEDIUM,
     },
     {
-        text: "High",
+        text: "mode_high",
         value: GAME_MODES.HIGH,
     },
 ] as const;
@@ -27,9 +29,11 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
+    const {t} = useTranslate(ResourceTypes.PLINKO);
+
     return (
         <div className="span-game-mode">
-            <Label title="Game Mode" />
+            <Label title={t("mode")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
                 {gameModes.map((mode) => (
                     <button
@@ -41,7 +45,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                         aria-pressed={gameMode === mode.value}
                         disabled={isDisabled}
                     >
-                        <span>{mode.text}</span>
+                        <span>{t(mode.text)}</span>
                     </button>
                 ))}
             </div>

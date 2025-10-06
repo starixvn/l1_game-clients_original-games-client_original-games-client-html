@@ -1,5 +1,7 @@
 import { memo } from "react";
 import Label from "./label";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslate } from "@tolgee/react";
 
 const BUTTONS_NUMBER_OF_BETS = [
     { text: "∞", value: Infinity },
@@ -16,9 +18,11 @@ const NumberOfBetsControl = ({
     setNumberOfBets: (numberOfBets: number) => void;
     isDisabled: boolean;
 }) => {
+    const {t} = useTranslate(ResourceTypes.COMMON);
+
     return (
         <div>
-            <Label title="Number of Bets" />
+            <Label title={t("number_of_bet")} />
             <div className="relative">
                 <input
                     type="number"

@@ -1,8 +1,9 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
-import { useClientSeedPF, useGameStore } from "@shared";
+import { ResourceTypes, useClientSeedPF, useGameStore } from "@shared";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { PercentageControl, StopOnControl, NumberOfBetsControl } from "./form-components";
+import { useTranslate } from "@tolgee/react";
 
 const AutoBetGroup = ({
     isDisabled,
@@ -25,7 +26,7 @@ const AutoBetGroup = ({
     const [stopOnWin, setStopOnWin] = useState(0);
     const [stopOnLoss, setStopOnLoss] = useState(0);
     const [totalNetProfit, setTotalNetProfit] = useState(0);
-
+    const {t} = useTranslate(ResourceTypes.COMMON);
     const { socket, endBet } = useGameStore(
         useShallow((state) => ({
             socket: state.socket,
@@ -104,7 +105,7 @@ const AutoBetGroup = ({
             </div>
             <div>
                 <PercentageControl
-                    title="On Win"
+                    title={t("on_win")}
                     isIncreaseOn={isIncreaseOnWin}
                     setIsIncreaseOn={setIsIncreaseOnWin}
                     percentage={onWinPercentage}
@@ -114,7 +115,7 @@ const AutoBetGroup = ({
             </div>
             <div>
                 <PercentageControl
-                    title="On Loss"
+                    title={t("on_loss")}
                     isIncreaseOn={isIncreaseOnLoss}
                     setIsIncreaseOn={setIsIncreaseOnLoss}
                     percentage={onLossPercentage}
@@ -123,10 +124,10 @@ const AutoBetGroup = ({
                 />
             </div>
             <div>
-                <StopOnControl title="Stop On Win" value={stopOnWin} setValue={setStopOnWin} isDisabled={isDisabled} />
+                <StopOnControl title={t("stop_on_win")} value={stopOnWin} setValue={setStopOnWin} isDisabled={isDisabled} />
             </div>
             <div>
-                <StopOnControl title="Stop On Loss" value={stopOnLoss} setValue={setStopOnLoss} isDisabled={isDisabled} />
+                <StopOnControl title={t("stop_on_loss")} value={stopOnLoss} setValue={setStopOnLoss} isDisabled={isDisabled} />
             </div>
         </div>
     );

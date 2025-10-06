@@ -1,11 +1,13 @@
+import { ResourceTypes } from "@shared/resources";
+import { useTranslate } from "@tolgee/react";
 import { memo } from "react";
 const tabs = [
     {
-        text: "Manual",
+        text: "manual",
         value: true,
     },
     {
-        text: "Auto",
+        text: "auto",
         value: false,
     },
 ];
@@ -19,6 +21,8 @@ const TabNavigation = ({
     onTabChange: (tab: boolean) => void;
     isDisabled: boolean;
 }) => {
+    const {t} = useTranslate(ResourceTypes.COMMON);
+
     return (
         <div className="flex">
             {tabs.map((tab) => (
@@ -30,7 +34,7 @@ const TabNavigation = ({
                     }`}
                     disabled={isDisabled}
                 >
-                    {tab.text}
+                    {t(tab.text)}
                 </button>
             ))}
         </div>

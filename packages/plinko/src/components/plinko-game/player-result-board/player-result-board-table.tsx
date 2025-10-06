@@ -27,7 +27,7 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
                         {translateCommon("bet_amount").capitalizeFirstLetter()}
                     </TableHead>
                     <TableHead className="text-primary-text h-full text-sm md:text-base text-center p-2 md:py-3 md:px-0 font-semibold  w-1/4">
-                        {translateCommon("multiplier").capitalizeFirstLetter()}
+                        {translateCommon("title_multiplier").capitalizeFirstLetter()}
                     </TableHead>
                     <TableHead className="text-primary-text h-full text-sm md:text-base text-right p-2 md:py-3 md:pr-3 pl-0 font-semibold rounded-tr-lg rounded-br-lg w-1/4">
                         {translateCommon("win").capitalizeFirstLetter()}

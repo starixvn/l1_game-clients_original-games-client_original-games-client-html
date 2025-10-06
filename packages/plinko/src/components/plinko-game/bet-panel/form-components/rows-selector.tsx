@@ -3,6 +3,8 @@ import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { NUMBER_OF_ROWS } from "@/constants";
 import Label from "./label";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslate } from "@tolgee/react";
 
 const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
@@ -12,9 +14,11 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
+    const {t} = useTranslate(ResourceTypes.PLINKO);
+
     return (
         <div className={`div-setting-row`}>
-            <Label title="Rows" />
+            <Label title={t("row")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
                 <div className="mx-2">
                     <span className="text-sm text-white">{numberOfRows}</span>

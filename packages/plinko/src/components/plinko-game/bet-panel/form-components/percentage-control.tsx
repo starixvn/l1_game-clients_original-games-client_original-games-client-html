@@ -1,5 +1,7 @@
 import React, { memo } from "react";
 import Label from "./label";
+import { useTranslate } from "@tolgee/react";
+import { ResourceTypes } from "@shared/resources";
 
 interface PercentageControlProps {
     isIncreaseOn: boolean;
@@ -11,11 +13,11 @@ interface PercentageControlProps {
 }
 const buttons = [
     {
-        text: "Reset",
+        text: "reset",
         value: false,
     },
     {
-        text: "Increase by",
+        text: "increase_by",
         value: true,
     },
 ];
@@ -27,10 +29,13 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     isDisabled,
     title,
 }) => {
+    const {t} = useTranslate(ResourceTypes.COMMON);
+
     const onClick = (value: boolean) => {
         setIsIncreaseOn(value);
         setPercentage(0);
     };
+
     return (
         <div>
             <Label title={title} />
@@ -45,7 +50,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                             aria-pressed={isIncreaseOn === button.value}
                             disabled={isDisabled}
                         >
-                            {button.text}
+                            {t(button.text)}
                         </button>
                     ))}
                 </div>

@@ -7,6 +7,8 @@ import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
 import TabNavigation from "./tab-navigation";
 import BetForm from "./bet-form";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslate } from "@tolgee/react";
 
 const BetControl = () => {
     const socket = useGameStore((state) => state.socket);
@@ -23,6 +25,7 @@ const BetControl = () => {
     const [isManualTab, setIsManualTab] = useState(true);
     const [isAutoBet, setIsAutoBet] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const {t} = useTranslate(ResourceTypes.COMMON);
 
     const handleBetClick = useCallback(() => {
         if (socket?.connected) {
@@ -58,11 +61,11 @@ const BetControl = () => {
             <div>
                 {isManualTab ? (
                     <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
-                        Bet
+                        {t("glossary_bet")}
                     </button>
                 ) : (
                     <button className={buttonClass} onClick={handleAutoBetClick}>
-                        {isAutoBet ? "Stop Auto Bet" : "Start Auto Bet"}
+                        {isAutoBet ? t("stop_auto_bet") : t("start_auto_bet")}
                     </button>
                 )}
             </div>
