@@ -3,11 +3,13 @@ import { Bodies, Body, Composite, Engine, Events, Runner, World } from 'matter-j
 import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
+import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 
 
 interface UsePhysicsEngineProps {
     numberOfRows: number;
     multipliers: number[];
+    gameMode: number;
     onBallHit?: (multiplier: number, betValue: number) => void;
     canvasWidth: number;
     canvasHeight: number;
@@ -32,6 +34,7 @@ interface UsePhysicsEngineReturn {
 export const usePhysicsEngine = ({
     numberOfRows,
     multipliers,
+    gameMode,
     onBallHit,
     canvasWidth,
     canvasHeight,
@@ -46,7 +49,8 @@ export const usePhysicsEngine = ({
         canvasWidth: number,
         canvasHeight: number,
         numberOfRows: number,
-        multipliers: number[]
+        multipliers: number[],
+        gameMode: number
     ) => {
         const pins: Body[] = [];
         const multipliersBodies: Body[] = [];
@@ -103,21 +107,13 @@ export const usePhysicsEngine = ({
                 label: `multiplier-${multiplier}-${i}`,
                 isStatic: true,
                 isSensor: true,
-                render: { fillStyle: getMultiplierColor(multiplier) }
+                render: { fillStyle: getMultiplierColor(i, gameMode, numberOfRows) }
             }));
         }
 
         return { pins, multipliersBodies, walls };
-    }, []);
+    }, [gameMode, numberOfRows]);
 
-    // Helper function to get multiplier color for physics bodies
-    const getMultiplierColor = (multiplier: number): string => {
-        if (multiplier >= 10) return physicsConfig.colors.multiplierHigh;
-        if (multiplier >= 5) return physicsConfig.colors.multiplierMedium;
-        if (multiplier >= 2) return physicsConfig.colors.multiplierLow;
-        if (multiplier >= 1) return physicsConfig.colors.multiplierLoss;
-        return '#333';
-    };
 
     // Cleanup physics function
     const cleanupPhysics = useCallback(() => {
@@ -156,21 +152,60 @@ export const usePhysicsEngine = ({
         World.remove(engine.world, ballBody);
         if (!ballExtension.hasTriggeredWin) {
             ballExtension.hasTriggeredWin = true;
+            handleBallWin(ballExtension, finalSlot, multiplier, betValue);
+        }
+    }, [onBallHit]);
 
-            if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
-                // Service-guided ball logic
-                if (finalSlot === ballExtension.expectedFinalSlot) {
-                    onBallHit?.(multiplier, betValue);
-                } else {
-                    ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
-                    if (ballExtension.wrongSlotHits >= 3) {
-                        onBallHit?.(ballExtension.multiplier || multiplier, betValue);
-                    }
-                }
-            } else {
-                // Regular ball
-                onBallHit?.(multiplier, betValue);
+    // Separate function to handle win logic and reduce complexity
+    const handleBallWin = useCallback((ballExtension: BallBodyExtension, finalSlot: number, multiplier: number, betValue: number) => {
+        if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
+            handleServiceGuidedBallWin(ballExtension, finalSlot, multiplier, betValue);
+        } else {
+            // Regular ball
+            onBallHit?.(multiplier, betValue);
+        }
+    }, [onBallHit]);
+
+    // Handle service-guided ball win logic
+    const handleServiceGuidedBallWin = useCallback((ballExtension: BallBodyExtension, finalSlot: number, multiplier: number, betValue: number) => {
+        const expectedFinalSlot = ballExtension.expectedFinalSlot;
+        const expectedMultiplier = ballExtension.multiplier;
+
+        if (finalSlot === expectedFinalSlot) {
+            if (process.env.NODE_ENV === 'development') {
+                logger.info('✅ [PHYSICS] Service-guided ball hit correct slot', {
+                    finalSlot,
+                    expectedFinalSlot,
+                    multiplier,
+                    betValue
+                });
             }
+            onBallHit?.(multiplier, betValue);
+            return;
+        }
+
+        // Wrong slot hit
+        ballExtension.wrongSlotHits = (ballExtension.wrongSlotHits || 0) + 1;
+
+        if (process.env.NODE_ENV === 'development') {
+            logger.warn('⚠️ [PHYSICS] Service-guided ball hit wrong slot', {
+                finalSlot,
+                expectedFinalSlot,
+                wrongSlotHits: ballExtension.wrongSlotHits,
+                multiplier,
+                expectedMultiplier
+            });
+        }
+
+        if (ballExtension.wrongSlotHits >= 3) {
+            if (process.env.NODE_ENV === 'development') {
+                logger.error('❌ [PHYSICS] Service-guided ball failed to hit correct slot after 3 attempts, using expected multiplier', {
+                    finalSlot,
+                    expectedFinalSlot,
+                    expectedMultiplier
+                });
+            }
+            onBallHit?.(expectedMultiplier || multiplier, betValue);
         }
     }, [onBallHit]);
 
@@ -179,9 +214,35 @@ export const usePhysicsEngine = ({
         if (ballExtension.isServiceGuided && ballExtension.servicePath && ballExtension.currentPathIndex < ballExtension.servicePath.length) {
             // Service-guided ball following path
             const direction = ballExtension.servicePath[ballExtension.currentPathIndex];
-            const forceX = direction === 1 ? 0.15 : -0.15;
-            Body.setVelocity(ballBody, { x: forceX * 2, y: ballBody.velocity.y });
-            Body.applyForce(ballBody, ballBody.position, { x: forceX, y: 0 });
+
+            // In Plinko, each step in the path represents a binary choice: left (0) or right (1)
+            // The service result array uses 1 to indicate "right" movement and 0 for "left" movement
+            // Higher count of 1s results in higher slotIndex (further right)
+            const targetDirection = direction === 1 ? 1 : -1; // 1 = right, 0 = left
+
+            // Apply stronger, more deterministic force to ensure correct path following
+            const forceMagnitude = 0.25; // Increased from 0.15 for more reliable guidance
+            const velocityMagnitude = 1.5; // Stronger velocity setting
+
+            Body.setVelocity(ballBody, {
+                x: targetDirection * velocityMagnitude,
+                y: ballBody.velocity.y
+            });
+            Body.applyForce(ballBody, ballBody.position, {
+                x: targetDirection * forceMagnitude,
+                y: 0
+            });
+
+            if (process.env.NODE_ENV === 'development') {
+                logger.debug('🎯 [PHYSICS] Service-guided ball collision', {
+                    pathIndex: ballExtension.currentPathIndex,
+                    direction,
+                    targetDirection,
+                    expectedFinalSlot: ballExtension.expectedFinalSlot,
+                    remainingPath: ballExtension.servicePath.slice(ballExtension.currentPathIndex + 1)
+                });
+            }
+
             ballExtension.currentPathIndex++;
         } else {
             // Random deflection for regular balls
@@ -267,7 +328,8 @@ export const usePhysicsEngine = ({
                 canvasWidth,
                 canvasHeight,
                 numberOfRows,
-                effectiveMultipliers
+                effectiveMultipliers,
+                gameMode
             );
 
             // Update state with created bodies

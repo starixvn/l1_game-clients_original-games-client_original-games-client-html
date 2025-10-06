@@ -3,10 +3,32 @@ import { Composite, Engine } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
+import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
+
+/**
+ * Helper function to draw rounded rectangles for slot styling
+ */
+function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, options: { fill?: boolean; stroke?: boolean } = {}): void {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+
+    if (options.fill) ctx.fill();
+    if (options.stroke) ctx.stroke();
+}
 
 interface UseBallRendererProps {
     numberOfRows: number;
     multipliers: number[];
+    gameMode: number;
     canvasWidth: number;
     canvasHeight: number;
     engine: React.MutableRefObject<Engine | null>;
@@ -27,17 +49,6 @@ interface UseBallRendererReturn {
     slotRenderData: any[];
 }
 
-/**
- * Helper function to get slot color based on multiplier
- */
-function getSlotColor(multiplier: number): string {
-    if (multiplier >= 100) return '#8e44ad';
-    if (multiplier >= 15) return '#9b59b6';
-    if (multiplier >= 2) return '#3498db';
-    if (multiplier >= 0.9) return '#2980b9';
-    if (multiplier >= 0.5) return '#1f4e79';
-    return '#2c3e50';
-}
 
 /**
  * Custom hook for managing canvas rendering and animation
@@ -46,6 +57,7 @@ function getSlotColor(multiplier: number): string {
 export const useBallRenderer = ({
     numberOfRows,
     multipliers,
+    gameMode,
     canvasWidth,
     canvasHeight,
     engine,
@@ -100,10 +112,10 @@ export const useBallRenderer = ({
                 slotY,
                 slotWidth: layoutData.slotWidth,
                 slotHeight: layoutData.visualSlotHeight,
-                color: getSlotColor(multiplier)
+                color: getMultiplierColor(i, gameMode, numberOfRows)
             };
         }).filter(Boolean);
-    }, [multipliers, layoutData]);
+    }, [multipliers, layoutData, gameMode, numberOfRows]);
 
     // Start render loop
     const startRenderLoop = useCallback((
@@ -125,17 +137,24 @@ export const useBallRenderer = ({
 
                 const { multiplier, slotX, slotY, slotWidth, slotHeight, color } = slot;
 
-                // Draw slot background
-                const slotGradient = ctx.createLinearGradient(slotX, slotY - slotHeight / 2, slotX, slotY + slotHeight / 2);
+                // Draw slot background with rounded corners to match history items
+                const radius = 6; // Match rounded-[6px] from history items
+                const x = slotX;
+                const y = slotY - slotHeight / 2;
+                const width = slotWidth;
+                const height = slotHeight;
+
+                // Draw background with rounded corners
+                const slotGradient = ctx.createLinearGradient(x, y, x, y + height);
                 slotGradient.addColorStop(0, color);
                 slotGradient.addColorStop(1, '#1a252f');
                 ctx.fillStyle = slotGradient;
-                ctx.fillRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+                drawRoundedRect(ctx, x, y, width, height, radius, { fill: true });
 
-                // Draw slot border
-                ctx.strokeStyle = '#34495e';
+                // Draw slot border with rounded corners
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Match border-[rgba(255,255,255,0.2)]
                 ctx.lineWidth = 1;
-                ctx.strokeRect(slotX, slotY - slotHeight / 2, slotWidth, slotHeight);
+                drawRoundedRect(ctx, x, y, width, height, radius, { stroke: true });
 
                 // Draw multiplier text
                 ctx.fillStyle = '#ffffff';

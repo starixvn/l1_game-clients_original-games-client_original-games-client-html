@@ -4,8 +4,6 @@ import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { usePhysicsEngine, useBallSpawner, useCanvas, useBallRenderer } from "./hooks";
 import { logger } from "../../../../services/logger";
-import { enableLogging } from "../../../../utils/enableLogging";
-import { diagnosticTool } from "../../../../utils/diagnosticTool";
 
 export interface SimplifiedCanvasBallLayoutRef {
     spawnBall: (betValue?: number) => void;
@@ -30,10 +28,11 @@ const CANVAS_HEIGHT = 550;
  */
 const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, BallLayoutProps>(
     ({ multipliers = [], probabilities = [], onBallHit }, ref) => {
-        const { numberOfRows, betAmount } = usePlinkoGameStore(
+        const { numberOfRows, betAmount, gameMode } = usePlinkoGameStore(
             useShallow((state) => ({
                 numberOfRows: state.numberOfRows,
                 betAmount: state.betAmount,
+                gameMode: state.gameMode,
             }))
         );
 
@@ -62,6 +61,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         } = usePhysicsEngine({
             numberOfRows,
             multipliers,
+            gameMode,
             onBallHit,
             canvasWidth: CANVAS_WIDTH,
             canvasHeight: CANVAS_HEIGHT,
@@ -79,6 +79,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         const { startRenderLoop, layoutData, slotRenderData } = useBallRenderer({
             numberOfRows,
             multipliers,
+            gameMode,
             canvasWidth: CANVAS_WIDTH,
             canvasHeight: CANVAS_HEIGHT,
             engine,
