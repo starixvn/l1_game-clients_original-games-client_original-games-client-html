@@ -8,8 +8,8 @@ import { Bodies, Body } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 import { logger } from '../../../../../services/logger';
-import { LAYOUT_CONSTANTS } from '@/lib/physics/constants/layout-constants';
-import { PHYSICS_CONSTANTS } from '@/lib/physics/constants/physics-constants';
+import { LAYOUT_CONSTANTS } from '../../../../../lib/physics/constants/layout-constants';
+import { PHYSICS_CONSTANTS } from '../../../../../lib/physics/constants/physics-constants';
 
 export interface PhysicsBody {
     pins: Body[];

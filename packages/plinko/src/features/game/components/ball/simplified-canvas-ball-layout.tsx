@@ -20,7 +20,7 @@ export interface SimplifiedCanvasBallLayoutRef {
 }
 
 // Fixed canvas dimensions - canvas stays at original size regardless of container resize
-import { CANVAS_CONSTANTS } from '@/lib/physics/constants/canvas-constants';
+import { CANVAS_CONSTANTS } from '../../../../lib/physics/constants/canvas-constants';
 
 const CANVAS_WIDTH = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_WIDTH;
 const CANVAS_HEIGHT = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_HEIGHT;

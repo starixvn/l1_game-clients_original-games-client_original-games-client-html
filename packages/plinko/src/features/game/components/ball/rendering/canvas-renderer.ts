@@ -9,8 +9,8 @@ import { BallBodyExtension } from '../../../../../types/physics';
 import * as DrawingUtils from './drawing-utils';
 import { LayoutData, SlotRenderData } from './layout-calculator';
 import { logger } from '../../../../../services/logger';
-import { RENDERING_CONSTANTS } from '@/lib/physics/constants/rendering-constants';
-import { BALL_CONSTANTS } from '@/lib/physics/constants/ball-constants';
+import { RENDERING_CONSTANTS } from '../../../../../lib/physics/constants/rendering-constants';
+import { BALL_CONSTANTS } from '../../../../../lib/physics/constants/ball-constants';
 
 // Export namespace for better organization
 export namespace CanvasRenderer {
@@ -117,42 +117,29 @@ export namespace CanvasRenderer {
 
         ctx.stroke();
 
-        // Draw collision points and peg information
+        // Draw collision points for velocity nudges
         pathPositions.forEach((pos, index) => {
             if (pos.type === 'collision' && pos.pathIndex !== undefined) {
                 // Draw collision point
                 ctx.fillStyle = '#ff4444'; // Red for collision points
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+                ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Draw path index number
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '10px Arial';
+                ctx.font = '9px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(pos.pathIndex.toString(), pos.x, pos.y - 12);
+                ctx.fillText(pos.pathIndex.toString(), pos.x, pos.y - 10);
 
                 // Draw direction indicator
                 if (pos.direction !== undefined) {
                     const directionSymbol = pos.direction === 0 ? '←' : '→';
                     ctx.fillStyle = '#ffff00'; // Yellow for direction
-                    ctx.font = '14px Arial';
-                    ctx.fillText(directionSymbol, pos.x, pos.y - 25);
+                    ctx.font = '12px Arial';
+                    ctx.fillText(directionSymbol, pos.x, pos.y - 20);
                 }
-
-                // Draw peg info
-                if (pos.pegRow && pos.pegCol) {
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '8px Arial';
-                    ctx.fillText(`${pos.pegRow}-${pos.pegCol}`, pos.x, pos.y + 12);
-                }
-            } else if (pos.type === 'launch') {
-                // Draw launch points as smaller dots
-                ctx.fillStyle = '#44ff44'; // Green for launch points
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 2, 0, Math.PI * 2);
-                ctx.fill();
             }
         });
     }
@@ -216,8 +203,10 @@ export namespace CanvasRenderer {
     export function renderFrame(renderContext: RenderContext): void {
         const { ctx, engine, pins, removedBallsRef, layoutData, slotRenderData } = renderContext;
 
-        // Clear canvas
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        // Clear canvas - handle test environment where canvas might not be available
+        const canvasWidth = ctx.canvas?.width || 800;
+        const canvasHeight = ctx.canvas?.height || 600;
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
         // Get ball count for logging
         const allBodies = Composite.allBodies(engine.world);
@@ -242,3 +231,10 @@ export namespace CanvasRenderer {
         renderBalls(ctx, engine, removedBallsRef);
     }
 }
+
+// Standalone exports for testing
+export const renderBallPath = CanvasRenderer.renderBallPath;
+export const renderBalls = CanvasRenderer.renderBalls;
+export const renderFrame = CanvasRenderer.renderFrame;
+export const renderPins = CanvasRenderer.renderPins;
+export const renderSlots = CanvasRenderer.renderSlots;

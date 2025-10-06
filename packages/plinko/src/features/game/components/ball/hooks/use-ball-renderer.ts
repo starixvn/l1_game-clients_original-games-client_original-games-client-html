@@ -3,7 +3,7 @@ import { Composite, Engine } from 'matter-js';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
-import { ANIMATION_CONSTANTS } from '@/lib/physics/constants/animation-constants';
+import { ANIMATION_CONSTANTS } from '../../../../../lib/physics/constants/animation-constants';
 import {
     calculateLayoutData,
     calculateSlotRenderData
@@ -88,15 +88,19 @@ export const useBallRenderer = ({
                 return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
             });
 
-            // Record current positions for service-guided balls
+            // Record current positions for service-guided balls (continuous path)
             balls.forEach((ball) => {
                 const ballExtension = ball as unknown as BallBodyExtension;
                 if (ballExtension.isServiceGuided && ballExtension.pathPositions) {
                     // Add current position to path (limit frequency to avoid too many points)
                     const lastPos = ballExtension.pathPositions[ballExtension.pathPositions.length - 1];
-                    if (!lastPos ||
-                        Math.abs(ball.position.x - lastPos.x) > 5 ||
-                        Math.abs(ball.position.y - lastPos.y) > 5) {
+                    const distanceMoved = lastPos ? Math.sqrt(
+                        Math.pow(ball.position.x - lastPos.x, 2) +
+                        Math.pow(ball.position.y - lastPos.y, 2)
+                    ) : Infinity;
+
+                    // Record position if moved more than 8 pixels or if it's a collision point
+                    if (distanceMoved > 8) {
                         ballExtension.pathPositions.push({
                             x: ball.position.x,
                             y: ball.position.y,

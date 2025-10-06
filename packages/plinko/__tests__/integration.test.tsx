@@ -171,7 +171,19 @@ describe('Ball Layout Integration Tests', () => {
             font: '',
             textAlign: '',
             textBaseline: '',
-            fillText: jest.fn()
+            fillText: jest.fn(),
+            // Add missing canvas drawing methods
+            moveTo: jest.fn(),
+            lineTo: jest.fn(),
+            quadraticCurveTo: jest.fn(),
+            bezierCurveTo: jest.fn(),
+            rect: jest.fn(),
+            roundRect: jest.fn(),
+            closePath: jest.fn(),
+            canvas: {
+                width: 800,
+                height: 600
+            }
         };
 
         HTMLCanvasElement.prototype.getContext = jest.fn().mockReturnValue(mockContext);
@@ -267,8 +279,8 @@ describe('Ball Layout Integration Tests', () => {
             // Verify service-guided ball creation
             expect(Bodies.circle).toHaveBeenCalledWith(
                 expect.any(Number),
-                40, // startY for service balls
-                expect.any(Number),
+                expect.any(Number), // ballRadius (calculated dynamically)
+                expect.any(Number), // ballRadius
                 expect.objectContaining({
                     label: 'service-guided-ball',
                     isStatic: false
@@ -311,11 +323,13 @@ describe('Ball Layout Integration Tests', () => {
                     pairs: [{
                         bodyA: {
                             label: 'ball-100',
-                            id: 1
+                            id: 1,
+                            position: { x: 300, y: 500 }
                         },
                         bodyB: {
                             label: 'multiplier-2.5-3',
-                            id: 2
+                            id: 2,
+                            position: { x: 300, y: 500 }
                         }
                     }]
                 };

@@ -100,12 +100,15 @@ export function createPhysicsBodies(
         const gap = pegRadius * 2 * mapGap; // 10 * 2 * 3 = 60
         const space = (canvasWidth - gap * columnsInRow) / 2;
 
+        console.log(`🏗️ [PHYSICS] Creating peg row ${row}/${rows}: ${columnsInRow} pegs`);
+
         for (let col = 1; col <= columnsInRow; col++) {
             const x = space + col * gap - pegRadius * mapGap;
             const y = row * gap; // row * 60
 
+            const pinLabel = `pin-${row}-${col}`;
             const pin = Bodies.circle(x, y, pegRadius, {
-                label: `pin-${row}-${col}`,
+                label: pinLabel,
                 render: { fillStyle: physicsConfig.colors.pin },
                 isStatic: true,
                 collisionFilter: {
@@ -113,8 +116,15 @@ export function createPhysicsBodies(
                 }
             });
             pins.push(pin);
+
+            // Log first few pegs for debugging
+            if (pins.length <= 10) {
+                console.log(`📍 [PHYSICS] Peg ${pins.length}: ${pinLabel} at (${Math.round(x)}, ${Math.round(y)})`);
+            }
         }
     }
+
+    console.log(`✅ [PHYSICS] Peg creation complete: ${pins.length} total pegs for ${rows} rows`);
 
     // Create invisible walls
     const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;
@@ -412,7 +422,7 @@ export function spawnBallWithPath(
 /**
  * Create a ball with service path data for physics-guided falling
  */
-function createBallWithServicePath(
+export function createBallWithServicePath(
     engine: Engine,
     serviceData: ServiceGuidedBallData,
     canvasRef: React.RefObject<HTMLDivElement>,

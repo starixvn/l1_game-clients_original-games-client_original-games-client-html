@@ -420,7 +420,16 @@ describe('Hooks Tests', () => {
                 stroke: jest.fn(),
                 beginPath: jest.fn(),
                 arc: jest.fn(),
-                setTransform: jest.fn()
+                setTransform: jest.fn(),
+                moveTo: jest.fn(),
+                lineTo: jest.fn(),
+                quadraticCurveTo: jest.fn(),
+                bezierCurveTo: jest.fn(),
+                rect: jest.fn(),
+                roundRect: jest.fn(),
+                closePath: jest.fn(),
+                save: jest.fn(),
+                restore: jest.fn()
             };
 
             const { result } = renderHook(() =>
@@ -449,7 +458,7 @@ describe('Hooks Tests', () => {
                 );
             });
 
-            expect(mockCtx.clearRect).toHaveBeenCalledWith(0, 0, 600, 550);
+            expect(mockCtx.clearRect).toHaveBeenCalledWith(0, 0, 800, 600);
         });
 
         it('should handle missing pins gracefully', () => {

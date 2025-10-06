@@ -21,8 +21,8 @@ export interface BallBodyExtension {
     createdAt?: number;
     wrongSlotHits?: number;
     pinCollisions?: string[];
+    appliedGuidanceSteps?: string[];
     pathPositions?: Array<{ x: number; y: number; type?: string; pegRow?: number; pegCol?: number; pathIndex?: number; direction?: number }>;
-    isProcessingCollision?: boolean;
 }
 
 /**

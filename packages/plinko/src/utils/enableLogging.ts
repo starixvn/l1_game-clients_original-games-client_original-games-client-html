@@ -8,8 +8,10 @@ export const enableLogging = () => {
     logger.expand(); // Show full functionality
     logger.start(); // Start logging
 
-    // Make logger available globally for easy access
-    (window as any).plinkoLogger = logger;
+    // Make logger available globally for easy access (only in browser environment)
+    if (typeof window !== 'undefined') {
+        (window as any).plinkoLogger = logger;
+    }
 
     console.log('🔧 [LOGGING] Plinko logging enabled!');
     console.log('🔧 [LOGGING] Use window.plinkoLogger to access logger methods:');

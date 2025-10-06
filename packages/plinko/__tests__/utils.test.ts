@@ -162,7 +162,7 @@ describe('Utility Functions Tests', () => {
                 const result = diagnosticTool.testBallSpawning(mockRef);
 
                 expect(result).toBe(false);
-                expect(console.error).toHaveBeenCalledWith('❌ [DIAGNOSTIC] Error during ball spawn:', expect.any(Error));
+                expect(console.error).toHaveBeenCalledWith('❌ [DIAGNOSTIC] Error spawning ball:', expect.any(Error));
             });
         });
 

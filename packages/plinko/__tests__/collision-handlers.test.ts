@@ -186,15 +186,10 @@ describe('Collision Handlers', () => {
                 velocity: { x: 0, y: 5 }
             };
 
-            // Mock the global Matter object
-            const originalMatter = global.Matter;
+            // Mock the Body.applyForce function
             const mockApplyForce = jest.fn();
-            (global as any).Matter = {
-                ...originalMatter,
-                Body: {
-                    applyForce: mockApplyForce
-                }
-            };
+            const originalApplyForce = require('matter-js').Body.applyForce;
+            require('matter-js').Body.applyForce = mockApplyForce;
 
             applyRandomPegDeflection(mockBallBody, 0.2);
 
@@ -204,12 +199,12 @@ describe('Collision Handlers', () => {
                 mockBallBody.position,
                 expect.objectContaining({
                     x: expect.any(Number),
-                    y: expect.any(Number)
+                    y: 0 // Should always be 0 for y component
                 })
             );
 
-            // Restore original Matter
-            (global as any).Matter = originalMatter;
+            // Restore original function
+            require('matter-js').Body.applyForce = originalApplyForce;
         });
 
         it('should handle custom deflection strength', () => {
@@ -219,21 +214,17 @@ describe('Collision Handlers', () => {
                 velocity: { x: 0, y: 5 }
             };
 
-            const originalMatter = global.Matter;
+            // Mock the Body.applyForce function
             const mockApplyForce = jest.fn();
-            (global as any).Matter = {
-                ...originalMatter,
-                Body: {
-                    applyForce: mockApplyForce
-                }
-            };
+            const originalApplyForce = require('matter-js').Body.applyForce;
+            require('matter-js').Body.applyForce = mockApplyForce;
 
             applyRandomPegDeflection(mockBallBody, 0.5);
 
             expect(mockApplyForce).toHaveBeenCalled();
 
-            // Restore original Matter
-            (global as any).Matter = originalMatter;
+            // Restore original function
+            require('matter-js').Body.applyForce = originalApplyForce;
         });
 
         it('should handle zero deflection strength', () => {
@@ -243,22 +234,18 @@ describe('Collision Handlers', () => {
                 velocity: { x: 0, y: 5 }
             };
 
-            const originalMatter = global.Matter;
+            // Mock the Body.applyForce function
             const mockApplyForce = jest.fn();
-            (global as any).Matter = {
-                ...originalMatter,
-                Body: {
-                    applyForce: mockApplyForce
-                }
-            };
+            const originalApplyForce = require('matter-js').Body.applyForce;
+            require('matter-js').Body.applyForce = mockApplyForce;
 
             applyRandomPegDeflection(mockBallBody, 0);
 
             // Should still apply some minimal force
             expect(mockApplyForce).toHaveBeenCalled();
 
-            // Restore original Matter
-            (global as any).Matter = originalMatter;
+            // Restore original function
+            require('matter-js').Body.applyForce = originalApplyForce;
         });
     });
 });

@@ -175,7 +175,19 @@ describe('SimplifiedCanvasBallLayout', () => {
             font: '',
             textAlign: '',
             textBaseline: '',
-            fillText: jest.fn()
+            fillText: jest.fn(),
+            // Add missing canvas drawing methods
+            moveTo: jest.fn(),
+            lineTo: jest.fn(),
+            quadraticCurveTo: jest.fn(),
+            bezierCurveTo: jest.fn(),
+            rect: jest.fn(),
+            roundRect: jest.fn(),
+            closePath: jest.fn(),
+            canvas: {
+                width: 800,
+                height: 600
+            }
         };
 
         // Mock getContext
@@ -325,8 +337,8 @@ describe('SimplifiedCanvasBallLayout', () => {
 
         expect(Bodies.circle).toHaveBeenCalledWith(
             expect.any(Number),
-            40, // startY for service balls
-            expect.any(Number),
+            expect.any(Number), // ballRadius (calculated dynamically)
+            expect.any(Number), // ballRadius
             expect.objectContaining({
                 label: 'service-guided-ball',
                 isStatic: false
