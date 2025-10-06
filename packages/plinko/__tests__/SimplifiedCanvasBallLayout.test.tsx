@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Bodies, Engine, Composite, Runner, World, Events } from 'matter-js';
-import SimplifiedCanvasBallLayout, { SimplifiedCanvasBallLayoutRef } from '../src/features/game/components/ball/SimplifiedCanvasBallLayout';
+import SimplifiedCanvasBallLayout, { SimplifiedCanvasBallLayoutRef } from '../src/features/game/components/ball/simplified-canvas-ball-layout';
 import { BallLayoutProps } from '../src/shared/types';
 import { logger } from '../src/services/logger';
 

@@ -168,6 +168,7 @@ describe('Hooks Tests', () => {
                 usePhysicsEngine({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     onBallHit: mockOnBallHit,
                     canvasWidth: 600,
                     canvasHeight: 550,
@@ -184,6 +185,7 @@ describe('Hooks Tests', () => {
                 usePhysicsEngine({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     onBallHit: mockOnBallHit,
                     canvasWidth: 600,
                     canvasHeight: 550,
@@ -200,6 +202,7 @@ describe('Hooks Tests', () => {
                 usePhysicsEngine({
                     numberOfRows: 8,
                     multipliers: [],
+                    gameMode: 1,
                     onBallHit: mockOnBallHit,
                     canvasWidth: 600,
                     canvasHeight: 550,
@@ -215,6 +218,7 @@ describe('Hooks Tests', () => {
                 usePhysicsEngine({
                     numberOfRows: 10,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     onBallHit: mockOnBallHit,
                     canvasWidth: 600,
                     canvasHeight: 550,
@@ -348,6 +352,7 @@ describe('Hooks Tests', () => {
                 useBallRenderer({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     canvasWidth: 600,
                     canvasHeight: 550,
                     engine: mockEngine,
@@ -366,6 +371,7 @@ describe('Hooks Tests', () => {
                 useBallRenderer({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     canvasWidth: 600,
                     canvasHeight: 550,
                     engine: mockEngine,
@@ -383,6 +389,7 @@ describe('Hooks Tests', () => {
                 useBallRenderer({
                     numberOfRows: 8,
                     multipliers: [],
+                    gameMode: 1,
                     canvasWidth: 600,
                     canvasHeight: 550,
                     engine: mockEngine,
@@ -420,6 +427,7 @@ describe('Hooks Tests', () => {
                 useBallRenderer({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     canvasWidth: 600,
                     canvasHeight: 550,
                     engine: mockEngine,
@@ -449,6 +457,7 @@ describe('Hooks Tests', () => {
                 useBallRenderer({
                     numberOfRows: 8,
                     multipliers: [0.5, 1, 2],
+                    gameMode: 1,
                     canvasWidth: 600,
                     canvasHeight: 550,
                     engine: mockEngine,

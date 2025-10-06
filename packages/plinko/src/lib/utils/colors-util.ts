@@ -13,7 +13,14 @@ export function generateMultiplierColor(mode: number, numberOfRows: number): str
         if (level > 4) {
             level = 5;
         }
-        colors[i] = MULTIPLIER_COLORS[mode][level];
+
+        // Ensure we have valid color data
+        const modeColors = MULTIPLIER_COLORS[mode];
+        if (!modeColors || !Array.isArray(modeColors)) {
+            colors[i] = '#FFDC48'; // Default fallback
+        } else {
+            colors[i] = modeColors[level] || modeColors[0] || '#FFDC48';
+        }
     }
 
     return colors;
@@ -23,7 +30,8 @@ export function getMultiplierColor(slotIndex: number, gameMode: number, numberOf
     const colors = generateMultiplierColor(gameMode, numberOfRows);
     // Handle out-of-bounds indices by returning a default color
     if (slotIndex < 0 || slotIndex >= colors.length) {
-        return MULTIPLIER_COLORS[gameMode][0] || '#FFDC48'; // Default to first color or fallback
+        const modeColors = MULTIPLIER_COLORS[gameMode];
+        return (modeColors && modeColors[0]) || '#FFDC48'; // Default to first color or fallback
     }
     return colors[slotIndex];
 }
