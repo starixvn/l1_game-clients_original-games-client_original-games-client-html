@@ -10,11 +10,11 @@ import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
 import { getOddsForMode } from "../../game-odds-config";
-import RoundMultiplierHistory from "@shared/components/game-components/round-multiplier-history/round-multiplier-history";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "@shared/components/game-base/type";
 import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
 import { useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
+import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
 
 const defaultGameState: GameState = {
     currentWin: 106,
