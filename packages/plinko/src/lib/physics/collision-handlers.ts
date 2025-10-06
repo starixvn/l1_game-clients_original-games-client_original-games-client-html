@@ -1,22 +1,24 @@
 import { Body, Engine } from 'matter-js';
 
-/**
- * Collision Handlers Module
- * Handles all collision detection and response logic for the Plinko game
- */
-
-// Extend Body interface to include custom properties
-interface ExtendedBody extends Body {
-    isRemoved?: boolean;
-}
-
+// Define types locally since they're not used elsewhere
 interface BallBodyExtension {
+    world?: Engine['world'];
     isServiceGuided?: boolean;
-    isRemoved?: boolean; // Flag to prevent re-processing removed balls
-    createdAt?: number; // Timestamp when ball was created
+    expectedFinalSlot?: number;
+    multiplier?: number;
+    betValue?: number;
+    hasTriggeredWin?: boolean;
+    servicePath?: number[];
+    currentPathIndex?: number;
+    isRemoved?: boolean;
+    createdAt?: number;
+    wrongSlotHits?: number;
+    pinCollisions?: string[];
 }
 
-export interface SlotLayout {
+type ExtendedBody = Body & BallBodyExtension;
+
+interface SlotLayout {
     startX: number;
     slotWidth: number;
     slotHeight: number;
@@ -24,14 +26,14 @@ export interface SlotLayout {
     multipliers: number[];
 }
 
-export interface AnimationState {
+interface AnimationState {
     offsetY: number;
     startTime: number;
     duration: number;
     type: 'slotBounce';
 }
 
-export interface CollisionHandlerOptions {
+interface CollisionHandlerOptions {
     slotLayout?: SlotLayout;
     canvasHeight?: number;
     onBallHit?: (multiplier: number, betValue: number) => void;
@@ -39,6 +41,11 @@ export interface CollisionHandlerOptions {
     lastLogTimeRef?: { current: number };
     animationState?: Map<string, AnimationState>;
 }
+
+/**
+ * Collision Handlers Module
+ * Handles all collision detection and response logic for the Plinko game
+ */
 
 /**
  * Apply random deflection to ball after peg collision for unpredictable bounce patterns
@@ -75,7 +82,6 @@ export function handleBallPayoutCollision(
     // Extract collision data from physics body labels
     const multiplierValue = parseFloat(slotBody.label.split('-')[1]);
     const ballValue = parseFloat(ballBody.label.split('-')[1]) || 1;
-    const winAmount = ballValue * multiplierValue;
     const slotId = slotBody.label; // Use full label as unique identifier
 
     // Call the callback to notify parent component about the win
@@ -113,8 +119,8 @@ export function handleBallPayoutCollision(
     }
 
     // Double-check removal by logging all remaining bodies
-    if (engine.world && typeof engine.world.bodies !== 'undefined') {
-        const remainingBalls = engine.world.bodies.filter(b => b.label && b.label.includes('ball'));
+    if (engine.world?.bodies) {
+        engine.world.bodies.filter(b => b.label?.includes('ball'));
     }
 
     // === SLOT VISUAL BOUNCE ANIMATION ===

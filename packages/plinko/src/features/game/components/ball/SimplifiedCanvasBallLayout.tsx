@@ -433,8 +433,15 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 // Draw pins
                 pins.forEach((pin, index) => {
                     const bounds = pin.bounds;
-                    const centerX = (bounds.min.x + bounds.max.x) / 2;
-                    const centerY = (bounds.min.y + bounds.max.y) / 2;
+                    let centerX, centerY;
+                    if (!bounds || !bounds.min || !bounds.max) {
+                        // Fallback to position if bounds are not available
+                        centerX = pin.position.x;
+                        centerY = pin.position.y;
+                    } else {
+                        centerX = (bounds.min.x + bounds.max.x) / 2;
+                        centerY = (bounds.min.y + bounds.max.y) / 2;
+                    }
 
                     ctx.fillStyle = '#F5DCFF';
                     ctx.strokeStyle = '#E0E0E0';

@@ -4,11 +4,6 @@ import { physicsConfig } from './physics-config';
 import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
 import { getMiddleDropPosition } from './drop-positions';
 
-/**
- * Physics Engine Module
- * Manages all physics engine operations, ball creation, and spawning
- */
-
 interface BallBodyExtension {
     world?: Engine['world'];
     isServiceGuided?: boolean;
@@ -20,6 +15,8 @@ interface BallBodyExtension {
     currentPathIndex?: number;
     isRemoved?: boolean; // Flag to prevent re-processing removed balls
     createdAt?: number; // Timestamp when ball was created
+    wrongSlotHits?: number;
+    pinCollisions?: string[];
 }
 
 export interface CanvasInfo {
@@ -36,6 +33,11 @@ export interface ServiceGuidedBallData {
     multiplier: number;
     betValue: number;
 }
+
+/**
+ * Physics Engine Module
+ * Manages all physics engine operations, ball creation, and spawning
+ */
 
 /**
  * Get current canvas dimensions and physics categories
