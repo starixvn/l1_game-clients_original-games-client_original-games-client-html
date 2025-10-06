@@ -69,14 +69,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             return;
         }
 
-        // Register handler for SIGNED_IN to send inGame message
-        const signedInHandlerId = gameMessageHandler.register(messageEventType.SIGNED_IN, (action) => {
-            if (socket?.connected) {
-                // Plinko service expects inGame without parameters (based on integration tests)
-                socket.emit("inGame");
-            }
-        });
-
         // Register handler for gameConfigs response to mark game as initialized
         const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
             setLocalGameInitialized(true);
@@ -154,15 +146,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             }
         });
 
-        // Check if socket is already connected and signed in, send inGame if needed
-        if (socket?.connected) {
-            socket.emit("inGame");
-        }
-
         return () => {
             // Cleanup handlers when component unmounts
             if (gameMessageHandler.removeHandler) {
-                gameMessageHandler.removeHandler(signedInHandlerId);
                 gameMessageHandler.removeHandler(gameConfigsHandlerId);
                 gameMessageHandler.removeHandler(endBetHandlerId);
             }

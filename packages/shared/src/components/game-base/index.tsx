@@ -664,7 +664,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetHistoryTable() {
-        return <BetHistoryControl defaultTab={"all-bets"} children={[<BetHistoryTable gameId={this.props.id?.toString()} />]} />;
+        return <BetHistoryControl defaultTab={"all-bets"} tabContent={[<BetHistoryTable gameId={this.props.id?.toString()} />]} />;
     }
 
     renderBetDetailModal() {

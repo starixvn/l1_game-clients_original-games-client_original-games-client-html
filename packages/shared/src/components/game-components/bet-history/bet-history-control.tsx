@@ -7,20 +7,20 @@ export type BetHistoryTab = "all-bets" | "my-bets" | "high-roller";
 
 export interface BetHistoryControlProps {
     defaultTab?: BetHistoryTab | null;
-    children: React.ReactNode[];
+    tabContent: React.ReactNode[];
     className?: string;
 }
 
-export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab = "all-bets", children, className }) => {
+export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab = "all-bets", tabContent, className }) => {
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
     // If only one child, don't show tabs
-    const shouldShowTabs = children.length > 1;
+    const shouldShowTabs = tabContent.length > 1;
 
     // Initialize active tab - ensure it's valid based on available tabs
     const [activeTab, setActiveTab] = useState<BetHistoryTab>(() => {
-        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, children.length) as BetHistoryTab[];
+        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, tabContent.length) as BetHistoryTab[];
         const defaultTabKey: BetHistoryTab = defaultTab || "all-bets";
         return availableTabs.includes(defaultTabKey) ? defaultTabKey : availableTabs[0];
     });
@@ -43,15 +43,15 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
         ];
 
         // Only return tabs based on children length
-        return allTabs.slice(0, children.length);
-    }, [translateCommon, children.length]);
+        return allTabs.slice(0, tabContent.length);
+    }, [translateCommon, tabContent.length]);
 
     useEffect(() => {
-        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, children.length);
+        const availableTabs = ["all-bets", "my-bets", "high-roller"].slice(0, tabContent.length);
         if (!availableTabs.includes(activeTab)) {
             setActiveTab(availableTabs[0] as BetHistoryTab);
         }
-    }, [children.length, activeTab]);
+    }, [tabContent.length, activeTab]);
 
     // Handle tab click
     const handleTabClick = (tabKey: BetHistoryTab) => {
@@ -61,18 +61,18 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
 
     const getCurrentContent = () => {
         if (!shouldShowTabs) {
-            return children[0];
+            return tabContent[0];
         }
 
         const tabIndex = tabs.findIndex((tab) => tab.key === activeTab);
-        return children[tabIndex] || children[0];
+        return tabContent[tabIndex] || tabContent[0];
     };
 
     // If only one child, render it directly without tabs
     if (!shouldShowTabs) {
         return (
             <div className={cn(`${styles["bet-history-container"]} rounded-xl bg-primary-bg p-2 h-full border-stroke`, className)}>
-                {children[0]}
+                {tabContent[0]}
             </div>
         );
     }
@@ -119,9 +119,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
                 <div
                     role="presentation"
                     data-orientation="horizontal"
-                    className={cn(
-                        "absolute rounded-[12px] h-[80%] z-[1] bg-[#0990FF]"
-                    )}
+                    className="absolute rounded-[12px] h-[80%] z-[1] bg-[#0990FF]"
                     style={{
                         left: "5px",
                         width: `calc(${100 / tabs.length}% - 5px)`,
@@ -132,7 +130,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ defaultTab
             </div>
 
             {/* Tab Content */}
-            <div className={cn(`${styles["bet-history-container"]} w-full rounded-xl p-2 border-stroke`)}>{getCurrentContent()}</div>
+            <div className={`${styles["bet-history-container"]} w-full rounded-xl p-2 border-stroke`}>{getCurrentContent()}</div>
         </div>
     );
 };

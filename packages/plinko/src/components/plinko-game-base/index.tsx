@@ -129,7 +129,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <BetHistoryControl
                 defaultTab={"all-bets"}
-                children={[<PlayerResultBoardTable />, <BetHistoryTable gameId={this.props.id?.toString()} />]}
+                tabContent={[
+                    <PlayerResultBoardTable key="player-result-board" />, 
+                    <BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />
+                ]}
             />
         );
     }
