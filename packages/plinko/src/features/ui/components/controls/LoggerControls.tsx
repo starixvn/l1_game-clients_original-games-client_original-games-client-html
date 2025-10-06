@@ -36,9 +36,14 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
     if (!isExpanded) {
+      // Expand the logger when UI is expanded so logging actually works
+      logger.expand();
       // Load recent logs when expanding
       const allLogs = logger.getLogs().split('\n').slice(3, -1); // Skip header, get last 10 logs
       setRecentLogs(allLogs.slice(-10));
+    } else {
+      // Collapse the logger when UI is collapsed
+      logger.collapse();
     }
   };
 
