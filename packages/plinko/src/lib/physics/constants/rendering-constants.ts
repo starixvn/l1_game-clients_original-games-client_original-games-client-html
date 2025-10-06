@@ -39,6 +39,12 @@ export const RENDERING_CONSTANTS = {
         HIGHLIGHT_POSITION_MULTIPLIER: 0.3
     },
 
+    // Path Line Rendering
+    PATH_LINE: {
+        COLOR: 'rgba(255, 255, 255, 0.6)',
+        WIDTH: 2
+    },
+
     // Logging
     LOGGING: {
         FRAME_LOG_PROBABILITY: 0.005, // ~0.5% of frames

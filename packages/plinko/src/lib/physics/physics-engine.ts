@@ -21,6 +21,7 @@ interface BallBodyExtension {
     createdAt?: number; // Timestamp when ball was created
     wrongSlotHits?: number;
     pinCollisions?: string[];
+    pathPositions?: { x: number; y: number }[]; // Track ball path for visualization
 }
 
 export interface CanvasInfo {
@@ -212,8 +213,23 @@ export function createPhysicsBodies(
     const slotHeight = LAYOUT_CONSTANTS.SLOTS.SLOT_HEIGHT; // Thin slot like demo
 
     multipliers.forEach((multiplier, index) => {
-        const col = index + 1; // Slots are 1-indexed in demo
-        const x = space + col * gap - pegRadius * mapGap;
+        // slotIndex begins with 0, so index 0 = slotIndex 0, index 4 = slotIndex 4
+        const slotIndex = index;
+        const x = space + (index + 1) * gap - pegRadius * mapGap;
+
+        const slotLabel = `multiplier-${multiplier}-${slotIndex}`;
+
+        console.log('🏗️ [PHYSICS] Creating multiplier slot - SLOT INDEX MAPPING:', {
+            arrayIndex: index,
+            slotIndex,
+            multiplier,
+            slotLabel,
+            position: { x: Math.round(x), y: Math.round(y) },
+            dimensions: { width: slotWidth, height: slotHeight },
+            totalSlots: multipliers.length,
+            rows,
+            mapping: `arrayIndex ${index} -> slotIndex ${slotIndex} -> label ${slotLabel}`
+        });
 
         const multiplierBody = Bodies.rectangle(
             x,
@@ -221,7 +237,7 @@ export function createPhysicsBodies(
             slotWidth,
             slotHeight,
             {
-                label: `multiplier-${multiplier}-${index}`,
+                label: slotLabel,
                 isStatic: true,
                 isSensor: true, // Like demo slots
                 collisionFilter: {
@@ -233,6 +249,22 @@ export function createPhysicsBodies(
             }
         );
         multipliersBodies.push(multiplierBody);
+    });
+
+    // Log final slot layout with detailed mapping
+    console.log('✅ [PHYSICS] FINAL SLOT LAYOUT - SLOT INDEX MAPPING:', {
+        totalSlots: multipliersBodies.length,
+        multipliersArray: multipliers,
+        slotMapping: multipliersBodies.map((body, index) => ({
+            physicalPosition: index,
+            slotIndex: index,
+            multiplier: multipliers[index],
+            label: body.label,
+            position: { x: Math.round(body.position.x), y: Math.round(body.position.y) },
+            mapping: `Position ${index} -> slotIndex ${index} -> multiplier ${multipliers[index]}`
+        })),
+        slotIndexRange: `0 to ${multipliersBodies.length - 1}`,
+        expectedBehavior: `slotIndex N corresponds to slot at physical position N`
     });
 
     return { pins, multipliersBodies, walls };
@@ -339,8 +371,24 @@ export function spawnBallWithPath(
 
     // Validate service data consistency
     const calculatedSlot = serviceData.path.filter(p => p === 1).length;
+    console.log('🎯 [PHYSICS] SERVICE BALL CREATION - SLOT INDEX CALCULATION:', {
+        path: serviceData.path,
+        pathLength: serviceData.path.length,
+        countOfOnes: calculatedSlot,
+        serviceSlotIndex: serviceData.finalSlot,
+        slotIndexMatch: calculatedSlot === serviceData.finalSlot,
+        expectedOutcome: `Ball should land on slotIndex ${serviceData.finalSlot}`,
+        pathDirections: serviceData.path.map((dir, idx) => `Step ${idx}: ${dir === 0 ? 'LEFT' : 'RIGHT'}`).join(', '),
+        betValue: serviceData.betValue,
+        multiplier: serviceData.multiplier
+    });
+
     if (calculatedSlot !== serviceData.finalSlot) {
-        // Slot mismatch validation (silenced)
+        console.warn('⚠️ [PHYSICS] Slot mismatch in service data:', {
+            calculatedSlot,
+            serviceFinalSlot: serviceData.finalSlot,
+            path: serviceData.path
+        });
     }
 
     // Validate path matches expected rows
@@ -385,15 +433,13 @@ function createBallWithServicePath(
 
     const ballColor = serviceData.betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
-    // Create ball body with service path information
-    const ball = Bodies.circle(ballX, ballRadius + BALL_CONSTANTS.SPAWN.SERVICE_Y_OFFSET, ballRadius, {
-        restitution: physicsTweaks.restitution,
-        friction: PHYSICS_CONSTANTS.BALL.FRICTION_SERVICE,
-        frictionAir: physicsTweaks.frictionAir,
-        density: physicsTweaks.density,
+    // Create ball body with service path information (match demo physics exactly)
+    const ball = Bodies.circle(ballX, ballRadius, ballRadius, {
+        restitution: 0, // No bounce like demo
+        friction: 0,    // No friction like demo
+        frictionAir: 0, // No air resistance like demo
         collisionFilter: {
-            group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP,
-            mask: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT | PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER // Only collide with pins and slots, not other balls
+            group: -1, // Match demo collision group
         },
         render: {
             fillStyle: ballColor,
@@ -413,6 +459,11 @@ function createBallWithServicePath(
     ballExtension.betValue = serviceData.betValue;
     ballExtension.isServiceGuided = true;
     ballExtension.createdAt = Date.now(); // Track creation time
+    ballExtension.pathPositions = [{
+        x: ball.position.x,
+        y: ball.position.y,
+        type: 'spawn'
+    }]; // Start path tracking
 
     return ball;
 }

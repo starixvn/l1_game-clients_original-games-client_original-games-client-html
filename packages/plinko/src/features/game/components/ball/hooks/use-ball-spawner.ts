@@ -89,15 +89,18 @@ export const useBallSpawner = ({
     }, [createBall, engine]);
 
     const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-        // Only log detailed info in development mode
-        if (process.env.NODE_ENV === 'development') {
-            logger.info('🎯 [HOOK] Spawning service-guided ball:', {
-                betValue,
-                finalSlot,
-                multiplier,
-                pathLength: path.length
-            });
-        }
+        const countOfOnes = path.filter(p => p === 1).length;
+
+        logger.info('🎯 [HOOK] Spawning service-guided ball - DATA FLOW TRACE:', {
+            betValue,
+            finalSlot,
+            multiplier,
+            path,
+            pathLength: path.length,
+            countOfOnes,
+            slotIndexMatch: countOfOnes === finalSlot,
+            pathBreakdown: path.join('')
+        });
 
         if (!engine.current?.world) {
             logger.error('❌ [HOOK] Physics engine not ready');

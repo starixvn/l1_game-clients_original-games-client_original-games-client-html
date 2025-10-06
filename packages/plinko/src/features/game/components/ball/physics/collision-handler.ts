@@ -28,20 +28,69 @@ export function handleMultiplierCollision(result: CollisionResult, options: Coll
     const { ballBody, ballExtension, obstacleBody, engine } = result;
 
     // Extract multiplier data from label
-    const labelParts = obstacleBody.label.split("-");
+    const fullLabel = obstacleBody.label || '';
+    const labelParts = fullLabel.split("-");
     const multiplier = parseFloat(labelParts[1]) || 1;
     const finalSlot = parseInt(labelParts[2]) || 0;
     const betValue = ballExtension.betValue || 100;
 
-    logger.info('🎯 [COLLISION] Ball hit multiplier - REMOVING BALL:', {
+    const slotMatch = finalSlot === ballExtension.expectedFinalSlot;
+    const pathCountOfOnes = ballExtension.servicePath?.filter(p => p === 1).length || 0;
+
+    // Calculate what slotIndex should be based on path
+    const correctSlotIndex = ballExtension.isServiceGuided ? pathCountOfOnes : null;
+
+    logger.error('🎯 [COLLISION] SLOT INDEX VERIFICATION - 0-BASED INDEXING:', {
         ballId: ballBody.id,
         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-        multiplier,
-        finalSlot,
-        expectedSlot: ballExtension.expectedFinalSlot,
-        isServiceGuided: ballExtension.isServiceGuided,
-        label: obstacleBody.label
+
+        // What the service says (both start with 0)
+        serviceSlotIndex: ballExtension.expectedFinalSlot,  // slotIndex from service
+        servicePath: ballExtension.servicePath,
+        pathCountOfOnes: pathCountOfOnes,
+
+        // What the physics engine detects
+        physicsSlotIndex: finalSlot,  // payout slot index from collision
+        physicsLabel: fullLabel,
+        physicsMultiplier: multiplier,
+
+        // Verification (both should be equal since both start with 0)
+        slotIndicesMatch: ballExtension.expectedFinalSlot === finalSlot,
+        pathValidatesSlotIndex: correctSlotIndex === ballExtension.expectedFinalSlot,
+
+        // Issue diagnosis
+        issue: ballExtension.expectedFinalSlot !== finalSlot ? 'WRONG_SLOT_LANDED' : 'CORRECT',
+        diagnosis: ballExtension.expectedFinalSlot !== finalSlot
+            ? `Service says slotIndex ${ballExtension.expectedFinalSlot}, but ball landed on slotIndex ${finalSlot}`
+            : `Ball correctly landed on slotIndex ${finalSlot}`,
+
+        // Path execution summary
+        pathExecuted: ballExtension.isServiceGuided ? `${ballExtension.currentPathIndex}/${ballExtension.servicePath.length} steps` : 'N/A',
+        pegCollisions: ballExtension.pinCollisions?.length || 0,
+
+        // Final conclusion
+        conclusion: ballExtension.expectedFinalSlot === finalSlot
+            ? `✅ SUCCESS: slotIndex ${ballExtension.expectedFinalSlot} matched correctly`
+            : `❌ FAILURE: Expected slotIndex ${ballExtension.expectedFinalSlot}, got ${finalSlot}. Path following issue.`
     });
+
+    // Additional validation logging
+    if (ballExtension.isServiceGuided && ballExtension.servicePath) {
+        const calculatedSlotIndex = ballExtension.servicePath.filter(p => p === 1).length;
+        const pathStepsExecuted = ballExtension.currentPathIndex;
+        const expectedPathSteps = ballExtension.servicePath.length;
+
+        logger.info('🔍 [COLLISION] Service-guided ball validation:', {
+            calculatedSlotIndex,
+            expectedSlotIndex: ballExtension.expectedFinalSlot,
+            pathStepsExecuted,
+            expectedPathSteps,
+            slotIndexMatch: calculatedSlotIndex === ballExtension.expectedFinalSlot,
+            pathCompleted: pathStepsExecuted >= expectedPathSteps,
+            finalSlotFromLabel: finalSlot,
+            slotMatch: finalSlot === ballExtension.expectedFinalSlot
+        });
+    }
 
     // Mark ball as removed
     ballExtension.isRemoved = true;
@@ -135,10 +184,10 @@ export function handleServiceGuidedWin(
  * Implements service-guided path following logic
  */
 export function handlePinCollision(result: CollisionResult): void {
-    const { ballBody, ballExtension } = result;
+    const { ballBody, ballExtension, obstacleBody } = result;
 
     if (ballExtension.isServiceGuided && ballExtension.servicePath && ballExtension.currentPathIndex < ballExtension.servicePath.length) {
-        handleServiceGuidedPinCollision(ballBody, ballExtension);
+        handleServiceGuidedPinCollision(ballBody, ballExtension, obstacleBody);
     } else {
         handleRandomPinCollision(ballBody);
     }
@@ -146,40 +195,139 @@ export function handlePinCollision(result: CollisionResult): void {
 
 /**
  * Handle pin collision for service-guided balls
- * Applies deterministic forces based on service path
+ * Uses static repositioning method like the demo project for deterministic paths
  */
-export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: BallBodyExtension): void {
-    const direction = ballExtension.servicePath[ballExtension.currentPathIndex];
+export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: BallBodyExtension, obstacleBody: Body): void {
+    const pegLabel = obstacleBody.label || '';
 
-    // In Plinko, each step represents a binary choice: left (0) or right (1)
-    // Service uses 1 to indicate "right" movement, 0 for "left" movement
-    // Higher count of 1s results in higher slotIndex (further right)
-    const targetDirection = direction === 1 ? 1 : -1; // 1 = right, 0 = left
-
-    // Apply stronger, more deterministic force for reliable path following
-    const forceMagnitude = COLLISION_CONSTANTS.FORCES.SERVICE_GUIDANCE_FORCE; // Increased for more reliable guidance
-    const velocityMagnitude = COLLISION_CONSTANTS.FORCES.SERVICE_GUIDANCE_VELOCITY; // Stronger velocity setting
-
-    Body.setVelocity(ballBody, {
-        x: targetDirection * velocityMagnitude,
-        y: ballBody.velocity.y
-    });
-    Body.applyForce(ballBody, ballBody.position, {
-        x: targetDirection * forceMagnitude,
-        y: 0
-    });
-
-    if (process.env.NODE_ENV === 'development') {
-        logger.debug('🎯 [PHYSICS] Service-guided ball collision', {
-            pathIndex: ballExtension.currentPathIndex,
-            direction,
-            targetDirection,
-            expectedFinalSlot: ballExtension.expectedFinalSlot,
-            remainingPath: ballExtension.servicePath.slice(ballExtension.currentPathIndex + 1)
-        });
+    // Check if we've already visited this peg (like demo project)
+    if (ballExtension.pinCollisions?.includes(pegLabel)) {
+        if (process.env.NODE_ENV === 'development') {
+            logger.debug('⏭️ [PHYSICS] Service-guided ball already visited this peg, skipping', {
+                pegLabel,
+                visitedPegs: ballExtension.pinCollisions
+            });
+        }
+        return;
     }
 
+    // Check if we're currently processing a collision (prevent rapid-fire collisions)
+    if (ballExtension.isProcessingCollision) {
+        console.log('⏳ [COLLISION] Ball is already processing a collision, skipping', {
+            pegLabel,
+            currentPathIndex: ballExtension.currentPathIndex
+        });
+        return;
+    }
+
+    ballExtension.isProcessingCollision = true;
+
+    // Only apply guidance if we haven't exceeded the path length
+    if (ballExtension.currentPathIndex >= ballExtension.servicePath.length) {
+        if (process.env.NODE_ENV === 'development') {
+            logger.warn('⚠️ [PHYSICS] Service-guided ball exceeded path length', {
+                pathIndex: ballExtension.currentPathIndex,
+                pathLength: ballExtension.servicePath.length,
+                expectedFinalSlot: ballExtension.expectedFinalSlot
+            });
+        }
+        return;
+    }
+
+    const direction = ballExtension.servicePath[ballExtension.currentPathIndex];
+    const pegRadius = obstacleBody.circleRadius || 10; // Get from obstacle body or default
+    const offsetVelocity = 1.2; // Slightly higher velocity for better control
+    const downwardVelocity = -3.5; // Stronger downward velocity
+
+    // Extract row and column from peg label for debugging
+    const pegParts = pegLabel.split('-');
+    const pegRow = parseInt(pegParts[1]) || 0;
+    const pegCol = parseInt(pegParts[2]) || 0;
+
+    console.log('🎯 [COLLISION] PEG COLLISION EXECUTION:', {
+        pegLabel,
+        pegRow,
+        pegCol,
+        ballPosition: { x: ballBody.position.x.toFixed(2), y: ballBody.position.y.toFixed(2) },
+        pathIndex: ballExtension.currentPathIndex,
+        directionFromPath: direction,
+        directionText: direction === 0 ? 'LEFT' : 'RIGHT',
+        fullPath: ballExtension.servicePath,
+        pathProgress: `${ballExtension.currentPathIndex + 1}/${ballExtension.servicePath.length}`,
+        remainingInstructions: ballExtension.servicePath.length - ballExtension.currentPathIndex - 1,
+        totalPegCollisions: ballExtension.pinCollisions?.length || 0,
+        expectedFinalSlot: ballExtension.expectedFinalSlot
+    });
+
+    // Temporarily make ball static to control its movement (like demo project)
+    Body.setStatic(ballBody, true);
+
+    // Calculate new position directly above the peg (like demo)
+    const newX = obstacleBody.position.x; // Position directly above the peg
+    const newY = obstacleBody.position.y - (pegRadius * 2); // Position above the peg
+
+    // Set position above the peg
+    Body.setPosition(ballBody, { x: newX, y: newY });
+
+    // Track path position for visualization (record both collision point and reposition point)
+    if (!ballExtension.pathPositions) {
+        ballExtension.pathPositions = [];
+    }
+    // Record the collision point (where ball hit the peg)
+    ballExtension.pathPositions.push({
+        x: ballBody.position.x,
+        y: ballBody.position.y,
+        type: 'collision',
+        pegRow,
+        pegCol,
+        pathIndex: ballExtension.currentPathIndex
+    });
+
+    // Apply velocity after a short delay to ensure position is set (like demo)
+    setTimeout(() => {
+        const velocityX = direction === 0 ? -offsetVelocity : offsetVelocity; // 0 = left, 1 = right
+        const velocityY = downwardVelocity; // Controlled downward velocity
+
+        Body.setVelocity(ballBody, {
+            x: velocityX,
+            y: velocityY,
+        });
+
+        // Make ball dynamic again
+        Body.setStatic(ballBody, false);
+
+        // Record the launch position (directly above the peg)
+        ballExtension.pathPositions.push({
+            x: newX,
+            y: newY,
+            type: 'launch',
+            direction,
+            pathIndex: ballExtension.currentPathIndex,
+            pegRow,
+            pegCol
+        });
+
+        console.log('🚀 [COLLISION] Ball launched after repositioning:', {
+            launchPosition: { x: newX.toFixed(2), y: newY.toFixed(2) },
+            velocity: { x: velocityX.toFixed(3), y: velocityY.toFixed(3) },
+            direction: direction === 0 ? 'LEFT' : 'RIGHT',
+            pathIndex: ballExtension.currentPathIndex,
+            totalPathPositions: ballExtension.pathPositions.length
+        });
+    }, 10);
+
+    // Record that we've visited this peg (like demo project)
+    if (!ballExtension.pinCollisions) {
+        ballExtension.pinCollisions = [];
+    }
+    ballExtension.pinCollisions.push(pegLabel);
+
     ballExtension.currentPathIndex++;
+
+    // Clear processing flag after a delay to allow next collision
+    setTimeout(() => {
+        ballExtension.isProcessingCollision = false;
+    }, 50);
 }
 
 /**

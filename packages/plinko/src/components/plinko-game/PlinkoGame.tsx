@@ -97,22 +97,36 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                 const multiplier = action.finish.settlementResult?.multiplier || 1;
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
+                const countOfOnes = resultPath.filter((p: number) => p === 1).length;
 
-                console.log("🎯 [PLINKO GAME] Server result path details:", {
+                console.log("🎯 [PLINKO GAME] Server result path details - FULL TRACE:", {
                     resultPath,
                     pathLength: resultPath.length,
                     expectedSlot: slotIndex,
-                    pathSum: resultPath.reduce((sum, val) => sum + val, 0), // Count of 1s
+                    countOfOnes,
+                    slotIndexMatch: countOfOnes === slotIndex,
+                    pathSum: resultPath.reduce((sum: number, val: number) => sum + val, 0), // Count of 1s
                     pathBreakdown: resultPath.join(""),
+                    multiplier,
+                    betAmount,
+                    winAmount,
+                    fullAction: action
                 });
 
-                logger.info("🎯 [PLINKO GAME] Spawning ball with server result path", {
+                logger.info("🎯 [PLINKO GAME] Spawning ball with server result path - SERVICE TO COMPONENT", {
                     resultPath,
                     pathLength: resultPath.length,
                     slotIndex,
                     multiplier,
                     betAmount,
                     winAmount,
+                    countOfOnes,
+                    validation: {
+                        pathLengthMatchesRows: resultPath.length === 9, // Assuming 9 rows
+                        slotIndexMatchesCount: countOfOnes === slotIndex,
+                        multiplierValid: multiplier > 0,
+                        betAmountValid: betAmount > 0
+                    }
                 });
 
                 // Function to attempt spawning with retry logic
@@ -121,11 +135,33 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
                     if (ballLayoutRef.current?.spawnBallWithPath) {
                         try {
+                            console.log("🚀 [PLINKO GAME] Calling spawnBallWithPath with data:", {
+                                betAmount,
+                                resultPath,
+                                slotIndex,
+                                multiplier,
+                                countOfOnes,
+                                ballLayoutReady: ballLayoutRef.current?.isReady?.()
+                            });
+
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
-                            logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path");
+
+                            logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path", {
+                                betAmount,
+                                pathLength: resultPath.length,
+                                slotIndex,
+                                multiplier,
+                                countOfOnes
+                            });
                             return true; // Success
                         } catch (error) {
-                            logger.error("❌ [PLINKO GAME] Error spawning ball", { error });
+                            logger.error("❌ [PLINKO GAME] Error spawning ball", {
+                                error,
+                                betAmount,
+                                resultPath,
+                                slotIndex,
+                                multiplier
+                            });
                             return false; // Failed
                         }
                     } else {
@@ -210,7 +246,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     };
 
     useEffect(() => {
-        if(endBet != -1) {
+        if (endBet != -1) {
             useGameStore.getState().resetBettingInfo();
         }
     }, [endBet])
@@ -282,10 +318,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const disabledMessage = !isConnected
         ? "(Connecting...)"
         : !isAuthenticated
-        ? "(Authenticating...)"
-        : !localGameInitialized
-        ? "(Initializing...)"
-        : "";
+            ? "(Authenticating...)"
+            : !localGameInitialized
+                ? "(Initializing...)"
+                : "";
 
     return (
         <div className="">

@@ -80,6 +80,32 @@ export const useBallRenderer = ({
                 logger.debug('🔄 [RENDER LOOP] Frame rendered');
             }
 
+            // Track ball positions for path visualization
+            const allBodies = Composite.allBodies(engine.world);
+            const balls = allBodies.filter((body) => {
+                if (!body.label?.includes("ball")) return false;
+                const ballExtension = body as unknown as BallBodyExtension;
+                return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
+            });
+
+            // Record current positions for service-guided balls
+            balls.forEach((ball) => {
+                const ballExtension = ball as unknown as BallBodyExtension;
+                if (ballExtension.isServiceGuided && ballExtension.pathPositions) {
+                    // Add current position to path (limit frequency to avoid too many points)
+                    const lastPos = ballExtension.pathPositions[ballExtension.pathPositions.length - 1];
+                    if (!lastPos ||
+                        Math.abs(ball.position.x - lastPos.x) > 5 ||
+                        Math.abs(ball.position.y - lastPos.y) > 5) {
+                        ballExtension.pathPositions.push({
+                            x: ball.position.x,
+                            y: ball.position.y,
+                            type: 'movement'
+                        });
+                    }
+                }
+            });
+
             // Use the modular renderer to render the entire frame
             CanvasRenderer.renderFrame({
                 ctx,

@@ -22,8 +22,8 @@ export const COLLISION_CONSTANTS = {
 
     // Force Magnitudes
     FORCES: {
-        SERVICE_GUIDANCE_FORCE: 0.25,
-        SERVICE_GUIDANCE_VELOCITY: 1.5
+        SERVICE_GUIDANCE_FORCE: 0.5,
+        SERVICE_GUIDANCE_VELOCITY: 3.0
     },
 
     // Probabilities

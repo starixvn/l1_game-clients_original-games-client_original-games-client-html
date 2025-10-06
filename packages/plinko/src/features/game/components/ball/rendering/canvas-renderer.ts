@@ -96,6 +96,68 @@ export namespace CanvasRenderer {
     }
 
     /**
+     * Render ball path line for service-guided balls
+     * Shows the trajectory the ball has followed
+     */
+    export function renderBallPath(ctx: CanvasRenderingContext2D, pathPositions: Array<{ x: number; y: number; type?: string; pegRow?: number; pegCol?: number; pathIndex?: number; direction?: number }>): void {
+        if (pathPositions.length < 2) return;
+
+        // Draw path line
+        ctx.strokeStyle = RENDERING_CONSTANTS.PATH_LINE.COLOR;
+        ctx.lineWidth = RENDERING_CONSTANTS.PATH_LINE.WIDTH;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(pathPositions[0].x, pathPositions[0].y);
+
+        for (let i = 1; i < pathPositions.length; i++) {
+            ctx.lineTo(pathPositions[i].x, pathPositions[i].y);
+        }
+
+        ctx.stroke();
+
+        // Draw collision points and peg information
+        pathPositions.forEach((pos, index) => {
+            if (pos.type === 'collision' && pos.pathIndex !== undefined) {
+                // Draw collision point
+                ctx.fillStyle = '#ff4444'; // Red for collision points
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw path index number
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(pos.pathIndex.toString(), pos.x, pos.y - 12);
+
+                // Draw direction indicator
+                if (pos.direction !== undefined) {
+                    const directionSymbol = pos.direction === 0 ? '←' : '→';
+                    ctx.fillStyle = '#ffff00'; // Yellow for direction
+                    ctx.font = '14px Arial';
+                    ctx.fillText(directionSymbol, pos.x, pos.y - 25);
+                }
+
+                // Draw peg info
+                if (pos.pegRow && pos.pegCol) {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '8px Arial';
+                    ctx.fillText(`${pos.pegRow}-${pos.pegCol}`, pos.x, pos.y + 12);
+                }
+            } else if (pos.type === 'launch') {
+                // Draw launch points as smaller dots
+                ctx.fillStyle = '#44ff44'; // Green for launch points
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+    }
+
+    /**
      * Render balls on canvas
      * Pure rendering function - only draws balls
      */
@@ -113,6 +175,12 @@ export namespace CanvasRenderer {
 
         balls.forEach((ball) => {
             const ballExtension = ball as unknown as BallBodyExtension;
+
+            // Draw path line for service-guided balls
+            if (ballExtension.isServiceGuided && ballExtension.pathPositions && ballExtension.pathPositions.length > 1) {
+                renderBallPath(ctx, ballExtension.pathPositions);
+            }
+
             const ballColor = ballExtension.betValue && ballExtension.betValue <= 0 ?
                 '#e74c3c' : '#FF6B6B'; // Use physicsConfig.colors.multiplierLoss or ball
 
