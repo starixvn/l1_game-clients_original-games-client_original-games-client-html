@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plinko Ball Spawning Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .button.success {
+            background: #28a745;
+        }
+        .button.danger {
+            background: #dc3545;
+        }
+        .button.warning {
+            background: #ffc107;
+            color: #000;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: #e9ecef;
+        }
+        .log-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Plinko Ball Spawning Debug Tool</h1>
+        <p>This tool helps diagnose why balls aren't spawning in your Plinko game.</p>
+        
+        <div class="section">
+            <h3>📊 Current Status</h3>
+            <div class="status" id="status">
+                <strong>Status:</strong> <span id="statusText">Ready to diagnose...</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔍 Diagnostic Tools</h3>
+            <button class="button" onclick="checkComponentRef()">Check Component Ref</button>
+            <button class="button" onclick="checkGameState()">Check Game State</button>
+            <button class="button" onclick="runFullDiagnostic()">Run Full Diagnostic</button>
+            <button class="button success" onclick="testBallSpawning()">Test Ball Spawning</button>
+            <button class="button warning" onclick="findGameButtons()">Find Game Buttons</button>
+        </div>
+
+        <div class="section">
+            <h3>🎮 Manual Ball Spawning</h3>
+            <p>Try to spawn balls manually to test if the component is working:</p>
+            <button class="button success" onclick="spawnBallManually()">Spawn Ball (Bet: 100)</button>
+            <button class="button success" onclick="spawnGuidedBallManually()">Spawn Guided Ball</button>
+            <button class="button danger" onclick="clearLogs()">Clear Logs</button>
+        </div>
+
+        <div class="section">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li><strong>First:</strong> Open your Plinko game in another tab</li>
+                <li><strong>Then:</strong> Click "Run Full Diagnostic" to check the current state</li>
+                <li><strong>Next:</strong> Click "Find Game Buttons" to locate the play/bet buttons</li>
+                <li><strong>Finally:</strong> Try "Test Ball Spawning" to see if manual spawning works</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h3>📝 Diagnostic Logs</h3>
+            <div class="log-output" id="logOutput">
+                Diagnostic logs will appear here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock diagnostic functions for testing
+        function log(message, data = null) {
+            const timestamp = new Date().toISOString();
+            let logEntry = `[${timestamp}] ${message}`;
+            if (data) {
+                logEntry += ` | Data: ${JSON.stringify(data, null, 2)}`;
+            }
+            
+            const logOutput = document.getElementById('logOutput');
+            logOutput.textContent += logEntry + '\n';
+            logOutput.scrollTop = logOutput.scrollHeight;
+            
+            console.log(logEntry);
+        }
+
+        function updateStatus(message) {
+            document.getElementById('statusText').textContent = message;
+        }
+
+        function checkComponentRef() {
+            log('🔍 [DIAGNOSTIC] Checking component ref...');
+            
+            // Try to find the component in the current window
+            const componentRef = window.plinkoComponentRef || window.gameRef || window.ballLayoutRef;
+            
+            if (!componentRef) {
+                log('❌ [DIAGNOSTIC] No component ref found in window object');
+                log('💡 [DIAGNOSTIC] Make sure the component ref is exposed globally');
+                updateStatus('Component ref not found');
+                return;
+            }
+
+            const refCheck = {
+                refExists: !!componentRef,
+                refCurrent: !!componentRef?.current,
+                hasSpawnBall: typeof componentRef?.current?.spawnBall === 'function',
+                hasSpawnBallWithPath: typeof componentRef?.current?.spawnBallWithPath === 'function',
+                hasIsReady: typeof componentRef?.current?.isReady === 'function',
+                isReady: componentRef?.current?.isReady?.()
+            };
+
+            log('✅ [DIAGNOSTIC] Component ref check results:', refCheck);
+            updateStatus(`Component ref: ${refCheck.refCurrent ? 'Found' : 'Not found'}`);
+        }
+
+        function checkGameState() {
+            log('🎮 [DIAGNOSTIC] Checking game state...');
+            
+            // Check for common game elements
+            const playButton = document.querySelector('[data-testid="play-button"], .play-button, button[class*="play"]');
+            const betButton = document.querySelector('[data-testid="bet-button"], .bet-button, button[class*="bet"]');
+            const spinButton = document.querySelector('[data-testid="spin-button"], .spin-button, button[class*="spin"]');
+            
+            const gameState = {
+                playButton: !!playButton,
+                betButton: !!betButton,
+                spinButton: !!spinButton,
+                playButtonText: playButton?.textContent,
+                betButtonText: betButton?.textContent,
+                spinButtonText: spinButton?.textContent
+            };
+
+            log('🎮 [DIAGNOSTIC] Game UI elements found:', gameState);
+            updateStatus(`Game buttons: ${Object.values(gameState).filter(Boolean).length} found`);
+        }
+
+        function findGameButtons() {
+            log('🔍 [DIAGNOSTIC] Searching for game buttons...');
+            
+            // Search for all buttons
+            const allButtons = document.querySelectorAll('button');
+            const buttonInfo = Array.from(allButtons).map(btn => ({
+                text: btn.textContent?.trim(),
+                classes: btn.className,
+                id: btn.id,
+                dataTestId: btn.getAttribute('data-testid')
+            }));
+
+            log('🔍 [DIAGNOSTIC] All buttons found:', buttonInfo);
+            
+            // Look for specific patterns
+            const playButtons = Array.from(allButtons).filter(btn => 
+                btn.textContent?.toLowerCase().includes('play') ||
+                btn.textContent?.toLowerCase().includes('start') ||
+                btn.textContent?.toLowerCase().includes('spin') ||
+                btn.className.toLowerCase().includes('play') ||
+                btn.className.toLowerCase().includes('start') ||
+                btn.className.toLowerCase().includes('spin')
+            );
+
+            log('🎮 [DIAGNOSTIC] Potential game buttons:', playButtons.map(btn => ({
+                text: btn.textContent?.trim(),
+                classes: btn.className,
+                id: btn.id
+            })));
+
+            updateStatus(`Found ${playButtons.length} potential game buttons`);
+        }
+
+        function testBallSpawning() {
+            log('🧪 [DIAGNOSTIC] Testing ball spawning...');
+            
+            const componentRef = window.plinkoComponentRef || window.gameRef || window.ballLayoutRef;
+            
+            if (!componentRef?.current) {
+                log('❌ [DIAGNOSTIC] No component ref available for testing');
+                updateStatus('Cannot test - no component ref');
+                return;
+            }
+
+            if (!componentRef.current.isReady()) {
+                log('❌ [DIAGNOSTIC] Component is not ready');
+                updateStatus('Component not ready');
+                return;
+            }
+
+            try {
+                log('🎯 [DIAGNOSTIC] Attempting to spawn ball...');
+                componentRef.current.spawnBall(100);
+                log('✅ [DIAGNOSTIC] Ball spawn command sent successfully');
+                updateStatus('Ball spawn test completed');
+            } catch (error) {
+                log('❌ [DIAGNOSTIC] Error spawning ball:', error);
+                updateStatus('Ball spawn test failed');
+            }
+        }
+
+        function spawnBallManually() {
+            log('🎯 [MANUAL] Attempting manual ball spawn...');
+            testBallSpawning();
+        }
+
+        function spawnGuidedBallManually() {
+            log('🎯 [MANUAL] Attempting manual guided ball spawn...');
+            
+            const componentRef = window.plinkoComponentRef || window.gameRef || window.ballLayoutRef;
+            
+            if (!componentRef?.current) {
+                log('❌ [MANUAL] No component ref available');
+                return;
+            }
+
+            try {
+                const path = [0, 1, 0, 1, 0];
+                const finalSlot = 2;
+                const multiplier = 2.5;
+                
+                log('🎯 [MANUAL] Spawning guided ball with path:', { path, finalSlot, multiplier });
+                componentRef.current.spawnBallWithPath(100, path, finalSlot, multiplier);
+                log('✅ [MANUAL] Guided ball spawn command sent');
+            } catch (error) {
+                log('❌ [MANUAL] Error spawning guided ball:', error);
+            }
+        }
+
+        function runFullDiagnostic() {
+            log('🔍 [DIAGNOSTIC] Running full diagnostic...');
+            checkComponentRef();
+            checkGameState();
+            findGameButtons();
+            testBallSpawning();
+            log('✅ [DIAGNOSTIC] Full diagnostic completed');
+        }
+
+        function clearLogs() {
+            document.getElementById('logOutput').textContent = 'Logs cleared...\n';
+            updateStatus('Logs cleared');
+        }
+
+        // Initialize
+        log('🔧 [INIT] Plinko Ball Spawning Debug Tool initialized');
+        log('💡 [INIT] Open your Plinko game in another tab, then run diagnostics');
+    </script>
+</body>
+</html>

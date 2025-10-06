@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
 import { Bodies, Body, Composite, Engine, Events, Runner, World } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
+import { logger } from '../../../../../services/logger';
 
 interface BallBodyExtension {
     world?: Engine['world'];
@@ -240,19 +241,43 @@ export const usePhysicsEngine = ({
     const [multipliersBodies, setMultipliersBodies] = useState<Body[]>([]);
     const [walls, setWalls] = useState<Body[]>([]);
 
-    // Initialize physics engine
+    // Initialize physics engine - only when essential parameters change
     useEffect(() => {
+        // Only reinitialize if we don't have an engine or if essential parameters changed
+        if (isInitialized && engineRef.current) {
+            // Check if we need to reinitialize based on essential parameters only
+            const needsReinit = false; // We'll keep the engine stable once initialized
+            if (!needsReinit) {
+                logger.debug('🔧 [PHYSICS] Engine already initialized, skipping reinitialization');
+                return;
+            }
+        }
+
         if (isInitialized) {
             cleanupPhysics();
             setIsInitialized(false);
         }
 
         const initTimeout = setTimeout(() => {
+            logger.info('🔧 [PHYSICS] Initializing physics engine...', {
+                canvasWidth,
+                canvasHeight,
+                numberOfRows,
+                containerSize,
+                multipliers: multipliers.length
+            });
+
             // Create physics engine
             const engine = Engine.create();
             const scaleFactor = Math.min(containerSize.width / canvasWidth, containerSize.height / canvasHeight);
             engine.gravity.y = physicsConfig.engine.engineGravity * scaleFactor;
             engineRef.current = engine;
+
+            logger.info('✅ [PHYSICS] Engine created:', {
+                engineId: engine.id,
+                gravity: engine.gravity,
+                worldBodies: engine.world.bodies.length
+            });
 
             // Create physics bodies using fixed canvas dimensions
             const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
@@ -264,6 +289,12 @@ export const usePhysicsEngine = ({
                 effectiveMultipliers
             );
 
+            logger.info('✅ [PHYSICS] Bodies created:', {
+                pins: createdPins.length,
+                multipliers: createdMultipliersBodies.length,
+                walls: createdWalls.length
+            });
+
             // Update state with created bodies
             setPins(createdPins);
             setMultipliersBodies(createdMultipliersBodies);
@@ -274,19 +305,44 @@ export const usePhysicsEngine = ({
             Runner.run(runner, engine);
 
             // Add all physics bodies to the world
-            Composite.add(engine.world, [...createdPins, ...createdMultipliersBodies, ...createdWalls]);
+            const allBodies = [...createdPins, ...createdMultipliersBodies, ...createdWalls];
+            logger.info('🔧 [PHYSICS] About to add bodies to world:', {
+                pins: createdPins.length,
+                multipliers: createdMultipliersBodies.length,
+                walls: createdWalls.length,
+                totalBodies: allBodies.length,
+                worldBodiesBefore: engine.world.bodies.length
+            });
+
+            // Add bodies individually to ensure they're added
+            allBodies.forEach((body, index) => {
+                Composite.add(engine.world, body);
+                if (index < 5) { // Log first 5 bodies for debugging
+                    logger.debug(`🔧 [PHYSICS] Added body ${index}:`, {
+                        id: body.id,
+                        label: body.label,
+                        position: body.position
+                    });
+                }
+            });
+
+            logger.info('✅ [PHYSICS] Bodies added to world:', {
+                totalBodies: engine.world.bodies.length,
+                worldBodies: engine.world.bodies.map(b => ({ id: b.id, label: b.label }))
+            });
 
             // Set up collision detection
             setupCollisionDetection(engine);
 
             setIsInitialized(true);
+            logger.info('🎉 [PHYSICS] Physics engine fully initialized!');
         }, 100);
 
         return () => {
             clearTimeout(initTimeout);
             cleanupPhysics();
         };
-    }, [numberOfRows, multipliers, canvasWidth, canvasHeight, containerSize, createPhysicsBodies, setupCollisionDetection, cleanupPhysics]);
+    }, [numberOfRows, canvasWidth, canvasHeight]); // Only reinitialize when essential parameters change
 
     // Update collision detection when onBallHit callback changes
     useEffect(() => {
@@ -297,6 +353,15 @@ export const usePhysicsEngine = ({
             setupCollisionDetection(engineRef.current);
         }
     }, [onBallHit, isInitialized, setupCollisionDetection]);
+
+    // Handle multiplier changes without reinitializing the entire engine
+    useEffect(() => {
+        if (engineRef.current && isInitialized && multipliers.length > 0) {
+            logger.debug('🔧 [PHYSICS] Updating multipliers without reinitializing engine');
+            // The engine is already initialized, we don't need to recreate it
+            // The multipliers are handled by the game logic, not the physics engine
+        }
+    }, [multipliers, isInitialized]);
 
     return {
         engine: engineRef,

@@ -3,6 +3,9 @@ import { BallLayoutProps } from "../../../../shared/types";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { usePhysicsEngine, useBallSpawner, useCanvas, useBallRenderer } from "./hooks";
+import { logger } from "../../../../services/logger";
+import { enableLogging } from "../../../../utils/enableLogging";
+import { diagnosticTool } from "../../../../utils/diagnosticTool";
 
 export interface SimplifiedCanvasBallLayoutRef {
     spawnBall: (betValue?: number) => void;
@@ -33,6 +36,13 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 betAmount: state.betAmount,
             }))
         );
+
+        // Enable logging for debugging
+        useEffect(() => {
+            enableLogging();
+        }, []);
+
+        // Run diagnostic when component is ready (moved after variable declarations)
 
         // Use canvas hook for container and canvas management
         const { containerRef, canvasRef, containerSize, canvasScale } = useCanvas({
@@ -222,23 +232,41 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         // Memoized imperative handle to prevent unnecessary re-renders
         const imperativeHandle = useMemo(() => ({
             spawnBall: (betValue?: number) => {
+                logger.info('🎯 [COMPONENT] spawnBall called:', { betValue, isInitialized, hasEngine: !!engine.current });
                 if (isInitialized && engine.current) {
                     spawnBall(betValue || 1);
                 } else {
-                    console.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
+                    logger.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                logger.info('🎯 [COMPONENT] spawnBallWithPath called:', {
+                    betValue,
+                    path,
+                    finalSlot,
+                    multiplier,
+                    isInitialized,
+                    hasEngine: !!engine.current
+                });
                 if (isInitialized && engine.current) {
                     spawnBallWithPath(betValue, path, finalSlot, multiplier);
                 } else {
-                    console.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
+                    logger.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
                 }
             },
             isReady: () => isInitialized && !!engine.current,
         }), [isInitialized, engine, spawnBall, spawnBallWithPath]);
 
         useImperativeHandle(ref, () => imperativeHandle, [imperativeHandle]);
+
+        // Make diagnostic tool available globally for manual debugging
+        useEffect(() => {
+            if (isInitialized) {
+                // Make the component ref available globally for debugging
+                (window as any).plinkoComponentRef = { current: imperativeHandle };
+                (window as any).plinkoDiagnostic = diagnosticTool;
+            }
+        }, [isInitialized, imperativeHandle]);
 
         return (
             <div

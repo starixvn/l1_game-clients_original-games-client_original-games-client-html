@@ -1,6 +1,7 @@
 import { useRef, useCallback, useMemo } from 'react';
 import { Composite, Engine } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
+import { logger } from '../../../../../services/logger';
 
 interface BallBodyExtension {
     world?: Engine['world'];
@@ -187,6 +188,20 @@ export const useBallRenderer = ({
                 const ballExtension = body as unknown as BallBodyExtension;
                 return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
             });
+
+            // Log ball rendering info every 60 frames (roughly once per second at 60fps)
+            if (balls.length > 0 && Math.random() < 0.016) {
+                logger.debug('🎨 [RENDER] Rendering balls:', {
+                    ballCount: balls.length,
+                    totalBodies: allBodies.length,
+                    ballPositions: balls.map(ball => ({
+                        id: ball.id,
+                        position: ball.position,
+                        label: ball.label,
+                        isRemoved: (ball as unknown as BallBodyExtension).isRemoved
+                    }))
+                });
+            }
 
             balls.forEach((ball) => {
                 const ballExtension = ball as unknown as BallBodyExtension;

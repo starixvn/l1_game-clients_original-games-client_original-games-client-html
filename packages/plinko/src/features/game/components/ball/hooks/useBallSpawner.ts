@@ -1,6 +1,7 @@
 import { useRef, useCallback, useMemo } from 'react';
 import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from '../../../../../lib/physics';
+import { logger } from '../../../../../services/logger';
 
 interface BallBodyExtension {
     world?: Engine['world'];
@@ -102,19 +103,52 @@ export const useBallSpawner = ({
     }, [createBall, engine]);
 
     const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-        if (!engine.current) return;
+        logger.info('🎯 [HOOK] SPAWNING BALL WITH SERVICE PATH:', {
+            betValue,
+            path,
+            finalSlot,
+            multiplier,
+            pathLength: path.length,
+            expectedRows: numberOfRows,
+            expectedFinalSlot: path.filter(p => p === 1).length,
+            engineExists: !!engine.current,
+            engineWorldExists: !!engine.current?.world
+        });
 
-        const { ball } = createBall(betValue, true, 40); // Start slightly lower for service balls
-        const ballExtension = ball as unknown as BallBodyExtension;
-        ballExtension.servicePath = path;
-        ballExtension.currentPathIndex = 0;
-        ballExtension.expectedFinalSlot = finalSlot;
-        ballExtension.multiplier = multiplier;
-        ballExtension.wrongSlotHits = 0;
-        ballExtension.pinCollisions = [];
+        if (!engine.current) {
+            logger.error('❌ [HOOK] No physics engine available');
+            return;
+        }
 
-        Composite.add(engine.current.world, ball);
-    }, [createBall, engine]);
+        if (!engine.current.world) {
+            logger.error('❌ [HOOK] No physics world available');
+            return;
+        }
+
+        try {
+            const { ball } = createBall(betValue, true, 40); // Start slightly lower for service balls
+            const ballExtension = ball as unknown as BallBodyExtension;
+            ballExtension.servicePath = path;
+            ballExtension.currentPathIndex = 0;
+            ballExtension.expectedFinalSlot = finalSlot;
+            ballExtension.multiplier = multiplier;
+            ballExtension.wrongSlotHits = 0;
+            ballExtension.pinCollisions = [];
+
+            logger.info('✅ [HOOK] Ball created:', {
+                id: ball.id,
+                label: ball.label,
+                position: ball.position,
+                isServiceGuided: ballExtension.isServiceGuided,
+                servicePath: ballExtension.servicePath
+            });
+
+            Composite.add(engine.current.world, ball);
+            logger.info('✅ [HOOK] Ball added to physics world - now falling!');
+        } catch (error) {
+            logger.error('❌ [HOOK] Error creating/spawning ball:', error);
+        }
+    }, [createBall, engine, numberOfRows]);
 
     return {
         spawnBall,

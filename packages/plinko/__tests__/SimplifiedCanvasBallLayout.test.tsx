@@ -23,7 +23,14 @@ jest.mock('matter-js', () => ({
         clear: jest.fn()
     },
     Composite: {
-        add: jest.fn(),
+        add: jest.fn((world, bodies) => {
+            // Actually add bodies to the world for realistic testing
+            if (Array.isArray(bodies)) {
+                world.bodies.push(...bodies);
+            } else {
+                world.bodies.push(bodies);
+            }
+        }),
         allBodies: jest.fn().mockReturnValue([
             {
                 id: 1,
