@@ -40,5 +40,5 @@ module.exports = {
     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
     transformIgnorePatterns: ["node_modules/(?!(matter-js|@testing-library)/)"],
     testTimeout: 10000,
-    verbose: true,
+    verbose: false, // Reduce noise, only show test results
 };

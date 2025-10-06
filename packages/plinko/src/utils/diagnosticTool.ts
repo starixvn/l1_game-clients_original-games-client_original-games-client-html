@@ -1,5 +1,3 @@
-import { logger } from '../services/logger';
-
 /**
  * Diagnostic tool to help identify why balls aren't spawning
  */
@@ -8,16 +6,7 @@ export const diagnosticTool = {
      * Check if the component ref is properly connected
      */
     checkComponentRef: (componentRef: any) => {
-        logger.info('🔍 [DIAGNOSTIC] Checking component ref:', {
-            refExists: !!componentRef,
-            refCurrent: !!componentRef?.current,
-            hasSpawnBall: typeof componentRef?.current?.spawnBall === 'function',
-            hasSpawnBallWithPath: typeof componentRef?.current?.spawnBallWithPath === 'function',
-            hasIsReady: typeof componentRef?.current?.isReady === 'function',
-            isReady: componentRef?.current?.isReady?.()
-        });
-
-        return {
+        const result = {
             refExists: !!componentRef,
             refCurrent: !!componentRef?.current,
             hasSpawnBall: typeof componentRef?.current?.spawnBall === 'function',
@@ -25,31 +14,34 @@ export const diagnosticTool = {
             hasIsReady: typeof componentRef?.current?.isReady === 'function',
             isReady: componentRef?.current?.isReady?.()
         };
+
+        console.log('🔍 [DIAGNOSTIC] Component ref check:', result);
+        return result;
     },
 
     /**
      * Test ball spawning directly
      */
     testBallSpawning: (componentRef: any) => {
-        logger.info('🧪 [DIAGNOSTIC] Testing ball spawning...');
+        console.log('🧪 [DIAGNOSTIC] Testing ball spawning...');
 
         if (!componentRef?.current) {
-            logger.error('❌ [DIAGNOSTIC] Component ref is null or undefined');
+            console.error('❌ [DIAGNOSTIC] Component ref is null or undefined');
             return false;
         }
 
         if (!componentRef.current.isReady()) {
-            logger.error('❌ [DIAGNOSTIC] Component is not ready');
+            console.error('❌ [DIAGNOSTIC] Component is not ready');
             return false;
         }
 
         try {
-            logger.info('🎯 [DIAGNOSTIC] Attempting to spawn ball...');
+            console.log('🎯 [DIAGNOSTIC] Attempting to spawn ball...');
             componentRef.current.spawnBall(100);
-            logger.info('✅ [DIAGNOSTIC] Ball spawn command sent successfully');
+            console.log('✅ [DIAGNOSTIC] Ball spawn command sent successfully');
             return true;
         } catch (error) {
-            logger.error('❌ [DIAGNOSTIC] Error spawning ball:', error);
+            console.error('❌ [DIAGNOSTIC] Error spawning ball:', error);
             return false;
         }
     },
@@ -58,11 +50,11 @@ export const diagnosticTool = {
      * Check game state and events
      */
     checkGameState: () => {
-        logger.info('🎮 [DIAGNOSTIC] Checking game state...');
+        console.log('🎮 [DIAGNOSTIC] Checking game state...');
 
         // Check if we're in a browser environment
         const isBrowser = typeof window !== 'undefined';
-        logger.info('🌐 [DIAGNOSTIC] Environment:', { isBrowser });
+        console.log('🌐 [DIAGNOSTIC] Environment:', { isBrowser });
 
         let playButton = null;
         let betButton = null;
@@ -74,7 +66,7 @@ export const diagnosticTool = {
             betButton = document.querySelector('[data-testid="bet-button"], .bet-button, button[class*="bet"]');
             spinButton = document.querySelector('[data-testid="spin-button"], .spin-button, button[class*="spin"]');
 
-            logger.info('🎮 [DIAGNOSTIC] Game UI elements:', {
+            console.log('🎮 [DIAGNOSTIC] Game UI elements:', {
                 playButton: !!playButton,
                 betButton: !!betButton,
                 spinButton: !!spinButton,
@@ -86,7 +78,7 @@ export const diagnosticTool = {
             // Check for event listeners on buttons
             if (playButton) {
                 const events = (playButton as any)._events || 'No events found';
-                logger.info('🎮 [DIAGNOSTIC] Play button events:', { events });
+                console.log('🎮 [DIAGNOSTIC] Play button events:', { events });
             }
         }
 
@@ -102,7 +94,7 @@ export const diagnosticTool = {
      * Run full diagnostic
      */
     runFullDiagnostic: (componentRef: any) => {
-        logger.info('🔍 [DIAGNOSTIC] Running full diagnostic...');
+        console.log('🔍 [DIAGNOSTIC] Running full diagnostic...');
 
         const refCheck = diagnosticTool.checkComponentRef(componentRef);
         const gameState = diagnosticTool.checkGameState();
@@ -115,7 +107,7 @@ export const diagnosticTool = {
             timestamp: new Date().toISOString()
         };
 
-        logger.info('📊 [DIAGNOSTIC] Full diagnostic summary:', summary);
+        console.log('📊 [DIAGNOSTIC] Full diagnostic summary:', summary);
 
         return summary;
     }

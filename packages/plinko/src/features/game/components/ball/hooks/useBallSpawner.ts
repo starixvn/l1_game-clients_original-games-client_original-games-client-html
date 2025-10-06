@@ -2,21 +2,7 @@ import { useRef, useCallback, useMemo } from 'react';
 import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
-
-interface BallBodyExtension {
-    world?: Engine['world'];
-    isServiceGuided?: boolean;
-    expectedFinalSlot?: number;
-    multiplier?: number;
-    betValue?: number;
-    hasTriggeredWin?: boolean;
-    servicePath?: number[];
-    currentPathIndex?: number;
-    isRemoved?: boolean;
-    createdAt?: number;
-    wrongSlotHits?: number;
-    pinCollisions?: string[];
-}
+import { BallBodyExtension } from '../../../../../types/physics';
 
 interface UseBallSpawnerProps {
     numberOfRows: number;
@@ -103,25 +89,17 @@ export const useBallSpawner = ({
     }, [createBall, engine]);
 
     const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-        logger.info('🎯 [HOOK] SPAWNING BALL WITH SERVICE PATH:', {
-            betValue,
-            path,
-            finalSlot,
-            multiplier,
-            pathLength: path.length,
-            expectedRows: numberOfRows,
-            expectedFinalSlot: path.filter(p => p === 1).length,
-            engineExists: !!engine.current,
-            engineWorldExists: !!engine.current?.world
-        });
-
-        if (!engine.current) {
-            logger.error('❌ [HOOK] No physics engine available');
-            return;
+        // Only log detailed info in development mode
+        if (process.env.NODE_ENV === 'development') {
+            logger.info('🎯 [HOOK] Spawning service-guided ball:', {
+                betValue,
+                finalSlot,
+                multiplier
+            });
         }
 
-        if (!engine.current.world) {
-            logger.error('❌ [HOOK] No physics world available');
+        if (!engine.current?.world) {
+            logger.error('❌ [HOOK] Physics engine not ready');
             return;
         }
 
@@ -135,18 +113,13 @@ export const useBallSpawner = ({
             ballExtension.wrongSlotHits = 0;
             ballExtension.pinCollisions = [];
 
-            logger.info('✅ [HOOK] Ball created:', {
-                id: ball.id,
-                label: ball.label,
-                position: ball.position,
-                isServiceGuided: ballExtension.isServiceGuided,
-                servicePath: ballExtension.servicePath
-            });
-
             Composite.add(engine.current.world, ball);
-            logger.info('✅ [HOOK] Ball added to physics world - now falling!');
+
+            if (process.env.NODE_ENV === 'development') {
+                logger.debug('✅ [HOOK] Service-guided ball spawned', { id: ball.id });
+            }
         } catch (error) {
-            logger.error('❌ [HOOK] Error creating/spawning ball:', error);
+            logger.error('❌ [HOOK] Error spawning service-guided ball:', error);
         }
     }, [createBall, engine, numberOfRows]);
 

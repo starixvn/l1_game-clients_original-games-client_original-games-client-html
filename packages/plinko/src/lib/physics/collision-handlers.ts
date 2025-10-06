@@ -1,46 +1,6 @@
 import { Body, Engine } from 'matter-js';
+import { BallBodyExtension, ExtendedBody, SlotLayout, AnimationState, CollisionHandlerOptions } from '../../types/physics';
 
-// Define types locally since they're not used elsewhere
-interface BallBodyExtension {
-    world?: Engine['world'];
-    isServiceGuided?: boolean;
-    expectedFinalSlot?: number;
-    multiplier?: number;
-    betValue?: number;
-    hasTriggeredWin?: boolean;
-    servicePath?: number[];
-    currentPathIndex?: number;
-    isRemoved?: boolean;
-    createdAt?: number;
-    wrongSlotHits?: number;
-    pinCollisions?: string[];
-}
-
-type ExtendedBody = Body & BallBodyExtension;
-
-interface SlotLayout {
-    startX: number;
-    slotWidth: number;
-    slotHeight: number;
-    bottomMargin: number;
-    multipliers: number[];
-}
-
-interface AnimationState {
-    offsetY: number;
-    startTime: number;
-    duration: number;
-    type: 'slotBounce';
-}
-
-interface CollisionHandlerOptions {
-    slotLayout?: SlotLayout;
-    canvasHeight?: number;
-    onBallHit?: (multiplier: number, betValue: number) => void;
-    collisionTime?: number;
-    lastLogTimeRef?: { current: number };
-    animationState?: Map<string, AnimationState>;
-}
 
 /**
  * Collision Handlers Module

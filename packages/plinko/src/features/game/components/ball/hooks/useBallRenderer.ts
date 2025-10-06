@@ -2,21 +2,7 @@ import { useRef, useCallback, useMemo } from 'react';
 import { Composite, Engine } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
-
-interface BallBodyExtension {
-    world?: Engine['world'];
-    isServiceGuided?: boolean;
-    expectedFinalSlot?: number;
-    multiplier?: number;
-    betValue?: number;
-    hasTriggeredWin?: boolean;
-    servicePath?: number[];
-    currentPathIndex?: number;
-    isRemoved?: boolean;
-    createdAt?: number;
-    wrongSlotHits?: number;
-    pinCollisions?: string[];
-}
+import { BallBodyExtension } from '../../../../../types/physics';
 
 interface UseBallRendererProps {
     numberOfRows: number;
@@ -189,17 +175,11 @@ export const useBallRenderer = ({
                 return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
             });
 
-            // Log ball rendering info every 60 frames (roughly once per second at 60fps)
-            if (balls.length > 0 && Math.random() < 0.016) {
-                logger.debug('🎨 [RENDER] Rendering balls:', {
-                    ballCount: balls.length,
-                    totalBodies: allBodies.length,
-                    ballPositions: balls.map(ball => ({
-                        id: ball.id,
-                        position: ball.position,
-                        label: ball.label,
-                        isRemoved: (ball as unknown as BallBodyExtension).isRemoved
-                    }))
+            // Only log ball rendering info in development mode and much less frequently
+            if (process.env.NODE_ENV === 'development' && balls.length > 0 && Math.random() < 0.002) { // ~1/500 frames
+                logger.debug('🎨 [RENDER] Active balls:', {
+                    count: balls.length,
+                    totalBodies: allBodies.length
                 });
             }
 

@@ -232,26 +232,25 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         // Memoized imperative handle to prevent unnecessary re-renders
         const imperativeHandle = useMemo(() => ({
             spawnBall: (betValue?: number) => {
-                logger.info('🎯 [COMPONENT] spawnBall called:', { betValue, isInitialized, hasEngine: !!engine.current });
+                // Only log in development mode to reduce noise
+                if (process.env.NODE_ENV === 'development') {
+                    logger.debug('🎯 [COMPONENT] spawnBall called', { betValue });
+                }
                 if (isInitialized && engine.current) {
                     spawnBall(betValue || 1);
-                } else {
-                    logger.warn('Cannot spawn ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
+                } else if (process.env.NODE_ENV === 'development') {
+                    logger.warn('Cannot spawn ball: engine not ready');
                 }
             },
             spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                logger.info('🎯 [COMPONENT] spawnBallWithPath called:', {
-                    betValue,
-                    path,
-                    finalSlot,
-                    multiplier,
-                    isInitialized,
-                    hasEngine: !!engine.current
-                });
+                // Only log in development mode to reduce noise
+                if (process.env.NODE_ENV === 'development') {
+                    logger.debug('🎯 [COMPONENT] spawnBallWithPath called', { betValue, finalSlot, multiplier });
+                }
                 if (isInitialized && engine.current) {
                     spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                } else {
-                    logger.warn('Cannot spawn guided ball: engine not ready', { isInitialized, hasEngine: !!engine.current });
+                } else if (process.env.NODE_ENV === 'development') {
+                    logger.warn('Cannot spawn guided ball: engine not ready');
                 }
             },
             isReady: () => isInitialized && !!engine.current,
