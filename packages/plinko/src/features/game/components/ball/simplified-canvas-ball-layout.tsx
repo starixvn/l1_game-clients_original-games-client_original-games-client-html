@@ -20,8 +20,10 @@ export interface SimplifiedCanvasBallLayoutRef {
 }
 
 // Fixed canvas dimensions - canvas stays at original size regardless of container resize
-const CANVAS_WIDTH = 600;
-const CANVAS_HEIGHT = 550;
+import { CANVAS_CONSTANTS } from '@/lib/physics/constants/canvas-constants';
+
+const CANVAS_WIDTH = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_WIDTH;
+const CANVAS_HEIGHT = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_HEIGHT;
 
 /**
  * Refactored Simplified Canvas Ball Layout Component
@@ -136,12 +138,12 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                                 ref={containerRef}
                                 className="simplified-canvas-ball-layout"
                                 style={{
-                                    width: "100%",
-                                    height: "100%",
+                                    width: CANVAS_CONSTANTS.CSS.FULL_SIZE,
+                                    height: CANVAS_CONSTANTS.CSS.FULL_SIZE,
                                     minHeight: "550px",
                                     position: "relative",
                                     overflow: "hidden",
-                                    background: "linear-gradient(to bottom, #0f1419 0%, #1a2332 30%, #0f1419 100%)",
+                                    background: CANVAS_CONSTANTS.BACKGROUNDS.MAIN_GRADIENT,
                                     borderRadius: "8px",
                                     boxSizing: "border-box",
                                     transition: "all 0.5s ease",

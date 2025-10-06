@@ -1,4 +1,6 @@
 import { ballSizingConfig } from './physics-config';
+import { PHYSICS_CONSTANTS } from './constants/physics-constants';
+import { BALL_CONSTANTS } from './constants/ball-constants';
 
 /**
  * Ball Calculations Module
@@ -22,12 +24,12 @@ export interface BallPhysicsTweaks {
  */
 export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): number {
     // Validate input
-    if (!rows || rows < 1) {
-        rows = 1;
+    if (!rows || rows < BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_ROWS) {
+        rows = BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_ROWS;
     }
 
-    if (rows > 50) {
-        rows = 50;
+    if (rows > BALL_CONSTANTS.SIZE_CONSTRAINTS.MAX_ROWS) {
+        rows = BALL_CONSTANTS.SIZE_CONSTRAINTS.MAX_ROWS;
     }
 
     // Core size calculation: inversely proportional to rows
@@ -46,7 +48,7 @@ export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): 
     const finalDiameter = clampedDiameter * canvasScaleFactor;
 
     // Convert diameter to radius for Matter.js (and ensure minimum size)
-    const radius = Math.max(2, finalDiameter / 2);
+    const radius = Math.max(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS, finalDiameter / 2);
 
     return radius;
 }
@@ -57,12 +59,12 @@ export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): 
  * Smaller balls: faster, more frantic movement
  */
 export function getBallPhysicsTweaks(ballRadius: number): BallPhysicsTweaks {
-    const sizeRatio = ballRadius / (ballSizingConfig.baseDiameter / 2);
+    const sizeRatio = ballRadius / BALL_CONSTANTS.PHYSICS_TWEAKS.SIZE_RATIO_BASE_DIAMETER;
 
     const physicsTweaks = {
-        restitution: 0.8 + (sizeRatio * 0.2), // Larger balls bounce more (0.8-1.0)
-        frictionAir: 0.02 + (sizeRatio * 0.03), // Larger balls fall slower (0.02-0.05)
-        density: 0.001 * (2 - sizeRatio) // Larger balls have more mass relative to size
+        restitution: PHYSICS_CONSTANTS.BALL.RESTITUTION_MIN + (sizeRatio * PHYSICS_CONSTANTS.BALL.RESTITUTION_RATIO_MULTIPLIER), // Larger balls bounce more (0.8-1.0)
+        frictionAir: PHYSICS_CONSTANTS.BALL.FRICTION_AIR_MIN + (sizeRatio * PHYSICS_CONSTANTS.BALL.FRICTION_AIR_RATIO_MULTIPLIER), // Larger balls fall slower (0.02-0.05)
+        density: PHYSICS_CONSTANTS.BALL.DENSITY_BASE * (PHYSICS_CONSTANTS.BALL.DENSITY_RATIO_MULTIPLIER - sizeRatio) // Larger balls have more mass relative to size
     };
 
     return physicsTweaks;

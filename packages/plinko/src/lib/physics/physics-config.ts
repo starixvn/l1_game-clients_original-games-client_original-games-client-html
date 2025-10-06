@@ -4,6 +4,9 @@
  * Defines all physics-related constants and configuration
  */
 
+import { PHYSICS_CONSTANTS } from './constants/physics-constants';
+import { LAYOUT_CONSTANTS } from './constants/layout-constants';
+
 export interface PhysicsConfig {
     pins: {
         startPins: number;
@@ -36,15 +39,15 @@ export interface PhysicsConfig {
  */
 export const physicsConfig: PhysicsConfig = {
     pins: {
-        startPins: 3,
+        startPins: LAYOUT_CONSTANTS.BOARD.INITIAL_COLUMNS,
         pinSize: 2,
-        pinGap: 20
+        pinGap: LAYOUT_CONSTANTS.BOARD.PEG_GAP_MULTIPLIER
     },
     ball: {
         ballSize: 12 // Base radius for 10 rows (dynamically scaled for other row counts)
     },
     engine: {
-        engineGravity: 1.8
+        engineGravity: PHYSICS_CONSTANTS.ENGINE.GRAVITY
     },
     world: {
         width: 480,  // Matches payout display width: 9 slots × 50px min-width + 8 × 2px gaps = 466px, rounded up

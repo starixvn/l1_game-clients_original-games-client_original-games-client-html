@@ -8,6 +8,8 @@ import { Bodies, Body } from 'matter-js';
 import { physicsConfig } from '../../../../../lib/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 import { logger } from '../../../../../services/logger';
+import { LAYOUT_CONSTANTS } from '@/lib/physics/constants/layout-constants';
+import { PHYSICS_CONSTANTS } from '@/lib/physics/constants/physics-constants';
 
 export interface PhysicsBody {
     pins: Body[];
@@ -35,9 +37,9 @@ export function createPinBodies(
     const pins: Body[] = [];
 
     // Scale physics elements based on number of rows
-    const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / rows));
-    const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
-    const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
+    const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / rows));
+    const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));
+    const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
     const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
 
     // Create pins in triangular layout
@@ -80,9 +82,9 @@ export function createMultiplierBodies(
     const multipliersBodies: Body[] = [];
 
     // Scale physics elements based on number of rows
-    const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / rows));
-    const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
-    const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
+    const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / rows));
+    const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));
+    const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
     const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
 
     // Create multiplier slots positioned at the same level as the last row, centered between pegs
@@ -128,7 +130,7 @@ export function createMultiplierBodies(
  * Pure function - creates wall bodies
  */
 export function createWallBodies(canvasWidth: number, canvasHeight: number): Body[] {
-    const wallThickness = 20;
+    const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;
 
     const leftWall = Bodies.rectangle(
         -wallThickness / 2, // Left edge
@@ -164,10 +166,10 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
     );
 
     // Create triangular boundary walls using strategic wall placements
-    const triangleTopMargin = canvasHeight * 0.08;
-    const triangleBottomMargin = canvasHeight * 0.15;
+    const triangleTopMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_TOP;
+    const triangleBottomMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOTTOM;
     const triangleBoardHeight = canvasHeight - triangleTopMargin - triangleBottomMargin;
-    const triangleBoardWidth = canvasWidth * 0.85; // Match the board width (85%)
+    const triangleBoardWidth = canvasWidth * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOARD_WIDTH; // Match the board width (85%)
 
     // Calculate triangular boundaries (matching the visual board)
     const triangleCenterX = canvasWidth / 2; // Top point
@@ -178,7 +180,7 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
     const triangularWalls: Body[] = [];
 
     // Create walls at progressive widths to form triangular shape
-    const wallLevels = 6; // Number of wall levels from top to bottom
+    const wallLevels = LAYOUT_CONSTANTS.BOARD.WALL_LEVELS; // Number of wall levels from top to bottom
     for (let level = 0; level < wallLevels; level++) {
         const t = level / (wallLevels - 1); // 0 to 1
         const currentY = triangleTopYPos + t * (triangleBottomYPos - triangleTopYPos);
@@ -187,9 +189,9 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
 
         // Left wall segment - position outside the play area
         const leftWallSegment = Bodies.rectangle(
-            currentX - 15, // Move further left
+            currentX - LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET, // Move further left
             currentY,
-            10, // Thickness
+            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
             {
                 render: { visible: false },
@@ -200,9 +202,9 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
 
         // Right wall segment - position outside the play area
         const rightWallSegment = Bodies.rectangle(
-            currentX + currentWidth + 15, // Move further right
+            currentX + currentWidth + LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET, // Move further right
             currentY,
-            10, // Thickness
+            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
             {
                 render: { visible: false },

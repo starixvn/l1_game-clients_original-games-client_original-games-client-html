@@ -9,6 +9,7 @@ import { physicsConfig } from '../../../../../lib/physics';
 import { createPhysicsBodies } from './body-factory';
 import { processCollision, CollisionHandlerOptions } from './collision-handler';
 import { logger } from '../../../../../services/logger';
+import { RENDERING_CONSTANTS } from '@/lib/physics/constants/rendering-constants';
 
 export interface PhysicsEngineState {
     engine: Engine | null;
@@ -114,7 +115,7 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
         const balls = Composite.allBodies(engine.world).filter(body =>
             body.label?.includes('ball')
         );
-        if (balls.length > 0 && Math.random() < 0.01) { // Log ~1% of updates to avoid spam
+        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.UPDATE_LOG_PROBABILITY) { // Log ~1% of updates to avoid spam
             logger.debug('⚡ [PHYSICS] Engine update - active balls:', balls.map(ball => ({
                 id: ball.id,
                 position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },

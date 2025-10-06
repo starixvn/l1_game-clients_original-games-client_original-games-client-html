@@ -9,6 +9,8 @@ import { BallBodyExtension } from '../../../../../types/physics';
 import * as DrawingUtils from './drawing-utils';
 import { LayoutData, SlotRenderData } from './layout-calculator';
 import { logger } from '../../../../../services/logger';
+import { RENDERING_CONSTANTS } from '@/lib/physics/constants/rendering-constants';
+import { BALL_CONSTANTS } from '@/lib/physics/constants/ball-constants';
 
 // Export namespace for better organization
 export namespace CanvasRenderer {
@@ -35,7 +37,7 @@ export namespace CanvasRenderer {
             const { multiplier, slotX, slotY, slotWidth, slotHeight, color } = slot;
 
             // Draw slot background with rounded corners to match history items
-            const radius = 6; // Match rounded-[6px] from history items
+            const radius = RENDERING_CONSTANTS.SLOTS.BORDER_RADIUS; // Match rounded-[6px] from history items
             const x = slotX;
             const y = slotY - slotHeight / 2;
             const width = slotWidth;
@@ -44,20 +46,20 @@ export namespace CanvasRenderer {
             // Draw background with rounded corners
             const slotGradient = DrawingUtils.createLinearGradient(
                 ctx, x, y, x, y + height,
-                [[0, color], [1, '#1a252f']]
+                [[0, color], [1, RENDERING_CONSTANTS.COLORS.SLOT_GRADIENT_START]]
             );
             ctx.fillStyle = slotGradient;
             DrawingUtils.drawRoundedRect(ctx, x, y, width, height, radius, { fill: true });
 
             // Draw slot border with rounded corners
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Match border-[rgba(255,255,255,0.2)]
+            ctx.strokeStyle = RENDERING_CONSTANTS.COLORS.SLOT_STROKE; // Match border-[rgba(255,255,255,0.2)]
             ctx.lineWidth = 1;
             DrawingUtils.drawRoundedRect(ctx, x, y, width, height, radius, { stroke: true });
 
             // Draw multiplier text
             DrawingUtils.drawText(ctx, multiplier.toFixed(1), slotX + slotWidth / 2, slotY, {
                 fillStyle: '#ffffff',
-                font: `bold ${Math.max(12, Math.min(16, slotWidth / 3))}px Arial`,
+                font: `bold ${Math.max(RENDERING_CONSTANTS.SLOTS.FONT_MIN_SIZE, Math.min(RENDERING_CONSTANTS.SLOTS.FONT_MAX_SIZE, slotWidth / RENDERING_CONSTANTS.SLOTS.FONT_SIZE_DIVISOR))}px Arial`,
                 textAlign: 'center',
                 textBaseline: 'middle'
             });
@@ -114,27 +116,27 @@ export namespace CanvasRenderer {
             const ballColor = ballExtension.betValue && ballExtension.betValue <= 0 ?
                 '#e74c3c' : '#FF6B6B'; // Use physicsConfig.colors.multiplierLoss or ball
 
-            const strokeColor = "#FFD700";
-            const lineWidth = Math.max(1, (ball.circleRadius || 5) * 0.1);
+            const strokeColor = RENDERING_CONSTANTS.BALL.BALL_STROKE;
+            const lineWidth = Math.max(RENDERING_CONSTANTS.BALL.MIN_LINE_WIDTH, (ball.circleRadius || BALL_CONSTANTS.DEFAULTS.CIRCLE_RADIUS_FALLBACK) * RENDERING_CONSTANTS.BALL.LINE_WIDTH_MULTIPLIER);
 
             // Draw main ball
             DrawingUtils.drawCircle(
                 ctx,
                 ball.position.x,
                 ball.position.y,
-                ball.circleRadius || 5,
+                ball.circleRadius || BALL_CONSTANTS.DEFAULTS.CIRCLE_RADIUS_FALLBACK,
                 ballColor,
                 strokeColor,
                 lineWidth
             );
 
             // Add inner highlight
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.fillStyle = RENDERING_CONSTANTS.COLORS.BALL_INNER_HIGHLIGHT;
             DrawingUtils.drawCircle(
                 ctx,
-                ball.position.x - (ball.circleRadius || 5) * 0.3,
-                ball.position.y - (ball.circleRadius || 5) * 0.3,
-                (ball.circleRadius || 5) * 0.4
+                ball.position.x - (ball.circleRadius || BALL_CONSTANTS.DEFAULTS.CIRCLE_RADIUS_FALLBACK) * RENDERING_CONSTANTS.BALL.INNER_HIGHLIGHT_OFFSET_MULTIPLIER,
+                ball.position.y - (ball.circleRadius || BALL_CONSTANTS.DEFAULTS.CIRCLE_RADIUS_FALLBACK) * RENDERING_CONSTANTS.BALL.HIGHLIGHT_POSITION_MULTIPLIER,
+                (ball.circleRadius || BALL_CONSTANTS.DEFAULTS.CIRCLE_RADIUS_FALLBACK) * RENDERING_CONSTANTS.BALL.INNER_HIGHLIGHT_RADIUS_MULTIPLIER
             );
         });
     }
@@ -158,7 +160,7 @@ export namespace CanvasRenderer {
         });
 
         // Log rendering occasionally
-        if (balls.length > 0 && Math.random() < 0.005) { // Log ~0.5% of frames
+        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.FRAME_LOG_PROBABILITY) { // Log ~0.5% of frames
             logger.debug('🎨 [RENDER] Rendering frame with balls:', balls.map(ball => ({
                 id: ball.id,
                 position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },

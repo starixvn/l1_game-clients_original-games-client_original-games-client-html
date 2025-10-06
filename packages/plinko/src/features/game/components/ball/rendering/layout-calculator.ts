@@ -5,6 +5,8 @@
  * Follows Single Responsibility Principle - only handles layout math
  */
 
+import { LAYOUT_CONSTANTS } from '@/lib/physics/constants/layout-constants';
+
 export interface LayoutData {
     scaleFactor: number;
     pegRadius: number;
@@ -35,9 +37,9 @@ export function calculateLayoutData(
     canvasWidth: number,
     canvasHeight: number
 ): LayoutData {
-    const scaleFactor = Math.max(0.4, Math.min(1.2, 10 / numberOfRows));
-    const pegRadius = Math.max(3, Math.min(12, 8 * scaleFactor));
-    const pegGap = Math.max(30, Math.min(55, 45 * scaleFactor));
+    const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / numberOfRows));
+    const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));
+    const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
     const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
 
     const lastRowY = boardTopMargin + (numberOfRows - 1) * pegGap;

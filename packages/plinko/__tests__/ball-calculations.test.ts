@@ -5,6 +5,7 @@ import {
 } from '../src/lib/physics/ball-calculations';
 import { getMiddleDropPosition } from '../src/lib/physics/drop-positions';
 import { ballSizingConfig, physicsConfig } from '../src/lib/physics/physics-config';
+import { BALL_CONSTANTS } from '../src/lib/physics/constants';
 
 describe('Ball Calculations', () => {
     describe('calculateBallSize', () => {
@@ -15,30 +16,30 @@ describe('Ball Calculations', () => {
         });
 
         it('should handle minimum rows (1)', () => {
-            const result = calculateBallSize(1, 1);
-            expect(result).toBeGreaterThanOrEqual(2); // Minimum radius
+            const result = calculateBallSize(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_ROWS, 1);
+            expect(result).toBeGreaterThanOrEqual(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS); // Minimum radius
             expect(result).toBeLessThanOrEqual(ballSizingConfig.maxDiameter / 2);
         });
 
         it('should handle maximum rows (50)', () => {
-            const result = calculateBallSize(50, 1);
-            expect(result).toBeGreaterThanOrEqual(2);
+            const result = calculateBallSize(BALL_CONSTANTS.SIZE_CONSTRAINTS.MAX_ROWS, 1);
+            expect(result).toBeGreaterThanOrEqual(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS);
             expect(result).toBeLessThanOrEqual(ballSizingConfig.maxDiameter / 2);
         });
 
         it('should handle invalid rows (0)', () => {
             const result = calculateBallSize(0, 1);
-            expect(result).toBeGreaterThanOrEqual(2);
+            expect(result).toBeGreaterThanOrEqual(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS);
         });
 
         it('should handle invalid rows (negative)', () => {
             const result = calculateBallSize(-5, 1);
-            expect(result).toBeGreaterThanOrEqual(2);
+            expect(result).toBeGreaterThanOrEqual(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS);
         });
 
         it('should handle rows over maximum (100)', () => {
             const result = calculateBallSize(100, 1);
-            expect(result).toBeGreaterThanOrEqual(2);
+            expect(result).toBeGreaterThanOrEqual(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS);
         });
 
         it('should apply canvas scale factor', () => {

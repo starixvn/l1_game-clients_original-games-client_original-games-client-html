@@ -3,6 +3,10 @@ import { Bodies, Body, Composite, Engine } from 'matter-js';
 import { physicsConfig } from './physics-config';
 import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
 import { getMiddleDropPosition } from './drop-positions';
+import { PHYSICS_CONSTANTS } from './constants/physics-constants';
+import { LAYOUT_CONSTANTS } from './constants/layout-constants';
+import { BALL_CONSTANTS } from './constants/ball-constants';
+import { RENDERING_CONSTANTS } from './constants/rendering-constants';
 
 interface BallBodyExtension {
     world?: Engine['world'];
@@ -47,17 +51,12 @@ export function getCanvasInfo(canvasRef: React.RefObject<HTMLDivElement>): Canva
 
     const containerRect = canvasRef.current.getBoundingClientRect();
 
-    // Define Matter.js collision categories (powers of 2)
-    const ballCategory = 0x0001;      // 1
-    const defaultCategory = 0x0002;   // 2
-    const multiplierCategory = 0x0004; // 4
-
     return {
         canvasWidth: containerRect.width || physicsConfig.world.width,
         canvasHeight: containerRect.height || physicsConfig.world.height,
-        ballCategory,
-        defaultCategory,
-        multiplierCategory
+        ballCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.BALL,
+        defaultCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT,
+        multiplierCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER
     };
 }
 
@@ -90,9 +89,9 @@ export function createPhysicsBodies(
 
     // Board dimensions based on plinko demo (1100x1100 canvas)
     // Using similar calculations to match the demo layout
-    const pegRadius = 10;
-    const mapGap = 3;
-    const initialColumns = 3;
+    const pegRadius = LAYOUT_CONSTANTS.BOARD.PEG_RADIUS;
+    const mapGap = LAYOUT_CONSTANTS.BOARD.PEG_GAP_MULTIPLIER;
+    const initialColumns = LAYOUT_CONSTANTS.BOARD.INITIAL_COLUMNS;
 
     // Create pins in triangular layout (matching plinko demo)
     for (let row = 1; row <= rows; row++) {
@@ -114,7 +113,7 @@ export function createPhysicsBodies(
     }
 
     // Create invisible walls
-    const wallThickness = 20;
+    const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;
     const leftWall = Bodies.rectangle(
         -wallThickness / 2, // Left edge
         canvasHeight / 2,
@@ -149,10 +148,10 @@ export function createPhysicsBodies(
     );
 
     // Create triangular boundary walls using strategic wall placements
-    const triangleTopMargin = canvasHeight * 0.08;
-    const triangleBottomMargin = canvasHeight * 0.15;
+    const triangleTopMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_TOP;
+    const triangleBottomMargin = canvasHeight * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOTTOM;
     const triangleBoardHeight = canvasHeight - triangleTopMargin - triangleBottomMargin;
-    const triangleBoardWidth = canvasWidth * 0.85; // Match the board width (85%)
+    const triangleBoardWidth = canvasWidth * LAYOUT_CONSTANTS.MARGINS.TRIANGLE_BOARD_WIDTH; // Match the board width (85%)
 
     // Calculate triangular boundaries (matching the visual board)
     const triangleCenterX = canvasWidth / 2; // Top point
@@ -163,7 +162,7 @@ export function createPhysicsBodies(
     const triangularWalls: Body[] = [];
 
     // Create walls at progressive widths to form triangular shape
-    const wallLevels = 6; // Number of wall levels from top to bottom
+    const wallLevels = LAYOUT_CONSTANTS.BOARD.WALL_LEVELS; // Number of wall levels from top to bottom
     for (let level = 0; level < wallLevels; level++) {
         const t = level / (wallLevels - 1); // 0 to 1
         const currentY = triangleTopYPos + t * (triangleBottomYPos - triangleTopYPos);
@@ -172,9 +171,9 @@ export function createPhysicsBodies(
 
         // Left wall segment
         const leftWallSegment = Bodies.rectangle(
-            currentX - 5,
+            currentX - LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET,
             currentY,
-            10, // Thickness
+            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
             {
                 render: { visible: false },
@@ -185,9 +184,9 @@ export function createPhysicsBodies(
 
         // Right wall segment
         const rightWallSegment = Bodies.rectangle(
-            currentX + currentWidth + 5,
+            currentX + currentWidth + LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_OFFSET,
             currentY,
-            10, // Thickness
+            LAYOUT_CONSTANTS.BOARD.TRIANGULAR_WALL_THICKNESS, // Thickness
             triangleBoardHeight / wallLevels, // Segment height
             {
                 render: { visible: false },
@@ -203,11 +202,11 @@ export function createPhysicsBodies(
 
     // Create multiplier slots (matching plinko demo slot layout)
     const numberOfSlots = rows + 1;
-    const gap = pegRadius * 2 * mapGap; // Same gap as pegs: 60
+    const gap = pegRadius * LAYOUT_CONSTANTS.SLOTS.GAP_MULTIPLIER * mapGap; // Same gap as pegs: 60
     const space = (canvasWidth - gap * numberOfSlots) / 2;
-    const y = numberOfSlots * pegRadius * 2 * 3 - 40; // 11 * 10 * 2 * 3 - 40 = 620 for 10 rows
-    const slotWidth = gap - 6; // gap - 6 = 54
-    const slotHeight = 1; // Thin slot like demo
+    const y = numberOfSlots * pegRadius * LAYOUT_CONSTANTS.SLOTS.GAP_MULTIPLIER * mapGap - LAYOUT_CONSTANTS.SLOTS.SLOT_Y_OFFSET; // 11 * 10 * 2 * 3 - 40 = 620 for 10 rows
+    const slotWidth = gap - LAYOUT_CONSTANTS.SLOTS.SLOT_WIDTH_REDUCTION; // gap - 6 = 54
+    const slotHeight = LAYOUT_CONSTANTS.SLOTS.SLOT_HEIGHT; // Thin slot like demo
 
     multipliers.forEach((multiplier, index) => {
         const col = index + 1; // Slots are 1-indexed in demo
@@ -280,7 +279,7 @@ export function spawnBall(
     const canvasHeight = containerRect.height || physicsConfig.world.height;
 
     // Calculate responsive scale factor for canvas size
-    const canvasScaleFactor = Math.min(canvasWidth / 400, canvasHeight / 400);
+    const canvasScaleFactor = Math.min(canvasWidth / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH, canvasHeight / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT);
 
     // Calculate dynamic ball size based on rows and canvas scaling
     const ballRadius = calculateBallSize(rows, canvasScaleFactor);
@@ -292,20 +291,20 @@ export function spawnBall(
     const ballX = getMiddleDropPosition(canvasWidth);
 
     // Add minimal random offset (±2px) to prevent identical paths while keeping it "middle"
-    const randomOffset = (Math.random() - 0.5) * 4; // -2px to +2px
+    const randomOffset = (Math.random() - BALL_CONSTANTS.SPAWN.RANDOM_OFFSET_MULTIPLIER) * BALL_CONSTANTS.SPAWN.RANDOM_OFFSET_RANGE; // -2px to +2px
     const finalBallX = ballX + randomOffset;
 
     const ballColor = betAmount <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
-    const ball = Bodies.circle(finalBallX, 30, ballRadius, {
+    const ball = Bodies.circle(finalBallX, BALL_CONSTANTS.SPAWN.Y_POSITION, ballRadius, {
         restitution: physicsTweaks.restitution, // Dynamic bounce based on size
-        friction: 0.6,
+        friction: PHYSICS_CONSTANTS.BALL.FRICTION,
         label: `ball-${betAmount}`,
         id: new Date().getTime(),
         frictionAir: physicsTweaks.frictionAir, // Dynamic air resistance for fall speed
         density: physicsTweaks.density, // Dynamic mass for realistic physics
         collisionFilter: {
-            group: -1
+            group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP
         },
         render: {
             fillStyle: ballColor
@@ -368,7 +367,7 @@ function createBallWithServicePath(
 
     // Calculate dynamic ball size based on rows and canvas scaling
     const containerRect = canvasRef.current.getBoundingClientRect();
-    const canvasScaleFactor = Math.min(containerRect.width / 480, containerRect.height / 400);
+    const canvasScaleFactor = Math.min(containerRect.width / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH_ALT, containerRect.height / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT_ALT);
     const ballRadius = calculateBallSize(rows, canvasScaleFactor);
 
     // Get physics tweaks based on ball size
@@ -380,14 +379,14 @@ function createBallWithServicePath(
     const ballColor = serviceData.betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
 
     // Create ball body with service path information
-    const ball = Bodies.circle(ballX, ballRadius + 10, ballRadius, {
+    const ball = Bodies.circle(ballX, ballRadius + BALL_CONSTANTS.SPAWN.SERVICE_Y_OFFSET, ballRadius, {
         restitution: physicsTweaks.restitution,
-        friction: 0.1,
+        friction: PHYSICS_CONSTANTS.BALL.FRICTION_SERVICE,
         frictionAir: physicsTweaks.frictionAir,
         density: physicsTweaks.density,
         render: {
             fillStyle: ballColor,
-            strokeStyle: '#FFD700',
+            strokeStyle: RENDERING_CONSTANTS.BALL.BALL_STROKE,
             lineWidth: 1
         },
         label: 'service-guided-ball',

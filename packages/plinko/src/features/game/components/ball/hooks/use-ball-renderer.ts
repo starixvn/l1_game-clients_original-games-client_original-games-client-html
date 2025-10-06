@@ -4,6 +4,7 @@ import { physicsConfig } from '../../../../../lib/physics';
 import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
+import { ANIMATION_CONSTANTS } from '@/lib/physics/constants/animation-constants';
 import {
     calculateLayoutData,
     calculateSlotRenderData
@@ -76,7 +77,7 @@ export const useBallRenderer = ({
             if (!ctx || !engine) return;
 
             // Log render loop occasionally
-            if (Math.random() < 0.001) { // Log ~0.1% of frames
+            if (Math.random() < ANIMATION_CONSTANTS.LOGGING.RENDER_LOOP_LOG_PROBABILITY) { // Log ~0.1% of frames
                 logger.debug('🔄 [RENDER LOOP] Frame rendered');
             }
 
@@ -101,7 +102,7 @@ export const useBallRenderer = ({
                     return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
                 });
 
-                if (balls.length > 0 && Math.random() < 0.002) { // ~1/500 frames
+                if (balls.length > 0 && Math.random() < ANIMATION_CONSTANTS.LOGGING.BALL_RENDER_LOG_PROBABILITY) { // ~1/500 frames
                     logger.debug('🎨 [RENDER] Active balls:', {
                         count: balls.length,
                         totalBodies: allBodies.length

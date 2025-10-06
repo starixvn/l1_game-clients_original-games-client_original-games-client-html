@@ -7,6 +7,7 @@
 import { Body, Engine, World } from 'matter-js';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { logger } from '../../../../../services/logger';
+import { COLLISION_CONSTANTS } from '@/lib/physics/constants/collision-constants';
 
 export interface CollisionHandlerOptions {
     onBallHit?: (multiplier: number, betValue: number) => void;
@@ -156,8 +157,8 @@ export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: B
     const targetDirection = direction === 1 ? 1 : -1; // 1 = right, 0 = left
 
     // Apply stronger, more deterministic force for reliable path following
-    const forceMagnitude = 0.25; // Increased for more reliable guidance
-    const velocityMagnitude = 1.5; // Stronger velocity setting
+    const forceMagnitude = COLLISION_CONSTANTS.FORCES.SERVICE_GUIDANCE_FORCE; // Increased for more reliable guidance
+    const velocityMagnitude = COLLISION_CONSTANTS.FORCES.SERVICE_GUIDANCE_VELOCITY; // Stronger velocity setting
 
     Body.setVelocity(ballBody, {
         x: targetDirection * velocityMagnitude,
@@ -187,8 +188,8 @@ export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: B
  */
 export function handleRandomPinCollision(ballBody: Body): void {
     const ballRadius = ballBody.circleRadius || 5;
-    const deflectionStrength = Math.max(0.1, Math.min(0.3, 0.25 / (ballRadius / 5)));
-    const randomForce = (Math.random() < 0.5 ? -1 : 1) * deflectionStrength * (Math.random() * 0.5 + 0.75);
+    const deflectionStrength = Math.max(COLLISION_CONSTANTS.DEFLECTION.MIN_STRENGTH, Math.min(COLLISION_CONSTANTS.DEFLECTION.MAX_STRENGTH, COLLISION_CONSTANTS.DEFLECTION.BASE_STRENGTH_DIVISOR / (ballRadius / 5)));
+    const randomForce = (Math.random() < COLLISION_CONSTANTS.PROBABILITIES.DEFLECTION_DIRECTION ? -1 : 1) * deflectionStrength * (Math.random() * COLLISION_CONSTANTS.DEFLECTION.RANDOM_FORCE_RANGE + COLLISION_CONSTANTS.DEFLECTION.RANDOM_FORCE_MIN);
     Body.applyForce(ballBody, ballBody.position, { x: randomForce, y: 0 });
 }
 

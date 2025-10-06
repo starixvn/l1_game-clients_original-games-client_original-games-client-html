@@ -1,5 +1,7 @@
 import { Body, Engine } from 'matter-js';
 import { BallBodyExtension, ExtendedBody, SlotLayout, AnimationState, CollisionHandlerOptions } from '../../types/physics';
+import { COLLISION_CONSTANTS } from './constants/collision-constants';
+import { ANIMATION_CONSTANTS } from './constants/animation-constants';
 
 
 /**
@@ -14,10 +16,10 @@ import { BallBodyExtension, ExtendedBody, SlotLayout, AnimationState, CollisionH
  * @param ballBody - The ball physics body that hit a peg
  * @param deflectionStrength - How strong the random deflection should be (0.1-0.3 recommended)
  */
-export function applyRandomPegDeflection(ballBody: Body, deflectionStrength: number = 0.2): void {
+export function applyRandomPegDeflection(ballBody: Body, deflectionStrength: number = COLLISION_CONSTANTS.DEFLECTION.DEFAULT_STRENGTH): void {
     // Add random horizontal velocity component
-    const randomDirection = Math.random() < 0.5 ? -1 : 1; // 50% left, 50% right
-    const randomForce = randomDirection * deflectionStrength * (Math.random() * 0.5 + 0.75); // 0.75-1.25x strength
+    const randomDirection = Math.random() < COLLISION_CONSTANTS.PROBABILITIES.DEFLECTION_DIRECTION ? -1 : 1; // 50% left, 50% right
+    const randomForce = randomDirection * deflectionStrength * (Math.random() * COLLISION_CONSTANTS.DEFLECTION.RANDOM_FORCE_RANGE + COLLISION_CONSTANTS.DEFLECTION.RANDOM_FORCE_MIN); // 0.75-1.25x strength
 
     // Apply the random force perpendicular to gravity (horizontal)
     Body.applyForce(ballBody, ballBody.position, {
@@ -50,7 +52,7 @@ export function handleBallPayoutCollision(
     }
 
     // Log the collision (throttled to prevent spam)
-    if (options.collisionTime && options.lastLogTimeRef && options.collisionTime - options.lastLogTimeRef.current > 200) {
+    if (options.collisionTime && options.lastLogTimeRef && options.collisionTime - options.lastLogTimeRef.current > COLLISION_CONSTANTS.TIMING.LOG_THROTTLE_MS) {
         options.lastLogTimeRef.current = options.collisionTime;
     }
 
@@ -86,8 +88,8 @@ export function handleBallPayoutCollision(
     // === SLOT VISUAL BOUNCE ANIMATION ===
     // Animate slot visually without moving physics body (keeps text rendering stable)
     if (options.animationState) {
-        const slotBounceDistance = 15 + Math.random() * 10; // 15-25 pixels down
-        const slotBounceDuration = 300; // ms
+        const slotBounceDistance = ANIMATION_CONSTANTS.SLOT_BOUNCE.MIN_DISTANCE + Math.random() * ANIMATION_CONSTANTS.SLOT_BOUNCE.DISTANCE_RANDOM_RANGE; // 15-25 pixels down
+        const slotBounceDuration = ANIMATION_CONSTANTS.SLOT_BOUNCE.DURATION_MS; // ms
 
         // Start visual bounce animation
         options.animationState.set(slotId, {
