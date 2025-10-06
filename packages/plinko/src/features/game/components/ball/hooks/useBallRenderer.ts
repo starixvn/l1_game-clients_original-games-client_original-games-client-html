@@ -5,11 +5,10 @@ import { logger } from '../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 import {
-    CanvasRenderer,
-    LayoutCalculator,
     calculateLayoutData,
     calculateSlotRenderData
-} from '../rendering';
+} from '../rendering/LayoutCalculator';
+import { CanvasRenderer } from '../rendering/CanvasRenderer';
 
 interface UseBallRendererProps {
     numberOfRows: number;

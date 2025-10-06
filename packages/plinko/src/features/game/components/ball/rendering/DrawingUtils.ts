@@ -104,7 +104,12 @@ export function createLinearGradient(
 ): CanvasGradient {
     const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
     colorStops.forEach(([offset, color]) => {
-        gradient.addColorStop(offset, color);
+        // Ensure color is defined before adding to gradient
+        if (color) {
+            gradient.addColorStop(offset, color);
+        } else {
+            console.warn(`Undefined color stop encountered at offset ${offset}, skipping`);
+        }
     });
     return gradient;
 }

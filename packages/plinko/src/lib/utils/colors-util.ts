@@ -20,5 +20,10 @@ export function generateMultiplierColor(mode: number, numberOfRows: number): str
 }
 
 export function getMultiplierColor(slotIndex: number, gameMode: number, numberOfRows: number): string {
-    return generateMultiplierColor(gameMode, numberOfRows)[slotIndex];
+    const colors = generateMultiplierColor(gameMode, numberOfRows);
+    // Handle out-of-bounds indices by returning a default color
+    if (slotIndex < 0 || slotIndex >= colors.length) {
+        return MULTIPLIER_COLORS[gameMode][0] || '#FFDC48'; // Default to first color or fallback
+    }
+    return colors[slotIndex];
 }
