@@ -1,10 +1,12 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
-import { useCommonTranslate, usePlinkoTranslate } from "@shared/react-hooks";
+import { useCommonTranslate  } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 import { gameModeMap } from "@shared/helpers/plinko";
 import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { numberWithCommas } from "@shared/helpers";
+import { ResourceTypes } from "@shared/resources";
+import { useTranslate } from "@tolgee/react";
 
 interface BetDetailRow {
     gameMode: number;
@@ -96,7 +98,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
     const { t: translateCommon } = useCommonTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
     const { drawInfo } = betDetailData || {};
-    const { t: translatePlinko } = usePlinkoTranslate();
+    const { t: translatePlinko } = useTranslate(ResourceTypes.PLINKO);
 
     // Check if any row reached max win (server-side) or if drawInfo has max win (client-side)
     const maxWinRow = data.find(row => row.reachMaxWin);

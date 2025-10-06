@@ -1,13 +1,14 @@
 
 import { gameModeMap } from "@shared/helpers/plinko";
-import { usePlinkoTranslate, useTranslator } from "@shared/react-hooks";
+import { useTranslator } from "@shared/react-hooks";
 import { ResourceTypes } from "@shared/resources";
 import useBetDetailStore from "@shared/stores/bet-detail-store/bet-detail-store";
+import { useTranslate } from "@tolgee/react";
 
 
 const PFVerifyResultBlock = () => {
     const { t } = useTranslator();
-    const { t: translatePlinko } = usePlinkoTranslate();
+    const { t: translatePlinko } = useTranslate(ResourceTypes.PLINKO);
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
 
     return (

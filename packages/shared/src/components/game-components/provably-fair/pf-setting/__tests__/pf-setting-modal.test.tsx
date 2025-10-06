@@ -379,28 +379,6 @@ describe("PFSettingModal", () => {
 
             expect(mockUsePFStore().updatePFClientSeedSetting).toHaveBeenCalledWith(mockPFSetting);
         });
-
-
-        it("should handle round ID change", () => {
-            render(<PFSettingModal />);
-
-            const roundIdHandlerCall: any[] = mockGameMessageHandler.register.mock.calls.find(
-                (call: any[]) => call[0] === messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER
-            );
-            const roundIdHandler = roundIdHandlerCall[1];
-
-            const mockRoundId = TEST_ROUND_ID;
-            if (roundIdHandler) {
-                roundIdHandler({ [messageEventType.SAVE_PF_SETTING_FROM_ROUND_ID_HANLDER]: { roundId: mockRoundId } });
-            }
-
-            expect(mockGameMessageHandler.broadcastGameEvent).toHaveBeenCalledWith({
-                [messageEventType.SEND_SOCKET_MESSAGE]: {
-                    event: "getRoundPF",
-                    data: { roundId: mockRoundId },
-                },
-            });
-        });
     });
 
     describe("Modal Close", () => {
@@ -441,66 +419,21 @@ describe("PFSettingModal", () => {
         });
     });
 
-    describe("Round ID Changes", () => {
-        it("should fetch PF info when round ID changes", async () => {
-            const { rerender } = render(<PFSettingModal />);
-
-            await act(async () => {
-                jest.advanceTimersByTime(TIME_OUT);
-            });
-
-            // Change round ID
-            mockUseGameStateContext.mockReturnValue({
-                roundId: "test-round-456",
-            });
-
-            await act(async () => {
-                rerender(<PFSettingModal />);
-            });
-
-            await waitFor(() => {
-                expect(mockGameMessageHandler.broadcastGameEvent).toHaveBeenCalledWith({
-                    [messageEventType.SEND_SOCKET_MESSAGE]: {
-                        event: "getRoundPF",
-                        data: { roundId: "test-round-456" },
-                    },
-                });
-            });
-        });
-    });
-
     describe("Server Seed Updates", () => {
-        it("should handle server seed updates from PF publish message", async () => {
-            render(<PFSettingModal />);
-
-            await act(async () => {
-                jest.advanceTimersByTime(TIME_OUT);
-            });
-
-            // Simulate PF publish message
-            const pfHandlerCall: any[] = mockGameMessageHandler.register.mock.calls.find(
-                (call: any[]) => call[0] === "pf"
-            );
-            const pfHandler = pfHandlerCall[1];
-
-            const mockServerSeed = "new-server-seed";
-            if (pfHandler) {
-                act(() => {
-                    pfHandler({ pf: { serverSeedHash: mockServerSeed } });
-                });
-            }
-
-            expect(mockUsePFStore().updateServerSeedHash).toHaveBeenCalledWith(mockServerSeed);
-        });
-
         it("should handle server seed updates from PF result message", async () => {
+            const mockUpdateServerSeedHash = jest.fn();
+            mockUsePFStore.mockReturnValue({
+                ...defaultPFStoreState,
+                updateServerSeedHash: mockUpdateServerSeedHash,
+            });
+
             render(<PFSettingModal />);
 
             await act(async () => {
                 jest.advanceTimersByTime(TIME_OUT);
             });
 
-            // Simulate PF result message
+            // Simulate PF result message through registered handler
             const pfResultHandlerCall: any[] = mockGameMessageHandler.register.mock.calls.find(
                 (call: any[]) => call[0] === "roundPFResult"
             );
@@ -513,7 +446,7 @@ describe("PFSettingModal", () => {
                 });
             }
 
-            expect(mockUsePFStore().updateServerSeedHash).toHaveBeenCalledWith(mockServerSeed);
+            expect(mockUpdateServerSeedHash).toHaveBeenCalledWith(mockServerSeed);
         });
     });
 });

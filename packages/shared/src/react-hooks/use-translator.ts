@@ -34,7 +34,3 @@ export const useSNTranslate = () => {
 export const useSedieMultiplayerTranslate = () => {
     return useTranslate(ResourceTypes.SEDIE_MULTIPLAYER);
 }
-
-export const usePlinkoTranslate = () => {
-    return useTranslate(ResourceTypes.PLINKO);
-}
