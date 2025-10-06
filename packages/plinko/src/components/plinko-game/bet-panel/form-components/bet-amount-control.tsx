@@ -28,7 +28,8 @@ const BetAmountControl = ({
     }, [gameConfigs?.maxBet, gameConfigs?.minBet, userStakeLevel]);
     const betAmount = usePlinkoGameStore((state) => state.betAmount);
     const [amount, setAmount] = useState<number | string>(minBet);
-    const buttonClass = "h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50";
+    const buttonClass =
+        "h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200";
 
     useEffect(() => {
         setAmount(betAmount);

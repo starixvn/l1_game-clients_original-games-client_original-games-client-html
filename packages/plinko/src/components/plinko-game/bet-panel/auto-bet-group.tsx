@@ -75,12 +75,13 @@ const AutoBetGroup = ({
         setTotalNetProfit(newTotalNetProfit);
         const newNumberOfBets = numberOfBets - 1;
         setNumberOfBets(newNumberOfBets);
-        const newBetAmount = getBetAmount(finish.winAmount > finish.amount);
-        handleBetAmountChange(newBetAmount);
-        handleBetClick(newBetAmount);
         if (newNumberOfBets <= 0) {
             setNumberOfBets(Infinity);
             setIsAutoBet(false);
+        } else {
+            const newBetAmount = getBetAmount(finish.winAmount > finish.amount);
+            handleBetAmountChange(newBetAmount);
+            handleBetClick(newBetAmount);
         }
     }, [finish]);
 

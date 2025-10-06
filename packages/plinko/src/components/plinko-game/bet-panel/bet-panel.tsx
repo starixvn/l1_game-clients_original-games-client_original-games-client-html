@@ -51,7 +51,7 @@ const BetControl = () => {
     }, [isAutoBet, handleBetClick]);
 
     const buttonClass =
-        "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50";
+        "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50 hover:scale-105 transition-all duration-200";
 
     return (
         <div className="flex flex-col px-3 gap-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:mt-0 md:h-full">

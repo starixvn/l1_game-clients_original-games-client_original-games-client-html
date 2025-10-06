@@ -40,7 +40,7 @@ const NumberOfBetsControl = ({
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
                     {BUTTONS_NUMBER_OF_BETS.map((button, index) => (
                         <button
-                            className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50"
+                            className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
                             onClick={() => setNumberOfBets(button.value)}
                             key={index}
                             disabled={isDisabled}
