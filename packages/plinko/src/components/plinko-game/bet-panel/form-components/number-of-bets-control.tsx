@@ -19,6 +19,11 @@ const NumberOfBetsControl = ({
     isDisabled: boolean;
 }) => {
     const {t} = useTranslate(ResourceTypes.COMMON);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Math.abs(parseInt(e.target.value));
+        const maxValue = 99999999;
+        setNumberOfBets(Math.min(value, maxValue));
+    };
 
     return (
         <div>
@@ -29,7 +34,7 @@ const NumberOfBetsControl = ({
                     step={1}
                     pattern="[0-9]*"
                     value={numberOfBets}
-                    onChange={(e) => setNumberOfBets(Math.min(parseInt(e.target.value), 99999999))}
+                    onChange={onChange}
                     onFocus={() => (numberOfBets === Infinity ? setNumberOfBets(0) : setNumberOfBets(numberOfBets))}
                     onBlur={() => setNumberOfBets(!numberOfBets ? Infinity : numberOfBets)}
                     inputMode="numeric"

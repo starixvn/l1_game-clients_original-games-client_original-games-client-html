@@ -68,6 +68,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // No need for setTimeout since we properly wait for the service response
     }
 
+    handleRemainingTime(_): void {
+        // nothing
+    }
+
     renderGameFrame(): JSX.Element {
         logger.debug("🎮 [PLINKO GAME BASE] Rendering game frame");
 
@@ -130,8 +134,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             <BetHistoryControl
                 defaultTab={"all-bets"}
                 tabContent={[
-                    <PlayerResultBoardTable key="player-result-board" />, 
-                    <BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />
+                    <PlayerResultBoardTable key="player-result-board" />,
+                    <BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />,
                 ]}
             />
         );

@@ -21,7 +21,7 @@ const StopOnControl = ({
                 pattern="[0-9]*"
                 maxLength={22}
                 value={value}
-                onChange={(e) => setValue(parseInt(e.target.value))}
+                onChange={(e) => setValue(Math.abs(+e.target.value))}
                 onBlur={(e) => setValue(Number((+e.target.value).toFixed(2)))}
                 inputMode="numeric"
                 className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"

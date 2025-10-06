@@ -36,6 +36,12 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
         setPercentage(0);
     };
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Math.abs(parseInt(e.target.value));
+        const maxValue = 10000;
+        setPercentage(Math.min(value, maxValue));
+    };
+
     return (
         <div>
             <Label title={title} />
@@ -60,11 +66,10 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                         step={1}
                         pattern="[0-9]*"
                         value={percentage}
-                        onChange={(e) => setPercentage(parseInt(e.target.value))}
-                        onBlur={() => setPercentage(Math.min(percentage || 0, 10000))}
+                        onChange={onChange}
                         inputMode="numeric"
                         disabled={!isIncreaseOn || isDisabled}
-                        className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
+                        className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50 pr-6"
                     />
                     <span
                         className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm text-white transition-all duration-200 ${
