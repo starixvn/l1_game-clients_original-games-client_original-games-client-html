@@ -229,7 +229,6 @@ export interface DrawInfo {
     pfResult: PFResult;
     clientSeed: string;
     reachMaxWin?: boolean;
-    maxWinAmount?: number;
 }
 
 export interface IUserStakeLevel {

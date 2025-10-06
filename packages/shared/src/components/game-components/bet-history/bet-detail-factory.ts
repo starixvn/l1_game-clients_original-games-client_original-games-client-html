@@ -23,7 +23,6 @@ export function createBetDetailData(
                 odds: row.originalBetLog?.odds,
                 settlementResult: row.originalBetLog?.settlementResult,
                 reachMaxWin: row.originalBetLog?.reachMaxWin,
-                maxWinAmount: row.originalBetLog?.winAmount,
                 pfResult: {
                     roundId: row.originalBetLog?.roundId,
                     serverSeedHash: "",
@@ -53,7 +52,6 @@ export function createBetDetailData(
                           win: row.originalBetLog?.betwin || 0, // Total win for the round
                           gameMode: gameMode,
                           reachMaxWin: row.originalBetLog?.reachMaxWin,
-                          maxWinAmount: row.originalBetLog?.winAmount || row.originalBetLog?.betWin || row.originalBetLog?.betwin,
                       };
                   })
                 : // Server-side logs or logs without betLogDetails - create single item
@@ -64,7 +62,6 @@ export function createBetDetailData(
                       win: row.originalBetLog?.betwin || row.originalBetLog?.betWin,
                       gameMode: row.originalBetLog?.gameMode || 0,
                       reachMaxWin: row.originalBetLog?.reachMaxWin,
-                      maxWinAmount: row.originalBetLog?.betWin || row.originalBetLog?.betwin,
                   }],
         };
     }

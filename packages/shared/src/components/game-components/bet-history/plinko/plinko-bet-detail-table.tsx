@@ -3,6 +3,7 @@ import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 import { gameModeMap } from "@shared/helpers/plinko";
+import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { numberWithCommas } from "@shared/helpers";
 
 interface BetDetailRow {
@@ -12,7 +13,6 @@ interface BetDetailRow {
     win: React.ReactNode;
     isWinningBet?: boolean;
     reachMaxWin?: boolean;
-    maxWinAmount?: number;
 }
 
 interface BetDetailTableProps {
@@ -94,10 +94,13 @@ const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
 
 const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, emptyMessage }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
+    const betDetailData = useBetDetailStore((state) => state.betDetailData);
+    const { drawInfo } = betDetailData || {};
 
-    // Check if any row reached max win
+    // Check if any row reached max win (server-side) or if drawInfo has max win (client-side)
     const maxWinRow = data.find(row => row.reachMaxWin);
-    const { reachMaxWin, maxWinAmount } = maxWinRow || {};
+    const reachMaxWin = maxWinRow?.reachMaxWin || drawInfo?.reachMaxWin;
+
 
     if (!data || data.length === 0) {
         return (
@@ -135,7 +138,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
             {reachMaxWin && (
                 <div className="font-semibold py-3 text-sm md:text-base">
                     <span>
-                        You reached the max win: {numberWithCommas(maxWinAmount, 2)}
+                        You reached the max win: {numberWithCommas(maxWinRow?.win as number, 2)}
                     </span>
                 </div>
             )}

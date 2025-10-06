@@ -4,8 +4,8 @@ import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-sto
 import usePFStore from '@shared/stores/pf-store/pf-store';
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
-    // Override to include winAmount support
-    protected latestFinish: { roundId: number; result?: any; settlementResult?: any; winAmount: number; amount: number } | null = null;
+    // Override to include winAmount and reachMaxWin support
+    protected latestFinish: { roundId: number; result?: any; settlementResult?: any; winAmount: number; amount: number; reachMaxWin?: boolean } | null = null;
 
     constructor(props: BetHistoryHandlerProps) {
         super(props);
@@ -20,19 +20,20 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         this.handlerIds.push(endBetId);
     }
 
-    // Override handleFinish to include winAmount
+    // Override handleFinish to include winAmount and reachMaxWin
     protected handleFinish({ finish }: any) {
         if (!finish) {
             return;
         }
 
-        const { roundId, result, settlementResult, winAmount, amount } = finish;
+        const { roundId, result, settlementResult, winAmount, amount, reachMaxWin } = finish;
         this.latestFinish = {
             roundId: Number(roundId) || 0,
             result,
             settlementResult,
             winAmount: Number(winAmount) || 0,
-            amount: Number(amount) || 0
+            amount: Number(amount) || 0,
+            reachMaxWin: Boolean(reachMaxWin)
         };
     }
 
@@ -99,7 +100,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             odds: {} // Plinko doesn't use odds-based calculations
         };
 
-        const betLog = this.createBetLog(
+        const betLog = this.createPlinkoBetLog(
             actualBettingRoundId,
             totalAmount,
             betwin,
@@ -119,5 +120,23 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
         betHistoryStore.clearPendingBets();
         this.resetPendingLocalCache();
+    }
+
+    // Override createBetLog to include reachMaxWin flag
+    protected createPlinkoBetLog(
+        roundId: number,
+        totalAmount: number,
+        betwin: number,
+        pendingDetails: any[],
+        firstBetTime: string,
+        resultData: any
+    ) {
+        const baseBetLog = super.createBetLog(roundId, totalAmount, betwin, pendingDetails, firstBetTime, resultData);
+
+        // Add reachMaxWin flag to the bet log
+        return {
+            ...baseBetLog,
+            reachMaxWin: this.latestFinish?.reachMaxWin || false
+        };
     }
 }
