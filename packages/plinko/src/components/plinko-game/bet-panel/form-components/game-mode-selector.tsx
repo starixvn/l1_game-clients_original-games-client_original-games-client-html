@@ -3,8 +3,7 @@ import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { GAME_MODES } from "@plinko/constants";
 import Label from "./label";
-import { useTranslate } from "@tolgee/react";
-import { ResourceTypes } from "@shared/resources";
+import { useCommonTranslate } from "@shared/react-hooks";
 
 const gameModes = [
     {
@@ -29,7 +28,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const { t } = useTranslate(ResourceTypes.PLINKO);
+    const { t } = useCommonTranslate();
 
     return (
         <div className="span-game-mode">

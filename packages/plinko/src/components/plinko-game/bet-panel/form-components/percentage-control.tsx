@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import Label from "./label";
-import { useTranslate } from "@tolgee/react";
-import { ResourceTypes } from "@shared/resources";
+import { useCommonTranslate } from "@shared/react-hooks";
 
 interface PercentageControlProps {
     isIncreaseOn: boolean;
@@ -29,7 +28,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     isDisabled,
     title,
 }) => {
-    const {t} = useTranslate(ResourceTypes.COMMON);
+    const { t } = useCommonTranslate();
 
     const onClick = (value: boolean) => {
         setIsIncreaseOn(value);

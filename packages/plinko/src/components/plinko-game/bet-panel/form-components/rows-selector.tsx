@@ -3,8 +3,7 @@ import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
-import { ResourceTypes } from "@shared/resources";
-import { useTranslate } from "@tolgee/react";
+import { useCommonTranslate } from "@shared/react-hooks";
 
 const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
@@ -14,7 +13,7 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const { t } = useTranslate(ResourceTypes.PLINKO);
+    const { t } = useCommonTranslate();
 
     return (
         <div className={`div-setting-row`}>

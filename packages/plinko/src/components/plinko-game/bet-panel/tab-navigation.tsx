@@ -1,5 +1,4 @@
-import { ResourceTypes } from "@shared/resources";
-import { useTranslate } from "@tolgee/react";
+import { useCommonTranslate } from "@shared";
 import { memo } from "react";
 const tabs = [
     {
@@ -21,7 +20,7 @@ const TabNavigation = ({
     onTabChange: (tab: boolean) => void;
     isDisabled: boolean;
 }) => {
-    const { t } = useTranslate(ResourceTypes.COMMON);
+    const { t } = useCommonTranslate();
 
     return (
         <div className="flex">

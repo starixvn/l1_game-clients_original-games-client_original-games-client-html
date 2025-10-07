@@ -2,16 +2,14 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
-import { useClientSeedPF } from "@shared/react-hooks";
+import { useClientSeedPF, useCommonTranslate } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
 import TabNavigation from "./tab-navigation";
 import BetForm from "./bet-form";
-import { ResourceTypes } from "@shared/resources";
-import { useTranslate } from "@tolgee/react";
 
 const BetControl = () => {
-    const socket = useGameStore((state) => state.socket);
+    const sendSocketEvent = useGameStore((state) => state.sendSocketEvent);
     const { clientSeed } = useClientSeedPF();
     const { betAmount, gameMode, numberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -25,14 +23,12 @@ const BetControl = () => {
     const [isManualTab, setIsManualTab] = useState(true);
     const [isAutoBet, setIsAutoBet] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const { t } = useTranslate(ResourceTypes.COMMON);
+    const { t } = useCommonTranslate();
 
     const handleBetClick = useCallback(() => {
-        if (socket?.connected) {
-            socket.emit("bet", { amount: betAmount, gameMode, numberOfRows, clientSeed });
-            setIsProcessing(true);
-        }
-    }, [socket, betAmount, gameMode, numberOfRows, clientSeed]);
+        sendSocketEvent("bet", { amount: betAmount, gameMode, numberOfRows, clientSeed });
+        setIsProcessing(true);
+    }, [sendSocketEvent, betAmount, gameMode, numberOfRows, clientSeed]);
 
     useEffect(() => {
         const endBetHandlerId = gameMessageHandler?.register(messageEventType.END_BET, () => {

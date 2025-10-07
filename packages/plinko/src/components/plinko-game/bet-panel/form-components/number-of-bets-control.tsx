@@ -1,7 +1,6 @@
 import { memo } from "react";
 import Label from "./label";
-import { ResourceTypes } from "@shared/resources";
-import { useTranslate } from "@tolgee/react";
+import { useCommonTranslate } from "@shared/react-hooks";
 
 const BUTTONS_NUMBER_OF_BETS = [
     { text: "∞", value: Infinity },
@@ -18,7 +17,7 @@ const NumberOfBetsControl = ({
     setNumberOfBets: (numberOfBets: number) => void;
     isDisabled: boolean;
 }) => {
-    const { t } = useTranslate(ResourceTypes.COMMON);
+    const { t } = useCommonTranslate();
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.abs(parseInt(e.target.value));
         const maxValue = 99999999;
