@@ -5,6 +5,8 @@ interface LoggerControlsProps {
   className?: string;
 }
 
+const color = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+
 // Style constants
 const CONTAINER_STYLES = {
   background: '#ef4444',
@@ -19,7 +21,7 @@ const CONTAINER_STYLES = {
 
 const STATUS_INDICATOR_STYLES = {
   borderRadius: '50%',
-  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+  boxShadow: color,
   border: '1px solid white'
 };
 
@@ -35,7 +37,7 @@ const BUTTON_BASE_STYLES = {
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
-  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+  boxShadow: color,
 };
 
 // Helper functions
@@ -124,7 +126,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ onClick, disabled = false, 
     }}
     onMouseLeave={(e) => {
       if (!disabled) {
-        e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+        e.currentTarget.style.boxShadow = color;
         e.currentTarget.style.transform = 'scale(1)';
       }
     }}
@@ -243,7 +245,7 @@ const ExpandedHeader: React.FC<ExpandedHeaderProps> = ({
         fontWeight: 'bold',
         borderRadius: '9999px',
         border: '1px solid #ca8a04',
-        boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+        boxShadow: color,
       }}>
         {logCount}
       </div>
