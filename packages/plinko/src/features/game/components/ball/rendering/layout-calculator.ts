@@ -5,7 +5,7 @@
  * Follows Single Responsibility Principle - only handles layout math
  */
 
-import { LAYOUT_CONSTANTS } from '@/lib/physics/constants/layout-constants';
+import { LAYOUT_CONSTANTS } from "@plinko/lib/physics/constants/layout-constants";
 
 export interface LayoutData {
     scaleFactor: number;
@@ -32,12 +32,11 @@ export interface SlotRenderData {
  * Calculate layout data for the Plinko board
  * Pure function - only performs calculations based on inputs
  */
-export function calculateLayoutData(
-    numberOfRows: number,
-    canvasWidth: number,
-    canvasHeight: number
-): LayoutData {
-    const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / numberOfRows));
+export function calculateLayoutData(numberOfRows: number, canvasWidth: number, canvasHeight: number): LayoutData {
+    const scaleFactor = Math.max(
+        LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE,
+        Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / numberOfRows)
+    );
     const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));
     const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
     const boardTopMargin = Math.max(40, Math.min(80, 60 * scaleFactor));
@@ -59,7 +58,7 @@ export function calculateLayoutData(
         lastRowStartX,
         visualSlotHeight,
         slotWidth,
-        numberOfSlots
+        numberOfSlots,
     };
 }
 
@@ -87,7 +86,7 @@ export function calculateSlotRenderData(
             slotY,
             slotWidth: layoutData.slotWidth,
             slotHeight: layoutData.visualSlotHeight,
-            color: getMultiplierColor(i, gameMode, layoutData.numberOfSlots - 1) // numberOfRows = slots - 1
+            color: getMultiplierColor(i, gameMode, layoutData.numberOfSlots - 1), // numberOfRows = slots - 1
         };
     });
 }
@@ -96,13 +95,7 @@ export function calculateSlotRenderData(
  * Find which slot index corresponds to a mouse position
  * Pure function for slot detection logic
  */
-export function findSlotIndex(
-    mouseX: number,
-    lastRowStartX: number,
-    pegGap: number,
-    slotWidth: number,
-    numberOfSlots: number
-): number {
+export function findSlotIndex(mouseX: number, lastRowStartX: number, pegGap: number, slotWidth: number, numberOfSlots: number): number {
     // Use same positioning logic as visual slots (between pegs)
     for (let i = 0; i < numberOfSlots; i++) {
         const slotCenterX = lastRowStartX + (i - 0.5) * pegGap; // Center between peg positions
@@ -118,12 +111,7 @@ export function findSlotIndex(
  * Calculate slot calculation data for hover interactions
  * Pure function for hover area calculations
  */
-export function calculateSlotCalculationData(
-    layoutData: LayoutData,
-    multipliers: number[],
-    probabilities: number[],
-    betAmount: number
-) {
+export function calculateSlotCalculationData(layoutData: LayoutData, multipliers: number[], probabilities: number[], betAmount: number) {
     if (multipliers.length === 0) return null;
 
     const slotHeight = Math.max(15, Math.min(40, (layoutData.pegGap - 8 * layoutData.scaleFactor) * 1.5));
@@ -142,6 +130,6 @@ export function calculateSlotCalculationData(
         multipliers,
         probabilities,
         betAmount,
-        numberOfSlots: layoutData.numberOfSlots
+        numberOfSlots: layoutData.numberOfSlots,
     };
 }

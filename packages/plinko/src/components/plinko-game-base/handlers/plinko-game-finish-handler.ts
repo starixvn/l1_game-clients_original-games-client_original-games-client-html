@@ -1,6 +1,6 @@
 import { GameFinishHandler } from "@shared/components/game-base/handlers/game-finish-handler";
-import { PlinkoFinish } from "@/shared/types/types";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import { PlinkoFinish } from "@plinko/shared/types/types";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 export class PlinkoGameFinishHandler extends GameFinishHandler {
     constructor(props: any) {

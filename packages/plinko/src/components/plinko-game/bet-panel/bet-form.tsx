@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import AutoBetGroup from "./auto-mode/auto-bet-group";
 import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
 

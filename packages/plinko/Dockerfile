@@ -1,0 +1,97 @@
+FROM hub.lumigame.com/base/node:24-alpine-25h2 AS base
+
+FROM base AS deps
+WORKDIR /app
+
+ENV YARN_CACHE_FOLDER=/root/.yarn
+
+RUN --mount=type=cache,target=$YARN_CACHE_FOLDER \
+     yarn cache dir && yarn cache list
+
+# Copy only the necessary package files for plinko
+COPY package.json yarn.lock ./
+COPY packages/shared/package.json packages/shared/package.json
+COPY packages/plinko/package.json packages/plinko/package.json
+RUN yarn install --frozen-lockfile --verbose
+
+FROM base AS builder
+WORKDIR /app
+
+# Copy the installed dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/yarn.lock ./yarn.lock
+
+# Copy root tsconfig files that plinko extends
+COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.node.json ./tsconfig.node.json
+
+# Copy only plinko-specific files
+COPY packages/plinko/package.json packages/plinko/package.json
+COPY packages/plinko/next.config.js packages/plinko/next.config.js
+COPY packages/plinko/tsconfig.json packages/plinko/tsconfig.json
+COPY packages/plinko/tailwind.config.js packages/plinko/tailwind.config.js
+COPY packages/plinko/postcss.config.js packages/plinko/postcss.config.js
+# Copy sentry config files from shared package
+COPY packages/shared/src/sentry-config/sentry.client.config.js packages/plinko/sentry.client.config.js
+COPY packages/shared/src/sentry-config/sentry.edge.config.js packages/plinko/sentry.edge.config.js
+COPY packages/shared/src/sentry-config/sentry.server.config.js packages/plinko/sentry.server.config.js
+COPY packages/plinko/custom-server.js packages/plinko/custom-server.js
+COPY packages/plinko/configs.json packages/plinko/configs.json
+COPY packages/plinko/game-settings.json packages/plinko/game-settings.json
+
+# Copy source code
+COPY packages/plinko/src packages/plinko/src
+COPY packages/plinko/public packages/plinko/public
+COPY packages/plinko/configs packages/plinko/configs
+
+# Copy shared package
+COPY packages/shared packages/shared
+
+# Build plinko app
+WORKDIR /app/packages/plinko
+
+# Set Next.js basePath and game ID for production deployment
+ENV NEXT_PUBLIC_BASE_PATH=/game-150
+ENV NEXT_PUBLIC_DEFAULT_GAME_ID=150
+ENV NEXT_PUBLIC_GAME_PACKAGE=plinko
+
+# Obfuscate deployment configs and build
+RUN yarn obfuscator-config-file
+RUN yarn build:standalone
+
+FROM base AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Ensure base path is set for runtime
+ENV NEXT_PUBLIC_BASE_PATH=/game-150
+
+RUN addgroup --system --gid 1001 nodejs  \
+     && adduser --system --uid 1001 nextjs \
+     && mkdir -p src packages/shared/configs
+
+# Copy the built app and required assets
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/next.config.js ./next.config.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/game-settings.json ./game-settings.json
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/configs.json ./configs.json
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/custom-server.js ./custom-server.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/src/image-loader.js ./src/image-loader.js
+COPY --from=builder --chown=nextjs:nodejs /app/packages/plinko/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/packages/shared/configs/custom-server.js ./packages/shared/configs/custom-server.js
+
+# Ensure proper permissions for the .next directory
+RUN chown -R nextjs:nodejs .next
+
+USER nextjs
+
+EXPOSE 5000
+ENV PORT=5000
+ENV HOSTNAME=0.0.0.0
+
+CMD ["sh", "-c", "node custom-server.js"]

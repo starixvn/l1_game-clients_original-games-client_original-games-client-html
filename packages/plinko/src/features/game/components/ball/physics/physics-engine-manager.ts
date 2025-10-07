@@ -4,13 +4,13 @@
  * Follows Single Responsibility Principle - only handles engine lifecycle
  */
 
-import { Engine, Runner, World, Events, Composite } from 'matter-js';
-import { physicsConfig } from '../../../../../lib/physics';
-import { createPhysicsBodies } from './body-factory';
-import { processCollision, CollisionHandlerOptions } from './collision-handler';
-import { logger } from '../../../../../services/logger';
-import { RENDERING_CONSTANTS } from '@/lib/physics/constants/rendering-constants';
-import { CANVAS_CONSTANTS } from '@/lib/physics/constants/canvas-constants';
+import { Engine, Runner, World, Events, Composite } from "matter-js";
+import { physicsConfig } from "../../../../../lib/physics";
+import { createPhysicsBodies } from "./body-factory";
+import { processCollision, CollisionHandlerOptions } from "./collision-handler";
+import { logger } from "../../../../../services/logger";
+import { RENDERING_CONSTANTS } from "@plinko/lib/physics/constants/rendering-constants";
+import { CANVAS_CONSTANTS } from "@plinko/lib/physics/constants/canvas-constants";
 
 export interface PhysicsEngineState {
     engine: Engine | null;
@@ -49,7 +49,7 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
         multipliers,
         gameMode,
         canvasWidth,
-        canvasHeight
+        canvasHeight,
     });
 
     // Create runner
@@ -61,7 +61,7 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
         isInitialized: true,
         pins,
         multipliersBodies,
-        walls
+        walls,
     };
 }
 
@@ -95,7 +95,9 @@ export function setupCollisionDetection(
  */
 export function addBodiesToWorld(engine: Engine, pins: any[], multipliersBodies: any[], walls: any[]): void {
     const allBodies = [...pins, ...multipliersBodies, ...walls];
-    logger.info(`🏗️ [PHYSICS] Adding bodies to world: pins=${pins.length}, multipliers=${multipliersBodies.length}, walls=${walls.length}, total=${allBodies.length}`);
+    logger.info(
+        `🏗️ [PHYSICS] Adding bodies to world: pins=${pins.length}, multipliers=${multipliersBodies.length}, walls=${walls.length}, total=${allBodies.length}`
+    );
     Composite.add(engine.world, allBodies);
 
     // Verify bodies were added
@@ -108,39 +110,39 @@ export function addBodiesToWorld(engine: Engine, pins: any[], multipliersBodies:
  * Side effect function - starts the runner
  */
 export function startPhysicsRunner(runner: Runner, engine: Engine): void {
-    logger.info('🚀 [PHYSICS] Starting physics runner');
+    logger.info("🚀 [PHYSICS] Starting physics runner");
     Runner.run(runner, engine);
 
     // Add logging for engine updates
-    Events.on(engine, 'beforeUpdate', () => {
-        const balls = Composite.allBodies(engine.world).filter(body =>
-            body.label?.includes('ball')
-        );
-        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.UPDATE_LOG_PROBABILITY) { // Log ~1% of updates to avoid spam
-            logger.debug('⚡ [PHYSICS] Engine update - active balls:', balls.map(ball => ({
-                id: ball.id,
-                position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
-                velocity: { x: Math.round(ball.velocity.x * 100) / 100, y: Math.round(ball.velocity.y * 100) / 100 },
-                label: ball.label
-            })));
+    Events.on(engine, "beforeUpdate", () => {
+        const balls = Composite.allBodies(engine.world).filter((body) => body.label?.includes("ball"));
+        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.UPDATE_LOG_PROBABILITY) {
+            // Log ~1% of updates to avoid spam
+            logger.debug(
+                "⚡ [PHYSICS] Engine update - active balls:",
+                balls.map((ball) => ({
+                    id: ball.id,
+                    position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
+                    velocity: { x: Math.round(ball.velocity.x * 100) / 100, y: Math.round(ball.velocity.y * 100) / 100 },
+                    label: ball.label,
+                }))
+            );
         }
     });
 
-    Events.on(engine, 'afterUpdate', () => {
+    Events.on(engine, "afterUpdate", () => {
         // Check for balls that have fallen outside canvas bounds and remove them
         checkAndRemoveOutOfBoundsBalls(engine);
 
         // Log ball removals
-        const balls = Composite.allBodies(engine.world).filter(body =>
-            body.label?.includes('ball')
-        );
-        balls.forEach(ball => {
+        const balls = Composite.allBodies(engine.world).filter((body) => body.label?.includes("ball"));
+        balls.forEach((ball) => {
             const extension = ball;
             if (extension.isRemoved && !extension.loggedRemoval) {
-                logger.debug('🗑️ [PHYSICS] Ball removed from world:', {
+                logger.debug("🗑️ [PHYSICS] Ball removed from world:", {
                     id: ball.id,
                     position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
-                    label: ball.label
+                    label: ball.label,
                 });
                 extension.loggedRemoval = true;
             }
@@ -153,9 +155,7 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
  * Prevents accumulation of problematic balls that can interfere with active physics
  */
 function checkAndRemoveOutOfBoundsBalls(engine: Engine): void {
-    const balls = Composite.allBodies(engine.world).filter(body =>
-        body.label?.includes('ball') && !body.isStatic
-    );
+    const balls = Composite.allBodies(engine.world).filter((body) => body.label?.includes("ball") && !body.isStatic);
 
     // Define reasonable bounds (with some margin beyond canvas)
     const canvasWidth = engine.world.bounds?.max?.x || CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_WIDTH;
@@ -165,12 +165,12 @@ function checkAndRemoveOutOfBoundsBalls(engine: Engine): void {
         maxX: canvasWidth * 1.5,
         maxY: canvasHeight * 1.5,
         minX: -canvasWidth * 0.5,
-        minY: -canvasHeight * 0.5
+        minY: -canvasHeight * 0.5,
     };
 
-    balls.forEach(ball => {
+    balls.forEach((ball) => {
         if (isBallOutOfBounds(ball, bounds)) {
-            removeBallFromWorld(ball, 'outside bounds');
+            removeBallFromWorld(ball, "outside bounds");
         } else if (isBallStuck(ball, canvasHeight)) {
             handleStuckBall(ball);
         } else {
@@ -196,10 +196,10 @@ function handleStuckBall(ball: any): void {
     if (!ball.stuckTime) {
         ball.stuckTime = Date.now();
     } else if (Date.now() - ball.stuckTime > 3000) {
-        logger.warn('🚨 [PHYSICS] Ball appears stuck - nudging:', {
+        logger.warn("🚨 [PHYSICS] Ball appears stuck - nudging:", {
             id: ball.id,
             position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
-            label: ball.label
+            label: ball.label,
         });
 
         // Give the ball a nudge
@@ -224,7 +224,7 @@ function removeBallFromWorld(ball: any, reason: string): void {
     logger.warn(`🚨 [PHYSICS] Ball ${reason} - removing:`, {
         id: ball.id,
         position: { x: Math.round(ball.position.x), y: Math.round(ball.position.y) },
-        label: ball.label
+        label: ball.label,
     });
 
     ball.isRemoved = true;

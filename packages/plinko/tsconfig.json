@@ -1,28 +1,22 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "declaration": true,
-    "declarationMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@shared": [
-        "../shared/src/index"
-      ],
-      "@shared/*": [
-        "../shared/src/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
-    }
-  },
-  "include": [
-    "src/**/*",
-    "../shared/src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "jsx": "preserve",
+        "paths": {
+            "@shared": ["../shared/src/index"],
+            "@shared/*": ["../shared/src/*"],
+            "@plinko/*": ["./src/*"]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "src/**/*",
+        "next.config.js",
+        "../shared/src/react-hooks/use-is-desktop.ts"
+    ],
+    "exclude": ["node_modules", "dist", ".next"]
 }

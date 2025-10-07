@@ -16,13 +16,13 @@ import PlinkoGame from "../plinko-game/PlinkoGame";
 import { logger } from "../../services/logger";
 import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
 import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
-import { PlayerResultBoardTable } from "@/components/plinko-game/player-result-board/player-result-board-table";
+import { PlayerResultBoardTable } from "@plinko/components/plinko-game/player-result-board/player-result-board-table";
 import PlinkoBetDetailModal from "../plinko-game/history";
-import BetPanel from "@/components/plinko-game/bet-panel/bet-panel";
+import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { PFSettingModal } from "@shared/components/game-components/provably-fair";
 import { createPortal } from "react-dom";
 import LiveStatsIcon from "@shared/components/game-components/menu/icons/live-stats";
-import LiveStats from "@/components/plinko-game/live-stats";
+import LiveStats from "@plinko/components/plinko-game/live-stats";
 
 // Dynamic imports for shared components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });

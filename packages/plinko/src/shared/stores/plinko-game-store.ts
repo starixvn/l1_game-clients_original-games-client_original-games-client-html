@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { GAME_MODES, NUMBER_OF_ROWS } from "@/constants";
-import { PlinkoFinish } from "@/shared/types/types";
+import { GAME_MODES, NUMBER_OF_ROWS } from "@plinko/constants";
+import { PlinkoFinish } from "@plinko/shared/types/types";
 
 export type PlinkoGameStore = {
     betAmount: number;

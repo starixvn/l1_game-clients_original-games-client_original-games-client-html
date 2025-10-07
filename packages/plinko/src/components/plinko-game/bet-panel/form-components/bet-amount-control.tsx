@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import Label from "./label";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources";
@@ -32,7 +32,7 @@ const BetAmountControl = ({
     const [amount, setAmount] = useState<number | string>(minBet);
     const buttonClass =
         "h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200";
-    const {t} = useTranslate(ResourceTypes.COMMON);
+    const { t } = useTranslate(ResourceTypes.COMMON);
 
     useEffect(() => {
         setAmount(betAmount);

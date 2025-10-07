@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useShallow } from "zustand/shallow";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
-import { NUMBER_OF_ROWS } from "@/constants";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
 import { ResourceTypes } from "@shared/resources";
 import { useTranslate } from "@tolgee/react";
@@ -14,7 +14,7 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const {t} = useTranslate(ResourceTypes.PLINKO);
+    const { t } = useTranslate(ResourceTypes.PLINKO);
 
     return (
         <div className={`div-setting-row`}>

@@ -11,19 +11,18 @@ const config = {
         "!packages/*/src/**/*.stories.{js,jsx,ts,tsx}",
         "!**/node_modules/**",
     ],
-    
-    forceCoverageMatch: [
-        "**/__tests__/**/*.test.{js,jsx,ts,tsx}",
-        "**/__tests__/**/*.spec.{js,jsx,ts,tsx}",
-    ],
+
+    forceCoverageMatch: ["**/__tests__/**/*.test.{js,jsx,ts,tsx}", "**/__tests__/**/*.spec.{js,jsx,ts,tsx}"],
     moduleNameMapper: {
         "^.+\\.(css|sass|scss)$": "identity-obj-proxy",
         "swiper/css": "identity-obj-proxy",
         "swiper/css/pagination": "identity-obj-proxy",
         "swiper/react": "<rootDir>/node_modules/swiper/swiper.js",
-        "^@/(.*)$": "<rootDir>/src/$1",
+        "^@/(.*)$": "<rootDir>/packages/plinko/src/$1",
         "^@shared/(.*)$": "<rootDir>/packages/shared/src/$1",
         "^@sedie-multiplayer/(.*)$": "<rootDir>/packages/sedie-multiplayer/src/$1",
+        "^@baccarat-multiplayer/(.*)$": "<rootDir>/packages/baccarat-multiplayer/src/$1",
+        "^@plinko/(.*)$": "<rootDir>/packages/plinko/src/$1",
     },
     testPathIgnorePatterns: [
         "<rootDir>/node_modules/",

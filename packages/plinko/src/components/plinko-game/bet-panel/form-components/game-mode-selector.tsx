@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useShallow } from "zustand/shallow";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
-import { GAME_MODES } from "@/constants";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { GAME_MODES } from "@plinko/constants";
 import Label from "./label";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources";
@@ -29,7 +29,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const {t} = useTranslate(ResourceTypes.PLINKO);
+    const { t } = useTranslate(ResourceTypes.PLINKO);
 
     return (
         <div className="span-game-mode">

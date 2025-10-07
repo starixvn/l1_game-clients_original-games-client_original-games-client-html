@@ -1,4 +1,4 @@
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import LiveStatsModal from "@shared/components/game-components/live-stats";
 
 const LiveStats = () => {

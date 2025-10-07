@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
 import { useClientSeedPF } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";

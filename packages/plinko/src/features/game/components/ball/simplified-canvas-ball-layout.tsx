@@ -1,16 +1,10 @@
 import React, { useRef, forwardRef, useImperativeHandle, useMemo } from "react";
 import { BallLayoutProps } from "../../../../shared/types";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { usePhysicsEngine, useBallSpawner, useCanvas, useBallRenderer } from "./hooks";
 import { logger } from "../../../../services/logger";
-import {
-    HoverManager,
-    EventHandler,
-    CanvasContainer,
-    LoadingIndicator,
-    GameOverlay
-} from "./components";
+import { HoverManager, EventHandler, CanvasContainer, LoadingIndicator, GameOverlay } from "./components";
 import { calculateSlotCalculationData } from "./rendering";
 
 export interface SimplifiedCanvasBallLayoutRef {
@@ -20,7 +14,7 @@ export interface SimplifiedCanvasBallLayoutRef {
 }
 
 // Fixed canvas dimensions - canvas stays at original size regardless of container resize
-import { CANVAS_CONSTANTS } from '../../../../lib/physics/constants/canvas-constants';
+import { CANVAS_CONSTANTS } from "../../../../lib/physics/constants/canvas-constants";
 
 const CANVAS_WIDTH = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_WIDTH;
 const CANVAS_HEIGHT = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_HEIGHT;
@@ -51,29 +45,25 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         // Use canvas hook for container and canvas management
         const { containerSize, canvasScale } = useCanvas({
             canvasWidth: CANVAS_WIDTH,
-            canvasHeight: CANVAS_HEIGHT
+            canvasHeight: CANVAS_HEIGHT,
         });
 
         // Use physics engine hook
-        const {
-            engine,
-            isInitialized,
-            pins
-        } = usePhysicsEngine({
+        const { engine, isInitialized, pins } = usePhysicsEngine({
             numberOfRows,
             multipliers,
             gameMode,
             onBallHit,
             canvasWidth: CANVAS_WIDTH,
             canvasHeight: CANVAS_HEIGHT,
-            containerSize
+            containerSize,
         });
 
         // Use ball spawner hook
         const { spawnBall, spawnBallWithPath } = useBallSpawner({
             numberOfRows,
             canvasWidth: CANVAS_WIDTH,
-            engine
+            engine,
         });
 
         // Use ball renderer hook
@@ -85,54 +75,51 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
             canvasHeight: CANVAS_HEIGHT,
             engine,
             pins,
-            removedBallsRef: useRef(new Set<number>()) // This will be properly managed in the physics hook
+            removedBallsRef: useRef(new Set<number>()), // This will be properly managed in the physics hook
         });
 
         // Memoized slot calculation data using layoutData for consistency
-        const slotCalculationData = useMemo(() =>
-            layoutData ? calculateSlotCalculationData(layoutData, multipliers, probabilities, betAmount) : null,
+        const slotCalculationData = useMemo(
+            () => (layoutData ? calculateSlotCalculationData(layoutData, multipliers, probabilities, betAmount) : null),
             [layoutData, multipliers, probabilities, betAmount]
         );
 
         // Memoized imperative handle to prevent unnecessary re-renders
-        const imperativeHandle = useMemo(() => ({
-            spawnBall: (betValue?: number) => {
-                // Only log in development mode to reduce noise
-                if (process.env.NODE_ENV === 'development') {
-                    logger.debug('🎯 [COMPONENT] spawnBall called', { betValue });
-                }
-                if (isInitialized && engine.current) {
-                    spawnBall(betValue || 1);
-                } else if (process.env.NODE_ENV === 'development') {
-                    logger.warn('Cannot spawn ball: engine not ready');
-                }
-            },
-            spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-                // Only log in development mode to reduce noise
-                if (process.env.NODE_ENV === 'development') {
-                    logger.debug('🎯 [COMPONENT] spawnBallWithPath called', { betValue, finalSlot, multiplier });
-                }
-                if (isInitialized && engine.current) {
-                    spawnBallWithPath(betValue, path, finalSlot, multiplier);
-                } else if (process.env.NODE_ENV === 'development') {
-                    logger.warn('Cannot spawn guided ball: engine not ready');
-                }
-            },
-            isReady: () => isInitialized && !!engine.current,
-        }), [isInitialized, engine, spawnBall, spawnBallWithPath]);
+        const imperativeHandle = useMemo(
+            () => ({
+                spawnBall: (betValue?: number) => {
+                    // Only log in development mode to reduce noise
+                    if (process.env.NODE_ENV === "development") {
+                        logger.debug("🎯 [COMPONENT] spawnBall called", { betValue });
+                    }
+                    if (isInitialized && engine.current) {
+                        spawnBall(betValue || 1);
+                    } else if (process.env.NODE_ENV === "development") {
+                        logger.warn("Cannot spawn ball: engine not ready");
+                    }
+                },
+                spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => {
+                    // Only log in development mode to reduce noise
+                    if (process.env.NODE_ENV === "development") {
+                        logger.debug("🎯 [COMPONENT] spawnBallWithPath called", { betValue, finalSlot, multiplier });
+                    }
+                    if (isInitialized && engine.current) {
+                        spawnBallWithPath(betValue, path, finalSlot, multiplier);
+                    } else if (process.env.NODE_ENV === "development") {
+                        logger.warn("Cannot spawn guided ball: engine not ready");
+                    }
+                },
+                isReady: () => isInitialized && !!engine.current,
+            }),
+            [isInitialized, engine, spawnBall, spawnBallWithPath]
+        );
 
         useImperativeHandle(ref, () => imperativeHandle, [imperativeHandle]);
 
         return (
-            <HoverManager
-                slotCalculationData={slotCalculationData}
-                betAmount={betAmount}
-            >
+            <HoverManager slotCalculationData={slotCalculationData} betAmount={betAmount}>
                 {(hoveredData, updateHover) => (
-                    <EventHandler
-                        slotCalculationData={slotCalculationData}
-                        onHoverUpdate={updateHover}
-                    >
+                    <EventHandler slotCalculationData={slotCalculationData} onHoverUpdate={updateHover}>
                         {(containerRef) => (
                             <div
                                 ref={containerRef}
@@ -162,17 +149,9 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                                     engine={engine}
                                 />
 
-                                <LoadingIndicator
-                                    isInitialized={isInitialized}
-                                    numberOfRows={numberOfRows}
-                                    multipliers={multipliers}
-                                />
+                                <LoadingIndicator isInitialized={isInitialized} numberOfRows={numberOfRows} multipliers={multipliers} />
 
-                                <GameOverlay
-                                    isInitialized={isInitialized}
-                                    numberOfRows={numberOfRows}
-                                    multipliers={multipliers}
-                                />
+                                <GameOverlay isInitialized={isInitialized} numberOfRows={numberOfRows} multipliers={multipliers} />
                             </div>
                         )}
                     </EventHandler>

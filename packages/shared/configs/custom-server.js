@@ -28,9 +28,9 @@ function createCustomServer(gameName) {
         "public",
         "static",
         "images",
-        gameName,
-        "scoreboard",
-        "statistic-icon-white4.webp"
+        gameName
+        // "scoreboard",
+        // "statistic-icon-white4.webp"
     );
     console.log(`🔍 Checking for statistic-icon-white4.webp:`);
     console.log(`  - Expected path: ${imagePath}`);

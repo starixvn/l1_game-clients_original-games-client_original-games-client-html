@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
 import { ResourceTypes, useClientSeedPF, useGameStore } from "@shared";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { PercentageControl, StopOnControl, NumberOfBetsControl } from "../form-components";
 import { useTranslate } from "@tolgee/react";
 
