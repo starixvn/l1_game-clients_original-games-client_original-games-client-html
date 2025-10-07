@@ -19,7 +19,6 @@ import {
     PlinkoStateHandler,
 } from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
-import { logger } from "../../services/logger";
 import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
 import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
 import { PlayerResultBoardTable } from "@plinko/components/plinko-game/player-result-board/player-result-board-table";
@@ -67,10 +66,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             dispatch: props.dispatch,
             gameMessageHandler: gameMessageHandler,
         });
-        logger.info("🏠 [PLINKO GAME BASE] PlinkoGameBase initialized", {
-            gameId: props.id,
-            timestamp: new Date().toISOString(),
-        });
     }
 
     registerHandlers() {
@@ -78,21 +73,11 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         this.inGameHandler.registerEvents();
     }
 
-    componentDidMount() {
-        super.componentDidMount();
-        logger.info("🚀 [PLINKO GAME BASE] Component mounted");
-
-        // Game initialization will be handled by the gameConfigs message handler
-        // No need for setTimeout since we properly wait for the service response
-    }
-
     handleRemainingTime(_): void {
         // nothing
     }
 
     renderGameFrame(): JSX.Element {
-        logger.debug("🎮 [PLINKO GAME BASE] Rendering game frame");
-
         return (
             <div className="relative h-full">
                 <Background gameId={this.props.id} />

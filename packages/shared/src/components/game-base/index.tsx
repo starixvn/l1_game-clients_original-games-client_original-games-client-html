@@ -55,7 +55,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     protected roundTimeCounter: number;
     protected timeCounter: number;
     private disconnectTimeout: NodeJS.Timeout;
-    private readonly gameMessageHandler: GameMessageHandler;
+    protected readonly gameMessageHandler: GameMessageHandler;
     private readonly roundStateHandler: IRoundStateHandler;
     private readonly gameStateHandler: IGameStateHandler;
     private readonly gameErrorHandler: GameErrorHandler;
