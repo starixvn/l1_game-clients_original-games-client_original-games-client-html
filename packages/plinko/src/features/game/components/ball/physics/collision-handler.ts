@@ -187,16 +187,6 @@ export function handleServiceGuidedWin(
 export function handlePinCollision(result: CollisionResult): void {
     const { ballBody, ballExtension, obstacleBody } = result;
 
-    // console.log('🎯 [DEBUG] Pin collision handler - ENTRY:', {
-    //     ballId: ballBody.id,
-    //     isServiceGuided: ballExtension.isServiceGuided,
-    //     hasServicePath: !!ballExtension.servicePath,
-    //     currentPathIndex: ballExtension.currentPathIndex,
-    //     pathLength: ballExtension.servicePath?.length,
-    //     pegLabel: obstacleBody.label,
-    //     willCallServiceGuided: ballExtension.isServiceGuided && ballExtension.servicePath && ballExtension.currentPathIndex < ballExtension.servicePath.length
-    // });
-
     if (ballExtension.isServiceGuided && ballExtension.servicePath && ballExtension.currentPathIndex < ballExtension.servicePath.length) {
         handleServiceGuidedPinCollision(ballBody, ballExtension, obstacleBody);
     } else {
