@@ -77,7 +77,7 @@ export const diagnosticTool = {
 
             // Check for event listeners on buttons
             if (playButton) {
-                const events = (playButton as any)._events || 'No events found';
+                const events = playButton._events || 'No events found';
                 console.log('🎮 [DIAGNOSTIC] Play button events:', { events });
             }
         }

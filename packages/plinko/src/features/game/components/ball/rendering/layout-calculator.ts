@@ -112,7 +112,9 @@ export function findSlotIndex(mouseX: number, lastRowStartX: number, pegGap: num
  * Pure function for hover area calculations
  */
 export function calculateSlotCalculationData(layoutData: LayoutData, multipliers: number[], probabilities: number[], betAmount: number) {
-    if (multipliers.length === 0) return null;
+    if (multipliers.length === 0) {
+        return null;
+    }
 
     const slotHeight = Math.max(15, Math.min(40, (layoutData.pegGap - 8 * layoutData.scaleFactor) * 1.5));
     // Use the same Y position as visual slots for hover detection

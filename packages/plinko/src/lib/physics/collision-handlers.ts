@@ -103,7 +103,9 @@ export function handleBallPayoutCollision(
         const startBounceAnimation = () => {
             const animateSlotVisualBounce = () => {
                 const animData = options.animationState?.get(slotId);
-                if (!animData || animData.type !== 'slotBounce') return;
+                if (!animData || animData.type !== 'slotBounce') {
+                    return;
+                }
 
                 const elapsed = Date.now() - animData.startTime;
                 const progress = Math.min(elapsed / animData.duration, 1);

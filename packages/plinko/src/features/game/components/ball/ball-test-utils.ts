@@ -115,11 +115,6 @@ export function performDirectSpawnTest(ballLayoutRef: any, config: TestSpawnConf
     if (refStatus.exists && refStatus.hasSpawnBallWithPath) {
         const success = executeTestBallSpawn(ballLayoutRef, config);
 
-        if (success) {
-            // Test completed successfully
-        } else {
-            // Test failed
-        }
 
         return success;
     } else {

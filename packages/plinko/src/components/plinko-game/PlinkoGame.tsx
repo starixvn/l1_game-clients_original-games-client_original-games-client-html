@@ -53,13 +53,6 @@ const PlinkoGame = () => {
 
         // Register handler for endBet message (contains the finish object with result path)
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
-            console.log("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
-            console.log("🎯 [PLINKO GAME] Ball layout ref status:", {
-                exists: !!ballLayoutRef.current,
-                isReady: ballLayoutRef.current?.isReady?.(),
-                type: typeof ballLayoutRef.current,
-                current: ballLayoutRef.current,
-            });
             logger.info("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
 
             if (action?.finish?.result) {

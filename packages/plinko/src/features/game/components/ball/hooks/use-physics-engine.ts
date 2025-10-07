@@ -83,11 +83,7 @@ export const usePhysicsEngine = ({
         // Only reinitialize if we don't have an engine or if essential parameters changed
         if (isInitialized && engineRef.current) {
             // Check if we need to reinitialize based on essential parameters only
-            const needsReinit = false; // We'll keep the engine stable once initialized
-            if (!needsReinit) {
-                logger.debug('🔧 [PHYSICS] Engine already initialized, skipping reinitialization');
-                return;
-            }
+            return;
         }
 
         if (isInitialized) {

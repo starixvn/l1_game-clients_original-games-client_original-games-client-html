@@ -60,7 +60,6 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
                 style.parentNode.removeChild(style);
             }
         }, 2000);
-    } else {
     }
 }
 
@@ -69,12 +68,6 @@ export function createWinTextParticle(winAmount: number, x: number, y: number): 
  * @param multiplier - The multiplier value to determine sound type
  */
 export function playCollisionSound(multiplier: number): void {
-    // Sound effect hooks - implement based on your audio system
-    const soundType = multiplier >= 10 ? 'jackpot' :
-        multiplier >= 5 ? 'big_win' :
-            multiplier >= 2 ? 'win' : 'small_win';
 
-    // Example: playSound(`${soundType}.mp3`);
-    // Example: AudioManager.play('bounce.mp3', { volume: 0.7 });
 }
 

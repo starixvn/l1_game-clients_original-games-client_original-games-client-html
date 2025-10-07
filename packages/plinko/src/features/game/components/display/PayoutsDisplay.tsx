@@ -10,9 +10,15 @@ interface PayoutsDisplayProps {
 }
 
 const getMultiplierClass = (multiplier: number): string => {
-    if (multiplier >= 10) return styles.high;
-    if (multiplier >= 5) return styles.medium;
-    if (multiplier >= 2) return styles.low;
+    if (multiplier >= 10) {
+        return styles.high;
+    }
+    if (multiplier >= 5) {
+        return styles.medium;
+    }
+    if (multiplier >= 2) {
+        return styles.low;
+    }
     return styles.none;
 };
 

@@ -48,7 +48,9 @@ export interface ServiceGuidedBallData {
  * Get current canvas dimensions and physics categories
  */
 export function getCanvasInfo(canvasRef: React.RefObject<HTMLDivElement>): CanvasInfo | null {
-    if (!canvasRef.current) return null;
+    if (!canvasRef.current) {
+        return null;
+    }
 
     const containerRect = canvasRef.current.getBoundingClientRect();
 
@@ -81,10 +83,18 @@ export function createPhysicsBodies(
      * Helper function to get multiplier color for physics bodies
      */
     function getMultiplierColor(multiplier: number): string {
-        if (multiplier >= 10) return physicsConfig.colors.multiplierHigh;
-        if (multiplier >= 5) return physicsConfig.colors.multiplierMedium;
-        if (multiplier >= 2) return physicsConfig.colors.multiplierLow;
-        if (multiplier >= 1) return physicsConfig.colors.multiplierLoss;
+        if (multiplier >= 10) {
+            return physicsConfig.colors.multiplierHigh;
+        }
+        if (multiplier >= 5) {
+            return physicsConfig.colors.multiplierMedium;
+        }
+        if (multiplier >= 2) {
+            return physicsConfig.colors.multiplierLow;
+        }
+        if (multiplier >= 1) {
+            return physicsConfig.colors.multiplierLoss;
+        }
         return '#333';
     }
 
@@ -319,7 +329,9 @@ export function spawnBall(
     // Update last spawn time
     lastSpawnTimeRef.current = now;
 
-    if (!engine.world || !canvasRef.current) return;
+    if (!engine.world || !canvasRef.current) {
+        return;
+    }
 
     // Get current canvas dimensions
     const containerRect = canvasRef.current.getBoundingClientRect();
@@ -362,7 +374,7 @@ export function spawnBall(
     });
 
     // Add creation timestamp and world reference for cleanup bookkeeping
-    const ballExtension = ball as Body & BallBodyExtension;
+    const ballExtension = ball;
     ballExtension.createdAt = Date.now();
     ballExtension.world = engine.world;
 
@@ -412,7 +424,7 @@ export function spawnBallWithPath(
         // Add ball to physics world
         if (engine.world) {
             Composite.add(engine.world, ball);
-            (ball as Body & BallBodyExtension).world = engine.world;
+            ball.world = engine.world;
         }
     } catch (error) {
         // Error handling (silenced)
@@ -428,15 +440,14 @@ export function createBallWithServicePath(
     canvasRef: React.RefObject<HTMLDivElement>,
     rows: number
 ): Body {
-    if (!canvasRef.current) throw new Error('Canvas not ready');
+    if (!canvasRef.current) {
+        throw new Error('Canvas not ready');
+    }
 
     // Calculate dynamic ball size based on rows and canvas scaling
     const containerRect = canvasRef.current.getBoundingClientRect();
     const canvasScaleFactor = Math.min(containerRect.width / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH_ALT, containerRect.height / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT_ALT);
     const ballRadius = calculateBallSize(rows, canvasScaleFactor);
-
-    // Get physics tweaks based on ball size
-    const physicsTweaks = getBallPhysicsTweaks(ballRadius);
 
     // Always spawn from the middle drop position (5th of 9 positions)
     const ballX = getMiddleDropPosition(containerRect.width);

@@ -73,14 +73,18 @@ export const useBallSpawner = ({
     }, [ballCreationParams, engine]);
 
     // Memoized spawn methods to prevent unnecessary re-renders
-    const spawnBall = useCallback((betValue: number = 1) => {
+    const spawnBall = useCallback((betValue = 1) => {
         const now = Date.now();
-        if (now - lastSpawnTimeRef.current < minSpawnInterval) return;
+        if (now - lastSpawnTimeRef.current < minSpawnInterval) {
+            return;
+        }
 
         lastSpawnTimeRef.current = now;
         removedBallsRef.current.clear();
 
-        if (!engine.current) return;
+        if (!engine.current) {
+            return;
+        }
 
         const { ball } = createBall(betValue);
         ball.position.x += (Math.random() - 0.5) * 4; // Add random offset

@@ -4,8 +4,8 @@
  * Follows Single Responsibility Principle - only handles canvas operations
  */
 
-import React, { useRef, useEffect } from 'react';
-import { logger } from '../../../../../services/logger';
+import React, { useRef, useEffect } from "react";
+import { logger } from "../../../../../services/logger";
 
 export interface CanvasContainerProps {
     canvasWidth: number;
@@ -39,7 +39,7 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({
     pins,
     numberOfRows,
     startRenderLoop,
-    engine
+    engine,
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -50,22 +50,24 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({
         }
 
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+            return;
+        }
 
         // Set canvas to fixed original dimensions
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
 
         // Start render loop with fixed canvas dimensions
-        if (process.env.NODE_ENV === 'development') {
-            logger.info('🎨 [CANVAS] Starting render loop:', {
+        if (process.env.NODE_ENV === "development") {
+            logger.info("🎨 [CANVAS] Starting render loop:", {
                 canvasWidth,
                 canvasHeight,
                 canvasScale,
                 pinsCount: pins.length,
                 multipliersCount: multipliers.length,
-                engineReady: !!engine.current
+                engineReady: !!engine.current,
             });
         }
         startRenderLoop(ctx, engine.current, { width: canvasWidth, height: canvasHeight }, multipliers, pins, numberOfRows);

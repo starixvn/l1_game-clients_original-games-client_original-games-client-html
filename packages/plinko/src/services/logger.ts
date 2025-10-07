@@ -1,4 +1,5 @@
 // Logger utility for downloading logs as text file
+type Level = 'info' | 'warn' | 'error' | 'debug';
 class Logger {
   private logs: string[] = [];
   private maxLogs: number = 10000; // Prevent memory issues
@@ -12,7 +13,7 @@ class Logger {
     }
   }
 
-  log(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
+  log(level: Level, message: string, data?: any) {
     // Always log errors regardless of state
     if (level === 'error') {
       this.doLog(level, message, data);
@@ -27,7 +28,7 @@ class Logger {
     this.doLog(level, message, data);
   }
 
-  private doLog(level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
+  private doLog(level: Level, message: string, data?: any) {
     const timestamp = new Date().toISOString();
     let logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
 

@@ -20,7 +20,9 @@ export const formatNumberWithCommas = (value: number): string => {
  * @returns Formatted string with commas
  */
 export const formatInputWithCommas = (value: string): string => {
-    if (value === '' || value === '.') return value;
+    if (value === '' || value === '.') {
+        return value;
+    }
 
     // Split by decimal point
     const parts = value.split('.');
@@ -45,7 +47,7 @@ export const validatePercentageInput = (
     input: string,
     currentValue: number,
     onChange: (value: number) => void,
-    maxValue: number = 10000
+    maxValue = 10000
 ): string => {
     // Allow empty input temporarily
     if (input === '') {
@@ -94,7 +96,7 @@ export const handlePercentageInputChange = (value: string): string => {
 
     // Prevent multiple decimal points
     const parts = filteredValue.split('.');
-    const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : filteredValue;
+    const cleanValue = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : filteredValue;
 
     // Apply comma formatting immediately
     return formatInputWithCommas(cleanValue);

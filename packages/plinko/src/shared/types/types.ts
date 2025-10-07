@@ -67,7 +67,7 @@ export type GameConfigs = {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GameBackgroundProps {
-    // No props needed for now - purely presentational
+    type: string;
 }
 
 export interface MultiplierDisplayProps {
@@ -93,9 +93,11 @@ export interface WinMessageProps {
     onAnimationEnd?: () => void; // Callback when animation completes
 }
 
+export type GameMode = "Lightning" | "Low" | "Medium" | "High";
+
 export interface BetControlsProps {
     betAmount: number;
-    gameMode: "Lightning" | "Low" | "Medium" | "High";
+    gameMode: GameMode;
     rows: number;
     numberOfBets: number;
     onWinAction: "Reset" | "Increase";

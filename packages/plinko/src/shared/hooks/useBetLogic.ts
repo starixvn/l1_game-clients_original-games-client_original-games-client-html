@@ -17,8 +17,10 @@ export interface UseBetLogicProps {
     onBalanceUpdate?: (newBalance: number) => void;
 }
 
+type BetStatus = 'idle' | 'placing' | 'accepted' | 'dropping' | 'settling';
+
 export interface UseBetLogicReturn {
-    betStatus: 'idle' | 'placing' | 'accepted' | 'dropping' | 'settling';
+    betStatus: BetStatus;
     isPanelDisabled: boolean;
     currentBetId: string | null;
     isBetButtonDisabled: boolean;
@@ -33,7 +35,7 @@ export const useBetLogic = ({
     onBetPlaced,
     onBalanceUpdate,
 }: UseBetLogicProps): UseBetLogicReturn => {
-    const [betStatus, setBetStatus] = useState<'idle' | 'placing' | 'accepted' | 'dropping' | 'settling'>('idle');
+    const [betStatus, setBetStatus] = useState<BetStatus>('idle');
     const [isPanelDisabled, setIsPanelDisabled] = useState(false);
     const [currentBetId, setCurrentBetId] = useState<string | null>(null);
 

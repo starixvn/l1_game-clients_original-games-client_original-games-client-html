@@ -46,7 +46,9 @@ export const EventHandler: React.FC<EventHandlerProps> = ({
 
     // Optimized hover state update with RAF throttling
     const updateHoverState = useCallback((slotIndex: number, event: MouseEvent) => {
-        if (mouseThrottleRef.current.lastHoveredIndex === slotIndex) return;
+        if (mouseThrottleRef.current.lastHoveredIndex === slotIndex) {
+            return;
+        }
 
         // Cancel previous RAF if exists
         if (mouseThrottleRef.current.rafId) {
@@ -62,13 +64,17 @@ export const EventHandler: React.FC<EventHandlerProps> = ({
 
     // Optimized mouse event handling with passive listeners and RAF throttling
     useEffect(() => {
-        if (!slotCalculationData) return;
+        if (!slotCalculationData) {
+            return;
+        }
 
         const { slotAreaTop, slotAreaBottom, lastRowStartX, pegGap, slotWidth, numberOfSlots } = slotCalculationData;
 
         const handleMouseMove = (event: MouseEvent) => {
             const rect = containerRef.current?.getBoundingClientRect();
-            if (!rect) return;
+            if (!rect) {
+                return;
+            }
 
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;

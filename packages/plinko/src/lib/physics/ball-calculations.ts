@@ -22,7 +22,7 @@ export interface BallPhysicsTweaks {
  * @param canvasScaleFactor - Canvas responsive scaling factor (width/480 or height/400)
  * @returns Calculated ball radius for Matter.js physics
  */
-export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): number {
+export function calculateBallSize(rows: number, canvasScaleFactor = 1): number {
     // Validate input
     if (!rows || rows < BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_ROWS) {
         rows = BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_ROWS;
@@ -48,9 +48,7 @@ export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): 
     const finalDiameter = clampedDiameter * canvasScaleFactor;
 
     // Convert diameter to radius for Matter.js (and ensure minimum size)
-    const radius = Math.max(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS, finalDiameter / 2);
-
-    return radius;
+    return Math.max(BALL_CONSTANTS.SIZE_CONSTRAINTS.MIN_RADIUS, finalDiameter / 2);
 }
 
 /**
@@ -61,11 +59,9 @@ export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): 
 export function getBallPhysicsTweaks(ballRadius: number): BallPhysicsTweaks {
     const sizeRatio = ballRadius / BALL_CONSTANTS.PHYSICS_TWEAKS.SIZE_RATIO_BASE_DIAMETER;
 
-    const physicsTweaks = {
+    return {
         restitution: PHYSICS_CONSTANTS.BALL.RESTITUTION_MIN + (sizeRatio * PHYSICS_CONSTANTS.BALL.RESTITUTION_RATIO_MULTIPLIER), // Larger balls bounce more (0.8-1.0)
         frictionAir: PHYSICS_CONSTANTS.BALL.FRICTION_AIR_MIN + (sizeRatio * PHYSICS_CONSTANTS.BALL.FRICTION_AIR_RATIO_MULTIPLIER), // Larger balls fall slower (0.02-0.05)
         density: PHYSICS_CONSTANTS.BALL.DENSITY_BASE * (PHYSICS_CONSTANTS.BALL.DENSITY_RATIO_MULTIPLIER - sizeRatio) // Larger balls have more mass relative to size
     };
-
-    return physicsTweaks;
 }
