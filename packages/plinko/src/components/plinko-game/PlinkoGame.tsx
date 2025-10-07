@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
-import { BallLayout, SimplifiedCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
+import { BallLayout, SimplifiedCanvasBallLayoutRef } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { logger } from "../../services/logger";
 import { useGameStore } from "@shared/stores";
@@ -11,13 +12,9 @@ import { GameEventActionType } from "@shared/react-contexts/game-state-context/g
 import { useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
 import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
 
+const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { ssr: false });
+
 const PlinkoGame = () => {
-    const [winMessage, setWinMessage] = useState<{
-        isVisible: boolean;
-        multiplier?: number;
-        betAmount?: number;
-        message?: string;
-    }>({ isVisible: false });
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
 
@@ -195,21 +192,7 @@ const PlinkoGame = () => {
 
     // Handle ball collision with multiplier slots
     const handleBallHit = (multiplier: number, betValue: number) => {
-        const payout = betValue * multiplier;
-        const message = `🎯 Ball ($${betValue}) hit ${multiplier}x slot! Payout: $${payout.toFixed(2)}`;
-
-        setWinMessage({
-            isVisible: true,
-            multiplier,
-            betAmount: betValue,
-            message,
-        });
-    };
-
-    // Handle win message animation end
-    const handleWinMessageEnd = () => {
-        setWinMessage((prev) => ({ ...prev, isVisible: false }));
-        clearBetResult(); // Clear the bet result after win message
+        //nothing
     };
 
     return (
@@ -268,13 +251,7 @@ const PlinkoGame = () => {
                             </div> */}
                         </div>
                     </div>
-                    <WinMessage
-                        isVisible={winMessage.isVisible}
-                        message={winMessage.message}
-                        multiplier={winMessage.multiplier}
-                        betAmount={winMessage.betAmount}
-                        onAnimationEnd={handleWinMessageEnd}
-                    />
+                    <WinningAmountEffect />
                 </div>
             </div>
         </div>
