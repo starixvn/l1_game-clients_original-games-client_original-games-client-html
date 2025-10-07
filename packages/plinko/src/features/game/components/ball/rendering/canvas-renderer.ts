@@ -241,7 +241,8 @@ export namespace CanvasRenderer {
         });
 
         // Log rendering occasionally
-        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.FRAME_LOG_PROBABILITY) {
+        
+        if (balls.length > 0 && Math.random() < RENDERING_CONSTANTS.LOGGING.FRAME_LOG_PROBABILITY) { // NOSONAR
             // Log ~0.5% of frames
             logger.debug(
                 "🎨 [RENDER] Rendering frame with balls:",

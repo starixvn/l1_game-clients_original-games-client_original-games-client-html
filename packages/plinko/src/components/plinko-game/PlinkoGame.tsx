@@ -177,11 +177,6 @@ const PlinkoGame = () => {
         }
     }, [endBet]);
 
-    const clearBetResult = () => {
-        // Plinko handles clearing results internally
-        useGameStore.getState().resetBettingInfo();
-    };
-
     // Socket connection is now handled by shared InitSocketIO in page.tsx
 
     // Handle bet results for auto bet - disabled since lastBetResult is not provided by shared system
