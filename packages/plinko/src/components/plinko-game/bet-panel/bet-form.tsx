@@ -2,7 +2,7 @@ import { useEffect, useMemo, useCallback, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
-import AutoBetGroup from "./auto-bet-group";
+import AutoBetGroup from "./auto-mode/auto-bet-group";
 import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
 
 const BetForm = ({
@@ -49,7 +49,7 @@ const BetForm = ({
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-3 p-4 md:p-0">
+        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-0 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled} />
             <RowsSelector isDisabled={isDisabled} />

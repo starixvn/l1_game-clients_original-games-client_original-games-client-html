@@ -1,9 +1,12 @@
 import { memo, useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
 import { ResourceTypes, useClientSeedPF, useGameStore } from "@shared";
 import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
-import { PercentageControl, StopOnControl, NumberOfBetsControl } from "./form-components";
+import { PercentageControl, StopOnControl, NumberOfBetsControl } from "../form-components";
 import { useTranslate } from "@tolgee/react";
+
+const AutoBetInstruction = dynamic(() => import("./auto-bet-instruction"), { ssr: false });
 
 const AutoBetGroup = ({
     isDisabled,
@@ -26,7 +29,8 @@ const AutoBetGroup = ({
     const [stopOnWin, setStopOnWin] = useState(0);
     const [stopOnLoss, setStopOnLoss] = useState(0);
     const [totalNetProfit, setTotalNetProfit] = useState(0);
-    const {t} = useTranslate(ResourceTypes.COMMON);
+    const [isShowAutoBetInstruction, setIsShowAutoBetInstruction] = useState(false);
+    const { t } = useTranslate(ResourceTypes.COMMON);
     const { socket, endBet } = useGameStore(
         useShallow((state) => ({
             socket: state.socket,
@@ -130,6 +134,13 @@ const AutoBetGroup = ({
             </div>
             <div>
                 <StopOnControl title={t("stop_on_loss")} value={stopOnLoss} setValue={setStopOnLoss} isDisabled={isDisabled} />
+            </div>
+            <div>
+                <div onClick={() => setIsShowAutoBetInstruction(true)} className="flex items-center gap-2 cursor-pointer">
+                    <span className="text-sm md:text-base font-semibold">{t("how_to_use_auto_mode")}</span>
+                    <i className="icon icon-back text-xl scale-x-[-1]" />
+                </div>
+                {isShowAutoBetInstruction && <AutoBetInstruction setIsShowAutoBetInstruction={setIsShowAutoBetInstruction} />}
             </div>
         </div>
     );

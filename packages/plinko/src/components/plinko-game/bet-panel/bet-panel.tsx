@@ -13,11 +13,12 @@ import { useTranslate } from "@tolgee/react";
 const BetControl = () => {
     const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
             numberOfRows: state.numberOfRows,
+            finish: state.finish,
         }))
     );
     const { gameMessageHandler } = useGameContext();
@@ -25,7 +26,7 @@ const BetControl = () => {
     const [isManualTab, setIsManualTab] = useState(true);
     const [isAutoBet, setIsAutoBet] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const {t} = useTranslate(ResourceTypes.COMMON);
+    const { t } = useTranslate(ResourceTypes.COMMON);
 
     const handleBetClick = useCallback(() => {
         if (socket?.connected) {
@@ -69,7 +70,7 @@ const BetControl = () => {
                     </button>
                 )}
             </div>
-            <div className="flex flex-col md:flex-col-reverse gap-3 rounded-t-xl bg-primary-bg">
+            <div className="flex flex-col md:flex-col-reverse rounded-t-xl bg-primary-bg md:gap-2">
                 <BetForm
                     isManualTab={isManualTab}
                     isDisabled={isProcessing || isAutoBet}
