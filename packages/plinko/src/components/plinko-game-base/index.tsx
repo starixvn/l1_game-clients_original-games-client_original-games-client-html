@@ -9,9 +9,15 @@ import {
 } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useTranslator } from "@shared/react-hooks";
 import GameBase from "@shared/components/game-base/";
-import { GameMessageHandler } from "@shared/components/game-base/handlers";
-import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
-import { PlinkoGameFinishHandler, PlinkoGameRoundDataHandler, PlinkoGameSoundHandler, PlinkoStateHandler } from "./handlers";
+import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
+import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "@shared/components/game-base/type";
+import {
+    PlinkoGameFinishHandler,
+    PlinkoGameRoundDataHandler,
+    PlinkoGameSoundHandler,
+    PlinkoInGameHandler,
+    PlinkoStateHandler,
+} from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
 import { logger } from "../../services/logger";
 import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
@@ -32,6 +38,7 @@ const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/
 const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
+    private readonly inGameHandler: PlinkoInGameHandler;
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
@@ -56,10 +63,19 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         };
         super(props, gameBaseHandlers);
 
+        this.inGameHandler = new PlinkoInGameHandler({
+            dispatch: props.dispatch,
+            gameMessageHandler: gameMessageHandler,
+        });
         logger.info("🏠 [PLINKO GAME BASE] PlinkoGameBase initialized", {
             gameId: props.id,
             timestamp: new Date().toISOString(),
         });
+    }
+
+    registerHandlers() {
+        super.registerHandlers();
+        this.inGameHandler.registerEvents();
     }
 
     componentDidMount() {

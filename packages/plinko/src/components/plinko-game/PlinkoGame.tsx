@@ -7,9 +7,6 @@ import { logger } from "../../services/logger";
 import { useGameStore } from "@shared/stores";
 import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
-import { RoundState } from "@shared/components/game-base/type";
-import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
-import { useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
 import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
 
 const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { ssr: false });
@@ -30,23 +27,11 @@ const PlinkoGame = () => {
 
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { gameMessageHandler } = useGameContext();
-    const dispatch = useGameStatesDispatch();
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
             return undefined;
         }
-
-        // Register handler for gameConfigs response to mark game as initialized
-        const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
-            console.log("🎯 [PLINKO GAME] GAME CONFIGS HANDLER CALLED", action);
-            dispatch({
-                type: GameEventActionType.UPDATE_ROUND_STATE,
-                payload: {
-                    roundState: RoundState.InRound,
-                },
-            });
-        });
 
         // Register handler for endBet message (contains the finish object with result path)
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
@@ -146,7 +131,6 @@ const PlinkoGame = () => {
         return () => {
             // Cleanup handlers when component unmounts
             if (gameMessageHandler.removeHandler) {
-                gameMessageHandler.removeHandler(gameConfigsHandlerId);
                 gameMessageHandler.removeHandler(endBetHandlerId);
             }
         };
