@@ -41,7 +41,9 @@
         "unique-names-generator": "^4.7.1",
         "use-sound": "^4.0.1",
         "ws": "^8.17.1",
-        "uuid": "^10.0.0"
+        "uuid": "^10.0.0",
+        "chart.js": "^4.4.0",
+        "react-chartjs-2": "^5.2.0"
     },
     "devDependencies": {
         "typescript": "^5.5.4",

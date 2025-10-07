@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { PayoutsRowProps } from '../../../../shared/types';
-import { getOddsForMode } from '../../../../game-odds-config';
 import { useGameStore } from '@shared/stores/game-store';
 
 // Map string game mode values to numeric values expected by getOddsForMode

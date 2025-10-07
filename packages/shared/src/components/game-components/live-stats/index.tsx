@@ -1,14 +1,16 @@
-import { useGameStore, usePopupStore } from "@shared/stores";
-import ModalContainer from "../modal-container";
-import { useAppTheme, useClickSound, useCommonTranslate } from "@shared/react-hooks";
+import { usePopupStore } from "@shared/stores";
+import {  useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import { memo, ReactElement, useEffect, useMemo, useRef, useState } from "react";
-import { FC } from "react";
-import { tolgee } from "@shared/tolgee";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources/type";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import { Line } from "react-chartjs-2";
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const LiveStatsModal = ({ winAmount, amount }): ReactElement<{ winAmount: number; amount: number }> => {
     const isShowLiveStats = usePopupStore((state) => state.isShowLiveStats);
@@ -16,14 +18,20 @@ const LiveStatsModal = ({ winAmount, amount }): ReactElement<{ winAmount: number
     const { t: translate } = useCommonTranslate();
     const clickSound = useClickSound();
     const [totalNetProfit, setTotalNetProfit] = useState(0);
+    const [netProfitHistory, setNetProfitHistory] = useState<{ time: string; value: number }[]>([]);
 
     const handleCloseModal = () => {
         toggleLiveStats(false);
     };
 
     useEffect(() => {
+        console.log(winAmount, amount);
         const newTotalNetProfit = Number((totalNetProfit + winAmount - amount).toFixed(2));
         setTotalNetProfit(newTotalNetProfit ?? 0);
+
+        // Add new data point to history
+        const currentTime = new Date().toLocaleTimeString();
+        setNetProfitHistory((prev) => [...prev, { time: currentTime, value: newTotalNetProfit }]);
     }, [winAmount, amount]);
 
     return (
@@ -60,24 +68,87 @@ const LiveStatsModal = ({ winAmount, amount }): ReactElement<{ winAmount: number
                     </div>
 
                     {/* Content - Flexible height */}
-                    <div className="flex-1 min-h-0 overflow-hidden p-3">{<WrapperLiveStats winAmount={winAmount} amount={amount} />}</div>
+                    <div className="flex-1 min-h-0 overflow-hidden px-3">
+                        {<WrapperLiveStats winAmount={winAmount} amount={amount} netProfitHistory={netProfitHistory} />}
+                    </div>
                 </div>
             </BaseDialog>
         )
     );
 };
 
-const LiveStats = ({ winAmount, amount }): ReactElement<{ winAmount: number; amount: number }> => {
+const LiveStats = ({
+    winAmount,
+    amount,
+    netProfitHistory,
+}): ReactElement<{ winAmount: number; amount: number; netProfitHistory: { time: string; value: number }[] }> => {
     const { t } = useTranslate(ResourceTypes.COMMON);
+
+    const chartData = useMemo(() => {
+        const labels = netProfitHistory.map((item) => item.time);
+        const data = netProfitHistory.map((item) => item.value);
+        
+        return {
+            labels: labels,
+            datasets: [
+                {
+                    label: "My Line",
+                    data: data,
+                    borderWidth: 2,
+                    fill: false,
+                    segment: {
+                        borderColor: (ctx) => {
+                            const idxNext = ctx.p1DataIndex;
+                            if (data[idxNext] >= 0) {
+                                return "gold";
+                            } else {
+                                return "red";
+                            }
+                        },
+                    },
+                },
+            ],
+        };
+    }, [netProfitHistory]);
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                enabled: false,
+            },
+        },
+        scales: {
+            x: {
+                display: false,
+            },
+            y: {
+                display: false,
+            },
+        },
+        elements: {
+            point: {
+                radius: 0,
+                hoverRadius: 0,
+            },
+        },
+        interaction: {
+            intersect: false,
+        },
+    };
 
     return useMemo(() => {
         return (
             <div className="h-full border-none flex flex-col justify-center items-center">
-                <div id="information" className="flex flex-col w-[228px] h-[102px]">
+                <div id="information" className="flex gap-2 flex-col w-[228px] h-[102px] bg-[#00000080] rounded-[12px] p-3">
                     <div className="flex justify-between px-5">
                         <div className="flex flex-col">
                             {t("profit")}
-                            <div>{winAmount - amount}</div>
+                            <div>{netProfitHistory[netProfitHistory.length - 1].value}</div>
                         </div>
                         <div>
                             {t("win")}
@@ -86,8 +157,8 @@ const LiveStats = ({ winAmount, amount }): ReactElement<{ winAmount: number; amo
                     </div>
                     <div className="flex justify-between px-5">
                         <div className="flex flex-col">
-                            {t("profit")}
-                            <div>{winAmount - amount}</div>
+                            {t("bet_amount")}
+                            <div>{amount}</div>
                         </div>
                         <div className="flex flex-col">
                             {t("loss")}
@@ -95,10 +166,16 @@ const LiveStats = ({ winAmount, amount }): ReactElement<{ winAmount: number; amo
                         </div>
                     </div>
                 </div>
-                <div id="my-chart" className="w-full h-full"></div>
+                <div id="my-chart" className="w-full h-[150px]">
+                    {netProfitHistory.length > 0 ? (
+                        <Line data={chartData} options={chartOptions} />
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-gray-500">No data available</div>
+                    )}
+                </div>
             </div>
         );
-    }, [winAmount, amount]);
+    }, [winAmount, amount, netProfitHistory, chartData, chartOptions, t]);
 };
 
 const WrapperLiveStats = memo(LiveStats);
