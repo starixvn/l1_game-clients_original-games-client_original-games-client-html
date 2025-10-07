@@ -18,7 +18,7 @@ const NumberOfBetsControl = ({
     setNumberOfBets: (numberOfBets: number) => void;
     isDisabled: boolean;
 }) => {
-    const {t} = useTranslate(ResourceTypes.COMMON);
+    const { t } = useTranslate(ResourceTypes.COMMON);
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.abs(parseInt(e.target.value));
         const maxValue = 99999999;
@@ -38,7 +38,7 @@ const NumberOfBetsControl = ({
                     onFocus={() => (numberOfBets === Infinity ? setNumberOfBets(0) : setNumberOfBets(numberOfBets))}
                     onBlur={() => setNumberOfBets(!numberOfBets ? Infinity : numberOfBets)}
                     inputMode="numeric"
-                    className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
+                    className="input text-white text-sm rounded-lg pl-3 pr-[10.25rem] input-focus w-full h-11 disabled:opacity-50"
                     disabled={isDisabled}
                 />
                 {numberOfBets === Infinity && (

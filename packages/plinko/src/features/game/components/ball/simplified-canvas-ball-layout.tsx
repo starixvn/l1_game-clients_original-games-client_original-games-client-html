@@ -130,7 +130,6 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                                     minHeight: "550px",
                                     position: "relative",
                                     overflow: "hidden",
-                                    background: CANVAS_CONSTANTS.BACKGROUNDS.MAIN_GRADIENT,
                                     borderRadius: "8px",
                                     boxSizing: "border-box",
                                     transition: "all 0.5s ease",

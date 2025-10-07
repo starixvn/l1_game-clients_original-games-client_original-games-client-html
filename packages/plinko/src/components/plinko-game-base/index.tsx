@@ -78,7 +78,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         logger.debug("🎮 [PLINKO GAME BASE] Rendering game frame");
 
         return (
-            <div>
+            <div className="relative h-full">
                 <Background gameId={this.props.id} />
                 <PlinkoGame />
                 {this.renderNotice()}

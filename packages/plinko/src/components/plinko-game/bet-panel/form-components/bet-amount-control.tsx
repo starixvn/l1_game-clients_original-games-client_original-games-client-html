@@ -59,7 +59,7 @@ const BetAmountControl = ({
                         setAmount(betAmount);
                     }}
                     inputMode="numeric"
-                    className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
+                    className="input text-white text-sm rounded-lg pl-3 pr-[10.5rem] input-focus w-full h-11 disabled:opacity-50"
                     disabled={isDisabled}
                 />
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
