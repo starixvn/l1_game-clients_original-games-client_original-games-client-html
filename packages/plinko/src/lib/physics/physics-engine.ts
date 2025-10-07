@@ -472,7 +472,7 @@ export function createBallWithServicePath(
     });
 
     // Store service path information on the ball
-    const ballExtension = ball as Body & BallBodyExtension;
+    const ballExtension = ball;
     ballExtension.servicePath = serviceData.path;
     ballExtension.currentPathIndex = 0;
     ballExtension.expectedFinalSlot = serviceData.finalSlot;

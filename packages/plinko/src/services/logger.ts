@@ -2,9 +2,9 @@
 type Level = 'info' | 'warn' | 'error' | 'debug';
 class Logger {
   private logs: string[] = [];
-  private maxLogs: number = 10000; // Prevent memory issues
-  private isEnabled: boolean = false; // Logging starts disabled by default
-  private isCollapsed: boolean = true; // Logger starts collapsed by default
+  private readonly maxLogs = 10000; // Prevent memory issues
+  private isEnabled = false; // Logging starts disabled by default
+  private isCollapsed = true; // Logger starts collapsed by default
 
   constructor() {
     // Initialize quietly when collapsed

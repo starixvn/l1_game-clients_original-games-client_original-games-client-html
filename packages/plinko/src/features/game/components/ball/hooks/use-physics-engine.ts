@@ -83,7 +83,9 @@ export const usePhysicsEngine = ({
         // Only reinitialize if we don't have an engine or if essential parameters changed
         if (isInitialized && engineRef.current) {
             // Check if we need to reinitialize based on essential parameters only
-            return;
+            return () => {
+                // No cleanup needed when slotCalculationData is not available
+            };
         }
 
         if (isInitialized) {

@@ -224,22 +224,9 @@ export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: B
         return; // Skip guidance for lower rows, let physics take over
     }
 
-    // console.log('🎯 [DEBUG] Service-guided pin collision - ENTRY:', {
-    //     ballId: ballBody.id,
-    //     currentPathIndex: ballExtension.currentPathIndex,
-    //     pathLength: ballExtension.servicePath?.length || 0,
-    //     pegLabel,
-    //     pegRow,
-    //     ballY: ballBody.position.y.toFixed(2)
-    // });
 
     // Only apply guidance if we haven't exceeded the path length
     if (!ballExtension.servicePath || ballExtension.currentPathIndex >= ballExtension.servicePath.length) {
-        // console.log('🎯 [DEBUG] Service-guided pin collision - SKIPPED (path completed):', {
-        //     ballId: ballBody.id,
-        //     currentPathIndex: ballExtension.currentPathIndex,
-        //     pathLength: ballExtension.servicePath?.length || 0
-        // });
         return;
     }
 
@@ -251,11 +238,6 @@ export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: B
 
     const pathStepKey = `step-${ballExtension.currentPathIndex}`;
     if (ballExtension.appliedGuidanceSteps?.includes(pathStepKey)) {
-        // console.log('🎯 [DEBUG] Service-guided pin collision - SKIPPED (guidance already applied for this step):', {
-        //     ballId: ballBody.id,
-        //     pathStepKey,
-        //     currentPathIndex: ballExtension.currentPathIndex
-        // });
         return;
     }
 
@@ -289,22 +271,6 @@ export function handleServiceGuidedPinCollision(ballBody: Body, ballExtension: B
         pathIndex: ballExtension.currentPathIndex,
         direction
     });
-
-    // console.log('🎯 [COLLISION] Service-guided peg collision - VELOCITY NUDGE:', {
-    //     pegLabel,
-    //     pegRow,
-    //     pegCol,
-    //     ballPosition: { x: ballBody.position.x.toFixed(2), y: ballBody.position.y.toFixed(2) },
-    //     pathIndex: ballExtension.currentPathIndex,
-    //     directionFromPath: direction,
-    //     directionText: direction === 0 ? 'LEFT' : 'RIGHT',
-    //     nudgeApplied: nudgeX.toFixed(3),
-    //     velocityChange: `x: ${currentVelocity.x.toFixed(3)} → ${(currentVelocity.x + nudgeX).toFixed(3)}`,
-    //     expectedFinalSlot: ballExtension.expectedFinalSlot,
-    //     pathProgress: `${ballExtension.currentPathIndex + 1}/${ballExtension.servicePath.length} steps applied`,
-    //     guidanceRows: `${pegRow}/${guidanceRows}`,
-    //     cumulativeEffect: `After ${ballExtension.currentPathIndex + 1} nudges, ball should be ${direction === 0 ? 'moving left' : 'moving right'}`
-    // });
 
     // Record that we've applied guidance for this path step
     ballExtension.appliedGuidanceSteps.push(pathStepKey);

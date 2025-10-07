@@ -65,7 +65,9 @@ export const EventHandler: React.FC<EventHandlerProps> = ({
     // Optimized mouse event handling with passive listeners and RAF throttling
     useEffect(() => {
         if (!slotCalculationData) {
-            return;
+            return () => {
+                // No cleanup needed when slotCalculationData is not available
+            };
         }
 
         const { slotAreaTop, slotAreaBottom, lastRowStartX, pegGap, slotWidth, numberOfSlots } = slotCalculationData;

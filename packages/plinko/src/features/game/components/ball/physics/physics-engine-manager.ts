@@ -191,7 +191,9 @@ function isBallStuck(ball: any, canvasHeight: number): boolean {
 }
 
 function handleStuckBall(ball: any): void {
-    if (ball.isRemoved) return;
+    if (ball.isRemoved) {
+        return;
+    }
 
     if (!ball.stuckTime) {
         ball.stuckTime = Date.now();
@@ -219,7 +221,9 @@ function resetStuckTimer(ball: any): void {
 }
 
 function removeBallFromWorld(ball: any, reason: string): void {
-    if (ball.isRemoved) return;
+    if (ball.isRemoved) {
+        return;
+    }
 
     logger.warn(`🚨 [PHYSICS] Ball ${reason} - removing:`, {
         id: ball.id,
