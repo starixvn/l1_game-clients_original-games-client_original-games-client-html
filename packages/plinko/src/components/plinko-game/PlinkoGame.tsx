@@ -49,6 +49,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     }>({ isVisible: false });
     const [isAutoBetRunning, setIsAutoBetRunning] = useState(false);
     const [localGameInitialized, setLocalGameInitialized] = useState(isGameInitialized);
+    const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
     const autoBetHandlerRef = useRef(null);
 
@@ -62,7 +63,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
     const dispatch = useGameStatesDispatch();
-
+    const gameConfigs = useGameStore((state) => state.gameConfigs); 
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
@@ -72,6 +73,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         // Register handler for gameConfigs response to mark game as initialized
         const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
             setLocalGameInitialized(true);
+            console.log("🎯 [PLINKO GAME] GAME CONFIGS HANDLER CALLED", action);
             dispatch({
                 type: GameEventActionType.UPDATE_ROUND_STATE,
                 payload: {
@@ -199,20 +201,20 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
     // Get multipliers from odds config based on current game mode and rows
     const payoutMultipliers = useMemo(() => {
         try {
-            return getOddsForMode(gameMode, numberOfRows);
+            return gameConfigs?.odds?.[gameMode][numberOfRows] as unknown as number[];
         } catch (error) {
             console.warn("Failed to get odds for mode, using fallback multipliers", { gameMode, numberOfRows, error });
             // Fallback multipliers if config is invalid
-            return [0.5, 0.2, 1.4, 190, 1.6, 1.8, 190, 1.5, 1.6];
+            return [];
         }
-    }, [gameMode, numberOfRows]);
-
-    const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
+    }, [gameMode, numberOfRows, gameConfigs]);
 
     // Update probabilities based on multipliers
     useEffect(() => {
-        const defaultProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length);
-        setPayoutProbabilities(defaultProbabilities);
+        if(payoutMultipliers && payoutMultipliers.length > 0) {
+            const defaultProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length);
+            setPayoutProbabilities(defaultProbabilities);
+        }
     }, [payoutMultipliers]);
 
     // Connection status from socket (reactive to socket changes)

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { PayoutsRowProps } from '../../../../shared/types';
 import { getOddsForMode } from '../../../../game-odds-config';
+import { useGameStore } from '@shared/stores/game-store';
 
 // Map string game mode values to numeric values expected by getOddsForMode
 const mapGameModeToNumber = (gameMode: PayoutsRowProps['gameMode']): number => {
@@ -100,12 +101,12 @@ const Tooltip = styled.div<{ $visible: boolean }>`
 // Section 3: PayoutsRow Component - Displays bottom row slots with multipliers and hover tooltips
 const PayoutsRow: React.FC<PayoutsRowProps> = ({ gameMode, rows, betAmount }) => {
     const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
-
+    const config = useGameStore((state) => state.gameConfigs);
     // Get payout data from odds config
     const payoutData = useMemo(() => {
         try {
             const numericGameMode = mapGameModeToNumber(gameMode);
-            const multipliers = getOddsForMode(numericGameMode, rows);
+            const multipliers = config?.odds?.[numericGameMode][rows] as unknown as number[];
             // Generate equal probabilities for all multipliers (this could be improved with actual probability calculations)
             const probabilities = multipliers.map(() => 1 / multipliers.length);
             return {
