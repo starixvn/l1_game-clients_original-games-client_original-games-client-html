@@ -570,6 +570,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return createPortal(<GameGuideModal />, document.getElementById("dashboard"));
     }
 
+    renderLiveStatsModal() {
+        return <></>;
+    }
+
     renderBettingBlock() {
         return <></>;
     }
@@ -684,6 +688,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     {this.renderPFSettingModal()}
                     {this.renderBetDetailModal()}
                     {this.renderGameGuideModal()}
+                    {this.renderLiveStatsModal()}
                 </div>
             </>
         );
