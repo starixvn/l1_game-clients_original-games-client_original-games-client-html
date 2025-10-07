@@ -52,8 +52,8 @@ COPY packages/shared packages/shared
 WORKDIR /app/packages/plinko
 
 # Set Next.js basePath and game ID for production deployment
-ENV NEXT_PUBLIC_BASE_PATH=/game-150
-ENV NEXT_PUBLIC_DEFAULT_GAME_ID=150
+ENV NEXT_PUBLIC_BASE_PATH=/game-145
+ENV NEXT_PUBLIC_DEFAULT_GAME_ID=145
 ENV NEXT_PUBLIC_GAME_PACKAGE=plinko
 
 # Obfuscate deployment configs and build
