@@ -66,7 +66,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Ensure base path is set for runtime
-ENV NEXT_PUBLIC_BASE_PATH=/game-150
+ENV NEXT_PUBLIC_BASE_PATH=/game-145
 
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs \
