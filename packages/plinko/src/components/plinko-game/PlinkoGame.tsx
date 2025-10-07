@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 import { BallLayout, SimplifiedCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { logger } from "../../services/logger";
@@ -21,14 +22,18 @@ const PlinkoGame = () => {
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
 
     // Shared game context and betting store
-    const endBet = useGameStore((state) => state.endBet);
-    const { socket } = useGameStore();
+    const { endBet, socket, gameConfigs } = useGameStore(
+        useShallow((state) => ({
+            endBet: state.endBet,
+            socket: state.socket,
+            gameConfigs: state.gameConfigs,
+        }))
+    );
     const { gameMode, numberOfRows } = usePlinkoGameStore();
 
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { gameMessageHandler } = useGameContext();
     const dispatch = useGameStatesDispatch();
-    const gameConfigs = useGameStore((state) => state.gameConfigs);
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
