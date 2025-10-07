@@ -4,15 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "@shared/react-hooks";
 import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from "@shared/components/game-components/provably-fair";
 import { Section } from "@shared/components/game-components/provably-fair/pf-form-components";
-import { Markup } from "interweave";
 import PfRoundBaseHelper from "@shared/helpers/pf/pf-round-base-helper";
 import { ResourceTypes } from "@shared/resources";
 import { useGameContext } from "@shared/react-contexts";
 import { useShallow } from "zustand/react/shallow";
 import { useBetDetailStore } from "@shared/stores/bet-detail-store/bet-detail-store";
 import { gameModeMap } from "@shared/helpers/plinko";
-
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
@@ -85,7 +82,8 @@ const PFVerification: FC = () => {
                     <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {translateInGame(`mode`).capitalizeFirstLetter()}: {translateInGame(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
+                    {translateInGame(`mode`).capitalizeFirstLetter()}:{" "}
+                    {translateInGame(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
                     <div className="flex gap-2 items-center">
                         {translateInGame(`row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
                     </div>
@@ -105,7 +103,6 @@ const PFVerification: FC = () => {
                             );
                         })}
                     </p>
-                    
                 </Section>
             </div>
         </div>

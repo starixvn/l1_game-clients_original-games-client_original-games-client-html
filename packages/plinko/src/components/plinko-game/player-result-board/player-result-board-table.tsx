@@ -1,20 +1,11 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate, usePlayerResultBoardPlinko } from "@shared/react-hooks";
-import { useStatisticStore } from "@shared/stores";
-import { useShallow } from "zustand/shallow";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
-
 
 export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, ref) => {
     const { t: translateCommon } = useCommonTranslate();
     const { tableData } = usePlayerResultBoardPlinko();
-    const { isShowStatistic } = useStatisticStore(
-        useShallow((state) => ({
-            isShowStatistic: state.isShowStatistic,
-        }))
-    );
-
 
     const renderTableHeader = () => {
         return (
@@ -92,4 +83,3 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
         </div>
     );
 });
-

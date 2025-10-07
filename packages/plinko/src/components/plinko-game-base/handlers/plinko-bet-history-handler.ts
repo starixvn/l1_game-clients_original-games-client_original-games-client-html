@@ -1,11 +1,18 @@
-import { BetHistoryHandler, BetHistoryHandlerProps } from '@shared/components/game-base/handlers/bet-history-handler';
+import { BetHistoryHandler, BetHistoryHandlerProps } from "@shared/components/game-base/handlers/bet-history-handler";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
-import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-store';
-import usePFStore from '@shared/stores/pf-store/pf-store';
+import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
+import usePFStore from "@shared/stores/pf-store/pf-store";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     // Override to include winAmount and reachMaxWin support
-    protected latestFinish: { roundId: number; result?: any; settlementResult?: any; winAmount: number; amount: number; reachMaxWin?: boolean } | null = null;
+    protected latestFinish: {
+        roundId: number;
+        result?: any;
+        settlementResult?: any;
+        winAmount: number;
+        amount: number;
+        reachMaxWin?: boolean;
+    } | null = null;
 
     constructor(props: BetHistoryHandlerProps) {
         super(props);
@@ -33,7 +40,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             settlementResult,
             winAmount: Number(winAmount) || 0,
             amount: Number(amount) || 0,
-            reachMaxWin: Boolean(reachMaxWin)
+            reachMaxWin: Boolean(reachMaxWin),
         };
     }
 
@@ -54,8 +61,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const betHistoryStore = useBetHistoryStore.getState();
         const pfStore = usePFStore.getState();
 
-        if (this.shouldUpdateRoundId(this.latestFinish!.roundId, betHistoryStore.pendingBetRoundId)) {
-            betHistoryStore.setPendingBetRoundId(this.latestFinish!.roundId);
+        if (this.shouldUpdateRoundId(this.latestFinish.roundId, betHistoryStore.pendingBetRoundId)) {
+            betHistoryStore.setPendingBetRoundId(this.latestFinish.roundId);
         }
 
         // Set first bet time if not set - use time from socket message
@@ -63,7 +70,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             betHistoryStore.setPendingFirstBetTime(action.finish.time);
         }
 
-        const betAmount = this.latestFinish!.amount;
+        const betAmount = this.latestFinish.amount;
 
         if (betAmount > 0) {
             const clientSeed = pfStore.pfClientSeedSetting?.useManualClientSeed
@@ -91,13 +98,12 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const pendingDetails = betHistoryStore.pendingBetDetails;
         const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
 
-        const betwin = this.latestFinish!.winAmount;
-        const actualBettingRoundId = this.latestFinish!.roundId;
+        const { winAmount: betwin, roundId: actualBettingRoundId } = this.latestFinish;
 
         const resultData = {
             result: this.latestFinish.result,
             settlementResult: this.latestFinish.settlementResult,
-            odds: {} // Plinko doesn't use odds-based calculations
+            odds: {}, // Plinko doesn't use odds-based calculations
         };
 
         const betLog = this.createPlinkoBetLog(
@@ -114,7 +120,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         if (!exists) {
             betHistoryStore.appendBetLogs([betLog], {
                 updatePagination: true,
-                source: "pending_bet_flush"
+                source: "pending_bet_flush",
             });
         }
 
@@ -136,7 +142,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         // Add reachMaxWin flag to the bet log
         return {
             ...baseBetLog,
-            reachMaxWin: this.latestFinish?.reachMaxWin || false
+            reachMaxWin: this.latestFinish?.reachMaxWin || false,
         };
     }
 }

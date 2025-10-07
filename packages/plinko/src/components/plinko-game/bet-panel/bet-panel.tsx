@@ -13,12 +13,11 @@ import { useTranslate } from "@tolgee/react";
 const BetControl = () => {
     const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
             numberOfRows: state.numberOfRows,
-            finish: state.finish,
         }))
     );
     const { gameMessageHandler } = useGameContext();
@@ -47,7 +46,6 @@ const BetControl = () => {
     const handleAutoBetClick = useCallback(() => {
         if (isAutoBet) {
             setIsAutoBet(false);
-            return;
         } else {
             setIsAutoBet(true);
             handleBetClick();

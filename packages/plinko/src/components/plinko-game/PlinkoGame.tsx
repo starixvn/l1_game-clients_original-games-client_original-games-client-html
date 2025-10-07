@@ -1,78 +1,42 @@
-import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { BallLayout, SimplifiedCanvasBallLayoutRef, WinMessage } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
-import { GameState, BetRecord } from "../../shared/types/index";
 import { logger } from "../../services/logger";
-import { useBettingStore, useGameStore } from "@shared/stores";
-import { useClientSeedPF } from "@shared/react-hooks";
+import { useGameStore } from "@shared/stores";
 import { useGameContext } from "@shared/react-contexts";
-import { messageEventType } from "@shared/components/game-base/handlers";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
-import { getOddsForMode } from "../../game-odds-config";
-import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { RoundState } from "@shared/components/game-base/type";
 import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
 import { useGameStatesDispatch } from "@shared/react-contexts/game-state-context/game-state-context";
 import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
 
-const defaultGameState: GameState = {
-    currentWin: 106,
-    soundEnabled: true,
-    balance: 10000, // Default balance for demo
-    bets: [
-        { player: "A***nnie", betAmount: 100, payout: 100 },
-        { player: "A***nnie", betAmount: 100, payout: 4444.3 },
-        { player: "john_smith92", betAmount: 100, payout: 100 },
-        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
-        { player: "john_smith92", betAmount: 100, payout: 100 },
-        { player: "john_smith92", betAmount: 100, payout: 4444.99 },
-        { player: "john_smith92", betAmount: 100, payout: 100 },
-        { player: "john_smith92", betAmount: 100, payout: 4444.3 },
-        { player: "john_smith92", betAmount: 100, payout: 100 },
-        { player: "john_smith92", betAmount: 100, payout: 100 },
-    ],
-    betsTab: "All",
-};
-
-interface PlinkoGameProps {
-    isGameInitialized?: boolean;
-}
-
-const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) => {
-    const [gameState, setGameState] = useState<GameState>(defaultGameState);
+const PlinkoGame = () => {
     const [winMessage, setWinMessage] = useState<{
         isVisible: boolean;
         multiplier?: number;
         betAmount?: number;
         message?: string;
     }>({ isVisible: false });
-    const [isAutoBetRunning, setIsAutoBetRunning] = useState(false);
-    const [localGameInitialized, setLocalGameInitialized] = useState(isGameInitialized);
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
-    const autoBetHandlerRef = useRef(null);
 
     // Shared game context and betting store
-    const ownBets = useGameStore((state) => state.ownBets);
     const endBet = useGameStore((state) => state.endBet);
     const { socket } = useGameStore();
     const { gameMode, numberOfRows } = usePlinkoGameStore();
 
     // Use shared PF system for clientSeed (like sedie-multiplayer)
-    const { clientSeed } = useClientSeedPF();
     const { gameMessageHandler } = useGameContext();
     const dispatch = useGameStatesDispatch();
-    const gameConfigs = useGameStore((state) => state.gameConfigs); 
+    const gameConfigs = useGameStore((state) => state.gameConfigs);
     // Register Plinko-specific handlers when component mounts
     useEffect(() => {
         if (!gameMessageHandler) {
-            return;
+            return undefined;
         }
 
         // Register handler for gameConfigs response to mark game as initialized
         const gameConfigsHandlerId = gameMessageHandler.register("gameConfigs", (action) => {
-            setLocalGameInitialized(true);
             console.log("🎯 [PLINKO GAME] GAME CONFIGS HANDLER CALLED", action);
             dispatch({
                 type: GameEventActionType.UPDATE_ROUND_STATE,
@@ -112,7 +76,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                     multiplier,
                     betAmount,
                     winAmount,
-                    fullAction: action
+                    fullAction: action,
                 });
 
                 logger.info("🎯 [PLINKO GAME] Spawning ball with server result path - SERVICE TO COMPONENT", {
@@ -127,8 +91,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                         pathLengthMatchesRows: resultPath.length === 9, // Assuming 9 rows
                         slotIndexMatchesCount: countOfOnes === slotIndex,
                         multiplierValid: multiplier > 0,
-                        betAmountValid: betAmount > 0
-                    }
+                        betAmountValid: betAmount > 0,
+                    },
                 });
 
                 // Function to attempt spawning with retry logic
@@ -143,7 +107,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 slotIndex,
                                 multiplier,
                                 countOfOnes,
-                                ballLayoutReady: ballLayoutRef.current?.isReady?.()
+                                ballLayoutReady: ballLayoutRef.current?.isReady?.(),
                             });
 
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
@@ -153,7 +117,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 pathLength: resultPath.length,
                                 slotIndex,
                                 multiplier,
-                                countOfOnes
+                                countOfOnes,
                             });
                             return true; // Success
                         } catch (error) {
@@ -162,7 +126,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
                                 betAmount,
                                 resultPath,
                                 slotIndex,
-                                multiplier
+                                multiplier,
                             });
                             return false; // Failed
                         }
@@ -193,11 +157,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         };
     }, [gameMessageHandler, socket]);
 
-    // Update local state when prop changes
-    useEffect(() => {
-        setLocalGameInitialized(isGameInitialized);
-    }, [isGameInitialized]);
-
     // Get multipliers from odds config based on current game mode and rows
     const payoutMultipliers = useMemo(() => {
         try {
@@ -211,47 +170,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
 
     // Update probabilities based on multipliers
     useEffect(() => {
-        if(payoutMultipliers && payoutMultipliers.length > 0) {
+        if (payoutMultipliers && payoutMultipliers.length > 0) {
             const defaultProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length);
             setPayoutProbabilities(defaultProbabilities);
         }
     }, [payoutMultipliers]);
 
-    // Connection status from socket (reactive to socket changes)
-    const isConnected = useMemo(() => socket?.connected ?? false, [socket?.connected]);
-    const isAuthenticated = true; // Assume authenticated since we're in the game
-    const isBetting = false; // Plinko manages its own betting state
-
-    // Send bets directly with clientSeed (compatible with PF system)
-    const placeBet = (amount: number, gameMode: number, rows: number) => {
-        // Immediately spawn ball for visual feedback
-        if (ballLayoutRef.current?.isReady?.()) {
-            console.log("🎯 [PLINKO GAME] Placing bet and spawning ball immediately", { amount, gameMode, rows });
-            ballLayoutRef.current.spawnBall(amount);
-        } else {
-            console.warn("🎯 [PLINKO GAME] Ball layout not ready for immediate spawn", {
-                hasRef: !!ballLayoutRef.current,
-                isReady: ballLayoutRef.current?.isReady?.(),
-            });
-        }
-
-        // Send bet to server for validation and potential server-guided path
-        if (socket?.connected) {
-            const betData = {
-                amount,
-                gameMode,
-                numberOfRows: rows,
-                clientSeed,
-            };
-            socket.emit("bet", betData);
-        }
-    };
-
     useEffect(() => {
-        if (endBet != -1) {
+        if (endBet !== -1) {
             useGameStore.getState().resetBettingInfo();
         }
-    }, [endBet])
+    }, [endBet]);
 
     const clearBetResult = () => {
         // Plinko handles clearing results internally
@@ -277,12 +206,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
             betAmount: betValue,
             message,
         });
-
-        // Update game state with win amount
-        setGameState((prev) => ({
-            ...prev,
-            currentWin: payout,
-        }));
     };
 
     // Handle win message animation end
@@ -290,40 +213,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ isGameInitialized = false }) =>
         setWinMessage((prev) => ({ ...prev, isVisible: false }));
         clearBetResult(); // Clear the bet result after win message
     };
-
-    // Handle service bet results - disabled since lastBetResult is not provided by shared system
-    // Plinko handles bet results through its own internal logic
-
-    // Convert service player bets to UI format
-    const convertedBets: BetRecord[] = useMemo(
-        () =>
-            Object.entries(ownBets).map(([choice, amount]) => ({
-                player: "You", // Since ownBets is for the current player
-                betAmount: amount,
-                payout: 0, // Shared system doesn't provide payout info
-            })),
-        [ownBets]
-    );
-
-    const updateGameState = (updates: Partial<GameState>) => {
-        setGameState((prev) => ({ ...prev, ...updates }));
-    };
-
-    const handleStopAutoBet = useCallback(() => {
-        // Stop the AutoBetHandler
-        autoBetHandlerRef.current?.stop();
-        setIsAutoBetRunning(false);
-    }, []);
-
-    // Determine disabled state and message
-    const isBetDisabled = !localGameInitialized || !isConnected || !isAuthenticated;
-    const disabledMessage = !isConnected
-        ? "(Connecting...)"
-        : !isAuthenticated
-            ? "(Authenticating...)"
-            : !localGameInitialized
-                ? "(Initializing...)"
-                : "";
 
     return (
         <div className="">
