@@ -253,3 +253,5 @@ function renderToggleButton(
         </div>
     );
 }
+
+export default BetHistoryTable;

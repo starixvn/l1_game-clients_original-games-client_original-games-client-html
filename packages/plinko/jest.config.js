@@ -2,6 +2,7 @@
 
 module.exports = {
     testEnvironment: "jsdom",
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
     testMatch: ["**/__tests__/**/*.test.{js,jsx,ts,tsx}"],
     collectCoverageFrom: [
         "src/**/*.{js,jsx,ts,tsx}",
@@ -36,6 +37,9 @@ module.exports = {
         "\\.(css|scss|sass)$": "identity-obj-proxy",
         "^(\\.{1,2}/.*)\\.js$": "$1",
         "^@/(.*)$": "<rootDir>/src/$1",
+        "^@shared$": "<rootDir>/../shared/src/index",
+        "^@shared/(.*)$": "<rootDir>/../shared/src/$1",
+        "^@plinko/(.*)$": "<rootDir>/src/$1",
     },
     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
     transformIgnorePatterns: ["node_modules/(?!(matter-js|@testing-library)/)"],

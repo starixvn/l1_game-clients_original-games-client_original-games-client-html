@@ -19,6 +19,7 @@ const config = {
         "swiper/css/pagination": "identity-obj-proxy",
         "swiper/react": "<rootDir>/node_modules/swiper/swiper.js",
         "^@/(.*)$": "<rootDir>/packages/plinko/src/$1",
+        "^@shared$": "<rootDir>/packages/shared/src/index",
         "^@shared/(.*)$": "<rootDir>/packages/shared/src/$1",
         "^@sedie-multiplayer/(.*)$": "<rootDir>/packages/sedie-multiplayer/src/$1",
         "^@baccarat-multiplayer/(.*)$": "<rootDir>/packages/baccarat-multiplayer/src/$1",

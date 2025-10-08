@@ -83,3 +83,5 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
         </div>
     );
 });
+
+export default PlayerResultBoardTable;

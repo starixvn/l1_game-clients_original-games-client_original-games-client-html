@@ -19,23 +19,24 @@ import {
     PlinkoStateHandler,
 } from "./handlers";
 import PlinkoGame from "../plinko-game/PlinkoGame";
-import BetHistoryControl from "@shared/components/game-components/bet-history/bet-history-control";
-import { BetHistoryTable } from "@shared/components/game-components/bet-history/bet-history-table";
-import { PlayerResultBoardTable } from "@plinko/components/plinko-game/player-result-board/player-result-board-table";
 import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
-import LiveStatsIcon from "@shared/components/game-components/menu/icons/live-stats";
 
-// Dynamic imports for shared components
+// Dynamic imports side components
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
 const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
 const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
 const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
-const LiveStats = dynamic(() => import("@plinko/components/plinko-game/live-stats"), { ssr: false });
 const PFSettingModal = dynamic(() => import("@shared/components/game-components/provably-fair/pf-setting"), { ssr: false });
+const LiveStatsIcon = dynamic(() => import("@shared/components/game-components/menu/icons/live-stats"), { ssr: false });
+const LiveStats = dynamic(() => import("@plinko/components/plinko-game/live-stats"), { ssr: false });
+const BetHistoryControl = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-control"), { ssr: false });
+const BetHistoryTable = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-table"), { ssr: false });
+const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-game/player-result-board/player-result-board-table"), {
+    ssr: false,
+});
 const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
-
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     constructor(props: GameBaseProps) {

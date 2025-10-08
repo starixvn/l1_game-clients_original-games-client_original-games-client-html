@@ -1,18 +1,7 @@
 import React from "react";
-import dynamic from "next/dynamic";
 import { Games, GameConfig } from "@shared/components/game-components/games";
 import { GAME_ID } from "../game-config";
-
-const LoadingGameComponent = React.memo(() => (
-    <div>Loading...</div>
-));
-
-LoadingGameComponent.displayName = "LoadingGameComponent";
-
-const PlinkoGame = dynamic(() => import("../page"), {
-    loading: () => <LoadingGameComponent />,
-    ssr: false,
-});
+import PlinkoGame from "../page";
 
 const gameConfig: GameConfig = {
     gameId: GAME_ID,

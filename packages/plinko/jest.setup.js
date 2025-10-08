@@ -1,5 +1,8 @@
 /** @format */
 
+// Set NODE_ENV to development for testing
+process.env.NODE_ENV = "development";
+
 require("@testing-library/jest-dom");
 
 // Mock canvas context with all required methods
