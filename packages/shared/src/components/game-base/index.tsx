@@ -136,7 +136,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 gameRoundDataHandler: this.gameRoundDataHandler,
             });
 
-
         this.gameDisabledHandler =
             gameDisabledHandler ??
             new GameDisableHandler({
@@ -302,7 +301,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.gameMessageHandler.register(messageEventType.ROUND_HISTORY, this.handleRoundHistory.bind(this));
         this.gameFinishHandler.registerEvents();
-        
+
         this.gameMessageHandler.register(messageEventType.GAME_DESTROY, this.onDestroy.bind(this));
         this.gameMessageHandler.register(messageEventType.CLEAR_GAME_TIMEOUT_AND_INTERVAL, this.clearGameTimeoutAndInterval.bind(this));
         this.gameMessageHandler.register(messageEventType.SEND_SOCKET_MESSAGE, this.sendSocketMessage.bind(this));
@@ -469,12 +468,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                    this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    })
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
                     ],
                 ...newGameState,
             });
@@ -613,7 +612,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<SoundIcon />,<GuideIcon />]} />;
+        return <MenuIconWrapper items={[<SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />]} />;
     }
 
     renderMenu() {
@@ -668,7 +667,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderBetHistoryTable() {
-        return <BetHistoryControl defaultTab={"all-bets"} tabContent={[<BetHistoryTable gameId={this.props.id?.toString()} />]} />;
+        return <BetHistoryControl tabContent={[<BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />]} />;
     }
 
     renderBetDetailModal() {

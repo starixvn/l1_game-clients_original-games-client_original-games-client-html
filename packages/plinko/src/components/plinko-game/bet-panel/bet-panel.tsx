@@ -52,8 +52,8 @@ const BetControl = () => {
         "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50";
 
     return (
-        <div className="flex flex-col px-3 gap-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:mt-0 md:h-full">
-            <div>
+        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:px-0 md:mt-0 md:h-full">
+            <div className="md:px-3">
                 {isManualTab ? (
                     <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
                         {t("glossary_bet")}

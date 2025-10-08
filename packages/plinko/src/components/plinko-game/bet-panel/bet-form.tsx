@@ -16,20 +16,21 @@ const BetForm = ({
     isAutoBet: boolean;
     setIsAutoBet: (isAutoBet: boolean) => void;
 }) => {
-    const { gameConfigs, userStakeLevel } = useGameStore(
+    const { gameMinBet, gameMaxBet, userStakeLevel } = useGameStore(
         useShallow((state) => ({
-            gameConfigs: state.gameConfigs,
+            gameMinBet: state.gameConfigs?.minBet ?? 0,
+            gameMaxBet: state.gameConfigs?.maxBet ?? 0,
             userStakeLevel: state.userStakeLevel,
         }))
     );
     const { minBet, maxBet } = useMemo(() => {
-        if (gameConfigs && userStakeLevel) {
-            const maxBet = Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
-            const minBet = Math.max(userStakeLevel.minBet, gameConfigs.minBet);
+        if (gameMinBet && gameMaxBet && userStakeLevel) {
+            const maxBet = Math.min(userStakeLevel.maxBet, gameMaxBet);
+            const minBet = Math.max(userStakeLevel.minBet, gameMinBet);
             return { minBet, maxBet };
         }
         return { minBet: 0, maxBet: 0 };
-    }, [gameConfigs?.maxBet, gameConfigs?.minBet, userStakeLevel]);
+    }, [gameMinBet, gameMaxBet, userStakeLevel]);
     const { betAmount, setBetAmount } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
@@ -49,7 +50,7 @@ const BetForm = ({
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-0 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled} />
             <RowsSelector isDisabled={isDisabled} />

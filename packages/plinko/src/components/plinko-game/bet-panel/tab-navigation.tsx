@@ -23,7 +23,7 @@ const TabNavigation = ({
     const { t } = useCommonTranslate();
 
     return (
-        <div className="flex">
+        <div className="flex md:px-3">
             {tabs.map((tab) => (
                 <button
                     key={tab.text}

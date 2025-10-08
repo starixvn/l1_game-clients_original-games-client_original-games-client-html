@@ -139,7 +139,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // Plinko handles its own bet history table within the PlinkoGame component
         return (
             <BetHistoryControl
-                defaultTab={"all-bets"}
                 tabContent={[
                     <PlayerResultBoardTable key="player-result-board" />,
                     <BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />,
