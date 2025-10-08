@@ -20,7 +20,7 @@ const BetControl = () => {
     );
     const { gameMessageHandler } = useGameContext();
 
-    const [isManualTab, setIsManualTab] = useState(true);
+    const [tabIndex, setTabIndex] = useState(0);
     const [isAutoBet, setIsAutoBet] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const { t } = useCommonTranslate();
@@ -51,6 +51,8 @@ const BetControl = () => {
     const buttonClass =
         "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50";
 
+    const isManualTab = tabIndex === 0;
+
     return (
         <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:px-0 md:mt-0 md:h-full">
             <div className="md:px-3">
@@ -71,7 +73,7 @@ const BetControl = () => {
                     isAutoBet={isAutoBet}
                     setIsAutoBet={setIsAutoBet}
                 />
-                <TabNavigation activeTab={isManualTab} onTabChange={setIsManualTab} isDisabled={isProcessing || isAutoBet} />
+                <TabNavigation activeIndex={tabIndex} onChangeTab={setTabIndex} isDisabled={isProcessing || isAutoBet} />
             </div>
         </div>
     );

@@ -137,7 +137,7 @@ const AutoBetGroup = ({
             </div>
             <div>
                 <div onClick={() => setIsShowAutoBetInstruction(true)} className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-sm md:text-base font-semibold">{t("how_to_use_auto_mode")}</span>
+                    <span className="text-sm md:text-base font-semibold">{t("how_to_use_auto_bet")}</span>
                     <i className="icon icon-back text-xl scale-x-[-1]" />
                 </div>
                 {isShowAutoBetInstruction && <AutoBetInstruction setIsShowAutoBetInstruction={setIsShowAutoBetInstruction} />}

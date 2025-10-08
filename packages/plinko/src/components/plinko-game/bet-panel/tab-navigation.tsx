@@ -1,41 +1,43 @@
 import { useCommonTranslate } from "@shared";
 import { memo } from "react";
-const tabs = [
-    {
-        text: "manual",
-        value: true,
-    },
-    {
-        text: "auto",
-        value: false,
-    },
-];
+
+const tabs = ["manual", "auto"];
 
 const TabNavigation = ({
-    activeTab,
-    onTabChange,
+    activeIndex,
+    onChangeTab,
     isDisabled,
 }: {
-    activeTab: boolean;
-    onTabChange: (tab: boolean) => void;
+    activeIndex: number;
+    onChangeTab: (index: number) => void;
     isDisabled: boolean;
 }) => {
     const { t } = useCommonTranslate();
 
     return (
-        <div className="flex md:px-3">
-            {tabs.map((tab) => (
-                <button
-                    key={tab.text}
-                    onClick={() => onTabChange(tab.value)}
-                    className={`flex-1 p-2 text-sm relative text-white md:pt-0 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] disabled:opacity-50 ${
-                        activeTab === tab.value ? "after:bg-green-500" : "after:bg-[#2C3545]"
-                    }`}
-                    disabled={isDisabled}
-                >
-                    {t(tab.text)}
-                </button>
-            ))}
+        <div className="md:px-3">
+            <div className="flex">
+                {tabs.map((tab, index) => (
+                    <button
+                        key={tab}
+                        onClick={() => onChangeTab(index)}
+                        className={`flex-1 p-2 text-sm relative text-white md:pt-0 disabled:opacity-50 after:bg-[#2C3545]`}
+                        disabled={isDisabled}
+                    >
+                        {t(tab)}
+                    </button>
+                ))}
+            </div>
+            <div className="relative bg-[#2C3545]">
+                <div className="absolute bottom-0 h-[2px] w-full bg-[#2C3545]"></div>
+                <div
+                    className="absolute bottom-0 h-[2px] bg-green-500 transition-all duration-300 ease-in-out"
+                    style={{
+                        width: `${100 / tabs.length}%`,
+                        transform: `translateX(${activeIndex * 100}%)`,
+                    }}
+                />
+            </div>
         </div>
     );
 };
