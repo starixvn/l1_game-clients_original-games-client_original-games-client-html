@@ -1,13 +1,14 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
-import { BallLayout, SimplifiedCanvasBallLayoutRef } from "../../features/game/components";
+import { BallLayout, PayoutsDisplay, SimplifiedCanvasBallLayoutRef } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { logger } from "../../services/logger";
 import { useGameStore } from "@shared/stores";
 import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
 import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
+import { calculateProbability } from "@plinko/utils/helper";
 
 const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { ssr: false });
 
@@ -150,7 +151,9 @@ const PlinkoGame = () => {
     // Update probabilities based on multipliers
     useEffect(() => {
         if (payoutMultipliers && payoutMultipliers.length > 0) {
-            const defaultProbabilities = payoutMultipliers.map(() => 1 / payoutMultipliers.length);
+            const defaultProbabilities = payoutMultipliers.map((val, index) => {
+                return calculateProbability(numberOfRows, index);
+            });
             setPayoutProbabilities(defaultProbabilities);
         }
     }, [payoutMultipliers]);
@@ -203,13 +206,12 @@ const PlinkoGame = () => {
                                 />
                             </div>
 
-                            {/* <PayoutsDisplay
+                            <PayoutsDisplay
                                 multipliers={payoutMultipliers}
                                 probabilities={payoutProbabilities}
-                                betAmount={gameState.betAmount}
-                                rows={gameState.rows}
-                                className="payouts-below-ball-layout"
-                            /> */}
+                                betAmount={endBet}
+                                rows={numberOfRows}
+                            />
 
                             {/* Temporary bet button for testing */}
                             {/* <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 100 }}>

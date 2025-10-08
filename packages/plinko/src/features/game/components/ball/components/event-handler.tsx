@@ -78,7 +78,7 @@ export const EventHandler: React.FC<EventHandlerProps> = ({
                 return;
             }
 
-            const mouseX = event.clientX - rect.left;
+            const mouseX = event.clientX - rect.left - 100;
             const mouseY = event.clientY - rect.top;
 
             // Check if mouse is in slot area

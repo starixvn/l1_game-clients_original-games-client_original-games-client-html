@@ -1,0 +1,75 @@
+/* Payout Tooltip Styles */
+.payoutTooltip {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.tooltipContent {
+    background: linear-gradient(to bottom, #093B77, #031122);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+    line-height: 1.4;
+    min-width: 280px;
+    max-width: 280px;
+    text-align: center;
+}
+
+.winAmount {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.probability {
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+.tooltipArrow {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #031122;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .tooltipContent {
+        min-width: 260px;
+        max-width: 260px;
+        font-size: 11px;
+    }
+    
+    .winAmount {
+        font-size: 13px;
+    }
+    
+    .probability {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tooltipContent {
+        min-width: 240px;
+        max-width: 240px;
+        padding: 6px 10px;
+    }
+}

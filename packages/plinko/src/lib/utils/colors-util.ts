@@ -31,7 +31,7 @@ export function getMultiplierColor(slotIndex: number, gameMode: number, numberOf
     // Handle out-of-bounds indices by returning a default color
     if (slotIndex < 0 || slotIndex >= colors.length) {
         const modeColors = MULTIPLIER_COLORS[gameMode];
-        return (modeColors && modeColors[0]) || "#FFDC48"; // Default to first color or fallback
+        return (modeColors && modeColors[0])
     }
     return colors[slotIndex];
 }
