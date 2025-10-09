@@ -1,6 +1,5 @@
 import { createHash } from "crypto";
 import { FC, useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { useTranslator } from "@shared/react-hooks";
 import { PFVerificationHeaderBlockBase, DefaultPFStyles as Styles } from "@shared/components/game-components/provably-fair";
 import { Section } from "@shared/components/game-components/provably-fair/pf-form-components";
@@ -24,7 +23,6 @@ const PFVerification: FC = () => {
         betDetailData.drawInfo.pfResult?.editedMergeClientSeed || betDetailData.drawInfo.pfResult?.mergeClientSeed || ""
     );
     const { t } = useTranslator();
-    const { t: translateInGame } = useTranslator([tolgeeNamespace]);
     const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
     const NUMBER_OF_ROWS = betDetailData.betLogDetails[0].choice;
@@ -82,22 +80,22 @@ const PFVerification: FC = () => {
                     <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {translateInGame(`mode`).capitalizeFirstLetter()}:{" "}
-                    {translateInGame(gameModeMap[betDetailData.betLogDetails[0].gameMode])}
+                    {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}:{" "}
+                    {t(`${tolgeeNamespace}.${gameModeMap[betDetailData.betLogDetails[0].gameMode]}`)}
                     <div className="flex gap-2 items-center">
-                        {translateInGame(`row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
+                        {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
                     </div>
                 </div>
                 <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-2">
                     <p className={Styles["pf-word-break"]}>{combinedHash}</p>
                 </Section>
 
-                <Section title={translateInGame("pf_verifier_tool_para_24")}>
+                <Section title={t(`${tolgeeNamespace}.pf_verifier_tool_para_24`)}>
                     <p className="font-weight-medium">
                         {verifyInfo.convertNumber.map((item, index) => {
                             const rawDigit = verifyInfo.rawDigits[index];
                             return (
-                                <span style={{ display: "block" }} key={uuidv4()}>
+                                <span style={{ display: "block" }} key={`${rawDigit}-${index}`}>
                                     {rawDigit} {"=>"} {item} {"mode 2 ="} {item % 2}
                                 </span>
                             );

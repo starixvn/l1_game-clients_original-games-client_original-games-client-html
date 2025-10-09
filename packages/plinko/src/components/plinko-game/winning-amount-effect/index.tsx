@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useCommonTranslate } from "@shared";
+import { numberWithCommas } from "@shared/helpers";
 
 export const WinningAmountEffect = () => {
     const finish = usePlinkoGameStore((state) => state.finish);
@@ -10,7 +11,7 @@ export const WinningAmountEffect = () => {
 
     useEffect(() => {
         clearTimeout(timerRef.current);
-        setWinAmount((prev) => Number((prev + (finish?.winAmount ?? 0)).toFixed(2)));
+        setWinAmount((prev) => prev + (finish?.winAmount ?? 0));
         timerRef.current = setTimeout(() => {
             setWinAmount(0);
         }, 3000);
@@ -22,7 +23,7 @@ export const WinningAmountEffect = () => {
     return (
         winAmount > 0 && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-1/2 text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:bottom-[4.5rem] md:text-xl">
-                {t("win")} {winAmount}
+                {t("win")} {numberWithCommas(winAmount, 2)}
             </div>
         )
     );

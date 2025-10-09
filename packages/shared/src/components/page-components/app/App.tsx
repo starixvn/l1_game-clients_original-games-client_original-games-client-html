@@ -42,9 +42,19 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
             <title>Original Games</title>
-            <link rel="shortcut icon" type="image/x-icon" href={`${gameConfig.assetPath}/favicons/favicon.ico?v=${buildVersion}`} sizes="any" />
+            <link
+                rel="shortcut icon"
+                type="image/x-icon"
+                href={`${gameConfig.assetPath}/favicons/favicon.ico?v=${buildVersion}`}
+                sizes="any"
+            />
             <link rel="icon" type="image/png" href={`${gameConfig.assetPath}/favicons/favicon2.png?v=${buildVersion}`} sizes="16x16" />
-            <link rel="apple-touch-icon" type="image/png" href={`${gameConfig.assetPath}/favicons/favicon2.png?v=${buildVersion}`} sizes="any" />
+            <link
+                rel="apple-touch-icon"
+                type="image/png"
+                href={`${gameConfig.assetPath}/favicons/favicon.png?v=${buildVersion}`}
+                sizes="any"
+            />
             {/* Favicon for browsers that request /favicon.ico */}
             <link rel="icon" type="image/x-icon" href={`${gameConfig.assetPath}/favicons/favicon.ico?v=${buildVersion}`} />
         </Head>
