@@ -25,7 +25,8 @@ const PFVerification: FC = () => {
     const { t } = useTranslator();
     const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
-    const NUMBER_OF_ROWS = betDetailData.betLogDetails[0].choice;
+    const NUMBER_OF_ROWS = useMemo(() => betDetailData.betLogDetails[0].choice, [betDetailData.betLogDetails[0].choice]);
+    const gameMode = useMemo(() => betDetailData.betLogDetails[0].gameMode, [betDetailData.betLogDetails[0].gameMode]);
 
     const verifyInfo = useMemo(
         () =>
@@ -80,27 +81,54 @@ const PFVerification: FC = () => {
                     <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}:{" "}
-                    {t(`${tolgeeNamespace}.${gameModeMap[betDetailData.betLogDetails[0].gameMode]}`)}
+                    {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}: {t(`${tolgeeNamespace}.${gameModeMap[gameMode]}`)}
                     <div className="flex gap-2 items-center">
                         {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
                     </div>
                 </div>
-                <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-2">
+                <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-1">
                     <p className={Styles["pf-word-break"]}>{combinedHash}</p>
                 </Section>
 
                 <Section title={t(`${tolgeeNamespace}.pf_verifier_tool_para_24`)}>
-                    <p className="font-weight-medium">
-                        {verifyInfo.convertNumber.map((item, index) => {
-                            const rawDigit = verifyInfo.rawDigits[index];
-                            return (
-                                <span style={{ display: "block" }} key={`${rawDigit}-${index}`}>
-                                    {rawDigit} {"=>"} {item} {"mode 2 ="} {item % 2}
-                                </span>
-                            );
-                        })}
-                    </p>
+                    <div className="flex flex-col gap-2">
+                        <p className="font-weight-medium">
+                            {verifyInfo.convertNumber.map((item, index) => {
+                                const rawDigit = verifyInfo.rawDigits[index];
+                                return (
+                                    <span style={{ display: "block" }} key={`${rawDigit}-${index}`}>
+                                        {rawDigit} {"=>"} {item} {"mode 2 ="} {item % 2}
+                                    </span>
+                                );
+                            })}
+                        </p>
+                        <p>
+                            {t(`${tolgeeNamespace}.slot_index`)}:{" "}
+                            {verifyInfo.convertNumber.map((item, index) => {
+                                return (
+                                    <span key={`${item}-${index}`}>
+                                        {item % 2} {index == verifyInfo.convertNumber.length - 1 ? "=" : "+ "}{" "}
+                                    </span>
+                                );
+                            })}{" "}
+                            {betDetailData.drawInfo.settlementResult.slotIndex}
+                        </p>
+                        <div className="flex items-center gap-5 overflow-x-auto">
+                            {betDetailData.drawInfo.odds[gameMode][NUMBER_OF_ROWS].map((item, index) => {
+                                return (
+                                    <div
+                                        key={`${item}-${index}`}
+                                        className={`flex flex-col items-center  ${
+                                            index == betDetailData.drawInfo.settlementResult.slotIndex ? Styles["text-successful"] : ""
+                                        }`}
+                                    >
+                                        <span>{index} </span>
+                                        <span>{item} </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </Section>
             </div>
         </div>
