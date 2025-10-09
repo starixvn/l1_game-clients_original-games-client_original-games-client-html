@@ -51,36 +51,36 @@ const PlinkoGame = () => {
                 const roundId = action.finish.roundId;
 
                 // Store the expected slot for this round for validation when ball lands
-                console.log('🎯 [PLINKO GAME] STORING EXPECTED SLOT', {
-                    roundId,
-                    slotIndex,
-                    actionRoundId: action.finish.roundId,
-                    mapSizeBefore: expectedSlotsByRound.size
-                });
+                // console.log('🎯 [PLINKO GAME] STORING EXPECTED SLOT', {
+                //     roundId,
+                //     slotIndex,
+                //     actionRoundId: action.finish.roundId,
+                //     mapSizeBefore: expectedSlotsByRound.size
+                // });
                 setExpectedSlotsByRound(prev => {
                     const newMap = new Map(prev.set(roundId, slotIndex));
-                    console.log('🎯 [PLINKO GAME] STORED EXPECTED SLOT', {
-                        roundId,
-                        slotIndex,
-                        mapSizeAfter: newMap.size,
-                        allEntries: Array.from(newMap.entries())
-                    });
+                    // console.log('🎯 [PLINKO GAME] STORED EXPECTED SLOT', {
+                    //     roundId,
+                    //     slotIndex,
+                    //     mapSizeAfter: newMap.size,
+                    //     allEntries: Array.from(newMap.entries())
+                    // });
                     return newMap;
                 });
 
-                console.log("🎯 [PLINKO GAME] Server result path details - FULL TRACE:", {
-                    resultPath,
-                    pathLength: resultPath.length,
-                    expectedSlot: slotIndex,
-                    countOfOnes,
-                    slotIndexMatch: countOfOnes === slotIndex,
-                    pathSum: resultPath.reduce((sum: number, val: number) => sum + val, 0), // Count of 1s
-                    pathBreakdown: resultPath.join(""),
-                    multiplier,
-                    betAmount,
-                    winAmount,
-                    fullAction: action,
-                });
+                // console.log("🎯 [PLINKO GAME] Server result path details - FULL TRACE:", {
+                //     resultPath,
+                //     pathLength: resultPath.length,
+                //     expectedSlot: slotIndex,
+                //     countOfOnes,
+                //     slotIndexMatch: countOfOnes === slotIndex,
+                //     pathSum: resultPath.reduce((sum: number, val: number) => sum + val, 0), // Count of 1s
+                //     pathBreakdown: resultPath.join(""),
+                //     multiplier,
+                //     betAmount,
+                //     winAmount,
+                //     fullAction: action,
+                // });
 
                 logger.info("🎯 [PLINKO GAME] Spawning ball with server result path - SERVICE TO COMPONENT", {
                     resultPath,
@@ -104,14 +104,14 @@ const PlinkoGame = () => {
 
                     if (ballLayoutRef.current?.spawnBallWithPath) {
                         try {
-                            console.log("🚀 [PLINKO GAME] Calling spawnBallWithPath with data:", {
-                                betAmount,
-                                resultPath,
-                                slotIndex,
-                                multiplier,
-                                countOfOnes,
-                                ballLayoutReady: ballLayoutRef.current?.isReady?.(),
-                            });
+                            // console.log("🚀 [PLINKO GAME] Calling spawnBallWithPath with data:", {
+                            //     betAmount,
+                            //     resultPath,
+                            //     slotIndex,
+                            //     multiplier,
+                            //     countOfOnes,
+                            //     ballLayoutReady: ballLayoutRef.current?.isReady?.(),
+                            // });
 
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier, undefined, roundId);
 
@@ -201,24 +201,24 @@ const PlinkoGame = () => {
 
     // Handle ball landing result validation against service result
     const handleBallLanded = (success: boolean, roundId?: number) => {
-        console.log('🎯 [PLINKO GAME] BALL LANDED - DEBUG INFO', {
-            success,
-            roundId,
-            expectedSlotsByRoundSize: expectedSlotsByRound.size,
-            allMapEntries: Array.from(expectedSlotsByRound.entries()),
-            roundIdType: typeof roundId,
-            roundIdValue: roundId
-        });
+        // console.log('🎯 [PLINKO GAME] BALL LANDED - DEBUG INFO', {
+        //     success,
+        //     roundId,
+        //     expectedSlotsByRoundSize: expectedSlotsByRound.size,
+        //     allMapEntries: Array.from(expectedSlotsByRound.entries()),
+        //     roundIdType: typeof roundId,
+        //     roundIdValue: roundId
+        // });
 
         const expectedSlot = roundId ? expectedSlotsByRound.get(roundId) : undefined;
 
-        console.log('🎯 [PLINKO GAME] BALL LANDED - SLOT RETRIEVAL', {
-            roundId,
-            expectedSlot,
-            expectedSlotType: typeof expectedSlot,
-            expectedSlotValue: expectedSlot,
-            mapHasRoundId: roundId ? expectedSlotsByRound.has(roundId) : false
-        });
+        // console.log('🎯 [PLINKO GAME] BALL LANDED - SLOT RETRIEVAL', {
+        //     roundId,
+        //     expectedSlot,
+        //     expectedSlotType: typeof expectedSlot,
+        //     expectedSlotValue: expectedSlot,
+        //     mapHasRoundId: roundId ? expectedSlotsByRound.has(roundId) : false
+        // });
 
         if (expectedSlot !== undefined && roundId !== undefined) {
             logger.info("🎯 [PLINKO GAME] BALL LANDING VALIDATION - CONTROLLER LEVEL", {
@@ -236,13 +236,13 @@ const PlinkoGame = () => {
             });
 
             if (success) {
-                logger.info("✅ [PLINKO GAME] BALL LANDED IN CORRECT SLOT - CONTROLLER CONFIRMATION", {
-                    expectedSlot,
-                    roundId,
-                    serviceResultSlot: expectedSlot,
-                    status: "SUCCESS",
-                    message: `Ball successfully landed in slot ${expectedSlot} as expected by service`
-                });
+                // logger.info("✅ [PLINKO GAME] BALL LANDED IN CORRECT SLOT - CONTROLLER CONFIRMATION", {
+                //     expectedSlot,
+                //     roundId,
+                //     serviceResultSlot: expectedSlot,
+                //     status: "SUCCESS",
+                //     message: `Ball successfully landed in slot ${expectedSlot} as expected by service`
+                // });
             } else {
                 logger.error("❌ [PLINKO GAME] BALL LANDED IN WRONG SLOT - CONTROLLER FAILURE DETECTED", {
                     expectedSlot,

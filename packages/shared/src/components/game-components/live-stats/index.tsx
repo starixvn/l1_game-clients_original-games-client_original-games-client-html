@@ -12,20 +12,24 @@ import { Line } from "react-chartjs-2";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const LiveStatsModal = ({ winAmount, amount }): ReactElement<{ winAmount: number; amount: number }> => {
+const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number } }): ReactElement => {
     const isShowLiveStats = usePopupStore((state) => state.isShowLiveStats);
     const toggleLiveStats = usePopupStore((state) => state.toggleLiveStats);
     const { t: translate } = useCommonTranslate();
     const clickSound = useClickSound();
     const [totalNetProfit, setTotalNetProfit] = useState(0);
     const [netProfitHistory, setNetProfitHistory] = useState<{ time: string; value: number }[]>([]);
-
+    
+    // Default values for winAmount and amount if not provided
+    const winAmount = useMemo(() => data?.winAmount ?? 0, [data?.winAmount]);
+    const amount = useMemo(() => data?.amount ?? 0, [data?.amount]);
+    
     const handleCloseModal = () => {
         toggleLiveStats(false);
     };
 
     useEffect(() => {
-        console.log(winAmount, amount);
+        //console.log(data);
         const newTotalNetProfit = Number((totalNetProfit + winAmount - amount).toFixed(2));
         setTotalNetProfit(newTotalNetProfit ?? 0);
 

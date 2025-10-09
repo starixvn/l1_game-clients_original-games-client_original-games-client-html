@@ -381,7 +381,14 @@ function handleBallMultiplierCollision(
             });
 
             // Notify UI of successful landing
-            onBallLanded?.(true);
+            // console.log('🎯 [PHYSICS] CALLING onBallLanded SUCCESS', {
+            //     ballId: ballBody.id,
+            //     roundId: ballExtension.roundId,
+            //     roundIdType: typeof ballExtension.roundId,
+            //     roundIdValue: ballExtension.roundId,
+            //     expectedSlot: ballExtension.expectedFinalSlot
+            // });
+            onBallLanded?.(true, ballExtension.roundId);
         } else {
             physicsLogger.error('🎯❌ SERVICE-GUIDED BALL LANDED IN WRONG SLOT - FAILURE!', {
                 component: 'ModularPhysicsEngine',
