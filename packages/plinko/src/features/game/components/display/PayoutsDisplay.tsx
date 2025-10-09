@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import PayoutTooltip from "./payout-tooltip";
 import { getMultiplierColor } from "@plinko/lib/utils/colors-util";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
+import styled from "./tooltip.module.scss";
 interface PayoutsDisplayProps {
     multipliers: number[];
     probabilities: number[];
@@ -18,11 +19,6 @@ const PayoutsDisplay: React.FC<PayoutsDisplayProps> = ({ multipliers, probabilit
         return betAmount * multiplier;
     };
 
-    // Format probability as percentage
-    const formatProbability = (probability: number): string => {
-        return (probability * 100).toFixed(1);
-    };
-
     if (!multipliers || multipliers.length === 0) {
         return (
             <div className="flex gap-2">
@@ -32,27 +28,29 @@ const PayoutsDisplay: React.FC<PayoutsDisplayProps> = ({ multipliers, probabilit
     }
 
     return (
-        <div className="absolute bottom-[120px] left-[50%] translate-x-[-50%] z-[1000]">
-            <div className="flex gap-2">
+        <div className={styled.payoutsDisplay}>
+            <div className={`flex justify-between py-0 ${styled[`row${rows}`]}`}
+             style={{ 
+                boxSizing: "border-box", }}>
                 {multipliers.map((multiplier, index) => {
-                    const probability = probabilities[index] || 0;
+                    const probability = probabilities[index];
                     const winAmount = calculateWin(multiplier);
 
                     return (
-                        <PayoutTooltip 
-                            key={`payout-${rows}-${index}`} 
-                            index={index} 
-                            winAmount={winAmount} 
+                        <PayoutTooltip
+                            key={`payout-${rows}-${index}`}
+                            index={index}
+                            winAmount={winAmount}
                             probability={probability}
                             totalItems={multipliers.length}
                         >
                             <div
-                                className={`w-[45px] h-[40px] rounded-[6px] flex items-center justify-center cursor-pointer`}
+                                className={`left-0absolute h-full w-full rounded-[6px] flex items-center justify-center cursor-pointer`}
                                 style={{
                                     backgroundColor: getMultiplierColor(index, gameMode, rows),
                                 }}
                             >
-                                <div className="text-white text-sm font-bold">{multiplier.toFixed(2)}</div>
+                                <span className={`${styled[`x-span`]} text-white font-bold`}>{multiplier.toFixed(2)}</span>
                             </div>
                         </PayoutTooltip>
                     );
@@ -61,6 +59,5 @@ const PayoutsDisplay: React.FC<PayoutsDisplayProps> = ({ multipliers, probabilit
         </div>
     );
 };
-
 
 export default PayoutsDisplay;

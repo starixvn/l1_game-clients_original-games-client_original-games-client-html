@@ -206,12 +206,12 @@ const PlinkoGame = () => {
                                 />
                             </div>
 
-                            <PayoutsDisplay
+                            {/* <PayoutsDisplay
                                 multipliers={payoutMultipliers}
                                 probabilities={payoutProbabilities}
                                 betAmount={endBet}
                                 rows={numberOfRows}
-                            />
+                            /> */}
 
                             {/* Temporary bet button for testing */}
                             {/* <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 100 }}>

@@ -73,3 +73,90 @@
         padding: 6px 10px;
     }
 }
+
+.payoutsDisplay {
+    aspect-ratio: 8.6;
+    bottom: calc(15% - 8px);
+    display: flex;
+    flex-direction: column;
+    height: 9.07%;
+    justify-content: space-between;
+    right: 0;
+    z-index: 1000;
+    position: absolute;
+    transform: translate(-45% );
+    left: 50%;
+}
+
+
+.row8 {
+    height: 85%;
+    
+    .x-span {
+        font-size: 13px;
+    }
+}
+
+.row9 {
+    height: 80%;
+    
+    .x-span {
+        font-size: 12px;
+    }
+}
+
+.row10 {
+    height: 75%;
+    
+    .x-span {
+        font-size: 11px;
+    }
+}
+
+.row11 {
+    height: 70%;
+    
+    .x-span {
+        font-size: 10px;
+    }
+}
+
+.row12 {
+    height: 65%;
+    
+    .x-span {
+        font-size: 9px;
+    }
+}
+
+.row13 {
+    height: 60%;
+    
+    .x-span {
+        font-size: 8px;
+    }
+}
+
+.row14 {
+    height: 55%;
+    
+    .x-span {
+        font-size: 7px;
+    }
+}
+
+.row15 {
+    height: 50%;
+    
+    .x-span {
+        font-size: 6px;
+    }
+}
+
+.row16 {
+    height: 50%;
+    
+    .x-span {
+        font-size: 6px;
+    }
+}

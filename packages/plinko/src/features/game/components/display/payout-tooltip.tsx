@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
+import { useTranslate } from "@tolgee/react";
 
 interface PayoutTooltipProps {
     children: React.ReactNode;
@@ -16,6 +17,8 @@ const PayoutTooltip: React.FC<PayoutTooltipProps> = ({ children, winAmount, prob
     const triggerRef = useRef<HTMLDivElement>(null);
     const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const isTouchDevice = useRef(false);
+
+    const {t} = useTranslate();
 
     useEffect(() => {
         isTouchDevice.current = "ontouchstart" in window || navigator.maxTouchPoints > 0;
@@ -91,7 +94,7 @@ const PayoutTooltip: React.FC<PayoutTooltipProps> = ({ children, winAmount, prob
     return (
         <div
             ref={triggerRef}
-            className="relative inline-block"
+            className="relative flex flex-1 items-center justify-center  mr-[1px]  p-[2px]"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onTouchStart={handleTouchStart}
@@ -106,16 +109,20 @@ const PayoutTooltip: React.FC<PayoutTooltipProps> = ({ children, winAmount, prob
                     <div
                         ref={tooltipRef}
                         className={cn(
-                            "absolute left-0 bottom-full w-[266px] bg-gradient-to-b from-[#093B77] to-[#031122] text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity duration-300 pointer-events-none z-10 whitespace-nowrap",
+                            "absolute flex flex-row gap-3 left-0 bottom-full w-[266px] bg-gradient-to-b from-[#093B77] to-[#031122] text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity duration-300 pointer-events-none z-10 whitespace-nowrap",
                             className
                         )}
                         style={{
                             transform: `translateX(${Math.max((-index * 100) / totalItems, -80)}%)`,
                         }}
                     >
-                        <div className="text-center">
-                            <div className="font-semibold text-sm mb-1">Win: ${winAmount.toLocaleString()}</div>
-                            <div className="text-xs opacity-90">Probability: {(probability * 100).toFixed(2)}%</div>
+                        <div className="text-start">
+                            <div className="font-semibold text-sm mb-1">{t("win")}</div>
+                            <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[130px] rounded-[8px] px-2 py-1 flex items-center justify-start">${winAmount.toLocaleString()}</div>
+                        </div>
+                        <div className="text-start">
+                            <div className="font-semibold text-sm mb-1">{t("probability")}</div>
+                            <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[100px] rounded-[8px] px-2 py-1 flex items-center justify-start">{(probability * 100).toFixed(2)}%</div>
                         </div>
 
                         {/* Arrow luôn ở chính giữa */}
