@@ -5,8 +5,7 @@ import { PhysicsFactors } from '../factors/core-factors';
  * Analyze all collisions in trajectory
  */
 export function analyzeTrajectoryCollisions(
-    trajectory: BallTrajectory,
-    pegConfig: any // PegConfiguration type
+    trajectory: BallTrajectory
 ): CollisionEvent[] {
     // Collisions are already calculated in calculateCompleteTrajectory
     return trajectory.collisions;

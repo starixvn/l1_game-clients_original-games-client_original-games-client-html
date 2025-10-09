@@ -21,9 +21,7 @@ export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
     numberOfRows,
     multipliers
 }) => {
-    if (isInitialized) {
-        return null;
-    }
+    if (isInitialized) return null;
 
     return (
         <div

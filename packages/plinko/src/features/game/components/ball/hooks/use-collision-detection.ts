@@ -5,7 +5,7 @@ import { setupCollisionDetection } from '../physics';
 import { CollisionCooldownManager } from '../physics/collisions/collision-cooldown';
 
 interface UseCollisionDetectionProps {
-    onBallLanded?: (success: boolean, roundId?: number) => void;
+    onBallLanded?: (success: boolean) => void;
 }
 
 interface UseCollisionDetectionReturn {

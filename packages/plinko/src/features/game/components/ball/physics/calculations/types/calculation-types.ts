@@ -1,6 +1,6 @@
 import { PhysicsFactors } from '../../factors/core-factors';
 
-// Re-export PhysicsFactors for external use
+// Re-export PhysicsFactors for convenience
 export type { PhysicsFactors };
 
 /**

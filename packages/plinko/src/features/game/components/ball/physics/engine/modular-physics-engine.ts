@@ -78,7 +78,7 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
 export function setupCollisionDetection(
     engine: Engine,
     cooldownManager: CollisionCooldownManager,
-    onBallLanded?: (success: boolean, roundId?: number) => void
+    onBallLanded?: (success: boolean) => void
 ): void {
     physicsLogger.info('🔧 SETTING UP MODULAR COLLISION DETECTION', {
         component: 'ModularPhysicsEngine',
@@ -126,7 +126,7 @@ export function setupCollisionDetection(
             // Check if this is a service-guided ball that has completed its path
             // Include both "service-guided-ball" and "pre-calculated-ball" labels
             const ballBody = (bodyA.label === 'service-guided-ball' || bodyA.label === 'pre-calculated-ball') ? bodyA :
-                ((bodyB.label === 'service-guided-ball' || bodyB.label === 'pre-calculated-ball') ? bodyB : null);
+                            ((bodyB.label === 'service-guided-ball' || bodyB.label === 'pre-calculated-ball') ? bodyB : null);
             const ballExtension = ballBody ? ballBody as unknown as BallBodyExtension : null;
             const hasCompletedPath = ballExtension && ballExtension.currentPathIndex >= ballExtension.servicePath?.length;
 
@@ -273,7 +273,7 @@ export function setupCollisionDetection(
 function handleBallMultiplierCollision(
     pair: any,
     engine: Engine,
-    onBallLanded?: (success: boolean, roundId?: number) => void
+    onBallLanded?: (success: boolean) => void
 ): void {
     const { bodyA, bodyB } = pair;
 
@@ -381,14 +381,7 @@ function handleBallMultiplierCollision(
             });
 
             // Notify UI of successful landing
-            console.log('🎯 [PHYSICS] CALLING onBallLanded SUCCESS', {
-                ballId: ballBody.id,
-                roundId: ballExtension.roundId,
-                roundIdType: typeof ballExtension.roundId,
-                roundIdValue: ballExtension.roundId,
-                expectedSlot: ballExtension.expectedFinalSlot
-            });
-            onBallLanded?.(true, ballExtension.roundId);
+            onBallLanded?.(true);
         } else {
             physicsLogger.error('🎯❌ SERVICE-GUIDED BALL LANDED IN WRONG SLOT - FAILURE!', {
                 component: 'ModularPhysicsEngine',
@@ -407,14 +400,7 @@ function handleBallMultiplierCollision(
             });
 
             // Notify UI of failed landing
-            console.log('🎯 [PHYSICS] CALLING onBallLanded FAILURE', {
-                ballId: ballBody.id,
-                roundId: ballExtension.roundId,
-                roundIdType: typeof ballExtension.roundId,
-                roundIdValue: ballExtension.roundId,
-                expectedSlot: ballExtension.expectedFinalSlot
-            });
-            onBallLanded?.(false, ballExtension.roundId);
+            onBallLanded?.(false);
         }
     } else {
         // Regular ball: Just log the landing

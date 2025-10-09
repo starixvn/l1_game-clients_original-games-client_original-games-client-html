@@ -103,8 +103,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );
@@ -149,8 +147,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );
@@ -203,8 +199,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );
@@ -269,8 +263,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );
@@ -311,8 +303,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );
@@ -369,8 +359,6 @@ describe('Service-Guided Ball Renderer - TDD Tests', () => {
                     gameMode: 1,
                     canvasWidth: 800,
                     canvasHeight: 600,
-                    engine: mockEngine,
-                    pins: [],
                     removedBallsRef: { current: new Set() }
                 })
             );

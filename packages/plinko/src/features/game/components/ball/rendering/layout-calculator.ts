@@ -34,8 +34,7 @@ export interface SlotRenderData {
  */
 export function calculateLayoutData(
     numberOfRows: number,
-    canvasWidth: number,
-    canvasHeight: number
+    canvasWidth: number
 ): LayoutData {
     const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / numberOfRows));
     const pegRadius = Math.max(3, Math.min(12, LAYOUT_CONSTANTS.BOARD.PEG_RADIUS_BASE * scaleFactor));

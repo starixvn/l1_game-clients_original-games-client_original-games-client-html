@@ -39,10 +39,12 @@ export function getMiddleDropPosition(canvasWidth: number): number {
     const middleIndex = LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX; // 0-based index, 5th position (middle of 9)
 
     if (positions.length > middleIndex) {
-        return positions[middleIndex];
+        const middlePosition = positions[middleIndex];
+        return middlePosition;
     }
 
     // Fallback to center if calculation fails
-    return canvasWidth / 2;
+    const fallbackPosition = canvasWidth / 2;
+    return fallbackPosition;
 }
 

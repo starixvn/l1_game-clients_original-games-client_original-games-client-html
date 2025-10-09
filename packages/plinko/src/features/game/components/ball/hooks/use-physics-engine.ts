@@ -11,7 +11,7 @@ interface UsePhysicsEngineProps {
     multipliers: number[];
     gameMode: number;
     onBallHit?: (multiplier: number, betValue: number) => void;
-    onBallLanded?: (success: boolean, roundId?: number) => void;
+    onBallLanded?: (success: boolean) => void;
     canvasWidth: number;
     canvasHeight: number;
     containerSize: { width: number; height: number };

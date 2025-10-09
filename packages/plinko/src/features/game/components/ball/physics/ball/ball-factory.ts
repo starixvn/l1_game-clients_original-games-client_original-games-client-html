@@ -10,7 +10,6 @@ export interface BallCreationOptions {
     numberOfRows: number;
     canvasWidth: number;
     engine: Engine;
-    roundId?: number;
 }
 
 /**
@@ -67,7 +66,6 @@ export class BallFactory {
         ballExtension.expectedFinalSlot = calculation.expectedFinalSlot;
         ballExtension.multiplier = calculation.serviceResult.multiplier;
         ballExtension.numberOfRows = calculation.serviceResult.numberOfRows || numberOfRows;
-        ballExtension.roundId = options.roundId;
 
         // Attach full pre-calculated data
         ballExtension.calculationData = {
