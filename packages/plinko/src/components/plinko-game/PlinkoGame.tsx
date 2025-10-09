@@ -16,8 +16,8 @@ const PlinkoGame = () => {
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
 
-    // Track the expected slot from the latest service result for validation
-    const [expectedSlotFromService, setExpectedSlotFromService] = useState<number | null>(null);
+    // Track expected slots per round ID to handle concurrent bets and avoid race conditions
+    const [expectedSlotsByRound, setExpectedSlotsByRound] = useState<Map<number, number>>(new Map());
 
     // Shared game context and betting store
     const { endBet, socket, gameConfigs } = useGameStore(
@@ -48,9 +48,25 @@ const PlinkoGame = () => {
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
                 const countOfOnes = resultPath.filter((p: number) => p === 1).length;
+                const roundId = action.finish.roundId;
 
-                // Store the expected slot for validation when ball lands
-                setExpectedSlotFromService(slotIndex);
+                // Store the expected slot for this round for validation when ball lands
+                console.log('🎯 [PLINKO GAME] STORING EXPECTED SLOT', {
+                    roundId,
+                    slotIndex,
+                    actionRoundId: action.finish.roundId,
+                    mapSizeBefore: expectedSlotsByRound.size
+                });
+                setExpectedSlotsByRound(prev => {
+                    const newMap = new Map(prev.set(roundId, slotIndex));
+                    console.log('🎯 [PLINKO GAME] STORED EXPECTED SLOT', {
+                        roundId,
+                        slotIndex,
+                        mapSizeAfter: newMap.size,
+                        allEntries: Array.from(newMap.entries())
+                    });
+                    return newMap;
+                });
 
                 console.log("🎯 [PLINKO GAME] Server result path details - FULL TRACE:", {
                     resultPath,
@@ -97,7 +113,7 @@ const PlinkoGame = () => {
                                 ballLayoutReady: ballLayoutRef.current?.isReady?.(),
                             });
 
-                            ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier);
+                            ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier, undefined, roundId);
 
                             logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path", {
                                 betAmount,
@@ -184,17 +200,36 @@ const PlinkoGame = () => {
     };
 
     // Handle ball landing result validation against service result
-    const handleBallLanded = (success: boolean) => {
-        const expectedSlot = expectedSlotFromService;
+    const handleBallLanded = (success: boolean, roundId?: number) => {
+        console.log('🎯 [PLINKO GAME] BALL LANDED - DEBUG INFO', {
+            success,
+            roundId,
+            expectedSlotsByRoundSize: expectedSlotsByRound.size,
+            allMapEntries: Array.from(expectedSlotsByRound.entries()),
+            roundIdType: typeof roundId,
+            roundIdValue: roundId
+        });
 
-        if (expectedSlot !== null) {
+        const expectedSlot = roundId ? expectedSlotsByRound.get(roundId) : undefined;
+
+        console.log('🎯 [PLINKO GAME] BALL LANDED - SLOT RETRIEVAL', {
+            roundId,
+            expectedSlot,
+            expectedSlotType: typeof expectedSlot,
+            expectedSlotValue: expectedSlot,
+            mapHasRoundId: roundId ? expectedSlotsByRound.has(roundId) : false
+        });
+
+        if (expectedSlot !== undefined && roundId !== undefined) {
             logger.info("🎯 [PLINKO GAME] BALL LANDING VALIDATION - CONTROLLER LEVEL", {
                 success,
                 expectedSlot,
+                roundId,
                 serviceResultSlot: expectedSlot,
                 validation: {
                     ballLandedCorrectly: success,
                     expectedSlotFromService: expectedSlot,
+                    roundId,
                     hasServiceResult: true,
                     slotValidationEnabled: true
                 }
@@ -203,6 +238,7 @@ const PlinkoGame = () => {
             if (success) {
                 logger.info("✅ [PLINKO GAME] BALL LANDED IN CORRECT SLOT - CONTROLLER CONFIRMATION", {
                     expectedSlot,
+                    roundId,
                     serviceResultSlot: expectedSlot,
                     status: "SUCCESS",
                     message: `Ball successfully landed in slot ${expectedSlot} as expected by service`
@@ -210,6 +246,7 @@ const PlinkoGame = () => {
             } else {
                 logger.error("❌ [PLINKO GAME] BALL LANDED IN WRONG SLOT - CONTROLLER FAILURE DETECTED", {
                     expectedSlot,
+                    roundId,
                     serviceResultSlot: expectedSlot,
                     status: "FAILED",
                     message: `Ball failed to land in expected slot ${expectedSlot}`,
@@ -218,7 +255,11 @@ const PlinkoGame = () => {
             }
 
             // Clear the expected slot after validation
-            setExpectedSlotFromService(null);
+            setExpectedSlotsByRound(prev => {
+                const newMap = new Map(prev);
+                newMap.delete(roundId);
+                return newMap;
+            });
         } else {
             logger.warn("⚠️ [PLINKO GAME] BALL LANDED BUT NO SERVICE RESULT TO VALIDATE AGAINST", {
                 success,

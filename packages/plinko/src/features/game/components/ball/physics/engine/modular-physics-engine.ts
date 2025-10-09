@@ -78,7 +78,7 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
 export function setupCollisionDetection(
     engine: Engine,
     cooldownManager: CollisionCooldownManager,
-    onBallLanded?: (success: boolean) => void
+    onBallLanded?: (success: boolean, roundId?: number) => void
 ): void {
     physicsLogger.info('🔧 SETTING UP MODULAR COLLISION DETECTION', {
         component: 'ModularPhysicsEngine',
@@ -273,7 +273,7 @@ export function setupCollisionDetection(
 function handleBallMultiplierCollision(
     pair: any,
     engine: Engine,
-    onBallLanded?: (success: boolean) => void
+    onBallLanded?: (success: boolean, roundId?: number) => void
 ): void {
     const { bodyA, bodyB } = pair;
 
@@ -381,7 +381,14 @@ function handleBallMultiplierCollision(
             });
 
             // Notify UI of successful landing
-            onBallLanded?.(true);
+            console.log('🎯 [PHYSICS] CALLING onBallLanded SUCCESS', {
+                ballId: ballBody.id,
+                roundId: ballExtension.roundId,
+                roundIdType: typeof ballExtension.roundId,
+                roundIdValue: ballExtension.roundId,
+                expectedSlot: ballExtension.expectedFinalSlot
+            });
+            onBallLanded?.(true, ballExtension.roundId);
         } else {
             physicsLogger.error('🎯❌ SERVICE-GUIDED BALL LANDED IN WRONG SLOT - FAILURE!', {
                 component: 'ModularPhysicsEngine',
@@ -400,7 +407,14 @@ function handleBallMultiplierCollision(
             });
 
             // Notify UI of failed landing
-            onBallLanded?.(false);
+            console.log('🎯 [PHYSICS] CALLING onBallLanded FAILURE', {
+                ballId: ballBody.id,
+                roundId: ballExtension.roundId,
+                roundIdType: typeof ballExtension.roundId,
+                roundIdValue: ballExtension.roundId,
+                expectedSlot: ballExtension.expectedFinalSlot
+            });
+            onBallLanded?.(false, ballExtension.roundId);
         }
     } else {
         // Regular ball: Just log the landing

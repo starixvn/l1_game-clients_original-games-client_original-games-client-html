@@ -13,8 +13,8 @@ interface UseBallSpawnerProps {
 }
 
 interface UseBallSpawnerReturn {
-    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number) => void;
-    spawnBallWithCalculation: (calculation: BallGameCalculation) => void;
+    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number, roundId?: number) => void;
+    spawnBallWithCalculation: (calculation: BallGameCalculation, roundId?: number) => void;
 }
 
 /**
@@ -27,7 +27,7 @@ export const useBallSpawner = ({
     engine
 }: UseBallSpawnerProps): UseBallSpawnerReturn => {
     // Pre-calculated ball spawning method - uses pre-calculated physics
-    const spawnBallWithCalculation = useCallback((calculation: BallGameCalculation) => {
+    const spawnBallWithCalculation = useCallback((calculation: BallGameCalculation, roundId?: number) => {
         if (!engine.current) {
             logger.error('❌ [PRE-CALC] No physics engine available for ball spawning');
             return;
@@ -52,7 +52,8 @@ export const useBallSpawner = ({
             calculation,
             numberOfRows,
             canvasWidth,
-            engine: engine.current
+            engine: engine.current,
+            roundId
         });
 
         physicsLogger?.info('✅ [PRE-CALC] Enhanced ball spawn completed', {
@@ -74,7 +75,8 @@ export const useBallSpawner = ({
         path: number[],
         finalSlot: number,
         multiplier: number,
-        serverRows?: number
+        serverRows?: number,
+        roundId?: number
     ) => {
         physicsLogger?.info('🎯 [PRE-CALC] Wrapping path-based spawn via calculation system', {
             component: 'BallSpawner',
@@ -98,7 +100,7 @@ export const useBallSpawner = ({
             BallFactory.clearActiveBalls(engine.current);
         }
 
-        spawnBallWithCalculation(calculation);
+        spawnBallWithCalculation(calculation, roundId);
     }, [numberOfRows, engine, spawnBallWithCalculation]);
 
     return {

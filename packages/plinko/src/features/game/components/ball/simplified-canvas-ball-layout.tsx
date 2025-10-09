@@ -1,6 +1,6 @@
 import React, { useRef, forwardRef, useImperativeHandle, useMemo } from "react";
 import { BallLayoutProps } from "../../../../shared/types";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "../../../../shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { usePhysicsEngine, useBallSpawner, useCanvas, useBallRenderer } from "./hooks";
 import { logger } from "../../../../services/logger";
@@ -16,8 +16,8 @@ import { calculateSlotCalculationData } from "./rendering";
 import { BallGameCalculation } from './physics/calculations/ball-game-calculation';
 
 export interface SimplifiedCanvasBallLayoutRef {
-    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number) => void;
-    spawnBallWithCalculation: (calculation: BallGameCalculation) => void;
+    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number, roundId?: number) => void;
+    spawnBallWithCalculation: (calculation: BallGameCalculation, roundId?: number) => void;
     forceReinitializePhysics: (newRows: number) => void;
     isReady: () => boolean;
 }
@@ -102,13 +102,13 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
 
         // Memoized imperative handle to prevent unnecessary re-renders
         const imperativeHandle = useMemo(() => ({
-            spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number) => {
+            spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number, roundId?: number) => {
                 // Only log in development mode to reduce noise
                 if (process.env.NODE_ENV === 'development') {
                     logger.debug('🎯 [COMPONENT] spawnBallWithPath called', { betValue, finalSlot, multiplier, serverRows });
                 }
                 if (isInitialized && engine.current) {
-                    spawnBallWithPath(betValue, path, finalSlot, multiplier, serverRows);
+                    spawnBallWithPath(betValue, path, finalSlot, multiplier, serverRows, roundId);
                 } else if (process.env.NODE_ENV === 'development') {
                     logger.warn('Cannot spawn guided ball: engine not ready');
                 }
@@ -121,7 +121,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 }
             },
             isReady: () => isInitialized && !!engine.current,
-            spawnBallWithCalculation: (calculation: BallGameCalculation) => {
+            spawnBallWithCalculation: (calculation: BallGameCalculation, roundId?: number) => {
                 if (!isInitialized || !engine) {
                     logger.warn('⚠️ [COMPONENT] spawnBallWithCalculation called but not initialized', {
                         isInitialized,
@@ -141,7 +141,7 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 try {
                     // Use the ball spawner with the pre-calculated data
                     // The calculation contains all the physics data needed
-                    spawnBallWithCalculation(calculation);
+                    spawnBallWithCalculation(calculation, roundId);
 
                     logger.debug('✅ [PRE-CALC] Ball spawn initiated with calculation data', {
                         calculationId: calculation.id,

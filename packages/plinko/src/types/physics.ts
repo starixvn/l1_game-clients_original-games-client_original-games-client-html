@@ -20,6 +20,7 @@ export interface BallBodyExtension {
     currentPathIndex?: number;
     isRemoved?: boolean;
     createdAt?: number;
+    roundId?: number;
     wrongSlotHits?: number;
     pinCollisions?: string[];
     appliedGuidanceSteps?: string[];
