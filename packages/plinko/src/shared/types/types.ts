@@ -78,6 +78,7 @@ export interface BallLayoutProps {
     multipliers?: number[];
     probabilities?: number[];
     onBallHit?: (multiplier: number, betValue: number) => void;
+    onBallLanded?: (success: boolean) => void;
 }
 
 export interface ValueDisplayProps {

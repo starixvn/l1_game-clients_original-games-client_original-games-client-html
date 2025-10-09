@@ -1,4 +1,5 @@
 import { Engine, Body } from 'matter-js';
+import { BallGameCalculation } from '../features/game/components/ball/physics/calculations/ball-game-calculation';
 
 /**
  * Shared physics-related types
@@ -22,7 +23,41 @@ export interface BallBodyExtension {
     wrongSlotHits?: number;
     pinCollisions?: string[];
     appliedGuidanceSteps?: string[];
+    collisionCooldown?: Map<string, number>;
+    collisionSequence?: Array<{ timestamp: number; pegLabel: string; position: { x: number; y: number }; velocity: { x: number; y: number } }>;
     pathPositions?: Array<{ x: number; y: number; type?: string; pegRow?: number; pegCol?: number; pathIndex?: number; direction?: number }>;
+    numberOfRows?: number;
+    onFinalTrajectory?: boolean;
+
+    // Delayed guidance system
+    pendingGuidance?: {
+        direction: number;
+        naturalNudgeStrength: number;
+        rowRatio: number;
+        rowCount: number;
+        pinRow: number;
+        appliedAtFrame: number;
+    };
+
+    // Bounce delay system
+    justBounced?: boolean;
+    bounceTimestamp?: number;
+
+    // Pre-calculated physics data for enhanced realism
+    calculationData?: {
+        id: string;
+        trajectory: BallGameCalculation['trajectory'];
+        collisions: BallGameCalculation['collisions'];
+        physicsFactors: BallGameCalculation['physicsFactors'];
+        stabilityMetrics: BallGameCalculation['stabilityMetrics'];
+        predictionConfidence: number;
+        pathConfidence: number[];
+        alternativePaths: BallGameCalculation['alternativePaths'];
+        environmentalFactors: BallGameCalculation['environmentalFactors'];
+        ballProperties: BallGameCalculation['ballProperties'];
+        pegConfiguration: BallGameCalculation['pegConfiguration'];
+        boardConfiguration: BallGameCalculation['boardConfiguration'];
+    };
 }
 
 /**

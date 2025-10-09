@@ -1,9 +1,10 @@
 import { useRef, useCallback, useMemo } from 'react';
 import { Composite, Engine } from 'matter-js';
 import { logger } from '../../../../../services/logger';
+import { physicsLogger } from '../physics';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
-import { ANIMATION_CONSTANTS } from '../../../../../lib/physics/constants/animation-constants';
+import { ANIMATION_CONSTANTS } from '../physics/constants/animation-constants';
 import {
     calculateLayoutData,
     calculateSlotRenderData
@@ -77,11 +78,6 @@ export const useBallRenderer = ({
                 return;
             }
 
-            // Log render loop occasionally
-            if (Math.random() < ANIMATION_CONSTANTS.LOGGING.RENDER_LOOP_LOG_PROBABILITY) { // Log ~0.1% of frames
-                logger.debug('🔄 [RENDER LOOP] Frame rendered');
-            }
-
             // Track ball positions for path visualization
             const allBodies = Composite.allBodies(engine.world);
             const balls = allBodies.filter((body) => {
@@ -91,6 +87,21 @@ export const useBallRenderer = ({
                 const ballExtension = body as unknown as BallBodyExtension;
                 return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
             });
+
+            // Log render loop occasionally
+            if (Math.random() < ANIMATION_CONSTANTS.LOGGING.RENDER_LOOP_LOG_PROBABILITY) { // Log ~0.1% of frames
+                logger.debug('🔄 [RENDER LOOP] Frame rendered');
+
+                physicsLogger.debug('Render frame processed', {
+                    component: 'BallRenderer',
+                    function: 'render',
+                    metadata: {
+                        ballsCount: balls.length,
+                        engineBodies: allBodies.length,
+                        canvasSize: { width: canvasWidth, height: canvasHeight }
+                    }
+                });
+            }
 
             // Record current positions for service-guided balls (continuous path)
             balls.forEach((ball) => {

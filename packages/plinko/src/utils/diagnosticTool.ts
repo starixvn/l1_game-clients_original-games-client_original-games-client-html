@@ -36,9 +36,9 @@ export const diagnosticTool = {
         }
 
         try {
-            console.log('🎯 [DIAGNOSTIC] Attempting to spawn ball...');
-            componentRef.current.spawnBall(100);
-            console.log('✅ [DIAGNOSTIC] Ball spawn command sent successfully');
+            console.log('🎯 [DIAGNOSTIC] Attempting to spawn service-guided ball...');
+            componentRef.current.spawnBallWithPath(100, [0, 1, 0], 1, 2.0);
+            console.log('✅ [DIAGNOSTIC] Service-guided ball spawn command sent successfully');
             return true;
         } catch (error) {
             console.error('❌ [DIAGNOSTIC] Error spawning ball:', error);

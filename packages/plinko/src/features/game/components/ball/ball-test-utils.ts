@@ -1,4 +1,5 @@
-import { calculateBallSize } from '../../../../lib/physics/ball-calculations';
+import { calculateBallSize } from './physics/ball/ball-scaling';
+import { physicsLogger } from './physics';
 
 /**
  * Ball Test Utilities
@@ -106,6 +107,16 @@ export function executeTestBallSpawn(
  * Comprehensive test function that handles both logging and execution
  */
 export function performDirectSpawnTest(ballLayoutRef: any, config: TestSpawnConfig) {
+    physicsLogger.info('Performing direct spawn test', {
+        component: 'BallTestUtils',
+        function: 'performDirectSpawnTest',
+        metadata: {
+            config,
+            hasRef: !!ballLayoutRef,
+            hasSpawnFunction: !!ballLayoutRef?.spawnBallWithPath
+        }
+    });
+
     // Check ball layout reference
     const refStatus = {
         exists: !!ballLayoutRef,
@@ -113,8 +124,22 @@ export function performDirectSpawnTest(ballLayoutRef: any, config: TestSpawnConf
     };
 
     if (refStatus.exists && refStatus.hasSpawnBallWithPath) {
-        return executeTestBallSpawn(ballLayoutRef, config);
+        const success = executeTestBallSpawn(ballLayoutRef, config);
+
+        physicsLogger.info('Direct spawn test completed', {
+            component: 'BallTestUtils',
+            function: 'performDirectSpawnTest',
+            metadata: { success, config }
+        });
+
+        return success;
     } else {
+        physicsLogger.warn('Direct spawn test failed - invalid reference', {
+            component: 'BallTestUtils',
+            function: 'performDirectSpawnTest',
+            metadata: { refStatus, config }
+        });
+
         return false;
     }
 }

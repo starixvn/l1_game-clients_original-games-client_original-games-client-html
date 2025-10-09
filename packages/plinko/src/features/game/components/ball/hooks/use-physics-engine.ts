@@ -1,13 +1,9 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
-import { Body, Engine, Runner, World } from 'matter-js';
+import { Body, Engine, Runner } from 'matter-js';
 import { logger } from '../../../../../services/logger';
-import {
-    initializePhysicsEngine,
-    setupCollisionDetection,
-    addBodiesToWorld,
-    startPhysicsRunner,
-    updateCollisionDetection
-} from '../physics';
+import { usePhysicsScaler } from './use-physics-scaler';
+import { useCollisionDetection } from './use-collision-detection';
+import { usePhysicsInitialization } from './use-physics-initialization';
 
 
 interface UsePhysicsEngineProps {
@@ -15,9 +11,11 @@ interface UsePhysicsEngineProps {
     multipliers: number[];
     gameMode: number;
     onBallHit?: (multiplier: number, betValue: number) => void;
+    onBallLanded?: (success: boolean) => void;
     canvasWidth: number;
     canvasHeight: number;
     containerSize: { width: number; height: number };
+    baseRows?: number;
 }
 
 interface UsePhysicsEngineReturn {
@@ -28,49 +26,39 @@ interface UsePhysicsEngineReturn {
     multipliersBodies: Body[];
     walls: Body[];
     cleanupPhysics: () => void;
-    setupCollisionDetection: (engine: Engine) => void;
+    forceReinitialize: (newRows: number) => void;
 }
 
 /**
  * Custom hook for managing the Matter.js physics engine
- * Handles engine initialization, cleanup, and collision detection setup
+ * Orchestrates physics initialization, scaling, and collision detection
  */
 export const usePhysicsEngine = ({
     numberOfRows,
     multipliers,
     gameMode,
     onBallHit,
+    onBallLanded,
     canvasWidth,
     canvasHeight,
-    containerSize
+    containerSize,
+    baseRows = 8
 }: UsePhysicsEngineProps): UsePhysicsEngineReturn => {
-    const engineRef = useRef<Engine | null>(null);
-    const runnerRef = useRef<Runner | null>(null);
+    // Use modular hooks for separated concerns
+    const { scaler, updateGravity } = usePhysicsScaler({ baseRows });
+    const { setupCollisions } = useCollisionDetection({ onBallLanded });
+    const { engine, runner, initializeEngineAndBodies, cleanup } = usePhysicsInitialization({
+        canvasWidth,
+        canvasHeight
+    });
+
     const removedBallsRef = useRef<Set<number>>(new Set());
-
-    // Physics body creation is now handled by the modular BodyFactory
-
 
     // Cleanup physics function
     const cleanupPhysics = useCallback(() => {
-        if (runnerRef.current) {
-            Runner.stop(runnerRef.current);
-            runnerRef.current = null;
-        }
-        if (engineRef.current) {
-            World.clear(engineRef.current.world, true);
-            Engine.clear(engineRef.current);
-            engineRef.current = null;
-        }
+        cleanup();
         removedBallsRef.current.clear();
-    }, []);
-
-    // Collision handling is now delegated to the modular CollisionHandler
-
-    // Setup collision detection using the modular CollisionHandler
-    const setupLocalCollisionDetection = useCallback((engine: Engine) => {
-        setupCollisionDetection(engine, removedBallsRef, { onBallHit });
-    }, [onBallHit]);
+    }, [cleanup]);
 
     // State for tracking initialization
     const [isInitialized, setIsInitialized] = useState(false);
@@ -78,14 +66,26 @@ export const usePhysicsEngine = ({
     const [multipliersBodies, setMultipliersBodies] = useState<Body[]>([]);
     const [walls, setWalls] = useState<Body[]>([]);
 
+    // Store previous numberOfRows to detect changes
+    const prevRowsRef = useRef(numberOfRows);
+
     // Initialize physics engine - only when essential parameters change
     useEffect(() => {
+        // Check if we need to reinitialize based on row count changes
+        const rowsChanged = prevRowsRef.current !== numberOfRows;
+        prevRowsRef.current = numberOfRows;
+
         // Only reinitialize if we don't have an engine or if essential parameters changed
-        if (isInitialized && engineRef.current) {
-            // Check if we need to reinitialize based on essential parameters only
-            return () => {
-                // No cleanup needed when slotCalculationData is not available
-            };
+        if (isInitialized && engine.current && !rowsChanged) {
+            logger.debug('🔧 [PHYSICS] Engine already initialized and rows unchanged, skipping reinitialization');
+            return;
+        }
+
+        if (rowsChanged && isInitialized) {
+            logger.info('🔄 [PHYSICS] Row count changed, reinitializing physics engine', {
+                oldRows: prevRowsRef.current,
+                newRows: numberOfRows
+            });
         }
 
         if (isInitialized) {
@@ -93,7 +93,8 @@ export const usePhysicsEngine = ({
             setIsInitialized(false);
         }
 
-        const initTimeout = setTimeout(() => {
+        // Initialize immediately without timeout for better responsiveness
+        const initPhysics = () => {
             // Only log initialization in development mode to reduce noise
             if (process.env.NODE_ENV === 'development') {
                 logger.info('🔧 [PHYSICS] Initializing physics engine...', {
@@ -102,79 +103,138 @@ export const usePhysicsEngine = ({
                 });
             }
 
-            // Use the modular physics system to initialize everything
-            const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
+            // Update scaler with current rows
+            scaler.current?.setRows(numberOfRows);
 
-            const physicsState = initializePhysicsEngine({
-                numberOfRows,
+            // Calculate gravity with current scaling
+            const currentGravity = updateGravity(containerSize, { width: canvasWidth, height: canvasHeight });
+
+            // Create body options
+            const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
+            const bodyOptions = {
+                rows: numberOfRows,
                 multipliers: effectiveMultipliers,
                 gameMode,
                 canvasWidth,
-                canvasHeight,
-                containerSize,
-                onBallHit
-            });
+                canvasHeight
+            };
 
-            // Store references
-            engineRef.current = physicsState.engine;
-            runnerRef.current = physicsState.runner;
+            // Initialize engine with proper gravity
+            const { pins: newPins, multipliersBodies: newMultipliersBodies, walls: newWalls } = initializeEngineAndBodies(bodyOptions, { x: 0, y: currentGravity });
 
-            // Update state with created bodies
-            setPins(physicsState.pins);
-            setMultipliersBodies(physicsState.multipliersBodies);
-            setWalls(physicsState.walls);
-
-            // Start the physics runner
-            if (physicsState.runner) {
-                startPhysicsRunner(physicsState.runner, physicsState.engine);
+            // Setup collision detection
+            if (engine.current) {
+                setupCollisions(engine.current);
             }
 
-            // Add bodies to world and setup collision detection
-            addBodiesToWorld(physicsState.engine, physicsState.pins, physicsState.multipliersBodies, physicsState.walls);
-            setupLocalCollisionDetection(physicsState.engine);
-
+            // Update state
+            setPins(newPins);
+            setMultipliersBodies(newMultipliersBodies);
+            setWalls(newWalls);
             setIsInitialized(true);
 
             if (process.env.NODE_ENV === 'development') {
                 logger.info('✅ [PHYSICS] Physics engine ready', {
-                    pins: physicsState.pins.length,
-                    multipliers: physicsState.multipliersBodies.length,
-                    walls: physicsState.walls.length,
-                    totalBodies: physicsState.pins.length + physicsState.multipliersBodies.length + physicsState.walls.length
+                    pins: newPins.length,
+                    multipliers: multipliers.length,
+                    walls: newWalls.length,
+                    totalBodies: newPins.length + multipliers.length + newWalls.length
                 });
             }
-        }, 100);
+        };
+
+        // Execute initialization immediately
+        initPhysics();
 
         return () => {
-            clearTimeout(initTimeout);
             cleanupPhysics();
         };
-    }, [numberOfRows, canvasWidth, canvasHeight]); // Only reinitialize when essential parameters change
+    }, [numberOfRows, canvasWidth, canvasHeight, scaler, updateGravity, containerSize, multipliers, gameMode]);
 
-    // Update collision detection when onBallHit callback changes
+    // Update row-based scaling when number of rows changes
     useEffect(() => {
-        if (engineRef.current && isInitialized) {
-            updateCollisionDetection(engineRef.current, removedBallsRef, { onBallHit });
+        if (scaler.current) {
+            scaler.current.setRows(numberOfRows);
+            logger.debug('🔧 [PHYSICS] Row scaling updated', {
+                rows: numberOfRows,
+                baseRows,
+                rowRatio: numberOfRows / baseRows
+            });
         }
-    }, [onBallHit, isInitialized]);
+    }, [numberOfRows, baseRows, scaler]);
 
     // Handle multiplier changes without reinitializing the entire engine
     useEffect(() => {
-        if (engineRef.current && isInitialized && multipliers.length > 0) {
+        if (engine.current && isInitialized && multipliers.length > 0) {
             logger.debug('🔧 [PHYSICS] Updating multipliers without reinitializing engine');
             // The engine is already initialized, we don't need to recreate it
             // The multipliers are handled by the game logic, not the physics engine
         }
-    }, [multipliers, isInitialized]);
+    }, [multipliers, isInitialized, engine]);
+
+    // Force reinitialization with specific row count (for server sync)
+    const forceReinitialize = useCallback((newRows: number) => {
+        logger.info('🔄 [PHYSICS] Force reinitializing physics engine with new row count', {
+            oldRows: numberOfRows,
+            newRows
+        });
+
+        // Update the stored row count
+        prevRowsRef.current = newRows;
+
+        // Force cleanup and reinitialization
+        if (isInitialized) {
+            cleanupPhysics();
+            setIsInitialized(false);
+        }
+
+        // Update scaler with new row count
+        scaler.current?.setRows(newRows);
+
+        // Calculate gravity for forced reinitialization
+        const currentGravity = updateGravity(containerSize, { width: canvasWidth, height: canvasHeight });
+
+        // Create body options with new row count
+        const effectiveMultipliers = multipliers.length > 0 ? multipliers : [0.5, 1, 1.2, 1.5, 2, 3, 5, 10, 20];
+        const bodyOptions = {
+            rows: newRows,
+            multipliers: effectiveMultipliers,
+            gameMode,
+            canvasWidth,
+            canvasHeight
+        };
+
+        // Reinitialize engine with new configuration
+        const { pins: newPins, multipliersBodies: newMultipliersBodies, walls: newWalls } = initializeEngineAndBodies(bodyOptions, { x: 0, y: currentGravity });
+
+        // Setup collision detection
+        if (engine.current) {
+            setupCollisions(engine.current);
+        }
+
+        // Update state
+        setPins(newPins);
+        setMultipliersBodies(newMultipliersBodies);
+        setWalls(newWalls);
+        setIsInitialized(true);
+
+        logger.info('✅ [PHYSICS] Force reinitialization complete', {
+            newRows,
+            pins: newPins.length,
+            multipliers: multipliers.length,
+            walls: newWalls.length,
+            totalBodies: newPins.length + multipliers.length + newWalls.length
+        });
+    }, [numberOfRows, multipliers, gameMode, canvasWidth, canvasHeight, containerSize, scaler, updateGravity]);
 
     return {
-        engine: engineRef,
-        runner: runnerRef,
+        engine,
+        runner,
         isInitialized,
         pins,
         multipliersBodies,
         walls,
         cleanupPhysics,
-        setupCollisionDetection: setupLocalCollisionDetection
+        forceReinitialize
     };
 };

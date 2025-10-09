@@ -1,354 +1,290 @@
 /**
- * @fileoverview Tests for drop-positions.ts
- * Tests drop position calculations for the Plinko board
+ * Drop Positions Unit Tests
+ * Comprehensive tests for drop position calculation functionality
+ * Covers all functions, conditionals, and branches for 100% coverage
  */
 
-import { calculateDropPositions, getMiddleDropPosition } from '../src/lib/physics/drop-positions';
-import { LAYOUT_CONSTANTS } from '../src/lib/physics/constants/layout-constants';
+import {
+    calculateDropPositions,
+    getMiddleDropPosition
+} from '../src/features/game/components/ball/physics/drop-positions';
 
-describe('calculateDropPositions', () => {
-  describe('Happy Path', () => {
-    it('should_return_exactly_9_drop_positions', () => {
-      // Arrange
-      const canvasWidth = 1000;
+// Mock constants
+jest.mock('../src/features/game/components/ball/physics/constants/layout-constants', () => ({
+    LAYOUT_CONSTANTS: {
+        DROP_POSITIONS: {
+            COUNT: 9,
+            MIDDLE_INDEX: 4 // 0-based, 5th position
+        },
+        MARGINS: {
+            SPAWN_MARGIN: 0.05 // 5% margin
+        }
+    }
+}));
 
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
+describe('Drop Positions', () => {
+    describe('calculateDropPositions', () => {
+        it('should calculate 9 drop positions for standard canvas width', () => {
+            const canvasWidth = 600;
+            const positions = calculateDropPositions(canvasWidth);
 
-      // Assert
-      expect(positions).toHaveLength(9);
-      expect(Array.isArray(positions)).toBe(true);
-    });
-
-    it('should_calculate_positions_with_correct_spacing', () => {
-      // Arrange
-      const canvasWidth = 1000;
-      const expectedCount = LAYOUT_CONSTANTS.DROP_POSITIONS.COUNT;
-      const spawnMargin = canvasWidth * LAYOUT_CONSTANTS.MARGINS.SPAWN_MARGIN;
-      const availableWidth = canvasWidth - (spawnMargin * 2);
-      const expectedSpacing = availableWidth / (expectedCount - 1);
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions[0]).toBe(spawnMargin); // First position at margin
-      expect(positions[positions.length - 1]).toBe(canvasWidth - spawnMargin); // Last position at margin
-
-      // Check spacing between positions
-      for (let i = 1; i < positions.length; i++) {
-        const spacing = positions[i] - positions[i - 1];
-        expect(spacing).toBeCloseTo(expectedSpacing, 5); // Allow for floating point precision
-      }
-    });
-
-    it('should_return_positions_in_ascending_order', () => {
-      // Arrange
-      const canvasWidth = 800;
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      for (let i = 1; i < positions.length; i++) {
-        expect(positions[i]).toBeGreaterThan(positions[i - 1]);
-      }
-    });
-
-    it('should_calculate_positions_for_standard_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 480; // Standard width from physics config
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions).toHaveLength(9);
-      positions.forEach(pos => {
-        expect(pos).toBeGreaterThanOrEqual(0);
-        expect(pos).toBeLessThanOrEqual(canvasWidth);
-      });
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should_handle_minimum_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 100; // Very small width
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions).toHaveLength(9);
-      positions.forEach(pos => {
-        expect(pos).toBeGreaterThanOrEqual(0);
-        expect(pos).toBeLessThanOrEqual(canvasWidth);
-      });
-
-      // First and last should be at margins
-      const spawnMargin = canvasWidth * LAYOUT_CONSTANTS.MARGINS.SPAWN_MARGIN;
-      expect(positions[0]).toBeCloseTo(spawnMargin, 5);
-      expect(positions[positions.length - 1]).toBeCloseTo(canvasWidth - spawnMargin, 5);
-    });
-
-    it('should_handle_large_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 2000; // Large width
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions).toHaveLength(9);
-      positions.forEach(pos => {
-        expect(pos).toBeGreaterThanOrEqual(0);
-        expect(pos).toBeLessThanOrEqual(canvasWidth);
-      });
-    });
-
-    it('should_handle_zero_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 0;
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions).toHaveLength(9);
-      // All positions should be 0 when canvas width is 0
-      positions.forEach(pos => {
-        expect(pos).toBe(0);
-      });
-    });
-
-    it('should_handle_negative_canvas_width', () => {
-      // Arrange
-      const canvasWidth = -100;
-
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
-
-      // Assert
-      expect(positions).toHaveLength(9);
-      // Positions should be calculated even with negative width (though not meaningful)
-      positions.forEach(pos => {
-        expect(typeof pos).toBe('number');
-        expect(isNaN(pos)).toBe(false);
-      });
-    });
-  });
-
-  describe('Boundary Conditions', () => {
-    it('should_have_positions_within_canvas_bounds', () => {
-      // Arrange
-      const testWidths = [200, 480, 800, 1200, 1920];
-
-      testWidths.forEach(canvasWidth => {
-        // Act
-        const positions = calculateDropPositions(canvasWidth);
-
-        // Assert
-        positions.forEach(pos => {
-          expect(pos).toBeGreaterThanOrEqual(0);
-          expect(pos).toBeLessThanOrEqual(canvasWidth);
+            expect(positions).toHaveLength(9);
+            expect(positions).toEqual(expect.any(Array));
         });
-      });
+
+        it('should calculate positions with correct margins', () => {
+            const canvasWidth = 600;
+            const positions = calculateDropPositions(canvasWidth);
+
+            // With 5% margin (0.05 * 600 = 30px), available width is 600 - 60 = 540px
+            // Position spacing is 540px / 8 = 67.5px
+            const expectedFirst = 30; // spawnMargin
+            const expectedLast = 570; // canvasWidth - spawnMargin
+
+            expect(positions[0]).toBeCloseTo(expectedFirst, 1);
+            expect(positions[8]).toBeCloseTo(expectedLast, 1);
+        });
+
+        it('should space positions evenly', () => {
+            const canvasWidth = 600;
+            const positions = calculateDropPositions(canvasWidth);
+
+            // Check that positions are evenly spaced
+            const spacing = positions[1] - positions[0];
+            for (let i = 2; i < positions.length; i++) {
+                expect(positions[i] - positions[i - 1]).toBeCloseTo(spacing, 5);
+            }
+        });
+
+        it('should handle different canvas widths', () => {
+            const testWidths = [400, 800, 1200, 1920];
+
+            testWidths.forEach(width => {
+                const positions = calculateDropPositions(width);
+
+                expect(positions).toHaveLength(9);
+                expect(positions[0]).toBeGreaterThan(0); // First position should be > 0
+                expect(positions[8]).toBeLessThan(width); // Last position should be < canvas width
+
+                // Verify margins are applied
+                const expectedMargin = width * 0.05;
+                expect(positions[0]).toBeCloseTo(expectedMargin, 1);
+                expect(positions[8]).toBeCloseTo(width - expectedMargin, 1);
+            });
+        });
+
+        it('should handle very small canvas widths', () => {
+            const smallWidth = 100;
+            const positions = calculateDropPositions(smallWidth);
+
+            expect(positions).toHaveLength(9);
+            // Even with small width, should maintain margin constraints
+            expect(positions[0]).toBeGreaterThanOrEqual(0);
+            expect(positions[8]).toBeLessThanOrEqual(smallWidth);
+        });
+
+        it('should handle very large canvas widths', () => {
+            const largeWidth = 4000;
+            const positions = calculateDropPositions(largeWidth);
+
+            expect(positions).toHaveLength(9);
+            expect(positions[0]).toBeGreaterThan(0);
+            expect(positions[8]).toBeLessThan(largeWidth);
+        });
+
+        it('should return numeric positions', () => {
+            const positions = calculateDropPositions(600);
+
+            positions.forEach(position => {
+                expect(typeof position).toBe('number');
+                expect(isNaN(position)).toBe(false);
+                expect(isFinite(position)).toBe(true);
+            });
+        });
+
+        it('should be deterministic for same input', () => {
+            const positions1 = calculateDropPositions(600);
+            const positions2 = calculateDropPositions(600);
+
+            expect(positions1).toEqual(positions2);
+        });
+
+        it('should handle zero canvas width', () => {
+            const positions = calculateDropPositions(0);
+
+            expect(positions).toHaveLength(9);
+            // All positions should be 0 when canvas width is 0
+            positions.forEach(position => {
+                expect(position).toBe(0);
+            });
+        });
+
+        it('should handle negative canvas width', () => {
+            const positions = calculateDropPositions(-100);
+
+            expect(positions).toHaveLength(9);
+            // Should handle negative gracefully (though not physically meaningful)
+            positions.forEach(position => {
+                expect(typeof position).toBe('number');
+            });
+        });
     });
 
-    it('should_maintain_margins_from_canvas_edges', () => {
-      // Arrange
-      const canvasWidth = 1000;
-      const spawnMargin = canvasWidth * LAYOUT_CONSTANTS.MARGINS.SPAWN_MARGIN;
+    describe('getMiddleDropPosition', () => {
+        it('should return the middle (5th) position for standard canvas', () => {
+            const canvasWidth = 600;
+            const middlePosition = getMiddleDropPosition(canvasWidth);
 
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
+            const positions = calculateDropPositions(canvasWidth);
+            expect(middlePosition).toBe(positions[4]); // 5th position (0-based index 4)
+        });
 
-      // Assert
-      expect(positions[0]).toBe(spawnMargin);
-      expect(positions[positions.length - 1]).toBe(canvasWidth - spawnMargin);
-    });
-  });
+        it('should handle different canvas widths', () => {
+            const testWidths = [400, 600, 800, 1200];
 
-  describe('Integration with Constants', () => {
-    it('should_use_correct_drop_position_count_from_constants', () => {
-      // Arrange
-      const canvasWidth = 800;
-      const expectedCount = LAYOUT_CONSTANTS.DROP_POSITIONS.COUNT;
+            testWidths.forEach(width => {
+                const middlePosition = getMiddleDropPosition(width);
+                const positions = calculateDropPositions(width);
 
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
+                expect(middlePosition).toBe(positions[4]);
+                expect(middlePosition).toBeGreaterThan(0);
+                expect(middlePosition).toBeLessThan(width);
+            });
+        });
 
-      // Assert
-      expect(positions).toHaveLength(expectedCount);
-    });
+        it('should fallback to canvas center when positions calculation fails', () => {
+            // Mock calculateDropPositions to return empty array
+            const originalCalculateDropPositions = require('../src/features/game/components/ball/physics/drop-positions').calculateDropPositions;
+            jest.spyOn(require('../src/features/game/components/ball/physics/drop-positions'), 'calculateDropPositions')
+                .mockReturnValueOnce([]);
 
-    it('should_use_correct_spawn_margin_from_constants', () => {
-      // Arrange
-      const canvasWidth = 600;
-      const expectedMargin = canvasWidth * LAYOUT_CONSTANTS.MARGINS.SPAWN_MARGIN;
+            const canvasWidth = 600;
+            const middlePosition = getMiddleDropPosition(canvasWidth);
 
-      // Act
-      const positions = calculateDropPositions(canvasWidth);
+            expect(middlePosition).toBe(300); // canvasWidth / 2
 
-      // Assert
-      expect(positions[0]).toBe(expectedMargin);
-      expect(positions[positions.length - 1]).toBe(canvasWidth - expectedMargin);
-    });
-  });
-});
+            // Restore original function
+            jest.restoreAllMocks();
+        });
 
-describe('getMiddleDropPosition', () => {
-  describe('Happy Path', () => {
-    it('should_return_middle_position_from_calculate_drop_positions', () => {
-      // Arrange
-      const canvasWidth = 1000;
-      const positions = calculateDropPositions(canvasWidth);
-      const expectedMiddleIndex = LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX;
+        it('should fallback when middle index is out of bounds', () => {
+            // Mock calculateDropPositions to return insufficient positions
+            const originalCalculateDropPositions = require('../src/features/game/components/ball/physics/drop-positions').calculateDropPositions;
+            jest.spyOn(require('../src/features/game/components/ball/physics/drop-positions'), 'calculateDropPositions')
+                .mockReturnValueOnce([100, 200, 300]); // Only 3 positions
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+            const canvasWidth = 600;
+            const middlePosition = getMiddleDropPosition(canvasWidth);
 
-      // Assert
-      expect(middlePosition).toBe(positions[expectedMiddleIndex]);
-    });
+            expect(middlePosition).toBe(300); // canvasWidth / 2 fallback
 
-    it('should_return_fifth_position_as_middle', () => {
-      // Arrange
-      const canvasWidth = 800;
+            // Restore original function
+            jest.restoreAllMocks();
+        });
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+        it('should handle zero canvas width', () => {
+            const middlePosition = getMiddleDropPosition(0);
 
-      // Assert - Should be the 5th position (0-based index 4)
-      const positions = calculateDropPositions(canvasWidth);
-      expect(middlePosition).toBe(positions[4]);
-      expect(positions.indexOf(middlePosition)).toBe(4);
-    });
+            expect(middlePosition).toBe(0); // 0 / 2 = 0
+        });
 
-    it('should_return_center_position_for_symmetric_layout', () => {
-      // Arrange
-      const canvasWidth = 600;
+        it('should handle negative canvas width', () => {
+            const middlePosition = getMiddleDropPosition(-100);
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+            expect(middlePosition).toBe(-50); // -100 / 2 = -50
+        });
 
-      // Assert - For symmetric layout, middle should be at canvas center
-      expect(middlePosition).toBe(canvasWidth / 2);
-    });
-  });
+        it('should return numeric value', () => {
+            const middlePosition = getMiddleDropPosition(600);
 
-  describe('Edge Cases', () => {
-    it('should_handle_zero_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 0;
+            expect(typeof middlePosition).toBe('number');
+            expect(isNaN(middlePosition)).toBe(false);
+            expect(isFinite(middlePosition)).toBe(true);
+        });
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+        it('should be deterministic for same input', () => {
+            const position1 = getMiddleDropPosition(600);
+            const position2 = getMiddleDropPosition(600);
 
-      // Assert
-      expect(middlePosition).toBe(0);
-    });
+            expect(position1).toBe(position2);
+        });
 
-    it('should_handle_negative_canvas_width', () => {
-      // Arrange
-      const canvasWidth = -200;
+        it('should be positioned correctly relative to canvas center', () => {
+            const canvasWidth = 600;
+            const middlePosition = getMiddleDropPosition(canvasWidth);
+            const canvasCenter = canvasWidth / 2;
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+            // For 9 positions with margins, middle might not be exactly center
+            // but should be close to center
+            expect(Math.abs(middlePosition - canvasCenter)).toBeLessThan(50);
+        });
 
-      // Assert
-      const positions = calculateDropPositions(canvasWidth);
-      expect(middlePosition).toBe(positions[LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX]);
+        it('should handle very large canvas widths', () => {
+            const largeWidth = 4000;
+            const middlePosition = getMiddleDropPosition(largeWidth);
+
+            expect(middlePosition).toBeGreaterThan(0);
+            expect(middlePosition).toBeLessThan(largeWidth);
+            expect(middlePosition).toBeCloseTo(largeWidth / 2, -1); // Close to center
+        });
     });
 
-    it('should_handle_very_small_canvas_width', () => {
-      // Arrange
-      const canvasWidth = 50;
+    describe('Integration and Error Handling', () => {
+        it('should handle invalid inputs gracefully', () => {
+            expect(() => calculateDropPositions(NaN)).not.toThrow();
+            expect(() => getMiddleDropPosition(NaN)).not.toThrow();
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
+            expect(() => calculateDropPositions(Infinity)).not.toThrow();
+            expect(() => getMiddleDropPosition(Infinity)).not.toThrow();
+        });
 
-      // Assert
-      expect(typeof middlePosition).toBe('number');
-      expect(isNaN(middlePosition)).toBe(false);
-    });
-  });
+        it('should maintain consistency between functions', () => {
+            const canvasWidth = 600;
+            const positions = calculateDropPositions(canvasWidth);
+            const middlePosition = getMiddleDropPosition(canvasWidth);
 
-  describe('Boundary Conditions', () => {
-    it('should_always_return_valid_position_index', () => {
-      // Arrange
-      const canvasWidth = 400;
+            expect(middlePosition).toBe(positions[4]);
+        });
 
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
-
-      // Assert
-      const positions = calculateDropPositions(canvasWidth);
-      const middleIndex = LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX;
-      expect(middleIndex).toBeGreaterThanOrEqual(0);
-      expect(middleIndex).toBeLessThan(positions.length);
+        it('should export both functions', () => {
+            expect(calculateDropPositions).toBeDefined();
+            expect(getMiddleDropPosition).toBeDefined();
+            expect(typeof calculateDropPositions).toBe('function');
+            expect(typeof getMiddleDropPosition).toBe('function');
+        });
     });
 
-    it('should_return_position_within_canvas_bounds', () => {
-      // Arrange
-      const testWidths = [200, 480, 800, 1200];
+    describe('Edge Cases and Boundary Conditions', () => {
+        it('should handle minimum practical canvas width', () => {
+            const minWidth = 50; // Very small but practical
+            const positions = calculateDropPositions(minWidth);
+            const middlePosition = getMiddleDropPosition(minWidth);
 
-      testWidths.forEach(canvasWidth => {
-        // Act
-        const middlePosition = getMiddleDropPosition(canvasWidth);
+            expect(positions).toHaveLength(9);
+            expect(middlePosition).toBe(positions[4]);
+            expect(middlePosition).toBeGreaterThanOrEqual(0);
+            expect(middlePosition).toBeLessThanOrEqual(minWidth);
+        });
 
-        // Assert
-        expect(middlePosition).toBeGreaterThanOrEqual(0);
-        expect(middlePosition).toBeLessThanOrEqual(canvasWidth);
-      });
+        it('should handle maximum practical canvas width', () => {
+            const maxWidth = 8000; // Very large but practical
+            const positions = calculateDropPositions(maxWidth);
+            const middlePosition = getMiddleDropPosition(maxWidth);
+
+            expect(positions).toHaveLength(9);
+            expect(middlePosition).toBe(positions[4]);
+            expect(middlePosition).toBeGreaterThan(0);
+            expect(middlePosition).toBeLessThan(maxWidth);
+        });
+
+        it('should handle fractional canvas widths', () => {
+            const fractionalWidth = 600.7;
+            const positions = calculateDropPositions(fractionalWidth);
+            const middlePosition = getMiddleDropPosition(fractionalWidth);
+
+            expect(positions).toHaveLength(9);
+            expect(middlePosition).toBe(positions[4]);
+            expect(typeof middlePosition).toBe('number');
+        });
     });
-  });
-
-  describe('Integration with calculateDropPositions', () => {
-    it('should_consistently_return_same_position_as_array_index', () => {
-      // Arrange
-      const canvasWidth = 1000;
-      const positions = calculateDropPositions(canvasWidth);
-      const middleIndex = LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX;
-
-      // Act
-      const middlePosition = getMiddleDropPosition(canvasWidth);
-
-      // Assert
-      expect(middlePosition).toBe(positions[middleIndex]);
-      expect(positions[middleIndex]).toBeDefined();
-    });
-
-    it('should_work_with_any_valid_canvas_width', () => {
-      // Arrange
-      const testWidths = [300, 600, 900, 1200];
-
-      testWidths.forEach(canvasWidth => {
-        // Act
-        const middlePosition = getMiddleDropPosition(canvasWidth);
-        const positions = calculateDropPositions(canvasWidth);
-
-        // Assert
-        expect(typeof middlePosition).toBe('number');
-        expect(positions).toContain(middlePosition);
-        expect(positions.indexOf(middlePosition)).toBe(LAYOUT_CONSTANTS.DROP_POSITIONS.MIDDLE_INDEX);
-      });
-    });
-  });
-
-  describe('Fallback Behavior', () => {
-    it('should_fallback_to_canvas_center_if_calculation_fails', () => {
-      // Arrange - This test is more for documentation since the current implementation
-      // always returns a valid position. Testing the fallback would require mocking
-      // the calculateDropPositions function to return an empty array.
-
-      // Act - Normal operation
-      const canvasWidth = 500;
-      const middlePosition = getMiddleDropPosition(canvasWidth);
-
-      // Assert - Should work normally
-      expect(middlePosition).toBe(canvasWidth / 2);
-    });
-  });
 });

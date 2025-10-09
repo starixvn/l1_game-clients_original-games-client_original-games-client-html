@@ -5,11 +5,12 @@
  */
 
 import { Bodies, Body } from 'matter-js';
-import { physicsConfig } from '../../../../../lib/physics';
+import { physicsConfig } from './physics-config';
 import { getMultiplierColor } from '../../../../../lib/utils/colors-util';
 import { logger } from '../../../../../services/logger';
-import { LAYOUT_CONSTANTS } from '../../../../../lib/physics/constants/layout-constants';
-import { PHYSICS_CONSTANTS } from '../../../../../lib/physics/constants/physics-constants';
+import { physicsLogger } from './performance/physics-logger';
+import { LAYOUT_CONSTANTS } from './constants/layout-constants';
+import { PHYSICS_CONSTANTS } from './constants/physics-constants';
 
 export interface PhysicsBody {
     pins: Body[];
@@ -128,7 +129,7 @@ export function createMultiplierBodies(
  * Create boundary walls for the physics world
  * Pure function - creates wall bodies
  */
-export function createWallBodies(canvasWidth: number, canvasHeight: number): Body[] {
+export function createWallBodies(canvasWidth: number, canvasHeight: number, rows: number = 8): Body[] {
     const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;
 
     const leftWall = Bodies.rectangle(
@@ -189,7 +190,53 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
         }
     );
 
-    return [leftWall, rightWall, floor, extendedLeftWall, extendedRightWall];
+    // Add triangular shield walls to bounce balls back into the board
+    // These angled walls form the natural boundaries of the triangular peg layout
+    const shieldWallThickness = wallThickness * 1.5; // Slightly thicker for better containment
+
+    // Calculate board boundaries based on row count for proper shield positioning
+    const scaleFactor = Math.max(LAYOUT_CONSTANTS.SCALE_BOUNDS.MIN_SCALE, Math.min(LAYOUT_CONSTANTS.SCALE_BOUNDS.MAX_SCALE, LAYOUT_CONSTANTS.BOARD.SCALE_FACTOR_BASE_ROWS / rows));
+    const pegGap = Math.max(30, Math.min(55, LAYOUT_CONSTANTS.BOARD.PEG_GAP_BASE * scaleFactor));
+    const lastRowColumns = rows;
+    const lastRowWidth = (lastRowColumns - 1) * pegGap;
+    const lastRowStartX = (canvasWidth - lastRowWidth) / 2;
+
+    // Position shields just outside the natural triangular boundaries
+    const shieldOffset = pegGap * 1.5; // Position shields 1.5 peg gaps from board edge
+
+    // Left triangular shield - angled wall that guides balls back to center
+    const leftShieldWall = Bodies.rectangle(
+        lastRowStartX - shieldOffset, // Position outside left board boundary
+        canvasHeight * 0.4,  // Position in middle-upper portion
+        shieldWallThickness,
+        canvasHeight * 0.7,  // Cover most of the falling area
+        {
+            angle: Math.PI / 8, // 22.5-degree angle to guide balls inward gently
+            render: { visible: false },
+            isStatic: true,
+            restitution: 0.9, // Very high restitution for strong bounce back
+            friction: 0.05,
+            label: 'left-shield-wall'
+        }
+    );
+
+    // Right triangular shield - angled wall that guides balls back to center
+    const rightShieldWall = Bodies.rectangle(
+        lastRowStartX + lastRowWidth + shieldOffset, // Position outside right board boundary
+        canvasHeight * 0.4,  // Position in middle-upper portion
+        shieldWallThickness,
+        canvasHeight * 0.7,  // Cover most of the falling area
+        {
+            angle: -Math.PI / 8, // -22.5-degree angle to guide balls inward gently
+            render: { visible: false },
+            isStatic: true,
+            restitution: 0.9, // Very high restitution for strong bounce back
+            friction: 0.05,
+            label: 'right-shield-wall'
+        }
+    );
+
+    return [leftWall, rightWall, floor, extendedLeftWall, extendedRightWall, leftShieldWall, rightShieldWall];
 }
 
 /**
@@ -199,9 +246,27 @@ export function createWallBodies(canvasWidth: number, canvasHeight: number): Bod
 export function createPhysicsBodies(options: BodyCreationOptions): PhysicsBody {
     const { rows, multipliers, gameMode, canvasWidth, canvasHeight } = options;
 
+    physicsLogger.info('Creating physics bodies', {
+        component: 'BodyFactory',
+        function: 'createPhysicsBodies',
+        metadata: { rows, multipliersCount: multipliers.length, gameMode, canvasWidth, canvasHeight }
+    });
+
     const pins = createPinBodies(rows, canvasWidth, canvasHeight);
     const multipliersBodies = createMultiplierBodies(rows, multipliers, gameMode, canvasWidth, canvasHeight);
-    const walls = createWallBodies(canvasWidth, canvasHeight);
+    const walls = createWallBodies(canvasWidth, canvasHeight, rows);
 
-    return { pins, multipliersBodies, walls };
+    const result = { pins, multipliersBodies, walls };
+
+    physicsLogger.info('Physics bodies created successfully', {
+        component: 'BodyFactory',
+        function: 'createPhysicsBodies',
+        metadata: {
+            pinsCount: pins.length,
+            multipliersCount: multipliersBodies.length,
+            wallsCount: walls.length
+        }
+    });
+
+    return result;
 }

@@ -1,9 +1,10 @@
-import { useRef, useCallback, useMemo } from 'react';
-import { Bodies, Body, Composite, Engine } from 'matter-js';
-import { physicsConfig, calculateBallSize, getBallPhysicsTweaks, getMiddleDropPosition } from '../../../../../lib/physics';
+import { useCallback } from 'react';
+import { Engine } from 'matter-js';
+import { physicsLogger } from '../physics';
 import { logger } from '../../../../../services/logger';
-import { BallBodyExtension } from '../../../../../types/physics';
-import { BALL_CONSTANTS } from '../../../../../lib/physics/constants/ball-constants';
+import { BallGameCalculation } from '../physics/calculations/ball-game-calculation';
+import { createCalculationFromServiceResponse } from '../physics/calculations/service-integration';
+import { BallFactory } from '../physics/ball/ball-factory';
 
 interface UseBallSpawnerProps {
     numberOfRows: number;
@@ -12,9 +13,8 @@ interface UseBallSpawnerProps {
 }
 
 interface UseBallSpawnerReturn {
-    spawnBall: (betValue?: number) => void;
-    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number) => void;
-    createBall: (betValue: number, isServiceGuided?: boolean, startY?: number) => { ball: Body };
+    spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number) => void;
+    spawnBallWithCalculation: (calculation: BallGameCalculation) => void;
 }
 
 /**
@@ -26,142 +26,83 @@ export const useBallSpawner = ({
     canvasWidth,
     engine
 }: UseBallSpawnerProps): UseBallSpawnerReturn => {
-    // Prevent rapid successive ball drops
-    const lastSpawnTimeRef = useRef<number>(0);
-    const minSpawnInterval = BALL_CONSTANTS.SPAWN.MIN_SPAWN_INTERVAL_AUTO_BET; // Increased to prevent physics engine overload with auto-bets
-    const removedBallsRef = useRef<Set<number>>(new Set());
+    // Pre-calculated ball spawning method - uses pre-calculated physics
+    const spawnBallWithCalculation = useCallback((calculation: BallGameCalculation) => {
+        if (!engine.current) {
+            logger.error('❌ [PRE-CALC] No physics engine available for ball spawning');
+            return;
+        }
 
-    // Memoize ball creation parameters to avoid recalculating on every spawn
-    const ballCreationParams = useMemo(() => {
-        const ballRadius = calculateBallSize(numberOfRows, 1);
-        const physicsTweaks = getBallPhysicsTweaks(ballRadius);
-        const ballX = getMiddleDropPosition(canvasWidth);
-
-        return {
-            ballRadius,
-            physicsTweaks,
-            ballX
-        };
-    }, [numberOfRows, canvasWidth]);
-
-    // Helper to create ball with physics properties
-    const createBall = useCallback((betValue: number, isServiceGuided = false, startY = 30) => {
-        const { ballRadius, physicsTweaks, ballX } = ballCreationParams;
-        const ballColor = betValue <= 0 ? physicsConfig.colors.multiplierLoss : physicsConfig.colors.ball;
-
-        const ball = Bodies.circle(ballX, startY, ballRadius, {
-            restitution: physicsTweaks.restitution,
-            friction: isServiceGuided ? 0.1 : 0.6,
-            frictionAir: physicsTweaks.frictionAir,
-            density: physicsTweaks.density,
-            render: isServiceGuided ? {
-                fillStyle: ballColor,
-                strokeStyle: "#FFD700",
-                lineWidth: 1,
-            } : { fillStyle: ballColor },
-            label: isServiceGuided ? "service-guided-ball" : `ball-${betValue}`,
-            isStatic: false,
+        physicsLogger?.info('🎯 [PRE-CALC] Spawning ball with enhanced pre-calculated physics', {
+            component: 'BallSpawner',
+            function: 'spawnBallWithCalculation',
+            metadata: {
+                calculationId: calculation.id,
+                betValue: calculation.serviceResult.betValue,
+                pathLength: calculation.serviceResult.path.length,
+                finalSlot: calculation.expectedFinalSlot,
+                winAmount: calculation.winAmount,
+                trajectoryPoints: calculation.trajectory.positions.length,
+                collisionEvents: calculation.collisions.length
+            }
         });
 
-        const ballExtension = ball as unknown as BallBodyExtension;
-        ballExtension.createdAt = Date.now();
-        ballExtension.world = engine.current?.world;
-        ballExtension.betValue = betValue;
-        ballExtension.isServiceGuided = isServiceGuided;
+        // Use the BallFactory to create and add the ball to the world
+        BallFactory.createBallWithCalculation({
+            calculation,
+            numberOfRows,
+            canvasWidth,
+            engine: engine.current
+        });
 
-        return { ball };
-    }, [ballCreationParams, engine]);
+        physicsLogger?.info('✅ [PRE-CALC] Enhanced ball spawn completed', {
+            component: 'BallSpawner',
+            function: 'spawnBallWithCalculation',
+            metadata: {
+                calculationId: calculation.id,
+                predictionConfidence: calculation.predictionConfidence.toFixed(3),
+                calculationTime: calculation.performance.calculationTime.toFixed(2) + 'ms',
+                memoryUsage: (calculation.performance.memoryUsage / 1024).toFixed(1) + 'KB',
+                physicsEnhanced: true,
+                trajectoryGuided: true
+            }
+        });
+    }, [numberOfRows, canvasWidth, engine]);
+    // Path-based wrapper: convert inputs to a calculation and delegate to spawnBallWithCalculation
+    const spawnBallWithPath = useCallback((
+        betValue: number,
+        path: number[],
+        finalSlot: number,
+        multiplier: number,
+        serverRows?: number
+    ) => {
+        physicsLogger?.info('🎯 [PRE-CALC] Wrapping path-based spawn via calculation system', {
+            component: 'BallSpawner',
+            function: 'spawnBallWithPath',
+            metadata: { betValue, pathLength: path.length, finalSlot, multiplier, serverRows }
+        });
 
-    // Memoized spawn methods to prevent unnecessary re-renders
-    const spawnBall = useCallback((betValue = 1) => {
-        const now = Date.now();
-        if (now - lastSpawnTimeRef.current < minSpawnInterval) {
-            return;
-        }
-
-        lastSpawnTimeRef.current = now;
-        removedBallsRef.current.clear();
-
-        if (!engine.current) {
-            return;
-        }
-
-        const { ball } = createBall(betValue);
-        ball.position.x += (Math.random() - 0.5) * 4; // Add random offset
-
-        Composite.add(engine.current.world, ball);
-    }, [createBall, engine]);
-
-    const spawnBallWithPath = useCallback((betValue: number, path: number[], finalSlot: number, multiplier: number) => {
-        const countOfOnes = path.filter(p => p === 1).length;
-
-        logger.info('🎯 [HOOK] Spawning service-guided ball - DATA FLOW TRACE:', {
-            betValue,
+        const effectiveRows = serverRows || numberOfRows;
+        const serviceData = {
+            path,
             finalSlot,
             multiplier,
-            path,
-            pathLength: path.length,
-            countOfOnes,
-            slotIndexMatch: countOfOnes === finalSlot,
-            pathBreakdown: path.join('')
-        });
+            betValue,
+            numberOfRows: effectiveRows
+        };
 
-        if (!engine.current?.world) {
-            logger.error('❌ [HOOK] Physics engine not ready');
-            return;
+        const calculation = createCalculationFromServiceResponse(serviceData);
+
+        // Clear any existing active balls for single-ball gameplay
+        if (engine.current) {
+            BallFactory.clearActiveBalls(engine.current);
         }
 
-        try {
-            const { ball } = createBall(betValue, true, 30); // Start higher for service balls to ensure collision
-            const ballExtension = ball as unknown as BallBodyExtension;
-            ballExtension.servicePath = path;
-            ballExtension.currentPathIndex = 0;
-            ballExtension.expectedFinalSlot = finalSlot;
-            ballExtension.multiplier = multiplier;
-            ballExtension.wrongSlotHits = 0;
-            ballExtension.pinCollisions = [];
-
-            Composite.add(engine.current.world, ball);
-
-            const allBodies = Composite.allBodies(engine.current.world);
-            const pins = allBodies.filter(body => body.label?.includes('pin'));
-            const walls = allBodies.filter(body => body.label?.includes('wall'));
-            const multipliers = allBodies.filter(body => body.label?.includes('multiplier'));
-
-            logger.info('✅ [HOOK] Ball added to physics world:', {
-                id: ball.id,
-                position: { x: ball.position.x, y: ball.position.y },
-                velocity: { x: ball.velocity.x, y: ball.velocity.y },
-                label: ball.label,
-                isServiceGuided: ballExtension.isServiceGuided,
-                servicePath: ballExtension.servicePath,
-                expectedFinalSlot: ballExtension.expectedFinalSlot,
-                totalBodiesInWorld: allBodies.length,
-                pinsCount: pins.length,
-                wallsCount: walls.length,
-                multipliersCount: multipliers.length,
-                samplePin: pins[0] ? { label: pins[0].label, position: { x: Math.round(pins[0].position.x), y: Math.round(pins[0].position.y) } } : 'no pins',
-                sampleWall: walls[0] ? { label: walls[0].label, position: { x: Math.round(walls[0].position.x), y: Math.round(walls[0].position.y) } } : 'no walls'
-            });
-
-            if (process.env.NODE_ENV === 'development') {
-                logger.info('✅ [HOOK] Service-guided ball added to world:', {
-                    id: ball.id,
-                    position: { x: ball.position.x, y: ball.position.y },
-                    label: ball.label,
-                    isServiceGuided: ballExtension.isServiceGuided,
-                    servicePath: ballExtension.servicePath,
-                    expectedFinalSlot: ballExtension.expectedFinalSlot
-                });
-            }
-        } catch (error) {
-            logger.error('❌ [HOOK] Error spawning service-guided ball:', error);
-        }
-    }, [createBall, engine, numberOfRows]);
+        spawnBallWithCalculation(calculation);
+    }, [numberOfRows, engine, spawnBallWithCalculation]);
 
     return {
-        spawnBall,
         spawnBallWithPath,
-        createBall
+        spawnBallWithCalculation
     };
 };
