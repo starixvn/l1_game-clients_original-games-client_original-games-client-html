@@ -23,7 +23,7 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 
 // Dynamic imports side components
-const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
+const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
 const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
 const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
@@ -81,7 +81,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderGameFrame(): JSX.Element {
         return (
             <div className="relative h-full">
-                <Background gameId={this.props.id} />
+                <Background />
                 <PlinkoGame />
                 {this.renderNotice()}
             </div>

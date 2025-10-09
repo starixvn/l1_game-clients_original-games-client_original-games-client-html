@@ -31,7 +31,10 @@ const BetControl = () => {
     }, [sendSocketEvent, betAmount, gameMode, numberOfRows, clientSeed]);
 
     useEffect(() => {
-        const endBetHandlerId = gameMessageHandler?.register(messageEventType.END_BET, () => {
+        const endBetHandlerId = gameMessageHandler?.register(messageEventType.END_BET, ({ endBet }) => {
+            if (endBet < 0) {
+                setIsAutoBet(false);
+            }
             setIsProcessing(false);
         });
         return () => {

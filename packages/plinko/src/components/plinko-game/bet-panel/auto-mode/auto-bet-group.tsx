@@ -31,12 +31,7 @@ const AutoBetGroup = ({
     const [totalNetProfit, setTotalNetProfit] = useState(0);
     const [isShowAutoBetInstruction, setIsShowAutoBetInstruction] = useState(false);
     const { t } = useTranslate(ResourceTypes.COMMON);
-    const { socket, endBet } = useGameStore(
-        useShallow((state) => ({
-            socket: state.socket,
-            endBet: state.endBet,
-        }))
-    );
+    const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
     const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -97,12 +92,6 @@ const AutoBetGroup = ({
             setTotalNetProfit(0);
         }
     }, [isAutoBet]);
-
-    useEffect(() => {
-        if (endBet < 0) {
-            setIsAutoBet(false);
-        }
-    }, [endBet]);
 
     return (
         <div className="flex flex-col gap-4">
