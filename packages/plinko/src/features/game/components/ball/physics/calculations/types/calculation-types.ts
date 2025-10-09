@@ -1,5 +1,8 @@
 import { PhysicsFactors } from '../../factors/core-factors';
 
+// Re-export PhysicsFactors for external use
+export type { PhysicsFactors };
+
 /**
  * Represents a single collision event with detailed physics data
  */

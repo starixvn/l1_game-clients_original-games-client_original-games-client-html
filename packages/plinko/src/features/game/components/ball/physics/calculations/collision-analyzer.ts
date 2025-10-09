@@ -1,5 +1,5 @@
 import { CollisionEvent, BallTrajectory, BallGameCalculation } from './types/calculation-types';
-import { PhysicsFactors } from '../../factors/core-factors';
+import { PhysicsFactors } from '../factors/core-factors';
 
 /**
  * Analyze all collisions in trajectory

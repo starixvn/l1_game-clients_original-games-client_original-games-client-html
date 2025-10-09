@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Label Rendering should render title text 1`] = `
+<div>
+  <div
+    class="text-sm md:text-base mb-2 font-semibold"
+  >
+    Test Label
+  </div>
+</div>
+`;

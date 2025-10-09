@@ -4,8 +4,6 @@
  * as described in the Plinko Physics Factors Relationship Documentation
  */
 
-import { PhysicsFactors } from './core-factors';
-
 /**
  * Collision Force Calculation
  * Formula: F = (mass × velocityChange) / time

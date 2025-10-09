@@ -1,5 +1,5 @@
 import { ServiceResult, BoardConfiguration } from './types/calculation-types';
-import { PhysicsFactors } from '../../factors/core-factors';
+import { PhysicsFactors } from '../factors/core-factors';
 import { calculatePathPredictability } from '../ball/ball-physics-calculations';
 import { calculateFinalSlotFromPath } from './utils/calculation-utils';
 

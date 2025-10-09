@@ -18,6 +18,9 @@ export type {
     PegConfiguration
 } from './types/calculation-types';
 
+// Re-export physics factors type for external use
+export type { PhysicsFactors };
+
 export { createDefaultBoardConfig } from './utils/calculation-utils';
 export { DEFAULT_CALCULATION_FACTORS } from './config/calculation-config';
 
