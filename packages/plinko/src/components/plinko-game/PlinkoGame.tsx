@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
-import { BallLayout, PayoutsDisplay, SimplifiedCanvasBallLayoutRef } from "../../features/game/components";
+import { BallLayout, SimplifiedCanvasBallLayoutRef } from "../../features/game/components";
 import { LoggerControls } from "../../features/ui/components";
 import { logger } from "../../services/logger";
 import { useGameStore } from "@shared/stores";
@@ -15,6 +15,9 @@ const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { s
 const PlinkoGame = () => {
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
+
+    // Track the expected slot from the latest service result for validation
+    const [expectedSlotFromService, setExpectedSlotFromService] = useState<number | null>(null);
 
     // Shared game context and betting store
     const { endBet, socket, gameConfigs } = useGameStore(
@@ -45,6 +48,9 @@ const PlinkoGame = () => {
                 const betAmount = action.finish.amount || action.endBet || 100;
                 const winAmount = action.finish.winAmount;
                 const countOfOnes = resultPath.filter((p: number) => p === 1).length;
+
+                // Store the expected slot for validation when ball lands
+                setExpectedSlotFromService(slotIndex);
 
                 console.log("🎯 [PLINKO GAME] Server result path details - FULL TRACE:", {
                     resultPath,
@@ -173,8 +179,53 @@ const PlinkoGame = () => {
     // Plinko uses hardcoded multipliers for now
 
     // Handle ball collision with multiplier slots
-    const handleBallHit = (multiplier: number, betValue: number) => {
+    const handleBallHit = () => {
         //nothing
+    };
+
+    // Handle ball landing result validation against service result
+    const handleBallLanded = (success: boolean) => {
+        const expectedSlot = expectedSlotFromService;
+
+        if (expectedSlot !== null) {
+            logger.info("🎯 [PLINKO GAME] BALL LANDING VALIDATION - CONTROLLER LEVEL", {
+                success,
+                expectedSlot,
+                serviceResultSlot: expectedSlot,
+                validation: {
+                    ballLandedCorrectly: success,
+                    expectedSlotFromService: expectedSlot,
+                    hasServiceResult: true,
+                    slotValidationEnabled: true
+                }
+            });
+
+            if (success) {
+                logger.info("✅ [PLINKO GAME] BALL LANDED IN CORRECT SLOT - CONTROLLER CONFIRMATION", {
+                    expectedSlot,
+                    serviceResultSlot: expectedSlot,
+                    status: "SUCCESS",
+                    message: `Ball successfully landed in slot ${expectedSlot} as expected by service`
+                });
+            } else {
+                logger.error("❌ [PLINKO GAME] BALL LANDED IN WRONG SLOT - CONTROLLER FAILURE DETECTED", {
+                    expectedSlot,
+                    serviceResultSlot: expectedSlot,
+                    status: "FAILED",
+                    message: `Ball failed to land in expected slot ${expectedSlot}`,
+                    actionRequired: "Check physics engine slot detection logic"
+                });
+            }
+
+            // Clear the expected slot after validation
+            setExpectedSlotFromService(null);
+        } else {
+            logger.warn("⚠️ [PLINKO GAME] BALL LANDED BUT NO SERVICE RESULT TO VALIDATE AGAINST", {
+                success,
+                expectedSlot: null,
+                message: "Ball landed but no expected slot was stored from service result"
+            });
+        }
     };
 
     return (
@@ -203,6 +254,7 @@ const PlinkoGame = () => {
                                     multipliers={payoutMultipliers}
                                     probabilities={payoutProbabilities}
                                     onBallHit={handleBallHit}
+                                    onBallLanded={handleBallLanded}
                                 />
                             </div>
 
