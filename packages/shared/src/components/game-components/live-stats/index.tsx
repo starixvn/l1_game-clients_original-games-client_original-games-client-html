@@ -1,6 +1,6 @@
 import { usePopupStore } from "@shared/stores";
-import {  useClickSound, useCommonTranslate } from "@shared/react-hooks";
-import { memo, ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
+import { memo, ReactElement, RefObject, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
@@ -8,7 +8,10 @@ import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources/type";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import { Line } from "react-chartjs-2";
-
+import { numberWithCommas } from "@shared/helpers";
+import { DraggableData, DraggableEvent } from "react-draggable";
+import Draggable from "react-draggable";
+import { isMobile } from "react-device-detect";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -17,81 +20,123 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
     const toggleLiveStats = usePopupStore((state) => state.toggleLiveStats);
     const { t: translate } = useCommonTranslate();
     const clickSound = useClickSound();
-    const [totalNetProfit, setTotalNetProfit] = useState(0);
+    const [totalWinAmount, setTotalWinAmount] = useState(0);
+    const [totalBetAmount, setTotalBetAmount] = useState(0);
     const [netProfitHistory, setNetProfitHistory] = useState<{ time: string; value: number }[]>([]);
-    
+    const [lostRound, setLostRound] = useState(0);
+    const [winRound, setWinRound] = useState(0);
+    const [dragEnabled, setDragEnabled] = useState(true);
+    const [position, setPosition] = useState<{ x: number; y: number }>({ x: 150, y: -910 });
+
     // Default values for winAmount and amount if not provided
-    const winAmount = useMemo(() => data?.winAmount ?? 0, [data?.winAmount]);
-    const amount = useMemo(() => data?.amount ?? 0, [data?.amount]);
-    
+    const { winAmount, amount } = data ?? { winAmount: 0, amount: 0 };
+
     const handleCloseModal = () => {
         toggleLiveStats(false);
     };
-
+    console.log(dragEnabled);
     useEffect(() => {
-        //console.log(data);
-        const newTotalNetProfit = Number((totalNetProfit + winAmount - amount).toFixed(2));
-        setTotalNetProfit(newTotalNetProfit ?? 0);
+        console.log("1", winAmount, amount);
+        const newTotalNetProfit = Number((winAmount - amount).toFixed(2));
+        setTotalBetAmount((prev) => prev + amount);
+        setTotalWinAmount((prev) => prev + winAmount);
 
-        // Add new data point to history
+        if (data) {
+            if (newTotalNetProfit < 0) {
+                setLostRound((prev) => prev + 1);
+            } else {
+                setWinRound((prev) => prev + 1);
+            }
+        }
+
         const currentTime = new Date().toLocaleTimeString();
         setNetProfitHistory((prev) => [...prev, { time: currentTime, value: newTotalNetProfit }]);
-    }, [winAmount, amount]);
+    }, [data]);
+
+    const onDrag = (event: DraggableEvent, data: DraggableData) => {
+        setPosition({
+            x: position.x + data.deltaX,
+            y: position.y + data.deltaY,
+        });
+    };
 
     return (
         isShowLiveStats && (
-            <BaseDialog
-                type={ModalType.Full}
-                isOpen={isShowLiveStats}
-                enableBackdrop={false}
-                onCloseModal={handleCloseModal}
-                extendedClassName="h-[302px] w-[254px] top-[200px] left-[50px]"
-            >
+            <Draggable disabled={!dragEnabled} onDrag={onDrag} defaultPosition={{ x: isMobile ? 86 : 1030, y: isMobile ? -1223 : -1230 }}>
                 <div
-                    id="live-stats"
-                    className={cn("flex flex-col h-full w-full rounded-t-2xl", {
-                        flex: isShowLiveStats,
-                        hidden: !isShowLiveStats,
-                    })}
-                    draggable={true}
+                    className="z-[301] absolute"
+                    style={{
+                        transform: `translate(${position.x}px,${position.y}px)`,
+                    }}
                 >
-                    {/* Header - Fixed height */}
-                    <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center my-2 flex-shrink-0">
-                        <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">
-                            {translate("live_stats")}
-                        </div>
-                        <span
-                            className="cursor-pointer ml-auto relative z-10"
-                            onClick={() => {
-                                clickSound();
-                                handleCloseModal();
-                            }}
+                    <BaseDialog
+                        type={ModalType.Full}
+                        isOpen={isShowLiveStats}
+                        enableBackdrop={false}
+                        onCloseModal={handleCloseModal}
+                        extendedClassName="h-[302px] w-[254px] top-[200px] left-[50px]"
+                    >
+                        <div
+                            id="live-stats"
+                            className={cn("flex flex-col h-full w-full gap-3 rounded-t-2xl", {
+                                flex: isShowLiveStats,
+                                hidden: !isShowLiveStats,
+                            })}
                         >
-                            <i className="icon-close text-sm w-4 h-4"></i>
-                        </span>
-                    </div>
+                            {/* Header */}
+                            <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center flex-shrink-0">
+                                <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">
+                                    {translate("live_stats")}
+                                </div>
+                                <span
+                                    className="cursor-pointer ml-auto relative z-10"
+                                    onClick={() => {
+                                        clickSound();
+                                        handleCloseModal();
+                                    }}
+                                >
+                                    <i className="icon-close text-sm w-4 h-4"></i>
+                                </span>
+                            </div>
 
-                    {/* Content - Flexible height */}
-                    <div className="flex-1 min-h-0 overflow-hidden px-3">
-                        {<WrapperLiveStats winAmount={winAmount} amount={amount} netProfitHistory={netProfitHistory} />}
-                    </div>
+                            {/* Content */}
+                            <div className="flex-1 min-h-0 overflow-hidden px-3">
+                                {
+                                    <WrapperLiveStats
+                                        totalBetAmount={totalBetAmount}
+                                        totalWinAmount={totalWinAmount}
+                                        netProfitHistory={netProfitHistory}
+                                        lostRound={lostRound}
+                                        winRound={winRound}
+                                    />
+                                }
+                            </div>
+                        </div>
+                    </BaseDialog>
                 </div>
-            </BaseDialog>
+            </Draggable>
         )
     );
 };
 
 const LiveStats = ({
-    winAmount,
-    amount,
+    totalBetAmount,
+    totalWinAmount,
     netProfitHistory,
-}): ReactElement<{ winAmount: number; amount: number; netProfitHistory: { time: string; value: number }[] }> => {
+    lostRound,
+    winRound,
+}): ReactElement<{
+    totalBetAmount: number;
+    totalWinAmount: number;
+    netProfitHistory: { time: string; value: number }[];
+    lostRound: number;
+    winRound: number;
+}> => {
     const { t } = useTranslate(ResourceTypes.COMMON);
 
     const chartData = useMemo(() => {
         const labels = netProfitHistory.map((item) => item.time);
         const data = netProfitHistory.map((item) => item.value);
-        
         return {
             labels: labels,
             datasets: [
@@ -100,6 +145,7 @@ const LiveStats = ({
                     data: data,
                     borderWidth: 2,
                     fill: false,
+                    tension: 0.1,
                     segment: {
                         borderColor: (ctx) => {
                             const idxNext = ctx.p1DataIndex;
@@ -115,7 +161,7 @@ const LiveStats = ({
         };
     }, [netProfitHistory]);
 
-    const chartOptions = {
+    const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -143,34 +189,34 @@ const LiveStats = ({
         interaction: {
             intersect: false,
         },
-    };
+    }), []);
 
     return useMemo(() => {
         return (
             <div className="h-full border-none flex flex-col justify-center items-center">
-                <div id="information" className="flex gap-2 flex-col w-[228px] h-[102px] bg-[#00000080] rounded-[12px] p-3">
-                    <div className="flex justify-between px-5">
-                        <div className="flex flex-col">
+                <div id="information" className="flex justify-between px-1 pt-1  w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
+                    <div className="flex flex-col justify-between flex-1 px-5 gap-1">
+                        <div className="flex flex-col items-center">
                             {t("profit")}
-                            <div>{netProfitHistory[netProfitHistory.length - 1].value}</div>
+                            <div>{numberWithCommas(totalWinAmount - totalBetAmount)}</div>
                         </div>
-                        <div>
-                            {t("win")}
-                            <div>{winAmount}</div>
+                        <div className="flex flex-col items-center">
+                            {t("bet_amount")}
+                            <div>{numberWithCommas(totalBetAmount)}</div>
                         </div>
                     </div>
-                    <div className="flex justify-between px-5">
-                        <div className="flex flex-col">
-                            {t("bet_amount")}
-                            <div>{amount}</div>
+                    <div className="flex  flex-col flex-1 px-5 gap-1">
+                        <div className="flex flex-col items-center">
+                            {t("wins")}
+                            <div>{numberWithCommas(winRound)}</div>
                         </div>
-                        <div className="flex flex-col">
-                            {t("loss")}
-                            <div>{winAmount}</div>
+                        <div className="flex flex-col items-center">
+                            {t("losses")}
+                            <div>{numberWithCommas(lostRound)}</div>
                         </div>
                     </div>
                 </div>
-                <div id="my-chart" className="w-full h-[150px]">
+                <div id="my-chart" className="w-full h-auto">
                     {netProfitHistory.length > 0 ? (
                         <Line data={chartData} options={chartOptions} />
                     ) : (
@@ -179,7 +225,7 @@ const LiveStats = ({
                 </div>
             </div>
         );
-    }, [winAmount, amount, netProfitHistory, chartData, chartOptions, t]);
+    }, [netProfitHistory, chartData, chartOptions]);
 };
 
 const WrapperLiveStats = memo(LiveStats);
