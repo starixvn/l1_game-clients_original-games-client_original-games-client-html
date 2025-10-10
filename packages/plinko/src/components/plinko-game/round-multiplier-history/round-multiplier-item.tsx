@@ -1,5 +1,5 @@
 import { getMultiplierColor } from "@plinko/lib/utils/colors-util";
-import { cn } from "@shared";
+import { cn, numberWithCommas } from "@shared";
 import React from "react";
 import { PlinkoRound } from "./round-multiplier-history";
 
@@ -14,12 +14,12 @@ const RoundMultiplierItem: React.FC<RoundMultiplierItemProps> = ({ round, classN
     return (
         <div
             className={cn(
-                `flex items-center justify-center px-2 py-[2px] rounded-[6px] border border-[rgba(255,255,255,0.2)] text-white whitespace-nowrap flex-shrink-0 min-w-10 text-sm font-semibold`,
+                `flex items-center justify-center rounded-[6px] border border-[rgba(255,255,255,0.2)] text-white whitespace-nowrap min-w-10 text-xs font-semibold h-5 md:text-sm md:min-w-auto md:px-1 md:py-0.5`,
                 className
             )}
             style={{ backgroundColor: bgColor || "#ccc" }}
         >
-            {round.settlementResult.multiplier.toFixed(2)}x
+            {numberWithCommas(round.settlementResult.multiplier)}x
         </div>
     );
 };

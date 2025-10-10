@@ -37,6 +37,8 @@ const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-g
     ssr: false,
 });
 const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
+const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
+
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     constructor(props: GameBaseProps) {
@@ -82,6 +84,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="relative h-full">
                 <Background />
+                <RoundMultiplierHistory />
                 <PlinkoGame />
                 {this.renderNotice()}
             </div>

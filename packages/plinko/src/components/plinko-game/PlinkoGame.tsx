@@ -7,7 +7,6 @@ import { logger } from "../../services/logger";
 import { useGameStore } from "@shared/stores";
 import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoGameStore } from "../../shared/stores/plinko-game-store";
-import RoundMultiplierHistory from "./round-multiplier-history/round-multiplier-history";
 import { calculateProbability } from "@plinko/utils/helper";
 
 const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { ssr: false });
@@ -57,7 +56,7 @@ const PlinkoGame = () => {
                 //     actionRoundId: action.finish.roundId,
                 //     mapSizeBefore: expectedSlotsByRound.size
                 // });
-                setExpectedSlotsByRound(prev => {
+                setExpectedSlotsByRound((prev) => {
                     const newMap = new Map(prev.set(roundId, slotIndex));
                     // console.log('🎯 [PLINKO GAME] STORED EXPECTED SLOT', {
                     //     roundId,
@@ -231,8 +230,8 @@ const PlinkoGame = () => {
                     expectedSlotFromService: expectedSlot,
                     roundId,
                     hasServiceResult: true,
-                    slotValidationEnabled: true
-                }
+                    slotValidationEnabled: true,
+                },
             });
 
             if (success) {
@@ -250,12 +249,12 @@ const PlinkoGame = () => {
                     serviceResultSlot: expectedSlot,
                     status: "FAILED",
                     message: `Ball failed to land in expected slot ${expectedSlot}`,
-                    actionRequired: "Check physics engine slot detection logic"
+                    actionRequired: "Check physics engine slot detection logic",
                 });
             }
 
             // Clear the expected slot after validation
-            setExpectedSlotsByRound(prev => {
+            setExpectedSlotsByRound((prev) => {
                 const newMap = new Map(prev);
                 newMap.delete(roundId);
                 return newMap;
@@ -264,7 +263,7 @@ const PlinkoGame = () => {
             logger.warn("⚠️ [PLINKO GAME] BALL LANDED BUT NO SERVICE RESULT TO VALIDATE AGAINST", {
                 success,
                 expectedSlot: null,
-                message: "Ball landed but no expected slot was stored from service result"
+                message: "Ball landed but no expected slot was stored from service result",
             });
         }
     };
@@ -288,7 +287,6 @@ const PlinkoGame = () => {
                 <div className="frame-game">
                     <div className="frame-2">
                         <div className="game-layout-container">
-                            <RoundMultiplierHistory />
                             <div className="ball-layout-wrapper">
                                 <BallLayout
                                     ref={ballLayoutRef}
