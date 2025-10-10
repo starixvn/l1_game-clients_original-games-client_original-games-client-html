@@ -50,7 +50,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                         <button
                             key={`button-${button.text}`}
                             className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none disabled:opacity-40 focus-visible:!outline-none focus-visible:!outline-0 
-                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
+                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full"
                             onClick={() => onClick(button.value)}
                             aria-pressed={isIncreaseOn === button.value}
                             disabled={isDisabled}

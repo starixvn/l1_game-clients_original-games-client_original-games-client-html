@@ -114,7 +114,7 @@ const PFVerification: FC = () => {
                             {betDetailData.drawInfo.settlementResult.slotIndex}
                         </p>
                         <div className="flex items-center gap-5 overflow-x-auto">
-                            {betDetailData.drawInfo.odds[gameMode][NUMBER_OF_ROWS].map((item, index) => {
+                            {betDetailData.drawInfo.odds?.[gameMode]?.[NUMBER_OF_ROWS]?.map((item, index) => {
                                 return (
                                     <div
                                         key={`${item}-${index}`}

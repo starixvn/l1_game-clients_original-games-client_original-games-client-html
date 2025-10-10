@@ -40,7 +40,6 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
 
     // Actions
     registerPFSettingsEvent: (message) => {
-        console.log("message", message);
         Object.values(EVENT_TYPE).forEach((event) => {
             if (message[event] !== undefined) {
                 if(event === EVENT_TYPE.PF) {

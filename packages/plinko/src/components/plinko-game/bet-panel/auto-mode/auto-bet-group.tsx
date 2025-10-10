@@ -33,7 +33,7 @@ const AutoBetGroup = ({
     const { t } = useTranslate(ResourceTypes.COMMON);
     const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, finish,  } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
@@ -41,6 +41,7 @@ const AutoBetGroup = ({
             finish: state.finish,
         }))
     );
+    const [initialBetAmount, setInitialBetAmount] = useState(0);
     const handleBetClick = useCallback(
         (amount: number) => {
             if (socket?.connected) {
@@ -56,8 +57,38 @@ const AutoBetGroup = ({
 
     const getBetAmount = (isWin: boolean) => {
         const percentage = isWin ? onWinPercentage : onLossPercentage;
+        const newInitialBetAmount = updateInitialBetAmount(isWin, isIncreaseOnWin, isIncreaseOnLoss);
+        
+        if (newInitialBetAmount) {
+            setInitialBetAmount(newInitialBetAmount);
+            return newInitialBetAmount;
+        }
+
         const newBetAmount = Number((betAmount * (1 + percentage / 100)).toFixed(2));
         return Math.min(newBetAmount, maxBet);
+    };
+
+
+    useEffect(() => {
+        if(!isAutoBet){
+            setInitialBetAmount(betAmount);
+        }
+    }, [betAmount, isAutoBet]);
+
+    const updateInitialBetAmount = (isWin: boolean, isIncreaseOnWin: boolean, isIncreaseOnLoss: boolean) => {
+        const betAmount = Math.min(initialBetAmount, maxBet);
+        
+        if (isWin) {
+            if (!isIncreaseOnWin) {   
+                return betAmount;
+            }
+        } else {
+            if (!isIncreaseOnLoss) {
+                return betAmount;
+            }
+        }
+
+        return null;
     };
 
     useEffect(() => {
@@ -67,7 +98,10 @@ const AutoBetGroup = ({
         if (!isAutoBet) {
             return;
         }
+
+        const isWin = finish.winAmount > finish.amount;
         const newTotalNetProfit = Number((totalNetProfit + finish.winAmount - finish.amount).toFixed(2));
+
         if (isReachStopCondition(newTotalNetProfit)) {
             setIsAutoBet(false);
             return;
@@ -77,12 +111,13 @@ const AutoBetGroup = ({
         setNumberOfBets(newNumberOfBets);
         // Note: Ball spawning is controlled by MIN_SPAWN_INTERVAL_AUTO_BET (1500ms) in ball-constants.ts
         // This prevents physics engine overload during rapid auto-betting
+        const newBetAmount = getBetAmount(isWin);
+        handleBetAmountChange(newBetAmount);
+
         if (newNumberOfBets <= 0) {
             setNumberOfBets(Infinity);
             setIsAutoBet(false);
         } else {
-            const newBetAmount = getBetAmount(finish.winAmount > finish.amount);
-            handleBetAmountChange(newBetAmount);
             handleBetClick(newBetAmount);
         }
     }, [finish]);

@@ -34,9 +34,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
     const handleCloseModal = () => {
         toggleLiveStats(false);
     };
-    console.log(dragEnabled);
     useEffect(() => {
-        console.log("1", winAmount, amount);
         const newTotalNetProfit = Number((winAmount - amount).toFixed(2));
         setTotalBetAmount((prev) => prev + amount);
         setTotalWinAmount((prev) => prev + winAmount);

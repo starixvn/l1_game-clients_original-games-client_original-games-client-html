@@ -112,7 +112,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             betwin,
             pendingDetails,
             betHistoryStore.pendingFirstBetTime,
-            resultData
+            resultData,
+            betHistoryStore.betLogs[0].odds
         );
 
         const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
@@ -135,7 +136,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         betwin: number,
         pendingDetails: any[],
         firstBetTime: string,
-        resultData: any
+        resultData: any,
+        odds: any
     ) {
         const baseBetLog = super.createBetLog(roundId, totalAmount, betwin, pendingDetails, firstBetTime, resultData);
 
@@ -143,6 +145,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         return {
             ...baseBetLog,
             reachMaxWin: this.latestFinish?.reachMaxWin || false,
+            odds: odds,
         };
     }
 }
