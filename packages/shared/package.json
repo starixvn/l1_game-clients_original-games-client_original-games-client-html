@@ -44,8 +44,7 @@
         "unique-names-generator": "^4.7.1",
         "use-sound": "^4.0.1",
         "uuid": "^10.0.0",
-        "ws": "^8.17.1",
-        "zustand": "^5.0.7"
+        "ws": "^8.17.1"
     },
     "devDependencies": {
         "rimraf": "^5.0.7",

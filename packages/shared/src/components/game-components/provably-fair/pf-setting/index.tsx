@@ -27,7 +27,19 @@ const INTER_FONT_STYLE = { fontFamily: "var(--font-family)" };
 
 const handleOnKeyDown = (event: any) => {
     const chr = event.key;
-    if ((NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) || (event.target.value.length >= 4 && event.which !== 8)) {
+    const target = event.target;
+    const isTextSelected = target.selectionStart !== target.selectionEnd;
+    
+    // Allow typing if text is selected (for replace behavior)
+    if (isTextSelected) {
+        if (NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) {
+            event.preventDefault();
+        }
+        return;
+    }
+    
+    // Original logic for when no text is selected
+    if ((NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) || (target.value.length >= 4 && event.which !== 8)) {
         event.preventDefault();
     }
 };
