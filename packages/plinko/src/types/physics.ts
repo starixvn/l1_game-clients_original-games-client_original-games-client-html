@@ -1,5 +1,5 @@
-import { Engine, Body } from 'matter-js';
-import { BallGameCalculation } from '../features/game/components/ball/physics/calculations/ball-game-calculation';
+import { Engine, Body } from "matter-js";
+import { BallGameCalculation } from "../features/game/components/ball/physics/calculations/ball-game-calculation";
 
 /**
  * Shared physics-related types
@@ -10,7 +10,7 @@ import { BallGameCalculation } from '../features/game/components/ball/physics/ca
  * Extended Body interface with custom properties for ball behavior
  */
 export interface BallBodyExtension {
-    world?: Engine['world'];
+    world?: Engine["world"];
     isServiceGuided?: boolean;
     expectedFinalSlot?: number;
     multiplier?: number;
@@ -19,14 +19,28 @@ export interface BallBodyExtension {
     servicePath?: number[];
     currentPathIndex?: number;
     isRemoved?: boolean;
+    loggedRemoval?: boolean;
     createdAt?: number;
     roundId?: number;
     wrongSlotHits?: number;
     pinCollisions?: string[];
     appliedGuidanceSteps?: string[];
     collisionCooldown?: Map<string, number>;
-    collisionSequence?: Array<{ timestamp: number; pegLabel: string; position: { x: number; y: number }; velocity: { x: number; y: number } }>;
-    pathPositions?: Array<{ x: number; y: number; type?: string; pegRow?: number; pegCol?: number; pathIndex?: number; direction?: number }>;
+    collisionSequence?: Array<{
+        timestamp: number;
+        pegLabel: string;
+        position: { x: number; y: number };
+        velocity: { x: number; y: number };
+    }>;
+    pathPositions?: Array<{
+        x: number;
+        y: number;
+        type?: string;
+        pegRow?: number;
+        pegCol?: number;
+        pathIndex?: number;
+        direction?: number;
+    }>;
     numberOfRows?: number;
     onFinalTrajectory?: boolean;
 
@@ -47,17 +61,17 @@ export interface BallBodyExtension {
     // Pre-calculated physics data for enhanced realism
     calculationData?: {
         id: string;
-        trajectory: BallGameCalculation['trajectory'];
-        collisions: BallGameCalculation['collisions'];
-        physicsFactors: BallGameCalculation['physicsFactors'];
-        stabilityMetrics: BallGameCalculation['stabilityMetrics'];
+        trajectory: BallGameCalculation["trajectory"];
+        collisions: BallGameCalculation["collisions"];
+        physicsFactors: BallGameCalculation["physicsFactors"];
+        stabilityMetrics: BallGameCalculation["stabilityMetrics"];
         predictionConfidence: number;
         pathConfidence: number[];
-        alternativePaths: BallGameCalculation['alternativePaths'];
-        environmentalFactors: BallGameCalculation['environmentalFactors'];
-        ballProperties: BallGameCalculation['ballProperties'];
-        pegConfiguration: BallGameCalculation['pegConfiguration'];
-        boardConfiguration: BallGameCalculation['boardConfiguration'];
+        alternativePaths: BallGameCalculation["alternativePaths"];
+        environmentalFactors: BallGameCalculation["environmentalFactors"];
+        ballProperties: BallGameCalculation["ballProperties"];
+        pegConfiguration: BallGameCalculation["pegConfiguration"];
+        boardConfiguration: BallGameCalculation["boardConfiguration"];
     };
 }
 
@@ -84,7 +98,7 @@ export interface AnimationState {
     offsetY: number;
     startTime: number;
     duration: number;
-    type: 'slotBounce';
+    type: "slotBounce";
 }
 
 /**

@@ -11,6 +11,7 @@ import { processCollision, CollisionHandlerOptions } from "./collision-handler";
 import { logger } from "@plinko/services/logger";
 import { RENDERING_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/rendering-constants";
 import { CANVAS_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/canvas-constants";
+import { BallBodyExtension } from "@plinko/types/physics";
 
 export interface PhysicsEngineState {
     engine: Engine | null;
@@ -137,7 +138,7 @@ export function startPhysicsRunner(runner: Runner, engine: Engine): void {
         // Log ball removals
         const balls = Composite.allBodies(engine.world).filter((body) => body.label?.includes("ball"));
         balls.forEach((ball) => {
-            const extension = ball;
+            const extension = ball as BallBodyExtension;
             if (extension.isRemoved && !extension.loggedRemoval) {
                 logger.debug("🗑️ [PHYSICS] Ball removed from world:", {
                     id: ball.id,

@@ -4,11 +4,11 @@
  * Bridges old test interface with new modular collision system
  */
 
-import { Body, Engine } from 'matter-js';
-import { BallBodyExtension } from '../../../../../../types/physics';
-import { physicsLogger } from '../performance/physics-logger';
-import { CollisionCooldownManager } from './collision-cooldown';
-import { PHYSICS_SCALING_FORMULAS } from '../scaling/row-based-scaling';
+import { Body, Engine } from "matter-js";
+import { BallBodyExtension } from "../../../../../../types/physics";
+import { physicsLogger } from "../performance/physics-logger";
+import { CollisionCooldownManager } from "./collision-cooldown";
+import { PHYSICS_SCALING_FORMULAS } from "../scaling/row-based-scaling";
 
 /**
  * Test utility to manually handle service-guided pin collisions
@@ -22,7 +22,7 @@ export function handleServiceGuidedPinCollision(
     cooldownManager?: CollisionCooldownManager
 ): void {
     logCollisionStart(ballBody, ballExtension, pegBody);
-    
+
     const manager = cooldownManager || new CollisionCooldownManager();
     const isServiceGuided = ballExtension.servicePath && ballExtension.currentPathIndex !== undefined;
 
@@ -34,22 +34,18 @@ export function handleServiceGuidedPinCollision(
         return;
     }
 
-    manager.registerCollision(ballBody.id, pegBody.id, 50);
+    manager.registerCollision(ballBody.id.toString(), pegBody.id.toString(), 50);
 }
 
 /**
  * Handle collision for non-service-guided balls
  */
-function handleNonServiceGuidedCollision(
-    ballBody: Body,
-    pegBody: Body,
-    manager: CollisionCooldownManager
-): boolean {
-    if (!manager.canCollide(ballBody.id, pegBody.id, 50)) {
-        physicsLogger.debug('Collision blocked by cooldown (test utility)', {
-            component: 'CollisionTestUtils',
-            function: 'handleNonServiceGuidedCollision',
-            metadata: { ballId: ballBody.id, pegId: pegBody.id }
+function handleNonServiceGuidedCollision(ballBody: Body, pegBody: Body, manager: CollisionCooldownManager): boolean {
+    if (!manager.canCollide(ballBody.id.toString(), pegBody.id.toString(), 50)) {
+        physicsLogger.debug("Collision blocked by cooldown (test utility)", {
+            component: "CollisionTestUtils",
+            function: "handleNonServiceGuidedCollision",
+            metadata: { ballId: ballBody.id, pegId: pegBody.id },
         });
         return false;
     }
@@ -71,7 +67,9 @@ function handleServiceGuidedCollision(
     }
 
     const pinLabelMatch = pegBody.label?.match(/pin-(\d+)-(\d+)/);
-    if (!pinLabelMatch) { return true; }
+    if (!pinLabelMatch) {
+        return true;
+    }
 
     const pinRow = parseInt(pinLabelMatch[1]);
     if (pinRow !== ballExtension.currentPathIndex + 1) {
@@ -80,7 +78,9 @@ function handleServiceGuidedCollision(
     }
 
     const currentStep = ballExtension.servicePath[ballExtension.currentPathIndex];
-    if (currentStep === undefined) { return true; }
+    if (currentStep === undefined) {
+        return true;
+    }
 
     applyServiceGuidedNudge(ballBody, ballExtension, currentStep, pinRow);
     updatePathProgress(ballExtension, pinRow);
@@ -92,12 +92,7 @@ function handleServiceGuidedCollision(
 /**
  * Apply nudge for service-guided balls
  */
-function applyServiceGuidedNudge(
-    ballBody: Body,
-    ballExtension: BallBodyExtension,
-    currentStep: number,
-    pinRow: number
-): void {
+function applyServiceGuidedNudge(ballBody: Body, ballExtension: BallBodyExtension, currentStep: number, pinRow: number): void {
     const naturalNudgeStrength = calculateNudgeStrength(ballExtension);
     const direction = currentStep === 1 ? 1 : -1;
 
@@ -125,12 +120,7 @@ function calculateNudgeStrength(ballExtension: BallBodyExtension): number {
 /**
  * Store guidance information for delayed application
  */
-function storeGuidanceInfo(
-    ballExtension: BallBodyExtension,
-    direction: number,
-    naturalNudgeStrength: number,
-    pinRow: number
-): void {
+function storeGuidanceInfo(ballExtension: BallBodyExtension, direction: number, naturalNudgeStrength: number, pinRow: number): void {
     const rowRatio = (ballExtension.numberOfRows || 8) / 8;
     const rowCount = ballExtension.numberOfRows || 8;
 
@@ -140,25 +130,21 @@ function storeGuidanceInfo(
         rowRatio,
         rowCount,
         pinRow,
-        appliedAtFrame: 0
+        appliedAtFrame: 0,
     };
 }
 
 /**
  * Apply deterministic velocity to ball
  */
-function applyDeterministicVelocity(
-    ballBody: Body,
-    direction: number,
-    naturalNudgeStrength: number
-): void {
+function applyDeterministicVelocity(ballBody: Body, direction: number, naturalNudgeStrength: number): void {
     const currentVelocity = { x: ballBody.velocity.x, y: ballBody.velocity.y };
     const deterministicVelocityX = direction * naturalNudgeStrength;
     const upwardBounce = 0.5;
 
     Body.setVelocity(ballBody, {
         x: deterministicVelocityX,
-        y: Math.max(currentVelocity.y - upwardBounce, -1.0)
+        y: Math.max(currentVelocity.y - upwardBounce, -1.0),
     });
 }
 
@@ -186,14 +172,14 @@ function updatePathProgress(ballExtension: BallBodyExtension, pinRow: number): v
  */
 function handleFinalTrajectory(ballBody: Body, ballExtension: BallBodyExtension): void {
     const isFinalNudge = ballExtension.currentPathIndex >= ballExtension.servicePath.length;
-    
+
     if (!isFinalNudge || ballExtension.expectedFinalSlot === undefined) {
         return;
     }
 
     ballExtension.onFinalTrajectory = true;
     const finalVelocity = calculateFinalTrajectoryVelocity(ballBody, ballExtension);
-    
+
     Body.setVelocity(ballBody, finalVelocity);
     logFinalTrajectorySet(ballBody, ballExtension, finalVelocity);
 }
@@ -241,9 +227,9 @@ function calculateFinalTrajectoryVelocity(ballBody: Body, ballExtension: BallBod
 
 // Logging functions
 function logCollisionStart(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
-    physicsLogger.info('🎯 SERVICE-GUIDED PIN COLLISION - STARTING', {
-        component: 'CollisionTestUtils',
-        function: 'handleServiceGuidedPinCollision',
+    physicsLogger.info("🎯 SERVICE-GUIDED PIN COLLISION - STARTING", {
+        component: "CollisionTestUtils",
+        function: "handleServiceGuidedPinCollision",
         metadata: {
             ballId: ballBody.id,
             pegId: pegBody.id,
@@ -252,63 +238,63 @@ function logCollisionStart(ballBody: Body, ballExtension: BallBodyExtension, peg
             currentPathIndex: ballExtension.currentPathIndex,
             servicePath: ballExtension.servicePath,
             expectedFinalSlot: ballExtension.expectedFinalSlot,
-            ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
-        }
+            ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        },
     });
 }
 
 function logSkipFinalTrajectory(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
-    physicsLogger.debug('Skipping nudge for ball on final trajectory', {
-        component: 'CollisionTestUtils',
-        function: 'handleServiceGuidedCollision',
+    physicsLogger.debug("Skipping nudge for ball on final trajectory", {
+        component: "CollisionTestUtils",
+        function: "handleServiceGuidedCollision",
         metadata: {
             ballId: ballBody.id,
             pegId: pegBody.id,
-            expectedFinalSlot: ballExtension.expectedFinalSlot
-        }
+            expectedFinalSlot: ballExtension.expectedFinalSlot,
+        },
     });
 }
 
 function logSkipWrongRow(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body, pinRow: number): void {
-    physicsLogger.debug('Skipping nudge - wrong row or already processed', {
-        component: 'CollisionTestUtils',
-        function: 'handleServiceGuidedCollision',
+    physicsLogger.debug("Skipping nudge - wrong row or already processed", {
+        component: "CollisionTestUtils",
+        function: "handleServiceGuidedCollision",
         metadata: {
             ballId: ballBody.id,
             pinRow,
             expectedRow: ballExtension.currentPathIndex + 1,
             currentPathIndex: ballExtension.currentPathIndex,
-            pinLabel: pegBody.label
-        }
+            pinLabel: pegBody.label,
+        },
     });
 }
 
 function logNudgeApplied(ballBody: Body, direction: number, naturalNudgeStrength: number): void {
-    physicsLogger.info('🎯 DETERMINISTIC PATH GUIDANCE APPLIED', {
-        component: 'CollisionTestUtils',
-        function: 'applyServiceGuidedNudge',
+    physicsLogger.info("🎯 DETERMINISTIC PATH GUIDANCE APPLIED", {
+        component: "CollisionTestUtils",
+        function: "applyServiceGuidedNudge",
         metadata: {
             ballId: ballBody.id,
             direction,
             nudgeStrength: naturalNudgeStrength.toFixed(3),
             deterministicVelocityX: (direction * naturalNudgeStrength).toFixed(3),
-            upwardBounce: '0.500',
-            velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
-        }
+            upwardBounce: "0.500",
+            velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        },
     });
 }
 
 function logFinalTrajectorySet(ballBody: Body, ballExtension: BallBodyExtension, finalVelocity: { x: number; y: number }): void {
-    physicsLogger.info('🎯 FINAL TRAJECTORY SET - DIRECTING TO TARGET SLOT', {
-        component: 'CollisionTestUtils',
-        function: 'handleFinalTrajectory',
+    physicsLogger.info("🎯 FINAL TRAJECTORY SET - DIRECTING TO TARGET SLOT", {
+        component: "CollisionTestUtils",
+        function: "handleFinalTrajectory",
         metadata: {
             ballId: ballBody.id,
             expectedFinalSlot: ballExtension.expectedFinalSlot,
             currentX: ballBody.position.x.toFixed(1),
             finalVelocity: { x: finalVelocity.x.toFixed(3), y: finalVelocity.y.toFixed(3) },
-            pathCompleted: true
-        }
+            pathCompleted: true,
+        },
     });
 }
 
@@ -316,18 +302,8 @@ function logFinalTrajectorySet(ballBody: Body, ballExtension: BallBodyExtension,
  * Test utility to handle pin collisions (wrapper for service-guided handler)
  * Provides backward compatibility for existing tests
  */
-export function handlePinCollision(result: {
-    ballBody: Body;
-    ballExtension: BallBodyExtension;
-    obstacleBody: Body;
-    engine: Engine;
-}): void {
-    handleServiceGuidedPinCollision(
-        result.ballBody,
-        result.ballExtension,
-        result.obstacleBody,
-        result.engine
-    );
+export function handlePinCollision(result: { ballBody: Body; ballExtension: BallBodyExtension; obstacleBody: Body; engine: Engine }): void {
+    handleServiceGuidedPinCollision(result.ballBody, result.ballExtension, result.obstacleBody, result.engine);
 }
 
 /**
@@ -346,22 +322,22 @@ export function handleMultiplierCollision(
     const { ballBody, ballExtension, obstacleBody } = result;
     const multiplier = options?.multiplier || 1;
 
-    physicsLogger.info('🎯 MULTIPLIER COLLISION HANDLED', {
-        component: 'CollisionTestUtils',
-        function: 'handleMultiplierCollision',
+    physicsLogger.info("🎯 MULTIPLIER COLLISION HANDLED", {
+        component: "CollisionTestUtils",
+        function: "handleMultiplierCollision",
         metadata: {
             ballId: ballBody.id,
             multiplier,
             ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
             multiplierPosition: { x: Math.round(obstacleBody.position.x), y: Math.round(obstacleBody.position.y) },
-            ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
-        }
+            ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        },
     });
 
     // Simple multiplier collision response - just slow down the ball slightly
     Body.setVelocity(ballBody, {
         x: ballBody.velocity.x * 0.95,
-        y: ballBody.velocity.y * 0.95
+        y: ballBody.velocity.y * 0.95,
     });
 
     // Extract multiplier from obstacle label (e.g., 'multiplier-2-3' -> 2)

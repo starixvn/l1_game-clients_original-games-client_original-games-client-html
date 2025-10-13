@@ -1,15 +1,15 @@
-import React from 'react';
-import { Bodies, Body, Composite, Engine } from 'matter-js';
-import { physicsConfig } from '@plinko/features/game/components/ball/physics/physics-config';
-import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
-import { getMiddleDropPosition } from '@plinko/features/game/components/ball/physics/drop-positions';
-import { PHYSICS_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/physics-constants';
-import { LAYOUT_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/layout-constants';
-import { BALL_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/ball-constants';
-import { RENDERING_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/rendering-constants';
+import React from "react";
+import { Bodies, Body, Composite, Engine } from "matter-js";
+import { physicsConfig } from "@plinko/features/game/components/ball/physics/physics-config";
+import { calculateBallSize, getBallPhysicsTweaks } from "./ball-calculations";
+import { getMiddleDropPosition } from "@plinko/features/game/components/ball/physics/drop-positions";
+import { PHYSICS_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/physics-constants";
+import { LAYOUT_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/layout-constants";
+import { BALL_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/ball-constants";
+import { RENDERING_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/rendering-constants";
 
 interface BallBodyExtension {
-    world?: Engine['world'];
+    world?: Engine["world"];
     isServiceGuided?: boolean;
     expectedFinalSlot?: number;
     multiplier?: number;
@@ -21,7 +21,7 @@ interface BallBodyExtension {
     createdAt?: number; // Timestamp when ball was created
     wrongSlotHits?: number;
     pinCollisions?: string[];
-    pathPositions?: { x: number; y: number }[]; // Track ball path for visualization
+    pathPositions?: { x: number; y: number; type?: string }[]; // Track ball path for visualization
 }
 
 export interface CanvasInfo {
@@ -59,7 +59,7 @@ export function getCanvasInfo(canvasRef: React.RefObject<HTMLDivElement>): Canva
         canvasHeight: containerRect.height || physicsConfig.world.height,
         ballCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.BALL,
         defaultCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT,
-        multiplierCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER
+        multiplierCategory: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER,
     };
 }
 
@@ -95,7 +95,7 @@ export function createPhysicsBodies(
         if (multiplier >= 1) {
             return physicsConfig.colors.multiplierLoss;
         }
-        return '#333';
+        return "#333";
     }
 
     // Board dimensions based on plinko demo (1100x1100 canvas)
@@ -122,8 +122,8 @@ export function createPhysicsBodies(
                 render: { fillStyle: physicsConfig.colors.pin },
                 isStatic: true,
                 collisionFilter: {
-                    category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT
-                }
+                    category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT,
+                },
             });
             pins.push(pin);
 
@@ -145,7 +145,7 @@ export function createPhysicsBodies(
         canvasHeight * 2,
         {
             render: { visible: false },
-            isStatic: true
+            isStatic: true,
         }
     );
 
@@ -156,7 +156,7 @@ export function createPhysicsBodies(
         canvasHeight * 2,
         {
             render: { visible: false },
-            isStatic: true
+            isStatic: true,
         }
     );
 
@@ -167,7 +167,7 @@ export function createPhysicsBodies(
         wallThickness,
         {
             render: { visible: false },
-            isStatic: true
+            isStatic: true,
         }
     );
 
@@ -202,7 +202,7 @@ export function createPhysicsBodies(
             {
                 render: { visible: false },
                 isStatic: true,
-                label: `triangle-left-wall-${level}`
+                label: `triangle-left-wall-${level}`,
             }
         );
 
@@ -215,7 +215,7 @@ export function createPhysicsBodies(
             {
                 render: { visible: false },
                 isStatic: true,
-                label: `triangle-right-wall-${level}`
+                label: `triangle-right-wall-${level}`,
             }
         );
 
@@ -239,7 +239,7 @@ export function createPhysicsBodies(
 
         const slotLabel = `multiplier-${multiplier}-${slotIndex}`;
 
-        console.log('🏗️ [PHYSICS] Creating multiplier slot - SLOT INDEX MAPPING:', {
+        console.log("🏗️ [PHYSICS] Creating multiplier slot - SLOT INDEX MAPPING:", {
             arrayIndex: index,
             slotIndex,
             multiplier,
@@ -248,31 +248,25 @@ export function createPhysicsBodies(
             dimensions: { width: slotWidth, height: slotHeight },
             totalSlots: multipliers.length,
             rows,
-            mapping: `arrayIndex ${index} -> slotIndex ${slotIndex} -> label ${slotLabel}`
+            mapping: `arrayIndex ${index} -> slotIndex ${slotIndex} -> label ${slotLabel}`,
         });
 
-        const multiplierBody = Bodies.rectangle(
-            x,
-            y,
-            slotWidth,
-            slotHeight,
-            {
-                label: slotLabel,
-                isStatic: true,
-                isSensor: true, // Like demo slots
-                collisionFilter: {
-                    category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER
-                },
-                render: {
-                    fillStyle: getMultiplierColor(multiplier)
-                }
-            }
-        );
+        const multiplierBody = Bodies.rectangle(x, y, slotWidth, slotHeight, {
+            label: slotLabel,
+            isStatic: true,
+            isSensor: true, // Like demo slots
+            collisionFilter: {
+                category: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER,
+            },
+            render: {
+                fillStyle: getMultiplierColor(multiplier),
+            },
+        });
         multipliersBodies.push(multiplierBody);
     });
 
     // Log final slot layout with detailed mapping
-    console.log('✅ [PHYSICS] FINAL SLOT LAYOUT - SLOT INDEX MAPPING:', {
+    console.log("✅ [PHYSICS] FINAL SLOT LAYOUT - SLOT INDEX MAPPING:", {
         totalSlots: multipliersBodies.length,
         multipliersArray: multipliers,
         slotMapping: multipliersBodies.map((body, index) => ({
@@ -281,10 +275,10 @@ export function createPhysicsBodies(
             multiplier: multipliers[index],
             label: body.label,
             position: { x: Math.round(body.position.x), y: Math.round(body.position.y) },
-            mapping: `Position ${index} -> slotIndex ${index} -> multiplier ${multipliers[index]}`
+            mapping: `Position ${index} -> slotIndex ${index} -> multiplier ${multipliers[index]}`,
         })),
         slotIndexRange: `0 to ${multipliersBodies.length - 1}`,
-        expectedBehavior: `slotIndex N corresponds to slot at physical position N`
+        expectedBehavior: `slotIndex N corresponds to slot at physical position N`,
     });
 
     return { pins, multipliersBodies, walls };
@@ -295,13 +289,13 @@ export function createPhysicsBodies(
  */
 export function setupCollisionDetection(): {
     lastLogTimeRef: { current: number };
-    animationState: Map<string, { offsetY: number; startTime: number; duration: number; type: 'slotBounce' }>;
+    animationState: Map<string, { offsetY: number; startTime: number; duration: number; type: "slotBounce" }>;
     pegCollisionTracker: Set<string>;
 } {
     // Physics engine now only handles setup, not collision detection
     // Collision detection is handled by layered PhysicsLayer.tsx for cleaner separation
     const lastLogTimeRef = { current: 0 };
-    const animationState = new Map<string, { offsetY: number; startTime: number; duration: number; type: 'slotBounce' }>();
+    const animationState = new Map<string, { offsetY: number; startTime: number; duration: number; type: "slotBounce" }>();
     const pegCollisionTracker = new Set<string>();
 
     return { lastLogTimeRef, animationState, pegCollisionTracker };
@@ -339,7 +333,10 @@ export function spawnBall(
     const canvasHeight = containerRect.height || physicsConfig.world.height;
 
     // Calculate responsive scale factor for canvas size
-    const canvasScaleFactor = Math.min(canvasWidth / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH, canvasHeight / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT);
+    const canvasScaleFactor = Math.min(
+        canvasWidth / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH,
+        canvasHeight / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT
+    );
 
     // Calculate dynamic ball size based on rows and canvas scaling
     const ballRadius = calculateBallSize(rows, canvasScaleFactor);
@@ -365,16 +362,16 @@ export function spawnBall(
         density: physicsTweaks.density, // Dynamic mass for realistic physics
         collisionFilter: {
             group: PHYSICS_CONSTANTS.BALL.COLLISION_FILTER_GROUP,
-            mask: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT | PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER // Only collide with pins and slots, not other balls
+            mask: PHYSICS_CONSTANTS.COLLISION_CATEGORIES.DEFAULT | PHYSICS_CONSTANTS.COLLISION_CATEGORIES.MULTIPLIER, // Only collide with pins and slots, not other balls
         },
         render: {
-            fillStyle: ballColor
+            fillStyle: ballColor,
         },
-        isStatic: false
+        isStatic: false,
     });
 
     // Add creation timestamp and world reference for cleanup bookkeeping
-    const ballExtension = ball;
+    const ballExtension = ball as BallBodyExtension;
     ballExtension.createdAt = Date.now();
     ballExtension.world = engine.world;
 
@@ -390,26 +387,25 @@ export function spawnBallWithPath(
     serviceData: ServiceGuidedBallData,
     rows: number
 ): void {
-
     // Validate service data consistency
-    const calculatedSlot = serviceData.path.filter(p => p === 1).length;
-    console.log('🎯 [PHYSICS] SERVICE BALL CREATION - SLOT INDEX CALCULATION:', {
+    const calculatedSlot = serviceData.path.filter((p) => p === 1).length;
+    console.log("🎯 [PHYSICS] SERVICE BALL CREATION - SLOT INDEX CALCULATION:", {
         path: serviceData.path,
         pathLength: serviceData.path.length,
         countOfOnes: calculatedSlot,
         serviceSlotIndex: serviceData.finalSlot,
         slotIndexMatch: calculatedSlot === serviceData.finalSlot,
         expectedOutcome: `Ball should land on slotIndex ${serviceData.finalSlot}`,
-        pathDirections: serviceData.path.map((dir, idx) => `Step ${idx}: ${dir === 0 ? 'LEFT' : 'RIGHT'}`).join(', '),
+        pathDirections: serviceData.path.map((dir, idx) => `Step ${idx}: ${dir === 0 ? "LEFT" : "RIGHT"}`).join(", "),
         betValue: serviceData.betValue,
-        multiplier: serviceData.multiplier
+        multiplier: serviceData.multiplier,
     });
 
     if (calculatedSlot !== serviceData.finalSlot) {
-        console.warn('⚠️ [PHYSICS] Slot mismatch in service data:', {
+        console.warn("⚠️ [PHYSICS] Slot mismatch in service data:", {
             calculatedSlot,
             serviceFinalSlot: serviceData.finalSlot,
-            path: serviceData.path
+            path: serviceData.path,
         });
     }
 
@@ -424,7 +420,7 @@ export function spawnBallWithPath(
         // Add ball to physics world
         if (engine.world) {
             Composite.add(engine.world, ball);
-            ball.world = engine.world;
+            (ball as BallBodyExtension).world = engine.world;
         }
     } catch (error) {
         // Error handling (silenced)
@@ -441,12 +437,15 @@ export function createBallWithServicePath(
     rows: number
 ): Body {
     if (!canvasRef.current) {
-        throw new Error('Canvas not ready');
+        throw new Error("Canvas not ready");
     }
 
     // Calculate dynamic ball size based on rows and canvas scaling
     const containerRect = canvasRef.current.getBoundingClientRect();
-    const canvasScaleFactor = Math.min(containerRect.width / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH_ALT, containerRect.height / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT_ALT);
+    const canvasScaleFactor = Math.min(
+        containerRect.width / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_WIDTH_ALT,
+        containerRect.height / RENDERING_CONSTANTS.CANVAS.SCALE_REFERENCE_HEIGHT_ALT
+    );
     const ballRadius = calculateBallSize(rows, canvasScaleFactor);
 
     // Always spawn from the middle drop position (5th of 9 positions)
@@ -457,7 +456,7 @@ export function createBallWithServicePath(
     // Create ball body with service path information (match demo physics exactly)
     const ball = Bodies.circle(ballX, ballRadius, ballRadius, {
         restitution: 0, // No bounce like demo
-        friction: 0,    // No friction like demo
+        friction: 0, // No friction like demo
         frictionAir: 0, // No air resistance like demo
         collisionFilter: {
             group: -1, // Match demo collision group
@@ -465,14 +464,14 @@ export function createBallWithServicePath(
         render: {
             fillStyle: ballColor,
             strokeStyle: RENDERING_CONSTANTS.BALL.BALL_STROKE,
-            lineWidth: 1
+            lineWidth: 1,
         },
-        label: 'service-guided-ball',
-        isStatic: false
+        label: "service-guided-ball",
+        isStatic: false,
     });
 
     // Store service path information on the ball
-    const ballExtension = ball;
+    const ballExtension = ball as BallBodyExtension;
     ballExtension.servicePath = serviceData.path;
     ballExtension.currentPathIndex = 0;
     ballExtension.expectedFinalSlot = serviceData.finalSlot;
@@ -480,11 +479,13 @@ export function createBallWithServicePath(
     ballExtension.betValue = serviceData.betValue;
     ballExtension.isServiceGuided = true;
     ballExtension.createdAt = Date.now(); // Track creation time
-    ballExtension.pathPositions = [{
-        x: ball.position.x,
-        y: ball.position.y,
-        type: 'spawn'
-    }]; // Start path tracking
+    ballExtension.pathPositions = [
+        {
+            x: ball.position.x,
+            y: ball.position.y,
+            type: "spawn",
+        },
+    ]; // Start path tracking
 
     return ball;
 }
