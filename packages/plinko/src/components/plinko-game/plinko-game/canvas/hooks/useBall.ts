@@ -1,10 +1,27 @@
-import { useCallback } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { Bodies, Body } from "matter-js";
 import { BallBody, PegBody } from "../type";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
+import { buildVersion } from "@shared/constants";
 
 export const useBall = () => {
+    const ballImageRef = useRef<HTMLImageElement | null>(null);
+    const imageLoadedRef = useRef(false);
+
+    useEffect(() => {
+        const image = new Image();
+        image.onload = () => {
+            imageLoadedRef.current = true;
+        };
+        image.onerror = () => {
+            console.error("Failed to load ball image");
+            imageLoadedRef.current = false;
+        };
+        image.src = `/static/images/plinko/ball.png?v=${buildVersion}`;
+        ballImageRef.current = image;
+    }, []);
+
     const createBall = useCallback((finish: PlinkoFinish) => {
         const { width, ballConfig } = PlinkoCanvasConfig;
         const x = width / 2;
@@ -29,10 +46,11 @@ export const useBall = () => {
             return;
         }
         const { ballConfig } = PlinkoCanvasConfig;
-        context.fillStyle = "#d0a025";
-        context.beginPath();
-        context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
-        context.fill();
+
+        // Draw the image if it's loaded
+        if (imageLoadedRef.current && ballImageRef.current) {
+            context.drawImage(ballImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2, ballConfig.radius * 2);
+        }
     }, []);
 
     const handleRoad = useCallback((body: BallBody, peg: PegBody) => {

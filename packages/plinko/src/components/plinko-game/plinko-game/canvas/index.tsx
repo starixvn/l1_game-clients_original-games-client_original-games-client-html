@@ -156,7 +156,7 @@ const PlinkoCanvas = () => {
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
         if (!canvasRef.current) {
-            return;
+            return undefined;
         }
 
         const engine = Engine.create();
@@ -183,7 +183,7 @@ const PlinkoCanvas = () => {
     useEffect(() => {
         const engine = initializeEngine();
         if (!engine || !canvasRef.current) {
-            return;
+            return undefined;
         }
 
         generateMap();
