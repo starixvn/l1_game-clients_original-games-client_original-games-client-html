@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { GAME_MODES, NUMBER_OF_ROWS } from "@plinko/constants";
+import { GAME_MODES } from "@plinko/constants";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 
 export type PlinkoGameStore = {

@@ -41,8 +41,8 @@ const PlinkoCanvas = () => {
             if (!engineRef.current) {
                 return;
             }
-            for (let i = 0; i < pairs.length; i++) {
-                const { bodyA, bodyB } = pairs[i];
+            for (const pair of pairs) {
+                const { bodyA, bodyB } = pair;
                 const ball = bodyA.label === PLINKO_OBJECTS.BALL ? bodyA : bodyB;
                 const object = bodyA.label === PLINKO_OBJECTS.BALL ? bodyB : bodyA;
                 if (!ball) {
@@ -158,8 +158,10 @@ const PlinkoCanvas = () => {
         if (!canvasRef.current) {
             return;
         }
+
         const engine = Engine.create();
         engineRef.current = engine;
+        
         return engine;
     }, []);
 
@@ -183,10 +185,12 @@ const PlinkoCanvas = () => {
         if (!engine || !canvasRef.current) {
             return;
         }
+
         generateMap();
         Events.on(engine, "collisionStart", handleCollision);
         const runner = startRunner();
         animate();
+
         return () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);

@@ -97,8 +97,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, index, totalItems, odds, cl
 
     const handleTouchMove = () => {
         if (touchTimeoutRef.current) {
-            clearTimeout(touchTimeoutRef.current);
-            touchTimeoutRef.current = null;
+            handleTouchEnd();
         }
     };
 

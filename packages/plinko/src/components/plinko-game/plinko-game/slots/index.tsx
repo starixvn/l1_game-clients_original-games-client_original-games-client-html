@@ -19,15 +19,17 @@ const Slots = () => {
     const [localFinishedBall, setLocalFinishedBall] = useState(finishedBall);
     
     useEffect(() => {
-        if (finishedBall) {
-            setLocalFinishedBall(finishedBall);
-            
-            const timer = setTimeout(() => {
-                setLocalFinishedBall(null);
-            }, 300);
-            
-            return () => clearTimeout(timer);
+        if (!finishedBall) {
+            return;
         }
+
+        setLocalFinishedBall(finishedBall);
+        
+        const timer = setTimeout(() => {
+            setLocalFinishedBall(null);
+        }, 300);
+        
+        return () => clearTimeout(timer);
     }, [finishedBall]);
     
     const odds = useMemo(() => {
