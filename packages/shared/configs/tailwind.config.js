@@ -72,6 +72,10 @@ module.exports = {
                     "0%": { transform: "translateX(0)" },
                     "100%": { transform: "translateX(-100%)" },
                 },
+                slideDown: {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "50%": { transform: "translateY(30%)" },
+                },
             },
             animation: {
                 "spin-slow": "spin 6s linear infinite",
@@ -81,6 +85,7 @@ module.exports = {
                 showBottom: "showBottom 0.3s ease-out forwards",
                 hideBottom: "hideBottom 0.2s ease-in forwards",
                 "slide-to-left": "slideToLeft 0.2s ease-in-out forwards",
+                "slide-down": "slideDown 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards",
             },
             zIndex: {
                 toast: "300",

@@ -1,6 +1,6 @@
 import { usePopupStore } from "@shared/stores";
 import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
-import { memo, ReactElement, RefObject, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { memo, ReactElement, useEffect, useMemo, useState } from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
@@ -9,8 +9,7 @@ import { ResourceTypes } from "@shared/resources/type";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { numberWithCommas } from "@shared/helpers";
-import { DraggableData, DraggableEvent } from "react-draggable";
-import Draggable from "react-draggable";
+import Draggable , { DraggableData, DraggableEvent } from "react-draggable";
 import { isMobile } from "react-device-detect";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
