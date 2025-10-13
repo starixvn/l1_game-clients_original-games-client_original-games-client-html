@@ -117,9 +117,8 @@ export function calculatePathDeflectionAngle(
 
     // Simplified deflection calculation
     const relativeAngle = velocityAngle - pegAngle;
-    const deflectionAngle = 2 * relativeAngle; // Elastic collision approximation
 
-    return deflectionAngle;
+    return 2 * relativeAngle;
 }
 
 /**
@@ -188,7 +187,7 @@ export function optimizePegPlacement(
 export function calculatePegInfluenceZones(
     pegs: PegGeometry[],
     ballRadius: number,
-    influenceRadius: number = 50
+    influenceRadius = 50
 ): Array<{
     pegIndex: number;
     zone: { center: { x: number; y: number }; radius: number };
@@ -306,7 +305,7 @@ export function calculatePegWearPatterns(
     stressPoints: number;
     recommendedMaintenance: boolean;
 }> {
-    const wearPatterns = pegs.map((peg, index) => {
+    return pegs.map((peg, index) => {
         const pegCollisions = collisionHistory.filter(h => h.pegIndex === index);
 
         const totalStress = pegCollisions.reduce((sum, collision) => {
@@ -325,16 +324,15 @@ export function calculatePegWearPatterns(
             recommendedMaintenance,
         };
     });
-
-    return wearPatterns;
 }
 
 /**
  * Generate peg layout variations for different game modes
  */
+type PegLayoutVariationType = 'dense' | 'sparse' | 'clustered' | 'random';
 export function generatePegLayoutVariations(
     baseLayout: PegGeometry[],
-    variationType: 'dense' | 'sparse' | 'clustered' | 'random'
+    variationType: PegLayoutVariationType
 ): PegGeometry[] {
     switch (variationType) {
         case 'dense':
@@ -360,8 +358,8 @@ export function generatePegLayoutVariations(
             return baseLayout.map(peg => ({
                 ...peg,
                 position: {
-                    x: peg.position.x + (Math.random() - 0.5) * 20,
-                    y: peg.position.y + (Math.random() - 0.5) * 20,
+                    x: peg.position.x + (Math.random() - 0.5) * 20, // NOSONAR
+                    y: peg.position.y + (Math.random() - 0.5) * 20, // NOSONAR
                 },
             }));
 

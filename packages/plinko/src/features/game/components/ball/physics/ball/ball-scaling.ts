@@ -118,8 +118,8 @@ export function scalePhysicsForCanvas(
     baseFactors: PhysicsFactors,
     canvasWidth: number,
     canvasHeight: number,
-    baseCanvasWidth: number = 480,
-    baseCanvasHeight: number = 400
+    baseCanvasWidth = 480,
+    baseCanvasHeight = 400
 ): PhysicsFactors {
     const widthRatio = canvasWidth / baseCanvasWidth;
     const heightRatio = canvasHeight / baseCanvasHeight;
@@ -146,7 +146,7 @@ export function scalePhysicsForCanvas(
  * Calculate ball size based on number of rows (legacy compatibility function)
  * This function replicates the exact logic from the original calculateBallSize
  */
-export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): number {
+export function calculateBallSize(rows: number, canvasScaleFactor = 1): number {
     physicsLogger.debug('Calculating ball size for rows', {
         component: 'BallScaling',
         function: 'calculateBallSize',
@@ -211,9 +211,9 @@ export function calculateBallSize(rows: number, canvasScaleFactor: number = 1): 
  * Calculate ball size progression for different row counts
  */
 export function calculateBallSizeProgression(
-    minRows: number = 8,
-    maxRows: number = 20,
-    steps: number = 13
+    minRows = 8,
+    maxRows = 20,
+    steps = 13
 ): Array<{ rows: number; radius: number; diameter: number }> {
     const progression: Array<{ rows: number; radius: number; diameter: number }> = [];
 
@@ -268,6 +268,35 @@ export function getPhysicsBalanceMetrics(
 }
 
 /**
+ * Calculate score for a specific radius against target metrics
+ */
+function calculateRadiusScore(
+    metrics: ReturnType<typeof getPhysicsBalanceMetrics>,
+    targetMetrics: Parameters<typeof optimizeBallSizeForGameplay>[0]
+): { score: number; totalWeight: number } {
+    const metricWeights = [
+        { key: 'collisionEfficiency' as const, weight: 25 },
+        { key: 'pathControlDifficulty' as const, weight: 25 },
+        { key: 'physicsStability' as const, weight: 25 },
+        { key: 'visualBalance' as const, weight: 25 },
+    ];
+
+    let score = 0;
+    let totalWeight = 0;
+
+    for (const { key, weight } of metricWeights) {
+        const targetValue = targetMetrics[key];
+        if (targetValue !== undefined) {
+            const diff = Math.abs(metrics[key] - targetValue);
+            score += (1 - diff) * weight;
+            totalWeight += weight;
+        }
+    }
+
+    return { score, totalWeight };
+}
+
+/**
  * Optimize ball size for specific gameplay requirements
  */
 export function optimizeBallSizeForGameplay(
@@ -278,7 +307,7 @@ export function optimizeBallSizeForGameplay(
         visualBalance?: number;
     },
     physicsFactors: PhysicsFactors,
-    tolerance: number = 0.1
+    tolerance = 0.1
 ): number {
     const minRadius = 4.5; // 9px diameter
     const maxRadius = 17.5; // 35px diameter
@@ -292,35 +321,7 @@ export function optimizeBallSizeForGameplay(
     for (let i = 0; i < 20; i++) { // Max 20 iterations
         const mid = (low + high) / 2;
         const metrics = getPhysicsBalanceMetrics(mid, physicsFactors);
-
-        // Calculate how well this radius meets target metrics
-        let score = 0;
-        let totalWeight = 0;
-
-        if (targetMetrics.collisionEfficiency !== undefined) {
-            const diff = Math.abs(metrics.collisionEfficiency - targetMetrics.collisionEfficiency);
-            score += (1 - diff) * 25;
-            totalWeight += 25;
-        }
-
-        if (targetMetrics.pathControlDifficulty !== undefined) {
-            const diff = Math.abs(metrics.pathControlDifficulty - targetMetrics.pathControlDifficulty);
-            score += (1 - diff) * 25;
-            totalWeight += 25;
-        }
-
-        if (targetMetrics.physicsStability !== undefined) {
-            const diff = Math.abs(metrics.physicsStability - targetMetrics.physicsStability);
-            score += (1 - diff) * 25;
-            totalWeight += 25;
-        }
-
-        if (targetMetrics.visualBalance !== undefined) {
-            const diff = Math.abs(metrics.visualBalance - targetMetrics.visualBalance);
-            score += (1 - diff) * 25;
-            totalWeight += 25;
-        }
-
+        const { score, totalWeight } = calculateRadiusScore(metrics, targetMetrics);
         const normalizedScore = totalWeight > 0 ? score / totalWeight : 0;
 
         if (normalizedScore > bestScore + tolerance) {

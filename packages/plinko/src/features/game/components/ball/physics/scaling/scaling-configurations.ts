@@ -485,8 +485,9 @@ export const PERFORMANCE_SCALING_PRESETS = {
 /**
  * Get scaling preset by category and name
  */
+type ScalingPresetCategory = 'gameMode' | 'device' | 'difficulty' | 'performance';
 export function getScalingPreset(
-    category: 'gameMode' | 'device' | 'difficulty' | 'performance',
+    category: ScalingPresetCategory,
     name: string
 ): { name: string; description: string; configurations: ScalingConfiguration[] } | null {
     let presets: any;

@@ -33,7 +33,7 @@ export interface AdaptationStrategy {
  * Adaptive scaling system
  */
 export class AdaptiveScalingSystem {
-    private scaler: PhysicsScaler;
+    private readonly scaler: PhysicsScaler;
     private strategies: AdaptationStrategy[] = [];
     private adaptationHistory: Array<{
         timestamp: number;
@@ -41,10 +41,10 @@ export class AdaptiveScalingSystem {
         appliedStrategy: string;
         scalingChanges: Record<string, { before: number; after: number }>;
     }> = [];
-    private lastAdaptation: number = 0;
-    private adaptationCooldown: number = 30000; // 30 seconds between adaptations
+    private lastAdaptation = 0;
+    private adaptationCooldown = 30000; // 30 seconds between adaptations
 
-    constructor(baseGravity: number = 1.0) {
+    constructor(baseGravity = 1.0) {
         this.scaler = new PhysicsScaler(baseGravity);
         this.initializeDefaultStrategies();
     }

@@ -4,7 +4,7 @@
  */
 
 import { PhysicsFactors } from '../factors/core-factors';
-import { calculateTerminalVelocity, calculateBounceHeight, calculateFallingSpeed } from '../factors/factor-relationships';
+import { calculateTerminalVelocity, calculateBounceHeight } from '../factors/factor-relationships';
 import { physicsLogger } from '../performance/physics-logger';
 
 /**
@@ -151,10 +151,10 @@ export function calculateGravityBalanceMetrics(
 export class AdaptiveGravitySystem {
     private currentGravity: number;
     private targetGravity: number;
-    private adaptationRate: number;
+    private readonly adaptationRate: number;
     private lastAdjustment: number;
 
-    constructor(initialGravity: number, adaptationRate: number = 0.1) {
+    constructor(initialGravity: number, adaptationRate = 0.1) {
         this.currentGravity = initialGravity;
         this.targetGravity = initialGravity;
         this.adaptationRate = adaptationRate;
@@ -201,7 +201,7 @@ export class AdaptiveGravitySystem {
     /**
      * Check if gravity has reached target
      */
-    hasReachedTarget(tolerance: number = 0.01): boolean {
+    hasReachedTarget(tolerance = 0.01): boolean {
         return Math.abs(this.currentGravity - this.targetGravity) < tolerance;
     }
 }
@@ -255,12 +255,6 @@ export function calculateGravityDifficultyImpact(
     ballPathPredictability: number;
     scoringVariability: number;
 } {
-    const terminalVelocity = calculateTerminalVelocity(
-        physicsFactors.ballMass,
-        gravity,
-        physicsFactors.airResistanceCoefficient
-    );
-
     // Higher gravity = higher difficulty
     const difficulty = Math.min(1, gravity / 2.0);
 
@@ -287,7 +281,7 @@ export function calculateGravityDifficultyImpact(
 export function calculateGravityCompensation(
     baseGravity: number,
     canvasHeight: number,
-    referenceHeight: number = 400
+    referenceHeight = 400
 ): number {
     // Adjust gravity so fall time remains consistent across different canvas sizes
     const heightRatio = canvasHeight / referenceHeight;
@@ -302,7 +296,7 @@ export function calculateGravityCompensation(
 export function analyzeGravityStability(
     gravity: number,
     physicsFactors: PhysicsFactors,
-    timeStep: number = 0.016
+    timeStep = 0.016
 ): {
     isStable: boolean;
     oscillations: number;

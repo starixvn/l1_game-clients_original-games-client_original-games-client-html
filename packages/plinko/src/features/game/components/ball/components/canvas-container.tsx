@@ -51,7 +51,7 @@ export const CanvasContainer: React.FC<CanvasContainerProps> = ({
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) { return; }
 
         // Set canvas to fixed original dimensions
         canvas.width = canvasWidth;

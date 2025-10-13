@@ -4,7 +4,7 @@
  */
 
 import { PhysicsFactors } from '../factors/core-factors';
-import { PerformanceMonitor, PerformanceMetrics } from './performance-monitor';
+import { PerformanceMetrics } from './performance-monitor';
 
 /**
  * Profiling session interface
@@ -23,9 +23,10 @@ export interface ProfilingSession {
 /**
  * Profiling event interface
  */
+type ProfilingEventType = 'collision' | 'optimization' | 'adaptation' | 'error' | 'custom';
 export interface ProfilingEvent {
     timestamp: number;
-    type: 'collision' | 'optimization' | 'adaptation' | 'error' | 'custom';
+    type: ProfilingEventType;
     data: Record<string, any>;
     duration?: number;
 }
@@ -34,10 +35,10 @@ export interface ProfilingEvent {
  * Performance profiler class
  */
 export class PerformanceProfiler {
-    private sessions: Map<string, ProfilingSession> = new Map();
+    private readonly sessions: Map<string, ProfilingSession> = new Map();
     private currentSession: ProfilingSession | null = null;
     private eventBuffer: ProfilingEvent[] = [];
-    private maxEventBufferSize: number = 1000;
+    private readonly maxEventBufferSize = 1000;
 
     /**
      * Start a new profiling session
@@ -46,7 +47,7 @@ export class PerformanceProfiler {
         physicsFactors: PhysicsFactors,
         metadata: Record<string, any> = {}
     ): string {
-        const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`; // NOSONAR
         const startTime = performance.now();
 
         const session: ProfilingSession = {
@@ -71,7 +72,7 @@ export class PerformanceProfiler {
      * End the current profiling session
      */
     endSession(): ProfilingSession | null {
-        if (!this.currentSession) return null;
+        if (!this.currentSession) { return null; }
 
         const endTime = performance.now();
         this.currentSession.endTime = endTime;
@@ -156,7 +157,7 @@ export class PerformanceProfiler {
      */
     analyzeSession(sessionId: string): SessionAnalysis | null {
         const session = this.sessions.get(sessionId);
-        if (!session) return null;
+        if (!session) { return null; }
 
         return this.analyzeSessionData(session);
     }
@@ -261,17 +262,17 @@ export class PerformanceProfiler {
     private identifyBottlenecks(metrics: PerformanceMetrics[], events: ProfilingEvent[]): string[] {
         const bottlenecks: string[] = [];
 
-        if (metrics.length === 0) return bottlenecks;
+        if (metrics.length === 0) { return bottlenecks; }
 
         const avgFPS = metrics.reduce((sum, m) => sum + m.fps, 0) / metrics.length;
         const avgFrameTime = metrics.reduce((sum, m) => sum + m.frameTime, 0) / metrics.length;
         const avgPhysicsTime = metrics.reduce((sum, m) => sum + m.physicsTime, 0) / metrics.length;
         const avgCollisions = metrics.reduce((sum, m) => sum + m.collisionCount, 0) / metrics.length;
 
-        if (avgFPS < 45) bottlenecks.push('Low FPS');
-        if (avgFrameTime > 22) bottlenecks.push('High frame time');
-        if (avgPhysicsTime > 10) bottlenecks.push('High physics calculation time');
-        if (avgCollisions > 40) bottlenecks.push('High collision count');
+        if (avgFPS < 45) { bottlenecks.push('Low FPS'); }
+        if (avgFrameTime > 22) { bottlenecks.push('High frame time'); }
+        if (avgPhysicsTime > 10) { bottlenecks.push('High physics calculation time'); }
+        if (avgCollisions > 40) { bottlenecks.push('High collision count'); }
 
         // Check for collision spikes
         const collisionSpikes = metrics.filter(m => m.collisionCount > 60).length;
@@ -292,7 +293,7 @@ export class PerformanceProfiler {
     ): string[] {
         const recommendations: string[] = [];
 
-        if (metrics.length === 0) return recommendations;
+        if (metrics.length === 0) { return recommendations; }
 
         const avgFPS = metrics.reduce((sum, m) => sum + m.fps, 0) / metrics.length;
         const avgCollisions = metrics.reduce((sum, m) => sum + m.collisionCount, 0) / metrics.length;
@@ -393,7 +394,7 @@ export interface StatsResult {
  * Comparative performance analysis
  */
 export class ComparativePerformanceAnalyzer {
-    private profiler: PerformanceProfiler;
+    private readonly profiler: PerformanceProfiler;
 
     constructor(profiler: PerformanceProfiler) {
         this.profiler = profiler;
@@ -416,7 +417,7 @@ export class ComparativePerformanceAnalyzer {
         const analysis1 = this.profiler.analyzeSession(sessionId1);
         const analysis2 = this.profiler.analyzeSession(sessionId2);
 
-        if (!analysis1 || !analysis2) return null;
+        if (!analysis1 || !analysis2) { return null; }
 
         const fpsChange = analysis2.metrics.fps.average - analysis1.metrics.fps.average;
         const frameTimeChange = analysis2.metrics.frameTime.average - analysis1.metrics.frameTime.average;
@@ -472,8 +473,7 @@ export class ComparativePerformanceAnalyzer {
         // Analyze FPS trend
         const recentSessions = sessions.slice(-5);
         const fpsValues = recentSessions.map(s => {
-            const avgFPS = s.metrics.reduce((sum, m) => sum + m.fps, 0) / s.metrics.length;
-            return avgFPS;
+            return s.metrics.reduce((sum, m) => sum + m.fps, 0) / s.metrics.length;
         });
 
         const fpsSlope = this.calculateTrendSlope(fpsValues);
@@ -482,8 +482,7 @@ export class ComparativePerformanceAnalyzer {
 
         // Overall performance trend (lower is better for frame time)
         const frameTimeValues = recentSessions.map(s => {
-            const avgFrameTime = s.metrics.reduce((sum, m) => sum + m.frameTime, 0) / s.metrics.length;
-            return avgFrameTime;
+            return s.metrics.reduce((sum, m) => sum + m.frameTime, 0) / s.metrics.length;
         });
 
         const frameTimeSlope = this.calculateTrendSlope(frameTimeValues);
@@ -512,7 +511,7 @@ export class ComparativePerformanceAnalyzer {
      */
     private calculateTrendSlope(values: number[]): number {
         const n = values.length;
-        if (n < 2) return 0;
+        if (n < 2) { return 0; }
 
         const xMean = (n - 1) / 2;
         const yMean = values.reduce((sum, val) => sum + val, 0) / n;

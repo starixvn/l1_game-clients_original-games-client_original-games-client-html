@@ -83,7 +83,7 @@ export class PhysicsLogger {
     }
 
     debug(message: string, context: Omit<PhysicsLogContext, 'timestamp'>): void {
-        if (!this.shouldLog(LogLevel.DEBUG)) return;
+        if (!this.shouldLog(LogLevel.DEBUG)) { return; }
 
         const fullContext: PhysicsLogContext = {
             ...context,
@@ -97,7 +97,7 @@ export class PhysicsLogger {
     }
 
     info(message: string, context: Omit<PhysicsLogContext, 'timestamp'>): void {
-        if (!this.shouldLog(LogLevel.INFO)) return;
+        if (!this.shouldLog(LogLevel.INFO)) { return; }
 
         const fullContext: PhysicsLogContext = {
             ...context,
@@ -111,7 +111,7 @@ export class PhysicsLogger {
     }
 
     warn(message: string, context: Omit<PhysicsLogContext, 'timestamp'>): void {
-        if (!this.shouldLog(LogLevel.WARN)) return;
+        if (!this.shouldLog(LogLevel.WARN)) { return; }
 
         const fullContext: PhysicsLogContext = {
             ...context,
@@ -125,7 +125,7 @@ export class PhysicsLogger {
     }
 
     error(message: string, context: Omit<PhysicsLogContext, 'timestamp'>, error?: Error): void {
-        if (!this.shouldLog(LogLevel.ERROR)) return;
+        if (!this.shouldLog(LogLevel.ERROR)) { return; }
 
         const fullContext: PhysicsLogContext = {
             ...context,

@@ -107,7 +107,7 @@ const PFVerification: FC = () => {
                             {verifyInfo.convertNumber.map((item, index) => {
                                 return (
                                     <span key={`${item}-${index}`}>
-                                        {item % 2} {index == verifyInfo.convertNumber.length - 1 ? "=" : "+ "}{" "}
+                                        {item % 2} {index === verifyInfo.convertNumber.length - 1 ? "=" : "+ "}{" "}
                                     </span>
                                 );
                             })}{" "}
@@ -119,7 +119,7 @@ const PFVerification: FC = () => {
                                     <div
                                         key={`${item}-${index}`}
                                         className={`flex flex-col items-center  ${
-                                            index == betDetailData.drawInfo.settlementResult.slotIndex ? Styles["text-successful"] : ""
+                                            index === betDetailData.drawInfo.settlementResult.slotIndex ? Styles["text-successful"] : ""
                                         }`}
                                     >
                                         <span>{index} </span>

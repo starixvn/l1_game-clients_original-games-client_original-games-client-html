@@ -89,8 +89,8 @@ export function predictBallTrajectory(
     initialVelocityX: number,
     initialVelocityY: number,
     physicsFactors: PhysicsFactors,
-    timeSteps: number = 100,
-    deltaTime: number = 0.016
+    timeSteps = 100,
+    deltaTime = 0.016
 ): Array<{ x: number; y: number; velocityX: number; velocityY: number }> {
     const trajectory: Array<{ x: number; y: number; velocityX: number; velocityY: number }> = [];
 
@@ -123,7 +123,9 @@ export function predictBallTrajectory(
         y += velocityY * deltaTime;
 
         // Break if ball has fallen too far
-        if (y > initialY + 1000) break;
+        if (y > initialY + 1000) {
+            break;
+        }
     }
 
     return trajectory;
@@ -180,7 +182,7 @@ export function calculateBallStabilityMetrics(
  */
 export function calculatePathPredictability(
     physicsFactors: PhysicsFactors,
-    trajectoryLength: number = 100
+    trajectoryLength = 100
 ): number {
     // Simulate multiple trajectories with slight variations
     const baseTrajectory = predictBallTrajectory(
@@ -194,8 +196,8 @@ export function calculatePathPredictability(
     let totalDeviation = 0;
 
     for (let i = 0; i < variations; i++) {
-        const variedVelocityX = physicsFactors.velocityX + (Math.random() - 0.5) * variationMagnitude;
-        const variedVelocityY = physicsFactors.velocityY + (Math.random() - 0.5) * variationMagnitude;
+        const variedVelocityX = physicsFactors.velocityX + (Math.random() - 0.5) * variationMagnitude; // NOSONAR
+        const variedVelocityY = physicsFactors.velocityY + (Math.random() - 0.5) * variationMagnitude; // NOSONAR
 
         const variedTrajectory = predictBallTrajectory(
             0, 0, variedVelocityX, variedVelocityY,
@@ -221,7 +223,7 @@ export function calculatePathPredictability(
  */
 export function calculateEnergyDissipationRate(
     physicsFactors: PhysicsFactors,
-    timeSpan: number = 1.0
+    timeSpan = 1.0
 ): number {
     const initialEnergy = 0.5 * physicsFactors.ballMass *
         (Math.pow(physicsFactors.velocityX, 2) + Math.pow(physicsFactors.velocityY, 2));

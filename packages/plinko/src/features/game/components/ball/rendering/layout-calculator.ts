@@ -123,7 +123,7 @@ export function calculateSlotCalculationData(
     probabilities: number[],
     betAmount: number
 ) {
-    if (multipliers.length === 0) return null;
+    if (multipliers.length === 0) { return null; }
 
     const slotHeight = Math.max(15, Math.min(40, (layoutData.pegGap - 8 * layoutData.scaleFactor) * 1.5));
     // Use the same Y position as visual slots for hover detection

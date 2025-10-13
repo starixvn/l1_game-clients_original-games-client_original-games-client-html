@@ -25,9 +25,18 @@ export const DEFAULT_CALCULATION_FACTORS: PhysicsFactors = {
  * Get color for multiplier value
  */
 export function getMultiplierColor(multiplier: number): string {
-    if (multiplier >= 50) return '#FFD700'; // Gold
-    if (multiplier >= 20) return '#FF6B6B'; // Red
-    if (multiplier >= 5) return '#4ECDC4';  // Teal
-    if (multiplier >= 2) return '#45B7D1';  // Blue
+    if (multiplier >= 50) {
+        return '#FFD700'; // Gold
+    }
+    if (multiplier >= 20) {
+        return '#FF6B6B'; // Red
+    }
+    if (multiplier >= 5) {
+        return '#4ECDC4';  // Teal
+    }
+    if (multiplier >= 2) {
+        return '#45B7D1';  // Blue
+    }
+    
     return '#96CEB4'; // Green
 }

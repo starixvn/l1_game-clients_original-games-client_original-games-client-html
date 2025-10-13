@@ -77,10 +77,7 @@ const PayoutTooltip: React.FC<PayoutTooltipProps> = ({ children, winAmount, prob
     };
 
     const handleTouchMove = () => {
-        if (touchTimeoutRef.current) {
-            clearTimeout(touchTimeoutRef.current);
-            touchTimeoutRef.current = null;
-        }
+        handleTouchEnd();
     };
 
     useEffect(() => {

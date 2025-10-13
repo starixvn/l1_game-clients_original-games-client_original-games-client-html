@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import PayoutTooltip from "./payout-tooltip";
 import { getMultiplierColor } from "@plinko/lib/utils/colors-util";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
@@ -27,9 +27,12 @@ const PayoutsDisplay: React.FC<PayoutsDisplayProps> = ({ multipliers, probabilit
         );
     }
 
+    const rowClass = styled[`row${rows}`];
+    const xSpanClass = styled[`x-span`];
+    
     return (
         <div className={styled.payoutsDisplay}>
-            <div className={`flex justify-between py-0 ${styled[`row${rows}`]}`}
+            <div className={`flex justify-between py-0 ${rowClass}`}
              style={{ 
                 boxSizing: "border-box", }}>
                 {multipliers.map((multiplier, index) => {
@@ -50,7 +53,7 @@ const PayoutsDisplay: React.FC<PayoutsDisplayProps> = ({ multipliers, probabilit
                                     backgroundColor: getMultiplierColor(index, gameMode, rows),
                                 }}
                             >
-                                <span className={`${styled[`x-span`]} text-white font-bold`}>{multiplier.toFixed(2)}</span>
+                                <span className={`${xSpanClass} text-white font-bold`}>{multiplier.toFixed(2)}</span>
                             </div>
                         </PayoutTooltip>
                     );

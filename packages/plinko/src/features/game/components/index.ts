@@ -13,7 +13,6 @@ export { default as MultiplierDisplay } from "./display/MultiplierDisplay";
 export { default as PayoutsDisplay } from "./display/PayoutsDisplay";
 export { default as PayoutsRow } from "./display/PayoutsRow";
 export { default as ValueDisplay } from "./display/ValueDisplay";
-export { default as LandingSignal } from './display/LandingSignal';
 
 // Layout components
 export { default as GameBackground } from "./layout/GameBackground";

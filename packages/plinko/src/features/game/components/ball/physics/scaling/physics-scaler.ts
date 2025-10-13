@@ -34,12 +34,12 @@ export interface ScalingConfiguration {
  * Physics scaler class
  */
 export class PhysicsScaler {
-    private configurations: Map<keyof PhysicsFactors, ScalingConfiguration> = new Map();
-    private baseGravity: number;
+    private readonly configurations: Map<keyof PhysicsFactors, ScalingConfiguration> = new Map();
+    private readonly baseGravity: number;
     private currentGravity: number;
-    private rowScaler: RowBasedPhysicsScaler;
+    private readonly rowScaler: RowBasedPhysicsScaler;
 
-    constructor(baseGravity: number = 1.0, baseRows: number = 8) {
+    constructor(baseGravity = 1.0, baseRows = 8) {
         this.baseGravity = baseGravity;
         this.currentGravity = baseGravity;
         this.rowScaler = new RowBasedPhysicsScaler(baseRows);
@@ -71,15 +71,6 @@ export class PhysicsScaler {
             maxValue: 8.0,
         });
 
-        this.configurations.set('nudgeStrength', {
-            factor: 'nudgeStrength',
-            scalingType: ScalingType.POWER,
-            baseValue: 2.5,
-            scalingFactor: 1.3,
-            exponent: 1.3,
-            minValue: 1.0,
-            maxValue: 10.0,
-        });
 
         this.configurations.set('collisionCooldown', {
             factor: 'collisionCooldown',

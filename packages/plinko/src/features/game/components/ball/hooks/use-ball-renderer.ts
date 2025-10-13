@@ -70,12 +70,16 @@ export const useBallRenderer = ({
         numberOfRows: number
     ) => {
         const render = () => {
-            if (!ctx || !engine) return;
+            if (!ctx || !engine) {
+                return;
+            }
 
             // Track ball positions for path visualization
             const allBodies = Composite.allBodies(engine.world);
             const balls = allBodies.filter((body) => {
-                if (!body.label?.includes("ball")) return false;
+                if (!body.label?.includes("ball")) {
+                    return false;
+                }
                 const ballExtension = body as unknown as BallBodyExtension;
                 return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
             });
@@ -133,7 +137,9 @@ export const useBallRenderer = ({
             if (process.env.NODE_ENV === 'development') {
                 const allBodies = Composite.allBodies(engine.world);
                 const balls = allBodies.filter((body) => {
-                    if (!body.label?.includes("ball")) return false;
+                    if (!body.label?.includes("ball")) {
+                        return false;
+                    }
                     const ballExtension = body as unknown as BallBodyExtension;
                     return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
                 });

@@ -32,7 +32,7 @@ export namespace CanvasRenderer {
      */
     export function renderSlots(ctx: CanvasRenderingContext2D, slotRenderData: SlotRenderData[]): void {
         slotRenderData.forEach((slot) => {
-            if (!slot) return;
+            if (!slot) { return; }
 
             const { multiplier, slotX, slotY, slotWidth, slotHeight, color } = slot;
 
@@ -100,7 +100,7 @@ export namespace CanvasRenderer {
      * Shows the trajectory the ball has followed
      */
     export function renderBallPath(ctx: CanvasRenderingContext2D, pathPositions: Array<{ x: number; y: number; type?: string; pegRow?: number; pegCol?: number; pathIndex?: number; direction?: number }>): void {
-        if (pathPositions.length < 2) return;
+        if (pathPositions.length < 2) { return; }
 
         // Draw path line
         ctx.strokeStyle = RENDERING_CONSTANTS.PATH_LINE.COLOR;
@@ -155,7 +155,7 @@ export namespace CanvasRenderer {
     ): void {
         const allBodies = Composite.allBodies(engine.world);
         const balls = allBodies.filter((body) => {
-            if (!body.label?.includes("ball")) return false;
+            if (!body.label?.includes("ball")) { return false; }
             const ballExtension = body as unknown as BallBodyExtension;
             return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
         });
@@ -211,7 +211,7 @@ export namespace CanvasRenderer {
         // Get ball count for logging
         const allBodies = Composite.allBodies(engine.world);
         const balls = allBodies.filter((body) => {
-            if (!body.label?.includes("ball")) return false;
+            if (!body.label?.includes("ball")) { return false; }
             const ballExtension = body as unknown as BallBodyExtension;
             return !ballExtension.isRemoved && !removedBallsRef.current?.has(body.id);
         });

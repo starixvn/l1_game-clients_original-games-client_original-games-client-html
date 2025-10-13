@@ -1,9 +1,8 @@
 import { Bodies, Body, Composite, Engine } from 'matter-js';
-import { physicsLogger } from '../../physics';
 import { logger } from '../../../../../../services/logger';
 import { BallBodyExtension } from '../../../../../../types/physics';
 import { BallGameCalculation } from '../calculations/ball-game-calculation';
-import { physicsConfig, getMiddleDropPosition } from '../../physics';
+import { physicsConfig, getMiddleDropPosition, physicsLogger } from '../../physics';
 
 export interface BallCreationOptions {
     calculation: BallGameCalculation;
@@ -87,8 +86,8 @@ export class BallFactory {
         ballExtension.pinCollisions = [];
 
         // Set initial velocity with variations
-        const initialXVariation = (Math.random() - 0.5) * 0.15;
-        const initialYVariation = (Math.random() - 0.5) * 0.1;
+        const initialXVariation = (Math.random() - 0.5) * 0.15; // NOSONAR
+        const initialYVariation = (Math.random() - 0.5) * 0.1; // NOSONAR
 
         const fastFallVelocityY = Math.max(calculation.physicsFactors.velocityY + initialYVariation, 2.0);
         const controlledVelocityX = calculation.physicsFactors.velocityX + initialXVariation;
@@ -98,7 +97,7 @@ export class BallFactory {
             y: fastFallVelocityY
         });
 
-        Body.setAngularVelocity(ball, (Math.random() - 0.5) * 0.15);
+        Body.setAngularVelocity(ball, (Math.random() - 0.5) * 0.15); // NOSONAR
 
         // Add ball to physics world
         Composite.add(engine.world, ball);

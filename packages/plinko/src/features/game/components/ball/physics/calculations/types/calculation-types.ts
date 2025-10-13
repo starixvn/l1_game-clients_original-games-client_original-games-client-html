@@ -96,13 +96,14 @@ export interface PegConfiguration {
 /**
  * Game board configuration
  */
+export type BoardLayout = 'standard' | 'pyramid' | 'diamond' | 'custom';
 export interface BoardConfiguration {
     /** Canvas width (pixels) */
     width: number;
     /** Canvas height (pixels) */
     height: number;
     /** Board layout type */
-    layout: 'standard' | 'pyramid' | 'diamond' | 'custom';
+    layout: BoardLayout;
     /** Number of rows of pegs */
     rows: number;
     /** Slot count at bottom */

@@ -4,7 +4,7 @@
  */
 
 import { PhysicsFactors } from '../factors/core-factors';
-import { calculateCollisionForce, calculateForcePerUnitArea, calculateDirectionChange } from '../factors/factor-relationships';
+import { calculateForcePerUnitArea, calculateDirectionChange } from '../factors/factor-relationships';
 import { physicsLogger } from '../performance/physics-logger';
 
 /**
@@ -21,16 +21,18 @@ export interface CollisionResponse {
 /**
  * Calculate collision response between ball and peg
  */
-export function calculateCollisionResponse(
-    ballVelocity: { x: number; y: number },
-    ballAngularVelocity: number,
-    ballMass: number,
-    ballRadius: number,
-    pegVelocity: { x: number; y: number },
-    pegMass: number,
-    collisionNormal: { x: number; y: number },
-    physicsFactors: PhysicsFactors
-): CollisionResponse {
+type parameters = {
+    ballVelocity: { x: number; y: number };
+    ballAngularVelocity: number;
+    ballMass: number;
+    ballRadius: number;
+    pegVelocity: { x: number; y: number };
+    pegMass: number;
+    collisionNormal: { x: number; y: number };
+    physicsFactors: PhysicsFactors;
+}
+
+export function calculateCollisionResponse({ ballVelocity, ballAngularVelocity, ballMass, ballRadius, pegVelocity, pegMass, collisionNormal, physicsFactors }: parameters): CollisionResponse {
     physicsLogger.debug('Calculating collision response', {
         component: 'CollisionResponse',
         function: 'calculateCollisionResponse',
@@ -168,8 +170,8 @@ export function calculateCollisionForceAndPressure(
  */
 export function calculateCollisionWear(
     collisionForce: number,
-    materialHardness: number = 1.0,
-    collisionCount: number = 1
+    materialHardness = 1.0,
+    collisionCount = 1
 ): {
     wearRate: number;
     durability: number;
@@ -241,8 +243,8 @@ export function calculateCollisionParticles(
     return {
         position: collisionPoint,
         velocity: {
-            x: -collisionNormal.x * baseSpeed + (Math.random() - 0.5) * spreadAngle,
-            y: -collisionNormal.y * baseSpeed + (Math.random() - 0.5) * spreadAngle,
+            x: -collisionNormal.x * baseSpeed + (Math.random() - 0.5) * spreadAngle, // NOSONAR
+            y: -collisionNormal.y * baseSpeed + (Math.random() - 0.5) * spreadAngle, // NOSONAR
         },
         count: particleCount,
         size: particleSize,

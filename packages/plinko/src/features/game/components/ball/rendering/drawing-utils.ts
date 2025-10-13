@@ -34,8 +34,8 @@ export function drawRoundedRect(
     ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
 
-    if (options.fill) ctx.fill();
-    if (options.stroke) ctx.stroke();
+    if (options.fill) {ctx.fill();}
+    if (options.stroke) {ctx.stroke();}
 }
 
 /**
@@ -82,10 +82,10 @@ export function drawText(
         textBaseline?: CanvasTextBaseline;
     } = {}
 ): void {
-    if (options.font) ctx.font = options.font;
-    if (options.fillStyle) ctx.fillStyle = options.fillStyle;
-    if (options.textAlign) ctx.textAlign = options.textAlign;
-    if (options.textBaseline) ctx.textBaseline = options.textBaseline;
+    if (options.font) {ctx.font = options.font;}
+    if (options.fillStyle) {ctx.fillStyle = options.fillStyle;}
+    if (options.textAlign) {ctx.textAlign = options.textAlign;}
+    if (options.textBaseline) {ctx.textBaseline = options.textBaseline;}
 
     ctx.fillText(text, x, y);
 }

@@ -29,6 +29,9 @@ export interface PhysicsEngineState {
     isInitialized: boolean;
 }
 
+const serviceGuidedBallLabel = 'service-guided-ball';
+const preCalculatedBallLabel = 'pre-calculated-ball';
+const multiplierLabel = 'multiplier-';
 
 /**
  * Initialize modular physics engine with new collision system
@@ -91,169 +94,7 @@ export function setupCollisionDetection(
 
     // Set up collision event handlers
     Events.on(engine, 'collisionStart', (event) => {
-        const pairs = event.pairs;
-        physicsLogger.info('Collision event triggered', {
-            component: 'ModularPhysicsEngine',
-            function: 'collisionStart',
-            metadata: { pairCount: pairs.length, worldId: engine.world.id }
-        });
-
-        for (const pair of pairs) {
-            const bodyA = pair.bodyA;
-            const bodyB = pair.bodyB;
-
-            physicsLogger.info('🔍 PROCESSING COLLISION PAIR - DETAILED', {
-                component: 'ModularPhysicsEngine',
-                function: 'collisionStart',
-                metadata: {
-                    bodyA: {
-                        id: bodyA.id,
-                        label: bodyA.label,
-                        isStatic: bodyA.isStatic,
-                        position: { x: Math.round(bodyA.position.x), y: Math.round(bodyA.position.y) },
-                        velocity: { x: bodyA.velocity.x.toFixed(3), y: bodyA.velocity.y.toFixed(3) }
-                    },
-                    bodyB: {
-                        id: bodyB.id,
-                        label: bodyB.label,
-                        isStatic: bodyB.isStatic,
-                        position: { x: Math.round(bodyB.position.x), y: Math.round(bodyB.position.y) },
-                        velocity: { x: bodyB.velocity.x.toFixed(3), y: bodyB.velocity.y.toFixed(3) }
-                    }
-                }
-            });
-
-            // Check if this is a service-guided ball that has completed its path
-            // Include both "service-guided-ball" and "pre-calculated-ball" labels
-            const ballBody = (bodyA.label === 'service-guided-ball' || bodyA.label === 'pre-calculated-ball') ? bodyA :
-                            ((bodyB.label === 'service-guided-ball' || bodyB.label === 'pre-calculated-ball') ? bodyB : null);
-            const ballExtension = ballBody ? ballBody as unknown as BallBodyExtension : null;
-            const hasCompletedPath = ballExtension && ballExtension.currentPathIndex >= ballExtension.servicePath?.length;
-
-            // Skip ALL collisions for service-guided balls that have completed their path,
-            // except for multiplier slots (to detect the final landing)
-            const isMultiplierCollision = bodyA.label?.startsWith('multiplier-') || bodyB.label?.startsWith('multiplier-');
-
-            if (hasCompletedPath && !isMultiplierCollision) {
-                physicsLogger.debug('Skipping collision - service-guided ball has completed path', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'collisionStart',
-                    metadata: {
-                        ballId: ballBody?.id,
-                        currentPathIndex: ballExtension?.currentPathIndex,
-                        servicePathLength: ballExtension?.servicePath?.length,
-                        expectedFinalSlot: ballExtension?.expectedFinalSlot,
-                        collisionType: 'skipped',
-                        reason: 'Path completed, preventing trajectory interference'
-                    }
-                });
-                return; // Skip this collision entirely
-            }
-
-            // Skip static body collisions unless it's a service-guided ball colliding with pins or multipliers
-            const isServiceGuidedBallLabel = (label: string) => label === 'service-guided-ball' || label === 'pre-calculated-ball';
-            const isServiceGuidedBallCollision = (isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)) &&
-                (bodyA.label?.startsWith('pin-') || bodyB.label?.startsWith('pin-'));
-
-            if ((bodyA.isStatic || bodyB.isStatic) && !isServiceGuidedBallCollision && !isMultiplierCollision) {
-                physicsLogger.debug('Skipping collision with static body (not service-guided)', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'collisionStart',
-                    metadata: {
-                        staticBody: bodyA.isStatic ? 'bodyA' : 'bodyB',
-                        bodyALabel: bodyA.label,
-                        bodyBLabel: bodyB.label,
-                        isServiceGuidedCollision: isServiceGuidedBallCollision
-                    }
-                });
-                continue;
-            }
-
-            // Check if collision is allowed by cooldown system
-            if (!cooldownManager.canCollide(bodyA.id, bodyB.id, 50)) { // 50ms cooldown
-                physicsLogger.debug('Collision blocked by cooldown system', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'collisionStart',
-                    metadata: { bodyAId: bodyA.id, bodyBId: bodyB.id }
-                });
-                continue;
-            }
-
-            // Determine collision type
-            const bodyAExtension = bodyA as unknown as BallBodyExtension;
-            const bodyBExtension = bodyB as unknown as BallBodyExtension;
-
-            physicsLogger.info('⚡ COLLISION PARTICIPANTS IDENTIFIED', {
-                component: 'ModularPhysicsEngine',
-                function: 'collisionStart',
-                metadata: {
-                    bodyA: {
-                        label: bodyA.label,
-                        isServiceGuided: bodyAExtension.isServiceGuided,
-                        servicePath: bodyAExtension.servicePath,
-                        expectedFinalSlot: bodyAExtension.expectedFinalSlot
-                    },
-                    bodyB: {
-                        label: bodyB.label,
-                        isServiceGuided: bodyBExtension.isServiceGuided,
-                        servicePath: bodyBExtension.servicePath,
-                        expectedFinalSlot: bodyBExtension.expectedFinalSlot
-                    },
-                    checkingServiceGuided: {
-                        bodyA_isServiceGuided: isServiceGuidedBallLabel(bodyA.label),
-                        bodyB_isServiceGuided: isServiceGuidedBallLabel(bodyB.label),
-                        eitherIsServiceGuided: isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)
-                    }
-                }
-            });
-
-            // Handle ball-peg collisions using new system
-            if (isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)) {
-                physicsLogger.info('🎯 SERVICE-GUIDED BALL COLLISION DETECTED', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'collisionStart',
-                    metadata: {
-                        ballBody: isServiceGuidedBallLabel(bodyA.label) ? 'bodyA' : 'bodyB',
-                        otherBody: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
-                        ballLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyA.label : bodyB.label,
-                        otherLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label
-                    }
-                });
-
-                if (isMultiplierCollision) {
-                    physicsLogger.info('🎯 ROUTING TO MULTIPLIER COLLISION HANDLER', {
-                        component: 'ModularPhysicsEngine',
-                        function: 'collisionStart',
-                        metadata: {
-                            multiplierBody: bodyA.label?.startsWith('multiplier-') ? bodyA.label : bodyB.label,
-                            hasCompletedPath,
-                            ballId: ballBody?.id,
-                            expectedFinalSlot: ballExtension?.expectedFinalSlot
-                        }
-                    });
-                    handleBallMultiplierCollision(pair, engine, onBallLanded);
-                } else {
-                    physicsLogger.info('🎯 ROUTING TO PEG COLLISION HANDLER', {
-                        component: 'ModularPhysicsEngine',
-                        function: 'collisionStart',
-                        metadata: {
-                            pegBody: !bodyA.label?.startsWith('multiplier-') ? bodyA.label : bodyB.label
-                        }
-                    });
-                    handleBallPegCollision(pair, cooldownManager, engine);
-                }
-            } else {
-                physicsLogger.info('❌ NON-SERVICE-GUIDED COLLISION - SKIPPING SERVICE LOGIC', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'collisionStart',
-                    metadata: {
-                        bodyALabel: bodyA.label,
-                        bodyBLabel: bodyB.label,
-                        reason: 'Neither body is service-guided ball'
-                    }
-                });
-            }
-        }
+        processCollisionPairs(event.pairs, engine, cooldownManager, onBallLanded);
     });
 
     // Setup delayed guidance system for natural physics
@@ -264,6 +105,287 @@ export function setupCollisionDetection(
     physicsLogger.info('Modular collision detection setup complete', {
         component: 'ModularPhysicsEngine',
         function: 'setupCollisionDetection'
+    });
+}
+
+/**
+ * Process all collision pairs
+ */
+function processCollisionPairs(
+    pairs: any[],
+    engine: Engine,
+    cooldownManager: CollisionCooldownManager,
+    onBallLanded?: (success: boolean) => void
+): void {
+    physicsLogger.info('Collision event triggered', {
+        component: 'ModularPhysicsEngine',
+        function: 'processCollisionPairs',
+        metadata: { pairCount: pairs.length, worldId: engine.world.id }
+    });
+
+    for (const pair of pairs) {
+        processCollisionPair(pair, engine, cooldownManager, onBallLanded);
+    }
+}
+
+/**
+ * Process a single collision pair
+ */
+function processCollisionPair(
+    pair: any,
+    engine: Engine,
+    cooldownManager: CollisionCooldownManager,
+    onBallLanded?: (success: boolean) => void
+): void {
+    const { bodyA, bodyB } = pair;
+    
+    logCollisionPairDetails(bodyA, bodyB);
+
+    if (shouldSkipCollision(bodyA, bodyB, cooldownManager)) {
+        return;
+    }
+
+    handleCollisionByType(bodyA, bodyB, pair, engine, cooldownManager, onBallLanded);
+}
+
+/**
+ * Log detailed collision pair information
+ */
+function logCollisionPairDetails(bodyA: Body, bodyB: Body): void {
+    physicsLogger.info('🔍 PROCESSING COLLISION PAIR - DETAILED', {
+        component: 'ModularPhysicsEngine',
+        function: 'logCollisionPairDetails',
+        metadata: {
+            bodyA: {
+                id: bodyA.id,
+                label: bodyA.label,
+                isStatic: bodyA.isStatic,
+                position: { x: Math.round(bodyA.position.x), y: Math.round(bodyA.position.y) },
+                velocity: { x: bodyA.velocity.x.toFixed(3), y: bodyA.velocity.y.toFixed(3) }
+            },
+            bodyB: {
+                id: bodyB.id,
+                label: bodyB.label,
+                isStatic: bodyB.isStatic,
+                position: { x: Math.round(bodyB.position.x), y: Math.round(bodyB.position.y) },
+                velocity: { x: bodyB.velocity.x.toFixed(3), y: bodyB.velocity.y.toFixed(3) }
+            }
+        }
+    });
+}
+
+/**
+ * Determine if collision should be skipped
+ */
+function shouldSkipCollision(bodyA: Body, bodyB: Body, cooldownManager: CollisionCooldownManager): boolean {
+    const ballBody = getServiceGuidedBall(bodyA, bodyB);
+    const ballExtension = ballBody ? ballBody as unknown as BallBodyExtension : null;
+    const hasCompletedPath = ballExtension && ballExtension.currentPathIndex >= ballExtension.servicePath?.length;
+    const isMultiplierCollision = bodyA.label?.startsWith(multiplierLabel) || bodyB.label?.startsWith(multiplierLabel);
+
+    // Skip collisions for completed path balls (except multipliers)
+    if (hasCompletedPath && !isMultiplierCollision) {
+        logSkipCompletedPath(ballBody, ballExtension);
+        return true;
+    }
+
+    // Skip static body collisions unless service-guided
+    if (shouldSkipStaticCollision(bodyA, bodyB, isMultiplierCollision)) {
+        return true;
+    }
+
+    // Check cooldown
+    if (!cooldownManager.canCollide(bodyA.id, bodyB.id, 50)) {
+        logSkipCooldown(bodyA, bodyB);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Get service-guided ball from collision pair
+ */
+function getServiceGuidedBall(bodyA: Body, bodyB: Body): Body | null {
+    const isServiceGuided = (label: string) => label === serviceGuidedBallLabel || label === preCalculatedBallLabel;
+    
+    if (isServiceGuided(bodyA.label)) { return bodyA; }
+    if (isServiceGuided(bodyB.label)) { return bodyB; }
+    return null;
+}
+
+/**
+ * Check if static collision should be skipped
+ */
+function shouldSkipStaticCollision(bodyA: Body, bodyB: Body, isMultiplierCollision: boolean): boolean {
+    const isServiceGuidedBallLabel = (label: string) => label === serviceGuidedBallLabel || label === preCalculatedBallLabel;
+    const isServiceGuidedBallCollision = (isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)) &&
+        (bodyA.label?.startsWith('pin-') || bodyB.label?.startsWith('pin-'));
+
+    if ((bodyA.isStatic || bodyB.isStatic) && !isServiceGuidedBallCollision && !isMultiplierCollision) {
+        logSkipStaticCollision(bodyA, bodyB, isServiceGuidedBallCollision);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Handle collision based on type
+ */
+function handleCollisionByType(
+    bodyA: Body,
+    bodyB: Body,
+    pair: any,
+    engine: Engine,
+    cooldownManager: CollisionCooldownManager,
+    onBallLanded?: (success: boolean) => void
+): void {
+    const isServiceGuidedBallLabel = (label: string) => label === serviceGuidedBallLabel || label === preCalculatedBallLabel;
+    const isMultiplierCollision = bodyA.label?.startsWith(multiplierLabel) || bodyB.label?.startsWith(multiplierLabel);
+
+    logCollisionParticipants(bodyA, bodyB, isServiceGuidedBallLabel);
+
+    if (isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)) {
+        handleServiceGuidedCollision(bodyA, bodyB, pair, engine, cooldownManager, onBallLanded, isMultiplierCollision);
+    } else {
+        logNonServiceGuidedCollision(bodyA, bodyB);
+    }
+}
+
+/**
+ * Handle service-guided ball collisions
+ */
+function handleServiceGuidedCollision(
+    bodyA: Body,
+    bodyB: Body,
+    pair: any,
+    engine: Engine,
+    cooldownManager: CollisionCooldownManager,
+    onBallLanded: (success: boolean) => void | undefined,
+    isMultiplierCollision: boolean
+): void {
+    const isServiceGuidedBallLabel = (label: string) => label === serviceGuidedBallLabel || label === preCalculatedBallLabel;
+    
+    logServiceGuidedCollision(bodyA, bodyB, isServiceGuidedBallLabel);
+
+    if (isMultiplierCollision) {
+        logMultiplierCollisionRouting(bodyA, bodyB);
+        handleBallMultiplierCollision(pair, engine, onBallLanded);
+    } else {
+        logPegCollisionRouting(bodyA, bodyB);
+        handleBallPegCollision(pair, cooldownManager, engine);
+    }
+}
+
+// Logging functions
+function logSkipCompletedPath(ballBody: Body | null, ballExtension: BallBodyExtension | null): void {
+    physicsLogger.debug('Skipping collision - service-guided ball has completed path', {
+        component: 'ModularPhysicsEngine',
+        function: 'shouldSkipCollision',
+        metadata: {
+            ballId: ballBody?.id,
+            currentPathIndex: ballExtension?.currentPathIndex,
+            servicePathLength: ballExtension?.servicePath?.length,
+            expectedFinalSlot: ballExtension?.expectedFinalSlot,
+            collisionType: 'skipped',
+            reason: 'Path completed, preventing trajectory interference'
+        }
+    });
+}
+
+function logSkipStaticCollision(bodyA: Body, bodyB: Body, isServiceGuidedBallCollision: boolean): void {
+    physicsLogger.debug('Skipping collision with static body (not service-guided)', {
+        component: 'ModularPhysicsEngine',
+        function: 'shouldSkipStaticCollision',
+        metadata: {
+            staticBody: bodyA.isStatic ? 'bodyA' : 'bodyB',
+            bodyALabel: bodyA.label,
+            bodyBLabel: bodyB.label,
+            isServiceGuidedBallCollision
+        }
+    });
+}
+
+function logSkipCooldown(bodyA: Body, bodyB: Body): void {
+    physicsLogger.debug('Collision blocked by cooldown system', {
+        component: 'ModularPhysicsEngine',
+        function: 'shouldSkipCollision',
+        metadata: { bodyAId: bodyA.id, bodyBId: bodyB.id }
+    });
+}
+
+function logCollisionParticipants(bodyA: Body, bodyB: Body, isServiceGuidedBallLabel: (label: string) => boolean): void {
+    const bodyAExtension = bodyA as unknown as BallBodyExtension;
+    const bodyBExtension = bodyB as unknown as BallBodyExtension;
+
+    physicsLogger.info('⚡ COLLISION PARTICIPANTS IDENTIFIED', {
+        component: 'ModularPhysicsEngine',
+        function: 'logCollisionParticipants',
+        metadata: {
+            bodyA: {
+                label: bodyA.label,
+                isServiceGuided: bodyAExtension.isServiceGuided,
+                servicePath: bodyAExtension.servicePath,
+                expectedFinalSlot: bodyAExtension.expectedFinalSlot
+            },
+            bodyB: {
+                label: bodyB.label,
+                isServiceGuided: bodyBExtension.isServiceGuided,
+                servicePath: bodyBExtension.servicePath,
+                expectedFinalSlot: bodyBExtension.expectedFinalSlot
+            },
+            checkingServiceGuided: {
+                bodyA_isServiceGuided: isServiceGuidedBallLabel(bodyA.label),
+                bodyB_isServiceGuided: isServiceGuidedBallLabel(bodyB.label),
+                eitherIsServiceGuided: isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label)
+            }
+        }
+    });
+}
+
+function logServiceGuidedCollision(bodyA: Body, bodyB: Body, isServiceGuidedBallLabel: (label: string) => boolean): void {
+    physicsLogger.info('🎯 SERVICE-GUIDED BALL COLLISION DETECTED', {
+        component: 'ModularPhysicsEngine',
+        function: 'handleServiceGuidedCollision',
+        metadata: {
+            ballBody: isServiceGuidedBallLabel(bodyA.label) ? 'bodyA' : 'bodyB',
+            otherBody: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
+            ballLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyA.label : bodyB.label,
+            otherLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label
+        }
+    });
+}
+
+function logMultiplierCollisionRouting(bodyA: Body, bodyB: Body): void {
+    physicsLogger.info('🎯 ROUTING TO MULTIPLIER COLLISION HANDLER', {
+        component: 'ModularPhysicsEngine',
+        function: 'handleServiceGuidedCollision',
+        metadata: {
+            multiplierBody: bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label
+        }
+    });
+}
+
+function logPegCollisionRouting(bodyA: Body, bodyB: Body): void {
+    physicsLogger.info('🎯 ROUTING TO PEG COLLISION HANDLER', {
+        component: 'ModularPhysicsEngine',
+        function: 'handleServiceGuidedCollision',
+        metadata: {
+            pegBody: !bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label
+        }
+    });
+}
+
+function logNonServiceGuidedCollision(bodyA: Body, bodyB: Body): void {
+    physicsLogger.info('❌ NON-SERVICE-GUIDED COLLISION - SKIPPING SERVICE LOGIC', {
+        component: 'ModularPhysicsEngine',
+        function: 'handleCollisionByType',
+        metadata: {
+            bodyALabel: bodyA.label,
+            bodyBLabel: bodyB.label,
+            reason: 'Neither body is service-guided ball'
+        }
     });
 }
 
@@ -279,7 +401,7 @@ function handleBallMultiplierCollision(
 
     // Determine which is ball and which is multiplier
     let ballBody: Body, multiplierBody: Body;
-    if (bodyA.label === 'service-guided-ball') {
+    if (bodyA.label === serviceGuidedBallLabel) {
         ballBody = bodyA;
         multiplierBody = bodyB;
     } else {
@@ -462,7 +584,7 @@ function handleBallPegCollision(pair: any, cooldownManager: CollisionCooldownMan
 
     // Determine which is ball and which is peg
     let ballBody: Body, pegBody: Body;
-    if (bodyA.label === 'service-guided-ball') {
+    if (bodyA.label === serviceGuidedBallLabel) {
         ballBody = bodyA;
         pegBody = bodyB;
     } else {
@@ -643,197 +765,309 @@ function applyPendingGuidance(engine: Engine): void {
     for (const body of worldBodies) {
         const ballExtension = body as unknown as BallBodyExtension;
 
-        // Check if this body has pending guidance to apply
-        if (ballExtension.pendingGuidance && !ballExtension.pendingGuidance.appliedAtFrame) {
-            const guidance = ballExtension.pendingGuidance;
-
-            physicsLogger.info('🎯 APPLYING DELAYED NATURAL GUIDANCE - AFTER NATURAL PHYSICS', {
-                component: 'ModularPhysicsEngine',
-                function: 'applyPendingGuidance',
-                metadata: {
-                    ballId: body.id,
-                    pinRow: guidance.pinRow,
-                    direction: guidance.direction > 0 ? 'RIGHT' : 'LEFT',
-                    naturalNudgeStrength: guidance.naturalNudgeStrength.toFixed(3),
-                    ballVelocityBefore: { x: body.velocity.x.toFixed(3), y: body.velocity.y.toFixed(3) }
-                }
-            });
-
-            // Check if ball just bounced - delay guidance to let bounce take effect
-            const timeSinceBounce = ballExtension.bounceTimestamp ?
-                Date.now() - ballExtension.bounceTimestamp : Infinity;
-            const bounceDelayMs = 300; // 300ms delay after bounce before applying guidance
-
-            if (ballExtension.justBounced && timeSinceBounce < bounceDelayMs) {
-                physicsLogger.debug('⏳ DELAYING GUIDANCE - Ball just bounced, letting bounce settle', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'applyPendingGuidance',
-                    metadata: {
-                        ballId: body.id,
-                        timeSinceBounce: Math.round(timeSinceBounce),
-                        bounceDelay: bounceDelayMs,
-                        remainingDelay: Math.round(bounceDelayMs - timeSinceBounce)
-                    }
-                });
-                return; // Skip guidance application this frame
-            }
-
-            // Clear bounce flag after delay
-            if (ballExtension.justBounced && timeSinceBounce >= bounceDelayMs) {
-                ballExtension.justBounced = false;
-                ballExtension.bounceTimestamp = undefined;
-            }
-
-            // Enhanced: Use pre-calculated trajectory data for ultra-realistic Plinko behavior
-            let blendedX: number;
-            let blendedY: number;
-
-            if (ballExtension.calculationData) {
-                // 🚀 PRE-CALCULATED TRAJECTORY GUIDANCE - Most realistic approach
-                const calcData = ballExtension.calculationData;
-                const currentPathIndex = ballExtension.currentPathIndex || 0;
-
-                // Find the expected trajectory point for current path step
-                const trajectoryLength = calcData.trajectory?.positions?.length || 0;
-                const expectedTrajectoryIndex = Math.min(
-                    currentPathIndex * 10, // Approximate trajectory point for this path step
-                    trajectoryLength - 1
-                );
-
-                const expectedPosition = calcData.trajectory?.positions?.[expectedTrajectoryIndex];
-                const expectedVelocity = calcData.trajectory?.velocities?.[expectedTrajectoryIndex];
-
-                if (expectedPosition && expectedVelocity) {
-                    // Calculate position error and velocity correction
-                    const positionErrorX = expectedPosition.x - body.position.x;
-                    const velocityErrorX = expectedVelocity.x - body.velocity.x;
-
-                    // Use physics-based correction with pre-calculated stability factors
-                    const nudgeStrength = calcData.physicsFactors?.nudgeStrength || 8.0;
-                    const controlResponsiveness = calcData.stabilityMetrics?.controlResponsiveness || 1.0;
-                    const correctionStrength = nudgeStrength * controlResponsiveness;
-                    const positionCorrection = positionErrorX * 0.005; // Ultra-gentle position correction
-                    const velocityCorrection = velocityErrorX * 0.01; // Minimal velocity correction
-
-                    // Apply minimal path direction guidance
-                    const pathGuidance = guidance.direction * guidance.naturalNudgeStrength * 0.05;
-
-                    // Blend all corrections - arcade natural physics with minimal guidance
-                    const naturalWeight = 0.95; // Ultra-natural physics (95%)
-                    const guidanceWeight = 0.05; // Minimal guidance only (5%)
-                    blendedX = body.velocity.x + positionCorrection + velocityCorrection + pathGuidance;
-                    blendedY = body.velocity.y; // Preserve natural vertical physics
-
-                    physicsLogger.debug('🎯 PRE-CALCULATED TRAJECTORY GUIDANCE APPLIED', {
-                        component: 'ModularPhysicsEngine',
-                        function: 'applyPendingGuidance',
-                        metadata: {
-                            ballId: body.id,
-                            calculationId: calcData.id,
-                            pathIndex: currentPathIndex,
-                            trajectoryIndex: expectedTrajectoryIndex,
-                            positionError: positionErrorX.toFixed(3),
-                            velocityError: velocityErrorX.toFixed(3),
-                            naturalWeight,
-                            guidanceWeight,
-                            corrections: {
-                                position: positionCorrection.toFixed(3),
-                                velocity: velocityCorrection.toFixed(3),
-                                path: pathGuidance.toFixed(3)
-                            },
-                            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) }
-                        }
-                    });
-                } else {
-                    // Fallback to standard guidance if trajectory data unavailable
-                    const naturalWeight = 0.9; // Even more natural for fallback
-                    const guidanceWeight = 0.1; // Very gentle guidance
-                    blendedX = (body.velocity.x * naturalWeight) + (guidance.direction * guidance.naturalNudgeStrength * guidanceWeight);
-                    blendedY = body.velocity.y;
-
-                    physicsLogger.debug('🎯 FALLBACK GUIDANCE APPLIED', {
-                        component: 'ModularPhysicsEngine',
-                        function: 'applyPendingGuidance',
-                        metadata: {
-                            ballId: body.id,
-                            naturalWeight,
-                            guidanceWeight,
-                            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) }
-                        }
-                    });
-                }
-            } else {
-                // Standard guidance for balls without pre-calculation
-                const currentX = body.velocity.x;
-                const currentY = body.velocity.y;
-
-                // Calculate desired correction
-                const desiredCorrection = guidance.direction * guidance.naturalNudgeStrength;
-
-                // Blend natural velocity with very gentle guidance (90% natural, 10% guided)
-                const naturalWeight = 0.9;
-                const guidanceWeight = 0.1;
-
-                blendedX = (currentX * naturalWeight) + (desiredCorrection * guidanceWeight);
-                blendedY = currentY; // Don't interfere with vertical velocity
-
-                physicsLogger.debug('🎯 STANDARD GUIDANCE APPLIED', {
-                    component: 'ModularPhysicsEngine',
-                    function: 'applyPendingGuidance',
-                    metadata: {
-                        ballId: body.id,
-                        naturalWeight,
-                        guidanceWeight,
-                        finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) }
-                    }
-                });
-            }
-
-            // Apply FAST velocity preservation for realistic Plinko falling speed
-            let preservedYVelocity: number;
-            if (ballExtension.calculationData) {
-                // Use pre-calculated physics for faster, more natural falling
-                const terminalVelocity = Math.sqrt(
-                    2 * ballExtension.calculationData.physicsFactors.ballMass * ballExtension.calculationData.physicsFactors.gravity /
-                    ballExtension.calculationData.physicsFactors.airResistanceCoefficient
-                );
-                // Allow maximum falling speeds (100% of terminal velocity for extreme descent)
-                preservedYVelocity = Math.min(Math.abs(blendedY), terminalVelocity * 1.0);
-                // Ensure minimum falling speed for fast Plinko experience
-                preservedYVelocity = Math.max(preservedYVelocity, 1.5);
-            } else {
-                // Fallback to scaling formulas but with faster preservation
-                const yVelocityPreservation = PHYSICS_SCALING_FORMULAS.yVelocityPreservation(guidance.rowRatio, guidance.rowCount);
-                preservedYVelocity = Math.abs(blendedY) * yVelocityPreservation;
-                // Ensure minimum speed even in fallback
-                preservedYVelocity = Math.max(preservedYVelocity, 1.5);
-            }
-
-            // Allow faster falling speeds for realistic Plinko experience
-            const maxHorizontalVelocity = guidance.rowCount > 14 ? 15 : guidance.rowCount > 12 ? 18 : 25;
-            const clampedX = Math.max(-maxHorizontalVelocity, Math.min(maxHorizontalVelocity, blendedX));
-            // Allow extremely fast downward velocities for high-speed Plinko experience
-            const clampedY = Math.max(-15, Math.min(40, preservedYVelocity));
-
-            // Apply the blended velocity
-            Body.setVelocity(body, {
-                x: clampedX,
-                y: clampedY
-            });
-
-            // Mark guidance as applied
-            ballExtension.pendingGuidance.appliedAtFrame = engine.timing.timestamp;
-
-            // Clear the pending guidance
-            ballExtension.pendingGuidance = undefined;
+        if (shouldApplyGuidance(ballExtension)) {
+            applyGuidanceToBall(body, ballExtension, engine);
         }
     }
 }
 
 /**
+ * Check if guidance should be applied to a ball
+ */
+function shouldApplyGuidance(ballExtension: BallBodyExtension): boolean {
+    return ballExtension.pendingGuidance && !ballExtension.pendingGuidance.appliedAtFrame;
+}
+
+/**
+ * Apply guidance to a specific ball
+ */
+function applyGuidanceToBall(body: Body, ballExtension: BallBodyExtension, engine: Engine): void {
+    const guidance = ballExtension.pendingGuidance;
+
+    logGuidanceApplication(body, guidance);
+
+    if (shouldDelayGuidance(ballExtension)) {
+        return;
+    }
+
+    clearBounceFlag(ballExtension);
+    const blendedVelocity = calculateBlendedVelocity(body, ballExtension, guidance);
+    const finalVelocity = applyVelocityPreservation(blendedVelocity, ballExtension, guidance);
+    applyFinalVelocity(body, finalVelocity);
+    markGuidanceApplied(ballExtension, engine);
+}
+
+/**
+ * Check if guidance should be delayed due to bounce
+ */
+function shouldDelayGuidance(ballExtension: BallBodyExtension): boolean {
+    const timeSinceBounce = ballExtension.bounceTimestamp ?
+        Date.now() - ballExtension.bounceTimestamp : Infinity;
+    const bounceDelayMs = 300;
+
+    if (ballExtension.justBounced && timeSinceBounce < bounceDelayMs) {
+        logGuidanceDelay(ballExtension, timeSinceBounce, bounceDelayMs);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Clear bounce flag after delay
+ */
+function clearBounceFlag(ballExtension: BallBodyExtension): void {
+    const timeSinceBounce = ballExtension.bounceTimestamp ?
+        Date.now() - ballExtension.bounceTimestamp : Infinity;
+    const bounceDelayMs = 300;
+
+    if (ballExtension.justBounced && timeSinceBounce >= bounceDelayMs) {
+        ballExtension.justBounced = false;
+        ballExtension.bounceTimestamp = undefined;
+    }
+}
+
+/**
+ * Calculate blended velocity based on guidance type
+ */
+function calculateBlendedVelocity(body: Body, ballExtension: BallBodyExtension, guidance: any): { x: number; y: number } {
+    if (ballExtension.calculationData) {
+        return calculatePreCalculatedVelocity(body, ballExtension, guidance);
+    } else {
+        return calculateStandardVelocity(body, guidance);
+    }
+}
+
+/**
+ * Calculate velocity using pre-calculated trajectory data
+ */
+function calculatePreCalculatedVelocity(body: Body, ballExtension: BallBodyExtension, guidance: any): { x: number; y: number } {
+    const calcData = ballExtension.calculationData;
+    const currentPathIndex = ballExtension.currentPathIndex || 0;
+    const trajectoryLength = calcData.trajectory?.positions?.length || 0;
+    const expectedTrajectoryIndex = Math.min(currentPathIndex * 10, trajectoryLength - 1);
+
+    const expectedPosition = calcData.trajectory?.positions?.[expectedTrajectoryIndex];
+    const expectedVelocity = calcData.trajectory?.velocities?.[expectedTrajectoryIndex];
+
+    if (expectedPosition && expectedVelocity) {
+        return calculateTrajectoryBasedVelocity(body, calcData, guidance, expectedPosition, expectedVelocity, currentPathIndex, expectedTrajectoryIndex);
+    } else {
+        return calculateFallbackVelocity(body, guidance);
+    }
+}
+
+/**
+ * Calculate velocity based on trajectory data
+ */
+function calculateTrajectoryBasedVelocity(
+    body: Body,
+    calcData: any,
+    guidance: any,
+    expectedPosition: any,
+    expectedVelocity: any,
+    currentPathIndex: number,
+    expectedTrajectoryIndex: number
+): { x: number; y: number } {
+    const positionErrorX = expectedPosition.x - body.position.x;
+    const velocityErrorX = expectedVelocity.x - body.velocity.x;
+
+    // Use physics-based correction with pre-calculated stability factors
+    const positionCorrection = positionErrorX * 0.005;
+    const velocityCorrection = velocityErrorX * 0.01;
+    const pathGuidance = guidance.direction * guidance.naturalNudgeStrength * 0.05;
+
+    const naturalWeight = 0.95;
+    const guidanceWeight = 0.05;
+    const blendedX = body.velocity.x + positionCorrection + velocityCorrection + pathGuidance;
+    const blendedY = body.velocity.y;
+
+    const guidanceData = {
+        body,
+        calcData,
+        currentPathIndex,
+        expectedTrajectoryIndex,
+        positionErrorX,
+        velocityErrorX,
+        naturalWeight,
+        guidanceWeight,
+        positionCorrection,
+        velocityCorrection,
+        pathGuidance,
+        blendedX,
+        blendedY
+    };
+    logPreCalculatedGuidance(guidanceData);
+
+    return { x: blendedX, y: blendedY };
+}
+
+/**
+ * Calculate fallback velocity when trajectory data is unavailable
+ */
+function calculateFallbackVelocity(body: Body, guidance: any): { x: number; y: number } {
+    const naturalWeight = 0.9;
+    const guidanceWeight = 0.1;
+    const blendedX = (body.velocity.x * naturalWeight) + (guidance.direction * guidance.naturalNudgeStrength * guidanceWeight);
+    const blendedY = body.velocity.y;
+
+    logFallbackGuidance(body, naturalWeight, guidanceWeight, blendedX, blendedY);
+
+    return { x: blendedX, y: blendedY };
+}
+
+/**
+ * Calculate standard velocity for balls without pre-calculation
+ */
+function calculateStandardVelocity(body: Body, guidance: any): { x: number; y: number } {
+    const desiredCorrection = guidance.direction * guidance.naturalNudgeStrength;
+    const naturalWeight = 0.9;
+    const guidanceWeight = 0.1;
+    const blendedX = (body.velocity.x * naturalWeight) + (desiredCorrection * guidanceWeight);
+    const blendedY = body.velocity.y;
+
+    logStandardGuidance(body, naturalWeight, guidanceWeight, blendedX, blendedY);
+
+    return { x: blendedX, y: blendedY };
+}
+
+/**
+ * Apply velocity preservation for realistic falling speed
+ */
+function applyVelocityPreservation(blendedVelocity: { x: number; y: number }, ballExtension: BallBodyExtension, guidance: any): { x: number; y: number } {
+    const preservedYVelocity = calculatePreservedYVelocity(blendedVelocity.y, ballExtension, guidance);
+    const maxHorizontalVelocity = calculateMaxHorizontalVelocity(guidance.rowCount);
+    const clampedX = Math.max(-maxHorizontalVelocity, Math.min(maxHorizontalVelocity, blendedVelocity.x));
+    const clampedY = Math.max(-15, Math.min(40, preservedYVelocity));
+
+    return { x: clampedX, y: clampedY };
+}
+
+/**
+ * Calculate preserved Y velocity
+ */
+function calculatePreservedYVelocity(blendedY: number, ballExtension: BallBodyExtension, guidance: any): number {
+    if (ballExtension.calculationData) {
+        const terminalVelocity = Math.sqrt(
+            2 * ballExtension.calculationData.physicsFactors.ballMass * ballExtension.calculationData.physicsFactors.gravity /
+            ballExtension.calculationData.physicsFactors.airResistanceCoefficient
+        );
+        const preservedYVelocity = Math.min(Math.abs(blendedY), terminalVelocity * 1.0);
+        return Math.max(preservedYVelocity, 1.5);
+    } else {
+        const yVelocityPreservation = PHYSICS_SCALING_FORMULAS.yVelocityPreservation(guidance.rowRatio, guidance.rowCount);
+        const preservedYVelocity = Math.abs(blendedY) * yVelocityPreservation;
+        return Math.max(preservedYVelocity, 1.5);
+    }
+}
+
+/**
+ * Calculate maximum horizontal velocity based on row count
+ */
+function calculateMaxHorizontalVelocity(rowCount: number): number {
+    if (rowCount > 14) { return 15; }
+    if (rowCount > 12) { return 18; }
+    return 25;
+}
+
+/**
+ * Apply final velocity to body
+ */
+function applyFinalVelocity(body: Body, finalVelocity: { x: number; y: number }): void {
+    Body.setVelocity(body, finalVelocity);
+}
+
+/**
+ * Mark guidance as applied and clear pending guidance
+ */
+function markGuidanceApplied(ballExtension: BallBodyExtension, engine: Engine): void {
+    ballExtension.pendingGuidance.appliedAtFrame = engine.timing.timestamp;
+    ballExtension.pendingGuidance = undefined;
+}
+
+// Logging functions
+function logGuidanceApplication(body: Body, guidance: any): void {
+    physicsLogger.info('🎯 APPLYING DELAYED NATURAL GUIDANCE - AFTER NATURAL PHYSICS', {
+        component: 'ModularPhysicsEngine',
+        function: 'applyGuidanceToBall',
+        metadata: {
+            ballId: body.id,
+            pinRow: guidance.pinRow,
+            direction: guidance.direction > 0 ? 'RIGHT' : 'LEFT',
+            naturalNudgeStrength: guidance.naturalNudgeStrength.toFixed(3),
+            ballVelocityBefore: { x: body.velocity.x.toFixed(3), y: body.velocity.y.toFixed(3) }
+        }
+    });
+}
+
+function logGuidanceDelay(ballExtension: BallBodyExtension, timeSinceBounce: number, bounceDelayMs: number): void {
+    physicsLogger.debug('⏳ DELAYING GUIDANCE - Ball just bounced, letting bounce settle', {
+        component: 'ModularPhysicsEngine',
+        function: 'shouldDelayGuidance',
+        metadata: {
+            ballId: (ballExtension as any).id,
+            timeSinceBounce: Math.round(timeSinceBounce),
+            bounceDelay: bounceDelayMs,
+            remainingDelay: Math.round(bounceDelayMs - timeSinceBounce)
+        }
+    });
+}
+
+function logPreCalculatedGuidance(guidanceData: any): void {
+    const metadata = {
+        ballId: guidanceData.body.id,
+        calculationId: guidanceData.calcData.id,
+        pathIndex: guidanceData.currentPathIndex,
+        trajectoryIndex: guidanceData.expectedTrajectoryIndex,
+        positionError: guidanceData.positionErrorX.toFixed(3),
+        velocityError: guidanceData.velocityErrorX.toFixed(3),
+        naturalWeight: guidanceData.naturalWeight,
+        guidanceWeight: guidanceData.guidanceWeight,
+        corrections: {
+            position: guidanceData.positionCorrection.toFixed(3),
+            velocity: guidanceData.velocityCorrection.toFixed(3),
+            path: guidanceData.pathGuidance.toFixed(3)
+        },
+        finalVelocity: { x: guidanceData.blendedX.toFixed(3), y: guidanceData.blendedY.toFixed(3) }
+    };
+
+    physicsLogger.debug('🎯 PRE-CALCULATED TRAJECTORY GUIDANCE APPLIED', {
+        component: 'ModularPhysicsEngine',
+        function: 'calculateTrajectoryBasedVelocity',
+        metadata
+    });
+}
+
+function logFallbackGuidance(body: Body, naturalWeight: number, guidanceWeight: number, blendedX: number, blendedY: number): void {
+    physicsLogger.debug('🎯 FALLBACK GUIDANCE APPLIED', {
+        component: 'ModularPhysicsEngine',
+        function: 'calculateFallbackVelocity',
+        metadata: {
+            ballId: body.id,
+            naturalWeight,
+            guidanceWeight,
+            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) }
+        }
+    });
+}
+
+function logStandardGuidance(body: Body, naturalWeight: number, guidanceWeight: number, blendedX: number, blendedY: number): void {
+    physicsLogger.debug('🎯 STANDARD GUIDANCE APPLIED', {
+        component: 'ModularPhysicsEngine',
+        function: 'calculateStandardVelocity',
+        metadata: {
+            ballId: body.id,
+            naturalWeight,
+            guidanceWeight,
+            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) }
+        }
+    });
+}
+
+/**
  * Calculate the target X position for a given slot index
  */
-function calculateSlotTargetX(slotIndex: number, canvasWidth: number = 600, numberOfRows: number = 8): number {
+function calculateSlotTargetX(slotIndex: number, canvasWidth = 600, numberOfRows = 8): number {
     // Use same positioning logic as physics world creation in body-factory.ts
     const pegGap = 40; // Same peg gap used in body factory
     const lastRowColumns = numberOfRows; // Last row has numberOfRows pegs

@@ -3,7 +3,6 @@
  * Defines ball-specific physics properties and their relationships
  */
 
-import { PhysicsFactors } from '../factors/core-factors';
 import { BALL_CONSTANTS } from '../constants/ball-constants';
 import { physicsLogger } from '../performance/physics-logger';
 
@@ -144,7 +143,7 @@ export function calculateBallProperties(radius: number, baseProperties: Partial<
  * Calculate ball mass based on radius and density
  * Formula: mass = density × (4/3) × π × radius³
  */
-export function calculateBallMass(radius: number, density: number = 1000): number {
+export function calculateBallMass(radius: number, density = 1000): number {
     // Convert radius from pixels to meters (assuming 100 pixels = 1 meter for physics)
     const radiusMeters = radius / 100;
     return density * (4 / 3) * Math.PI * Math.pow(radiusMeters, 3);
@@ -186,9 +185,9 @@ export function getBallPhysicsTweaks(radius: number): BallPhysicsTweaks {
  */
 export function calculateDynamicBallSize(
     rows: number,
-    baseRows: number = 10,
-    baseRadius: number = 12,
-    canvasScaleFactor: number = 1
+    baseRows = 10,
+    baseRadius = 12,
+    canvasScaleFactor = 1
 ): number {
     physicsLogger.debug('Calculating dynamic ball size', {
         component: 'BallProperties',

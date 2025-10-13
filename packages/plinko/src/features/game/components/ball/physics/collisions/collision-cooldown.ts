@@ -20,7 +20,7 @@ export interface CollisionCooldownState {
  * Collision cooldown manager class
  */
 export class CollisionCooldownManager {
-    private cooldowns: Map<string, CollisionCooldownState> = new Map();
+    private readonly cooldowns: Map<string, CollisionCooldownState> = new Map();
 
     /**
      * Check if collision is allowed for given bodies
@@ -158,7 +158,7 @@ export class CollisionCooldownManager {
      */
     private getCollisionKey(bodyAId: string, bodyBId: string): string {
         // Ensure consistent ordering regardless of parameter order
-        const [id1, id2] = [bodyAId, bodyBId].sort();
+        const [id1, id2] = [bodyAId, bodyBId].sort((a, b) => a.localeCompare(b));
         return `${id1}-${id2}`;
     }
 
@@ -203,7 +203,7 @@ export function calculateOptimalCooldownPeriod(
     ballVelocity: number,
     pegSpacing: number,
     collisionCooldown: number,
-    safetyFactor: number = 1.2
+    safetyFactor = 1.2
 ): number {
     // Time for ball to move past peg
     const timeToPassPeg = pegSpacing / ballVelocity;
@@ -236,9 +236,9 @@ export function calculateOptimalCooldownPeriod(
  */
 export class AdaptiveCooldownSystem {
     private collisionHistory: number[] = [];
-    private historySize = 100;
-    private baseCooldownPeriod: number;
-    private adaptationRate = 0.1;
+    private readonly historySize = 100;
+    private readonly baseCooldownPeriod: number;
+    private readonly adaptationRate = 0.1;
 
     constructor(baseCooldownPeriod: number) {
         this.baseCooldownPeriod = baseCooldownPeriod;
@@ -360,11 +360,9 @@ export function validateCooldownConfig(config: CooldownConfig): {
  */
 export function optimizeCooldownConfigForPerformance(
     config: CooldownConfig,
-    targetFrameRate: number = 60,
-    maxCollisionsPerFrame: number = 100
+    targetFrameRate = 60,
+    maxCollisionsPerFrame = 100
 ): CooldownConfig {
-    const frameTime = 1000 / targetFrameRate;
-
     // Increase cooldowns if too many collisions per frame
     const optimizationFactor = Math.max(1, maxCollisionsPerFrame / 50);
 

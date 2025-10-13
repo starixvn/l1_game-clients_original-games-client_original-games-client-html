@@ -3,7 +3,6 @@
  * Monitors and analyzes physics performance metrics
  */
 
-import { PhysicsFactors } from '../factors/core-factors';
 
 /**
  * Performance metrics interface
@@ -35,10 +34,10 @@ export const PERFORMANCE_THRESHOLDS = {
  */
 export class PerformanceMonitor {
     private metrics: PerformanceMetrics[] = [];
-    private maxHistorySize: number = 100;
-    private lastFrameTime: number = 0;
-    private frameCount: number = 0;
-    private physicsStartTime: number = 0;
+    private maxHistorySize = 100;
+    private lastFrameTime = 0;
+    private frameCount = 0;
+    private physicsStartTime = 0;
 
     /**
      * Start physics performance measurement
@@ -90,7 +89,7 @@ export class PerformanceMonitor {
      * Calculate current FPS
      */
     private calculateFPS(): number {
-        if (this.metrics.length < 2) return 60;
+        if (this.metrics.length < 2) { return 60; }
 
         const recentMetrics = this.metrics.slice(-10); // Last 10 frames
         const timeSpan = recentMetrics[recentMetrics.length - 1].timestamp - recentMetrics[0].timestamp;
@@ -103,7 +102,7 @@ export class PerformanceMonitor {
      * Calculate average frame time
      */
     private calculateFrameTime(): number {
-        if (this.metrics.length < 2) return 16.67;
+        if (this.metrics.length < 2) { return 16.67; }
 
         const recentMetrics = this.metrics.slice(-10);
         const totalFrameTime = recentMetrics.reduce((sum, metric) => sum + metric.frameTime, 0);
@@ -170,20 +169,20 @@ export class PerformanceMonitor {
         let score = 100;
 
         // FPS penalty
-        if (averageFPS < 50) score -= 30;
-        else if (averageFPS < 55) score -= 15;
+        if (averageFPS < 50) { score -= 30; }
+        else if (averageFPS < 55) { score -= 15; }
 
         // Frame time penalty
-        if (averageFrameTime > 20) score -= 20;
-        else if (averageFrameTime > 18) score -= 10;
+        if (averageFrameTime > 20) { score -= 20; }
+        else if (averageFrameTime > 18) { score -= 10; }
 
         // Physics time penalty
-        if (averagePhysicsTime > 10) score -= 25;
-        else if (averagePhysicsTime > 8) score -= 10;
+        if (averagePhysicsTime > 10) { score -= 25; }
+        else if (averagePhysicsTime > 8) { score -= 10; }
 
         // Collision count penalty
-        if (averageCollisionsPerFrame > 40) score -= 15;
-        else if (averageCollisionsPerFrame > 30) score -= 5;
+        if (averageCollisionsPerFrame > 40) { score -= 15; }
+        else if (averageCollisionsPerFrame > 30) { score -= 5; }
 
         const performanceScore = Math.max(0, Math.min(100, score));
 
@@ -208,7 +207,6 @@ export class PerformanceMonitor {
         recommendations: string[];
     } {
         const current = this.getCurrentMetrics();
-        const stats = this.getPerformanceStats();
         const issues: string[] = [];
         const recommendations: string[] = [];
 
@@ -305,7 +303,7 @@ export class PerformanceMonitor {
 /**
  * Create performance monitor with custom settings
  */
-export function createPerformanceMonitor(maxHistorySize: number = 100): PerformanceMonitor {
+export function createPerformanceMonitor(maxHistorySize = 100): PerformanceMonitor {
     const monitor = new PerformanceMonitor();
     monitor.setMaxHistorySize(maxHistorySize);
     return monitor;
@@ -315,8 +313,8 @@ export function createPerformanceMonitor(maxHistorySize: number = 100): Performa
  * Performance benchmarking utility
  */
 export class PerformanceBenchmarker {
-    private monitor: PerformanceMonitor;
-    private benchmarks: Map<string, {
+    private readonly monitor: PerformanceMonitor;
+    private readonly benchmarks: Map<string, {
         startTime: number;
         measurements: number[];
     }> = new Map();
@@ -340,7 +338,7 @@ export class PerformanceBenchmarker {
      */
     endBenchmark(name: string): number {
         const benchmark = this.benchmarks.get(name);
-        if (!benchmark) return 0;
+        if (!benchmark) { return 0; }
 
         const endTime = performance.now();
         const duration = endTime - benchmark.startTime;
@@ -365,7 +363,7 @@ export class PerformanceBenchmarker {
         measurementCount: number;
     } | null {
         const benchmark = this.benchmarks.get(name);
-        if (!benchmark || benchmark.measurements.length === 0) return null;
+        if (!benchmark || benchmark.measurements.length === 0) { return null; }
 
         const measurements = benchmark.measurements;
         const averageTime = measurements.reduce((sum, time) => sum + time, 0) / measurements.length;
@@ -398,14 +396,15 @@ export class PerformanceBenchmarker {
 /**
  * Performance alert system
  */
+type AlertType = 'warning' | 'error' | 'info';
 export class PerformanceAlertSystem {
     private alerts: Array<{
         timestamp: number;
-        type: 'warning' | 'error' | 'info';
+        type: AlertType;
         message: string;
         metrics: PerformanceMetrics;
     }> = [];
-    private maxAlerts: number = 50;
+    private readonly maxAlerts = 50;
 
     /**
      * Check for performance issues and create alerts
@@ -414,7 +413,7 @@ export class PerformanceAlertSystem {
         const health = monitor.checkPerformanceHealth();
         const currentMetrics = monitor.getCurrentMetrics();
 
-        if (!currentMetrics) return;
+        if (!currentMetrics) { return; }
 
         // Create alerts for issues
         health.issues.forEach(issue => {
@@ -455,7 +454,7 @@ export class PerformanceAlertSystem {
     /**
      * Get recent alerts
      */
-    getRecentAlerts(count: number = 10): Array<{
+    getRecentAlerts(count = 10): Array<{
         timestamp: number;
         type: 'warning' | 'error' | 'info';
         message: string;

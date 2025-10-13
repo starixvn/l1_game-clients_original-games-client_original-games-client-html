@@ -78,7 +78,7 @@ export const usePhysicsEngine = ({
         // Only reinitialize if we don't have an engine or if essential parameters changed
         if (isInitialized && engine.current && !rowsChanged) {
             logger.debug('🔧 [PHYSICS] Engine already initialized and rows unchanged, skipping reinitialization');
-            return;
+            return undefined;
         }
 
         if (rowsChanged && isInitialized) {

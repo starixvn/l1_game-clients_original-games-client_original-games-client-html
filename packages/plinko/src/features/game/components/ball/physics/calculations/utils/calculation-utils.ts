@@ -77,7 +77,7 @@ export function calculateStabilityMetrics(physicsFactors: PhysicsFactors): BallG
 /**
  * Create a default board configuration for standard Plinko games
  */
-export function createDefaultBoardConfig(slotCount: number = 9, rows?: number): BoardConfiguration {
+export function createDefaultBoardConfig(slotCount = 9, rows?: number): BoardConfiguration {
     const slots: Array<{ index: number; x: number; multiplier: number; color: string }> = [];
     const multipliers = [0.5, 1, 2, 5, 10, 20, 50, 100, 200]; // Standard multipliers
     const { getMultiplierColor } = require('../config/calculation-config');

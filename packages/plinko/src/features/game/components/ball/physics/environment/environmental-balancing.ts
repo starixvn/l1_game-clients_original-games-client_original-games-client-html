@@ -5,16 +5,16 @@
 
 import { PhysicsFactors } from '../factors/core-factors';
 import { calculateOptimalGravity } from './gravity-system';
-import { calculateAirResistanceBalanceMetrics } from './air-resistance-system';
 
 /**
  * Environmental balance configuration
  */
+type BalancePriority = 'speed' | 'control' | 'predictability' | 'balanced';
 export interface EnvironmentalBalanceConfig {
     targetFallTime: number;      // Target time for ball to fall through board
     targetControlTime: number;   // Target time player has to control ball
     targetBounceHeight: number;  // Target maximum bounce height
-    balancePriority: 'speed' | 'control' | 'predictability' | 'balanced';
+    balancePriority: BalancePriority;
 }
 
 /**
@@ -55,7 +55,7 @@ export function calculateOptimalEnvironmentalBalance(
     );
 
     // Adjust air resistance based on balance priority
-    let optimalAirResistance = physicsFactors.airResistanceCoefficient;
+    let optimalAirResistance;
 
     switch (fullConfig.balancePriority) {
         case 'speed':
@@ -139,7 +139,7 @@ export function calculateBalanceMetrics(
  * Environmental balance optimizer
  */
 export class EnvironmentalBalanceOptimizer {
-    private config: EnvironmentalBalanceConfig;
+    private readonly config: EnvironmentalBalanceConfig;
     private currentGravity: number;
     private currentAirResistance: number;
     private optimizationHistory: Array<{
@@ -165,7 +165,7 @@ export class EnvironmentalBalanceOptimizer {
     optimizeForMetrics(
         physicsFactors: PhysicsFactors,
         boardHeight: number,
-        iterations: number = 10
+        iterations = 10
     ): {
         optimalGravity: number;
         optimalAirResistance: number;
@@ -255,8 +255,8 @@ export class EnvironmentalBalanceOptimizer {
         totalWeight += predictabilityWeight;
 
         // Penalty for extreme values
-        if (gravity < 0.3 || gravity > 2.5) score *= 0.8;
-        if (airResistance < 0.005 || airResistance > 0.3) score *= 0.8;
+        if (gravity < 0.3 || gravity > 2.5) { score *= 0.8; }
+        if (airResistance < 0.005 || airResistance > 0.3) { score *= 0.8; }
 
         return totalWeight > 0 ? score / totalWeight : 0;
     }
@@ -367,7 +367,7 @@ export function adaptEnvironmentalFactors(
     currentGravity: number,
     currentAirResistance: number,
     playerAccuracy: number, // 0-1 scale
-    targetAccuracy: number = 0.7
+    targetAccuracy = 0.7
 ): {
     newGravity: number;
     newAirResistance: number;

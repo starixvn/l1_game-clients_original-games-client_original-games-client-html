@@ -23,7 +23,7 @@ export interface OptimizationStrategy {
  */
 export class OptimizationManager {
     private strategies: OptimizationStrategy[] = [];
-    private appliedOptimizations: Map<string, {
+    private readonly appliedOptimizations: Map<string, {
         appliedAt: number;
         originalFactors: PhysicsFactors;
         optimizedFactors: PhysicsFactors;
@@ -193,7 +193,7 @@ export class OptimizationManager {
      */
     revertOptimization(strategyName: string): PhysicsFactors | null {
         const optimization = this.appliedOptimizations.get(strategyName);
-        if (!optimization) return null;
+        if (!optimization) { return null; }
 
         this.appliedOptimizations.delete(strategyName);
         return optimization.originalFactors;
@@ -203,11 +203,12 @@ export class OptimizationManager {
      * Revert all optimizations
      */
     revertAllOptimizations(): PhysicsFactors | null {
-        if (this.appliedOptimizations.size === 0) return null;
+        if (this.appliedOptimizations.size === 0) { return null; }
 
         // Return the most recent original factors
         const optimizations = Array.from(this.appliedOptimizations.values());
-        const mostRecent = optimizations.sort((a, b) => b.appliedAt - a.appliedAt)[0];
+        optimizations.sort((a, b) => b.appliedAt - a.appliedAt);
+        const mostRecent = optimizations[0];
 
         this.appliedOptimizations.clear();
         return mostRecent.originalFactors;
@@ -316,13 +317,13 @@ export class OptimizationManager {
  * Automatic optimization system
  */
 export class AutomaticOptimizationSystem {
-    private manager: OptimizationManager;
-    private monitor: PerformanceMonitor;
+    private readonly manager: OptimizationManager;
+    private readonly monitor: PerformanceMonitor;
     private checkInterval: number;
-    private lastCheck: number = 0;
-    private enabled: boolean = true;
+    private lastCheck = 0;
+    private enabled = true;
 
-    constructor(manager: OptimizationManager, monitor: PerformanceMonitor, checkInterval: number = 5000) {
+    constructor(manager: OptimizationManager, monitor: PerformanceMonitor, checkInterval = 5000) {
         this.manager = manager;
         this.monitor = monitor;
         this.checkInterval = checkInterval;
@@ -332,10 +333,10 @@ export class AutomaticOptimizationSystem {
      * Update automatic optimization system
      */
     update(currentFactors: PhysicsFactors): PhysicsFactors {
-        if (!this.enabled) return currentFactors;
+        if (!this.enabled) { return currentFactors; }
 
         const now = Date.now();
-        if (now - this.lastCheck < this.checkInterval) return currentFactors;
+        if (now - this.lastCheck < this.checkInterval) { return currentFactors; }
 
         this.lastCheck = now;
 
@@ -436,8 +437,7 @@ export function applyPerformancePreset(
     presetName: keyof typeof PERFORMANCE_PRESETS,
     currentFactors: PhysicsFactors
 ): PhysicsFactors {
-    const preset = PERFORMANCE_PRESETS[presetName];
-    let optimizedFactors = { ...currentFactors };
+    const optimizedFactors = { ...currentFactors };
 
     // Apply preset-specific optimizations
     switch (presetName) {

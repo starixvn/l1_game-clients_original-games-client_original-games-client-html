@@ -129,7 +129,7 @@ export function createMultiplierBodies(
  * Create boundary walls for the physics world
  * Pure function - creates wall bodies
  */
-export function createWallBodies(canvasWidth: number, canvasHeight: number, rows: number = 8): Body[] {
+export function createWallBodies(canvasWidth: number, canvasHeight: number, rows = 8): Body[] {
     const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;
 
     const leftWall = Bodies.rectangle(

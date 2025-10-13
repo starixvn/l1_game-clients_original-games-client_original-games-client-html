@@ -48,7 +48,23 @@ export function validatePhysicsFactors(factors: Partial<PhysicsFactors>): Valida
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    // Validate each provided factor
+    // Validate individual factors
+    validateIndividualFactors(factors, errors);
+
+    // Perform cross-factor validations
+    performCrossFactorValidations(factors, warnings);
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings
+    };
+}
+
+/**
+ * Validate individual physics factors
+ */
+function validateIndividualFactors(factors: Partial<PhysicsFactors>, errors: string[]): void {
     Object.entries(factors).forEach(([key, value]) => {
         const factorName = key as keyof PhysicsFactors;
         const validation = validatePhysicsFactor(factorName, value);
@@ -57,64 +73,95 @@ export function validatePhysicsFactors(factors: Partial<PhysicsFactors>): Valida
             errors.push(validation.error);
         }
     });
+}
 
-    // Cross-factor validations
-    if (factors.ballSize !== undefined && factors.pegSpacing !== undefined) {
-        const collisionProbability = (factors.ballSize + (factors.pegSize || 5)) / factors.pegSpacing;
+/**
+ * Perform cross-factor validations
+ */
+function performCrossFactorValidations(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    validateCollisionProbability(factors, warnings);
+    validateGravityAirResistanceBalance(factors, warnings);
+    validateBallMassSizeConsistency(factors, warnings);
+    validateFrictionRestitutionCompatibility(factors, warnings);
+    validateCollisionCooldown(factors, warnings);
+}
 
-        if (collisionProbability > 1.5) {
-            warnings.push('High collision probability may cause physics instability');
-        }
-
-        if (collisionProbability < 0.1) {
-            warnings.push('Low collision probability may result in balls slipping through pegs');
-        }
+/**
+ * Validate collision probability
+ */
+function validateCollisionProbability(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    if (factors.ballSize === undefined || factors.pegSpacing === undefined) {
+        return;
     }
 
-    // Gravity and air resistance balance check
-    if (factors.gravity !== undefined && factors.airResistanceCoefficient !== undefined) {
-        const ratio = factors.airResistanceCoefficient / factors.gravity;
+    const collisionProbability = (factors.ballSize + (factors.pegSize || 5)) / factors.pegSpacing;
 
-        if (ratio > 0.1) {
-            warnings.push('High air resistance relative to gravity may slow gameplay significantly');
-        }
+    if (collisionProbability > 1.5) {
+        warnings.push('High collision probability may cause physics instability');
+    } else if (collisionProbability < 0.1) {
+        warnings.push('Low collision probability may result in balls slipping through pegs');
+    }
+}
 
-        if (ratio < 0.005) {
-            warnings.push('Low air resistance relative to gravity may cause unrealistic ball trajectories');
-        }
+/**
+ * Validate gravity and air resistance balance
+ */
+function validateGravityAirResistanceBalance(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    if (factors.gravity === undefined || factors.airResistanceCoefficient === undefined) {
+        return;
     }
 
-    // Ball mass and size consistency check
-    if (factors.ballMass !== undefined && factors.ballSize !== undefined) {
-        const expectedMass = 1000 * (4 / 3) * Math.PI * Math.pow(factors.ballSize / 100, 3); // Convert pixels to meters
-        const massRatio = factors.ballMass / expectedMass;
+    const ratio = factors.airResistanceCoefficient / factors.gravity;
 
-        if (massRatio > 2 || massRatio < 0.5) {
-            warnings.push('Ball mass may not be consistent with ball size for realistic physics');
-        }
+    if (ratio > 0.1) {
+        warnings.push('High air resistance relative to gravity may slow gameplay significantly');
+    } else if (ratio < 0.005) {
+        warnings.push('Low air resistance relative to gravity may cause unrealistic ball trajectories');
+    }
+}
+
+/**
+ * Validate ball mass and size consistency
+ */
+function validateBallMassSizeConsistency(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    if (factors.ballMass === undefined || factors.ballSize === undefined) {
+        return;
     }
 
-    // Friction and restitution compatibility
-    if (factors.friction !== undefined && factors.restitution !== undefined) {
-        if (factors.friction > 0.7 && factors.restitution > 0.8) {
-            warnings.push('High friction with high restitution may cause unstable bouncing behavior');
-        }
+    const expectedMass = 1000 * (4 / 3) * Math.PI * Math.pow(factors.ballSize / 100, 3);
+    const massRatio = factors.ballMass / expectedMass;
+
+    if (massRatio > 2 || massRatio < 0.5) {
+        warnings.push('Ball mass may not be consistent with ball size for realistic physics');
+    }
+}
+
+/**
+ * Validate friction and restitution compatibility
+ */
+function validateFrictionRestitutionCompatibility(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    if (factors.friction === undefined || factors.restitution === undefined) {
+        return;
     }
 
-    // Collision cooldown validation
-    if (factors.collisionCooldown !== undefined && factors.velocityY !== undefined) {
-        const timeBetweenPegs = 60 / factors.velocityY; // Assuming 60px peg spacing
+    if (factors.friction > 0.7 && factors.restitution > 0.8) {
+        warnings.push('High friction with high restitution may cause unstable bouncing behavior');
+    }
+}
 
-        if (factors.collisionCooldown > timeBetweenPegs * 2) {
-            warnings.push('Collision cooldown may be too long for current falling speed');
-        }
+/**
+ * Validate collision cooldown
+ */
+function validateCollisionCooldown(factors: Partial<PhysicsFactors>, warnings: string[]): void {
+    if (factors.collisionCooldown === undefined || factors.velocityY === undefined) {
+        return;
     }
 
-    return {
-        isValid: errors.length === 0,
-        errors,
-        warnings
-    };
+    const timeBetweenPegs = 60 / factors.velocityY;
+
+    if (factors.collisionCooldown > timeBetweenPegs * 2) {
+        warnings.push('Collision cooldown may be too long for current falling speed');
+    }
 }
 
 /**

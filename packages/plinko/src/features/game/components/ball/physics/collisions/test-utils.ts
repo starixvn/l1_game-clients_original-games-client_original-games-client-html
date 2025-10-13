@@ -21,6 +21,226 @@ export function handleServiceGuidedPinCollision(
     engine: Engine,
     cooldownManager?: CollisionCooldownManager
 ): void {
+    logCollisionStart(ballBody, ballExtension, pegBody);
+    
+    const manager = cooldownManager || new CollisionCooldownManager();
+    const isServiceGuided = ballExtension.servicePath && ballExtension.currentPathIndex !== undefined;
+
+    if (!isServiceGuided) {
+        if (!handleNonServiceGuidedCollision(ballBody, pegBody, manager)) {
+            return;
+        }
+    } else if (!handleServiceGuidedCollision(ballBody, ballExtension, pegBody, manager)) {
+        return;
+    }
+
+    manager.registerCollision(ballBody.id, pegBody.id, 50);
+}
+
+/**
+ * Handle collision for non-service-guided balls
+ */
+function handleNonServiceGuidedCollision(
+    ballBody: Body,
+    pegBody: Body,
+    manager: CollisionCooldownManager
+): boolean {
+    if (!manager.canCollide(ballBody.id, pegBody.id, 50)) {
+        physicsLogger.debug('Collision blocked by cooldown (test utility)', {
+            component: 'CollisionTestUtils',
+            function: 'handleNonServiceGuidedCollision',
+            metadata: { ballId: ballBody.id, pegId: pegBody.id }
+        });
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Handle collision for service-guided balls
+ */
+function handleServiceGuidedCollision(
+    ballBody: Body,
+    ballExtension: BallBodyExtension,
+    pegBody: Body,
+    manager: CollisionCooldownManager
+): boolean {
+    if (ballExtension.onFinalTrajectory) {
+        logSkipFinalTrajectory(ballBody, ballExtension, pegBody);
+        return false;
+    }
+
+    const pinLabelMatch = pegBody.label?.match(/pin-(\d+)-(\d+)/);
+    if (!pinLabelMatch) { return true; }
+
+    const pinRow = parseInt(pinLabelMatch[1]);
+    if (pinRow !== ballExtension.currentPathIndex + 1) {
+        logSkipWrongRow(ballBody, ballExtension, pegBody, pinRow);
+        return true;
+    }
+
+    const currentStep = ballExtension.servicePath[ballExtension.currentPathIndex];
+    if (currentStep === undefined) { return true; }
+
+    applyServiceGuidedNudge(ballBody, ballExtension, currentStep, pinRow);
+    updatePathProgress(ballExtension, pinRow);
+    handleFinalTrajectory(ballBody, ballExtension);
+
+    return true;
+}
+
+/**
+ * Apply nudge for service-guided balls
+ */
+function applyServiceGuidedNudge(
+    ballBody: Body,
+    ballExtension: BallBodyExtension,
+    currentStep: number,
+    pinRow: number
+): void {
+    const naturalNudgeStrength = calculateNudgeStrength(ballExtension);
+    const direction = currentStep === 1 ? 1 : -1;
+
+    storeGuidanceInfo(ballExtension, direction, naturalNudgeStrength, pinRow);
+    applyDeterministicVelocity(ballBody, direction, naturalNudgeStrength);
+    markBallBounced(ballExtension);
+    logNudgeApplied(ballBody, direction, naturalNudgeStrength);
+}
+
+/**
+ * Calculate nudge strength based on ball extension data
+ */
+function calculateNudgeStrength(ballExtension: BallBodyExtension): number {
+    const rowRatio = (ballExtension.numberOfRows || 8) / 8;
+    const rowCount = ballExtension.numberOfRows || 8;
+
+    if (ballExtension.calculationData) {
+        return ballExtension.calculationData.physicsFactors.nudgeStrength * 0.8;
+    }
+
+    const baseNudgeStrength = PHYSICS_SCALING_FORMULAS.nudgeStrength(rowRatio, rowCount);
+    return baseNudgeStrength * 0.7;
+}
+
+/**
+ * Store guidance information for delayed application
+ */
+function storeGuidanceInfo(
+    ballExtension: BallBodyExtension,
+    direction: number,
+    naturalNudgeStrength: number,
+    pinRow: number
+): void {
+    const rowRatio = (ballExtension.numberOfRows || 8) / 8;
+    const rowCount = ballExtension.numberOfRows || 8;
+
+    ballExtension.pendingGuidance = {
+        direction,
+        naturalNudgeStrength,
+        rowRatio,
+        rowCount,
+        pinRow,
+        appliedAtFrame: 0
+    };
+}
+
+/**
+ * Apply deterministic velocity to ball
+ */
+function applyDeterministicVelocity(
+    ballBody: Body,
+    direction: number,
+    naturalNudgeStrength: number
+): void {
+    const currentVelocity = { x: ballBody.velocity.x, y: ballBody.velocity.y };
+    const deterministicVelocityX = direction * naturalNudgeStrength;
+    const upwardBounce = 0.5;
+
+    Body.setVelocity(ballBody, {
+        x: deterministicVelocityX,
+        y: Math.max(currentVelocity.y - upwardBounce, -1.0)
+    });
+}
+
+/**
+ * Mark ball as bounced
+ */
+function markBallBounced(ballExtension: BallBodyExtension): void {
+    ballExtension.justBounced = true;
+    ballExtension.bounceTimestamp = Date.now();
+}
+
+/**
+ * Update path progress
+ */
+function updatePathProgress(ballExtension: BallBodyExtension, pinRow: number): void {
+    if (!ballExtension.appliedGuidanceSteps) {
+        ballExtension.appliedGuidanceSteps = [];
+    }
+    ballExtension.appliedGuidanceSteps.push(`row-${pinRow}-step-${ballExtension.currentPathIndex}`);
+    ballExtension.currentPathIndex++;
+}
+
+/**
+ * Handle final trajectory if this was the last nudge
+ */
+function handleFinalTrajectory(ballBody: Body, ballExtension: BallBodyExtension): void {
+    const isFinalNudge = ballExtension.currentPathIndex >= ballExtension.servicePath.length;
+    
+    if (!isFinalNudge || ballExtension.expectedFinalSlot === undefined) {
+        return;
+    }
+
+    ballExtension.onFinalTrajectory = true;
+    const finalVelocity = calculateFinalTrajectoryVelocity(ballBody, ballExtension);
+    
+    Body.setVelocity(ballBody, finalVelocity);
+    logFinalTrajectorySet(ballBody, ballExtension, finalVelocity);
+}
+
+/**
+ * Calculate final trajectory velocity
+ */
+function calculateFinalTrajectoryVelocity(ballBody: Body, ballExtension: BallBodyExtension): { x: number; y: number } {
+    const canvasWidth = 600;
+    const numberOfRows = ballExtension.numberOfRows || 8;
+    const pegGap = 40;
+    const lastRowColumns = numberOfRows;
+    const lastRowWidth = (lastRowColumns - 1) * pegGap;
+    const lastRowStartX = (canvasWidth - lastRowWidth) / 2;
+    const targetX = lastRowStartX + (ballExtension.expectedFinalSlot - 0.5) * pegGap;
+
+    const currentX = ballBody.position.x;
+    const distanceX = targetX - currentX;
+
+    const rowRatio = numberOfRows / 8;
+    const rowCount = numberOfRows;
+    const fallSpeed = PHYSICS_SCALING_FORMULAS.fallSpeed(rowRatio, rowCount);
+    const horizontalSpeed = PHYSICS_SCALING_FORMULAS.horizontalSpeed(rowRatio, rowCount);
+
+    const velocityMultiplier = rowCount > 12 ? 1.5 : 2.0;
+    const maxVelocityX = horizontalSpeed * velocityMultiplier;
+    const minTimeToTarget = 0.2;
+    const requiredVelocityX = Math.abs(distanceX) / minTimeToTarget;
+    const clampedVelocityX = Math.min(requiredVelocityX, maxVelocityX);
+    const velocityX = Math.sign(distanceX) * clampedVelocityX;
+
+    let maxFinalHorizontalVelocity: number;
+    if (rowCount > 14) {
+        maxFinalHorizontalVelocity = 12;
+    } else if (rowCount > 12) {
+        maxFinalHorizontalVelocity = 18;
+    } else {
+        maxFinalHorizontalVelocity = 25;
+    }
+    const clampedFinalX = Math.max(-maxFinalHorizontalVelocity, Math.min(maxFinalHorizontalVelocity, velocityX));
+    const clampedFinalY = Math.max(-3, Math.min(15, fallSpeed));
+
+    return { x: clampedFinalX, y: clampedFinalY };
+}
+
+// Logging functions
+function logCollisionStart(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
     physicsLogger.info('🎯 SERVICE-GUIDED PIN COLLISION - STARTING', {
         component: 'CollisionTestUtils',
         function: 'handleServiceGuidedPinCollision',
@@ -35,271 +255,59 @@ export function handleServiceGuidedPinCollision(
             ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
         }
     });
+}
 
-    // Create cooldown manager if not provided
-    const manager = cooldownManager || new CollisionCooldownManager();
-
-    // Service-guided logic: Apply deterministic path correction
-    // Check if this is a service-guided ball that needs deterministic nudges
-    const isServiceGuided = ballExtension.servicePath && ballExtension.currentPathIndex !== undefined;
-
-    // For service-guided balls, bypass cooldown to ensure deterministic path following
-    if (!isServiceGuided) {
-        // Check if collision is allowed for non-guided balls
-        if (!manager.canCollide(ballBody.id, pegBody.id, 50)) { // 50ms cooldown
-            physicsLogger.debug('Collision blocked by cooldown (test utility)', {
-                component: 'CollisionTestUtils',
-                function: 'handleServiceGuidedPinCollision',
-                metadata: { ballId: ballBody.id, pegId: pegBody.id }
-            });
-            return;
-        }
-    }
-
-    // Apply deterministic path correction for service-guided balls
-    if (isServiceGuided) {
-        // Skip collision nudges for balls already on final trajectory to prevent disruption
-        if (ballExtension.onFinalTrajectory) {
-            physicsLogger.debug('Skipping nudge for ball on final trajectory', {
-                component: 'CollisionTestUtils',
-                function: 'handleServiceGuidedPinCollision',
-                metadata: {
-                    ballId: ballBody.id,
-                    pegId: pegBody.id,
-                    expectedFinalSlot: ballExtension.expectedFinalSlot
-                }
-            });
-            // Still register cooldown for physics stability
-            manager.registerCollision(ballBody.id, pegBody.id, 50);
-            return;
-        }
-
-        // Extract pin row from label (format: "pin-ROW-COLUMN")
-        const pinLabelMatch = pegBody.label?.match(/pin-(\d+)-(\d+)/);
-        if (pinLabelMatch) {
-            const pinRow = parseInt(pinLabelMatch[1]);
-
-            // Only apply nudge if this is the next row in sequence
-            // currentPathIndex corresponds to the row we should be processing
-            if (pinRow === ballExtension.currentPathIndex + 1) {
-                const currentStep = ballExtension.servicePath[ballExtension.currentPathIndex];
-
-                if (currentStep !== undefined) {
-                    // Enhanced: Use pre-calculated physics factors for realistic Plinko behavior
-                    let naturalNudgeStrength: number;
-
-                    // Define rowRatio and rowCount for guidance
-                    const rowRatio = (ballExtension.numberOfRows || 8) / 8;
-                    const rowCount = ballExtension.numberOfRows || 8;
-
-                    if (ballExtension.calculationData) {
-                        // 🚀 Use PRE-CALCULATED nudge strength for authentic physics
-                        naturalNudgeStrength = ballExtension.calculationData.physicsFactors.nudgeStrength * 0.8; // Stronger guidance for deterministic path
-
-                        physicsLogger.debug('🎯 USING PRE-CALCULATED PHYSICS FOR COLLISION', {
-                            component: 'CollisionTestUtils',
-                            function: 'handleServiceGuidedPinCollision',
-                            metadata: {
-                                ballId: ballBody.id,
-                                calculationId: ballExtension.calculationData.id,
-                                preCalculatedNudgeStrength: ballExtension.calculationData.physicsFactors.nudgeStrength.toFixed(3),
-                                adjustedNudgeStrength: naturalNudgeStrength.toFixed(3),
-                                physicsStability: ballExtension.calculationData.stabilityMetrics.controlResponsiveness.toFixed(3)
-                            }
-                        });
-                    } else {
-                        // Fallback to generic scaling formulas
-                        const baseNudgeStrength = PHYSICS_SCALING_FORMULAS.nudgeStrength(rowRatio, rowCount);
-                        naturalNudgeStrength = baseNudgeStrength * 0.7; // Stronger guidance for deterministic path
-                    }
-
-                    const direction = currentStep === 1 ? 1 : -1; // 1 = right, 0 = left
-
-                    // Store guidance information for delayed application
-                    ballExtension.pendingGuidance = {
-                        direction,
-                        naturalNudgeStrength,
-                        rowRatio,
-                        rowCount,
-                        pinRow,
-                        appliedAtFrame: 0 // Will be set when applied
-                    };
-
-                    // Deterministic Plinko bounce - ensure ball follows service path exactly
-                    const currentVelocity = { x: ballBody.velocity.x, y: ballBody.velocity.y };
-
-                    // Calculate deterministic direction based on service path
-                    // Override current velocity with strong directional guidance
-                    const deterministicVelocityX = direction * naturalNudgeStrength;
-                    const upwardBounce = 0.5; // Gentle upward bounce for natural feel
-
-                    // Apply deterministic velocity to ensure path follows service result
-                    Body.setVelocity(ballBody, {
-                        x: deterministicVelocityX,
-                        y: Math.max(currentVelocity.y - upwardBounce, -1.0) // Ensure upward movement
-                    });
-
-                    // Mark the ball to prevent immediate velocity overrides
-                    ballExtension.justBounced = true;
-                    ballExtension.bounceTimestamp = Date.now();
-
-                    physicsLogger.info('🎯 DETERMINISTIC PATH GUIDANCE APPLIED', {
-                        component: 'CollisionTestUtils',
-                        function: 'handleServiceGuidedPinCollision',
-                        metadata: {
-                            ballId: ballBody.id,
-                            direction,
-                            nudgeStrength: naturalNudgeStrength.toFixed(3),
-                            deterministicVelocityX: deterministicVelocityX.toFixed(3),
-                            upwardBounce: upwardBounce.toFixed(3),
-                            velocityBefore: { x: currentVelocity.x.toFixed(3), y: currentVelocity.y.toFixed(3) },
-                            velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
-                        }
-                    });
-
-                    physicsLogger.info('🎯 SCHEDULING NATURAL DETERMINISTIC GUIDANCE - DELAYED APPLICATION', {
-                        component: 'CollisionTestUtils',
-                        function: 'handleServiceGuidedPinCollision',
-                        metadata: {
-                            ballId: ballBody.id,
-                            pinRow,
-                            expectedRow: ballExtension.currentPathIndex + 1,
-                            currentPathIndex: ballExtension.currentPathIndex,
-                            currentStep,
-                            direction: direction > 0 ? 'RIGHT' : 'LEFT',
-                            naturalNudgeStrength: naturalNudgeStrength.toFixed(3),
-                            ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-                            guidanceScheduled: true
-                        }
-                    });
-
-                    // Don't apply velocity changes here - let natural physics resolve first
-                    // Guidance will be applied in the next physics update cycle
-
-                    // Mark this step as applied and increment path index
-                    if (!ballExtension.appliedGuidanceSteps) {
-                        ballExtension.appliedGuidanceSteps = [];
-                    }
-                    ballExtension.appliedGuidanceSteps.push(`row-${pinRow}-step-${ballExtension.currentPathIndex}`);
-                    ballExtension.currentPathIndex++;
-
-                    // Check if this was the final nudge - if so, set trajectory to target slot
-                    const isFinalNudge = ballExtension.currentPathIndex >= ballExtension.servicePath.length;
-
-                    if (isFinalNudge && ballExtension.expectedFinalSlot !== undefined) {
-                        // Mark the ball as being on final trajectory to prevent further collision disruptions
-                        ballExtension.onFinalTrajectory = true;
-                        // Calculate target X position for the expected slot
-                        const canvasWidth = 600; // Assuming standard canvas width
-                        const numberOfRows = ballExtension.numberOfRows || 8; // Use stored row count or default to 8
-                        // Use same positioning logic as physics world creation
-                        const pegGap = 40; // Same peg gap used in body factory
-                        const lastRowColumns = numberOfRows; // Last row has numberOfRows pegs
-                        const lastRowWidth = (lastRowColumns - 1) * pegGap;
-                        const lastRowStartX = (canvasWidth - lastRowWidth) / 2;
-                        // Position slots between pegs: center between peg positions (same as body factory)
-                        const targetX = lastRowStartX + (ballExtension.expectedFinalSlot - 0.5) * pegGap;
-
-                        // Set velocity to go straight to target X position
-                        const currentX = ballBody.position.x;
-                        const distanceX = targetX - currentX;
-
-                        // Use tiered scaling formulas for trajectory correction
-                        const rowRatio = (ballExtension.numberOfRows || 8) / 8;
-                        const rowCount = ballExtension.numberOfRows || 8;
-                        const fallSpeed = PHYSICS_SCALING_FORMULAS.fallSpeed(rowRatio, rowCount);
-                        const horizontalSpeed = PHYSICS_SCALING_FORMULAS.horizontalSpeed(rowRatio, rowCount);
-
-                        // Calculate required horizontal velocity to reach target within reasonable time
-                        // Limit maximum velocity more aggressively for higher row counts
-                        const velocityMultiplier = rowCount > 12 ? 1.5 : 2.0; // More conservative for many rows
-                        const maxVelocityX = horizontalSpeed * velocityMultiplier;
-                        const minTimeToTarget = 0.2; // Minimum 0.2 seconds to reach target
-                        const requiredVelocityX = Math.abs(distanceX) / minTimeToTarget;
-                        const clampedVelocityX = Math.min(requiredVelocityX, maxVelocityX);
-                        const velocityX = Math.sign(distanceX) * clampedVelocityX;
-
-                        // Clamp final trajectory velocities to prevent out-of-bounds
-                        // Use progressively more restrictive clamping for higher row counts
-                        const maxFinalHorizontalVelocity = rowCount > 14 ? 12 : rowCount > 12 ? 18 : 25; // Very strict for 15+ rows
-                        const clampedFinalX = Math.max(-maxFinalHorizontalVelocity, Math.min(maxFinalHorizontalVelocity, velocityX));
-                        const clampedFinalY = Math.max(-3, Math.min(15, fallSpeed)); // More restrictive for high rows
-
-                        Body.setVelocity(ballBody, {
-                            x: clampedFinalX,
-                            y: clampedFinalY
-                        });
-
-                        physicsLogger.info('🎯 FINAL TRAJECTORY SET - DIRECTING TO TARGET SLOT', {
-                            component: 'CollisionTestUtils',
-                            function: 'handleServiceGuidedPinCollision',
-                            metadata: {
-                                ballId: ballBody.id,
-                                expectedFinalSlot: ballExtension.expectedFinalSlot,
-                                currentX: currentX.toFixed(1),
-                                targetX: targetX.toFixed(1),
-                                distanceX: distanceX.toFixed(1),
-                                finalVelocity: { x: velocityX.toFixed(3), y: fallSpeed.toFixed(3) },
-                                pathCompleted: true
-                            }
-                        });
-                    }
-
-                    physicsLogger.info('🎯 DETERMINISTIC NUDGE APPLIED - PATH ADVANCED', {
-                        component: 'CollisionTestUtils',
-                        function: 'handleServiceGuidedPinCollision',
-                        metadata: {
-                            ballId: ballBody.id,
-                            pinRow,
-                            newPathIndex: ballExtension.currentPathIndex,
-                            ballVelocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-                            totalStepsApplied: ballExtension.appliedGuidanceSteps?.length,
-                            isFinalNudge
-                        }
-                    });
-
-                    // Register collision cooldown
-                    manager.registerCollision(ballBody.id, pegBody.id, 50);
-
-                    physicsLogger.debug('Service-guided pin collision handled successfully', {
-                        component: 'CollisionTestUtils',
-                        function: 'handleServiceGuidedPinCollision',
-                        metadata: {
-                            ballId: ballBody.id,
-                            finalPathIndex: ballExtension.currentPathIndex,
-                            finalVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-                            finalPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) }
-                        }
-                    });
-                    return;
-                }
-            } else {
-                physicsLogger.debug('Skipping nudge - wrong row or already processed', {
-                    component: 'CollisionTestUtils',
-                    function: 'handleServiceGuidedPinCollision',
-                    metadata: {
-                        ballId: ballBody.id,
-                        pinRow,
-                        expectedRow: ballExtension.currentPathIndex + 1,
-                        currentPathIndex: ballExtension.currentPathIndex,
-                        pinLabel: pegBody.label
-                    }
-                });
-            }
-        }
-    }
-
-    // Handle non-service-guided balls with basic collision response
-    // Register collision cooldown for physics stability
-    manager.registerCollision(ballBody.id, pegBody.id, 50);
-
-    physicsLogger.debug('Non-service-guided pin collision handled (cooldown only)', {
+function logSkipFinalTrajectory(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
+    physicsLogger.debug('Skipping nudge for ball on final trajectory', {
         component: 'CollisionTestUtils',
-        function: 'handleServiceGuidedPinCollision',
+        function: 'handleServiceGuidedCollision',
         metadata: {
             ballId: ballBody.id,
             pegId: pegBody.id,
-            isServiceGuided: false
+            expectedFinalSlot: ballExtension.expectedFinalSlot
+        }
+    });
+}
+
+function logSkipWrongRow(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body, pinRow: number): void {
+    physicsLogger.debug('Skipping nudge - wrong row or already processed', {
+        component: 'CollisionTestUtils',
+        function: 'handleServiceGuidedCollision',
+        metadata: {
+            ballId: ballBody.id,
+            pinRow,
+            expectedRow: ballExtension.currentPathIndex + 1,
+            currentPathIndex: ballExtension.currentPathIndex,
+            pinLabel: pegBody.label
+        }
+    });
+}
+
+function logNudgeApplied(ballBody: Body, direction: number, naturalNudgeStrength: number): void {
+    physicsLogger.info('🎯 DETERMINISTIC PATH GUIDANCE APPLIED', {
+        component: 'CollisionTestUtils',
+        function: 'applyServiceGuidedNudge',
+        metadata: {
+            ballId: ballBody.id,
+            direction,
+            nudgeStrength: naturalNudgeStrength.toFixed(3),
+            deterministicVelocityX: (direction * naturalNudgeStrength).toFixed(3),
+            upwardBounce: '0.500',
+            velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) }
+        }
+    });
+}
+
+function logFinalTrajectorySet(ballBody: Body, ballExtension: BallBodyExtension, finalVelocity: { x: number; y: number }): void {
+    physicsLogger.info('🎯 FINAL TRAJECTORY SET - DIRECTING TO TARGET SLOT', {
+        component: 'CollisionTestUtils',
+        function: 'handleFinalTrajectory',
+        metadata: {
+            ballId: ballBody.id,
+            expectedFinalSlot: ballExtension.expectedFinalSlot,
+            currentX: ballBody.position.x.toFixed(1),
+            finalVelocity: { x: finalVelocity.x.toFixed(3), y: finalVelocity.y.toFixed(3) },
+            pathCompleted: true
         }
     });
 }

@@ -25,7 +25,7 @@ export function analyzePathAlternatives(
     for (let i = 0; i < 3; i++) {
         const variation = [...serviceResult.path];
         // Flip one random decision
-        const flipIndex = Math.floor(Math.random() * variation.length);
+        const flipIndex = Math.floor(Math.random() * variation.length); // NOSONAR
         variation[flipIndex] = 1 - variation[flipIndex];
 
         const finalSlot = calculateFinalSlotFromPath(variation, boardConfig.slotCount);

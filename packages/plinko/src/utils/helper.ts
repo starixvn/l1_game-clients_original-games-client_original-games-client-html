@@ -1,5 +1,5 @@
 export const binomial = (n: number, k: number) => {
-    if (k > n) return 0;
+    if (k > n) { return 0; }
     let result = 1;
     for (let i = 0; i < k; i++) {
         result *= (n - i) / (i + 1);

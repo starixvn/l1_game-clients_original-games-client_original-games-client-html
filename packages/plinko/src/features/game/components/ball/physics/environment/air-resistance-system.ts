@@ -102,9 +102,8 @@ export function calculateAirResistanceDamping(
     deltaTime: number
 ): number {
     const acceleration = airResistanceForce / mass;
-    const dampingFactor = Math.max(0.8, 1 - acceleration * deltaTime);
 
-    return dampingFactor;
+    return Math.max(0.8, 1 - acceleration * deltaTime);
 }
 
 /**
@@ -114,8 +113,8 @@ export function simulateTrajectoryWithAirResistance(
     initialPosition: { x: number; y: number },
     initialVelocity: { x: number; y: number },
     physicsFactors: PhysicsFactors,
-    timeSteps: number = 100,
-    deltaTime: number = 0.016
+    timeSteps = 100,
+    deltaTime = 0.016
 ): Array<{
     time: number;
     position: { x: number; y: number };
@@ -131,8 +130,8 @@ export function simulateTrajectoryWithAirResistance(
         airResistanceForce: number;
     }> = [];
 
-    let position = { ...initialPosition };
-    let velocity = { ...initialVelocity };
+    const position = { ...initialPosition };
+    const velocity = { ...initialVelocity };
     let time = 0;
 
     for (let i = 0; i < timeSteps; i++) {
@@ -175,7 +174,7 @@ export function simulateTrajectoryWithAirResistance(
         time += deltaTime;
 
         // Stop if ball has fallen too far
-        if (position.y > initialPosition.y + 1000) break;
+        if (position.y > initialPosition.y + 1000) { break; }
     }
 
     return trajectory;
@@ -228,9 +227,9 @@ export function calculateAirResistanceBalanceMetrics(
 export class AdaptiveAirResistanceSystem {
     private currentCoefficient: number;
     private targetCoefficient: number;
-    private adaptationRate: number;
+    private readonly adaptationRate: number;
 
-    constructor(initialCoefficient: number, adaptationRate: number = 0.05) {
+    constructor(initialCoefficient: number, adaptationRate = 0.05) {
         this.currentCoefficient = initialCoefficient;
         this.targetCoefficient = initialCoefficient;
         this.adaptationRate = adaptationRate;
@@ -305,7 +304,7 @@ export function calculateWindEffects(
 export function analyzeAirResistanceStability(
     airResistanceCoefficient: number,
     physicsFactors: PhysicsFactors,
-    timeStep: number = 0.016
+    timeStep = 0.016
 ): {
     isStable: boolean;
     dampingRatio: number;
@@ -340,7 +339,7 @@ export function analyzeAirResistanceStability(
         maxDisplacement = Math.max(maxDisplacement, Math.abs(position));
 
         // Stop if motion is essentially stopped
-        if (Math.abs(velocity) < 0.01 && Math.abs(position) < 0.1) break;
+        if (Math.abs(velocity) < 0.01 && Math.abs(position) < 0.1) { break; }
     }
 
     // Calculate damping ratio (critical damping approximation)
@@ -368,7 +367,7 @@ export function analyzeAirResistanceStability(
 export function calculateTemperatureCompensation(
     baseCoefficient: number,
     temperature: number,
-    referenceTemperature: number = 20
+    referenceTemperature = 20
 ): number {
     // Air viscosity increases with temperature, affecting drag
     const temperatureRatio = (temperature + 273.15) / (referenceTemperature + 273.15);
@@ -382,8 +381,8 @@ export function calculateTemperatureCompensation(
  */
 export function generateAltitudeResistanceProfile(
     baseCoefficient: number,
-    maxAltitude: number = 5000,
-    steps: number = 10
+    maxAltitude = 5000,
+    steps = 10
 ): Array<{ altitude: number; coefficient: number; density: number }> {
     const profile: Array<{ altitude: number; coefficient: number; density: number }> = [];
 

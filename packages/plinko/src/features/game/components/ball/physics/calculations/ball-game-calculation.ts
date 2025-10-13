@@ -53,7 +53,7 @@ export function calculateBallGame(
     const startTime = performance.now();
 
     // Create calculation ID
-    const id = `calc_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    const id = `calc_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`; // NOSONAR
 
     // Initialize environmental factors
     const environmentalFactors: EnvironmentalFactors = {

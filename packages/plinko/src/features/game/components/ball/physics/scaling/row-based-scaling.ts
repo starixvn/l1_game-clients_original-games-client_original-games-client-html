@@ -45,71 +45,71 @@ export const BASELINE_PHYSICS_8_ROWS = {
 export const PHYSICS_SCALING_FORMULAS = {
     // Extreme gravity scaling for maximum Plinko acceleration
     gravity: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 1.5; // Extreme gravity for maximum falling speed
-        if (rowCount <= 14) return 1.5 * Math.pow(rowRatio, 0.1); // Enhanced scaling for extreme acceleration
+        if (rowCount <= 10) { return 1.5; } // Extreme gravity for maximum falling speed
+        if (rowCount <= 14) { return 1.5 * Math.pow(rowRatio, 0.1); } // Enhanced scaling for extreme acceleration
         return 1.5 * Math.pow(rowRatio, 0.18); // Maximum scaling for extreme cases
     },
 
     // Ball size - minimal changes for near-baseline
     ballRadius: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return DEFAULT_PHYSICS_FACTORS.ballSize; // No change
-        if (rowCount <= 14) return DEFAULT_PHYSICS_FACTORS.ballSize * Math.pow(rowRatio, -0.03); // Minimal change
+        if (rowCount <= 10) { return DEFAULT_PHYSICS_FACTORS.ballSize; } // No change
+        if (rowCount <= 14) { return DEFAULT_PHYSICS_FACTORS.ballSize * Math.pow(rowRatio, -0.03); } // Minimal change
         return DEFAULT_PHYSICS_FACTORS.ballSize * Math.pow(rowRatio, -0.08); // More significant for extreme
     },
 
     // Mass scaling - follows ball size
     ballMass: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return DEFAULT_PHYSICS_FACTORS.ballMass; // No change
-        if (rowCount <= 14) return DEFAULT_PHYSICS_FACTORS.ballMass * Math.pow(rowRatio, -0.05); // Minimal change
+        if (rowCount <= 10) { return DEFAULT_PHYSICS_FACTORS.ballMass; } // No change
+        if (rowCount <= 14) { return DEFAULT_PHYSICS_FACTORS.ballMass * Math.pow(rowRatio, -0.05); } // Minimal change
         return DEFAULT_PHYSICS_FACTORS.ballMass * Math.pow(rowRatio, -0.12); // More significant
     },
 
     // Natural restitution for realistic Plinko bounce behavior
     restitution: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 0.45; // Natural bounce for standard games
-        if (rowCount <= 14) return 0.45 * Math.pow(rowRatio, 0.03); // Slight increase for medium games
-        if (rowCount === 16) return 0.42; // Good bounce for 16 rows
+        if (rowCount <= 10) { return 0.45; } // Natural bounce for standard games
+        if (rowCount <= 14) { return 0.45 * Math.pow(rowRatio, 0.03); } // Slight increase for medium games
+        if (rowCount === 16) { return 0.42; } // Good bounce for 16 rows
         return 0.45 * Math.pow(rowRatio, 0.05); // Natural bounce for extreme cases
     },
 
     // Friction - minimal changes
     friction: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return DEFAULT_PHYSICS_FACTORS.friction; // No change
-        if (rowCount <= 14) return DEFAULT_PHYSICS_FACTORS.friction * Math.pow(rowRatio, 0.05); // Slight increase
+        if (rowCount <= 10) { return DEFAULT_PHYSICS_FACTORS.friction; } // No change
+        if (rowCount <= 14) { return DEFAULT_PHYSICS_FACTORS.friction * Math.pow(rowRatio, 0.05); } // Slight increase
         return DEFAULT_PHYSICS_FACTORS.friction * Math.pow(rowRatio, 0.1); // More increase
     },
 
     // Air resistance - very minimal changes
     frictionAir: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return DEFAULT_PHYSICS_FACTORS.airResistanceCoefficient; // No change
-        if (rowCount <= 14) return DEFAULT_PHYSICS_FACTORS.airResistanceCoefficient * Math.pow(rowRatio, -0.03); // Minimal
+        if (rowCount <= 10) { return DEFAULT_PHYSICS_FACTORS.airResistanceCoefficient; } // No change
+        if (rowCount <= 14) { return DEFAULT_PHYSICS_FACTORS.airResistanceCoefficient * Math.pow(rowRatio, -0.03); } // Minimal
         return DEFAULT_PHYSICS_FACTORS.airResistanceCoefficient * Math.pow(rowRatio, -0.08); // More significant
     },
 
     // Collision nudges - reduced for better collision feel
     nudgeStrength: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 8.0; // Balanced baseline for natural guidance
-        if (rowCount <= 14) return 8.0 * Math.pow(rowRatio, 0.12); // Gentle scaling
+        if (rowCount <= 10) { return 8.0; } // Balanced baseline for natural guidance
+        if (rowCount <= 14) { return 8.0 * Math.pow(rowRatio, 0.12); } // Gentle scaling
         return 8.0 * Math.sqrt(rowRatio); // More scaling for extreme
     },
 
     // Trajectory correction speeds - tiered scaling
     fallSpeed: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 2.0; // No scaling
-        if (rowCount <= 14) return 2.0 * Math.pow(rowRatio, 0.15); // Gentle scaling
+        if (rowCount <= 10) { return 2.0; } // No scaling
+        if (rowCount <= 14) { return 2.0 * Math.pow(rowRatio, 0.15); } // Gentle scaling
         return 2.0 * Math.pow(rowRatio, 0.3); // More scaling
     },
 
     horizontalSpeed: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 3.0; // No scaling
-        if (rowCount <= 14) return 3.0 * Math.pow(rowRatio, 0.15); // Gentle scaling
+        if (rowCount <= 10) { return 3.0; } // No scaling
+        if (rowCount <= 14) { return 3.0 * Math.pow(rowRatio, 0.15); } // Gentle scaling
         return 3.0 * Math.pow(rowRatio, 0.3); // More scaling
     },
 
     // Y velocity preservation - allow natural energy loss for better path following
     yVelocityPreservation: (rowRatio: number, rowCount: number) => {
-        if (rowCount <= 10) return 0.7; // Allow more energy loss for stable path following
-        if (rowCount <= 14) return Math.max(0.5, 0.8 * Math.pow(rowRatio, -0.05)); // Moderate reduction
+        if (rowCount <= 10) { return 0.7; } // Allow more energy loss for stable path following
+        if (rowCount <= 14) { return Math.max(0.5, 0.8 * Math.pow(rowRatio, -0.05)); } // Moderate reduction
         return Math.max(0.4, 0.75 * Math.pow(rowRatio, -0.1)); // More reduction for extreme
     },
 } as const;
@@ -117,21 +117,22 @@ export const PHYSICS_SCALING_FORMULAS = {
 /**
  * Row scaling configuration
  */
+type ScalingMode = 'proportional' | 'progressive' | 'adaptive';
 export interface RowScalingConfig {
     baseRows: number;
     currentRows: number;
-    scalingMode: 'proportional' | 'progressive' | 'adaptive';
+    scalingMode: ScalingMode;
 }
 
 /**
  * Row-based physics scaler
  */
 export class RowBasedPhysicsScaler {
-    private baseRows: number = 8;
-    private currentRows: number = 8;
-    private scalingMode: 'proportional' | 'progressive' | 'adaptive' = 'proportional';
+    private readonly baseRows: number = 8;
+    private currentRows = 8;
+    private scalingMode: ScalingMode = 'proportional';
 
-    constructor(baseRows: number = 8) {
+    constructor(baseRows = 8) {
         this.baseRows = baseRows;
         this.currentRows = baseRows;
     }
@@ -274,9 +275,9 @@ export class RowBasedPhysicsScaler {
  */
 export function calculateCanvasScalingForRows(
     rows: number,
-    baseRows: number = 8,
-    canvasWidth: number = 600,
-    canvasHeight: number = 550
+    baseRows = 8,
+    canvasWidth = 600,
+    canvasHeight = 550
 ): {
     scaleFactor: number;
     adjustedCanvasWidth: number;
@@ -289,7 +290,6 @@ export function calculateCanvasScalingForRows(
 
     // Estimate height needed: top margin + (rows-1) * gap + bottom margin
     const estimatedHeight = baseTopMargin + (rows - 1) * basePegGap + baseBottomMargin;
-    const baseEstimatedHeight = baseTopMargin + (baseRows - 1) * basePegGap + baseBottomMargin;
 
     // Calculate scale factor to fit the estimated height
     const heightScaleFactor = canvasHeight / estimatedHeight;
@@ -308,7 +308,7 @@ export function calculateCanvasScalingForRows(
 /**
  * Create row-based physics scaler with custom base rows
  */
-export function createRowBasedPhysicsScaler(baseRows: number = 8): RowBasedPhysicsScaler {
+export function createRowBasedPhysicsScaler(baseRows = 8): RowBasedPhysicsScaler {
     return new RowBasedPhysicsScaler(baseRows);
 }
 
@@ -318,7 +318,7 @@ export function createRowBasedPhysicsScaler(baseRows: number = 8): RowBasedPhysi
 export function applyRowScalingToFactors(
     baseFactors: PhysicsFactors,
     rows: number,
-    baseRows: number = 8
+    baseRows = 8
 ): PhysicsFactors {
     const scaler = createRowBasedPhysicsScaler(baseRows);
     scaler.setRows(rows);

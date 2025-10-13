@@ -92,7 +92,7 @@ export function detectAdvancedCollision(
     ballRadius: number,
     pegPosition: { x: number; y: number },
     pegRadius: number,
-    deltaTime: number = 0.016
+    deltaTime = 0.016
 ): CollisionDetectionResult | null {
     // Check current position collision
     const currentCollision = detectCirclePegCollision(ballPosition, ballRadius, pegPosition, pegRadius);
@@ -211,7 +211,7 @@ export function calculatePegImpactZone(
     pegPosition: { x: number; y: number },
     pegRadius: number,
     ballRadius: number,
-    impactAngle: number = Math.PI / 4 // 45 degrees
+    impactAngle = Math.PI / 4 // 45 degrees
 ): {
     center: { x: number; y: number };
     radius: number;
@@ -237,7 +237,7 @@ export function predictCollisionSequence(
     ballVelocity: { x: number; y: number },
     pegs: Array<{ x: number; y: number; radius: number }>,
     physicsFactors: PhysicsFactors,
-    maxPredictions: number = 10
+    maxPredictions = 10
 ): Array<{
     pegIndex: number;
     collisionPoint: { x: number; y: number };
@@ -275,7 +275,10 @@ export function predictCollisionSequence(
             });
         }
 
-        if (predictions.length >= maxPredictions) break;
+        if (predictions.length >= maxPredictions) 
+        {
+            break;
+        }
     }
 
     return predictions.sort((a, b) => a.timeToCollision - b.timeToCollision);

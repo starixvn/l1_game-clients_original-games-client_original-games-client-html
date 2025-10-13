@@ -97,7 +97,9 @@ function calculateFinalSlotFromPath(path: number[]): number {
  * Extract physics factors from service data
  */
 function extractPhysicsFactors(serviceData: any): Partial<PhysicsFactors> | undefined {
-    if (!serviceData.physicsFactors) return undefined;
+    if (!serviceData.physicsFactors) {
+        return undefined;
+    }
 
     return {
         gravity: serviceData.physicsFactors.gravity,
@@ -192,7 +194,9 @@ export function createCalculationFromLogData(
     try {
         // Parse log data to extract service result
         const serviceData = parseLogData(logData);
-        if (!serviceData) return null;
+        if (!serviceData) {
+            return null;
+        }
 
         return createCalculationFromServiceResponse(serviceData, boardConfig, physicsFactors);
     } catch (error) {
@@ -211,7 +215,9 @@ function parseLogData(logData: string): any | null {
     const multiplierMatch = logData.match(/multiplier[^\d]*([\d.]+)/i);
     const betMatch = logData.match(/betValue[^\d]*(\d+)/i);
 
-    if (!pathMatch || !slotMatch) return null;
+    if (!pathMatch || !slotMatch) {
+        return null;
+    }
 
     // Parse path array
     let path: number[] = [];
@@ -257,7 +263,7 @@ function generatePathForSlot(targetSlot: number, pathLength: number): number[] {
             position--;
         } else {
             // At target, make random but biased movements
-            const decision = Math.random() > 0.6 ? 1 : 0;
+            const decision = Math.random() > 0.6 ? 1 : 0; // NOSONAR
             path.push(decision);
             position += decision === 1 ? 1 : -1;
         }
