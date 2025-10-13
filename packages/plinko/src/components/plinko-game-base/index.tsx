@@ -18,9 +18,9 @@ import {
     PlinkoInGameHandler,
     PlinkoStateHandler,
 } from "./handlers";
-import PlinkoGame from "../plinko-game/PlinkoGame";
 import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
+import PlinkoGame from "../plinko-game/plinko-game";
 
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
@@ -38,6 +38,7 @@ const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-g
 });
 const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
 const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
+const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
@@ -86,6 +87,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 <Background />
                 <RoundMultiplierHistory />
                 <PlinkoGame />
+                <WinningAmountEffect />
                 {this.renderNotice()}
             </div>
         );

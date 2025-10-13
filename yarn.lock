@@ -3037,6 +3037,11 @@
   resolved "http://npm.lumigame.com/@types/lodash/-/lodash-4.17.0.tgz"
   integrity sha512-t7dhREVv6dbNj0q17X12j7yDG4bD/DHYX7o5/DbDxobP0HnGPgpRz2Ej77aL7TZT3DSw13fqUTj8J4mMnqa7WA==
 
+"@types/matter-js@^0.20.0":
+  version "0.20.2"
+  resolved "http://npm.lumigame.com/@types/matter-js/-/matter-js-0.20.2.tgz#f24c6e9ffd779426336d3c966f7bd2e69dceee08"
+  integrity sha512-3PPKy3QxvZ89h9+wdBV2488I1JLVs7DEpIkPvgO8JC1mUdiVSO37ZIvVctOTD7hIq8OAL2gJ3ugGSuUip6DhCw==
+
 "@types/minimatch@^3.0.3":
   version "3.0.5"
   resolved "http://npm.lumigame.com/@types/minimatch/-/minimatch-3.0.5.tgz"

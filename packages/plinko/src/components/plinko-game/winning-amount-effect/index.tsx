@@ -4,7 +4,7 @@ import { useCommonTranslate } from "@shared";
 import { numberWithCommas } from "@shared/helpers";
 
 export const WinningAmountEffect = () => {
-    const finish = usePlinkoGameStore((state) => state.finish);
+    const finish = usePlinkoGameStore((state) => state.finishedBall);
     const [winAmount, setWinAmount] = useState(0);
     const timerRef = useRef<NodeJS.Timeout>(null);
     const { t } = useCommonTranslate();
@@ -19,13 +19,13 @@ export const WinningAmountEffect = () => {
             clearTimeout(timerRef.current);
         };
     }, [finish]);
-
+    if (!winAmount) {
+        return <div className="h-10"></div>;
+    }
     return (
-        winAmount > 0 && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-1/2 text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:bottom-[4.5rem] md:text-xl">
-                {t("win")} {numberWithCommas(winAmount, 2)}
-            </div>
-        )
+        <div className="h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl">
+            {t("win")} {numberWithCommas(winAmount, 2)}
+        </div>
     );
 };
 
