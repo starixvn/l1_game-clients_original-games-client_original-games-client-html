@@ -11,11 +11,12 @@ import BetForm from "./bet-form";
 const BetControl = () => {
     const sendSocketEvent = useGameStore((state) => state.sendSocketEvent);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, numberOfDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
             numberOfRows: state.numberOfRows,
+            numberOfDroppingBall: state.numberOfDroppingBall,
         }))
     );
     const { gameMessageHandler } = useGameContext();
@@ -76,7 +77,11 @@ const BetControl = () => {
                     isAutoBet={isAutoBet}
                     setIsAutoBet={setIsAutoBet}
                 />
-                <TabNavigation activeIndex={tabIndex} onChangeTab={setTabIndex} isDisabled={isProcessing || isAutoBet} />
+                <TabNavigation
+                    activeIndex={tabIndex}
+                    onChangeTab={setTabIndex}
+                    isDisabled={isProcessing || isAutoBet || numberOfDroppingBall > 0}
+                />
             </div>
         </div>
     );

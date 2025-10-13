@@ -2,6 +2,7 @@ import { Round } from "@shared";
 import { useGameStore } from "@shared/stores";
 import React, { useEffect, useRef, useState } from "react";
 import RoundMultiplierItem from "./round-multiplier-item";
+import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 
 export interface PlinkoRound extends Round {
     gameMode: number;
@@ -9,33 +10,30 @@ export interface PlinkoRound extends Round {
 }
 const RoundMultiplierHistory = () => {
     const roundHistory = useGameStore((state) => state.roundHistory);
+    const finish = usePlinkoGameStore((state) => state.finishedBall);
     const [data, setData] = useState<PlinkoRound[]>([]);
-    const previousLengthRef = useRef(0);
+    const isInitializedRef = useRef(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
-        const maxLength = 12;
-        if (roundHistory?.length && previousLengthRef.current) {
-            const newItem = roundHistory[0];
+        if (finish) {
+            const maxLength = 10;
             setIsAnimating(true);
             setTimeout(() => {
-                setData((prevData) => {
-                    const newData = [...prevData, newItem as PlinkoRound];
-                    if (newData.length > maxLength) {
-                        return newData.slice(-maxLength);
-                    }
-                    return newData;
-                });
+                setData((prevData) => [...prevData, finish as PlinkoRound].slice(-maxLength));
                 setIsAnimating(false);
             }, 200);
         }
-        if (!previousLengthRef.current) {
+    }, [finish]);
+
+    useEffect(() => {
+        if (roundHistory?.length && !isInitializedRef.current) {
             setData(roundHistory.reverse() as PlinkoRound[]);
-            previousLengthRef.current = roundHistory.length;
+            isInitializedRef.current = true;
         }
     }, [roundHistory]);
 
-    if (!roundHistory.length) {
+    if (!data.length) {
         return null;
     }
 

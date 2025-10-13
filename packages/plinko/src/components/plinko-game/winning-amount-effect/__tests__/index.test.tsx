@@ -49,7 +49,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toBeNull();
+            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.textContent).toBe("");
         });
 
         it("should not render when finish is null", () => {
@@ -60,7 +61,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toBeNull();
+            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.textContent).toBe("");
         });
 
         it("should not render when finish.winAmount is 0", () => {
@@ -71,7 +73,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toBeNull();
+            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.textContent).toBe("");
         });
 
         it("should render when finish has positive winAmount", () => {
@@ -109,7 +112,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toBeNull();
+            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.textContent).toBe("");
         });
 
         it("should handle null winAmount gracefully", () => {
@@ -120,7 +124,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toBeNull();
+            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.textContent).toBe("");
         });
     });
 

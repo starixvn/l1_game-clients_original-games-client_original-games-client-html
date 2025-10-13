@@ -21,7 +21,7 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         <div className={`div-setting-row`}>
             <Label title={t("row")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
-                <div className="mx-2">
+                <div className={`mx-2 ${isDisabled ? "opacity-50" : ""}`}>
                     <span className="text-sm text-white">{numberOfRows}</span>
                 </div>
                 <input

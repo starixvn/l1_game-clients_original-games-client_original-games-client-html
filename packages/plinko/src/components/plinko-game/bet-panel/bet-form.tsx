@@ -31,10 +31,11 @@ const BetForm = ({
         }
         return { minBet: 0, maxBet: 0 };
     }, [gameMinBet, gameMaxBet, userStakeLevel]);
-    const { betAmount, setBetAmount } = usePlinkoGameStore(
+    const { betAmount, setBetAmount, numberOfDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             setBetAmount: state.actions.setBetAmount,
+            numberOfDroppingBall: state.numberOfDroppingBall,
         }))
     );
 
@@ -52,12 +53,12 @@ const BetForm = ({
     return (
         <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
-            <GameModeSelector isDisabled={isDisabled} />
-            <RowsSelector isDisabled={isDisabled} />
+            <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
+            <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
 
             {!isManualTab && (
                 <AutoBetGroup
-                    isDisabled={isDisabled}
+                    isDisabled={isDisabled || numberOfDroppingBall > 0}
                     isAutoBet={isAutoBet}
                     setIsAutoBet={setIsAutoBet}
                     handleBetAmountChange={handleBetAmountChange}

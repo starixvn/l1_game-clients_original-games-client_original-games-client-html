@@ -23,6 +23,7 @@ jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
         betAmount: 100,
         gameMode: "normal",
         numberOfRows: 16,
+        numberOfDroppingBall: 0,
     })),
 }));
 

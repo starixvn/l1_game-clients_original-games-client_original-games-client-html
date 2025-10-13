@@ -141,4 +141,15 @@ describe("RowsSelector", () => {
             expect(mockSetNumberOfRows).toHaveBeenCalledWith(16);
         });
     });
+
+    describe("Disabled", () => {
+        it("should disable input when isDisabled is true", () => {
+            // Arrange
+            const { container } = render(<RowsSelector {...defaultProps} isDisabled={true} />);
+
+            // Act & Assert
+            expect(container).toMatchSnapshot();
+            expect(screen.getByRole("slider")).toBeDisabled();
+        });
+    });
 });
