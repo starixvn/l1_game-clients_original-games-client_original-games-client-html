@@ -15,7 +15,7 @@ const Background = () => {
             <div className="absolute z-[-100] h-[862px] w-full overflow-hidden md:h-full">
                 <div
                     className="relative h-[862px] w-full bg-center"
-                    style={{ backgroundImage: `url('/static/images/background/polygon.webp?v=${buildVersion}')` }}
+                    style={{ backgroundImage: `url('${basePath}/static/images/background/polygon.webp?v=${buildVersion}')` }}
                 ></div>
             </div>
         </>

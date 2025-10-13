@@ -4,6 +4,7 @@ import { BallBody, PegBody } from "../type";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { buildVersion } from "@shared/constants";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const useBall = () => {
     const ballImageRef = useRef<HTMLImageElement | null>(null);
@@ -18,7 +19,7 @@ export const useBall = () => {
             console.error("Failed to load ball image");
             imageLoadedRef.current = false;
         };
-        image.src = `/static/images/plinko/ball.png?v=${buildVersion}`;
+        image.src = `${basePath}/static/images/plinko/ball.png?v=${buildVersion}`;
         ballImageRef.current = image;
     }, []);
 
