@@ -5,12 +5,12 @@
  */
 
 import { Engine, Runner, World, Events, Composite } from "matter-js";
-import { physicsConfig } from "../../../../../lib/physics";
+import { physicsConfig } from "@plinko/features/game/components/ball/physics/physics-config";
 import { createPhysicsBodies } from "./body-factory";
 import { processCollision, CollisionHandlerOptions } from "./collision-handler";
-import { logger } from "../../../../../services/logger";
-import { RENDERING_CONSTANTS } from "@plinko/lib/physics/constants/rendering-constants";
-import { CANVAS_CONSTANTS } from "@plinko/lib/physics/constants/canvas-constants";
+import { logger } from "@plinko/services/logger";
+import { RENDERING_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/rendering-constants";
+import { CANVAS_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/canvas-constants";
 
 export interface PhysicsEngineState {
     engine: Engine | null;

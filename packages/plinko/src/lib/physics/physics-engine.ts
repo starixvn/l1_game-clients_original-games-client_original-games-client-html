@@ -1,12 +1,12 @@
 import React from 'react';
 import { Bodies, Body, Composite, Engine } from 'matter-js';
-import { physicsConfig } from './physics-config';
+import { physicsConfig } from '@plinko/features/game/components/ball/physics/physics-config';
 import { calculateBallSize, getBallPhysicsTweaks } from './ball-calculations';
-import { getMiddleDropPosition } from './drop-positions';
-import { PHYSICS_CONSTANTS } from './constants/physics-constants';
-import { LAYOUT_CONSTANTS } from './constants/layout-constants';
-import { BALL_CONSTANTS } from './constants/ball-constants';
-import { RENDERING_CONSTANTS } from './constants/rendering-constants';
+import { getMiddleDropPosition } from '@plinko/features/game/components/ball/physics/drop-positions';
+import { PHYSICS_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/physics-constants';
+import { LAYOUT_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/layout-constants';
+import { BALL_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/ball-constants';
+import { RENDERING_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/rendering-constants';
 
 interface BallBodyExtension {
     world?: Engine['world'];

@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { ResourceTypes } from "@shared/resources";
 import { useTranslate } from "@tolgee/react";
-import usePlinkoGameStore from "@/shared/stores/plinko-game-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { PercentageControl, StopOnControl, NumberOfBetsControl } from "./form-components";
 import { generateComprehensiveTddTestCases } from "../../../utils/tdd-test-utils";
 import { logger } from "../../../services/logger";

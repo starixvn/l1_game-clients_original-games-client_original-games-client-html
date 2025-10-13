@@ -7,7 +7,7 @@
 import { Body, Engine, World } from 'matter-js';
 import { BallBodyExtension } from '../../../../../types/physics';
 import { logger } from '../../../../../services/logger';
-import { COLLISION_CONSTANTS } from '../../../../../lib/physics/constants/collision-constants';
+import { COLLISION_CONSTANTS } from '../../../../../features/game/components/ball/physics/constants/collision-constants';
 
 export interface CollisionHandlerOptions {
     onBallHit?: (multiplier: number, betValue: number) => void;

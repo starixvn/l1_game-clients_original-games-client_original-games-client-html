@@ -1,6 +1,6 @@
-import { ballSizingConfig } from './physics-config';
-import { PHYSICS_CONSTANTS } from './constants/physics-constants';
-import { BALL_CONSTANTS } from './constants/ball-constants';
+import { ballSizingConfig } from '@plinko/features/game/components/ball/physics/physics-config';
+import { PHYSICS_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/physics-constants';
+import { BALL_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/ball-constants';
 
 /**
  * Ball Calculations Module

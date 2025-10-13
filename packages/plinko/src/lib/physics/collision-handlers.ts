@@ -1,7 +1,7 @@
 import { Body, Engine } from 'matter-js';
 import { BallBodyExtension, CollisionHandlerOptions } from '../../types/physics';
-import { COLLISION_CONSTANTS } from './constants/collision-constants';
-import { ANIMATION_CONSTANTS } from './constants/animation-constants';
+import { COLLISION_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/collision-constants';
+import { ANIMATION_CONSTANTS } from '@plinko/features/game/components/ball/physics/constants/animation-constants';
 
 
 /**
