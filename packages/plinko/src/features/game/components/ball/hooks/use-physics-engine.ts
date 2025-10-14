@@ -77,14 +77,19 @@ export const usePhysicsEngine = ({
 
         // Only reinitialize if we don't have an engine or if essential parameters changed
         if (isInitialized && engine.current && !rowsChanged) {
-            logger.debug('🔧 [PHYSICS] Engine already initialized and rows unchanged, skipping reinitialization');
+            logger.logPhysicsEvent('engine-skip-reinit', {
+                reason: 'already-initialized',
+                rowsUnchanged: true,
+                hasEngine: !!engine.current
+            });
             return undefined;
         }
 
         if (rowsChanged && isInitialized) {
-            logger.info('🔄 [PHYSICS] Row count changed, reinitializing physics engine', {
+            logger.logPhysicsEvent('engine-row-change', {
                 oldRows: prevRowsRef.current,
-                newRows: numberOfRows
+                newRows: numberOfRows,
+                action: 'reinitializing'
             });
         }
 
@@ -95,11 +100,16 @@ export const usePhysicsEngine = ({
 
         // Initialize immediately without timeout for better responsiveness
         const initPhysics = () => {
+            logger.startWorkflow('physics-engine-init', 'physics', 'Initialize Matter.js physics engine');
+
             // Only log initialization in development mode to reduce noise
             if (process.env.NODE_ENV === 'development') {
-                logger.info('🔧 [PHYSICS] Initializing physics engine...', {
+                logger.logPhysicsEvent('engine-init-start', {
                     rows: numberOfRows,
-                    multipliers: multipliers.length
+                    multipliers: multipliers.length,
+                    gameMode,
+                    canvasWidth,
+                    canvasHeight
                 });
             }
 
@@ -134,13 +144,15 @@ export const usePhysicsEngine = ({
             setIsInitialized(true);
 
             if (process.env.NODE_ENV === 'development') {
-                logger.info('✅ [PHYSICS] Physics engine ready', {
+                logger.logPhysicsEvent('engine-init-complete', {
                     pins: newPins.length,
                     multipliers: multipliers.length,
                     walls: newWalls.length,
                     totalBodies: newPins.length + multipliers.length + newWalls.length
                 });
             }
+
+            logger.endWorkflow('physics-engine-init');
         };
 
         // Execute initialization immediately
@@ -155,7 +167,7 @@ export const usePhysicsEngine = ({
     useEffect(() => {
         if (scaler.current) {
             scaler.current.setRows(numberOfRows);
-            logger.debug('🔧 [PHYSICS] Row scaling updated', {
+            logger.logPhysicsEvent('scaler-row-update', {
                 rows: numberOfRows,
                 baseRows,
                 rowRatio: numberOfRows / baseRows
@@ -166,7 +178,11 @@ export const usePhysicsEngine = ({
     // Handle multiplier changes without reinitializing the entire engine
     useEffect(() => {
         if (engine.current && isInitialized && multipliers.length > 0) {
-            logger.debug('🔧 [PHYSICS] Updating multipliers without reinitializing engine');
+            logger.logPhysicsEvent('multiplier-update-skip', {
+                reason: 'handled-by-game-logic',
+                multiplierCount: multipliers.length,
+                engineInitialized: isInitialized
+            });
             // The engine is already initialized, we don't need to recreate it
             // The multipliers are handled by the game logic, not the physics engine
         }
@@ -174,9 +190,11 @@ export const usePhysicsEngine = ({
 
     // Force reinitialization with specific row count (for server sync)
     const forceReinitialize = useCallback((newRows: number) => {
-        logger.info('🔄 [PHYSICS] Force reinitializing physics engine with new row count', {
+        logger.startWorkflow('force-physics-reinit', 'physics', 'Force reinitialize physics engine');
+        logger.logPhysicsEvent('force-reinit-start', {
             oldRows: numberOfRows,
-            newRows
+            newRows,
+            reason: 'server-sync'
         });
 
         // Update the stored row count
@@ -218,13 +236,15 @@ export const usePhysicsEngine = ({
         setWalls(newWalls);
         setIsInitialized(true);
 
-        logger.info('✅ [PHYSICS] Force reinitialization complete', {
+        logger.logPhysicsEvent('force-reinit-complete', {
             newRows,
             pins: newPins.length,
             multipliers: multipliers.length,
             walls: newWalls.length,
             totalBodies: newPins.length + multipliers.length + newWalls.length
         });
+
+        logger.endWorkflow('force-physics-reinit');
     }, [numberOfRows, multipliers, gameMode, canvasWidth, canvasHeight, containerSize, scaler, updateGravity]);
 
     return {

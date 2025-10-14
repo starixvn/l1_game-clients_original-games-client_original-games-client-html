@@ -3,6 +3,7 @@ import { messageEventType } from "@shared/components/game-base/handlers/game-mes
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePFStore from "@shared/stores/pf-store/pf-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { logger } from "@plinko/services/logger";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     // Override to include winAmount and reachMaxWin support
@@ -19,14 +20,19 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
     constructor(props: BetHistoryHandlerProps) {
         super(props);
+        logger.startWorkflow('bet-history-handler-init', 'betting', 'Initialize PlinkoBetHistoryHandler');
         this.setupFinishedBallSubscription();
+        logger.endWorkflow('bet-history-handler-init');
     }
 
     private setupFinishedBallSubscription() {
         this.unsubscribeFinishedBall = usePlinkoGameStore.subscribe(
             (state) => state.finishedBall,
             (finishedBall, previousFinishedBall) => {
-                console.log("PlinkoBetHistoryHandler: finishedBall changed", finishedBall);
+                logger.logStateChange('finished-ball-subscription', previousFinishedBall, finishedBall, {
+                    category: 'betting',
+                    roundId: finishedBall?.roundId
+                });
                 if (finishedBall && finishedBall.roundId !== previousFinishedBall?.roundId) {
                     this.handleFinishedBallChange(finishedBall);
                 }
@@ -39,7 +45,14 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             return;
         }
 
-        console.log("PlinkoBetHistoryHandler: Processing finishedBall", finishedBall);
+        logger.logBetAction('finished-ball-processing', {
+            roundId: finishedBall.roundId,
+            multiplier: finishedBall.multiplier,
+            winAmount: finishedBall.winAmount
+        }, {
+            category: 'betting',
+            roundId: finishedBall.roundId
+        });
 
         this.flushBetLogIfAny(finishedBall.roundId);
     }
@@ -72,9 +85,18 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
     private handleEndBet(action: any) {
         if (action?.finish) {
+            logger.logSocketEvent('endBet', 'received', {
+                roundId: action.finish?.roundId,
+                winAmount: action.finish?.winAmount,
+                hasOwnBets: !!action.ownBets
+            }, {
+                category: 'socket',
+                roundId: action.finish?.roundId
+            });
+
             // Extract bet data from endBet message (Plinko doesn't send separate ownBets)
             this.addPlinkoBetToPending(action);
-            
+
             // Process the finish data
             this.handleFinish({ finish: action.finish });
 
@@ -86,7 +108,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     private addPlinkoBetToPending(action: any) {
         const betHistoryStore = useBetHistoryStore.getState();
         const pfStore = usePFStore.getState();
-     
+
         if (this.shouldUpdateRoundId(this.latestFinish.roundId, betHistoryStore.pendingBetRoundId)) {
             betHistoryStore.setPendingBetRoundId(this.latestFinish.roundId);
         }
@@ -171,11 +193,15 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     }
 
     public cleanup() {
+        logger.startWorkflow('bet-history-handler-cleanup', 'betting', 'Cleanup PlinkoBetHistoryHandler resources');
+
         if (this.unsubscribeFinishedBall) {
             this.unsubscribeFinishedBall();
             this.unsubscribeFinishedBall = null;
+            logger.logBetAction('finished-ball-unsubscribed', {}, { category: 'betting' });
         }
 
         super.cleanup();
+        logger.endWorkflow('bet-history-handler-cleanup');
     }
 }

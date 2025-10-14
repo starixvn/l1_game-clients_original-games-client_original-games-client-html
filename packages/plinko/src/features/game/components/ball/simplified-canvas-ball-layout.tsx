@@ -44,6 +44,7 @@ const CANVAS_HEIGHT = CANVAS_CONSTANTS.DIMENSIONS.DEFAULT_HEIGHT;
  */
 const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, BallLayoutProps>(
     ({ multipliers = [], probabilities = [], onBallHit, onBallLanded }, ref) => {
+        logger.startWorkflow('ball-layout-init', 'physics', 'Initialize SimplifiedCanvasBallLayout component');
         const { numberOfRows, betAmount, gameMode } = usePlinkoGameStore(
             useShallow((state) => ({
                 numberOfRows: state.numberOfRows,
@@ -51,6 +52,21 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                 gameMode: state.gameMode,
             }))
         );
+
+        logger.logPhysicsEvent('ball-layout-props', {
+            multipliersCount: multipliers.length,
+            probabilitiesCount: probabilities.length,
+            hasOnBallHit: !!onBallHit,
+            hasOnBallLanded: !!onBallLanded,
+            storeState: {
+                numberOfRows,
+                betAmount,
+                gameMode
+            }
+        }, {
+            category: 'physics',
+            workflow: 'ball-layout-init'
+        });
 
         // Use canvas hook for container and canvas management
         const { containerSize, canvasScale } = useCanvas({
@@ -97,10 +113,14 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
         // Memoized imperative handle to prevent unnecessary re-renders
         const imperativeHandle = useMemo(
             () => ({
-                spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number) => {
+                spawnBallWithPath: (betValue: number, path: number[], finalSlot: number, multiplier: number, serverRows?: number, roundId?: number) => {
+                    if (roundId) {
+                        logger.startWorkflow(`ball-spawn-${roundId}`, 'physics', `Spawn ball for round ${roundId}`);
+                    }
+
                     // Only log in development mode to reduce noise
                     if (process.env.NODE_ENV === "development") {
-                        logger.debug("🎯 [COMPONENT] spawnBallWithPath called", { betValue, finalSlot, multiplier, serverRows });
+                        logger.logPhysicsEvent('spawn-ball-path', { betValue, finalSlot, multiplier, serverRows, roundId });
                     }
                     if (isInitialized && engine.current) {
                         spawnBallWithPath(betValue, path, finalSlot, multiplier, serverRows);
@@ -116,21 +136,27 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                     }
                 },
                 isReady: () => isInitialized && !!engine.current,
-                spawnBallWithCalculation: (calculation: BallGameCalculation) => {
+                spawnBallWithCalculation: (calculation: BallGameCalculation, roundId?: number) => {
+                    if (roundId || calculation.id) {
+                        logger.startWorkflow(`spawn-ball-calculation-${roundId || calculation.id}`, 'physics', `Spawn ball with calculation for round ${roundId || calculation.id}`);
+                    }
+
                     if (!isInitialized || !engine) {
-                        logger.warn("⚠️ [COMPONENT] spawnBallWithCalculation called but not initialized", {
+                        logger.logError(new Error("spawnBallWithCalculation called but not initialized"), {
                             isInitialized,
                             hasEngine: !!engine,
+                            calculationId: calculation.id,
                         });
                         return;
                     }
 
-                    logger.info("🎯 [PRE-CALC] Spawning ball with pre-calculated data", {
+                    logger.logGameEvent('spawn-ball-pre-calc', {
                         calculationId: calculation.id,
                         betValue: calculation.serviceResult.betValue,
                         pathLength: calculation.serviceResult.path.length,
                         finalSlot: calculation.expectedFinalSlot,
                         winAmount: calculation.winAmount,
+                        roundId
                     });
 
                     try {
@@ -138,17 +164,25 @@ const SimplifiedCanvasBallLayout = forwardRef<SimplifiedCanvasBallLayoutRef, Bal
                         // The calculation contains all the physics data needed
                         spawnBallWithCalculation(calculation);
 
-                        logger.debug("✅ [PRE-CALC] Ball spawn initiated with calculation data", {
+                        logger.logPhysicsEvent('ball-spawn-success', {
                             calculationId: calculation.id,
                             trajectoryPoints: calculation.trajectory.positions.length,
                             collisionEvents: calculation.collisions.length,
                             predictionConfidence: calculation.predictionConfidence.toFixed(3),
                         });
+
+                        if (roundId || calculation.id) {
+                            logger.endWorkflow(`spawn-ball-calculation-${roundId || calculation.id}`);
+                        }
                     } catch (error) {
-                        logger.error("❌ [PRE-CALC] Error spawning ball with calculation", {
-                            error,
+                        logger.logError(error as Error, {
                             calculationId: calculation.id,
+                            context: 'spawnBallWithCalculation'
                         });
+
+                        if (roundId || calculation.id) {
+                            logger.endWorkflow(`spawn-ball-calculation-${roundId || calculation.id}`);
+                        }
                         throw error;
                     }
                 },

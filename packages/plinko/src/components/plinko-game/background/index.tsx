@@ -1,9 +1,17 @@
 import { memo } from "react";
 import Image from "next/image";
 import { buildVersion } from "@shared/constants";
+import { logger } from "@plinko/services/logger";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const Background = () => {
+    logger.logUIEvent('background-render', {
+        buildVersion,
+        basePath: basePath || 'default',
+        hasBackgroundImage: true,
+        hasPolygonOverlay: true
+    });
+
     return (
         <>
             <Image

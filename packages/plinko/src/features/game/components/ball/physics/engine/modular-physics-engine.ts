@@ -6,6 +6,7 @@
 
 import { Engine, Runner, World, Events, Body } from "matter-js";
 import { physicsLogger } from "../performance/physics-logger";
+import { logger } from "../../../../../services/logger";
 import { createPhysicsBodies, BodyCreationOptions } from "../body-factory";
 import { detectCirclePegCollision } from "../collisions/collision-detection";
 import { CollisionCooldownManager } from "../collisions/collision-cooldown";
@@ -37,6 +38,16 @@ const multiplierLabel = "multiplier-";
  * Initialize modular physics engine with new collision system
  */
 export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEngineState {
+    logger.startWorkflow('modular-physics-engine-init', 'physics', 'Initialize modular physics engine');
+
+    logger.logPhysicsEvent('engine-init-start', {
+        gravity: config.gravity,
+        enableSleeping: config.enableSleeping,
+        constraintIterations: config.constraintIterations,
+        positionIterations: config.positionIterations,
+        velocityIterations: config.velocityIterations
+    });
+
     physicsLogger.info("Initializing modular physics engine", {
         component: "ModularPhysicsEngine",
         function: "initializePhysicsEngine",
@@ -72,6 +83,15 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
         metadata: { worldId: engine.world.id },
     });
 
+    logger.logPhysicsEvent('engine-init-complete', {
+        worldId: engine.world.id,
+        engineId: engine.id,
+        hasRunner: !!state.runner,
+        hasCooldownManager: !!state.cooldownManager
+    });
+
+    logger.endWorkflow('modular-physics-engine-init');
+
     return state;
 }
 
@@ -83,6 +103,15 @@ export function setupCollisionDetection(
     cooldownManager: CollisionCooldownManager,
     onBallLanded?: (success: boolean) => void
 ): void {
+    logger.startWorkflow('collision-detection-setup', 'physics', 'Setup collision detection event handlers');
+
+    logger.logPhysicsEvent('collision-setup-start', {
+        worldId: engine.world.id,
+        engineId: engine.id,
+        hasCooldownManager: !!cooldownManager,
+        hasBallLandedCallback: !!onBallLanded
+    });
+
     physicsLogger.info("🔧 SETTING UP MODULAR COLLISION DETECTION", {
         component: "ModularPhysicsEngine",
         function: "setupCollisionDetection",
@@ -106,6 +135,14 @@ export function setupCollisionDetection(
         component: "ModularPhysicsEngine",
         function: "setupCollisionDetection",
     });
+
+    logger.logPhysicsEvent('collision-setup-complete', {
+        worldId: engine.world.id,
+        engineId: engine.id,
+        collisionHandlersAttached: true
+    });
+
+    logger.endWorkflow('collision-detection-setup');
 }
 
 /**
@@ -956,7 +993,7 @@ function calculatePreservedYVelocity(blendedY: number, ballExtension: BallBodyEx
     if (ballExtension.calculationData) {
         const terminalVelocity = Math.sqrt(
             (2 * ballExtension.calculationData.physicsFactors.ballMass * ballExtension.calculationData.physicsFactors.gravity) /
-                ballExtension.calculationData.physicsFactors.airResistanceCoefficient
+            ballExtension.calculationData.physicsFactors.airResistanceCoefficient
         );
         const preservedYVelocity = Math.min(Math.abs(blendedY), terminalVelocity * 1.0);
         return Math.max(preservedYVelocity, 1.5);

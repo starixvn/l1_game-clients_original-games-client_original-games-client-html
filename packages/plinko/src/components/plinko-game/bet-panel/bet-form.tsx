@@ -2,6 +2,7 @@ import { useEffect, useMemo, useCallback, memo } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { logger } from "@plinko/services/logger";
 import AutoBetGroup from "./auto-mode/auto-bet-group";
 import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
 
@@ -16,6 +17,8 @@ const BetForm = ({
     isAutoBet: boolean;
     setIsAutoBet: (isAutoBet: boolean) => void;
 }) => {
+    logger.startWorkflow('bet-form-init', 'betting', 'Initialize BetForm component');
+
     const { gameMinBet, gameMaxBet, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameMinBet: state.gameConfigs?.minBet ?? 0,
@@ -41,14 +44,38 @@ const BetForm = ({
 
     const handleBetAmountChange = useCallback(
         (amount: number) => {
+            logger.logBetAction('bet-amount-change', {
+                newAmount: amount,
+                minBet,
+                maxBet,
+                previousAmount: betAmount
+            });
             setBetAmount(amount, minBet, maxBet);
         },
-        [minBet, maxBet]
+        [minBet, maxBet, betAmount]
     );
 
     useEffect(() => {
+        logger.logBetAction('bet-amount-validation', {
+            betAmount,
+            minBet,
+            maxBet,
+            action: 'validate-and-set'
+        });
         setBetAmount(betAmount, minBet, maxBet);
-    }, [minBet, maxBet]);
+    }, [minBet, maxBet, betAmount]);
+
+    logger.logUIEvent('bet-form-render', {
+        isManualTab,
+        isDisabled,
+        isAutoBet,
+        hasDroppingBalls: numberOfDroppingBall > 0,
+        betAmount,
+        minBet,
+        maxBet
+    });
+
+    logger.endWorkflow('bet-form-init');
 
     return (
         <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
