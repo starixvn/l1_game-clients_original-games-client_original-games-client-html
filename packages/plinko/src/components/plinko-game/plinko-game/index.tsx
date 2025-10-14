@@ -5,13 +5,39 @@ import { PLINKO_CANVAS_SCALE } from "./constant";
 import Slots from "./slots";
 import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 const Game = () => {
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
-    const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
+
+    // Calculate container scaling for entire game component
+    const calculateContainerScale = useCallback(() => {
+        if (typeof window === 'undefined') return 1;
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Assume base game dimensions (these should match the design)
+        const baseGameWidth = 1050; // canvas width
+        const baseGameHeight = 600; // canvas height plus some padding
+
+        // Calculate scale to fit viewport while maintaining aspect ratio
+        const scaleX = viewportWidth / baseGameWidth;
+        const scaleY = viewportHeight / baseGameHeight;
+
+        // Use the smaller scale to ensure the game fits completely
+        const containerScale = Math.min(scaleX, scaleY);
+
+        // Apply bounds to prevent extreme scaling
+        const minScale = 0.3;
+        const maxScale = 1.0;
+
+        return Math.max(minScale, Math.min(maxScale, containerScale));
+    }, []);
+
+    const [containerScale, setContainerScale] = useState(1);
 
     // Refs for detailed dimension logging
     const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -343,8 +369,251 @@ const Game = () => {
         });
     };
 
-    // Log overall layout analysis
+    // Log background and parent container analysis
+    const logBackgroundAndParentAnalysis = (mainContainer: HTMLElement, mainRect: DOMRect) => {
+        // Find parent containers that might contain background
+        const findParentContainers = (element: Element, maxLevels = 5) => {
+            const containers = [];
+            let current = element.parentElement;
+            let level = 0;
+
+            while (current && level < maxLevels) {
+                const rect = current.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(current);
+
+                // Check if this element has background-related properties
+                const hasBackground = computedStyle.backgroundImage !== 'none' ||
+                    computedStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+                    computedStyle.backgroundColor !== 'transparent';
+
+                containers.push({
+                    level,
+                    tagName: current.tagName,
+                    id: current.id,
+                    className: current.className,
+                    dimensions: {
+                        width: rect.width,
+                        height: rect.height,
+                        top: rect.top,
+                        left: rect.left,
+                        right: rect.right,
+                        bottom: rect.bottom,
+                    },
+                    computedStyle: {
+                        position: computedStyle.position,
+                        width: computedStyle.width,
+                        height: computedStyle.height,
+                        overflow: computedStyle.overflow,
+                        overflowX: computedStyle.overflowX,
+                        overflowY: computedStyle.overflowY,
+                        backgroundImage: computedStyle.backgroundImage,
+                        backgroundSize: computedStyle.backgroundSize,
+                        backgroundPosition: computedStyle.backgroundPosition,
+                        backgroundRepeat: computedStyle.backgroundRepeat,
+                        transform: computedStyle.transform,
+                        display: computedStyle.display,
+                        margin: computedStyle.margin,
+                        padding: computedStyle.padding,
+                    },
+                    hasBackground,
+                    isClipping: {
+                        left: rect.left < 0,
+                        right: rect.right > window.innerWidth,
+                        top: rect.top < 0,
+                        bottom: rect.bottom > window.innerHeight,
+                    },
+                    relationshipToGame: {
+                        containsGame: current.contains(mainContainer),
+                        offsetLeft: rect.left - mainRect.left,
+                        offsetTop: rect.top - mainRect.top,
+                        overlapWidth: Math.max(0, Math.min(rect.right, mainRect.right) - Math.max(rect.left, mainRect.left)),
+                        overlapHeight: Math.max(0, Math.min(rect.bottom, mainRect.bottom) - Math.max(rect.top, mainRect.top)),
+                    }
+                });
+
+                current = current.parentElement;
+                level++;
+            }
+
+            return containers;
+        };
+
+        // Find background images specifically
+        const findBackgroundImages = () => {
+            const images = document.querySelectorAll('img[alt*="Background"], [style*="background-image"]');
+            return Array.from(images).map(img => {
+                const rect = img.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(img);
+                return {
+                    tagName: img.tagName,
+                    alt: img.getAttribute('alt'),
+                    src: img.getAttribute('src'),
+                    dimensions: {
+                        width: rect.width,
+                        height: rect.height,
+                        top: rect.top,
+                        left: rect.left,
+                        right: rect.right,
+                        bottom: rect.bottom,
+                    },
+                    computedStyle: {
+                        position: computedStyle.position,
+                        width: computedStyle.width,
+                        height: computedStyle.height,
+                        objectFit: computedStyle.objectFit,
+                        objectPosition: computedStyle.objectPosition,
+                        transform: computedStyle.transform,
+                        zIndex: computedStyle.zIndex,
+                    },
+                    relationshipToGame: {
+                        containsGame: img.contains(mainContainer),
+                        offsetLeft: rect.left - mainRect.left,
+                        offsetTop: rect.top - mainRect.top,
+                        overlapWidth: Math.max(0, Math.min(rect.right, mainRect.right) - Math.max(rect.left, mainRect.left)),
+                        overlapHeight: Math.max(0, Math.min(rect.bottom, mainRect.bottom) - Math.max(rect.top, mainRect.top)),
+                    },
+                    isClipping: {
+                        left: rect.left < 0,
+                        right: rect.right > window.innerWidth,
+                        top: rect.top < 0,
+                        bottom: rect.bottom > window.innerHeight,
+                    }
+                };
+            });
+        };
+
+        const parentContainers = findParentContainers(mainContainer);
+        const backgroundImages = findBackgroundImages();
+
+        logger.logUIEvent('background-parent-analysis', {
+            gameContainer: {
+                dimensions: {
+                    width: mainRect.width,
+                    height: mainRect.height,
+                    top: mainRect.top,
+                    left: mainRect.left,
+                    right: mainRect.right,
+                    bottom: mainRect.bottom,
+                },
+                centerX: mainRect.left + mainRect.width / 2,
+                centerY: mainRect.top + mainRect.height / 2,
+            },
+            parentContainers,
+            backgroundImages,
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                centerX: window.innerWidth / 2,
+                centerY: window.innerHeight / 2,
+                aspectRatio: window.innerWidth / window.innerHeight,
+            },
+            scalingAnalysis: {
+                gameToViewportWidthRatio: mainRect.width / window.innerWidth,
+                gameToViewportHeightRatio: mainRect.height / window.innerHeight,
+                gameCenterOffsetX: (mainRect.left + mainRect.width / 2) - (window.innerWidth / 2),
+                gameCenterOffsetY: (mainRect.top + mainRect.height / 2) - (window.innerHeight / 2),
+                backgroundImageCount: backgroundImages.length,
+                containersWithBackground: parentContainers.filter(c => c.hasBackground).length,
+            },
+            clippingAnalysis: {
+                gameContainerClipped: mainRect.left < 0 || mainRect.right > window.innerWidth || mainRect.top < 0 || mainRect.bottom > window.innerHeight,
+                backgroundImagesClipped: backgroundImages.filter(img => img.isClipping.left || img.isClipping.right || img.isClipping.top || img.isClipping.bottom),
+                parentContainersClipped: parentContainers.filter(c => c.isClipping.left || c.isClipping.right || c.isClipping.top || c.isClipping.bottom),
+            }
+        });
+    };
+
+    // Log overall layout analysis with enhanced scaling approach consideration
     const logLayoutAnalysis = (mainContainer: HTMLElement, canvasContainer: HTMLElement | null, slotsContainer: HTMLElement | null, mainRect: DOMRect, numberOfRows: number) => {
+        // Calculate optimal container scaling approach
+        const calculateContainerScaling = () => {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const gameWidth = mainRect.width;
+            const gameHeight = mainRect.height;
+
+            // Current canvas scaling
+            const currentCanvasScale = PLINKO_CANVAS_SCALE[numberOfRows];
+            const canvasExpectedWidth = 1050 * currentCanvasScale;
+            const canvasExpectedHeight = 600 * currentCanvasScale;
+
+            // Container scaling alternatives
+            const scaleByWidth = viewportWidth / gameWidth;
+            const scaleByHeight = viewportHeight / gameHeight;
+            const scaleByMinDimension = Math.min(scaleByWidth, scaleByHeight);
+            const scaleByMaxDimension = Math.max(scaleByWidth, scaleByHeight);
+
+            // Background consideration - assume background is designed for certain aspect ratio
+            const assumedGameAspectRatio = 1050 / 600; // canvas aspect ratio
+            const viewportAspectRatio = viewportWidth / viewportHeight;
+
+            return {
+                currentApproach: {
+                    canvasScale: currentCanvasScale,
+                    canvasExpectedDimensions: {
+                        width: canvasExpectedWidth,
+                        height: canvasExpectedHeight,
+                    },
+                    canvasActualDimensions: canvasContainer ? canvasContainer.getBoundingClientRect() : null,
+                },
+                containerScalingAlternatives: {
+                    scaleByWidth: {
+                        scale: scaleByWidth,
+                        scaledGameWidth: gameWidth * scaleByWidth,
+                        scaledGameHeight: gameHeight * scaleByWidth,
+                        keepsAspectRatio: true,
+                        fitsWidth: true,
+                        fitsHeight: gameHeight * scaleByWidth <= viewportHeight,
+                    },
+                    scaleByHeight: {
+                        scale: scaleByHeight,
+                        scaledGameWidth: gameWidth * scaleByHeight,
+                        scaledGameHeight: gameHeight * scaleByHeight,
+                        keepsAspectRatio: true,
+                        fitsWidth: gameWidth * scaleByHeight <= viewportWidth,
+                        fitsHeight: true,
+                    },
+                    scaleByMinDimension: {
+                        scale: scaleByMinDimension,
+                        scaledGameWidth: gameWidth * scaleByMinDimension,
+                        scaledGameHeight: gameHeight * scaleByMinDimension,
+                        keepsAspectRatio: true,
+                        fitsWidth: gameWidth * scaleByMinDimension <= viewportWidth,
+                        fitsHeight: gameHeight * scaleByMinDimension <= viewportHeight,
+                    },
+                    scaleByMaxDimension: {
+                        scale: scaleByMaxDimension,
+                        scaledGameWidth: gameWidth * scaleByMaxDimension,
+                        scaledGameHeight: gameHeight * scaleByMaxDimension,
+                        keepsAspectRatio: true,
+                        fitsWidth: gameWidth * scaleByMaxDimension <= viewportWidth,
+                        fitsHeight: gameHeight * scaleByMaxDimension <= viewportHeight,
+                    },
+                    fitToViewport: {
+                        scale: Math.min(viewportWidth / gameWidth, viewportHeight / gameHeight),
+                        scaledGameWidth: gameWidth * Math.min(viewportWidth / gameWidth, viewportHeight / gameHeight),
+                        scaledGameHeight: gameHeight * Math.min(viewportWidth / gameWidth, viewportHeight / gameHeight),
+                        keepsAspectRatio: true,
+                        fitsViewport: true,
+                    },
+                },
+                aspectRatioAnalysis: {
+                    assumedGameAspectRatio,
+                    viewportAspectRatio,
+                    aspectRatioDifference: Math.abs(assumedGameAspectRatio - viewportAspectRatio),
+                    viewportWiderThanGame: viewportAspectRatio > assumedGameAspectRatio,
+                },
+                recommendedApproach: {
+                    containerScale: Math.min(viewportWidth / gameWidth, viewportHeight / gameHeight),
+                    reason: 'Scale entire container to fit viewport while maintaining aspect ratio',
+                    preservesBackground: true,
+                    preventsClipping: true,
+                }
+            };
+        };
+
+        const scalingAnalysis = calculateContainerScaling();
+
         logger.logUIEvent('game-layout-analysis', {
             containers: {
                 mainFound: !!mainContainer,
@@ -356,6 +625,7 @@ const Game = () => {
                 numberOfRows,
                 scaleInRange: PLINKO_CANVAS_SCALE[numberOfRows] >= 0.5 && PLINKO_CANVAS_SCALE[numberOfRows] <= 2.0,
             },
+            scalingAnalysis,
             potentialIssues: {
                 mainContainerOverflow: mainRect.width > window.innerWidth || mainRect.height > window.innerHeight,
                 canvasNotScaled: canvasContainer ? Math.abs(canvasContainer.getBoundingClientRect().width - (1050 * PLINKO_CANVAS_SCALE[numberOfRows])) > 10 : false,
@@ -365,6 +635,7 @@ const Game = () => {
                 canvasClipped: canvasContainer ? (canvasContainer.getBoundingClientRect().left < 0 || canvasContainer.getBoundingClientRect().right > window.innerWidth) : false,
                 slotsClipped: slotsContainer ? (slotsContainer.getBoundingClientRect().left < 0 || slotsContainer.getBoundingClientRect().right > window.innerWidth) : false,
                 mainClipped: mainRect.left < 0 || mainRect.right > window.innerWidth,
+                backgroundScalingMismatch: 'Background images may not scale with canvas-only approach',
             },
             clipping: {
                 main: {
@@ -372,18 +643,24 @@ const Game = () => {
                     right: mainRect.right > window.innerWidth,
                     top: mainRect.top < 0,
                     bottom: mainRect.bottom > window.innerHeight,
+                    totalClippedWidth: Math.max(0, -mainRect.left) + Math.max(0, mainRect.right - window.innerWidth),
+                    totalClippedHeight: Math.max(0, -mainRect.top) + Math.max(0, mainRect.bottom - window.innerHeight),
                 },
                 canvas: canvasContainer ? {
                     left: canvasContainer.getBoundingClientRect().left < 0,
                     right: canvasContainer.getBoundingClientRect().right > window.innerWidth,
                     top: canvasContainer.getBoundingClientRect().top < 0,
                     bottom: canvasContainer.getBoundingClientRect().bottom > window.innerHeight,
+                    totalClippedWidth: Math.max(0, -canvasContainer.getBoundingClientRect().left) + Math.max(0, canvasContainer.getBoundingClientRect().right - window.innerWidth),
+                    totalClippedHeight: Math.max(0, -canvasContainer.getBoundingClientRect().top) + Math.max(0, canvasContainer.getBoundingClientRect().bottom - window.innerHeight),
                 } : null,
                 slots: slotsContainer ? {
                     left: slotsContainer.getBoundingClientRect().left < 0,
                     right: slotsContainer.getBoundingClientRect().right > window.innerWidth,
                     top: slotsContainer.getBoundingClientRect().top < 0,
                     bottom: slotsContainer.getBoundingClientRect().bottom > window.innerHeight,
+                    totalClippedWidth: Math.max(0, -slotsContainer.getBoundingClientRect().left) + Math.max(0, slotsContainer.getBoundingClientRect().right - window.innerWidth),
+                    totalClippedHeight: Math.max(0, -slotsContainer.getBoundingClientRect().top) + Math.max(0, slotsContainer.getBoundingClientRect().bottom - window.innerHeight),
                 } : null,
             },
             viewport: {
@@ -393,6 +670,8 @@ const Game = () => {
                 aspectRatio: window.innerWidth / window.innerHeight,
                 scrollX: window.scrollX,
                 scrollY: window.scrollY,
+                centerX: window.innerWidth / 2,
+                centerY: window.innerHeight / 2,
             },
             responsive: {
                 isMobile: window.innerWidth < 768,
@@ -400,8 +679,25 @@ const Game = () => {
                 isDesktop: window.innerWidth >= 1024,
                 contentWidthRatio: mainRect.width / window.innerWidth,
                 contentHeightRatio: mainRect.height / window.innerHeight,
+                gameCenterOffsetX: (mainRect.left + mainRect.width / 2) - (window.innerWidth / 2),
+                gameCenterOffsetY: (mainRect.top + mainRect.height / 2) - (window.innerHeight / 2),
+            },
+            proposedSolution: {
+                approach: 'Scale entire game container instead of just canvas',
+                containerScale: scalingAnalysis.recommendedApproach.containerScale,
+                transform: `scale(${scalingAnalysis.recommendedApproach.containerScale})`,
+                positioning: 'Center container in viewport after scaling',
+                benefits: [
+                    'Preserves background scaling',
+                    'Maintains aspect ratio',
+                    'Prevents clipping',
+                    'Responsive across all screen sizes'
+                ]
             }
         });
+
+        // Log background and parent analysis
+        logBackgroundAndParentAnalysis(mainContainer, mainRect);
     };
 
     // Comprehensive logging function for all container relationships
@@ -425,7 +721,7 @@ const Game = () => {
         logMainContainer(mainContainer, mainRect, mainComputedStyle);
 
         if (canvasContainer) {
-            logCanvasContainer(canvasContainer, mainRect, scaleValue, numberOfRows);
+            logCanvasContainer(canvasContainer, mainRect, PLINKO_CANVAS_SCALE[numberOfRows], numberOfRows);
         }
 
         if (slotsContainer) {
@@ -438,9 +734,9 @@ const Game = () => {
 
         logLayoutAnalysis(mainContainer, canvasContainer, slotsContainer, mainRect, numberOfRows);
 
-    }, [numberOfRows, scaleValue]);
+    }, [numberOfRows]);
 
-    // Log canvas scaling information for debugging mobile issues
+    // Initialize container scaling and log canvas scaling information for debugging mobile issues
     useEffect(() => {
         logger.logGameEvent('plinko-canvas-component-created', {
             component: 'PlinkoCanvasGame',
@@ -450,14 +746,18 @@ const Game = () => {
             workflow: 'plinko-canvas-game-init'
         });
 
-        const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
+        // Calculate and set initial container scale
+        const initialScale = calculateContainerScale();
+        setContainerScale(initialScale);
+
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isIPhone = /iPhone/.test(navigator.userAgent);
 
         logger.logUIEvent('canvas-scaling-calculation', {
             numberOfRows,
-            scaleValue,
+            canvasScaleValue: PLINKO_CANVAS_SCALE[numberOfRows],
+            containerScale: initialScale,
             scaleAvailable: !!PLINKO_CANVAS_SCALE[numberOfRows],
             deviceInfo: {
                 isMobile,
@@ -477,7 +777,7 @@ const Game = () => {
                 transform: {
                     translateX: '-50%',
                     translateY: `${numberOfRows + numberOfRows / 8}px`,
-                    scale: scaleValue,
+                    scale: PLINKO_CANVAS_SCALE[numberOfRows],
                 },
                 positioning: {
                     origin: 'top',
@@ -491,8 +791,10 @@ const Game = () => {
                 origin: 'top',
             },
             potentialIssues: {
-                scaleTooSmall: scaleValue < 0.5,
-                scaleTooLarge: scaleValue > 2.0,
+                canvasScaleTooSmall: PLINKO_CANVAS_SCALE[numberOfRows] < 0.5,
+                canvasScaleTooLarge: PLINKO_CANVAS_SCALE[numberOfRows] > 2.0,
+                containerScaleTooSmall: initialScale < 0.3,
+                containerScaleTooLarge: initialScale > 1.0,
                 viewportTooSmall: window.innerWidth < 320,
                 highPixelRatio: window.devicePixelRatio > 2,
                 iPhoneSpecific: isIPhone,
@@ -553,12 +855,18 @@ const Game = () => {
                         } : null,
                     },
                     scaling: {
-                        expectedScale: scaleValue,
+                        expectedCanvasScale: PLINKO_CANVAS_SCALE[numberOfRows],
+                        expectedContainerScale: initialScale,
                         actualScale: rect.width / 1050, // Assuming canvas width is 1050
-                        scaleRatio: (rect.width / 1050) / scaleValue,
-                        expectedDimensions: {
-                            width: 1050 * scaleValue,
-                            height: 600 * scaleValue,
+                        canvasScaleRatio: (rect.width / 1050) / PLINKO_CANVAS_SCALE[numberOfRows],
+                        containerScaleRatio: rect.width / (1050 * initialScale),
+                        expectedCanvasDimensions: {
+                            width: 1050 * PLINKO_CANVAS_SCALE[numberOfRows],
+                            height: 600 * PLINKO_CANVAS_SCALE[numberOfRows],
+                        },
+                        expectedContainerDimensions: {
+                            width: 1050 * initialScale,
+                            height: 600 * initialScale,
                         },
                         actualDimensions: {
                             width: rect.width,
@@ -619,10 +927,15 @@ const Game = () => {
 
         // Monitor window resize events with comprehensive logging
         const handleResize = () => {
+            // Recalculate container scale on resize
+            const newContainerScale = calculateContainerScale();
+            setContainerScale(newContainerScale);
+
             // Log resize event with detailed analysis
             logger.logUIEvent('canvas-resize-event', {
                 numberOfRows,
-                newScale: PLINKO_CANVAS_SCALE[numberOfRows],
+                newCanvasScale: PLINKO_CANVAS_SCALE[numberOfRows],
+                newContainerScale,
                 viewport: {
                     width: window.innerWidth,
                     height: window.innerHeight,
@@ -638,10 +951,14 @@ const Game = () => {
                     orientation: window.innerWidth > window.innerHeight ? 'landscape' : 'portrait',
                 },
                 scaling: {
-                    scaleValue: PLINKO_CANVAS_SCALE[numberOfRows],
-                    scaleInRange: PLINKO_CANVAS_SCALE[numberOfRows] >= 0.5 && PLINKO_CANVAS_SCALE[numberOfRows] <= 2.0,
+                    canvasScaleValue: PLINKO_CANVAS_SCALE[numberOfRows],
+                    containerScale: newContainerScale,
+                    canvasScaleInRange: PLINKO_CANVAS_SCALE[numberOfRows] >= 0.5 && PLINKO_CANVAS_SCALE[numberOfRows] <= 2.0,
+                    containerScaleInRange: newContainerScale >= 0.3 && newContainerScale <= 1.0,
                     expectedCanvasWidth: 1050 * PLINKO_CANVAS_SCALE[numberOfRows],
                     expectedCanvasHeight: 600 * PLINKO_CANVAS_SCALE[numberOfRows],
+                    expectedContainerWidth: 1050 * newContainerScale,
+                    expectedContainerHeight: 600 * newContainerScale,
                 },
                 potentialIssues: {
                     viewportTooSmall: window.innerWidth < 320,
@@ -685,10 +1002,17 @@ const Game = () => {
             }
             logger.endWorkflow('plinko-canvas-game-init');
         };
-    }, [numberOfRows, logContainerRelationships]);
+    }, [numberOfRows, logContainerRelationships, calculateContainerScale]);
 
     return (
-        <div ref={mainContainerRef} className="flex flex-col items-center justify-center relative">
+        <div
+            ref={mainContainerRef}
+            className="flex flex-col items-center justify-center relative w-full h-full"
+            style={{
+                transform: `scale(${containerScale})`,
+                transformOrigin: 'center top',
+            }}
+        >
             {/* Logger Controls - positioned above canvas for debugging */}
             {process.env.NODE_ENV === 'development' && (
                 <div
@@ -698,6 +1022,8 @@ const Game = () => {
                         left: "10px",
                         right: "10px",
                         zIndex: 10000,
+                        transform: `scale(${1 / containerScale})`, // Counter-scale logger controls to keep them readable
+                        transformOrigin: 'top left',
                     }}
                 >
                     <LoggerControls className="w-full" />
@@ -709,7 +1035,8 @@ const Game = () => {
                     ref={canvasContainerRef}
                     className="absolute origin-top left-1/2 z-[-1]"
                     style={{
-                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${scaleValue})`,
+                        // Remove individual canvas scaling, let container scaling handle it
+                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px)`,
                     }}
                 >
                     <PlinkoCanvas />
