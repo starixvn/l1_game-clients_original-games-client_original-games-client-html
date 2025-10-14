@@ -5,13 +5,16 @@ import { PLINKO_CANVAS_SCALE } from "./constant";
 import Slots from "./slots";
 import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 
 const Game = () => {
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
+
+    // Store viewport width in state, only update on resize to prevent scale changes on clicks
+    const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
 
     // Refs for detailed dimension logging
     const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -619,6 +622,9 @@ const Game = () => {
 
         // Monitor window resize events with comprehensive logging
         const handleResize = () => {
+            // Update viewport width state to trigger scale recalculation only on resize
+            setViewportWidth(window.innerWidth);
+
             // Log resize event with detailed analysis
             logger.logUIEvent('canvas-resize-event', {
                 numberOfRows,
@@ -685,10 +691,34 @@ const Game = () => {
             }
             logger.endWorkflow('plinko-canvas-game-init');
         };
-    }, [numberOfRows, logContainerRelationships]);
+    }, [numberOfRows, viewportWidth, logContainerRelationships]);
+
+    // Memoize the scale calculation to prevent recalculation on every render/click
+    const finalScale = useMemo(() => {
+        // Calculate the exact scale needed to make pegs align with screen edges
+        const pegRadius = 8.5;
+        const mapGap = 3.4;
+        const gap = pegRadius * 2 * mapGap; // 57.8
+        const initialColumns = 3;
+        const columnsInRow = initialColumns + (numberOfRows - 1); // 12 for 10 rows
+        const space = (1050 - gap * columnsInRow) / 2; // 178.2
+        const leftmostPegX = space + 1 * gap - pegRadius * mapGap; // 207.1
+        const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
+        const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
+
+        // Calculate final scale: (viewport width / peg span) to make pegs fill screen
+        return viewportWidth / pegsSpan;
+    }, [viewportWidth, numberOfRows]); // Only recalculate when viewport or rows change
 
     return (
-        <div ref={mainContainerRef} className="flex flex-col items-center justify-center relative">
+        <div
+            ref={mainContainerRef}
+            className="flex flex-col items-center justify-center relative"
+            style={{
+                transform: `scale(${Math.min(1, finalScale)})`,
+                transformOrigin: 'top center'
+            }}
+        >
             {/* Logger Controls - positioned above canvas for debugging */}
             {process.env.NODE_ENV === 'development' && (
                 <div
