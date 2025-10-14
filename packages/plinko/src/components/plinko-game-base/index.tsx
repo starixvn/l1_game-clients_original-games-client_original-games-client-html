@@ -33,7 +33,7 @@ const PFSettingModal = dynamic(() => import("@shared/components/game-components/
 const LiveStatsIcon = dynamic(() => import("@shared/components/game-components/menu/icons/live-stats"), { ssr: false });
 const LiveStats = dynamic(() => import("@plinko/components/plinko-game/live-stats"), { ssr: false });
 const BetHistoryControl = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-control"), { ssr: false });
-const BetHistoryTable = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-table"), { ssr: false });
+const PlinkoBetHistoryTable = dynamic(() => import("../plinko-game/history/plinko-bet-history-table"), { ssr: false });
 const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-game/player-result-board/player-result-board-table"), {
     ssr: false,
 });
@@ -153,7 +153,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             <BetHistoryControl
                 tabContent={[
                     <PlayerResultBoardTable key="player-result-board" />,
-                    <BetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />,
+                    <PlinkoBetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />,
                 ]}
             />
         );

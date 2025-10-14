@@ -13,6 +13,14 @@ import { cn } from "@shared/utils/merge-tailwind-util";
 import BouncingDotsLoader from "./bouncing-dots-loader";
 import { createBetDetailData } from "./bet-detail-factory";
 
+// Types for customizable functions (like BetDetailBase pattern)
+export interface BetHistoryTableProps {
+    gameId?: string;
+    getDisplayedBetLogs?: (handler: BetHistoryHandler | null, betLogs: any[], isExpanded: boolean) => any[];
+    getHeaderColumns?: (translateCommon: any) => any[];
+    renderToggleButton?: (totalPages: number, isExpanded: boolean, isLoading: boolean, handleToggle: () => void, styles: any, t: any, handler?: BetHistoryHandler) => React.ReactNode;
+}
+
 // Function to create row data for bet history table
 const createBetHistoryRowData = (
     row: BetHistoryDisplayData,
@@ -88,7 +96,24 @@ const renderBetHistoryHeader = (headerColumns: any[]) => {
     );
 };
 
-export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
+// Default implementations
+const defaultGetDisplayedBetLogs = (handler: BetHistoryHandler | null, betLogs: any[], isExpanded: boolean) => {
+    return isExpanded ? betLogs : betLogs.slice(0, 10);
+};
+
+const defaultGetHeaderColumns = (translateCommon: any) => [
+    { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
+    { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
+    { key: "total_stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
+    { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
+];
+
+export const BetHistoryTable = ({
+    gameId,
+    getDisplayedBetLogs: customGetDisplayedBetLogs,
+    getHeaderColumns: customGetHeaderColumns,
+    renderToggleButton: customRenderToggleButton
+}: BetHistoryTableProps) => {
     const { gameMessageHandler } = useGameContext();
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
@@ -138,8 +163,9 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
         }
     };
 
-    // Get displayed data from store
-    const displayedBetLogs = isExpanded ? betLogs : betLogs.slice(0, 10);
+    // Get displayed data using custom function or default
+    const getDisplayedBetLogs = customGetDisplayedBetLogs || defaultGetDisplayedBetLogs;
+    const displayedBetLogs = getDisplayedBetLogs(betHistoryHandler, betLogs, isExpanded);
     const tableData = transformBetLogsToDisplayData(displayedBetLogs);
 
     // Calculate dynamic max height based on CSS breakpoints and row count
@@ -182,12 +208,8 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
     };
 
     // Define header columns configuration
-    const headerColumns = [
-        { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
-        { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
-        { key: "total_stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
-        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
-    ];
+    const getHeaderColumns = customGetHeaderColumns || defaultGetHeaderColumns;
+    const headerColumns = getHeaderColumns(translateCommon);
 
     return (
         <>
@@ -219,7 +241,9 @@ export const BetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
                 </Table>
             </div>
 
-            {renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
+            {customRenderToggleButton
+                ? customRenderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon, betHistoryHandler || undefined)
+                : renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
         </>
     );
 };
