@@ -11,7 +11,28 @@ const Game = () => {
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
-    const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
+
+    // Responsive scale calculation
+    const calculateResponsiveScale = useCallback((rows: number, viewportWidth: number) => {
+        const baseScale = PLINKO_CANVAS_SCALE[rows] || 1;
+        const maxWidth = viewportWidth - 40; // Account for padding/margins
+
+        // Ensure canvas fits within viewport
+        const responsiveScale = Math.min(baseScale, maxWidth / 1050);
+
+        // Apply device-specific adjustments
+        if (viewportWidth < 640) {
+            // Mobile
+            return Math.max(0.5, responsiveScale * 0.8);
+        } else if (viewportWidth < 1024) {
+            // Tablet
+            return Math.max(0.6, responsiveScale * 0.9);
+        }
+
+        return responsiveScale;
+    }, []);
+
+    const scaleValue = calculateResponsiveScale(numberOfRows, window.innerWidth);
 
     // Refs for detailed dimension logging
     const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -685,7 +706,7 @@ const Game = () => {
             }
             logger.endWorkflow('plinko-canvas-game-init');
         };
-    }, [numberOfRows, logContainerRelationships]);
+    }, [numberOfRows, logContainerRelationships, calculateResponsiveScale]);
 
     return (
         <div ref={mainContainerRef} className="flex flex-col items-center justify-center relative">
@@ -704,7 +725,7 @@ const Game = () => {
                 </div>
             )}
 
-            <div className="rounded-lg mx-auto w-full h-[600px] overflow-x-hidden pt-5">
+            <div className="rounded-lg mx-auto w-full max-w-[1050px] h-[600px] overflow-x-visible pt-5">
                 <div
                     ref={canvasContainerRef}
                     className="absolute origin-top left-1/2 z-[-1]"

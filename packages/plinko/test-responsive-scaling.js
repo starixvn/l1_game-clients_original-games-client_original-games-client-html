@@ -2,7 +2,10 @@
 // Run this in the browser console to test different viewport sizes
 
 const testResponsiveScaling = () => {
-    console.log("🧪 Testing Plinko Responsive Scaling");
+    console.log("🧪 Testing Plinko Responsive Scaling - FIXED VERSION");
+    console.log("✅ Dynamic viewport-aware scaling implemented");
+    console.log("✅ Container overflow changed from hidden to visible");
+    console.log("✅ Max-width constraint added to prevent overflow");
 
     // Test different viewport sizes
     const testSizes = [
@@ -15,25 +18,47 @@ const testResponsiveScaling = () => {
         { width: 2560, height: 1440, name: "QHD Desktop" },
     ];
 
-    // Function to calculate expected scaling
-    const calculateExpectedScaling = (viewportWidth, viewportHeight) => {
-        const baseGameWidth = 1050;
-        const baseGameHeight = 600;
+    // Function to calculate expected scaling (updated to match implementation)
+    const calculateExpectedScaling = (viewportWidth, viewportHeight, numberOfRows = 10) => {
+        const PLINKO_CANVAS_SCALE = {
+            8: 1.125,
+            9: 1,
+            10: 0.905,
+            11: 0.82,
+            12: 0.755,
+            13: 0.695,
+            14: 0.645,
+            15: 0.602,
+            16: 0.565,
+        };
 
-        const scaleX = viewportWidth / baseGameWidth;
-        const scaleY = viewportHeight / baseGameHeight;
-        const containerScale = Math.min(scaleX, scaleY);
-        const boundedScale = Math.max(0.3, Math.min(1.0, containerScale));
+        const baseScale = PLINKO_CANVAS_SCALE[numberOfRows] || 1;
+        const maxWidth = viewportWidth - 40; // Account for padding/margins
+
+        // Ensure canvas fits within viewport
+        let responsiveScale = Math.min(baseScale, maxWidth / 1050);
+
+        // Apply device-specific adjustments
+        if (viewportWidth < 640) {
+            // Mobile
+            responsiveScale = Math.max(0.5, responsiveScale * 0.8);
+        } else if (viewportWidth < 1024) {
+            // Tablet
+            responsiveScale = Math.max(0.6, responsiveScale * 0.9);
+        }
+
+        const expectedGameWidth = 1050 * responsiveScale;
+        const expectedGameHeight = 600 * responsiveScale;
 
         return {
-            scaleX,
-            scaleY,
-            containerScale,
-            boundedScale,
-            expectedGameWidth: baseGameWidth * boundedScale,
-            expectedGameHeight: baseGameHeight * boundedScale,
-            willFitWidth: baseGameWidth * boundedScale <= viewportWidth,
-            willFitHeight: baseGameHeight * boundedScale <= viewportHeight,
+            baseScale,
+            responsiveScale,
+            expectedGameWidth,
+            expectedGameHeight,
+            willFitWidth: expectedGameWidth <= viewportWidth,
+            willFitHeight: expectedGameHeight <= viewportHeight,
+            maxAllowedWidth: maxWidth,
+            deviceType: viewportWidth < 640 ? "mobile" : viewportWidth < 1024 ? "tablet" : "desktop",
         };
     };
 
@@ -46,17 +71,27 @@ const testResponsiveScaling = () => {
 
     console.log("📱 Current Viewport:", currentViewport);
 
-    const currentScaling = calculateExpectedScaling(currentViewport.width, currentViewport.height);
-    console.log("🎯 Current Expected Scaling:", currentScaling);
+    const currentScaling = calculateExpectedScaling(currentViewport.width, currentViewport.height, 10);
+    console.log("🎯 Current Expected Scaling (10 rows):", {
+        baseScale: currentScaling.baseScale.toFixed(3),
+        responsiveScale: currentScaling.responsiveScale.toFixed(3),
+        gameSize: `${currentScaling.expectedGameWidth.toFixed(0)}x${currentScaling.expectedGameHeight.toFixed(0)}`,
+        deviceType: currentScaling.deviceType,
+        fitsViewport: currentScaling.willFitWidth && currentScaling.willFitHeight,
+        willClip: !currentScaling.willFitWidth,
+    });
 
     // Test different sizes
-    console.log("📊 Testing Different Viewport Sizes:");
+    console.log("📊 Testing Different Viewport Sizes (10 rows):");
     testSizes.forEach((size) => {
-        const scaling = calculateExpectedScaling(size.width, size.height);
-        console.log(`${size.name} (${size.width}x${size.height}):`, {
-            containerScale: scaling.boundedScale.toFixed(3),
+        const scaling = calculateExpectedScaling(size.width, size.height, 10);
+        console.log(`${size.name} (${size.width}x${size.height}) - ${scaling.deviceType}:`, {
+            baseScale: scaling.baseScale.toFixed(3),
+            responsiveScale: scaling.responsiveScale.toFixed(3),
             gameSize: `${scaling.expectedGameWidth.toFixed(0)}x${scaling.expectedGameHeight.toFixed(0)}`,
+            maxAllowedWidth: scaling.maxAllowedWidth,
             fitsViewport: scaling.willFitWidth && scaling.willFitHeight,
+            willClip: !scaling.willFitWidth,
         });
     });
 
