@@ -21,6 +21,7 @@ import {
 import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
@@ -79,6 +80,11 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     handleRemainingTime(_): void {
         // nothing
+    }
+
+    onSocketDisconnect(): void {
+        super.onSocketDisconnect();
+        usePlinkoGameStore.getState().reset();
     }
 
     renderGameFrame(): JSX.Element {

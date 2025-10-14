@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { GAME_MODES } from "@plinko/constants";
+import { GAME_MODES, NUMBER_OF_ROWS } from "@plinko/constants";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 
 export type PlinkoGameStore = {
@@ -16,13 +16,14 @@ export type PlinkoGameStore = {
         setFinish: (finish: PlinkoFinish) => void;
         setFinishedBall: (finishedBall: PlinkoFinish) => void;
     };
+    reset: () => void;
 };
 
 export const usePlinkoGameStore = create<PlinkoGameStore>()((set) => {
     return {
         betAmount: 1,
         gameMode: GAME_MODES.MEDIUM,
-        numberOfRows: 10,
+        numberOfRows: NUMBER_OF_ROWS.MAX,
         finish: null,
         numberOfDroppingBall: 0,
         finishedBall: null,
@@ -44,6 +45,15 @@ export const usePlinkoGameStore = create<PlinkoGameStore>()((set) => {
             setFinishedBall: (finishedBall: PlinkoFinish) =>
                 set((state) => ({ finishedBall, numberOfDroppingBall: state.numberOfDroppingBall - 1 })),
         },
+        reset: () =>
+            set({
+                betAmount: 1,
+                gameMode: GAME_MODES.MEDIUM,
+                numberOfRows: NUMBER_OF_ROWS.MAX,
+                finish: null,
+                numberOfDroppingBall: 0,
+                finishedBall: null,
+            }),
     };
 });
 

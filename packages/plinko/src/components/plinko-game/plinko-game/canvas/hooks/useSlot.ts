@@ -13,7 +13,7 @@ export const useSlot = () => {
             const gap = pegRadius * 2 * mapGap;
             const space = (width - gap * numberOfSlots) / 2;
             const x = space + col * gap - pegRadius * mapGap;
-            const y = numberOfSlots * pegRadius * 2 * mapGap - 40;
+            const y = numberOfSlots * pegRadius * 2 * mapGap - 30;
             const options = {
                 isSensor: true,
                 isStatic: true,

@@ -161,7 +161,7 @@ const PlinkoCanvas = () => {
 
         const engine = Engine.create();
         engineRef.current = engine;
-        
+
         return engine;
     }, []);
 
