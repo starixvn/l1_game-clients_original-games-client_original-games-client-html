@@ -1,6 +1,7 @@
 import React from "react";
 import { Bodies, Body, Composite, Engine } from "matter-js";
 import { physicsConfig } from "@plinko/features/game/components/ball/physics/physics-config";
+import { logger } from "@plinko/services/logger";
 import { calculateBallSize, getBallPhysicsTweaks } from "./ball-calculations";
 import { getMiddleDropPosition } from "@plinko/features/game/components/ball/physics/drop-positions";
 import { PHYSICS_CONSTANTS } from "@plinko/features/game/components/ball/physics/constants/physics-constants";
@@ -48,6 +49,17 @@ export interface ServiceGuidedBallData {
  * Get current canvas dimensions and physics categories
  */
 export function getCanvasInfo(canvasRef: React.RefObject<HTMLDivElement>): CanvasInfo | null {
+    logger.logPhysicsEvent('canvas-info-request', {
+        hasCanvasRef: !!canvasRef.current,
+        canvasElement: canvasRef.current?.tagName,
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+        }
+    });
     if (!canvasRef.current) {
         return null;
     }
@@ -110,7 +122,14 @@ export function createPhysicsBodies(
         const gap = pegRadius * 2 * mapGap; // 10 * 2 * 3 = 60
         const space = (canvasWidth - gap * columnsInRow) / 2;
 
-        console.log(`🏗️ [PHYSICS] Creating peg row ${row}/${rows}: ${columnsInRow} pegs`);
+        logger.logPhysicsEvent('peg-row-creation', {
+            row,
+            totalRows: rows,
+            columnsInRow,
+            deviceInfo: {
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            }
+        });
 
         for (let col = 1; col <= columnsInRow; col++) {
             const x = space + col * gap - pegRadius * mapGap;
@@ -129,12 +148,24 @@ export function createPhysicsBodies(
 
             // Log first few pegs for debugging
             if (pins.length <= 10) {
-                console.log(`📍 [PHYSICS] Peg ${pins.length}: ${pinLabel} at (${Math.round(x)}, ${Math.round(y)})`);
+                logger.logPhysicsEvent('peg-position', {
+                    pegIndex: pins.length,
+                    label: pinLabel,
+                    position: { x: Math.round(x), y: Math.round(y) },
+                    row,
+                    col
+                });
             }
         }
     }
 
-    console.log(`✅ [PHYSICS] Peg creation complete: ${pins.length} total pegs for ${rows} rows`);
+    logger.logPhysicsEvent('peg-creation-complete', {
+        totalPegs: pins.length,
+        rows,
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        }
+    });
 
     // Create invisible walls
     const wallThickness = PHYSICS_CONSTANTS.WALLS.THICKNESS;

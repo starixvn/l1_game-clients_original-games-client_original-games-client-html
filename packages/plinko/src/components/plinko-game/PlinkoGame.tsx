@@ -18,6 +18,87 @@ const PlinkoGame = () => {
     // Track expected slots per round ID to handle concurrent bets and avoid race conditions
     const [expectedSlotsByRound, setExpectedSlotsByRound] = useState<Map<number, number>>(new Map());
 
+    // Log device and viewport information for canvas scaling debugging
+    useEffect(() => {
+        const logDeviceInfo = () => {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isIPhone = /iPhone/.test(navigator.userAgent);
+
+            logger.logUIEvent('device-detection', {
+                userAgent: navigator.userAgent,
+                isMobile,
+                isIOS,
+                isIPhone,
+                platform: navigator.platform,
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    devicePixelRatio: window.devicePixelRatio,
+                    screenWidth: window.screen.width,
+                    screenHeight: window.screen.height,
+                    screenAvailWidth: window.screen.availWidth,
+                    screenAvailHeight: window.screen.availHeight,
+                },
+                touchSupport: {
+                    maxTouchPoints: navigator.maxTouchPoints,
+                    hasTouchScreen: 'ontouchstart' in window,
+                },
+                canvasSupport: {
+                    supportsCanvas: !!document.createElement('canvas').getContext,
+                    webglSupport: (() => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+                        } catch (e) {
+                            return false;
+                        }
+                    })(),
+                },
+                performance: {
+                    memory: (performance as any).memory ? {
+                        usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+                        totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+                        jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
+                    } : 'Not available',
+                }
+            });
+
+            // Log orientation changes
+            const handleOrientationChange = () => {
+                logger.logUIEvent('orientation-change', {
+                    orientation: (screen as any).orientation?.type || 'unknown',
+                    angle: (screen as any).orientation?.angle || 0,
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                    }
+                });
+            };
+
+            window.addEventListener('orientationchange', handleOrientationChange);
+            window.addEventListener('resize', () => {
+                logger.logUIEvent('window-resize', {
+                    newViewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                        devicePixelRatio: window.devicePixelRatio,
+                    }
+                });
+            });
+
+            return () => {
+                window.removeEventListener('orientationchange', handleOrientationChange);
+                window.removeEventListener('resize', () => { });
+            };
+        };
+
+        const cleanup = logDeviceInfo();
+        logger.startWorkflow('plinko-game-init', 'game-init', 'Initialize PlinkoGame component');
+
+        return cleanup;
+    }, []);
+
     // Shared game context and betting store
     const { endBet, socket, gameConfigs } = useGameStore(
         useShallow((state) => ({
@@ -82,33 +163,77 @@ const PlinkoGame = () => {
 
                     if (ballLayoutRef.current?.spawnBallWithPath) {
                         try {
+                            logger.logGameEvent('ball-spawn-attempt', {
+                                retryCount,
+                                roundId,
+                                betAmount,
+                                pathLength: resultPath.length,
+                                slotIndex,
+                                multiplier,
+                                canvasReady: !!ballLayoutRef.current,
+                                deviceInfo: {
+                                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                                    viewport: {
+                                        width: window.innerWidth,
+                                        height: window.innerHeight,
+                                        devicePixelRatio: window.devicePixelRatio,
+                                    }
+                                }
+                            });
 
                             ballLayoutRef.current.spawnBallWithPath(betAmount, resultPath, slotIndex, multiplier, undefined, roundId);
 
-                            logger.info("✅ [PLINKO GAME] Ball spawned successfully with server path", {
+                            logger.logGameEvent('ball-spawn-success', {
+                                roundId,
                                 betAmount,
                                 pathLength: resultPath.length,
                                 slotIndex,
                                 multiplier,
                                 countOfOnes,
+                                retryCount
                             });
                             return true; // Success
                         } catch (error) {
-                            logger.error("❌ [PLINKO GAME] Error spawning ball", {
-                                error,
+                            logger.logError(error as Error, {
+                                context: 'ball-spawn-attempt',
+                                roundId,
                                 betAmount,
                                 resultPath,
                                 slotIndex,
                                 multiplier,
+                                retryCount,
+                                deviceInfo: {
+                                    viewport: {
+                                        width: window.innerWidth,
+                                        height: window.innerHeight,
+                                    }
+                                }
                             });
                             return false; // Failed
                         }
                     } else {
                         if (retryCount < maxRetries) {
+                            logger.logGameEvent('ball-spawn-retry', {
+                                retryCount,
+                                maxRetries,
+                                roundId,
+                                canvasReady: !!ballLayoutRef.current
+                            });
                             // Retry after 100ms
                             setTimeout(() => attemptSpawnBall(retryCount + 1), 100);
                         } else {
-                            logger.error("❌ [PLINKO GAME] ballLayoutRef not available after max retries for spawning");
+                            logger.logError(new Error('ballLayoutRef not available after max retries'), {
+                                context: 'ball-spawn-timeout',
+                                roundId,
+                                maxRetries,
+                                canvasReady: !!ballLayoutRef.current,
+                                deviceInfo: {
+                                    viewport: {
+                                        width: window.innerWidth,
+                                        height: window.innerHeight,
+                                    }
+                                }
+                            });
                         }
                         return false; // Still not ready, will retry
                     }
@@ -166,32 +291,46 @@ const PlinkoGame = () => {
 
     // Handle ball collision with multiplier slots
     const handleBallHit = () => {
-        //nothing
+        logger.logPhysicsEvent('ball-hit-multiplier', {
+            context: 'handleBallHit callback',
+            deviceInfo: {
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                }
+            }
+        });
     };
 
     // Handle ball landing result validation against service result
     const handleBallLanded = (success: boolean, roundId?: number) => {
-
         const expectedSlot = roundId ? expectedSlotsByRound.get(roundId) : undefined;
 
+        logger.logGameEvent('ball-landed-validation', {
+            success,
+            roundId,
+            expectedSlot,
+            validation: {
+                ballLandedCorrectly: success,
+                expectedSlotFromService: expectedSlot,
+                roundId,
+                hasServiceResult: expectedSlot !== undefined,
+                slotValidationEnabled: true,
+            },
+            deviceInfo: {
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    devicePixelRatio: window.devicePixelRatio,
+                }
+            }
+        });
 
         if (expectedSlot !== undefined && roundId !== undefined) {
-            logger.info("🎯 [PLINKO GAME] BALL LANDING VALIDATION - CONTROLLER LEVEL", {
-                success,
-                expectedSlot,
-                roundId,
-                serviceResultSlot: expectedSlot,
-                validation: {
-                    ballLandedCorrectly: success,
-                    expectedSlotFromService: expectedSlot,
-                    roundId,
-                    hasServiceResult: true,
-                    slotValidationEnabled: true,
-                },
-            });
-
             if (success) {
-                logger.info("✅ [PLINKO GAME] BALL LANDED IN CORRECT SLOT - CONTROLLER CONFIRMATION", {
+                logger.logGameEvent('ball-landed-success', {
                     expectedSlot,
                     roundId,
                     serviceResultSlot: expectedSlot,
@@ -199,13 +338,19 @@ const PlinkoGame = () => {
                     message: `Ball successfully landed in slot ${expectedSlot} as expected by service`
                 });
             } else {
-                logger.error("❌ [PLINKO GAME] BALL LANDED IN WRONG SLOT - CONTROLLER FAILURE DETECTED", {
+                logger.logError(new Error(`Ball landed in wrong slot - expected ${expectedSlot}`), {
+                    context: 'ball-landing-validation',
                     expectedSlot,
                     roundId,
                     serviceResultSlot: expectedSlot,
                     status: "FAILED",
-                    message: `Ball failed to land in expected slot ${expectedSlot}`,
                     actionRequired: "Check physics engine slot detection logic",
+                    deviceInfo: {
+                        viewport: {
+                            width: window.innerWidth,
+                            height: window.innerHeight,
+                        }
+                    }
                 });
             }
 
@@ -216,16 +361,33 @@ const PlinkoGame = () => {
                 return newMap;
             });
         } else {
-            logger.warn("⚠️ [PLINKO GAME] BALL LANDED BUT NO SERVICE RESULT TO VALIDATE AGAINST", {
+            logger.logGameEvent('ball-landed-no-validation', {
                 success,
+                roundId,
                 expectedSlot: null,
                 message: "Ball landed but no expected slot was stored from service result",
             });
         }
     };
 
+    logger.logUIEvent('plinko-game-render', {
+        payoutProbabilitiesCount: payoutProbabilities.length,
+        expectedSlotsCount: expectedSlotsByRound.size,
+        gameMode,
+        numberOfRows,
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+        }
+    });
+
+    logger.endWorkflow('plinko-game-init');
+
     return (
-        <div className="">
+        <div className="" style={{ position: 'relative', overflow: 'visible' }}>
             {/* Logger Controls - positioned outside game-info to avoid clipping */}
             <div
                 style={{

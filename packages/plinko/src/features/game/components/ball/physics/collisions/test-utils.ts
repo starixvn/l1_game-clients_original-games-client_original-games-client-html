@@ -7,6 +7,7 @@
 import { Body, Engine } from "matter-js";
 import { BallBodyExtension } from "../../../../../../types/physics";
 import { physicsLogger } from "../performance/physics-logger";
+import { logger } from "../../../../../services/logger";
 import { CollisionCooldownManager } from "./collision-cooldown";
 import { PHYSICS_SCALING_FORMULAS } from "../scaling/row-based-scaling";
 
@@ -227,6 +228,20 @@ function calculateFinalTrajectoryVelocity(ballBody: Body, ballExtension: BallBod
 
 // Logging functions
 function logCollisionStart(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
+    logger.logPhysicsEvent('service-guided-collision-start', {
+        ballId: ballBody.id,
+        pegId: pegBody.id,
+        ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        pegPosition: { x: Math.round(pegBody.position.x), y: Math.round(pegBody.position.y) },
+        currentPathIndex: ballExtension.currentPathIndex,
+        servicePathLength: ballExtension.servicePath?.length,
+        expectedFinalSlot: ballExtension.expectedFinalSlot,
+        ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        }
+    });
+
     physicsLogger.info("🎯 SERVICE-GUIDED PIN COLLISION - STARTING", {
         component: "CollisionTestUtils",
         function: "handleServiceGuidedPinCollision",
@@ -270,6 +285,18 @@ function logSkipWrongRow(ballBody: Body, ballExtension: BallBodyExtension, pegBo
 }
 
 function logNudgeApplied(ballBody: Body, direction: number, naturalNudgeStrength: number): void {
+    logger.logPhysicsEvent('deterministic-path-guidance', {
+        ballId: ballBody.id,
+        direction,
+        nudgeStrength: naturalNudgeStrength.toFixed(3),
+        deterministicVelocityX: (direction * naturalNudgeStrength).toFixed(3),
+        upwardBounce: 0.500,
+        velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        }
+    });
+
     physicsLogger.info("🎯 DETERMINISTIC PATH GUIDANCE APPLIED", {
         component: "CollisionTestUtils",
         function: "applyServiceGuidedNudge",

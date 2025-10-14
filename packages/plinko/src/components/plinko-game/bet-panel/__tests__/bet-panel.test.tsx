@@ -1,6 +1,19 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BetControl from "../bet-panel";
+import { logger } from "@plinko/services/logger";
+
+// Mock the logger
+const mockLogger = {
+    logBetAction: jest.fn(),
+    logSocketEvent: jest.fn(),
+    startWorkflow: jest.fn(),
+    endWorkflow: jest.fn(),
+    logUIEvent: jest.fn(),
+};
+jest.mock("@plinko/services/logger", () => ({
+    logger: mockLogger,
+}));
 
 // Mock the stores
 const mockSendSocketEvent = jest.fn();
@@ -339,6 +352,206 @@ describe("BetControl", () => {
             // Assert
             expect(screen.getByTestId("tab-navigation")).toHaveAttribute("data-active-index", "1");
             expect(screen.getByTestId("bet-form")).toHaveAttribute("data-auto-bet", "true");
+        });
+    });
+
+    describe("Logger Integration", () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it("should start bet-panel workflow on component initialization", () => {
+            // Arrange & Act
+            render(<BetControl />);
+
+            // Assert
+            expect(mockLogger.startWorkflow).toHaveBeenCalledWith(
+                'bet-panel-init',
+                'betting',
+                'Initialize BetControl component'
+            );
+        });
+
+        it("should log bet action when manual bet button is clicked", () => {
+            // Arrange
+            render(<BetControl />);
+
+            // Act
+            fireEvent.click(screen.getByRole("button", { name: "glossary_bet" }));
+
+            // Assert
+            expect(mockLogger.logBetAction).toHaveBeenCalledWith(
+                'manual-bet-initiated',
+                expect.objectContaining({
+                    betAmount: 100,
+                    gameMode: "normal",
+                    numberOfRows: 16,
+                    clientSeed: expect.stringContaining("provided")
+                })
+            );
+        });
+
+        it("should log socket event when bet is sent", () => {
+            // Arrange
+            render(<BetControl />);
+
+            // Act
+            fireEvent.click(screen.getByRole("button", { name: "glossary_bet" }));
+
+            // Assert
+            expect(mockLogger.logSocketEvent).toHaveBeenCalledWith(
+                'bet',
+                'sent',
+                expect.objectContaining({
+                    amount: 100,
+                    gameMode: "normal",
+                    numberOfRows: 16,
+                    hasClientSeed: true
+                }),
+                expect.objectContaining({ category: 'betting' })
+            );
+        });
+
+        it("should log auto bet start when auto bet is initiated", () => {
+            // Arrange
+            render(<BetControl />);
+
+            // Act
+            fireEvent.click(screen.getByTestId("auto-tab"));
+            fireEvent.click(screen.getByRole("button", { name: "start_auto_bet" }));
+
+            // Assert
+            expect(mockLogger.logBetAction).toHaveBeenCalledWith(
+                'auto-bet-start',
+                expect.objectContaining({
+                    wasActive: false,
+                    betAmount: 100,
+                    gameMode: "normal",
+                    numberOfRows: 16,
+                    clientSeed: expect.stringContaining("provided")
+                })
+            );
+        });
+
+        it("should log auto bet stop when auto bet is stopped", () => {
+            // Arrange
+            render(<BetControl />);
+
+            // Act
+            fireEvent.click(screen.getByTestId("auto-tab"));
+            fireEvent.click(screen.getByRole("button", { name: "start_auto_bet" }));
+            fireEvent.click(screen.getByRole("button", { name: "stop_auto_bet" }));
+
+            // Assert
+            expect(mockLogger.logBetAction).toHaveBeenCalledWith(
+                'auto-bet-manual-stop',
+                expect.objectContaining({
+                    wasActive: true,
+                    betAmount: 100,
+                    gameMode: "normal",
+                    numberOfRows: 16
+                })
+            );
+        });
+
+        it("should log socket event when endBet is received", () => {
+            // Arrange
+            const mockRegister = jest.fn((event, handler) => {
+                // Simulate calling the handler with endBet data
+                setTimeout(() => handler({ endBet: 0 }), 0);
+                return "handler-id-123";
+            });
+            const mockUseGameContext = require("@shared/react-contexts").useGameContext;
+            mockUseGameContext.mockReturnValue({
+                gameMessageHandler: {
+                    register: mockRegister,
+                    removeHandler: jest.fn(),
+                },
+            });
+
+            // Act
+            render(<BetControl />);
+
+            // Wait for the async handler to be called
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    expect(mockLogger.logSocketEvent).toHaveBeenCalledWith(
+                        'endBet',
+                        'received',
+                        expect.objectContaining({
+                            endBet: 0,
+                            isAutoBetCancelled: false,
+                            wasProcessing: false
+                        }),
+                        expect.objectContaining({ category: 'betting' })
+                    );
+                    resolve(void 0);
+                }, 10);
+            });
+        });
+
+        it("should log bet processing complete when endBet is received", () => {
+            // Arrange
+            const mockRegister = jest.fn((event, handler) => {
+                setTimeout(() => handler({ endBet: 100 }), 0);
+                return "handler-id-123";
+            });
+            const mockUseGameContext = require("@shared/react-contexts").useGameContext;
+            mockUseGameContext.mockReturnValue({
+                gameMessageHandler: {
+                    register: mockRegister,
+                    removeHandler: jest.fn(),
+                },
+            });
+
+            // Act
+            render(<BetControl />);
+
+            // Wait for the async handler to be called
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    expect(mockLogger.logBetAction).toHaveBeenCalledWith(
+                        'bet-processing-complete',
+                        expect.objectContaining({
+                            wasProcessing: false,
+                            endBet: 100
+                        })
+                    );
+                    resolve(void 0);
+                }, 10);
+            });
+        });
+
+        it("should log UI event when component renders", () => {
+            // Arrange & Act
+            render(<BetControl />);
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'bet-panel-render',
+                expect.objectContaining({
+                    tabIndex: 0,
+                    isManualTab: true,
+                    isAutoBet: false,
+                    isProcessing: false,
+                    betAmount: 100,
+                    gameMode: "normal",
+                    numberOfRows: 16,
+                    numberOfDroppingBall: 0,
+                    hasClientSeed: true
+                })
+            );
+        });
+
+        it("should end bet-panel workflow on unmount", () => {
+            // Arrange
+            const { unmount } = render(<BetControl />);
+
+            // Act
+            unmount();
+
+            // Assert
+            expect(mockLogger.endWorkflow).toHaveBeenCalledWith('bet-panel-init');
         });
     });
 });

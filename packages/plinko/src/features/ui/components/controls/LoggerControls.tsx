@@ -379,7 +379,7 @@ const LoggerControls: React.FC<LoggerControlsProps> = ({ className = '' }) => {
   const toggleExpanded = () => {
     const newExpanded = !isExpanded;
     setIsExpanded(newExpanded);
-    
+
     if (newExpanded) {
       logger.expand();
       setRecentLogs(getRecentLogs());

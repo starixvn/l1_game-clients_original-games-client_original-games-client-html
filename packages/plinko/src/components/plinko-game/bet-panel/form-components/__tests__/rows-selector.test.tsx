@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import RowsSelector from "../rows-selector";
+import { logger } from "@plinko/services/logger";
 
 // Mock the stores
 jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
@@ -15,6 +16,15 @@ jest.mock("@shared/react-hooks", () => ({
 
 jest.mock("@shared/react-contexts", () => ({
     useGameContext: jest.fn(),
+}));
+
+// Mock the logger
+const mockLogger = {
+    logUIEvent: jest.fn(),
+    logStateChange: jest.fn(),
+};
+jest.mock("@plinko/services/logger", () => ({
+    logger: mockLogger,
 }));
 
 // Mock constants
@@ -150,6 +160,161 @@ describe("RowsSelector", () => {
             // Act & Assert
             expect(container).toMatchSnapshot();
             expect(screen.getByRole("slider")).toBeDisabled();
+        });
+    });
+
+    describe("Logger Integration", () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it("should log UI event when slider value changes", () => {
+            // Arrange
+            const mockSetNumberOfRows = jest.fn();
+            mockUsePlinkoGameStore.mockReturnValue({
+                ...defaultPlinkoStoreState,
+                setNumberOfRows: mockSetNumberOfRows,
+            });
+            render(<RowsSelector {...defaultProps} />);
+
+            // Act
+            const slider = screen.getByRole("slider");
+            fireEvent.change(slider, { target: { value: "14" } });
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'rows-selector-change',
+                expect.objectContaining({
+                    newValue: 14,
+                    previousValue: 12,
+                    minValue: 8,
+                    maxValue: 16,
+                    isValid: true,
+                    deviceInfo: expect.objectContaining({
+                        isMobile: expect.any(Boolean),
+                    })
+                })
+            );
+        });
+
+        it("should log state change when setNumberOfRows is called", () => {
+            // Arrange
+            const mockSetNumberOfRows = jest.fn();
+            mockUsePlinkoGameStore.mockReturnValue({
+                ...defaultPlinkoStoreState,
+                setNumberOfRows: mockSetNumberOfRows,
+            });
+            render(<RowsSelector {...defaultProps} />);
+
+            // Act
+            const slider = screen.getByRole("slider");
+            fireEvent.change(slider, { target: { value: "14" } });
+
+            // Assert
+            expect(mockLogger.logStateChange).toHaveBeenCalledWith(
+                'number-of-rows',
+                12,
+                14,
+                expect.objectContaining({ category: 'state' })
+            );
+        });
+
+        it("should log UI event when component renders", () => {
+            // Arrange & Act
+            render(<RowsSelector {...defaultProps} />);
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'rows-selector-render',
+                expect.objectContaining({
+                    currentValue: 12,
+                    minValue: 8,
+                    maxValue: 16,
+                    isDisabled: false,
+                    deviceInfo: expect.objectContaining({
+                        isMobile: expect.any(Boolean),
+                    })
+                })
+            );
+        });
+
+        it("should log UI event when component is disabled", () => {
+            // Arrange & Act
+            render(<RowsSelector {...defaultProps} isDisabled={true} />);
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'rows-selector-render',
+                expect.objectContaining({
+                    currentValue: 12,
+                    minValue: 8,
+                    maxValue: 16,
+                    isDisabled: true,
+                    deviceInfo: expect.objectContaining({
+                        isMobile: expect.any(Boolean),
+                    })
+                })
+            );
+        });
+
+        it("should log minimum value change", () => {
+            // Arrange
+            const mockSetNumberOfRows = jest.fn();
+            mockUsePlinkoGameStore.mockReturnValue({
+                ...defaultPlinkoStoreState,
+                setNumberOfRows: mockSetNumberOfRows,
+            });
+            render(<RowsSelector {...defaultProps} />);
+
+            // Act
+            const slider = screen.getByRole("slider");
+            fireEvent.change(slider, { target: { value: "8" } });
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'rows-selector-change',
+                expect.objectContaining({
+                    newValue: 8,
+                    previousValue: 12,
+                    minValue: 8,
+                    maxValue: 16,
+                    isValid: true,
+                    isMinValue: true,
+                    deviceInfo: expect.objectContaining({
+                        isMobile: expect.any(Boolean),
+                    })
+                })
+            );
+        });
+
+        it("should log maximum value change", () => {
+            // Arrange
+            const mockSetNumberOfRows = jest.fn();
+            mockUsePlinkoGameStore.mockReturnValue({
+                ...defaultPlinkoStoreState,
+                setNumberOfRows: mockSetNumberOfRows,
+            });
+            render(<RowsSelector {...defaultProps} />);
+
+            // Act
+            const slider = screen.getByRole("slider");
+            fireEvent.change(slider, { target: { value: "16" } });
+
+            // Assert
+            expect(mockLogger.logUIEvent).toHaveBeenCalledWith(
+                'rows-selector-change',
+                expect.objectContaining({
+                    newValue: 16,
+                    previousValue: 12,
+                    minValue: 8,
+                    maxValue: 16,
+                    isValid: true,
+                    isMaxValue: true,
+                    deviceInfo: expect.objectContaining({
+                        isMobile: expect.any(Boolean),
+                    })
+                })
+            );
         });
     });
 });

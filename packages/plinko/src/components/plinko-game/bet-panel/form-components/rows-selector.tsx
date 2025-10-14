@@ -1,10 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
 import { useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
+import { logger } from "@plinko/services/logger";
 
 const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
@@ -16,6 +17,44 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
 
     const { tolgeeNamespace } = useGameContext();
     const { t } = useTranslator([tolgeeNamespace]);
+
+    const handleRowsChange = useCallback((newValue: number) => {
+        const isValid = newValue >= NUMBER_OF_ROWS.MIN && newValue <= NUMBER_OF_ROWS.MAX;
+        const isMinValue = newValue === NUMBER_OF_ROWS.MIN;
+        const isMaxValue = newValue === NUMBER_OF_ROWS.MAX;
+
+        logger.logUIEvent('rows-selector-change', {
+            newValue,
+            previousValue: numberOfRows,
+            minValue: NUMBER_OF_ROWS.MIN,
+            maxValue: NUMBER_OF_ROWS.MAX,
+            isValid,
+            isMinValue,
+            isMaxValue,
+            deviceInfo: {
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                }
+            }
+        });
+
+        if (isValid) {
+            setNumberOfRows(newValue);
+        }
+    }, [numberOfRows, setNumberOfRows]);
+
+    // Log component render
+    logger.logUIEvent('rows-selector-render', {
+        currentValue: numberOfRows,
+        minValue: NUMBER_OF_ROWS.MIN,
+        maxValue: NUMBER_OF_ROWS.MAX,
+        isDisabled,
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        }
+    });
 
     return (
         <div className={`div-setting-row`}>
@@ -29,14 +68,13 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                     min={NUMBER_OF_ROWS.MIN}
                     max={NUMBER_OF_ROWS.MAX}
                     value={numberOfRows}
-                    onChange={(e) => setNumberOfRows(parseInt(e.target.value))}
+                    onChange={(e) => handleRowsChange(parseInt(e.target.value))}
                     disabled={isDisabled}
                     className="w-full disabled:opacity-50"
                     style={
                         {
-                            "--input-range-progress": `${
-                                ((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
-                            }%`,
+                            "--input-range-progress": `${((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
+                                }%`,
                         } as React.CSSProperties
                     }
                 />

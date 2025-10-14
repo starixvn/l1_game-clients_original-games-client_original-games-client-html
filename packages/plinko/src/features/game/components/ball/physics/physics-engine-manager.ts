@@ -37,7 +37,26 @@ export interface PhysicsEngineConfig {
  * Pure function - returns initialized engine state
  */
 export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEngineState {
+    logger.startWorkflow('physics-engine-manager-init', 'physics', 'Initialize physics engine manager');
+
     const { numberOfRows, multipliers, gameMode, canvasWidth, canvasHeight, containerSize } = config;
+
+    logger.logPhysicsEvent('physics-engine-init-start', {
+        numberOfRows,
+        multipliersCount: multipliers.length,
+        gameMode,
+        canvasWidth,
+        canvasHeight,
+        containerSize,
+        scaleFactor: Math.min(containerSize.width / canvasWidth, containerSize.height / canvasHeight),
+        deviceInfo: {
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+        }
+    });
 
     // Create physics engine
     const engine = Engine.create();
@@ -55,6 +74,18 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
 
     // Create runner
     const runner = Runner.create();
+
+    logger.logPhysicsEvent('physics-engine-init-complete', {
+        engineId: engine.id,
+        pinsCount: pins.length,
+        multipliersCount: multipliersBodies.length,
+        wallsCount: walls.length,
+        totalBodies: pins.length + multipliersBodies.length + walls.length,
+        gravity: engine.gravity.y,
+        scaleFactor
+    });
+
+    logger.endWorkflow('physics-engine-manager-init');
 
     return {
         engine,

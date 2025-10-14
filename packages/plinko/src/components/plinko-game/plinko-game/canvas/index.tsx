@@ -7,6 +7,7 @@ import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
+import { logger } from "@plinko/services/logger";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,6 +19,44 @@ const PlinkoCanvas = () => {
     const { finish, setFinishedBall } = usePlinkoGameStore(
         useShallow((state) => ({ finish: state.finish, setFinishedBall: state.actions.setFinishedBall }))
     );
+
+    // Log canvas initialization details for mobile debugging
+    useEffect(() => {
+        logger.startWorkflow('plinko-canvas-init', 'ui', 'Initialize PlinkoCanvas component');
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isIPhone = /iPhone/.test(navigator.userAgent);
+
+        logger.logUIEvent('canvas-component-init', {
+            config: PlinkoCanvasConfig,
+            deviceInfo: {
+                isMobile,
+                isIOS,
+                isIPhone,
+                userAgent: navigator.userAgent.substring(0, 100), // Truncate for logging
+                platform: navigator.platform,
+                devicePixelRatio: window.devicePixelRatio,
+            },
+            viewport: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+            },
+            canvas: {
+                expectedWidth: PlinkoCanvasConfig.width,
+                expectedHeight: PlinkoCanvasConfig.height,
+                willBeCreated: true,
+            },
+            potentialIssues: {
+                viewportTooSmall: window.innerWidth < PlinkoCanvasConfig.width * 0.5,
+                highPixelRatio: window.devicePixelRatio > 2,
+                iOSDevice: isIOS,
+                iPhoneDevice: isIPhone,
+            }
+        });
+    }, []);
 
     // Peg hook
     const { createPegs, drawPeg } = usePeg();
@@ -41,6 +80,20 @@ const PlinkoCanvas = () => {
             if (!engineRef.current) {
                 return;
             }
+
+            logger.logPhysicsEvent('collision-detected', {
+                pairsCount: pairs.length,
+                engineId: engineRef.current.id,
+                timestamp: Date.now(),
+                deviceInfo: {
+                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                    }
+                }
+            });
+
             for (const pair of pairs) {
                 const { bodyA, bodyB } = pair;
                 const ball = bodyA.label === PLINKO_OBJECTS.BALL ? bodyA : bodyB;
@@ -48,18 +101,42 @@ const PlinkoCanvas = () => {
                 if (!ball) {
                     continue;
                 }
+
                 // collision with peg
                 if (object?.label === PLINKO_OBJECTS.PEG) {
+                    logger.logPhysicsEvent('peg-collision', {
+                        ballId: ball.id,
+                        pegId: object.id,
+                        position: {
+                            x: ball.position.x,
+                            y: ball.position.y,
+                        }
+                    });
                     createPegEffect(object);
                     handleRoad(ball, object);
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
+                    logger.logPhysicsEvent('slot-collision', {
+                        ballId: ball.id,
+                        slotId: object.id,
+                        finishData: (ball as BallBody).finish,
+                        position: {
+                            x: ball.position.x,
+                            y: ball.position.y,
+                        }
+                    });
+
                     setFinishedBall((ball as BallBody).finish);
 
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
                     sceneObjectsRef.current.splice(sceneObjectsRef.current.indexOf(ball), 1);
+
+                    logger.logPhysicsEvent('ball-removed', {
+                        ballId: ball.id,
+                        remainingBalls: sceneObjectsRef.current.length,
+                    });
                 }
             }
         },
@@ -138,6 +215,14 @@ const PlinkoCanvas = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         if (!context) {
+            logger.logUIEvent('canvas-context-error', {
+                message: 'Failed to get 2D context from canvas',
+                canvasExists: !!canvas,
+                canvasDimensions: {
+                    width: canvas.width,
+                    height: canvas.height,
+                }
+            });
             return;
         }
 
@@ -151,31 +236,108 @@ const PlinkoCanvas = () => {
         // draw effects
         drawPegEffect?.(context);
         animationRef.current = requestAnimationFrame(animate);
+
+        // Log performance metrics periodically (every ~60 frames)
+        if (Math.random() < 0.016) { // ~1/60 chance
+            logger.logUIEvent('canvas-render-performance', {
+                sceneObjectsCount: sceneObjectsRef.current.length,
+                pegEffectsCount: pegEffectsRef.current.length,
+                canvasDimensions: {
+                    width: canvas.width,
+                    height: canvas.height,
+                },
+                deviceInfo: {
+                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                    devicePixelRatio: window.devicePixelRatio,
+                }
+            });
+        }
     }, [drawSceneObject, drawPegEffect]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
         if (!canvasRef.current) {
+            logger.logUIEvent('canvas-init-failed', {
+                reason: 'canvasRef not available',
+                component: 'PlinkoCanvas'
+            });
             return undefined;
         }
 
+        logger.logPhysicsEvent('engine-initialization', {
+            canvasAvailable: !!canvasRef.current,
+            canvasDimensions: {
+                width: canvasRef.current.width,
+                height: canvasRef.current.height,
+            }
+        });
+
         const engine = Engine.create();
         engineRef.current = engine;
+
+        logger.logPhysicsEvent('engine-created', {
+            engineId: engine.id,
+            worldId: engine.world.id
+        });
 
         return engine;
     }, []);
 
     const startRunner = useCallback(() => {
         const canvas = canvasRef.current;
+        if (!canvas) {
+            logger.logUIEvent('runner-start-failed', {
+                reason: 'canvas not available'
+            });
+            return undefined;
+        }
+
         const { width, height } = PlinkoCanvasConfig;
+
+        logger.logUIEvent('canvas-setup', {
+            config: PlinkoCanvasConfig,
+            before: {
+                width: canvas.width,
+                height: canvas.height,
+                styleWidth: canvas.style.width,
+                styleHeight: canvas.style.height,
+            }
+        });
+
         canvas.width = width;
         canvas.height = height;
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
         canvas.style.pointerEvents = "none";
 
+        logger.logUIEvent('canvas-configured', {
+            actualDimensions: {
+                width: canvas.width,
+                height: canvas.height,
+                styleWidth: canvas.style.width,
+                styleHeight: canvas.style.height,
+            },
+            expectedDimensions: {
+                width,
+                height,
+            },
+            deviceInfo: {
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                }
+            }
+        });
+
         const runner = Runner.create();
         Runner.run(runner, engineRef.current);
+
+        logger.logPhysicsEvent('runner-started', {
+            runnerId: runner.id,
+            engineId: engineRef.current?.id
+        });
+
         return runner;
     }, []);
 
@@ -204,10 +366,29 @@ const PlinkoCanvas = () => {
     // Add ball
     useEffect(() => {
         if (finish) {
+            logger.logPhysicsEvent('ball-creation-triggered', {
+                finishData: finish,
+                existingBallsCount: sceneObjectsRef.current.length,
+                deviceInfo: {
+                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                }
+            });
+
             const ballBody = createBall(finish);
             addObjects([ballBody]);
+
+            logger.logPhysicsEvent('ball-added-to-scene', {
+                ballId: ballBody.id,
+                totalBallsInScene: sceneObjectsRef.current.length,
+                ballPosition: {
+                    x: ballBody.position.x,
+                    y: ballBody.position.y,
+                }
+            });
         }
     }, [finish, createBall, addObjects]);
+
+    logger.endWorkflow('plinko-canvas-init');
 
     return <canvas ref={canvasRef} />;
 };
