@@ -136,7 +136,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<LiveStatsIcon />, <SoundIcon />, <GuideIcon />, <PFIcon />]} />;
+        return <MenuIconWrapper items={[<LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
     }
 
     renderPFSettingModal() {

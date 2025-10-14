@@ -2,6 +2,7 @@ import { BetHistoryHandler, BetHistoryHandlerProps } from "@shared/components/ga
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePFStore from "@shared/stores/pf-store/pf-store";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     // Override to include winAmount and reachMaxWin support
@@ -14,8 +15,33 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         reachMaxWin?: boolean;
     } | null = null;
 
+    private unsubscribeFinishedBall: (() => void) | null = null;
+
     constructor(props: BetHistoryHandlerProps) {
         super(props);
+        this.setupFinishedBallSubscription();
+    }
+
+    private setupFinishedBallSubscription() {
+        this.unsubscribeFinishedBall = usePlinkoGameStore.subscribe(
+            (state) => state.finishedBall,
+            (finishedBall, previousFinishedBall) => {
+                console.log("PlinkoBetHistoryHandler: finishedBall changed", finishedBall);
+                if (finishedBall && finishedBall.roundId !== previousFinishedBall?.roundId) {
+                    this.handleFinishedBallChange(finishedBall);
+                }
+            }
+        );
+    }
+
+    private handleFinishedBallChange(finishedBall: any) {
+        if (!finishedBall) {
+            return;
+        }
+
+        console.log("PlinkoBetHistoryHandler: Processing finishedBall", finishedBall);
+
+        this.flushBetLogIfAny(finishedBall.roundId);
     }
 
     // Override the event registration to handle Plinko-specific events
@@ -48,19 +74,19 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         if (action?.finish) {
             // Extract bet data from endBet message (Plinko doesn't send separate ownBets)
             this.addPlinkoBetToPending(action);
-
+            
             // Process the finish data
             this.handleFinish({ finish: action.finish });
 
             // Flush immediately for now (will flush when ball disappear later)
-            this.flushLocalBetLogIfAny();
+            //this.flushLocalBetLogIfAny();
         }
     }
 
     private addPlinkoBetToPending(action: any) {
         const betHistoryStore = useBetHistoryStore.getState();
         const pfStore = usePFStore.getState();
-
+     
         if (this.shouldUpdateRoundId(this.latestFinish.roundId, betHistoryStore.pendingBetRoundId)) {
             betHistoryStore.setPendingBetRoundId(this.latestFinish.roundId);
         }
@@ -83,12 +109,11 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 choice: `plinko-${action.ownBets.gameMode}-${action.ownBets.numberOfRows}`,
                 clientSeed,
             };
-
             betHistoryStore.addPendingBet(betData);
         }
     }
 
-    protected flushLocalBetLogIfAny() {
+    protected flushBetLogIfAny(roundId: number) {
         const betHistoryStore = useBetHistoryStore.getState();
 
         if (!betHistoryStore.hasPendingBets() || !this.latestFinish?.settlementResult) {
@@ -98,7 +123,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const pendingDetails = betHistoryStore.pendingBetDetails;
         const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
 
-        const { winAmount: betwin, roundId: actualBettingRoundId } = this.latestFinish;
+        const { winAmount: betwin } = this.latestFinish;
 
         const resultData = {
             result: this.latestFinish.result,
@@ -107,7 +132,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         };
 
         const betLog = this.createPlinkoBetLog(
-            actualBettingRoundId,
+            roundId,
             totalAmount,
             betwin,
             pendingDetails,
@@ -115,8 +140,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             resultData,
             betHistoryStore.betLogs[0].odds
         );
-
-        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
+        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === roundId);
 
         if (!exists) {
             betHistoryStore.appendBetLogs([betLog], {
@@ -124,9 +148,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 source: "pending_bet_flush",
             });
         }
-
-        betHistoryStore.clearPendingBets();
-        this.resetPendingLocalCache();
     }
 
     // Override createBetLog to include reachMaxWin flag
@@ -147,5 +168,14 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             reachMaxWin: this.latestFinish?.reachMaxWin || false,
             odds: odds,
         };
+    }
+
+    public cleanup() {
+        if (this.unsubscribeFinishedBall) {
+            this.unsubscribeFinishedBall();
+            this.unsubscribeFinishedBall = null;
+        }
+
+        super.cleanup();
     }
 }
