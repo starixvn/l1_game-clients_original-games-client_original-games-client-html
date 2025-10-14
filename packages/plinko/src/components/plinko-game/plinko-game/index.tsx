@@ -8,11 +8,19 @@ import { LoggerControls } from "@plinko/features/ui/components";
 import { useEffect } from "react";
 
 const Game = () => {
+    logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
+
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
 
     // Log canvas scaling information for debugging mobile issues
     useEffect(() => {
-        logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
+        logger.logGameEvent('plinko-canvas-component-created', {
+            component: 'PlinkoCanvasGame',
+            numberOfRows
+        }, {
+            category: 'game-init',
+            workflow: 'plinko-canvas-game-init'
+        });
 
         const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);

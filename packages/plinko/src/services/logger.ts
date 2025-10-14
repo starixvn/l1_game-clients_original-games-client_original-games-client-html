@@ -1,4 +1,4 @@
-// Logger utility for downloading logs as text file with detailed workflow tracking
+// Comprehensive Logger utility for downloading logs as text file with detailed workflow tracking
 type Level = 'info' | 'warn' | 'error' | 'debug';
 type Category = 'game-init' | 'betting' | 'socket' | 'physics' | 'api' | 'ui' | 'state' | 'pf' | 'sound' | 'preload' | 'analytics' | 'error';
 
@@ -23,35 +23,31 @@ interface WorkflowTimer {
 
 class Logger {
   private logs: string[] = [];
-  private readonly maxLogs = 10000; // Prevent memory issues
-  private isEnabled = false; // Logging starts disabled by default
-  private isCollapsed = true; // Logger starts collapsed by default
+  private readonly maxLogs: number = 10000; // Prevent memory issues
   private workflowTimers: Map<string, WorkflowTimer> = new Map();
   private activeWorkflows: Set<string> = new Set();
+  private autoSaveEnabled: boolean = true;
+  private autoSaveInterval: NodeJS.Timeout | null = null;
+  private autoDownloadInterval: NodeJS.Timeout | null = null;
+  private readonly STORAGE_KEY = 'plinko_game_logs';
+  private readonly AUTO_SAVE_INTERVAL = 30000; // 30 seconds
+  private readonly AUTO_DOWNLOAD_INTERVAL = 300000; // 5 minutes
 
   constructor() {
-    // Initialize quietly when collapsed
-    if (!this.isCollapsed) {
-      this.log('info', 'Logger initialized');
-    }
+    // Initialize with a header
+    this.log('info', 'Logger initialized - Auto-save enabled');
+
+    // Load existing logs from localStorage
+    this.loadFromStorage();
+
+    // Start auto-save functionality
+    this.startAutoSave();
+
+    // Start auto-download functionality
+    this.startAutoDownload();
   }
 
   log(level: Level, message: string, data?: any, context?: LogContext) {
-    // Always log errors regardless of state
-    if (level === 'error') {
-      this.doLog(level, message, data, context);
-      return;
-    }
-
-    // Don't log if disabled or collapsed (except for errors)
-    if (!this.isEnabled || this.isCollapsed) {
-      return;
-    }
-
-    this.doLog(level, message, data, context);
-  }
-
-  private doLog(level: Level, message: string, data?: any, context?: LogContext) {
     const timestamp = new Date().toISOString();
     let logEntry = `[${timestamp}] [${level.toUpperCase()}]`;
 
@@ -92,10 +88,7 @@ class Logger {
       }
     }
 
-    // Log to console when not collapsed
-    if (!this.isCollapsed) {
-      console.log(logEntry);
-    }
+    // Console logging removed
 
     // Store in memory
     this.logs.push(logEntry);
@@ -103,6 +96,11 @@ class Logger {
     // Prevent memory overflow
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(-this.maxLogs);
+    }
+
+    // Auto-save to localStorage on critical logs
+    if (level === 'error' || message.includes('Workflow completed') || message.includes('API Response')) {
+      this.saveToStorage();
     }
   }
 
@@ -270,28 +268,91 @@ class Logger {
     return changes;
   }
 
+  // Auto-save functionality
+  private startAutoSave() {
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+    }
+    this.autoSaveInterval = setInterval(() => {
+      if (this.autoSaveEnabled && this.logs.length > 0) {
+        this.saveToStorage();
+      }
+    }, this.AUTO_SAVE_INTERVAL);
+  }
+
+  private stopAutoSave() {
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+      this.autoSaveInterval = null;
+    }
+  }
+
+  private saveToStorage() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+        logs: this.logs,
+        timestamp: new Date().toISOString(),
+        version: '1.0'
+      }));
+    } catch (error) {
+      console.warn('Failed to save logs to localStorage:', error);
+    }
+  }
+
+  private loadFromStorage() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const data = JSON.parse(stored);
+        if (data.logs && Array.isArray(data.logs)) {
+          this.logs = data.logs;
+          this.log('info', 'Logs loaded from localStorage', { count: this.logs.length });
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load logs from localStorage:', error);
+    }
+  }
+
+  // Auto-download functionality
+  private startAutoDownload() {
+    if (this.autoDownloadInterval) {
+      clearInterval(this.autoDownloadInterval);
+    }
+    this.autoDownloadInterval = setInterval(() => {
+      if (this.logs.length > 0) {
+        this.downloadLogs(`auto-game-logs-${new Date().toISOString().split('T')[0]}-${Date.now()}.txt`);
+      }
+    }, this.AUTO_DOWNLOAD_INTERVAL);
+  }
+
+  private stopAutoDownload() {
+    if (this.autoDownloadInterval) {
+      clearInterval(this.autoDownloadInterval);
+      this.autoDownloadInterval = null;
+    }
+  }
+
   // Get all logs as a formatted string
   getLogs(): string {
-    const header = `Plinko Game Console Logs\nGenerated: ${new Date().toLocaleString()}\nTotal Logs: ${this.logs.length}\n\n`;
+    const header = `Game Console Logs\nGenerated: ${new Date().toLocaleString()}\nTotal Logs: ${this.logs.length}\n\n`;
     return header + this.logs.join('\n');
   }
 
   // Clear all logs
   clear() {
     this.logs = [];
-    if (!this.isCollapsed) {
-      this.log('info', 'Logger cleared');
-    }
+    this.log('info', 'Logger cleared');
   }
 
   // Download logs as a text file
-  downloadLogs(filename?: string) {
+  downloadLogs(filename?: string): string {
     const logsContent = this.getLogs();
     const blob = new Blob([logsContent], { type: 'text/plain;charset=utf-8' });
 
     const downloadLink = document.createElement('a');
     downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = filename || `plinko-logs-${new Date().toISOString().split('T')[0]}.txt`;
+    downloadLink.download = filename || `game-logs-${new Date().toISOString().split('T')[0]}.txt`;
 
     // Trigger download
     document.body.appendChild(downloadLink);
@@ -301,25 +362,12 @@ class Logger {
     // Clean up the URL object
     URL.revokeObjectURL(downloadLink.href);
 
-    // Only log if not collapsed
-    if (!this.isCollapsed) {
-      this.log('info', 'Logs downloaded', { filename: downloadLink.download });
-    }
+    return downloadLink.download;
   }
 
   // Get log count
   getLogCount(): number {
     return this.logs.length;
-  }
-
-  // Check if logging is enabled
-  isLoggingEnabled(): boolean {
-    return this.isEnabled;
-  }
-
-  // Check if logger is collapsed
-  isCollapsedState(): boolean {
-    return this.isCollapsed;
   }
 
   // Get active workflows
@@ -344,62 +392,23 @@ class Logger {
 
   // Get logger status
   getStatus(): {
-    enabled: boolean;
-    collapsed: boolean;
     logCount: number;
     activeWorkflows: string[];
     workflowCount: number;
   } {
     return {
-      enabled: this.isEnabled,
-      collapsed: this.isCollapsed,
       logCount: this.logs.length,
       activeWorkflows: Array.from(this.activeWorkflows),
       workflowCount: this.workflowTimers.size
     };
   }
 
-  // Start logging
-  start() {
-    if (!this.isEnabled) {
-      this.isEnabled = true;
-      // Don't log here to avoid recursion if logging is disabled
-      console.log('[LOGGER] Logging started');
-    }
-  }
-
-  // Stop logging
-  stop() {
-    if (this.isEnabled) {
-      this.isEnabled = false;
-      // Don't log here to avoid recursion since logging is now disabled
-      console.log('[LOGGER] Logging stopped');
-    }
-  }
-
-  // Expand logger (show full functionality)
-  expand() {
-    if (this.isCollapsed) {
-      this.isCollapsed = false;
-      console.log('[LOGGER] Logger expanded - full functionality available');
-      this.log('info', 'Logger expanded');
-    }
-  }
-
-  // Collapse logger (minimal interface)
-  collapse() {
-    if (!this.isCollapsed) {
-      this.isCollapsed = true;
-      console.log('[LOGGER] Logger collapsed - minimal interface active');
-    }
-  }
-
-  // Toggle collapsed/expanded state
-  toggle() {
-    if (this.isCollapsed) {
-      this.expand();
-    } else {
-      this.collapse();
+  // Stop auto-operations and final save
+  stopAutoOperations() {
+    this.stopAutoSave();
+    this.stopAutoDownload();
+    if (this.logs.length > 0) {
+      this.saveToStorage();
     }
   }
 }

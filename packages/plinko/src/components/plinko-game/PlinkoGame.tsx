@@ -12,11 +12,25 @@ import { calculateProbability } from "@plinko/utils/helper";
 const WinningAmountEffect = dynamic(() => import("./winning-amount-effect"), { ssr: false });
 
 const PlinkoGame = () => {
+    logger.startWorkflow('plinko-game-init', 'game-init', 'Initialize PlinkoGame component');
+
     const [payoutProbabilities, setPayoutProbabilities] = useState<number[]>([]);
     const ballLayoutRef = useRef<SimplifiedCanvasBallLayoutRef>(null);
 
     // Track expected slots per round ID to handle concurrent bets and avoid race conditions
     const [expectedSlotsByRound, setExpectedSlotsByRound] = useState<Map<number, number>>(new Map());
+
+    logger.logGameEvent('plinko-game-component-created', {
+        component: 'PlinkoGame',
+        initialState: {
+            payoutProbabilities: [],
+            expectedSlotsByRound: new Map(),
+            ballLayoutRef: null
+        }
+    }, {
+        category: 'game-init',
+        workflow: 'plinko-game-init'
+    });
 
     // Log device and viewport information for canvas scaling debugging
     useEffect(() => {
@@ -94,7 +108,6 @@ const PlinkoGame = () => {
         };
 
         const cleanup = logDeviceInfo();
-        logger.startWorkflow('plinko-game-init', 'game-init', 'Initialize PlinkoGame component');
 
         return cleanup;
     }, []);
@@ -109,6 +122,21 @@ const PlinkoGame = () => {
     );
     const { gameMode, numberOfRows } = usePlinkoGameStore();
 
+    logger.logGameEvent('plinko-game-stores-initialized', {
+        sharedStore: {
+            endBet,
+            socketConnected: !!socket,
+            gameConfigsAvailable: !!gameConfigs
+        },
+        plinkoStore: {
+            gameMode,
+            numberOfRows
+        }
+    }, {
+        category: 'game-init',
+        workflow: 'plinko-game-init'
+    });
+
     // Use shared PF system for clientSeed (like sedie-multiplayer)
     const { gameMessageHandler } = useGameContext();
     // Register Plinko-specific handlers when component mounts
@@ -119,7 +147,10 @@ const PlinkoGame = () => {
 
         // Register handler for endBet message (contains the finish object with result path)
         const endBetHandlerId = gameMessageHandler.register("endBet", (action) => {
-            logger.info("🎯 [PLINKO GAME] ENDBET HANDLER CALLED - Bet result received, spawning ball with server path", action);
+            logger.logBetAction('endBet-handler-called', action, {
+                category: 'betting',
+                workflow: 'plinko-game-init'
+            });
 
             if (action?.finish?.result) {
                 const resultPath = action.finish.result;
@@ -141,7 +172,7 @@ const PlinkoGame = () => {
                     return new Map(prev.set(roundId, slotIndex));
                 });
 
-                logger.info("🎯 [PLINKO GAME] Spawning ball with server result path - SERVICE TO COMPONENT", {
+                logger.logGameEvent('ball-spawn-attempt', {
                     resultPath,
                     pathLength: resultPath.length,
                     slotIndex,
@@ -155,6 +186,10 @@ const PlinkoGame = () => {
                         multiplierValid: multiplier > 0,
                         betAmountValid: betAmount > 0,
                     },
+                }, {
+                    category: 'game-init',
+                    roundId: roundId?.toString(),
+                    workflow: 'plinko-game-init'
                 });
 
                 // Function to attempt spawning with retry logic
@@ -191,6 +226,10 @@ const PlinkoGame = () => {
                                 multiplier,
                                 countOfOnes,
                                 retryCount
+                            }, {
+                                category: 'game-init',
+                                roundId: roundId?.toString(),
+                                workflow: 'plinko-game-init'
                             });
                             return true; // Success
                         } catch (error) {
@@ -208,6 +247,10 @@ const PlinkoGame = () => {
                                         height: window.innerHeight,
                                     }
                                 }
+                            }, {
+                                category: 'error',
+                                roundId: roundId?.toString(),
+                                workflow: 'plinko-game-init'
                             });
                             return false; // Failed
                         }
@@ -218,6 +261,10 @@ const PlinkoGame = () => {
                                 maxRetries,
                                 roundId,
                                 canvasReady: !!ballLayoutRef.current
+                            }, {
+                                category: 'game-init',
+                                roundId: roundId?.toString(),
+                                workflow: 'plinko-game-init'
                             });
                             // Retry after 100ms
                             setTimeout(() => attemptSpawnBall(retryCount + 1), 100);
@@ -233,6 +280,10 @@ const PlinkoGame = () => {
                                         height: window.innerHeight,
                                     }
                                 }
+                            }, {
+                                category: 'error',
+                                roundId: roundId?.toString(),
+                                workflow: 'plinko-game-init'
                             });
                         }
                         return false; // Still not ready, will retry
@@ -384,7 +435,12 @@ const PlinkoGame = () => {
         }
     });
 
-    logger.endWorkflow('plinko-game-init');
+    // End workflow on component unmount
+    useEffect(() => {
+        return () => {
+            logger.endWorkflow('plinko-game-init');
+        };
+    }, []);
 
     return (
         <div className="" style={{ position: 'relative', overflow: 'visible' }}>
