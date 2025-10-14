@@ -6,13 +6,12 @@ import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources/type";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
-import { Line } from "react-chartjs-2";
 import { numberWithCommas } from "@shared/helpers";
-import Draggable , { DraggableData, DraggableEvent } from "react-draggable";
+import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { isMobile } from "react-device-detect";
+import { AreaChart, Area, XAxis, YAxis } from "recharts";
+
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number } }): ReactElement => {
     const isShowLiveStats = usePopupStore((state) => state.isShowLiveStats);
@@ -21,7 +20,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
     const clickSound = useClickSound();
     const [totalWinAmount, setTotalWinAmount] = useState(0);
     const [totalBetAmount, setTotalBetAmount] = useState(0);
-    const [netProfitHistory, setNetProfitHistory] = useState<{ time: string; value: number }[]>([]);
+    const [netProfitHistory, setNetProfitHistory] = useState<{ x: number; y: number }[]>([]);
     const [lostRound, setLostRound] = useState(0);
     const [winRound, setWinRound] = useState(0);
     const [dragEnabled, setDragEnabled] = useState(true);
@@ -34,20 +33,24 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
         toggleLiveStats(false);
     };
     useEffect(() => {
-        const newTotalNetProfit = Number((winAmount - amount).toFixed(2));
+        const roundNetProfit = Number((winAmount - amount).toFixed(2));
         setTotalBetAmount((prev) => prev + amount);
         setTotalWinAmount((prev) => prev + winAmount);
 
         if (data) {
-            if (newTotalNetProfit < 0) {
+            if (roundNetProfit < 0) {
                 setLostRound((prev) => prev + 1);
             } else {
                 setWinRound((prev) => prev + 1);
             }
         }
 
-        const currentTime = new Date().toLocaleTimeString();
-        setNetProfitHistory((prev) => [...prev, { time: currentTime, value: newTotalNetProfit }]);
+        // Calculate cumulative net profit
+        setNetProfitHistory((prev) => {
+            const lastCumulativeProfit = prev.length > 0 ? prev[prev.length - 1].y : 0;
+            const newCumulativeProfit = Number((lastCumulativeProfit + roundNetProfit).toFixed(2));
+            return [...prev, { x: prev.length, y: newCumulativeProfit }];
+        });
     }, [data]);
 
     const onDrag = (event: DraggableEvent, data: DraggableData) => {
@@ -125,68 +128,26 @@ const LiveStats = ({
 }): ReactElement<{
     totalBetAmount: number;
     totalWinAmount: number;
-    netProfitHistory: { time: string; value: number }[];
+    netProfitHistory: { x: number; y: number }[];
     lostRound: number;
     winRound: number;
 }> => {
     const { t } = useTranslate(ResourceTypes.COMMON);
 
-    const chartData = useMemo(() => {
-        const labels = netProfitHistory.map((item) => item.time);
-        const data = netProfitHistory.map((item) => item.value);
-        return {
-            labels: labels,
-            datasets: [
-                {
-                    label: "My Line",
-                    data: data,
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.1,
-                    segment: {
-                        borderColor: (ctx) => {
-                            const idxNext = ctx.p1DataIndex;
-                            if (data[idxNext] >= 0) {
-                                return "gold";
-                            } else {
-                                return "red";
-                            }
-                        },
-                    },
-                },
-            ],
-        };
-    }, [netProfitHistory]);
+    const gradientOffset = () => {
+        const dataMax = Math.max(...netProfitHistory.map((i) => i.y));
+        const dataMin = Math.min(...netProfitHistory.map((i) => i.y));
+        if (dataMax <= 0) {
+            return 0;
+        }
+        if (dataMin >= 0) {
+            return 1;
+        }
 
-    const chartOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false,
-            },
-            tooltip: {
-                enabled: false,
-            },
-        },
-        scales: {
-            x: {
-                display: false,
-            },
-            y: {
-                display: false,
-            },
-        },
-        elements: {
-            point: {
-                radius: 0,
-                hoverRadius: 0,
-            },
-        },
-        interaction: {
-            intersect: false,
-        },
-    }), []);
+        return dataMax / (dataMax - dataMin);
+    };
+
+    const off = gradientOffset();
 
     return useMemo(() => {
         return (
@@ -215,14 +176,31 @@ const LiveStats = ({
                 </div>
                 <div id="my-chart" className="w-full h-auto">
                     {netProfitHistory.length > 0 ? (
-                        <Line data={chartData} options={chartOptions} />
+                            <AreaChart width={228} height={150} data={netProfitHistory}>
+                                <XAxis dataKey="x" hide />
+                                <YAxis hide domain={[-100, 100]} />
+                                <defs>
+                                    <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset={off} stopColor="green" stopOpacity={1} />
+                                        <stop offset={off} stopColor="red" stopOpacity={1} />
+                                    </linearGradient>
+                                </defs>
+                                <Area
+                                    type="monotone"
+                                    dataKey="y"
+                                    stroke="#000"
+                                    fill="url(#splitColor)"
+                                    isAnimationActive={false}
+                                    baseLine={0}
+                                />
+                            </AreaChart>
                     ) : (
                         <div className="flex items-center justify-center h-full text-gray-500">No data available</div>
                     )}
                 </div>
             </div>
         );
-    }, [netProfitHistory, chartData, chartOptions]);
+    }, [netProfitHistory]);
 };
 
 const WrapperLiveStats = memo(LiveStats);
