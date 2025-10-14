@@ -27,8 +27,8 @@ class Logger {
   private workflowTimers: Map<string, WorkflowTimer> = new Map();
   private activeWorkflows: Set<string> = new Set();
   private autoSaveEnabled: boolean = true;
-  private autoSaveInterval: NodeJS.Timeout | null = null;
-  private autoDownloadInterval: NodeJS.Timeout | null = null;
+  private autoSaveInterval: ReturnType<typeof setInterval> | null = null;
+  private autoDownloadInterval: ReturnType<typeof setInterval> | null = null;
   private readonly STORAGE_KEY = 'plinko_game_logs';
   private readonly AUTO_SAVE_INTERVAL = 30000; // 30 seconds
   private readonly AUTO_DOWNLOAD_INTERVAL = 300000; // 5 minutes
@@ -244,7 +244,7 @@ class Logger {
   }
 
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private diffStates(oldState: any, newState: any): any {
@@ -254,16 +254,18 @@ class Logger {
       return { oldValue: oldState, newValue: newState };
     }
 
-    const allKeys = new Set([...Object.keys(oldState || {}), ...Object.keys(newState || {})]);
+    const oldKeys = Object.keys(oldState || {});
+    const newKeys = Object.keys(newState || {});
+    const allKeys = new Set(oldKeys.concat(newKeys));
 
-    for (const key of allKeys) {
+    allKeys.forEach(key => {
       const oldVal = oldState?.[key];
       const newVal = newState?.[key];
 
       if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
         changes[key] = { from: oldVal, to: newVal };
       }
-    }
+    });
 
     return changes;
   }
@@ -372,7 +374,9 @@ class Logger {
 
   // Get active workflows
   getActiveWorkflows(): string[] {
-    return Array.from(this.activeWorkflows);
+    const result: string[] = [];
+    this.activeWorkflows.forEach(id => result.push(id));
+    return result;
   }
 
   // Get workflow status
@@ -396,9 +400,11 @@ class Logger {
     activeWorkflows: string[];
     workflowCount: number;
   } {
+    const activeWorkflows: string[] = [];
+    this.activeWorkflows.forEach(id => activeWorkflows.push(id));
     return {
       logCount: this.logs.length,
-      activeWorkflows: Array.from(this.activeWorkflows),
+      activeWorkflows,
       workflowCount: this.workflowTimers.size
     };
   }

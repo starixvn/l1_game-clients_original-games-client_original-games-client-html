@@ -35,7 +35,6 @@ const PlinkoCanvas = () => {
                 isIOS,
                 isIPhone,
                 userAgent: navigator.userAgent.substring(0, 100), // Truncate for logging
-                platform: navigator.platform,
                 devicePixelRatio: window.devicePixelRatio,
             },
             viewport: {
@@ -83,7 +82,6 @@ const PlinkoCanvas = () => {
 
             logger.logPhysicsEvent('collision-detected', {
                 pairsCount: pairs.length,
-                engineId: engineRef.current.id,
                 timestamp: Date.now(),
                 deviceInfo: {
                     isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
@@ -276,7 +274,6 @@ const PlinkoCanvas = () => {
         engineRef.current = engine;
 
         logger.logPhysicsEvent('engine-created', {
-            engineId: engine.id,
             worldId: engine.world.id
         });
 
@@ -334,8 +331,7 @@ const PlinkoCanvas = () => {
         Runner.run(runner, engineRef.current);
 
         logger.logPhysicsEvent('runner-started', {
-            runnerId: runner.id,
-            engineId: engineRef.current?.id
+            hasEngine: !!engineRef.current
         });
 
         return runner;

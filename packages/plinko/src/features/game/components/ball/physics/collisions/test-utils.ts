@@ -6,8 +6,7 @@
 
 import { Body, Engine } from "matter-js";
 import { BallBodyExtension } from "../../../../../../types/physics";
-import { physicsLogger } from "../performance/physics-logger";
-import { logger } from "../../../../../services/logger";
+import { logger } from "@plinko/services/logger";
 import { CollisionCooldownManager } from "./collision-cooldown";
 import { PHYSICS_SCALING_FORMULAS } from "../scaling/row-based-scaling";
 
@@ -43,10 +42,11 @@ export function handleServiceGuidedPinCollision(
  */
 function handleNonServiceGuidedCollision(ballBody: Body, pegBody: Body, manager: CollisionCooldownManager): boolean {
     if (!manager.canCollide(ballBody.id.toString(), pegBody.id.toString(), 50)) {
-        physicsLogger.debug("Collision blocked by cooldown (test utility)", {
+        logger.logPhysicsEvent('collision-blocked-cooldown', {
+            ballId: ballBody.id,
+            pegId: pegBody.id,
             component: "CollisionTestUtils",
-            function: "handleNonServiceGuidedCollision",
-            metadata: { ballId: ballBody.id, pegId: pegBody.id },
+            function: "handleNonServiceGuidedCollision"
         });
         return false;
     }
@@ -67,7 +67,7 @@ function handleServiceGuidedCollision(
         return false;
     }
 
-    const pinLabelMatch = pegBody.label?.match(/pin-(\d+)-(\d+)/);
+    const pinLabelMatch = /pin-(\d+)-(\d+)/.exec(pegBody.label || '');
     if (!pinLabelMatch) {
         return true;
     }
@@ -242,45 +242,42 @@ function logCollisionStart(ballBody: Body, ballExtension: BallBodyExtension, peg
         }
     });
 
-    physicsLogger.info("🎯 SERVICE-GUIDED PIN COLLISION - STARTING", {
-        component: "CollisionTestUtils",
-        function: "handleServiceGuidedPinCollision",
-        metadata: {
-            ballId: ballBody.id,
-            pegId: pegBody.id,
-            ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-            pegPosition: { x: Math.round(pegBody.position.x), y: Math.round(pegBody.position.y) },
-            currentPathIndex: ballExtension.currentPathIndex,
-            servicePath: ballExtension.servicePath,
-            expectedFinalSlot: ballExtension.expectedFinalSlot,
-            ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🎯 SERVICE-GUIDED PIN COLLISION - STARTING", {
+    //     component: "CollisionTestUtils",
+    //     function: "handleServiceGuidedPinCollision",
+    //     metadata: {
+    //         ballId: ballBody.id,
+    //         pegId: pegBody.id,
+    //         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+    //         pegPosition: { x: Math.round(pegBody.position.x), y: Math.round(pegBody.position.y) },
+    //         currentPathIndex: ballExtension.currentPathIndex,
+    //         servicePath: ballExtension.servicePath,
+    //         expectedFinalSlot: ballExtension.expectedFinalSlot,
+    //         ballVelocityBefore: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+    //     },
+    // });
 }
 
 function logSkipFinalTrajectory(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body): void {
-    physicsLogger.debug("Skipping nudge for ball on final trajectory", {
+    logger.logPhysicsEvent('nudge-skipped-final-trajectory', {
+        ballId: ballBody.id,
+        pegId: pegBody.id,
+        expectedFinalSlot: ballExtension.expectedFinalSlot,
         component: "CollisionTestUtils",
-        function: "handleServiceGuidedCollision",
-        metadata: {
-            ballId: ballBody.id,
-            pegId: pegBody.id,
-            expectedFinalSlot: ballExtension.expectedFinalSlot,
-        },
+        function: "handleServiceGuidedCollision"
     });
 }
 
 function logSkipWrongRow(ballBody: Body, ballExtension: BallBodyExtension, pegBody: Body, pinRow: number): void {
-    physicsLogger.debug("Skipping nudge - wrong row or already processed", {
+    logger.logPhysicsEvent('nudge-skipped-wrong-row', {
+        ballId: ballBody.id,
+        pinRow,
+        expectedRow: ballExtension.currentPathIndex + 1,
+        currentPathIndex: ballExtension.currentPathIndex,
+        pinLabel: pegBody.label,
         component: "CollisionTestUtils",
-        function: "handleServiceGuidedCollision",
-        metadata: {
-            ballId: ballBody.id,
-            pinRow,
-            expectedRow: ballExtension.currentPathIndex + 1,
-            currentPathIndex: ballExtension.currentPathIndex,
-            pinLabel: pegBody.label,
-        },
+        function: "handleServiceGuidedCollision"
     });
 }
 
@@ -297,31 +294,27 @@ function logNudgeApplied(ballBody: Body, direction: number, naturalNudgeStrength
         }
     });
 
-    physicsLogger.info("🎯 DETERMINISTIC PATH GUIDANCE APPLIED", {
+    logger.logPhysicsEvent('deterministic-path-guidance-applied', {
+        ballId: ballBody.id,
+        direction,
+        nudgeStrength: naturalNudgeStrength.toFixed(3),
+        deterministicVelocityX: (direction * naturalNudgeStrength).toFixed(3),
+        upwardBounce: "0.500",
+        velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
         component: "CollisionTestUtils",
-        function: "applyServiceGuidedNudge",
-        metadata: {
-            ballId: ballBody.id,
-            direction,
-            nudgeStrength: naturalNudgeStrength.toFixed(3),
-            deterministicVelocityX: (direction * naturalNudgeStrength).toFixed(3),
-            upwardBounce: "0.500",
-            velocityAfter: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-        },
+        function: "applyServiceGuidedNudge"
     });
 }
 
 function logFinalTrajectorySet(ballBody: Body, ballExtension: BallBodyExtension, finalVelocity: { x: number; y: number }): void {
-    physicsLogger.info("🎯 FINAL TRAJECTORY SET - DIRECTING TO TARGET SLOT", {
+    logger.logPhysicsEvent('final-trajectory-set', {
+        ballId: ballBody.id,
+        expectedFinalSlot: ballExtension.expectedFinalSlot,
+        currentX: ballBody.position.x.toFixed(1),
+        finalVelocity: { x: finalVelocity.x.toFixed(3), y: finalVelocity.y.toFixed(3) },
+        pathCompleted: true,
         component: "CollisionTestUtils",
-        function: "handleFinalTrajectory",
-        metadata: {
-            ballId: ballBody.id,
-            expectedFinalSlot: ballExtension.expectedFinalSlot,
-            currentX: ballBody.position.x.toFixed(1),
-            finalVelocity: { x: finalVelocity.x.toFixed(3), y: finalVelocity.y.toFixed(3) },
-            pathCompleted: true,
-        },
+        function: "handleFinalTrajectory"
     });
 }
 
@@ -349,16 +342,14 @@ export function handleMultiplierCollision(
     const { ballBody, ballExtension, obstacleBody } = result;
     const multiplier = options?.multiplier || 1;
 
-    physicsLogger.info("🎯 MULTIPLIER COLLISION HANDLED", {
+    logger.logPhysicsEvent('multiplier-collision-handled', {
+        ballId: ballBody.id,
+        multiplier,
+        ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        multiplierPosition: { x: Math.round(obstacleBody.position.x), y: Math.round(obstacleBody.position.y) },
+        ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
         component: "CollisionTestUtils",
-        function: "handleMultiplierCollision",
-        metadata: {
-            ballId: ballBody.id,
-            multiplier,
-            ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-            multiplierPosition: { x: Math.round(obstacleBody.position.x), y: Math.round(obstacleBody.position.y) },
-            ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-        },
+        function: "handleMultiplierCollision"
     });
 
     // Simple multiplier collision response - just slow down the ball slightly
@@ -368,7 +359,7 @@ export function handleMultiplierCollision(
     });
 
     // Extract multiplier from obstacle label (e.g., 'multiplier-2-3' -> 2)
-    const multiplierMatch = obstacleBody.label?.match(/multiplier-([0-9.]+)-(\d+)/);
+    const multiplierMatch = /multiplier-([0-9.]+)-(\d+)/.exec(obstacleBody.label || '');
     if (multiplierMatch) {
         const actualMultiplier = parseFloat(multiplierMatch[1]);
 

@@ -5,8 +5,7 @@
  */
 
 import { Engine, Runner, World, Events, Body } from "matter-js";
-import { physicsLogger } from "../performance/physics-logger";
-import { logger } from "../../../../../services/logger";
+import { logger } from "@plinko/services/logger";
 import { createPhysicsBodies, BodyCreationOptions } from "../body-factory";
 import { detectCirclePegCollision } from "../collisions/collision-detection";
 import { CollisionCooldownManager } from "../collisions/collision-cooldown";
@@ -48,10 +47,10 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
         velocityIterations: config.velocityIterations
     });
 
-    physicsLogger.info("Initializing modular physics engine", {
+    logger.logPhysicsEvent('modular-physics-engine-init-start', {
         component: "ModularPhysicsEngine",
         function: "initializePhysicsEngine",
-        metadata: config,
+        config
     });
 
     // Create Matter.js engine
@@ -77,15 +76,13 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
         isInitialized: true,
     };
 
-    physicsLogger.info("Modular physics engine initialized successfully", {
+    logger.logPhysicsEvent('modular-physics-engine-init-success', {
         component: "ModularPhysicsEngine",
         function: "initializePhysicsEngine",
-        metadata: { worldId: engine.world.id },
+        worldId: engine.world.id
     });
 
     logger.logPhysicsEvent('engine-init-complete', {
-        worldId: engine.world.id,
-        engineId: engine.id,
         hasRunner: !!state.runner,
         hasCooldownManager: !!state.cooldownManager
     });
@@ -106,20 +103,16 @@ export function setupCollisionDetection(
     logger.startWorkflow('collision-detection-setup', 'physics', 'Setup collision detection event handlers');
 
     logger.logPhysicsEvent('collision-setup-start', {
-        worldId: engine.world.id,
-        engineId: engine.id,
         hasCooldownManager: !!cooldownManager,
         hasBallLandedCallback: !!onBallLanded
     });
 
-    physicsLogger.info("🔧 SETTING UP MODULAR COLLISION DETECTION", {
+    logger.logPhysicsEvent('collision-detection-setup-start', {
         component: "ModularPhysicsEngine",
-        function: "setupCollisionDetection",
-        metadata: { worldId: engine.world.id, engineId: engine },
+        function: "setupCollisionDetection"
     });
 
-    // Temporarily set logger to DEBUG level for detailed collision logging
-    physicsLogger.configure({ level: 0 }); // DEBUG level
+    // Logger is already configured for comprehensive logging
 
     // Set up collision event handlers
     Events.on(engine, "collisionStart", (event) => {
@@ -131,14 +124,12 @@ export function setupCollisionDetection(
         applyPendingGuidance(engine);
     });
 
-    physicsLogger.info("Modular collision detection setup complete", {
+    logger.logPhysicsEvent('collision-detection-setup-complete', {
         component: "ModularPhysicsEngine",
         function: "setupCollisionDetection",
     });
 
     logger.logPhysicsEvent('collision-setup-complete', {
-        worldId: engine.world.id,
-        engineId: engine.id,
         collisionHandlersAttached: true
     });
 
@@ -154,10 +145,11 @@ function processCollisionPairs(
     cooldownManager: CollisionCooldownManager,
     onBallLanded?: (success: boolean) => void
 ): void {
-    physicsLogger.info("Collision event triggered", {
+    logger.logPhysicsEvent('collision-event-triggered', {
         component: "ModularPhysicsEngine",
         function: "processCollisionPairs",
-        metadata: { pairCount: pairs.length, worldId: engine.world.id },
+        pairCount: pairs.length,
+        worldId: engine.world.id
     });
 
     for (const pair of pairs) {
@@ -189,26 +181,27 @@ function processCollisionPair(
  * Log detailed collision pair information
  */
 function logCollisionPairDetails(bodyA: Body, bodyB: Body): void {
-    physicsLogger.info("🔍 PROCESSING COLLISION PAIR - DETAILED", {
-        component: "ModularPhysicsEngine",
-        function: "logCollisionPairDetails",
-        metadata: {
-            bodyA: {
-                id: bodyA.id,
-                label: bodyA.label,
-                isStatic: bodyA.isStatic,
-                position: { x: Math.round(bodyA.position.x), y: Math.round(bodyA.position.y) },
-                velocity: { x: bodyA.velocity.x.toFixed(3), y: bodyA.velocity.y.toFixed(3) },
-            },
-            bodyB: {
-                id: bodyB.id,
-                label: bodyB.label,
-                isStatic: bodyB.isStatic,
-                position: { x: Math.round(bodyB.position.x), y: Math.round(bodyB.position.y) },
-                velocity: { x: bodyB.velocity.x.toFixed(3), y: bodyB.velocity.y.toFixed(3) },
-            },
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🔍 PROCESSING COLLISION PAIR - DETAILED", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "logCollisionPairDetails",
+    //     metadata: {
+    //         bodyA: {
+    //             id: bodyA.id,
+    //             label: bodyA.label,
+    //             isStatic: bodyA.isStatic,
+    //             position: { x: Math.round(bodyA.position.x), y: Math.round(bodyA.position.y) },
+    //             velocity: { x: bodyA.velocity.x.toFixed(3), y: bodyA.velocity.y.toFixed(3) },
+    //         },
+    //         bodyB: {
+    //             id: bodyB.id,
+    //             label: bodyB.label,
+    //             isStatic: bodyB.isStatic,
+    //             position: { x: Math.round(bodyB.position.x), y: Math.round(bodyB.position.y) },
+    //             velocity: { x: bodyB.velocity.x.toFixed(3), y: bodyB.velocity.y.toFixed(3) },
+    //         },
+    //     },
+    // });
 }
 
 /**
@@ -322,113 +315,112 @@ function handleServiceGuidedCollision(
 
 // Logging functions
 function logSkipCompletedPath(ballBody: Body | null, ballExtension: BallBodyExtension | null): void {
-    physicsLogger.debug("Skipping collision - service-guided ball has completed path", {
-        component: "ModularPhysicsEngine",
-        function: "shouldSkipCollision",
-        metadata: {
-            ballId: ballBody?.id,
-            currentPathIndex: ballExtension?.currentPathIndex,
-            servicePathLength: ballExtension?.servicePath?.length,
-            expectedFinalSlot: ballExtension?.expectedFinalSlot,
-            collisionType: "skipped",
-            reason: "Path completed, preventing trajectory interference",
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // // physicsLogger.debug("Skipping collision - service-guided ball has completed path", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "shouldSkipCollision",
+    //     metadata: {
+    //         ballId: ballBody?.id,
+    //         currentPathIndex: ballExtension?.currentPathIndex,
+    //         servicePathLength: ballExtension?.servicePath?.length,
+    //         expectedFinalSlot: ballExtension?.expectedFinalSlot,
+    //         collisionType: "skipped",
+    //         reason: "Path completed, preventing trajectory interference",
+    //     },
+    // });
 }
 
 function logSkipStaticCollision(bodyA: Body, bodyB: Body, isServiceGuidedBallCollision: boolean): void {
-    physicsLogger.debug("Skipping collision with static body (not service-guided)", {
-        component: "ModularPhysicsEngine",
-        function: "shouldSkipStaticCollision",
-        metadata: {
-            staticBody: bodyA.isStatic ? "bodyA" : "bodyB",
-            bodyALabel: bodyA.label,
-            bodyBLabel: bodyB.label,
-            isServiceGuidedBallCollision,
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("Skipping collision with static body (not service-guided)", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "shouldSkipStaticCollision",
+    //     metadata: {
+    //         staticBody: bodyA.isStatic ? "bodyA" : "bodyB",
+    //         bodyALabel: bodyA.label,
+    //         bodyBLabel: bodyB.label,
+    //         isServiceGuidedBallCollision,
+    //     },
+    // });
 }
 
 function logSkipCooldown(bodyA: Body, bodyB: Body): void {
-    physicsLogger.debug("Collision blocked by cooldown system", {
-        component: "ModularPhysicsEngine",
-        function: "shouldSkipCollision",
-        metadata: { bodyAId: bodyA.id, bodyBId: bodyB.id },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("Collision blocked by cooldown system", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "shouldSkipCollision",
+    //     metadata: { bodyAId: bodyA.id, bodyBId: bodyB.id },
+    // });
 }
 
 function logCollisionParticipants(bodyA: Body, bodyB: Body, isServiceGuidedBallLabel: (label: string) => boolean): void {
     const bodyAExtension = bodyA as unknown as BallBodyExtension;
     const bodyBExtension = bodyB as unknown as BallBodyExtension;
 
-    physicsLogger.info("⚡ COLLISION PARTICIPANTS IDENTIFIED", {
+    logger.logPhysicsEvent('collision-participants-identified', {
         component: "ModularPhysicsEngine",
         function: "logCollisionParticipants",
-        metadata: {
-            bodyA: {
-                label: bodyA.label,
-                isServiceGuided: bodyAExtension.isServiceGuided,
-                servicePath: bodyAExtension.servicePath,
-                expectedFinalSlot: bodyAExtension.expectedFinalSlot,
-            },
-            bodyB: {
-                label: bodyB.label,
-                isServiceGuided: bodyBExtension.isServiceGuided,
-                servicePath: bodyBExtension.servicePath,
-                expectedFinalSlot: bodyBExtension.expectedFinalSlot,
-            },
-            checkingServiceGuided: {
-                bodyA_isServiceGuided: isServiceGuidedBallLabel(bodyA.label),
-                bodyB_isServiceGuided: isServiceGuidedBallLabel(bodyB.label),
-                eitherIsServiceGuided: isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label),
-            },
+        bodyA: {
+            label: bodyA.label,
+            isServiceGuided: bodyAExtension.isServiceGuided,
+            servicePath: bodyAExtension.servicePath,
+            expectedFinalSlot: bodyAExtension.expectedFinalSlot,
+        },
+        bodyB: {
+            label: bodyB.label,
+            isServiceGuided: bodyBExtension.isServiceGuided,
+            servicePath: bodyBExtension.servicePath,
+            expectedFinalSlot: bodyBExtension.expectedFinalSlot,
+        },
+        checkingServiceGuided: {
+            bodyA_isServiceGuided: isServiceGuidedBallLabel(bodyA.label),
+            bodyB_isServiceGuided: isServiceGuidedBallLabel(bodyB.label),
+            eitherIsServiceGuided: isServiceGuidedBallLabel(bodyA.label) || isServiceGuidedBallLabel(bodyB.label),
         },
     });
 }
 
 function logServiceGuidedCollision(bodyA: Body, bodyB: Body, isServiceGuidedBallLabel: (label: string) => boolean): void {
-    physicsLogger.info("🎯 SERVICE-GUIDED BALL COLLISION DETECTED", {
+    logger.logPhysicsEvent('service-guided-ball-collision-detected', {
         component: "ModularPhysicsEngine",
         function: "handleServiceGuidedCollision",
-        metadata: {
-            ballBody: isServiceGuidedBallLabel(bodyA.label) ? "bodyA" : "bodyB",
-            otherBody: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
-            ballLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyA.label : bodyB.label,
-            otherLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
-        },
+        ballBody: isServiceGuidedBallLabel(bodyA.label) ? "bodyA" : "bodyB",
+        otherBody: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
+        ballLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyA.label : bodyB.label,
+        otherLabel: isServiceGuidedBallLabel(bodyA.label) ? bodyB.label : bodyA.label,
     });
 }
 
 function logMultiplierCollisionRouting(bodyA: Body, bodyB: Body): void {
-    physicsLogger.info("🎯 ROUTING TO MULTIPLIER COLLISION HANDLER", {
+    logger.logPhysicsEvent('routing-to-multiplier-collision-handler', {
         component: "ModularPhysicsEngine",
         function: "handleServiceGuidedCollision",
-        metadata: {
-            multiplierBody: bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label,
-        },
+        multiplierBody: bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label,
     });
 }
 
 function logPegCollisionRouting(bodyA: Body, bodyB: Body): void {
-    physicsLogger.info("🎯 ROUTING TO PEG COLLISION HANDLER", {
-        component: "ModularPhysicsEngine",
-        function: "handleServiceGuidedCollision",
-        metadata: {
-            pegBody: !bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label,
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🎯 ROUTING TO PEG COLLISION HANDLER", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "handleServiceGuidedCollision",
+    //     metadata: {
+    //         pegBody: !bodyA.label?.startsWith(multiplierLabel) ? bodyA.label : bodyB.label,
+    //     },
+    // });
 }
 
 function logNonServiceGuidedCollision(bodyA: Body, bodyB: Body): void {
-    physicsLogger.info("❌ NON-SERVICE-GUIDED COLLISION - SKIPPING SERVICE LOGIC", {
-        component: "ModularPhysicsEngine",
-        function: "handleCollisionByType",
-        metadata: {
-            bodyALabel: bodyA.label,
-            bodyBLabel: bodyB.label,
-            reason: "Neither body is service-guided ball",
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // // physicsLogger.info("❌ NON-SERVICE-GUIDED COLLISION - SKIPPING SERVICE LOGIC", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "handleCollisionByType",
+    //     metadata: {
+    //         bodyALabel: bodyA.label,
+    //         bodyBLabel: bodyB.label,
+    //         reason: "Neither body is service-guided ball",
+    //     },
+    // });
 }
 
 /**
@@ -470,54 +462,57 @@ function handleBallMultiplierCollision(pair: any, engine: Engine, onBallLanded?:
         // Increased threshold for faster falling speeds and physics simulation differences
         if (positionDifference <= 200) {
             correctedFinalSlot = ballExtension.expectedFinalSlot;
-            physicsLogger.info("🎯 SLOT CORRECTION APPLIED - Ball close to expected slot", {
-                component: "ModularPhysicsEngine",
-                function: "handleBallMultiplierCollision",
-                metadata: {
-                    ballId: ballBody.id,
-                    originalSlot: finalSlot,
-                    correctedSlot: correctedFinalSlot,
-                    positionDifference: Math.round(positionDifference),
-                    threshold: 200,
-                },
-            });
+            // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+            // physicsLogger.info("🎯 SLOT CORRECTION APPLIED - Ball close to expected slot", {
+            //     component: "ModularPhysicsEngine",
+            //     function: "handleBallMultiplierCollision",
+            //     metadata: {
+            //         ballId: ballBody.id,
+            //         originalSlot: finalSlot,
+            //         correctedSlot: correctedFinalSlot,
+            //         positionDifference: Math.round(positionDifference),
+            //         threshold: 200,
+            //     },
+            // });
         } else if (positionDifference > 200) {
             // Log when correction is NOT applied due to distance
-            physicsLogger.warn("🎯 SLOT CORRECTION SKIPPED - Ball too far from expected slot", {
-                component: "ModularPhysicsEngine",
-                function: "handleBallMultiplierCollision",
-                metadata: {
-                    ballId: ballBody.id,
-                    expectedSlot: ballExtension.expectedFinalSlot,
-                    detectedSlot: finalSlot,
-                    positionDifference: Math.round(positionDifference),
-                    threshold: 200,
-                    actualX: Math.round(actualX),
-                    expectedX: Math.round(expectedX),
-                },
-            });
+            // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+            // physicsLogger.warn("🎯 SLOT CORRECTION SKIPPED - Ball too far from expected slot", {
+            //     component: "ModularPhysicsEngine",
+            //     function: "handleBallMultiplierCollision",
+            //     metadata: {
+            //         ballId: ballBody.id,
+            //         expectedSlot: ballExtension.expectedFinalSlot,
+            //         detectedSlot: finalSlot,
+            //         positionDifference: Math.round(positionDifference),
+            //         threshold: 200,
+            //         actualX: Math.round(actualX),
+            //         expectedX: Math.round(expectedX),
+            //     },
+            // });
         }
     }
 
-    physicsLogger.info("🎯 BALL HIT MULTIPLIER SLOT - FINAL POSITION CHECK", {
-        component: "ModularPhysicsEngine",
-        function: "handleBallMultiplierCollision",
-        metadata: {
-            ballId: ballBody.id,
-            multiplier,
-            originalSlot: finalSlot,
-            finalSlot: correctedFinalSlot,
-            expectedSlot: ballExtension.expectedFinalSlot,
-            expectedX: Math.round(expectedX),
-            actualX: Math.round(actualX),
-            positionDifference: Math.round(positionDifference),
-            betValue,
-            ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-            servicePath: ballExtension.servicePath,
-            pathIndex: ballExtension.currentPathIndex,
-            totalPathLength: ballExtension.servicePath?.length,
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🎯 BALL HIT MULTIPLIER SLOT - FINAL POSITION CHECK", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "handleBallMultiplierCollision",
+    //     metadata: {
+    //         ballId: ballBody.id,
+    //         multiplier,
+    //         originalSlot: finalSlot,
+    //         finalSlot: correctedFinalSlot,
+    //         expectedSlot: ballExtension.expectedFinalSlot,
+    //         expectedX: Math.round(expectedX),
+    //         actualX: Math.round(actualX),
+    //         positionDifference: Math.round(positionDifference),
+    //         betValue,
+    //         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+    //         servicePath: ballExtension.servicePath,
+    //         pathIndex: ballExtension.currentPathIndex,
+    //         totalPathLength: ballExtension.servicePath?.length,
+    //     },
+    // });
 
     // Handle ball landing based on type
     if (ballExtension.isServiceGuided && ballExtension.expectedFinalSlot !== undefined) {
@@ -525,92 +520,98 @@ function handleBallMultiplierCollision(pair: any, engine: Engine, onBallLanded?:
         const correctSlot = ballExtension.expectedFinalSlot === correctedFinalSlot;
 
         if (correctSlot) {
-            physicsLogger.info("🎯✅ SERVICE-GUIDED BALL LANDED IN CORRECT SLOT - SUCCESS!", {
-                component: "ModularPhysicsEngine",
-                function: "handleBallMultiplierCollision",
-                metadata: {
-                    ballId: ballBody.id,
-                    expectedSlot: ballExtension.expectedFinalSlot,
-                    actualSlot: finalSlot,
-                    multiplier,
-                    winAmount: betValue * multiplier,
-                    servicePath: ballExtension.servicePath,
-                    finalPathIndex: ballExtension.currentPathIndex,
-                    status: "SUCCESS",
-                },
-            });
+            // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+            // physicsLogger.info("🎯✅ SERVICE-GUIDED BALL LANDED IN CORRECT SLOT - SUCCESS!", {
+            //     component: "ModularPhysicsEngine",
+            //     function: "handleBallMultiplierCollision",
+            //     metadata: {
+            //         ballId: ballBody.id,
+            //         expectedSlot: ballExtension.expectedFinalSlot,
+            //         actualSlot: finalSlot,
+            //         multiplier,
+            //         winAmount: betValue * multiplier,
+            //         servicePath: ballExtension.servicePath,
+            //         finalPathIndex: ballExtension.currentPathIndex,
+            //         status: "SUCCESS",
+            //     },
+            // });
 
             onBallLanded?.(true);
         } else {
-            physicsLogger.error("🎯❌ SERVICE-GUIDED BALL LANDED IN WRONG SLOT - FAILURE!", {
-                component: "ModularPhysicsEngine",
-                function: "handleBallMultiplierCollision",
-                metadata: {
-                    ballId: ballBody.id,
-                    expectedSlot: ballExtension.expectedFinalSlot,
-                    actualSlot: correctedFinalSlot,
-                    originalMultiplierSlot: finalSlot,
-                    multiplier,
-                    servicePath: ballExtension.servicePath,
-                    finalPathIndex: ballExtension.currentPathIndex,
-                    status: "FAILED",
-                    slotDifference: Math.abs(ballExtension.expectedFinalSlot - correctedFinalSlot),
-                },
-            });
+            // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+            // physicsLogger.error("🎯❌ SERVICE-GUIDED BALL LANDED IN WRONG SLOT - FAILURE!", {
+            //     component: "ModularPhysicsEngine",
+            //     function: "handleBallMultiplierCollision",
+            //     metadata: {
+            //         ballId: ballBody.id,
+            //         expectedSlot: ballExtension.expectedFinalSlot,
+            //         actualSlot: correctedFinalSlot,
+            //         originalMultiplierSlot: finalSlot,
+            //         multiplier,
+            //         servicePath: ballExtension.servicePath,
+            //         finalPathIndex: ballExtension.currentPathIndex,
+            //         status: "FAILED",
+            //         slotDifference: Math.abs(ballExtension.expectedFinalSlot - correctedFinalSlot),
+            //     },
+            // });
 
             // Notify UI of failed landing
             onBallLanded?.(false);
         }
     } else {
         // Regular ball: Just log the landing
-        physicsLogger.info("🎯 BALL LANDED IN SLOT", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallMultiplierCollision",
-            metadata: {
-                ballId: ballBody.id,
-                slot: finalSlot,
-                multiplier,
-                winAmount: betValue * multiplier,
-                ballType: "regular",
-            },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.info("🎯 BALL LANDED IN SLOT", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallMultiplierCollision",
+        //     metadata: {
+        //         ballId: ballBody.id,
+        //         slot: finalSlot,
+        //         multiplier,
+        //         winAmount: betValue * multiplier,
+        //         ballType: "regular",
+        //     },
+        // });
     }
 
     // Mark the ball as removed but delay actual removal to allow landing signal to show
-    physicsLogger.info("🗑️ MARKING BALL FOR REMOVAL AFTER LANDING", {
-        component: "ModularPhysicsEngine",
-        function: "handleBallMultiplierCollision",
-        metadata: {
-            ballId: ballBody.id,
-            finalSlot: correctedFinalSlot,
-            originalMultiplierSlot: finalSlot,
-            multiplier: multiplier,
-            position: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-            ballType: ballExtension.isServiceGuided ? "service-guided" : "regular",
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🗑️ MARKING BALL FOR REMOVAL AFTER LANDING", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "handleBallMultiplierCollision",
+    //     metadata: {
+    //         ballId: ballBody.id,
+    //         finalSlot: correctedFinalSlot,
+    //         originalMultiplierSlot: finalSlot,
+    //         multiplier: multiplier,
+    //         position: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+    //         ballType: ballExtension.isServiceGuided ? "service-guided" : "regular",
+    //     },
+    // });
 
     // Mark ball as removed in the extension (prevents further collisions)
     ballExtension.isRemoved = true;
 
     // Delay actual removal to allow landing signal animation to complete
     setTimeout(() => {
-        physicsLogger.debug("🗑️ REMOVING BALL FROM PHYSICS WORLD", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallMultiplierCollision",
-            metadata: { ballId: ballBody.id, delay: "500ms" },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.debug("🗑️ REMOVING BALL FROM PHYSICS WORLD", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallMultiplierCollision",
+        //     metadata: { ballId: ballBody.id, delay: "500ms" },
+        // });
         World.remove(engine.world, ballBody);
     }, 500); // 500ms delay to allow landing signal to show
 
     // Note: Ball removal is handled by the collision event system
     // The ball will be removed when it comes to rest or hits the bottom
 
-    physicsLogger.info("Multiplier collision processed", {
-        component: "ModularPhysicsEngine",
-        function: "handleBallMultiplierCollision",
-        metadata: { ballId: ballBody.id, multiplier, finalSlot: correctedFinalSlot, originalMultiplierSlot: finalSlot },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Multiplier collision processed", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "handleBallMultiplierCollision",
+    //     metadata: { ballId: ballBody.id, multiplier, finalSlot: correctedFinalSlot, originalMultiplierSlot: finalSlot },
+    // });
 }
 
 /**
@@ -633,17 +634,18 @@ function handleBallPegCollision(pair: any, cooldownManager: CollisionCooldownMan
 
     // For balls that have completed their path, skip physics entirely to prevent trajectory interference
     if (ballExtension.currentPathIndex >= ballExtension.servicePath?.length) {
-        physicsLogger.debug("Skipping peg collision physics - ball has completed path", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallPegCollision",
-            metadata: {
-                ballId: ballBody.id,
-                currentPathIndex: ballExtension.currentPathIndex,
-                servicePathLength: ballExtension.servicePath?.length,
-                expectedFinalSlot: ballExtension.expectedFinalSlot,
-                reason: "Preventing trajectory interference",
-            },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.debug("Skipping peg collision physics - ball has completed path", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallPegCollision",
+        //     metadata: {
+        //         ballId: ballBody.id,
+        //         currentPathIndex: ballExtension.currentPathIndex,
+        //         servicePathLength: ballExtension.servicePath?.length,
+        //         expectedFinalSlot: ballExtension.expectedFinalSlot,
+        //         reason: "Preventing trajectory interference",
+        //     },
+        // });
         return; // Skip physics entirely for completed path balls
     }
 
@@ -658,48 +660,51 @@ function handleBallPegCollision(pair: any, cooldownManager: CollisionCooldownMan
     if (collisionResult) {
         const ballExtension = ballBody as unknown as BallBodyExtension;
 
-        physicsLogger.info("Ball-peg collision detected - BEFORE correction", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallPegCollision",
-            metadata: {
-                ballId: ballBody.id,
-                pegId: pegBody.id,
-                penetration: collisionResult.penetration,
-                ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-                ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-                isServiceGuided: ballExtension.isServiceGuided,
-                currentPathIndex: ballExtension.currentPathIndex,
-                servicePath: ballExtension.servicePath,
-                expectedFinalSlot: ballExtension.expectedFinalSlot,
-            },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.info("Ball-peg collision detected - BEFORE correction", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallPegCollision",
+        //     metadata: {
+        //         ballId: ballBody.id,
+        //         pegId: pegBody.id,
+        //         penetration: collisionResult.penetration,
+        //         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        //         ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        //         isServiceGuided: ballExtension.isServiceGuided,
+        //         currentPathIndex: ballExtension.currentPathIndex,
+        //         servicePath: ballExtension.servicePath,
+        //         expectedFinalSlot: ballExtension.expectedFinalSlot,
+        //     },
+        // });
 
         // Use service-guided collision handling for deterministic path following
         handleServiceGuidedPinCollision(ballBody, ballExtension, pegBody, engine, cooldownManager);
 
-        physicsLogger.info("Ball-peg collision handled - AFTER correction", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallPegCollision",
-            metadata: {
-                ballId: ballBody.id,
-                ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-                ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
-                updatedPathIndex: ballExtension.currentPathIndex,
-                servicePath: ballExtension.servicePath,
-                expectedFinalSlot: ballExtension.expectedFinalSlot,
-            },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.info("Ball-peg collision handled - AFTER correction", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallPegCollision",
+        //     metadata: {
+        //         ballId: ballBody.id,
+        //         ballPosition: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        //         ballVelocity: { x: ballBody.velocity.x.toFixed(3), y: ballBody.velocity.y.toFixed(3) },
+        //         updatedPathIndex: ballExtension.currentPathIndex,
+        //         servicePath: ballExtension.servicePath,
+        //         expectedFinalSlot: ballExtension.expectedFinalSlot,
+        //     },
+        // });
     } else {
-        physicsLogger.debug("No collision detected between ball and peg", {
-            component: "ModularPhysicsEngine",
-            function: "handleBallPegCollision",
-            metadata: {
-                ballId: ballBody.id,
-                pegId: pegBody.id,
-                ballPos: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
-                pegPos: { x: Math.round(pegBody.position.x), y: Math.round(pegBody.position.y) },
-            },
-        });
+        // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+        // physicsLogger.debug("No collision detected between ball and peg", {
+        //     component: "ModularPhysicsEngine",
+        //     function: "handleBallPegCollision",
+        //     metadata: {
+        //         ballId: ballBody.id,
+        //         pegId: pegBody.id,
+        //         ballPos: { x: Math.round(ballBody.position.x), y: Math.round(ballBody.position.y) },
+        //         pegPos: { x: Math.round(pegBody.position.x), y: Math.round(pegBody.position.y) },
+        //     },
+        // });
     }
 }
 
@@ -707,45 +712,49 @@ function handleBallPegCollision(pair: any, cooldownManager: CollisionCooldownMan
  * Add bodies to world using new body factory
  */
 export function addBodiesToWorld(engine: Engine, options: BodyCreationOptions): void {
-    physicsLogger.info("Adding bodies to world using modular factory", {
-        component: "ModularPhysicsEngine",
-        function: "addBodiesToWorld",
-        metadata: options,
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Adding bodies to world using modular factory", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "addBodiesToWorld",
+    //     metadata: options,
+    // });
 
     const bodies = createPhysicsBodies(options);
 
     // Add all bodies to world
     World.add(engine.world, [...bodies.pins, ...bodies.multipliersBodies, ...bodies.walls]);
 
-    physicsLogger.info("Bodies added to world successfully", {
-        component: "ModularPhysicsEngine",
-        function: "addBodiesToWorld",
-        metadata: {
-            pinsCount: bodies.pins.length,
-            multipliersCount: bodies.multipliersBodies.length,
-            wallsCount: bodies.walls.length,
-            totalBodies: bodies.pins.length + bodies.multipliersBodies.length + bodies.walls.length,
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Bodies added to world successfully", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "addBodiesToWorld",
+    //     metadata: {
+    //         pinsCount: bodies.pins.length,
+    //         multipliersCount: bodies.multipliersBodies.length,
+    //         wallsCount: bodies.walls.length,
+    //         totalBodies: bodies.pins.length + bodies.multipliersBodies.length + bodies.walls.length,
+    //     },
+    // });
 }
 
 /**
  * Start physics runner
  */
 export function startPhysicsRunner(runner: Runner, engine: Engine): void {
-    physicsLogger.info("Starting physics runner", {
-        component: "ModularPhysicsEngine",
-        function: "startPhysicsRunner",
-        metadata: { worldId: engine.world.id },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Starting physics runner", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "startPhysicsRunner",
+    //     metadata: { worldId: engine.world.id },
+    // });
 
     Runner.run(runner, engine);
 
-    physicsLogger.info("Physics runner started successfully", {
-        component: "ModularPhysicsEngine",
-        function: "startPhysicsRunner",
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Physics runner started successfully", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "startPhysicsRunner",
+    // });
 }
 
 /**
@@ -757,21 +766,23 @@ export function updateCollisionDetection(cooldownManager: CollisionCooldownManag
 
     // Log cooldown stats periodically
     const stats = cooldownManager.getStats();
-    physicsLogger.debug("Collision cooldown system updated", {
-        component: "ModularPhysicsEngine",
-        function: "updateCollisionDetection",
-        metadata: stats,
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("Collision cooldown system updated", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "updateCollisionDetection",
+    //     metadata: stats,
+    // });
 }
 
 /**
  * Clean up physics engine
  */
 export function cleanupPhysicsEngine(engine: Engine | null, runner: Runner | null): void {
-    physicsLogger.info("Cleaning up physics engine", {
-        component: "ModularPhysicsEngine",
-        function: "cleanupPhysicsEngine",
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Cleaning up physics engine", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "cleanupPhysicsEngine",
+    // });
 
     if (runner) {
         Runner.stop(runner);
@@ -782,10 +793,11 @@ export function cleanupPhysicsEngine(engine: Engine | null, runner: Runner | nul
         Engine.clear(engine);
     }
 
-    physicsLogger.info("Physics engine cleanup completed", {
-        component: "ModularPhysicsEngine",
-        function: "cleanupPhysicsEngine",
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("Physics engine cleanup completed", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "cleanupPhysicsEngine",
+    // });
 }
 
 /**
@@ -1034,30 +1046,32 @@ function markGuidanceApplied(ballExtension: BallBodyExtension, engine: Engine): 
 
 // Logging functions
 function logGuidanceApplication(body: Body, guidance: any): void {
-    physicsLogger.info("🎯 APPLYING DELAYED NATURAL GUIDANCE - AFTER NATURAL PHYSICS", {
-        component: "ModularPhysicsEngine",
-        function: "applyGuidanceToBall",
-        metadata: {
-            ballId: body.id,
-            pinRow: guidance.pinRow,
-            direction: guidance.direction > 0 ? "RIGHT" : "LEFT",
-            naturalNudgeStrength: guidance.naturalNudgeStrength.toFixed(3),
-            ballVelocityBefore: { x: body.velocity.x.toFixed(3), y: body.velocity.y.toFixed(3) },
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.info("🎯 APPLYING DELAYED NATURAL GUIDANCE - AFTER NATURAL PHYSICS", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "applyGuidanceToBall",
+    //     metadata: {
+    //         ballId: body.id,
+    //         pinRow: guidance.pinRow,
+    //         direction: guidance.direction > 0 ? "RIGHT" : "LEFT",
+    //         naturalNudgeStrength: guidance.naturalNudgeStrength.toFixed(3),
+    //         ballVelocityBefore: { x: body.velocity.x.toFixed(3), y: body.velocity.y.toFixed(3) },
+    //     },
+    // });
 }
 
 function logGuidanceDelay(ballExtension: BallBodyExtension, timeSinceBounce: number, bounceDelayMs: number): void {
-    physicsLogger.debug("⏳ DELAYING GUIDANCE - Ball just bounced, letting bounce settle", {
-        component: "ModularPhysicsEngine",
-        function: "shouldDelayGuidance",
-        metadata: {
-            ballId: (ballExtension as any).id,
-            timeSinceBounce: Math.round(timeSinceBounce),
-            bounceDelay: bounceDelayMs,
-            remainingDelay: Math.round(bounceDelayMs - timeSinceBounce),
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("⏳ DELAYING GUIDANCE - Ball just bounced, letting bounce settle", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "shouldDelayGuidance",
+    //     metadata: {
+    //         ballId: (ballExtension as any).id,
+    //         timeSinceBounce: Math.round(timeSinceBounce),
+    //         bounceDelay: bounceDelayMs,
+    //         remainingDelay: Math.round(bounceDelayMs - timeSinceBounce),
+    //     },
+    // });
 }
 
 function logPreCalculatedGuidance(guidanceData: any): void {
@@ -1078,37 +1092,40 @@ function logPreCalculatedGuidance(guidanceData: any): void {
         finalVelocity: { x: guidanceData.blendedX.toFixed(3), y: guidanceData.blendedY.toFixed(3) },
     };
 
-    physicsLogger.debug("🎯 PRE-CALCULATED TRAJECTORY GUIDANCE APPLIED", {
-        component: "ModularPhysicsEngine",
-        function: "calculateTrajectoryBasedVelocity",
-        metadata,
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("🎯 PRE-CALCULATED TRAJECTORY GUIDANCE APPLIED", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "calculateTrajectoryBasedVelocity",
+    //     metadata,
+    // });
 }
 
 function logFallbackGuidance(body: Body, naturalWeight: number, guidanceWeight: number, blendedX: number, blendedY: number): void {
-    physicsLogger.debug("🎯 FALLBACK GUIDANCE APPLIED", {
-        component: "ModularPhysicsEngine",
-        function: "calculateFallbackVelocity",
-        metadata: {
-            ballId: body.id,
-            naturalWeight,
-            guidanceWeight,
-            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) },
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("🎯 FALLBACK GUIDANCE APPLIED", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "calculateFallbackVelocity",
+    //     metadata: {
+    //         ballId: body.id,
+    //         naturalWeight,
+    //         guidanceWeight,
+    //         finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) },
+    //     },
+    // });
 }
 
 function logStandardGuidance(body: Body, naturalWeight: number, guidanceWeight: number, blendedX: number, blendedY: number): void {
-    physicsLogger.debug("🎯 STANDARD GUIDANCE APPLIED", {
-        component: "ModularPhysicsEngine",
-        function: "calculateStandardVelocity",
-        metadata: {
-            ballId: body.id,
-            naturalWeight,
-            guidanceWeight,
-            finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) },
-        },
-    });
+    // Temporarily disabled - TODO: replace with logger.logPhysicsEvent
+    // physicsLogger.debug("🎯 STANDARD GUIDANCE APPLIED", {
+    //     component: "ModularPhysicsEngine",
+    //     function: "calculateStandardVelocity",
+    //     metadata: {
+    //         ballId: body.id,
+    //         naturalWeight,
+    //         guidanceWeight,
+    //         finalVelocity: { x: blendedX.toFixed(3), y: blendedY.toFixed(3) },
+    //     },
+    // });
 }
 
 /**

@@ -76,7 +76,6 @@ export function initializePhysicsEngine(config: PhysicsEngineConfig): PhysicsEng
     const runner = Runner.create();
 
     logger.logPhysicsEvent('physics-engine-init-complete', {
-        engineId: engine.id,
         pinsCount: pins.length,
         multipliersCount: multipliersBodies.length,
         wallsCount: walls.length,
