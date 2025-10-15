@@ -209,7 +209,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 }
             },
             transform: {
-                expected: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${canvasScale})`,
+                expected: `translateX(-50%) translateY(${(numberOfRows + numberOfRows / 8) * canvasScale / scaleValue}px) scale(${canvasScale})`,
                 applied: canvasComputedStyle.transform,
                 parsed: (() => {
                     const transform = canvasComputedStyle.transform;
@@ -338,6 +338,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 slotsExpectedTop: 570,
                 slotsActualTop: slotsRect.top - mainRect.top,
                 scaleRatio: canvasRect.height / 600,
+                canvasTranslateYAdjustment: (numberOfRows + numberOfRows / 8) * (canvasScale || PLINKO_CANVAS_SCALE[numberOfRows]) / PLINKO_CANVAS_SCALE[numberOfRows],
             },
             viewport: {
                 width: window.innerWidth,
@@ -522,8 +523,8 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 containerHeight: 600,
                 transform: {
                     translateX: '-50%',
-                    translateY: `${numberOfRows + numberOfRows / 8}px`,
-                    scale: scaleValue,
+                    translateY: `${(numberOfRows + numberOfRows / 8) * canvasScale / scaleValue}px`,
+                    scale: canvasScale,
                 },
                 positioning: {
                     origin: 'top',
@@ -779,7 +780,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                     ref={canvasContainerRef}
                     className="absolute origin-top left-1/2 z-[-1]"
                     style={{
-                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${canvasScale})`,
+                        transform: `translateX(-50%) translateY(${(numberOfRows + numberOfRows / 8) * canvasScale / scaleValue}px) scale(${canvasScale})`,
                     }}
                 >
                     <PlinkoCanvas />
