@@ -7,7 +7,7 @@ import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
 import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 
-const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) => {
+const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>((props, ref) => {
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
@@ -721,10 +721,37 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
     // Calculate the scaled height for parent component
     const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
 
-    // Expose the scaled height for parent component to use
+    // Calculate wrapper scale for desktop when main container exceeds frame dimensions
+    const wrapperScale = useMemo(() => {
+        if (isMobile) {
+            return 1.0; // No wrapper scaling on mobile
+        }
+
+        // Get the plinko-game-frame element dimensions
+        const gameFrameElement = document.getElementById('plinko-game-frame');
+        if (!gameFrameElement || !mainContainerRef.current) {
+            return 1.0;
+        }
+
+        const frameRect = gameFrameElement.getBoundingClientRect();
+        const mainRect = mainContainerRef.current.getBoundingClientRect();
+
+        // Calculate scale factors needed to fit main container within frame
+        const scaleX = frameRect.width / mainRect.width;
+        const scaleY = frameRect.height / mainRect.height;
+        const minScale = Math.min(scaleX, scaleY);
+
+        // Only scale down if main container is larger than frame
+        return mainRect.width > frameRect.width || mainRect.height > frameRect.height
+            ? Math.min(1, minScale)
+            : 1.0;
+    }, [isMobile, finalScale]); // Depend on finalScale to recalculate when main container changes
+
+    // Expose the scaled height and wrapper scale for parent component to use
     React.useImperativeHandle(ref, () => ({
-        getScaledHeight: () => scaledHeight
-    }), [scaledHeight]);
+        getScaledHeight: () => scaledHeight,
+        getWrapperScale: () => wrapperScale
+    }), [scaledHeight, wrapperScale]);
 
     return (
         <div

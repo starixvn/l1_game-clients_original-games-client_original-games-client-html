@@ -44,7 +44,7 @@ const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
-    private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number }>();
+    private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
     constructor(props: GameBaseProps) {
         logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
 
@@ -109,13 +109,25 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderGameFrame(): JSX.Element {
+        // Get the wrapper scale from the PlinkoGame component for desktop scaling
+        const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1.0;
+
         return (
             <div className="relative h-full" id="plinko-game-frame">
                 <Background />
-                <RoundMultiplierHistory />
-                <PlinkoGame ref={this.plinkoGameRef} />
-                <WinningAmountEffect />
-                {this.renderNotice()}
+                <div
+                    id="plinko-game-frame-without-background-wrapper"
+                    style={{
+                        transform: `scale(${wrapperScale})`,
+                        transformOrigin: 'center top'
+                    }}
+                >
+                    <RoundMultiplierHistory />
+                    <PlinkoGame ref={this.plinkoGameRef} />
+                    <WinningAmountEffect />
+                    {this.renderNotice()}
+                </div>
+
             </div>
         );
     }
