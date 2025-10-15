@@ -41,25 +41,27 @@ const renderPlinkoToggleButtons = (config: PlinkoToggleConfig) => {
     const serverTotalPages = storeState?.serverTotalPages || 0;
     const betHistoryScrollWrapper = document.querySelector('.bet-history-scroll-wrapper');
 
-    // Calculate if all pages are loaded
-    const expandedPages = handler?.getExpandedLoadedPages?.()?.size || 0;
-    const totalLoadedPages = expandedPages; // expandedLoadedPages already includes page 1
+    // Calculate if all pages are loaded using actual record count
+    const pageSize = 10;
+    const calculatedTotalPages = Math.ceil(totalRecords / pageSize);
 
-    // Get the highest loaded page to check if we've reached the end
+    // Get the highest loaded page during expansion
     const expandedLoadedPagesSet = handler?.getExpandedLoadedPages?.();
-    const expandedLoadedPagesArray = expandedLoadedPagesSet ? expandedLoadedPagesSet as number[] : [];
+    const expandedLoadedPagesArray = expandedLoadedPagesSet ? Array.from(expandedLoadedPagesSet as Set<number>) : [];
     const highestLoadedPage = expandedLoadedPagesArray.length > 0 ? Math.max(...expandedLoadedPagesArray) : 0;
 
-    // Consider all pages loaded if either:
-    // 1. We have tracked all pages as loaded during expansion, OR
-    // 2. We have all the expected records (for existing users with pre-loaded data), OR
-    // 3. We've reached or exceeded the last page number
+    // All pages are loaded if:
+    // When we have server data, use server-reported totals
+    // When we don't have server data, use calculated totals
     const expectedTotalRecords = serverTotalPages * 10;
-    const hasLoadedAllPages = totalLoadedPages >= serverTotalPages ||
-                             (serverTotalPages > 0 && totalRecords >= expectedTotalRecords) ||
-                             (serverTotalPages > 0 && highestLoadedPage >= serverTotalPages);
+    const hasLoadedAllPages = serverTotalPages > 0
+        ? (totalRecords >= expectedTotalRecords) || (highestLoadedPage >= serverTotalPages)
+        : highestLoadedPage >= calculatedTotalPages;
+
+
 
     const effectiveTotalRecords = serverTotalPages > 0 ? (serverTotalPages * 10) : totalRecords;
+
 
     if (effectiveTotalRecords <= 10 && serverTotalPages <= 1) {
         return null;
@@ -105,6 +107,7 @@ const renderPlinkoToggleButtons = (config: PlinkoToggleConfig) => {
     const showMoreButton = (!isExpanded && effectiveTotalRecords > 10) ||
                           (isExpanded && !hasLoadedAllPages && serverTotalPages > 1);
     const showLessButton = isExpanded;
+
 
     return (
         <div className={`${styles["toggle-button-container"]}`}>
