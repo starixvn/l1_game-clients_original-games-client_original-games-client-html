@@ -13,13 +13,20 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
 
-    // Store viewport width in state, only update on resize to prevent scale changes on clicks
+    // Store viewport and wrapper dimensions in state, only update on resize to prevent scale changes on clicks
     const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+    const [wrapperWidth, setWrapperWidth] = useState(() => window.innerWidth);
 
     // Refs for detailed dimension logging
     const mainContainerRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const slotsContainerRef = useRef<HTMLDivElement>(null);
+
+    // Helper function to get wrapper width
+    const getWrapperWidth = useCallback(() => {
+        const wrapper = document.getElementById('plinko-game-frame-wrapper');
+        return wrapper ? wrapper.getBoundingClientRect().width : window.innerWidth;
+    }, []);
 
     // Helper function to get DOM tree for clipping analysis
     const getDOMTree = (element: Element, maxDepth = 5) => {
@@ -148,7 +155,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
     };
 
     // Log canvas container dimensions
-    const logCanvasContainer = (canvasContainer: HTMLElement, mainRect: DOMRect, scaleValue: number, numberOfRows: number) => {
+    const logCanvasContainer = (canvasContainer: HTMLElement, mainRect: DOMRect, canvasScale: number, numberOfRows: number) => {
         const canvasRect = canvasContainer.getBoundingClientRect();
         const canvasComputedStyle = window.getComputedStyle(canvasContainer);
 
@@ -202,7 +209,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 }
             },
             transform: {
-                expected: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${scaleValue})`,
+                expected: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${canvasScale})`,
                 applied: canvasComputedStyle.transform,
                 parsed: (() => {
                     const transform = canvasComputedStyle.transform;
@@ -217,12 +224,12 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 })(),
             },
             scaling: {
-                expectedScale: scaleValue,
+                expectedScale: canvasScale,
                 actualScale: canvasRect.width / 1050, // Assuming original canvas width is 1050
-                scaleRatio: (canvasRect.width / 1050) / scaleValue,
+                scaleRatio: (canvasRect.width / 1050) / canvasScale,
                 scaledDimensions: {
-                    expectedWidth: 1050 * scaleValue,
-                    expectedHeight: 600 * scaleValue,
+                    expectedWidth: 1050 * canvasScale,
+                    expectedHeight: 600 * canvasScale,
                     actualWidth: canvasRect.width,
                     actualHeight: canvasRect.height,
                 }
@@ -298,7 +305,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
     };
 
     // Log relationships between canvas and slots
-    const logCanvasSlotsRelationship = (canvasContainer: HTMLElement, slotsContainer: HTMLElement, mainRect: DOMRect, numberOfRows: number) => {
+    const logCanvasSlotsRelationship = (canvasContainer: HTMLElement, slotsContainer: HTMLElement, mainRect: DOMRect, numberOfRows: number, canvasScale?: number) => {
         const canvasRect = canvasContainer.getBoundingClientRect();
         const slotsRect = slotsContainer.getBoundingClientRect();
 
@@ -324,6 +331,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
             },
             scaling: {
                 scaleValue: PLINKO_CANVAS_SCALE[numberOfRows],
+                canvasScale: canvasScale || PLINKO_CANVAS_SCALE[numberOfRows],
                 numberOfRows,
                 canvasExpectedHeight: 600,
                 canvasActualHeight: canvasRect.height,
@@ -407,6 +415,41 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
         });
     };
 
+    // Memoize the scale calculation to prevent recalculation on every render/click
+    const finalScale = useMemo(() => {
+        // Calculate the exact scale needed to make pegs align with screen edges
+        const pegRadius = 8.5;
+        const mapGap = 3.4;
+        const gap = pegRadius * 2 * mapGap; // 57.8
+        const initialColumns = 3;
+        const columnsInRow = initialColumns + (numberOfRows - 1); // 12 for 10 rows
+        const space = (1050 - gap * columnsInRow) / 2; // 178.2
+        const leftmostPegX = space + 1 * gap - pegRadius * mapGap; // 207.1
+        const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
+        const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
+
+        // Calculate final scale: (wrapper width / peg span) to make pegs fit within wrapper
+        return wrapperWidth / pegsSpan;
+    }, [wrapperWidth, numberOfRows]); // Only recalculate when wrapper width or rows change
+
+    // Calculate adjusted canvas scale to prevent overflow
+    const canvasScale = useMemo(() => {
+        const expectedCanvasWidth = 1050 * scaleValue;
+        if (expectedCanvasWidth > wrapperWidth) {
+            // Apply finalScale to prevent overflow
+            return Math.min(scaleValue, finalScale);
+        }
+        return scaleValue;
+    }, [scaleValue, finalScale, wrapperWidth]);
+
+    // Calculate the scaled height for parent component
+    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
+
+    // Expose the scaled height for parent component to use
+    React.useImperativeHandle(ref, () => ({
+        getScaledHeight: () => scaledHeight
+    }), [scaledHeight]);
+
     // Comprehensive logging function for all container relationships
     const logContainerRelationships = useCallback(() => {
         const mainContainer = mainContainerRef.current;
@@ -428,7 +471,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
         logMainContainer(mainContainer, mainRect, mainComputedStyle);
 
         if (canvasContainer) {
-            logCanvasContainer(canvasContainer, mainRect, scaleValue, numberOfRows);
+            logCanvasContainer(canvasContainer, mainRect, canvasScale, numberOfRows);
         }
 
         if (slotsContainer) {
@@ -436,12 +479,12 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
         }
 
         if (canvasContainer && slotsContainer) {
-            logCanvasSlotsRelationship(canvasContainer, slotsContainer, mainRect, numberOfRows);
+            logCanvasSlotsRelationship(canvasContainer, slotsContainer, mainRect, numberOfRows, canvasScale);
         }
 
         logLayoutAnalysis(mainContainer, canvasContainer, slotsContainer, mainRect, numberOfRows);
 
-    }, [numberOfRows, scaleValue]);
+    }, [numberOfRows, scaleValue, canvasScale]);
 
     // Log canvas scaling information for debugging mobile issues
     useEffect(() => {
@@ -612,6 +655,10 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
             }
         };
 
+        // Set initial wrapper width after component mounts
+        const initialWrapperWidth = getWrapperWidth();
+        setWrapperWidth(initialWrapperWidth);
+
         // Check immediately and after a delay to catch dynamic rendering
         checkCanvasScaling();
         logContainerRelationships();
@@ -622,10 +669,12 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
 
         // Monitor window resize events with comprehensive logging
         const handleResize = () => {
-            // Update viewport width state to trigger scale recalculation only on resize
+            // Update viewport and wrapper width state to trigger scale recalculation only on resize
             setViewportWidth(window.innerWidth);
+            setWrapperWidth(getWrapperWidth());
 
             // Log resize event with detailed analysis
+            const currentWrapperWidth = getWrapperWidth();
             logger.logUIEvent('canvas-resize-event', {
                 numberOfRows,
                 newScale: PLINKO_CANVAS_SCALE[numberOfRows],
@@ -636,6 +685,11 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                     scrollX: window.scrollX,
                     scrollY: window.scrollY,
                 },
+                wrapper: {
+                    width: currentWrapperWidth,
+                    expectedCanvasWidth: 1050 * PLINKO_CANVAS_SCALE[numberOfRows],
+                    willOverflow: (1050 * PLINKO_CANVAS_SCALE[numberOfRows]) > currentWrapperWidth,
+                },
                 responsive: {
                     isMobile: window.innerWidth < 768,
                     isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
@@ -645,6 +699,8 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                 },
                 scaling: {
                     scaleValue: PLINKO_CANVAS_SCALE[numberOfRows],
+                    finalScale: currentWrapperWidth / 635.8, // Approximate pegs span
+                    canvasScale: Math.min(PLINKO_CANVAS_SCALE[numberOfRows], currentWrapperWidth / 635.8),
                     scaleInRange: PLINKO_CANVAS_SCALE[numberOfRows] >= 0.5 && PLINKO_CANVAS_SCALE[numberOfRows] <= 2.0,
                     expectedCanvasWidth: 1050 * PLINKO_CANVAS_SCALE[numberOfRows],
                     expectedCanvasHeight: 600 * PLINKO_CANVAS_SCALE[numberOfRows],
@@ -653,6 +709,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                     viewportTooSmall: window.innerWidth < 320,
                     highPixelRatio: window.devicePixelRatio > 2,
                     extremeAspectRatio: window.innerWidth / window.innerHeight > 3 || window.innerHeight / window.innerWidth > 3,
+                    canvasOverflow: (1050 * PLINKO_CANVAS_SCALE[numberOfRows]) > currentWrapperWidth,
                 }
             });
 
@@ -691,32 +748,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
             }
             logger.endWorkflow('plinko-canvas-game-init');
         };
-    }, [numberOfRows, viewportWidth, logContainerRelationships]);
-
-    // Memoize the scale calculation to prevent recalculation on every render/click
-    const finalScale = useMemo(() => {
-        // Calculate the exact scale needed to make pegs align with screen edges
-        const pegRadius = 8.5;
-        const mapGap = 3.4;
-        const gap = pegRadius * 2 * mapGap; // 57.8
-        const initialColumns = 3;
-        const columnsInRow = initialColumns + (numberOfRows - 1); // 12 for 10 rows
-        const space = (1050 - gap * columnsInRow) / 2; // 178.2
-        const leftmostPegX = space + 1 * gap - pegRadius * mapGap; // 207.1
-        const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
-        const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
-
-        // Calculate final scale: (viewport width / peg span) to make pegs fill screen
-        return viewportWidth / pegsSpan;
-    }, [viewportWidth, numberOfRows]); // Only recalculate when viewport or rows change
-
-    // Calculate the scaled height for parent component
-    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
-
-    // Expose the scaled height for parent component to use
-    React.useImperativeHandle(ref, () => ({
-        getScaledHeight: () => scaledHeight
-    }), [scaledHeight]);
+    }, [numberOfRows, viewportWidth, wrapperWidth, logContainerRelationships, getWrapperWidth]);
 
     return (
         <div
@@ -747,7 +779,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
                     ref={canvasContainerRef}
                     className="absolute origin-top left-1/2 z-[-1]"
                     style={{
-                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${scaleValue})`,
+                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${canvasScale})`,
                     }}
                 >
                     <PlinkoCanvas />
