@@ -76,21 +76,23 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             return;
         }
 
-        const totalAmount = pendingBets.reduce((sum: number, bet: any) => sum + (Number(bet.amount) || 0), 0);
-        const { winAmount: betwin } = this.latestFinish;
+        // Each roundId should have only one bet (one ball per round)
+        const bet = pendingBets[0];
+        const betAmount = Number(bet.amount) || 0;
+        const winAmount = Number(bet.winAmount) || 0;
 
         const resultData = {
-            result: this.latestFinish.result,
-            settlementResult: this.latestFinish.settlementResult,
-            odds: this.latestFinish.odds || {}, // Use odds from endBet event
+            result: bet.result,
+            settlementResult: bet.settlementResult,
+            odds: bet.odds || {},
         };
 
         const betLog = this.createPlinkoBetLog(
             roundId,
-            totalAmount,
-            betwin,
-            pendingBets,
-            pendingBets[0]?.time, // Use first bet's time
+            betAmount,
+            winAmount,
+            [bet], // Pass as array for compatibility
+            bet.time,
             resultData
         );
 
@@ -184,8 +186,10 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
     private addPlinkoBetToPending(action: any) {
         const pfStore = usePFStore.getState();
-        const roundId = this.latestFinish.roundId;
-        const betAmount = this.latestFinish.amount;
+        
+        const roundId = Number(action.finish.roundId) || 0;
+        const betAmount = Number(action.finish.amount) || 0;
+        const winAmount = Number(action.finish.winAmount) || 0;
 
         if (betAmount > 0) {
             const clientSeed = pfStore.pfClientSeedSetting?.useManualClientSeed
@@ -195,9 +199,13 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             const betData = {
                 time: action.finish.time,
                 amount: betAmount,
+                winAmount: winAmount, // Store win amount per bet
                 choice: `plinko-${action.ownBets.gameMode}-${action.ownBets.numberOfRows}`,
                 clientSeed,
                 roundId: roundId, // Include round ID for tracking
+                result: action.finish.result,
+                settlementResult: action.finish.settlementResult,
+                odds: action.finish.odds || {},
             };
             
             // Store this bet for the specific round ID
@@ -205,8 +213,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 this.pendingBetsByRound.set(roundId, []);
             }
             this.pendingBetsByRound.get(roundId).push(betData);
-            
-            console.log("PlinkoBetHistoryHandler: Added pending bet for round", roundId, betData);
         }
     }
 
