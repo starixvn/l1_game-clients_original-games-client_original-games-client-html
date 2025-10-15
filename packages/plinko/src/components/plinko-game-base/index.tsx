@@ -45,6 +45,8 @@ const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
+    private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
+    private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
     constructor(props: GameBaseProps) {
         logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
 
@@ -113,17 +115,25 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1.0;
 
         return (
-            <div className="relative h-full" id="plinko-game-frame">
+            <div
+                ref={this.gameFrameWrapperRef}
+                className="relative h-full"
+                id="plinko-game-frame-wrapper"
+            >
                 <Background />
                 <div
-                    id="plinko-game-frame-without-background-wrapper"
+                    ref={this.gameFrameWrapperWithoutBackgroundRef}
+                    id="plinko-game-frame-wrapper-without-background"
                     style={{
                         transform: `scale(${wrapperScale})`,
                         transformOrigin: 'center top'
                     }}
                 >
                     <RoundMultiplierHistory />
-                    <PlinkoGame ref={this.plinkoGameRef} />
+                    <PlinkoGame
+                        ref={this.plinkoGameRef}
+                        gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef}
+                    />
                     <WinningAmountEffect />
                     {this.renderNotice()}
                 </div>

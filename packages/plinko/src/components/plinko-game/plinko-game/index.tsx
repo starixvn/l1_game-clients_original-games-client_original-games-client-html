@@ -7,7 +7,12 @@ import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
 import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 
-const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>((props, ref) => {
+interface GameProps {
+    gameFrameWrapperWithoutBackgroundRef?: React.RefObject<HTMLDivElement>;
+}
+
+const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: () => number }, GameProps>((props, ref) => {
+    const { gameFrameWrapperWithoutBackgroundRef } = props;
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
@@ -727,13 +732,13 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
             return 1.0; // No wrapper scaling on mobile
         }
 
-        // Get the plinko-game-frame element dimensions
-        const gameFrameElement = document.getElementById('plinko-game-frame');
-        if (!gameFrameElement || !mainContainerRef.current) {
+        // Get the frame wrapper without background element dimensions (this contains our game)
+        const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
+        if (!frameWrapperWithoutBackgroundElement || !mainContainerRef.current) {
             return 1.0;
         }
 
-        const frameRect = gameFrameElement.getBoundingClientRect();
+        const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
         const mainRect = mainContainerRef.current.getBoundingClientRect();
 
         // Calculate scale factors needed to fit main container within frame
@@ -745,7 +750,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         return mainRect.width > frameRect.width || mainRect.height > frameRect.height
             ? Math.min(1, minScale)
             : 1.0;
-    }, [isMobile, finalScale]); // Depend on finalScale to recalculate when main container changes
+    }, [isMobile, viewportWidth, finalScale]); // Recalculate when viewport changes or mobile status changes
 
     // Expose the scaled height and wrapper scale for parent component to use
     React.useImperativeHandle(ref, () => ({
