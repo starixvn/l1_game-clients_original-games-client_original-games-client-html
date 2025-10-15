@@ -435,11 +435,51 @@ const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) =>
 
     // Calculate adjusted canvas scale to prevent overflow
     const canvasScale = useMemo(() => {
+        // Detect mobile devices (iPhone, Android phones, etc.)
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isIPhone = /iPhone/.test(navigator.userAgent);
+
+        // For mobile devices, use the old scaling logic (just scaleValue)
+        // to prevent over-scaling down on small screens like iPhone 14 Pro Max
+        if (isMobile) {
+            logger.logUIEvent('mobile-scaling-logic', {
+                deviceType: 'mobile',
+                isIOS,
+                isIPhone,
+                scaleValue,
+                wrapperWidth,
+                expectedCanvasWidth: 1050 * scaleValue,
+                willUseOldLogic: true,
+                reason: 'Using old commit scaling logic for mobile to prevent excessive downscaling'
+            });
+            return scaleValue;
+        }
+
+        // For desktop, use current logic with overflow prevention
         const expectedCanvasWidth = 1050 * scaleValue;
         if (expectedCanvasWidth > wrapperWidth) {
+            logger.logUIEvent('desktop-scaling-logic', {
+                deviceType: 'desktop',
+                scaleValue,
+                finalScale,
+                wrapperWidth,
+                expectedCanvasWidth,
+                willClamp: true,
+                reason: 'Applying finalScale clamping to prevent overflow on desktop'
+            });
             // Apply finalScale to prevent overflow
             return Math.min(scaleValue, finalScale);
         }
+
+        logger.logUIEvent('desktop-scaling-logic', {
+            deviceType: 'desktop',
+            scaleValue,
+            wrapperWidth,
+            expectedCanvasWidth,
+            willClamp: false,
+            reason: 'No clamping needed, using scaleValue directly'
+        });
         return scaleValue;
     }, [scaleValue, finalScale, wrapperWidth]);
 
