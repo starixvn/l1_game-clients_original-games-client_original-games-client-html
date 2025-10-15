@@ -13,20 +13,33 @@ const getPlinkoDisplayedBetLogs = (handler: BetHistoryHandler | null, betLogs: a
     return isExpanded ? betLogs : betLogs.slice(0, 10);
 };
 
+// Configuration interface for Plinko toggle buttons
+interface PlinkoToggleConfig {
+    totalPages: number;
+    isExpanded: boolean;
+    isLoading: boolean;
+    handleToggle: () => void;
+    styles: any;
+    t: any;
+    handler?: any;
+    storeState?: { totalRecords: number; serverTotalPages: number; isExpanded: boolean };
+}
+
 // Custom render function for Plinko toggle buttons
-const renderPlinkoToggleButtons = (
-    totalPages: number,
-    isExpanded: boolean,
-    isLoading: boolean,
-    handleToggle: () => void,
-    styles: any,
-    t: any,
-    handler?: any,
-    storeState?: { totalRecords: number; serverTotalPages: number; isExpanded: boolean }
-) => {
+const renderPlinkoToggleButtons = (config: PlinkoToggleConfig) => {
+    const {
+        isExpanded,
+        isLoading,
+        handleToggle,
+        styles,
+        t,
+        handler,
+        storeState
+    } = config;
     // Use passed store state or fallback to direct access
     const totalRecords = storeState?.totalRecords || 0;
     const serverTotalPages = storeState?.serverTotalPages || 0;
+    const betHistoryScrollWrapper = document.querySelector('.bet-history-scroll-wrapper');
 
     // Calculate if all pages are loaded
     const expandedPages = handler?.getExpandedLoadedPages?.()?.size || 0;
@@ -34,7 +47,7 @@ const renderPlinkoToggleButtons = (
 
     // Get the highest loaded page to check if we've reached the end
     const expandedLoadedPagesSet = handler?.getExpandedLoadedPages?.();
-    const expandedLoadedPagesArray = expandedLoadedPagesSet ? Array.from(expandedLoadedPagesSet) as number[] : [];
+    const expandedLoadedPagesArray = expandedLoadedPagesSet ? expandedLoadedPagesSet as number[] : [];
     const highestLoadedPage = expandedLoadedPagesArray.length > 0 ? Math.max(...expandedLoadedPagesArray) : 0;
 
     // Consider all pages loaded if either:
@@ -46,7 +59,6 @@ const renderPlinkoToggleButtons = (
                              (serverTotalPages > 0 && totalRecords >= expectedTotalRecords) ||
                              (serverTotalPages > 0 && highestLoadedPage >= serverTotalPages);
 
-    const effectiveTotalPages = Math.max(serverTotalPages, totalRecords > 0 ? 1 : 0);
     const effectiveTotalRecords = serverTotalPages > 0 ? (serverTotalPages * 10) : totalRecords;
 
     if (effectiveTotalRecords <= 10 && serverTotalPages <= 1) {
@@ -54,7 +66,7 @@ const renderPlinkoToggleButtons = (
     }
 
     const handleExpand = () => {
-        const scrollWrapper = document.querySelector('.bet-history-scroll-wrapper') as HTMLElement;
+        const scrollWrapper = betHistoryScrollWrapper;
         const currentScrollTop = scrollWrapper?.scrollTop || 0;
 
         if (handler && handler.expand) {
@@ -64,7 +76,7 @@ const renderPlinkoToggleButtons = (
         }
 
         setTimeout(() => {
-            const newScrollWrapper = document.querySelector('.bet-history-scroll-wrapper') as HTMLElement;
+            const newScrollWrapper = betHistoryScrollWrapper;
             if (newScrollWrapper && currentScrollTop > 0) {
                 newScrollWrapper.scrollTop = currentScrollTop;
             }
@@ -83,7 +95,7 @@ const renderPlinkoToggleButtons = (
         }
 
         setTimeout(() => {
-            const scrollWrapper = document.querySelector('.bet-history-scroll-wrapper') as HTMLElement;
+            const scrollWrapper = betHistoryScrollWrapper;
             if (scrollWrapper) {
                 scrollWrapper.scrollTop = 0;
             }
@@ -140,16 +152,16 @@ const PlinkoBetHistoryTable = ({ gameId }: { gameId?: string } = {}) => {
         t: any,
         handler?: any
     ) => {
-        return renderPlinkoToggleButtons(
+        return renderPlinkoToggleButtons({
             totalPages,
-            isExpandedFromProps,
+            isExpanded: isExpandedFromProps,
             isLoading,
             handleToggle,
             styles,
             t,
             handler,
-            { totalRecords, serverTotalPages, isExpanded } // Pass store state
-        );
+            storeState: { totalRecords, serverTotalPages, isExpanded }
+        });
     };
 
     return (

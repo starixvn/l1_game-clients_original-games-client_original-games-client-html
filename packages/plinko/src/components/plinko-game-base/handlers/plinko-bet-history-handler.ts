@@ -17,17 +17,17 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     } | null = null;
 
     // Plinko-specific state for rolling window display
-    private loadedServerPages: Set<number> = new Set(); // Track loaded server pages
-    private expandedLoadedPages: Set<number> = new Set(); // Track pages loaded during expanded state
+    private readonly loadedServerPages: Set<number> = new Set(); // Track loaded server pages
+    private readonly expandedLoadedPages: Set<number> = new Set(); // Track pages loaded during expanded state
 
     // Track finished ball round IDs to handle multiple concurrent balls
-    private finishedRoundIds: Set<number> = new Set();
+    private readonly finishedRoundIds: Set<number> = new Set();
 
     // Track pending bets by round ID (since Plinko has one round per ball)
-    private pendingBetsByRound: Map<number, any[]> = new Map();
+    private readonly pendingBetsByRound: Map<number, any[]> = new Map();
 
     // Track if we've switched to server pagination mode
-    private hasSwitchedToServerMode: boolean = false;
+    private hasSwitchedToServerMode = false;
 
     private unsubscribeFinishedBall: (() => void) | null = null;
 
@@ -204,7 +204,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             if (!this.pendingBetsByRound.has(roundId)) {
                 this.pendingBetsByRound.set(roundId, []);
             }
-            this.pendingBetsByRound.get(roundId)!.push(betData);
+            this.pendingBetsByRound.get(roundId).push(betData);
             
             console.log("PlinkoBetHistoryHandler: Added pending bet for round", roundId, betData);
         }
