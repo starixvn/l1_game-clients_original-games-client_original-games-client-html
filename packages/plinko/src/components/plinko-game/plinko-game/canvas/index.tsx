@@ -7,6 +7,7 @@ import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
+import { useGameStore } from "@shared/stores/game-store";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -161,7 +162,7 @@ const PlinkoCanvas = () => {
 
         const engine = Engine.create();
         engineRef.current = engine;
-        engine.gravity.y = 1.2;
+        engine.gravity.y = 1.15;
         return engine;
     }, []);
 
@@ -206,6 +207,7 @@ const PlinkoCanvas = () => {
         if (finish) {
             const ballBody = createBall(finish);
             addObjects([ballBody]);
+            useGameStore.getState().resetBettingInfo();
         }
     }, [finish, createBall, addObjects]);
 

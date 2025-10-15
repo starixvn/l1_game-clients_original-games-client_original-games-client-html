@@ -3,7 +3,7 @@ import { cn } from "@shared/utils/merge-tailwind-util";
 import { useTranslate } from "@tolgee/react";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
-import { numberWithCommas } from "@shared";
+import { numberWithCommas, ResourceTypes } from "@shared";
 
 interface TooltipProps {
     children: React.ReactNode;
@@ -23,7 +23,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, index, totalItems, odds, cl
     const { betAmount, numberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({ betAmount: state.betAmount, numberOfRows: state.numberOfRows }))
     );
-    const { t } = useTranslate();
+    const { t } = useTranslate(ResourceTypes.PLINKO);
 
     const probability = useMemo(() => {
         const binomial = (n: number, k: number) => {
@@ -134,13 +134,13 @@ const Tooltip: React.FC<TooltipProps> = ({ children, index, totalItems, odds, cl
                         }}
                     >
                         <div className="text-start">
-                            <div className="font-semibold text-sm mb-1">{t("win")}</div>
+                            <div className="font-semibold text-sm mb-1">{t("win_amount")}</div>
                             <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[130px] rounded-[8px] px-2 py-1 flex items-center justify-start">
                                 ${numberWithCommas(winAmount)}
                             </div>
                         </div>
                         <div className="text-start">
-                            <div className="font-semibold text-sm mb-1">{t("probability")}</div>
+                            <div className="font-semibold text-sm mb-1">{t("chance")}</div>
                             <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[100px] rounded-[8px] px-2 py-1 flex items-center justify-start">
                                 {numberWithCommas(probability * 100, 4)}%
                             </div>
