@@ -703,11 +703,6 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
 
     // Memoize the scale calculation to prevent recalculation on every render/click
     const finalScale = useMemo(() => {
-        // Only apply scaling on mobile devices, use scale 1.0 (no scaling) for desktop
-        if (!isMobile) {
-            return 1.0;
-        }
-
         // Calculate the exact scale needed to make pegs align with screen edges
         const pegRadius = 8.5;
         const mapGap = 3.4;
@@ -719,9 +714,25 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
         const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
 
+        // Check if we should use peg-based scaling on desktop when main container would exceed frame
+        if (!isMobile) {
+            const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
+            if (frameWrapperWithoutBackgroundElement) {
+                const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
+                // Calculate what the main container width would be with scaleValue (canvas scaling)
+                const expectedMainWidth = 1050 * scaleValue; // 1050 is the original canvas width
+
+                // Use peg-based scaling if expected main container width exceeds frame width
+                if (expectedMainWidth > frameRect.width) {
+                    return frameRect.width / pegsSpan;
+                }
+            }
+            return 1.0;
+        }
+
         // Calculate final scale: (viewport width / peg span) to make pegs fill screen
         return viewportWidth / pegsSpan;
-    }, [viewportWidth, numberOfRows, isMobile]); // Only recalculate when viewport or rows change
+    }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
     // Calculate the scaled height for parent component
     const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
