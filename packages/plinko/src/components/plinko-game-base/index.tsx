@@ -44,6 +44,7 @@ const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
+    private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number }>();
     constructor(props: GameBaseProps) {
         logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
 
@@ -109,10 +110,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame(): JSX.Element {
         return (
-            <div className="relative h-full">
+            <div className="relative h-full" id="plinko-game-frame">
                 <Background />
                 <RoundMultiplierHistory />
-                <PlinkoGame />
+                <PlinkoGame ref={this.plinkoGameRef} />
                 <WinningAmountEffect />
                 {this.renderNotice()}
             </div>
@@ -120,11 +121,19 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderLeftSide() {
+        // Get the scaled height from the PlinkoGame component
+        const scaledHeight = this.plinkoGameRef.current?.getScaledHeight() ?? 600;
+
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col md:flex-row-reverse md:mx-3">
-                    <div className="w-full md:w-8/12">{this.renderGameFrame()}</div>
-                    <div className="w-full md:w-4/12">{this.renderBetControl()}</div>
+                    <div
+                        className="w-full md:w-8/12"
+                        style={{ height: `${scaledHeight}px` }}
+                    >
+                        {this.renderGameFrame()}
+                    </div>
+                    <div className="w-full md:w-4/12" style={{ zIndex: 9999 }}>{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>

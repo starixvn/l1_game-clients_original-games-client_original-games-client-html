@@ -5,9 +5,9 @@ import { PLINKO_CANVAS_SCALE } from "./constant";
 import Slots from "./slots";
 import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
-import { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 
-const Game = () => {
+const Game = React.forwardRef<{ getScaledHeight: () => number }>((props, ref) => {
     logger.startWorkflow('plinko-canvas-game-init', 'ui', 'Initialize Plinko canvas game component');
 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
@@ -710,6 +710,14 @@ const Game = () => {
         return viewportWidth / pegsSpan;
     }, [viewportWidth, numberOfRows]); // Only recalculate when viewport or rows change
 
+    // Calculate the scaled height for parent component
+    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
+
+    // Expose the scaled height for parent component to use
+    React.useImperativeHandle(ref, () => ({
+        getScaledHeight: () => scaledHeight
+    }), [scaledHeight]);
+
     return (
         <div
             ref={mainContainerRef}
@@ -750,5 +758,6 @@ const Game = () => {
             </div>
         </div>
     );
-};
+});
+Game.displayName = 'PlinkoGame';
 export default Game;

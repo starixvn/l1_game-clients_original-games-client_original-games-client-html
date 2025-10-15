@@ -118,7 +118,7 @@ const BetControl = () => {
     logger.endWorkflow('bet-panel-init');
 
     return (
-        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:px-0 md:mt-0 md:h-full">
+        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:px-0 md:mt-0 md:h-full" >
             <div className="md:px-3">
                 {isManualTab ? (
                     <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
