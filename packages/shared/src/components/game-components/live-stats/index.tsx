@@ -149,14 +149,24 @@ const LiveStats = ({
 
     const off = gradientOffset();
 
+    const profitAmount = totalWinAmount - totalBetAmount;
+    const getColorClass = (amount: number) => {
+        if (amount > 0) return "text-winning-highlight";
+        if (amount < 0) return "text-red-500";
+        return "text-white";
+    };
+
+    const profitColorClass = getColorClass(profitAmount);
+    const winsColorClass = getColorClass(winRound);
+
     return useMemo(() => {
         return (
             <div className="h-full border-none flex flex-col justify-center items-center">
-                <div id="information" className="flex justify-between px-1 pt-1  w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
+                <div id="information" className="flex justify-between  pt-1  w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
                     <div className="flex flex-col justify-between flex-1 px-5 gap-1">
                         <div className="flex flex-col items-center">
                             {t("profit")}
-                            <div>{numberWithCommas(totalWinAmount - totalBetAmount)}</div>
+                            <div className={profitColorClass}>{numberWithCommas(profitAmount)}</div>
                         </div>
                         <div className="flex flex-col items-center">
                             {t("bet_amount")}
@@ -166,11 +176,11 @@ const LiveStats = ({
                     <div className="flex  flex-col flex-1 px-5 gap-1">
                         <div className="flex flex-col items-center">
                             {t("wins")}
-                            <div>{numberWithCommas(winRound)}</div>
+                            <div className={winsColorClass}>{numberWithCommas(winRound)}</div>
                         </div>
                         <div className="flex flex-col items-center">
                             {t("losses")}
-                            <div>{numberWithCommas(lostRound)}</div>
+                            <div className={cn(lostRound > 0 ? "text-red-500" : "")}>{numberWithCommas(lostRound)}</div>
                         </div>
                     </div>
                 </div>
@@ -181,8 +191,8 @@ const LiveStats = ({
                                 <YAxis hide domain={[-100, 100]} />
                                 <defs>
                                     <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset={off} stopColor="green" stopOpacity={1} />
-                                        <stop offset={off} stopColor="red" stopOpacity={1} />
+                                        <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
+                                        <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
                                     </linearGradient>
                                 </defs>
                                 <Area
