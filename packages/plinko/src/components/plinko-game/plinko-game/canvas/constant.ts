@@ -13,7 +13,7 @@ export const PlinkoCanvasConfig: IPlinkoCanvasConfig = {
     mapGap: 3.4,
     ballConfig: {
         radius: 11,
-        offsetVelocityX: 1,
-        offsetVelocityY: -3,
+        offsetVelocityX: 1.3,
+        offsetVelocityY: -2.1,
     },
 };
