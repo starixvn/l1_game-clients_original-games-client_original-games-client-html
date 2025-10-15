@@ -128,7 +128,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col md:flex-row-reverse md:mx-3">
                     <div
-                        id="plinko-game-frame-wrapper"
                         className="w-full md:w-8/12"
                         style={{ height: `${scaledHeight}px` }}
                     >
