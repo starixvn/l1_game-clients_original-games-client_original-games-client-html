@@ -162,7 +162,8 @@ const PlinkoCanvas = () => {
 
         const engine = Engine.create();
         engineRef.current = engine;
-        engine.gravity.y = 1.15;
+        engineRef.current.timing.timeScale = 1.5;
+
         return engine;
     }, []);
 
