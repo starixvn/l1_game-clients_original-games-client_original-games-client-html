@@ -268,11 +268,16 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
                     const effectiveFrameWidth = frameRect.width * marginFactor;
                     const normalizedScale = effectiveFrameWidth / referencePegsSpan;
                     return normalizedScale * (referencePegsSpan / pegsSpan);
+                } else {
+                    // If main container fits within frame, don't apply additional scaling
+                    return 1.0;
                 }
             }
-            // Normalize by reference scale to keep container size consistent
+            // Normalize by reference scale to keep container size consistent only if needed
             const referenceScaleValue = PLINKO_CANVAS_SCALE[referenceRows] || 1.0;
-            return (scaleValue / referenceScaleValue) * (referencePegsSpan / pegsSpan);
+            const normalizedScale = (scaleValue / referenceScaleValue) * (referencePegsSpan / pegsSpan);
+            // Only apply normalization if it would result in scaling down (normalizedScale < 1.0)
+            return Math.min(1.0, normalizedScale);
         }
 
         // Calculate final scale: (viewport width / peg span) to make pegs fill screen
@@ -283,7 +288,9 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         const effectiveViewportWidth = viewportWidth * marginFactor;
         const referenceEffectivePegsSpan = referencePegsSpan * (PLINKO_CANVAS_SCALE[referenceRows] || 1.0);
         const referenceScale = effectiveViewportWidth / referenceEffectivePegsSpan;
-        return referenceScale * (referenceEffectivePegsSpan / (pegsSpan * scaleValue));
+        const calculatedScale = referenceScale * (referenceEffectivePegsSpan / (pegsSpan * scaleValue));
+        // Only apply scaling if it would result in scaling down (calculatedScale < 1.0)
+        return Math.min(1.0, calculatedScale);
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
     // Calculate the scaled height for parent component
