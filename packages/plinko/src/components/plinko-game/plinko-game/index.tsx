@@ -229,7 +229,11 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         const space = (1050 - gap * columnsInRow) / 2; // 178.2
         const leftmostPegX = space + 1 * gap - pegRadius * mapGap; // 207.1
         const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
-        const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
+
+        // Calculate visual span including peg radii to prevent clipping
+        const visualLeftEdge = leftmostPegX - pegRadius;
+        const visualRightEdge = rightmostPegX + pegRadius;
+        const pegsSpan = visualRightEdge - visualLeftEdge; // Full visual extent of pegs
 
         // Calculate peg span for reference row count (10 rows) to normalize scaling
         const referenceRows = 10;
@@ -237,7 +241,11 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         const referenceSpace = (1050 - gap * referenceColumnsInRow) / 2;
         const referenceLeftmostPegX = referenceSpace + 1 * gap - pegRadius * mapGap;
         const referenceRightmostPegX = referenceSpace + referenceColumnsInRow * gap - pegRadius * mapGap;
-        const referencePegsSpan = referenceRightmostPegX - referenceLeftmostPegX;
+
+        // Calculate visual span for reference including peg radii
+        const referenceVisualLeftEdge = referenceLeftmostPegX - pegRadius;
+        const referenceVisualRightEdge = referenceRightmostPegX + pegRadius;
+        const referencePegsSpan = referenceVisualRightEdge - referenceVisualLeftEdge;
 
         // Check if we should use peg-based scaling on desktop when main container would exceed frame
         if (!isMobile) {
@@ -308,7 +316,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
             className="flex flex-col items-center justify-center relative"
             style={{
                 transform: `scale(${Math.min(1, finalScale)})`,
-                transformOrigin: 'top center'
+                transformOrigin: 'top center',
             }}
         >
             {/* Logger Controls - positioned above canvas for debugging */}
