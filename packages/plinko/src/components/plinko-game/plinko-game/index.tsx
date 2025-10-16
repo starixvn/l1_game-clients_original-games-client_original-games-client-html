@@ -258,7 +258,10 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
                 // Use peg-based scaling if expected main container width exceeds frame width
                 if (expectedMainWidth > frameRect.width) {
                     // Normalize by reference peg span to keep container size consistent
-                    const normalizedScale = frameRect.width / referencePegsSpan;
+                    // Add margin to prevent pegs from touching frame boundaries
+                    const marginFactor = 0.9; // Use 90% of frame width to provide margin
+                    const effectiveFrameWidth = frameRect.width * marginFactor;
+                    const normalizedScale = effectiveFrameWidth / referencePegsSpan;
                     return normalizedScale * (referencePegsSpan / pegsSpan);
                 }
             }
@@ -270,8 +273,11 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         // Calculate final scale: (viewport width / peg span) to make pegs fill screen
         // Account for canvas scaling to ensure proper fit when number of rows changes
         // Normalize by reference peg span to keep container size consistent
+        // Add margin to prevent pegs from touching parent boundaries
+        const marginFactor = 0.9; // Use 90% of viewport width to provide margin
+        const effectiveViewportWidth = viewportWidth * marginFactor;
         const referenceEffectivePegsSpan = referencePegsSpan * (PLINKO_CANVAS_SCALE[referenceRows] || 1.0);
-        const referenceScale = viewportWidth / referenceEffectivePegsSpan;
+        const referenceScale = effectiveViewportWidth / referenceEffectivePegsSpan;
         return referenceScale * (referenceEffectivePegsSpan / (pegsSpan * scaleValue));
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
