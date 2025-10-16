@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import { isMobile } from "react-device-detect";
 import { logger } from "@plinko/services/logger";
+import { getMobileHeightStyle } from "../plinko-game/plinko-game/scaling-utils";
 
 import {
     GameStateProvider,
@@ -148,15 +149,12 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // Get the scaled height from the PlinkoGame component
         const scaledHeight = this.plinkoGameRef.current?.getScaledHeight() ?? 600;
 
-        // Apply scaled height only for mobile devices
-        const heightStyle = isMobile ? { height: `${scaledHeight}px` } : {};
-
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col md:flex-row-reverse md:mx-3">
                     <div
                         className="w-full md:w-8/12"
-                        style={heightStyle}
+                        style={getMobileHeightStyle(isMobile, scaledHeight)}
                     >
                         {this.renderGameFrame()}
                     </div>

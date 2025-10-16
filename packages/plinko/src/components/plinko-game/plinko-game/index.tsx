@@ -7,6 +7,12 @@ import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
 import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { isMobile, isTablet, isDesktop } from "react-device-detect";
+import {
+    calculateFinalScale,
+    calculateWrapperScale,
+    calculateScaledHeight,
+    ScalingConfig
+} from "./scaling-utils";
 
 interface GameProps {
     gameFrameWrapperWithoutBackgroundRef?: React.RefObject<HTMLDivElement>;
@@ -701,67 +707,31 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         };
     }, [numberOfRows, viewportWidth, logContainerRelationships]);
 
-    // Memoize the scale calculation to prevent recalculation on every render/click
+    // Memoize the scale calculation using dedicated scaling utilities
     const finalScale = useMemo(() => {
-        // Calculate the exact scale needed to make pegs align with screen edges
-        const pegRadius = 8.5;
-        const mapGap = 3.4;
-        const gap = pegRadius * 2 * mapGap; // 57.8
-        const initialColumns = 3;
-        const columnsInRow = initialColumns + (numberOfRows - 1); // 12 for 10 rows
-        const space = (1050 - gap * columnsInRow) / 2; // 178.2
-        const leftmostPegX = space + 1 * gap - pegRadius * mapGap; // 207.1
-        const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
-        const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
+        const frameRect = gameFrameWrapperWithoutBackgroundRef?.current?.getBoundingClientRect();
 
-        // Check if we should use peg-based scaling on desktop when main container would exceed frame
-        if (!isMobile) {
-            const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
-            if (frameWrapperWithoutBackgroundElement) {
-                const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
-                // Calculate what the main container width would be with scaleValue (canvas scaling)
-                const expectedMainWidth = 1050 * scaleValue; // 1050 is the original canvas width
+        const config: ScalingConfig = {
+            numberOfRows,
+            viewportWidth,
+            isMobile,
+            scaleValue,
+            frameRect: frameRect || undefined
+        };
 
-                // Use peg-based scaling if expected main container width exceeds frame width
-                if (expectedMainWidth > frameRect.width) {
-                    return frameRect.width / pegsSpan;
-                }
-            }
-            return 1.0;
-        }
-
-        // Calculate final scale: (viewport width / peg span) to make pegs fill screen
-        return viewportWidth / pegsSpan;
-    }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
+        return calculateFinalScale(config);
+    }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]);
 
     // Calculate the scaled height for parent component
-    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
+    const scaledHeight = useMemo(() => calculateScaledHeight(finalScale), [finalScale]);
 
     // Calculate wrapper scale for desktop when main container exceeds frame dimensions
     const wrapperScale = useMemo(() => {
-        if (isMobile) {
-            return 1.0; // No wrapper scaling on mobile
-        }
+        const frameRect = gameFrameWrapperWithoutBackgroundRef?.current?.getBoundingClientRect();
+        const mainRect = mainContainerRef.current?.getBoundingClientRect();
 
-        // Get the frame wrapper without background element dimensions (this contains our game)
-        const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
-        if (!frameWrapperWithoutBackgroundElement || !mainContainerRef.current) {
-            return 1.0;
-        }
-
-        const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
-        const mainRect = mainContainerRef.current.getBoundingClientRect();
-
-        // Calculate scale factors needed to fit main container within frame
-        const scaleX = frameRect.width / mainRect.width;
-        const scaleY = frameRect.height / mainRect.height;
-        const minScale = Math.min(scaleX, scaleY);
-
-        // Only scale down if main container is larger than frame
-        return mainRect.width > frameRect.width || mainRect.height > frameRect.height
-            ? Math.min(1, minScale)
-            : 1.0;
-    }, [isMobile, viewportWidth, finalScale]); // Recalculate when viewport changes or mobile status changes
+        return calculateWrapperScale(isMobile, frameRect, mainRect, finalScale);
+    }, [isMobile, finalScale, gameFrameWrapperWithoutBackgroundRef]);
 
     // Expose the scaled height and wrapper scale for parent component to use
     React.useImperativeHandle(ref, () => ({
