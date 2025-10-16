@@ -130,7 +130,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderLeftSide() {
         // Get the scaled height from the PlinkoGame component
-        const scaledHeight = 400;
+        const scaledHeight = 420;
 
         // Apply scaled height only for mobile devices
         const heightStyle = isMobile ? { height: `${scaledHeight}px` } : {};

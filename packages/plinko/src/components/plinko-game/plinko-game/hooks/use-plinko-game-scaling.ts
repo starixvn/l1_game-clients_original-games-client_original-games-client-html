@@ -16,14 +16,20 @@ export const usePlinkoGameScaling = ({
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
     const [isInitialized, setIsInitialized] = useState(false);
 
-    // Add a small delay to ensure DOM is ready before calculating scaling
+    // Initialize immediately for mobile, or after a short delay for desktop to ensure DOM stability
     useEffect(() => {
-        const timer = setTimeout(() => {
+        if (isMobile) {
+            // Mobile devices typically render faster, initialize immediately
             setIsInitialized(true);
-        }, 100); // Small delay to let DOM stabilize
+        } else {
+            // Desktop may need a short delay for complex layouts
+            const timer = setTimeout(() => {
+                setIsInitialized(true);
+            }, 50);
 
-        return () => clearTimeout(timer);
-    }, []);
+            return () => clearTimeout(timer);
+        }
+    }, [isMobile]);
 
     const finalScale = useMemo(() => {
         // Don't calculate finalScale until DOM is ready
@@ -31,40 +37,42 @@ export const usePlinkoGameScaling = ({
             return 1;
         }
 
-        // Only apply finalScale in extreme cases to avoid interfering with scaleValue
-        // The scaleValue (based on numberOfRows) should handle normal scaling
-        if (!isMobile) {
-            const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
-            if (frameWrapperWithoutBackgroundElement) {
-                const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
-                const expectedMainWidth = 1050 * scaleValue; // 1050 is the original canvas width
-
-                // Only apply finalScale if content would be severely cut off (>50% overflow)
-                const severeOverflowThreshold = 1.5;
-                if (expectedMainWidth > frameRect.width * severeOverflowThreshold) {
-                    const pegRadius = 8.5;
-                    const mapGap = 3.4;
-                    const gap = pegRadius * 2 * mapGap;
-                    const initialColumns = 3;
-                    const columnsInRow = initialColumns + (numberOfRows - 1);
-                    const space = (1050 - gap * columnsInRow) / 2;
-                    const leftmostPegX = space + 1 * gap - pegRadius * mapGap;
-                    const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap;
-
-                    const visualLeftEdge = leftmostPegX - pegRadius;
-                    const visualRightEdge = rightmostPegX + pegRadius;
-                    const pegsSpan = visualRightEdge - visualLeftEdge;
-
-                    const marginFactor = 0.8; // More aggressive margin
-                    const effectiveFrameWidth = frameRect.width * marginFactor;
-                    return Math.max(0.5, effectiveFrameWidth / pegsSpan); // Don't scale below 0.5
-                }
-            }
+        const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
+        if (!frameWrapperWithoutBackgroundElement) {
+            return 1;
         }
 
-        // Let scaleValue handle normal scaling
+        const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
+        const expectedMainWidth = 1050 * scaleValue; // 1050 is the original canvas width
+
+        // Check if content needs scaling to fit within the frame
+        if (expectedMainWidth > frameRect.width) {
+            const pegRadius = 8.5;
+            const mapGap = 3.4;
+            const gap = pegRadius * 2 * mapGap;
+            const initialColumns = 3;
+            const columnsInRow = initialColumns + (numberOfRows - 1);
+            const space = (1050 - gap * columnsInRow) / 2;
+            const leftmostPegX = space + 1 * gap - pegRadius * mapGap;
+            const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap;
+
+            const visualLeftEdge = leftmostPegX - pegRadius;
+            const visualRightEdge = rightmostPegX + pegRadius;
+            const pegsSpan = visualRightEdge - visualLeftEdge;
+
+            // Use different margin factors for mobile vs desktop
+            const marginFactor = isMobile ? 0.95 : 0.8; // Less aggressive margin on mobile
+            const effectiveFrameWidth = frameRect.width * marginFactor;
+            const calculatedScale = effectiveFrameWidth / pegsSpan;
+
+            // Apply minimum scale limits
+            const minScale = isMobile ? 0.7 : 0.5; // Higher minimum scale for mobile
+            return Math.max(minScale, calculatedScale);
+        }
+
+        // No scaling needed
         return 1;
-    }, [viewportWidth, gameFrameWrapperWithoutBackgroundRef, isInitialized]); // Don't depend on numberOfRows or scaleValue to avoid interference
+    }, [viewportWidth, gameFrameWrapperWithoutBackgroundRef, isInitialized, scaleValue, numberOfRows, isMobile]);
 
     return {
         scaleValue,

@@ -20,14 +20,20 @@ export const usePlinkoGameLayout = ({
     const baseGameHeight = isMobile && window.innerHeight < 700 ? Math.max(500, window.innerHeight * 0.65) : 600;
     const scaledHeight = baseGameHeight * Math.min(1, finalScale);
 
-    // Ensure layout calculations happen after DOM is ready
+    // Initialize layout immediately for mobile, or after a short delay for desktop
     useEffect(() => {
-        const timer = setTimeout(() => {
+        if (isMobile) {
+            // Mobile devices typically render faster, initialize immediately
             setIsLayoutReady(true);
-        }, 150); // Slightly longer delay to ensure all elements are positioned
+        } else {
+            // Desktop may need a short delay for layout stability
+            const timer = setTimeout(() => {
+                setIsLayoutReady(true);
+            }, 75);
 
-        return () => clearTimeout(timer);
-    }, []);
+            return () => clearTimeout(timer);
+        }
+    }, [isMobile]);
 
     const wrapperScale = useMemo(() => {
         if (isMobile || !isLayoutReady) {

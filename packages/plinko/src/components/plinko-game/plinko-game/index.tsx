@@ -4,6 +4,7 @@ import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import Slots from "./slots";
 import { LoggerControls } from "@plinko/features/ui/components";
 import React, { useState } from "react";
+import { isMobile } from "react-device-detect";
 import { usePlinkoGameScaling, usePlinkoGameLayout, usePlinkoGameResize } from "./hooks";
 
 interface GameProps {
@@ -44,11 +45,11 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
     return (
         <div
             ref={mainContainerRef}
-            className="flex flex-col items-center justify-center relative"
+            className={`flex flex-col items-center justify-center relative ${isMobile ? 'min-h-full' : ''}`}
             style={finalScale < 1 ? {
                 transform: `scale(${finalScale})`,
                 transformOrigin: 'top center',
-            } : undefined}
+            } : {}}
         >
             {/* Logger Controls - positioned above canvas for debugging */}
             {process.env.NODE_ENV === 'development' && (
