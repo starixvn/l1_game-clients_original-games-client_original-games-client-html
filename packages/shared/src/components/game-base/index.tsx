@@ -73,6 +73,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         const { dispatch } = this.props;
         const gamName = this.props.translate(`${GameResourceKeys.GAME_NAME}_${this.props.id}`);
 
+        // Destructure handlers for cleaner initialization
         const {
             roundStateHandler,
             gameStateHandler,
@@ -87,41 +88,34 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             gameSoundHandler,
         } = handlers;
 
+        // Initialize core handlers (required)
         this.roundStateHandler = roundStateHandler;
         this.gameMessageHandler = gameMessageHandler;
+
+        // Initialize optional handlers with defaults
         this.gameRoundDataHandler = gameRoundDataHandler ?? new GameRoundDataHandler();
         this.gameStateHandler = gameStateHandler ?? new GameStateHandler();
-        this.gameErrorHandler =
-            gameErrorHandler ??
-            new GameErrorHandler({
-                dispatch,
-                gameMessageHandler: this.gameMessageHandler,
-                gamName,
-            });
-
-        this.playerHandler =
-            playerHandler ??
-            new PlayerHandler({
-                dispatch,
-                gameMessageHandler: this.gameMessageHandler,
-                gameName: this.props.gameName,
-            });
-
-        this.placeBetHandler =
-            placeBetHandler ??
-            new PlaceBetHandler({
-                tolgeeNamespace: this.props.tolgeeNamespace,
-                gameMessageHandler: this.gameMessageHandler,
-                gameName: gamName,
-                getPlayerBalance: this.getPlayerBalance,
-                hedgeBetGroups: this.props.hedgeBetGroups,
-                translate: props.translate,
-                playPlaceBetSound: () => {
-                    this.props.gameSound.playPlaceBetSound();
-                },
-                gameId: this.props.id,
-                betPayloadFormat: "single",
-            });
+        this.gameErrorHandler = gameErrorHandler ?? new GameErrorHandler({
+            dispatch,
+            gameMessageHandler: this.gameMessageHandler,
+            gamName,
+        });
+        this.playerHandler = playerHandler ?? new PlayerHandler({
+            dispatch,
+            gameMessageHandler: this.gameMessageHandler,
+            gameName: this.props.gameName,
+        });
+        this.placeBetHandler = placeBetHandler ?? new PlaceBetHandler({
+            tolgeeNamespace: this.props.tolgeeNamespace,
+            gameMessageHandler: this.gameMessageHandler,
+            gameName: gamName,
+            getPlayerBalance: this.getPlayerBalance,
+            hedgeBetGroups: this.props.hedgeBetGroups,
+            translate: props.translate,
+            playPlaceBetSound: () => this.props.gameSound.playPlaceBetSound(),
+            gameId: this.props.id,
+            betPayloadFormat: "single",
+        });
 
         this.gameFinishHandler =
             gameFinishHandler ??

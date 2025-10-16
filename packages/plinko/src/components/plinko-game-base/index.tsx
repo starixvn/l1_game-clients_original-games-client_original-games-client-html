@@ -2,7 +2,6 @@ import React, { JSX } from "react";
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import { isMobile } from "react-device-detect";
-import { logger } from "@plinko/services/logger";
 
 import {
     GameStateProvider,
@@ -43,51 +42,44 @@ const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-gam
 const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
 const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
 
+// Helper function to create game handlers
+const createGameHandlers = (props: GameBaseProps): GameBaseHandlers => {
+    const gameMessageHandler = new GameMessageHandler(props.dispatch);
+    const gameRoundDataHandler = new PlinkoGameRoundDataHandler();
+    const roundStateHandler = new PlinkoStateHandler();
+
+    return {
+        roundStateHandler,
+        gameMessageHandler,
+        gameRoundDataHandler,
+        gameSoundHandler: new PlinkoGameSoundHandler({ gameSound: () => props.gameSound }),
+        gameFinishHandler: new PlinkoGameFinishHandler({
+            dispatch: props.dispatch,
+            gameMessageHandler,
+            durations: props.durations,
+            roundStateHandler,
+            runGame: () => { }, // Will be set by GameBase
+            gameId: props.id,
+            gameStateContextModel: () => props.gameStateContextModel,
+            gameRoundDataHandler,
+        }),
+    };
+};
+
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
     private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
     private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
+
     constructor(props: GameBaseProps) {
-        // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
-        const gameMessageHandler = new GameMessageHandler(props.dispatch);
-        const gameRoundDataHandler = new PlinkoGameRoundDataHandler();
-        const roundStateHandler = new PlinkoStateHandler();
-
-        logger.logGameEvent('game-base-handlers-init', {
-            hasGameMessageHandler: !!gameMessageHandler,
-            hasGameRoundDataHandler: !!gameRoundDataHandler,
-            hasRoundStateHandler: !!roundStateHandler,
-            gameId: props.id
-        });
-
-        const gameBaseHandlers: GameBaseHandlers = {
-            roundStateHandler,
-            gameMessageHandler: gameMessageHandler,
-            gameRoundDataHandler: gameRoundDataHandler,
-            gameSoundHandler: new PlinkoGameSoundHandler({ gameSound: () => props.gameSound }),
-            gameFinishHandler: new PlinkoGameFinishHandler({
-                dispatch: props.dispatch,
-                gameMessageHandler: gameMessageHandler,
-                durations: props.durations,
-                roundStateHandler,
-                runGame: () => { }, // Will be set by GameBase
-                gameId: props.id,
-                gameStateContextModel: () => props.gameStateContextModel,
-                gameRoundDataHandler: gameRoundDataHandler,
-            }),
-        };
-
+        const gameBaseHandlers = createGameHandlers(props);
         super(props, gameBaseHandlers);
-
-        logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
 
         this.inGameHandler = new PlinkoInGameHandler({
             dispatch: props.dispatch,
-            gameMessageHandler: gameMessageHandler,
+            gameMessageHandler: gameBaseHandlers.gameMessageHandler,
         });
-
-        logger.endWorkflow('plinko-game-base-init');
     }
 
     registerHandlers() {
@@ -100,21 +92,13 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     onSocketDisconnect(): void {
-        logger.logSocketEvent('disconnect', 'received', {
-            action: 'reset-game-state'
-        }, { category: 'socket' });
-
         super.onSocketDisconnect();
         usePlinkoGameStore.getState().reset();
-
-        logger.logGameEvent('game-state-reset', {
-            reason: 'socket-disconnect'
-        });
     }
 
     renderGameFrame(): JSX.Element {
         // Get the wrapper scale from the PlinkoGame component for desktop scaling
-        const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1.0;
+        const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1;
 
         return (
             <div
@@ -227,17 +211,6 @@ const PlinkoWrapper = (props: any) => {
 const PlinkoFC = (props: any) => {
     const tolgeeNamespace = props["tolgeeNamespace"];
     const { t } = useTranslator([tolgeeNamespace]);
-
-    logger.startWorkflow('plinko-fc-init', 'game-init', 'Initialize PlinkoFC functional component');
-
-    logger.logGameEvent('plinko-fc-props', {
-        tolgeeNamespace,
-        hasGameStateContext: !!useGameStateContext(),
-        hasGameStatesDispatch: !!useGameStatesDispatch(),
-        hasTranslator: !!t
-    });
-
-    logger.endWorkflow('plinko-fc-init');
 
     return (
         <PlinkoGameBase
