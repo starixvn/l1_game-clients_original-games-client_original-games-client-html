@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Bodies, Body } from "matter-js";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
+import { SlotBody } from "../type";
 
 export const useSlot = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
@@ -18,8 +19,9 @@ export const useSlot = () => {
                 isSensor: true,
                 isStatic: true,
             };
-            const body = Bodies.rectangle(x, y, gap - 6, 1, options);
+            const body = Bodies.rectangle(x, y, gap - 6, 1, options) as SlotBody;
             body.label = PLINKO_OBJECTS.SLOT;
+            body.slotIndex = col - 1; // Slot index starts from 0
             slots.push(body);
         }
         return slots;

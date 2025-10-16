@@ -19,6 +19,7 @@ export interface BallBody extends Body {
     index?: string;
     finish?: PlinkoFinish;
     collidedRowIndexes?: number[];
+    slotIndex?: number;
 }
 
 export interface PegBody extends Body {
@@ -26,6 +27,10 @@ export interface PegBody extends Body {
     rowIndex?: number;
     circleRadius?: number;
     side?: string;
+}
+
+export interface SlotBody extends Body {
+    slotIndex?: number;
 }
 
 export interface PegEffect {

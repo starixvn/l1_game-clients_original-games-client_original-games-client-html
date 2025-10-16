@@ -2,8 +2,8 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, PegEffect } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
+import { BallBody, PegEffect, SlotBody } from "./type";
+import { useSlot, usePeg, useBall, usePegEffect, useSlotValidationLogger } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
@@ -35,6 +35,9 @@ const PlinkoCanvas = () => {
         pegIdRef,
     });
 
+    // Slot validation logger hook
+    const { logValidation, downloadLogs, clearLogs, getLogs } = useSlotValidationLogger();
+
     // Collision handler
     const handleCollision = useCallback(
         (event: IEventCollision<Engine>) => {
@@ -56,7 +59,18 @@ const PlinkoCanvas = () => {
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
-                    setFinishedBall((ball as BallBody).finish);
+                    const slotBody = object as SlotBody;
+                    const ballBody = ball as BallBody;               
+                    
+                    setFinishedBall(ballBody.finish);
+                    
+                    // Log validation data
+                    logValidation({
+                        slotIndex: slotBody.slotIndex,
+                        settlementResultSlotIndex: ballBody.finish?.settlementResult.slotIndex || -1,
+                        ballId: ballBody.id?.toString(),
+                        gameRoundId: ballBody.finish?.roundId,
+                    });
 
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
@@ -64,7 +78,7 @@ const PlinkoCanvas = () => {
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall]
+        [createPegEffect, handleRoad, setFinishedBall, logValidation]
     );
 
     // Draw scene object
@@ -211,6 +225,19 @@ const PlinkoCanvas = () => {
             useGameStore.getState().resetBettingInfo();
         }
     }, [finish, createBall, addObjects]);
+
+    // Expose logger functions to window for debugging
+    useEffect(() => {
+        (window as any).plinkoSlotValidation = {
+            downloadLogs,
+            clearLogs,
+            getLogs,
+        };
+        
+        return () => {
+            delete (window as any).plinkoSlotValidation;
+        };
+    }, [downloadLogs, clearLogs, getLogs]);
 
     return <canvas ref={canvasRef} />;
 };

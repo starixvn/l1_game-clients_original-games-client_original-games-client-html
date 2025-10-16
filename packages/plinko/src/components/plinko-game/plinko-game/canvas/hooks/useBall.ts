@@ -27,7 +27,7 @@ export const useBall = () => {
         const { width, ballConfig } = PlinkoCanvasConfig;
         const x = width / 2;
         const options = {
-            restitution: 0,
+            restitution: 0.1,
             friction: 0,
             frictionAir: 0.01,
             collisionFilter: {
@@ -60,11 +60,11 @@ export const useBall = () => {
         if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
             const road = body.finish?.result[peg.rowIndex];
             
-            Body.setPosition(body, {
-                x: peg.position.x,
-                y: peg.position.y - (peg.circleRadius || pegRadius) * 2,
-            });
-            
+            // Body.setPosition(body, {
+            //     x: peg.position.x,
+            //     y: peg.position.y - (peg.circleRadius || pegRadius) * 2,
+            // });
+
             setTimeout(() => {
                 Body.setVelocity(body, {
                     x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,
