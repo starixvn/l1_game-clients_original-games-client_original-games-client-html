@@ -231,6 +231,14 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap; // 842.9
         const pegsSpan = rightmostPegX - leftmostPegX; // 635.8px (distance between extreme pegs)
 
+        // Calculate peg span for reference row count (10 rows) to normalize scaling
+        const referenceRows = 10;
+        const referenceColumnsInRow = initialColumns + (referenceRows - 1);
+        const referenceSpace = (1050 - gap * referenceColumnsInRow) / 2;
+        const referenceLeftmostPegX = referenceSpace + 1 * gap - pegRadius * mapGap;
+        const referenceRightmostPegX = referenceSpace + referenceColumnsInRow * gap - pegRadius * mapGap;
+        const referencePegsSpan = referenceRightmostPegX - referenceLeftmostPegX;
+
         // Check if we should use peg-based scaling on desktop when main container would exceed frame
         if (!isMobile) {
             const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
@@ -241,20 +249,26 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
 
                 // Use peg-based scaling if expected main container width exceeds frame width
                 if (expectedMainWidth > frameRect.width) {
-                    return frameRect.width / pegsSpan;
+                    // Normalize by reference peg span to keep container size consistent
+                    const normalizedScale = frameRect.width / referencePegsSpan;
+                    return normalizedScale * (referencePegsSpan / pegsSpan);
                 }
             }
-            return 1.0;
+            // Normalize by reference scale to keep container size consistent
+            const referenceScaleValue = PLINKO_CANVAS_SCALE[referenceRows] || 1.0;
+            return (scaleValue / referenceScaleValue) * (referencePegsSpan / pegsSpan);
         }
 
         // Calculate final scale: (viewport width / peg span) to make pegs fill screen
         // Account for canvas scaling to ensure proper fit when number of rows changes
-        const effectivePegsSpan = pegsSpan * scaleValue;
-        return viewportWidth / effectivePegsSpan;
+        // Normalize by reference peg span to keep container size consistent
+        const referenceEffectivePegsSpan = referencePegsSpan * (PLINKO_CANVAS_SCALE[referenceRows] || 1.0);
+        const referenceScale = viewportWidth / referenceEffectivePegsSpan;
+        return referenceScale * (referenceEffectivePegsSpan / (pegsSpan * scaleValue));
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
-    // Calculate the scaled height for parent component - keep height consistent regardless of rows
-    const scaledHeight = 600; // Keep consistent height regardless of scaling
+    // Calculate the scaled height for parent component
+    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
 
     // Calculate wrapper scale for desktop when main container exceeds frame dimensions
     const wrapperScale = useMemo(() => {
@@ -293,7 +307,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
             ref={mainContainerRef}
             className="flex flex-col items-center justify-center relative"
             style={{
-                transform: `scaleX(${Math.min(1, finalScale)}) scaleY(1)`,
+                transform: `scale(${Math.min(1, finalScale)})`,
                 transformOrigin: 'top center'
             }}
         >
