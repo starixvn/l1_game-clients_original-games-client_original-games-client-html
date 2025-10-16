@@ -47,9 +47,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
     private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
     private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
+    private readonly isMobile: boolean;
     constructor(props: GameBaseProps) {
-        logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
-
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
         const gameRoundDataHandler = new PlinkoGameRoundDataHandler();
@@ -78,7 +77,13 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameRoundDataHandler: gameRoundDataHandler,
             }),
         };
+
         super(props, gameBaseHandlers);
+
+        logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
+
+        // Initialize mobile detection after super call
+        this.isMobile = this.detectMobile();
 
         this.inGameHandler = new PlinkoInGameHandler({
             dispatch: props.dispatch,
@@ -86,6 +91,14 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         });
 
         logger.endWorkflow('plinko-game-base-init');
+    }
+
+    private detectMobile(): boolean {
+        // Check if window is available (client-side) and screen width is less than 768px (md breakpoint)
+        if (typeof window !== 'undefined') {
+            return window.innerWidth < 768;
+        }
+        return false;
     }
 
     registerHandlers() {
@@ -146,12 +159,15 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // Get the scaled height from the PlinkoGame component
         const scaledHeight = this.plinkoGameRef.current?.getScaledHeight() ?? 600;
 
+        // Apply scaled height only for mobile devices
+        const heightStyle = this.isMobile ? { height: `${scaledHeight}px` } : {};
+
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col md:flex-row-reverse md:mx-3">
                     <div
                         className="w-full md:w-8/12"
-                        style={{ height: `${scaledHeight}px` }}
+                        style={heightStyle}
                     >
                         {this.renderGameFrame()}
                     </div>
