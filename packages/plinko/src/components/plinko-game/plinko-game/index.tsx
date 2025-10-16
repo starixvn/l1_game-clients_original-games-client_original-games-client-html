@@ -253,8 +253,8 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         return viewportWidth / effectivePegsSpan;
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
-    // Calculate the scaled height for parent component
-    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
+    // Calculate the scaled height for parent component - keep height consistent regardless of rows
+    const scaledHeight = 600; // Keep consistent height regardless of scaling
 
     // Calculate wrapper scale for desktop when main container exceeds frame dimensions
     const wrapperScale = useMemo(() => {
@@ -293,7 +293,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
             ref={mainContainerRef}
             className="flex flex-col items-center justify-center relative"
             style={{
-                transform: `scale(${Math.min(1, finalScale)})`,
+                transform: `scaleX(${Math.min(1, finalScale)}) scaleY(1)`,
                 transformOrigin: 'top center'
             }}
         >
