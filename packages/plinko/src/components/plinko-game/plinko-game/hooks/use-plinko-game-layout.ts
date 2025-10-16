@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { isMobile } from "react-device-detect";
 
 interface UsePlinkoGameLayoutProps {
@@ -21,25 +21,28 @@ export const usePlinkoGameLayout = ({
 
     const wrapperScale = useMemo(() => {
         if (isMobile) {
-            return 1.0;
+            return 1;
         }
 
         const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
         if (!frameWrapperWithoutBackgroundElement || !mainContainerRef.current) {
-            return 1.0;
+            return 1;
         }
 
         const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
         const mainRect = mainContainerRef.current.getBoundingClientRect();
 
-        const scaleX = frameRect.width / mainRect.width;
-        const scaleY = frameRect.height / mainRect.height;
-        const minScale = Math.min(scaleX, scaleY);
+        // Only apply wrapper scaling if content would significantly overflow the frame
+        // Use a threshold to prevent constant recalculations on minor dimension changes
+        const overflowThreshold = 1.1; // Only scale if overflow is more than 10%
+        if (mainRect.width > frameRect.width * overflowThreshold || mainRect.height > frameRect.height * overflowThreshold) {
+            const scaleX = frameRect.width / mainRect.width;
+            const scaleY = frameRect.height / mainRect.height;
+            return Math.min(scaleX, scaleY);
+        }
 
-        return mainRect.width > frameRect.width || mainRect.height > frameRect.height
-            ? Math.min(1, minScale)
-            : 1.0;
-    }, [finalScale, gameFrameWrapperWithoutBackgroundRef]);
+        return 1;
+    }, [gameFrameWrapperWithoutBackgroundRef]); // Don't depend on numberOfRows to avoid interference with scaleValue
 
     return {
         mainContainerRef,

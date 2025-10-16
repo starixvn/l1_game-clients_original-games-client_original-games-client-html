@@ -16,56 +16,40 @@ export const usePlinkoGameScaling = ({
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
 
     const finalScale = useMemo(() => {
-        const pegRadius = 8.5;
-        const mapGap = 3.4;
-        const gap = pegRadius * 2 * mapGap;
-        const initialColumns = 3;
-        const columnsInRow = initialColumns + (numberOfRows - 1);
-        const space = (1050 - gap * columnsInRow) / 2;
-        const leftmostPegX = space + 1 * gap - pegRadius * mapGap;
-        const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap;
-
-        const visualLeftEdge = leftmostPegX - pegRadius;
-        const visualRightEdge = rightmostPegX + pegRadius;
-        const pegsSpan = visualRightEdge - visualLeftEdge;
-
+        // Only apply finalScale in extreme cases to avoid interfering with scaleValue
+        // The scaleValue (based on numberOfRows) should handle normal scaling
         if (!isMobile) {
             const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
             if (frameWrapperWithoutBackgroundElement) {
                 const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
-                const expectedMainWidth = 1050 * scaleValue;
+                const expectedMainWidth = 1050 * scaleValue; // 1050 is the original canvas width
 
-                if (expectedMainWidth > frameRect.width) {
-                    const marginFactor = 0.9;
+                // Only apply finalScale if content would be severely cut off (>50% overflow)
+                const severeOverflowThreshold = 1.5;
+                if (expectedMainWidth > frameRect.width * severeOverflowThreshold) {
+                    const pegRadius = 8.5;
+                    const mapGap = 3.4;
+                    const gap = pegRadius * 2 * mapGap;
+                    const initialColumns = 3;
+                    const columnsInRow = initialColumns + (numberOfRows - 1);
+                    const space = (1050 - gap * columnsInRow) / 2;
+                    const leftmostPegX = space + 1 * gap - pegRadius * mapGap;
+                    const rightmostPegX = space + columnsInRow * gap - pegRadius * mapGap;
+
+                    const visualLeftEdge = leftmostPegX - pegRadius;
+                    const visualRightEdge = rightmostPegX + pegRadius;
+                    const pegsSpan = visualRightEdge - visualLeftEdge;
+
+                    const marginFactor = 0.8; // More aggressive margin
                     const effectiveFrameWidth = frameRect.width * marginFactor;
-                    const normalizedScale = effectiveFrameWidth / pegsSpan;
-                    return normalizedScale * (pegsSpan / pegsSpan);
-                } else {
-                    return 1.0;
+                    return Math.max(0.5, effectiveFrameWidth / pegsSpan); // Don't scale below 0.5
                 }
             }
-
-            const referenceRows = 10;
-            const referenceScaleValue = PLINKO_CANVAS_SCALE[referenceRows] || 1.0;
-            const normalizedScale = (scaleValue / referenceScaleValue) * (pegsSpan / pegsSpan);
-            return Math.min(1.0, normalizedScale);
         }
 
-        const marginFactor = 0.9;
-        const effectiveViewportWidth = viewportWidth * marginFactor;
-        const referenceRows = 10;
-        const referenceColumnsInRow = initialColumns + (referenceRows - 1);
-        const referenceSpace = (1050 - gap * referenceColumnsInRow) / 2;
-        const referenceLeftmostPegX = referenceSpace + 1 * gap - pegRadius * mapGap;
-        const referenceRightmostPegX = referenceSpace + referenceColumnsInRow * gap - pegRadius * mapGap;
-        const referenceVisualLeftEdge = referenceLeftmostPegX - pegRadius;
-        const referenceVisualRightEdge = referenceRightmostPegX + pegRadius;
-        const referencePegsSpan = referenceVisualRightEdge - referenceVisualLeftEdge;
-        const referenceEffectivePegsSpan = referencePegsSpan * (PLINKO_CANVAS_SCALE[referenceRows] || 1.0);
-        const referenceScale = effectiveViewportWidth / referenceEffectivePegsSpan;
-        const calculatedScale = referenceScale * (referenceEffectivePegsSpan / (pegsSpan * scaleValue));
-        return Math.min(1.0, calculatedScale);
-    }, [viewportWidth, numberOfRows, scaleValue, gameFrameWrapperWithoutBackgroundRef]);
+        // Let scaleValue handle normal scaling
+        return 1;
+    }, [viewportWidth, gameFrameWrapperWithoutBackgroundRef]); // Don't depend on numberOfRows or scaleValue to avoid interference
 
     return {
         scaleValue,

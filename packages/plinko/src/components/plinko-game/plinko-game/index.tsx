@@ -45,10 +45,10 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
         <div
             ref={mainContainerRef}
             className="flex flex-col items-center justify-center relative"
-            style={{
-                transform: `scale(${Math.min(1, finalScale)})`,
+            style={finalScale < 1 ? {
+                transform: `scale(${finalScale})`,
                 transformOrigin: 'top center',
-            }}
+            } : undefined}
         >
             {/* Logger Controls - positioned above canvas for debugging */}
             {process.env.NODE_ENV === 'development' && (
