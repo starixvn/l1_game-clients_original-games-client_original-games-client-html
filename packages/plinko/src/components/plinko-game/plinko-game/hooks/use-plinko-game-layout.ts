@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 
 interface UsePlinkoGameLayoutProps {
@@ -15,12 +15,22 @@ export const usePlinkoGameLayout = ({
     const mainContainerRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const slotsContainerRef = useRef<HTMLDivElement>(null);
+    const [isLayoutReady, setIsLayoutReady] = useState(false);
 
     const baseGameHeight = isMobile && window.innerHeight < 700 ? Math.max(500, window.innerHeight * 0.65) : 600;
     const scaledHeight = baseGameHeight * Math.min(1, finalScale);
 
+    // Ensure layout calculations happen after DOM is ready
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLayoutReady(true);
+        }, 150); // Slightly longer delay to ensure all elements are positioned
+
+        return () => clearTimeout(timer);
+    }, []);
+
     const wrapperScale = useMemo(() => {
-        if (isMobile) {
+        if (isMobile || !isLayoutReady) {
             return 1;
         }
 
@@ -42,7 +52,7 @@ export const usePlinkoGameLayout = ({
         }
 
         return 1;
-    }, [gameFrameWrapperWithoutBackgroundRef]); // Don't depend on numberOfRows to avoid interference with scaleValue
+    }, [gameFrameWrapperWithoutBackgroundRef, isLayoutReady]); // Don't depend on numberOfRows to avoid interference with scaleValue
 
     return {
         mainContainerRef,

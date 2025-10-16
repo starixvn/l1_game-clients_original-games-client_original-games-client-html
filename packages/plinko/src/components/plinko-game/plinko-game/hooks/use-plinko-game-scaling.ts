@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { PLINKO_CANVAS_SCALE } from "../constant";
 
@@ -14,8 +14,23 @@ export const usePlinkoGameScaling = ({
     gameFrameWrapperWithoutBackgroundRef
 }: UsePlinkoGameScalingProps) => {
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // Add a small delay to ensure DOM is ready before calculating scaling
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsInitialized(true);
+        }, 100); // Small delay to let DOM stabilize
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const finalScale = useMemo(() => {
+        // Don't calculate finalScale until DOM is ready
+        if (!isInitialized) {
+            return 1;
+        }
+
         // Only apply finalScale in extreme cases to avoid interfering with scaleValue
         // The scaleValue (based on numberOfRows) should handle normal scaling
         if (!isMobile) {
@@ -49,7 +64,7 @@ export const usePlinkoGameScaling = ({
 
         // Let scaleValue handle normal scaling
         return 1;
-    }, [viewportWidth, gameFrameWrapperWithoutBackgroundRef]); // Don't depend on numberOfRows or scaleValue to avoid interference
+    }, [viewportWidth, gameFrameWrapperWithoutBackgroundRef, isInitialized]); // Don't depend on numberOfRows or scaleValue to avoid interference
 
     return {
         scaleValue,
