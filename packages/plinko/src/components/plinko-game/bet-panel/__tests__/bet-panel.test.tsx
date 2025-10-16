@@ -391,8 +391,9 @@ describe("BetControl", () => {
             // Assert
             expect(mockUseHotKey).toHaveBeenCalledWith({
                 onSpaceKey: expect.any(Function),
-                onDoubleBet: expect.any(Function),
-                onHalfBet: expect.any(Function),
+                onDKey: expect.any(Function),
+                onSKey: expect.any(Function),
+                onAKey: expect.any(Function),
                 isEnabled: true,
             });
         });
@@ -420,36 +421,36 @@ describe("BetControl", () => {
             });
         });
 
-        it("should double bet amount when D key is pressed (via onDoubleBet callback)", () => {
+        it("should double bet amount when D key is pressed (via onDKey callback)", () => {
             // Arrange
             const mockUseHotKey = require("@shared/react-hooks").useHotKey;
-            let onDoubleBetCallback: (() => void) | undefined;
-            mockUseHotKey.mockImplementation(({ onDoubleBet }) => {
-                onDoubleBetCallback = onDoubleBet;
+            let onDKeyCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onDKey }) => {
+                onDKeyCallback = onDKey;
             });
             render(<BetControl />);
 
             // Act
-            if (onDoubleBetCallback) {
-                onDoubleBetCallback();
+            if (onDKeyCallback) {
+                onDKeyCallback();
             }
 
             // Assert
             expect(mockSetBetAmount).toHaveBeenCalledWith(200, 1, 1000);
         });
 
-        it("should half bet amount when S key is pressed (via onHalfBet callback)", () => {
+        it("should half bet amount when S key is pressed (via onSKey callback)", () => {
             // Arrange
             const mockUseHotKey = require("@shared/react-hooks").useHotKey;
-            let onHalfBetCallback: (() => void) | undefined;
-            mockUseHotKey.mockImplementation(({ onHalfBet }) => {
-                onHalfBetCallback = onHalfBet;
+            let onSKeyCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onSKey }) => {
+                onSKeyCallback = onSKey;
             });
             render(<BetControl />);
 
             // Act
-            if (onHalfBetCallback) {
-                onHalfBetCallback();
+            if (onSKeyCallback) {
+                onSKeyCallback();
             }
 
             // Assert
