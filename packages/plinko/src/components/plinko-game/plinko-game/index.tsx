@@ -282,7 +282,13 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
     // Calculate the scaled height for parent component
-    const scaledHeight = 600 * Math.min(1, finalScale); // 600 is the original height
+    // Coordinate scaleValue and finalScale to keep consistent height regardless of numberOfRows
+    // When scaleValue changes with numberOfRows, adjust finalScale to compensate
+    const referenceRows = 10;
+    const referenceScaleValue = PLINKO_CANVAS_SCALE[referenceRows] || 1.0;
+    // Normalize finalScale so that the effective scaling relative to reference is consistent
+    const normalizedFinalScale = finalScale * (referenceScaleValue / scaleValue);
+    const scaledHeight = 600 * Math.min(1, normalizedFinalScale);
 
     // Calculate wrapper scale for desktop when main container exceeds frame dimensions
     const wrapperScale = useMemo(() => {
