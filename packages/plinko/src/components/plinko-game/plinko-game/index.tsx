@@ -6,6 +6,7 @@ import Slots from "./slots";
 import { logger } from "@plinko/services/logger";
 import { LoggerControls } from "@plinko/features/ui/components";
 import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import { isMobile, isTablet, isDesktop } from "react-device-detect";
 
 interface GameProps {
     gameFrameWrapperWithoutBackgroundRef?: React.RefObject<HTMLDivElement>;
@@ -19,7 +20,6 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
 
     // Mobile detection - only apply scaling on mobile devices
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // Store viewport width in state, only update on resize to prevent scale changes on clicks
     const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
@@ -406,9 +406,9 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
                 scrollY: window.scrollY,
             },
             responsive: {
-                isMobile: window.innerWidth < 768,
-                isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
-                isDesktop: window.innerWidth >= 1024,
+                isMobile,
+                isTablet,
+                isDesktop,
                 contentWidthRatio: mainRect.width / window.innerWidth,
                 contentHeightRatio: mainRect.height / window.innerHeight,
             }

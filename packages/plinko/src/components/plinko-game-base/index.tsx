@@ -1,6 +1,7 @@
 import React, { JSX } from "react";
 import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
+import { isMobile } from "react-device-detect";
 import { logger } from "@plinko/services/logger";
 
 import {
@@ -47,7 +48,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
     private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
     private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
-    private readonly isMobile: boolean;
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
@@ -82,23 +82,12 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
         logger.startWorkflow('plinko-game-base-init', 'game-init', 'Initialize PlinkoGameBase component');
 
-        // Initialize mobile detection after super call
-        this.isMobile = this.detectMobile();
-
         this.inGameHandler = new PlinkoInGameHandler({
             dispatch: props.dispatch,
             gameMessageHandler: gameMessageHandler,
         });
 
         logger.endWorkflow('plinko-game-base-init');
-    }
-
-    private detectMobile(): boolean {
-        // Check if window is available (client-side) and screen width is less than 768px (md breakpoint)
-        if (typeof window !== 'undefined') {
-            return window.innerWidth < 768;
-        }
-        return false;
     }
 
     registerHandlers() {
@@ -160,7 +149,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         const scaledHeight = this.plinkoGameRef.current?.getScaledHeight() ?? 600;
 
         // Apply scaled height only for mobile devices
-        const heightStyle = this.isMobile ? { height: `${scaledHeight}px` } : {};
+        const heightStyle = isMobile ? { height: `${scaledHeight}px` } : {};
 
         return (
             <div className="col-span-12 mb-3">
