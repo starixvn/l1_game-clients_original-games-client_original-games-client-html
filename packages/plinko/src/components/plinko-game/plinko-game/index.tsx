@@ -27,6 +27,9 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
 
+    // Calculate responsive base height - only reduce on very small screens
+    const baseGameHeight = isMobile && window.innerHeight < 700 ? Math.max(500, window.innerHeight * 0.65) : 600;
+
     // Mobile detection - only apply scaling on mobile devices
 
     // Store viewport width in state, only update on resize to prevent scale changes on clicks
@@ -109,7 +112,9 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
                 screenHeight: window.screen.height,
             },
             canvas: {
-                containerHeight: 600,
+                containerHeight: baseGameHeight,
+                originalHeight: 600,
+                heightRatio: baseGameHeight / 600,
                 transform: {
                     translateX: '-50%',
                     translateY: `${numberOfRows + numberOfRows / 8}px`,
@@ -216,7 +221,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
             }
             logger.endWorkflow('plinko-canvas-game-init');
         };
-    }, [numberOfRows, viewportWidth, logContainerRelationships]);
+    }, [numberOfRows, viewportWidth, logContainerRelationships, baseGameHeight]);
 
     // Memoize the scale calculation to prevent recalculation on every render/click
     const finalScale = useMemo(() => {
@@ -282,13 +287,7 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
     }, [viewportWidth, numberOfRows, isMobile, scaleValue, gameFrameWrapperWithoutBackgroundRef]); // Only recalculate when viewport or rows change
 
     // Calculate the scaled height for parent component
-    // Coordinate scaleValue and finalScale to keep consistent height regardless of numberOfRows
-    // When scaleValue changes with numberOfRows, adjust finalScale to compensate
-    const referenceRows = 10;
-    const referenceScaleValue = PLINKO_CANVAS_SCALE[referenceRows] || 1.0;
-    // Normalize finalScale so that the effective scaling relative to reference is consistent
-    const normalizedFinalScale = finalScale * (referenceScaleValue / scaleValue);
-    const scaledHeight = 600 * Math.min(1, normalizedFinalScale);
+    const scaledHeight = baseGameHeight * Math.min(1, finalScale);
 
     // Calculate wrapper scale for desktop when main container exceeds frame dimensions
     const wrapperScale = useMemo(() => {
@@ -346,17 +345,24 @@ const Game = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: 
                 </div>
             )}
 
-            <div className="rounded-lg mx-auto w-full h-[600px] overflow-x-hidden pt-5">
+            <div
+                className="rounded-lg mx-auto w-full overflow-x-hidden pt-5"
+                style={{ height: `${baseGameHeight}px` }}
+            >
                 <div
                     ref={canvasContainerRef}
                     className="absolute origin-top left-1/2 z-[-1]"
                     style={{
-                        transform: `translateX(-50%) translateY(${numberOfRows + numberOfRows / 8}px) scale(${scaleValue})`,
+                        transform: `translateX(-50%) translateY(${(numberOfRows + numberOfRows / 8) * (baseGameHeight / 600)}px) scale(${scaleValue})`,
                     }}
                 >
                     <PlinkoCanvas />
                 </div>
-                <div ref={slotsContainerRef} className="absolute top-[570px] left-0 w-full flex items-center justify-center origin-top">
+                <div
+                    ref={slotsContainerRef}
+                    className="absolute left-0 w-full flex items-center justify-center origin-top"
+                    style={{ top: `${baseGameHeight - 30}px` }}
+                >
                     <Slots />
                 </div>
             </div>
