@@ -1,22 +1,29 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
-import { useClientSeedPF, useCommonTranslate } from "@shared/react-hooks";
+import { useClientSeedPF, useCommonTranslate, useHotKey } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
 import TabNavigation from "./tab-navigation";
 import BetForm from "./bet-form";
 
 const BetControl = () => {
-    const sendSocketEvent = useGameStore((state) => state.sendSocketEvent);
+    const { sendSocketEvent, gameConfigs, userStakeLevel } = useGameStore(
+        useShallow((state) => ({
+            sendSocketEvent: state.sendSocketEvent,
+            gameConfigs: state.gameConfigs,
+            userStakeLevel: state.userStakeLevel,
+        }))
+    );
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, numberOfDroppingBall } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, numberOfDroppingBall, setBetAmount } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
             numberOfRows: state.numberOfRows,
             numberOfDroppingBall: state.numberOfDroppingBall,
+            setBetAmount: state.actions.setBetAmount,
         }))
     );
     const { gameMessageHandler } = useGameContext();
@@ -25,6 +32,15 @@ const BetControl = () => {
     const [isAutoBet, setIsAutoBet] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const { t } = useCommonTranslate();
+
+    const { minBet, maxBet } = useMemo(() => {
+        if (gameConfigs?.minBet && gameConfigs?.maxBet && userStakeLevel) {
+            const maxBet = Math.min(userStakeLevel.maxBet, gameConfigs.maxBet);
+            const minBet = Math.max(userStakeLevel.minBet, gameConfigs.minBet);
+            return { minBet, maxBet };
+        }
+        return { minBet: 0, maxBet: 0 };
+    }, [gameConfigs?.minBet, gameConfigs?.maxBet, userStakeLevel]);
 
     const handleBetClick = useCallback(() => {
         sendSocketEvent("bet", { amount: betAmount, gameMode, numberOfRows, clientSeed });
@@ -51,6 +67,32 @@ const BetControl = () => {
             handleBetClick();
         }
     }, [isAutoBet, handleBetClick]);
+
+    useHotKey({
+        onSpaceKey: () => {
+            if (!isProcessing && !isAutoBet && isManualTab) {
+                handleBetClick();
+            }
+        },
+        onDKey: () => {
+            if (!isProcessing && !isAutoBet && minBet > 0) {
+                const newBetAmount = Math.min(betAmount * 2, maxBet);
+                setBetAmount(newBetAmount, minBet, maxBet);
+            }
+        },
+        onSKey: () => {
+            if (!isProcessing && !isAutoBet && minBet > 0) {
+                const newBetAmount = Math.max(betAmount / 2, minBet);
+                setBetAmount(newBetAmount, minBet, maxBet);
+            }
+        },
+        onAKey: () => {
+            if (!isProcessing && !isAutoBet && minBet > 0) {
+                setBetAmount(minBet, minBet, maxBet);
+            }
+        },
+        isEnabled: true,
+    });
 
     const buttonClass =
         "text-sm font-bold w-full h-11 rounded-xl uppercase bg-gradient-to-l from-[#1FDC13] to-[#1D9C05] shadow-[0_0_8px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:opacity-50";

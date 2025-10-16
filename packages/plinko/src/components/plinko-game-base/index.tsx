@@ -22,7 +22,6 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
@@ -40,6 +39,8 @@ const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-g
 const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
 const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
 const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
+const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key"), { ssr: false });
+const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot-key"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
@@ -136,7 +137,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
+        return <MenuIconWrapper items={[<HotKeyIcon key="hot-key-icon" />,<LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
     }
 
     renderPFSettingModal() {
@@ -145,6 +146,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderLiveStatsModal() {
         return createPortal(<LiveStats />, document.getElementById("dashboard"));
+    }
+
+    renderHotKeyModal() {
+        return createPortal(<HotKeyModal />, document.getElementById("dashboard"));
     }
 
     renderBetHistoryTable(): JSX.Element {

@@ -573,6 +573,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
+    renderHotKeyModal() {
+        return <></>;
+    }
+
     renderBettingBlock() {
         return <></>;
     }
@@ -688,6 +692,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     {this.renderBetDetailModal()}
                     {this.renderGameGuideModal()}
                     {this.renderLiveStatsModal()}
+                    {this.renderHotKeyModal()}
                 </div>
             </>
         );

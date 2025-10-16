@@ -2,6 +2,11 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BetControl from "../bet-panel";
 
+// Mock useShallow
+jest.mock("zustand/shallow", () => ({
+    useShallow: jest.fn((selector) => selector),
+}));
+
 // Mock the stores
 const mockSendSocketEvent = jest.fn();
 jest.mock("@shared/stores/game-store", () => ({
@@ -9,22 +14,55 @@ jest.mock("@shared/stores/game-store", () => ({
         if (typeof selector === "function") {
             return selector({
                 sendSocketEvent: mockSendSocketEvent,
+                gameConfigs: {
+                    minBet: 1,
+                    maxBet: 1000,
+                },
+                userStakeLevel: {
+                    minBet: 1,
+                    maxBet: 1000,
+                },
             });
         }
         return {
             sendSocketEvent: mockSendSocketEvent,
+            gameConfigs: {
+                minBet: 1,
+                maxBet: 1000,
+            },
+            userStakeLevel: {
+                minBet: 1,
+                maxBet: 1000,
+            },
         };
     }),
 }));
 
+const mockSetBetAmount = jest.fn();
 jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
     __esModule: true,
-    default: jest.fn(() => ({
-        betAmount: 100,
-        gameMode: "normal",
-        numberOfRows: 16,
-        numberOfDroppingBall: 0,
-    })),
+    default: jest.fn((selector) => {
+        if (typeof selector === "function") {
+            return selector({
+                betAmount: 100,
+                gameMode: "normal",
+                numberOfRows: 16,
+                numberOfDroppingBall: 0,
+                actions: {
+                    setBetAmount: mockSetBetAmount,
+                },
+            });
+        }
+        return {
+            betAmount: 100,
+            gameMode: "normal",
+            numberOfRows: 16,
+            numberOfDroppingBall: 0,
+            actions: {
+                setBetAmount: mockSetBetAmount,
+            },
+        };
+    }),
 }));
 
 // Mock the hooks
@@ -35,6 +73,7 @@ jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn(() => ({
         t: (key: string) => key,
     })),
+    useHotKey: jest.fn(),
 }));
 
 jest.mock("@shared/react-contexts", () => ({
@@ -84,6 +123,7 @@ jest.mock("../bet-form", () => {
 describe("BetControl", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockSetBetAmount.mockClear();
     });
 
     describe("Rendering", () => {
@@ -339,6 +379,122 @@ describe("BetControl", () => {
             // Assert
             expect(screen.getByTestId("tab-navigation")).toHaveAttribute("data-active-index", "1");
             expect(screen.getByTestId("bet-form")).toHaveAttribute("data-auto-bet", "true");
+        });
+    });
+
+    describe("Hot Key Functionality", () => {
+        it("should call useHotKey hook with correct parameters", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            render(<BetControl />);
+
+            // Assert
+            expect(mockUseHotKey).toHaveBeenCalledWith({
+                onSpaceKey: expect.any(Function),
+                onDoubleBet: expect.any(Function),
+                onHalfBet: expect.any(Function),
+                isEnabled: true,
+            });
+        });
+
+        it("should trigger bet when space key is pressed (via onSpaceKey callback)", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            let onSpaceKeyCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onSpaceKey }) => {
+                onSpaceKeyCallback = onSpaceKey;
+            });
+            render(<BetControl />);
+
+            // Act
+            if (onSpaceKeyCallback) {
+                onSpaceKeyCallback();
+            }
+
+            // Assert
+            expect(mockSendSocketEvent).toHaveBeenCalledWith("bet", {
+                amount: 100,
+                gameMode: "normal",
+                numberOfRows: 16,
+                clientSeed: "test-seed-123",
+            });
+        });
+
+        it("should double bet amount when D key is pressed (via onDoubleBet callback)", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            let onDoubleBetCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onDoubleBet }) => {
+                onDoubleBetCallback = onDoubleBet;
+            });
+            render(<BetControl />);
+
+            // Act
+            if (onDoubleBetCallback) {
+                onDoubleBetCallback();
+            }
+
+            // Assert
+            expect(mockSetBetAmount).toHaveBeenCalledWith(200, 1, 1000);
+        });
+
+        it("should half bet amount when S key is pressed (via onHalfBet callback)", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            let onHalfBetCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onHalfBet }) => {
+                onHalfBetCallback = onHalfBet;
+            });
+            render(<BetControl />);
+
+            // Act
+            if (onHalfBetCallback) {
+                onHalfBetCallback();
+            }
+
+            // Assert
+            expect(mockSetBetAmount).toHaveBeenCalledWith(50, 1, 1000);
+        });
+
+        it("should not trigger bet when space key is pressed during processing", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            let onSpaceKeyCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onSpaceKey }) => {
+                onSpaceKeyCallback = onSpaceKey;
+            });
+            render(<BetControl />);
+
+            // Act - First click to start processing
+            fireEvent.click(screen.getByRole("button", { name: "glossary_bet" }));
+            // Then try hot key
+            if (onSpaceKeyCallback) {
+                onSpaceKeyCallback();
+            }
+
+            // Assert - Should only be called once (from button click)
+            expect(mockSendSocketEvent).toHaveBeenCalledTimes(1);
+        });
+
+        it("should not trigger bet when space key is pressed in auto bet mode", () => {
+            // Arrange
+            const mockUseHotKey = require("@shared/react-hooks").useHotKey;
+            let onSpaceKeyCallback: (() => void) | undefined;
+            mockUseHotKey.mockImplementation(({ onSpaceKey }) => {
+                onSpaceKeyCallback = onSpaceKey;
+            });
+            render(<BetControl />);
+
+            // Act - Switch to auto tab and start auto bet
+            fireEvent.click(screen.getByTestId("auto-tab"));
+            fireEvent.click(screen.getByRole("button", { name: "start_auto_bet" }));
+            // Then try hot key
+            if (onSpaceKeyCallback) {
+                onSpaceKeyCallback();
+            }
+
+            // Assert - Should only be called once (from auto bet start)
+            expect(mockSendSocketEvent).toHaveBeenCalledTimes(1);
         });
     });
 });

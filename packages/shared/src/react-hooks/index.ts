@@ -18,3 +18,4 @@ export * from "./use-translator";
 export * from "./use-theme";
 export * from "./use-translator";
 export * from "./use-is-desktop";
+export * from "./use-hot-key";
