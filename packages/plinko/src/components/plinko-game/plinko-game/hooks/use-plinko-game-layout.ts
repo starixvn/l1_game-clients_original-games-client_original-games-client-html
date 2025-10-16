@@ -36,10 +36,11 @@ export const usePlinkoGameLayout = ({
     }, [isMobile]);
 
     const wrapperScale = useMemo(() => {
-        if (isMobile || !isLayoutReady) {
+        if (!isLayoutReady) {
             return 1;
         }
 
+        // On mobile, be more conservative with wrapper scaling to avoid over-scaling slots
         const frameWrapperWithoutBackgroundElement = gameFrameWrapperWithoutBackgroundRef?.current;
         if (!frameWrapperWithoutBackgroundElement || !mainContainerRef.current) {
             return 1;
@@ -48,17 +49,19 @@ export const usePlinkoGameLayout = ({
         const frameRect = frameWrapperWithoutBackgroundElement.getBoundingClientRect();
         const mainRect = mainContainerRef.current.getBoundingClientRect();
 
-        // Only apply wrapper scaling if content would significantly overflow the frame
-        // Use a threshold to prevent constant recalculations on minor dimension changes
-        const overflowThreshold = 1.1; // Only scale if overflow is more than 10%
+        // Use different thresholds for mobile vs desktop
+        const overflowThreshold = isMobile ? 1.2 : 1.1; // More conservative on mobile
         if (mainRect.width > frameRect.width * overflowThreshold || mainRect.height > frameRect.height * overflowThreshold) {
             const scaleX = frameRect.width / mainRect.width;
             const scaleY = frameRect.height / mainRect.height;
-            return Math.min(scaleX, scaleY);
+            const calculatedScale = Math.min(scaleX, scaleY);
+
+            // On mobile, don't scale below 0.8 to keep slots readable
+            return isMobile ? Math.max(0.8, calculatedScale) : calculatedScale;
         }
 
         return 1;
-    }, [gameFrameWrapperWithoutBackgroundRef, isLayoutReady]); // Don't depend on numberOfRows to avoid interference with scaleValue
+    }, [gameFrameWrapperWithoutBackgroundRef, isLayoutReady, isMobile]);
 
     return {
         mainContainerRef,

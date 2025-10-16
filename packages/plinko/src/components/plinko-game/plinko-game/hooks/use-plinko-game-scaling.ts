@@ -61,12 +61,12 @@ export const usePlinkoGameScaling = ({
             const pegsSpan = visualRightEdge - visualLeftEdge;
 
             // Use different margin factors for mobile vs desktop
-            const marginFactor = isMobile ? 0.95 : 0.8; // Less aggressive margin on mobile
+            const marginFactor = isMobile ? 0.9 : 0.8; // Less aggressive margin on mobile
             const effectiveFrameWidth = frameRect.width * marginFactor;
             const calculatedScale = effectiveFrameWidth / pegsSpan;
 
-            // Apply minimum scale limits
-            const minScale = isMobile ? 0.7 : 0.5; // Higher minimum scale for mobile
+            // Apply minimum scale limits - be more conservative on mobile
+            const minScale = isMobile ? 0.75 : 0.5;
             return Math.max(minScale, calculatedScale);
         }
 
