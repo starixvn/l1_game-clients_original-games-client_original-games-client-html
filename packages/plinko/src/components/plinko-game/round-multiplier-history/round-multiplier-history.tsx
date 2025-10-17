@@ -38,7 +38,8 @@ const RoundMultiplierHistory = () => {
     }
 
     return (
-        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto">
+        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto"
+        style={{ maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" }}>
             <div className="flex justify-end gap-1 overflow-x-auto ">
                 {[...data].map((round, index) => (
                     <div key={round.roundId} className={`${isAnimating ? "animate-slide-to-left" : ""}`}>

@@ -37,7 +37,7 @@ const PlinkoBetHistoryTable = dynamic(() => import("../plinko-game/history/plink
 const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-game/player-result-board/player-result-board-table"), {
     ssr: false,
 });
-const PlinkoBetDetailModal = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
+const PlinkoBetDetail = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
 const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
 const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
 const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key"), { ssr: false });
@@ -158,7 +158,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBetDetailModal(): JSX.Element {
         // Plinko handles its own modals within the PlinkoGame component
-        return <PlinkoBetDetailModal />;
+        return <PlinkoBetDetail />;
     }
 
     renderMenuIcons() {
