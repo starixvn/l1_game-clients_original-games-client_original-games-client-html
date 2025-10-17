@@ -42,4 +42,5 @@ export interface PegEffect {
     borderColor: string;
     speed: number;
     maxSpeed: number;
+    elapsed: number;
 }

@@ -158,13 +158,13 @@ const PlinkoCanvas = () => {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
+        // draw effects first (behind objects)
+        drawPegEffect?.(context);
+
         // Draw all scene objects
         sceneObjectsRef.current.forEach((obj) => {
             drawSceneObject(obj);
         });
-
-        // draw effects
-        drawPegEffect?.(context);
         animationRef.current = requestAnimationFrame(animate);
     }, [drawSceneObject, drawPegEffect]);
 

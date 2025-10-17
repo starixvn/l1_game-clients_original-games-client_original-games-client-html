@@ -13,13 +13,14 @@ export const usePegEffect = ({ pegEffectsRef, pegIdRef }: UsePegEffectProps) => 
             const { pegRadius } = PlinkoCanvasConfig;
             const pegEffect: PegEffect = {
                 x: body.position.x,
-                y: body.position.y,
-                radius: pegRadius,
+                y: body.position.y + pegRadius * 0.3,
+                radius: pegRadius * 0.7,
                 color: "#ffffff",
                 borderColor: "#FFFFFFCC",
                 borderRadius: pegRadius + 2.7,
                 speed: 0,
-                maxSpeed: 100,
+                elapsed: 0,
+                maxSpeed: 1000,
             };
 
             pegEffectsRef.current.push(pegEffect);
@@ -29,25 +30,32 @@ export const usePegEffect = ({ pegEffectsRef, pegIdRef }: UsePegEffectProps) => 
 
     const drawPegEffect = useCallback(
         (context: CanvasRenderingContext2D) => {
-            for (let i = pegEffectsRef.current.length - 1; i >= 0; i--) {
-                const effect = pegEffectsRef.current[i];
-                effect.speed += 2;
+            const effects = pegEffectsRef.current;
+            const effectsToRemove: number[] = [];
 
-                if (effect.speed < effect.maxSpeed) {
-                    const currentOpacity = 1 - effect.speed / effect.maxSpeed;
-                    context.globalAlpha = currentOpacity;
-                    context.fillStyle = effect.borderColor;
-                    context.beginPath();
-                    context.arc(effect.x, effect.y, effect.borderRadius, 0, Math.PI * 2);
-                    context.fill();
-                    context.fillStyle = effect.color;
-                    context.beginPath();
-                    context.arc(effect.x, effect.y, effect.radius, 0, Math.PI * 2);
-                    context.fill();
-                    context.globalAlpha = 1;
-                } else {
-                    pegEffectsRef.current.splice(i, 1);
+            for (let i = 0; i < effects.length; i++) {
+                const effect = effects[i];
+                effect.elapsed += 46;
+
+                const progress = effect.elapsed / effect.maxSpeed;
+
+                if (progress >= 1) {
+                    effectsToRemove.push(i);
+                    continue;
                 }
+
+                const pulseRadius = effect.radius + progress * 20;
+
+                const alpha = 0.5 * (1 - progress);
+
+                context.beginPath();
+                context.arc(effect.x, effect.y, pulseRadius, 0, Math.PI * 2);
+                context.fillStyle = `rgba(0, 0, 0, ${alpha})`;
+                context.fill();
+            }
+
+            for (let i = effectsToRemove.length - 1; i >= 0; i--) {
+                effects.splice(effectsToRemove[i], 1);
             }
         },
         [pegEffectsRef]
