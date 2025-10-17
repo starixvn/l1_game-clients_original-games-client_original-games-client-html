@@ -45,7 +45,6 @@ const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
-    private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
     private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
     private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
 
@@ -94,9 +93,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderGameFrame(): JSX.Element {
-        // Get the wrapper scale from the PlinkoGame component for desktop scaling
-        const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1;
-
         return (
             <div
                 ref={this.gameFrameWrapperRef}
@@ -107,14 +103,9 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 <div
                     ref={this.gameFrameWrapperWithoutBackgroundRef}
                     id="plinko-game-frame-wrapper-without-background"
-                    style={{
-                        transform: `scale(${wrapperScale})`,
-                        transformOrigin: 'center top'
-                    }}
                 >
                     <RoundMultiplierHistory />
                     <PlinkoGame
-                        ref={this.plinkoGameRef}
                         gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef}
                     />
                     <WinningAmountEffect />

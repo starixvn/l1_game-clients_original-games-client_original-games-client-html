@@ -11,8 +11,9 @@ interface PlinkoGameProps {
     gameFrameWrapperWithoutBackgroundRef?: React.RefObject<HTMLDivElement>;
 }
 
-const PlinkoGame = React.forwardRef<{ getScaledHeight: () => number; getWrapperScale: () => number }, PlinkoGameProps>(
-    ({ gameFrameWrapperWithoutBackgroundRef }, ref) => {
+const PlinkoGame: React.FC<PlinkoGameProps> = ({
+    gameFrameWrapperWithoutBackgroundRef
+}) => {
         const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
 
         const { scaleValue, finalScale } = usePlinkoGameScaling({
@@ -24,28 +25,13 @@ const PlinkoGame = React.forwardRef<{ getScaledHeight: () => number; getWrapperS
             mainContainerRef,
             canvasContainerRef,
             slotsContainerRef,
-            baseGameHeight,
-            scaledHeight,
-            wrapperScale
+            baseGameHeight
         } = usePlinkoGameLayout({
             numberOfRows,
             finalScale,
             gameFrameWrapperRef: gameFrameWrapperWithoutBackgroundRef
         });
 
-        // Expose the scaled height and wrapper scale for parent component to use
-        React.useImperativeHandle(ref, () => ({
-            getScaledHeight: () => scaledHeight,
-            getWrapperScale: () => wrapperScale
-        }), [scaledHeight, wrapperScale]);
-
-        const handleDownloadLogs = () => {
-            if ((globalThis as any).plinkoSlotValidation) {
-                (globalThis as any).plinkoSlotValidation.downloadLogs();
-            } else {
-                console.warn("Plinko slot validation not available yet");
-            }
-        };
 
         return (
             <div
@@ -76,19 +62,10 @@ const PlinkoGame = React.forwardRef<{ getScaledHeight: () => number; getWrapperS
                     >
                         <Slots />
                     </div>
-                    <div className="flex gap-2 mb-4">
-                        <button
-                            onClick={handleDownloadLogs}
-                            className="text-white rounded hover:bg-blue-600"
-                        >
-                            Logs
-                        </button>
-                    </div>
                 </div>
             </div>
         );
-    }
-);
+};
 
 PlinkoGame.displayName = 'PlinkoGame';
 export default PlinkoGame;

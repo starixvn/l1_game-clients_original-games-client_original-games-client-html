@@ -8,7 +8,7 @@ import {
 /**
  * Shared utility for calculating peg positions and safe scaling
  */
-export const calculatePegPositions = (numberOfRows: number) => {
+const calculatePegPositions = (numberOfRows: number) => {
     const { RADIUS: pegRadius, MAP_GAP: mapGap, INITIAL_COLUMNS: initialColumns } = PEG_CONSTANTS;
     const gap = pegRadius * 2 * mapGap;
     const columnsInRow = initialColumns + (numberOfRows - 1);
@@ -66,9 +66,8 @@ export const calculatePegSafeScale = (
         const bufferFactor = visualMarginMultiplier === PEG_CONSTANTS.VISUAL_MARGIN_MULTIPLIER.SAFE_SCALE
             ? BUFFER_FACTORS.PEG_SAFE_SCALE_HIGH
             : BUFFER_FACTORS.PEG_SAFE_SCALE_LOW;
-        const safeScale = Math.min(DEFAULT_VALUES.NO_SCALE, availableWidth / requiredWidth * bufferFactor);
 
-        return safeScale;
+        return Math.min(DEFAULT_VALUES.NO_SCALE, availableWidth / requiredWidth * bufferFactor);
     }
 
     return DEFAULT_VALUES.NO_SCALE; // No cutoff detected

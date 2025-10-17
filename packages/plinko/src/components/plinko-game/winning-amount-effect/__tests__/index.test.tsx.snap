@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WinningAmountEffect Rendering Logic should render when finish has positive winAmount 1`] = `
+<div>
+  <div
+    class="h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl"
+  >
+    win
+     
+    1,000.00
+  </div>
+</div>
+`;

@@ -36,7 +36,7 @@ export const PEG_CONSTANTS = {
     },
 } as const;
 
-// Scaling Threshold Constants
+// Scaling Threshold Constants (Mobile Only - Desktop handled by CSS/Tailwind)
 export const SCALING_THRESHOLDS = {
     MOBILE: {
         /** Threshold for scaling down on mobile */
@@ -50,49 +50,8 @@ export const SCALING_THRESHOLDS = {
         /** Maximum scale up for mobile */
         MAX_SCALE_UP: 1.1,
     },
-    DESKTOP: {
-        /** Threshold for scaling down on desktop */
-        SCALE_DOWN: 2,
-        /** Threshold for scaling up on desktop (initial render) */
-        SCALE_UP_INITIAL: 0.5,
-        /** Threshold for scaling up on desktop (after resize) */
-        SCALE_UP_RESIZED: 0.75,
-        /** Margin factor for desktop scaling */
-        MARGIN_FACTOR: 0.6,
-        /** Minimum scale for desktop */
-        MIN_SCALE: 0.4,
-        /** Maximum scale up for desktop */
-        MAX_SCALE_UP: 1.2,
-    },
 } as const;
 
-// Layout Threshold Constants
-export const LAYOUT_THRESHOLDS = {
-    STACKED: {
-        /** Overflow threshold for stacked/mobile layout */
-        OVERFLOW: 1.1,
-        /** Scale up threshold for stacked layout */
-        SCALE_UP: 0.7,
-        /** Minimum scale for stacked layout */
-        MIN_SCALE: 0.75,
-        /** Maximum scale up for stacked layout */
-        MAX_SCALE_UP: 1.15,
-    },
-    DESKTOP_RESIZED: {
-        /** Overflow threshold for desktop after resize */
-        OVERFLOW: 1.05,
-        /** Scale up threshold for desktop after resize */
-        SCALE_UP: 0.75,
-    },
-    DESKTOP_INITIAL: {
-        /** Overflow threshold for desktop initial render */
-        OVERFLOW: 2,
-        /** Scale up threshold for desktop initial render */
-        SCALE_UP: 0.5,
-        /** Minimum scale for desktop initial render */
-        MIN_SCALE: 0.95,
-    },
-} as const;
 
 // Buffer Factors for Safe Scaling
 export const BUFFER_FACTORS = {
@@ -102,13 +61,6 @@ export const BUFFER_FACTORS = {
     PEG_SAFE_SCALE_LOW: 0.88,
 } as const;
 
-// Timing Constants
-export const TIMING_CONSTANTS = {
-    /** Desktop initialization delay in milliseconds */
-    DESKTOP_INIT_DELAY: 50,
-    /** Desktop layout initialization delay in milliseconds */
-    DESKTOP_LAYOUT_DELAY: 75,
-} as const;
 
 // Visual Effect Constants
 export const VISUAL_CONSTANTS = {

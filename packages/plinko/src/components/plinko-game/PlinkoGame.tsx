@@ -42,8 +42,6 @@ const PlinkoGame = () => {
                 const slotIndex = action.finish.settlementResult?.slotIndex || 4;
                 const multiplier = action.finish.settlementResult?.multiplier || 1;
                 const betAmount = action.finish.amount || action.endBet || 100;
-                const winAmount = action.finish.winAmount;
-                const countOfOnes = resultPath.filter((p: number) => p === 1).length;
                 const roundId = action.finish.roundId;
 
                 // Store the expected slot for this round for validation when ball lands

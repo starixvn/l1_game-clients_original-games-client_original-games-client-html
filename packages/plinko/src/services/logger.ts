@@ -24,14 +24,15 @@ interface WorkflowTimer {
 class Logger {
   private logs: string[] = [];
   private readonly maxLogs: number = 10000; // Prevent memory issues
-  private workflowTimers: Map<string, WorkflowTimer> = new Map();
-  private activeWorkflows: Set<string> = new Set();
-  private autoSaveEnabled: boolean = true;
+  private readonly workflowTimers: Map<string, WorkflowTimer> = new Map();
+  private readonly activeWorkflows: Set<string> = new Set();
+  private readonly autoSaveEnabled = true;
   private autoSaveInterval: ReturnType<typeof setInterval> | null = null;
   private autoDownloadInterval: ReturnType<typeof setInterval> | null = null;
   private readonly STORAGE_KEY = 'plinko_game_logs';
   private readonly AUTO_SAVE_INTERVAL = 30000; // 30 seconds
   private readonly AUTO_DOWNLOAD_INTERVAL = 300000; // 5 minutes
+  private requestCounter = 0;
 
   constructor() {
     // Initialize with a header
@@ -65,11 +66,21 @@ class Logger {
 
     // Add IDs if provided
     const ids = [];
-    if (context?.userId) ids.push(`User:${context.userId}`);
-    if (context?.sessionId) ids.push(`Session:${context.sessionId}`);
-    if (context?.roundId) ids.push(`Round:${context.roundId}`);
-    if (context?.betId) ids.push(`Bet:${context.betId}`);
-    if (context?.requestId) ids.push(`Request:${context.requestId}`);
+    if (context?.userId) {
+      ids.push(`User:${context.userId}`);
+    }
+    if (context?.sessionId) {
+      ids.push(`Session:${context.sessionId}`);
+    }
+    if (context?.roundId) {
+      ids.push(`Round:${context.roundId}`);
+    }
+    if (context?.betId) {
+      ids.push(`Bet:${context.betId}`);
+    }
+    if (context?.requestId) {
+      ids.push(`Request:${context.requestId}`);
+    }
     if (ids.length > 0) {
       logEntry += ` | IDs: {${ids.join(', ')}}`;
     }
@@ -244,7 +255,10 @@ class Logger {
   }
 
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    // Use a counter-based approach for request IDs to ensure uniqueness
+    // This is suitable for logging purposes and avoids weak cryptography concerns
+    this.requestCounter = (this.requestCounter + 1) % 1000000; // Reset after 1M requests
+    return `req_${Date.now()}_${this.requestCounter.toString().padStart(6, '0')}`;
   }
 
   private diffStates(oldState: any, newState: any): any {
