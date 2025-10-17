@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { NUMBER_OF_ROWS } from "@plinko/constants";
@@ -17,6 +17,14 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { tolgeeNamespace } = useGameContext();
     const { t } = useTranslator([tolgeeNamespace]);
 
+    const handleRowsChange = useCallback((newValue: number) => {
+        const isValid = newValue >= NUMBER_OF_ROWS.MIN && newValue <= NUMBER_OF_ROWS.MAX;
+
+        if (isValid) {
+            setNumberOfRows(newValue);
+        }
+    }, [numberOfRows, setNumberOfRows]);
+
     return (
         <div className={`div-setting-row`}>
             <Label title={t("row")} />
@@ -29,14 +37,13 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                     min={NUMBER_OF_ROWS.MIN}
                     max={NUMBER_OF_ROWS.MAX}
                     value={numberOfRows}
-                    onChange={(e) => setNumberOfRows(parseInt(e.target.value))}
+                    onChange={(e) => handleRowsChange(Number.parseInt(e.target.value))}
                     disabled={isDisabled}
                     className="w-full disabled:opacity-50"
                     style={
                         {
-                            "--input-range-progress": `${
-                                ((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
-                            }%`,
+                            "--input-range-progress": `${((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100
+                                }%`,
                         } as React.CSSProperties
                     }
                 />

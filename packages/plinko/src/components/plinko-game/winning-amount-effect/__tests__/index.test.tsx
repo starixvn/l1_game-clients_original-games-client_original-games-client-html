@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { WinningAmountEffect } from "../index";
 
 // Mock the stores
@@ -139,7 +139,9 @@ describe("WinningAmountEffect", () => {
             expect(screen.getByText("win 1,000.00")).toBeInTheDocument();
 
             // Fast-forward time by 3 seconds
-            jest.advanceTimersByTime(4000);
+            act(() => {
+                jest.advanceTimersByTime(4000);
+            });
             rerender(<WinningAmountEffect />);
 
             // Assert

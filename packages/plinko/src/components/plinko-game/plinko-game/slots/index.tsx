@@ -43,9 +43,8 @@ const Slots = () => {
             <Tooltip key={`slot-${index}-${numberOfRows}`} index={index} totalItems={odds.length} odds={item}>
                 <span
                     key={`${index}-${item}`}
-                    className={` ${
-                        isHit ? "animate-slide-down" : ""
-                    }  flex items-center justify-center text-white text-xs font-bold h-[30px]
+                    className={` ${isHit ? "animate-slide-down" : ""
+                        }  flex items-center justify-center text-white text-xs font-bold h-[30px]
             rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]`}
                     style={{
                         width: `${54 * PLINKO_CANVAS_SCALE[numberOfRows]}px`,

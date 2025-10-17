@@ -16,6 +16,7 @@ const BetForm = ({
     isAutoBet: boolean;
     setIsAutoBet: (isAutoBet: boolean) => void;
 }) => {
+
     const { gameMinBet, gameMaxBet, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameMinBet: state.gameConfigs?.minBet ?? 0,
@@ -43,12 +44,12 @@ const BetForm = ({
         (amount: number) => {
             setBetAmount(amount, minBet, maxBet);
         },
-        [minBet, maxBet]
+        [minBet, maxBet, betAmount]
     );
 
     useEffect(() => {
         setBetAmount(betAmount, minBet, maxBet);
-    }, [minBet, maxBet]);
+    }, [minBet, maxBet, betAmount]);
 
     return (
         <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">

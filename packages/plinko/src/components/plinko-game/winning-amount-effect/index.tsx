@@ -19,9 +19,11 @@ export const WinningAmountEffect = () => {
             clearTimeout(timerRef.current);
         };
     }, [finish]);
+
     if (!winAmount) {
         return <div className="h-10"></div>;
     }
+
     return (
         <div className="h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl">
             {t("win")} {numberWithCommas(winAmount, 2)}

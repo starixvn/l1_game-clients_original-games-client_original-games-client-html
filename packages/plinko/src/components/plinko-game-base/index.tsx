@@ -22,6 +22,7 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { isMobile } from "react-device-detect";
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
@@ -44,6 +45,10 @@ const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
+    private readonly plinkoGameRef = React.createRef<{ getScaledHeight: () => number; getWrapperScale: () => number }>();
+    private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
+    private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
+
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
         const gameMessageHandler = new GameMessageHandler(props.dispatch);
@@ -89,13 +94,33 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderGameFrame(): JSX.Element {
+        // Get the wrapper scale from the PlinkoGame component for desktop scaling
+        const wrapperScale = this.plinkoGameRef.current?.getWrapperScale() ?? 1;
+
         return (
-            <div className="relative h-full">
+            <div
+                ref={this.gameFrameWrapperRef}
+                className="relative h-full"
+                id="plinko-game-frame-wrapper"
+            >
                 <Background />
-                <RoundMultiplierHistory />
-                <PlinkoGame />
-                <WinningAmountEffect />
-                {this.renderNotice()}
+                <div
+                    ref={this.gameFrameWrapperWithoutBackgroundRef}
+                    id="plinko-game-frame-wrapper-without-background"
+                    style={{
+                        transform: `scale(${wrapperScale})`,
+                        transformOrigin: 'center top'
+                    }}
+                >
+                    <RoundMultiplierHistory />
+                    <PlinkoGame
+                        ref={this.plinkoGameRef}
+                        gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef}
+                    />
+                    <WinningAmountEffect />
+                    {this.renderNotice()}
+                </div>
+
             </div>
         );
     }
@@ -104,8 +129,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col lg:flex-row-reverse lg:mx-3">
-                    <div className="w-full lg:w-8/12">{this.renderGameFrame()}</div>
-                    <div className="w-full lg:w-4/12">{this.renderBetControl()}</div>
+                    <div className="w-full lg:w-8/12" style={{ height: `${isMobile ? '360px' : ''}` }}>{this.renderGameFrame()}</div>
+                    <div className="w-full lg:w-4/12" style={{ zIndex: 9999 }}>{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>
