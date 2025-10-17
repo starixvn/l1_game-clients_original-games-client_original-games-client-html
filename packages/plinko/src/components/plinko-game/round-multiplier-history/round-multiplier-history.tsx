@@ -28,7 +28,7 @@ const RoundMultiplierHistory = () => {
 
     useEffect(() => {
         if (roundHistory?.length && !isInitializedRef.current) {
-            setData(roundHistory.reverse() as PlinkoRound[]);
+            setData(roundHistory.toReversed() as PlinkoRound[]);
             isInitializedRef.current = true;
         }
     }, [roundHistory]);
@@ -41,8 +41,8 @@ const RoundMultiplierHistory = () => {
         <div className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto">
             <div className="flex justify-end gap-1 overflow-x-auto ">
                 {[...data].map((round, index) => (
-                    <div key={index} className={`${isAnimating ? "animate-slide-to-left" : ""}`}>
-                        <RoundMultiplierItem key={round.roundId} round={round as PlinkoRound} />
+                    <div key={round.roundId} className={`${isAnimating ? "animate-slide-to-left" : ""}`}>
+                        <RoundMultiplierItem key={round.roundId} round={round} isWin={round.settlementResult.multiplier >= 1} />
                     </div>
                 ))}
             </div>

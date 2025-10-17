@@ -169,12 +169,12 @@ describe("BetControl", () => {
                 "mt-3",
                 "rounded-t-xl",
                 "justify-end",
-                "md:flex-col-reverse",
-                "md:bg-primary-bg",
-                "md:py-4",
-                "md:px-0",
-                "md:mt-0",
-                "md:h-full"
+                "lg:flex-col-reverse",
+                "lg:bg-primary-bg",
+                "lg:py-4",
+                "lg:px-0",
+                "lg:mt-0",
+                "lg:h-full"
             );
         });
     });
