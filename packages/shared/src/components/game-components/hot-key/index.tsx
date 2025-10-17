@@ -31,13 +31,13 @@ const HotKeyModal = () => {
                 isOpen={isShowHotKey}
                 enableBackdrop={false}
                 onCloseModal={handleCloseModal}
-                extendedClassName="h-[302px] w-[354px] top-[200px] left-[50px]"
+                extendedClassName="h-[250px] w-[354px] top-[200px] left-[50px]"
             >
                 <div id="hot-key" className={cn("flex flex-col h-full w-full gap-3 rounded-t-2xl")}>
                     {/* Header */}
                     <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center flex-shrink-0">
                         <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">
-                            {translate("live_stats")}
+                            {translate("hot_key")}
                         </div>
                         <span
                             className="cursor-pointer ml-auto relative z-10"

@@ -67,7 +67,7 @@ const PlinkoCanvas = () => {
                     // Log validation data
                     logValidation({
                         slotIndex: slotBody.slotIndex,
-                        settlementResultSlotIndex: ballBody.finish?.settlementResult.slotIndex || -1,
+                        settlementResultSlotIndex: ballBody.finish?.settlementResult.slotIndex,
                         ballId: ballBody.id?.toString(),
                         gameRoundId: ballBody.finish?.roundId,
                     });

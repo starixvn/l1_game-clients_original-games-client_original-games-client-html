@@ -56,11 +56,11 @@ export const useBall = () => {
 
     const handleRoad = useCallback((body: BallBody, peg: PegBody) => {
         Body.setStatic(body, true);
-        const { pegRadius, ballConfig } = PlinkoCanvasConfig; // NOSONAR
+        const { pegRadius, ballConfig } = PlinkoCanvasConfig;
         if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
             const road = body.finish?.result[peg.rowIndex];
             
-            // Body.setPosition(body, {x: peg.position.x,y: peg.position.y - (peg.circleRadius || pegRadius) * 2,}); // NOSONAR
+            Body.setPosition(body, {x: peg.position.x,y: peg.position.y - (peg.circleRadius || pegRadius) * 2,});
 
             setTimeout(() => {
                 Body.setVelocity(body, {
