@@ -8,6 +8,7 @@ import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
+import { usePlinkoBallHitWinSound } from "@shared/react-hooks/use-sound";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -38,6 +39,11 @@ const PlinkoCanvas = () => {
     // Slot validation logger hook
     const { logValidation, downloadLogs, clearLogs, getLogs } = useSlotValidationLogger();
 
+    // Sound hook
+    const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
+    const playPlinkoBallHitWinSoundRef = useRef(playPlinkoBallHitWinSound);
+    playPlinkoBallHitWinSoundRef.current = playPlinkoBallHitWinSound;
+
     // Collision handler
     const handleCollision = useCallback(
         (event: IEventCollision<Engine>) => {
@@ -55,7 +61,7 @@ const PlinkoCanvas = () => {
                 // collision with peg
                 if (object?.label === PLINKO_OBJECTS.PEG) {
                     createPegEffect(object);
-                    handleRoad(ball, object);
+                    handleRoad(ball, object);               
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
@@ -63,7 +69,7 @@ const PlinkoCanvas = () => {
                     const ballBody = ball as BallBody;               
                     
                     setFinishedBall(ballBody.finish);
-                    
+                    playPlinkoBallHitWinSoundRef.current();
                     // Log validation data
                     logValidation({
                         slotIndex: slotBody.slotIndex,

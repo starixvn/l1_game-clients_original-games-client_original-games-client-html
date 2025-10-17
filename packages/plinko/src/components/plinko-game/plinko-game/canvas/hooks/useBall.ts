@@ -4,12 +4,16 @@ import { BallBody, PegBody } from "../type";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { buildVersion } from "@shared/constants";
+import { usePlinkoBallHitPinSound } from "@shared/react-hooks/use-sound";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const useBall = () => {
     const ballImageRef = useRef<HTMLImageElement | null>(null);
     const imageLoadedRef = useRef(false);
-
+    const playPlinkoBallHitPinSound = usePlinkoBallHitPinSound();
+    const playPlinkoBallHitPinSoundRef = useRef(playPlinkoBallHitPinSound);
+    playPlinkoBallHitPinSoundRef.current = playPlinkoBallHitPinSound;
+    
     useEffect(() => {
         const image = new Image();
         image.onload = () => {
@@ -68,6 +72,7 @@ export const useBall = () => {
                     y: ballConfig.offsetVelocityY,
                 });
             }, 0);
+            playPlinkoBallHitPinSoundRef.current();
             body.collidedRowIndexes?.push(peg.rowIndex);
         }
         Body.setStatic(body, false);

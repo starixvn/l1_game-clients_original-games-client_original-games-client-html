@@ -17,6 +17,8 @@ const mp3File = {
     blockBet: `block-bet`,
     popUpWinning: `pop-up-winning`,
     diceShakingRolling: `dice-shaking-rolling`,
+    plinkoBallHitPin: `ball-hit-pin`,
+    plinkoBallHitWin: `ball-hit-win`,
 };
 
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
@@ -85,4 +87,12 @@ export const usePopUpWinningSound = () => {
 
 export const useDiceShakingRollingSound = () => {
     return usePlaySound(resourceMp3.diceShakingRolling);
+};
+
+export const usePlinkoBallHitPinSound = () => {
+    return usePlaySound(resourceMp3.plinkoBallHitPin);
+};
+
+export const usePlinkoBallHitWinSound = () => {
+    return usePlaySound(resourceMp3.plinkoBallHitWin);
 };

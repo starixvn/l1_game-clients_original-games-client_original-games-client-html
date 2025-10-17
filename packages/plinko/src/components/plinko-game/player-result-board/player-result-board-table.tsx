@@ -53,13 +53,15 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
                             <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
                                 {row.betAmount}
                             </TableCell>
-                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
-                                {row.multiplier}
+                            <TableCell className={
+                                cn("py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base", 
+                                Number.parseFloat(row.multiplier) >= 1 ? "text-winning-highlight" : "text-secondary-text")}>
+                                {row.multiplier}x
                             </TableCell>
                             <TableCell
                                 className={cn(
                                     "py-[10.3px] md:py-[12.5px] px-2 md:px-3 font-normal text-right pl-0 md:text-base",
-                                    parseFloat(row.win) > 0 ? "text-winning-highlight" : "text-secondary-text"
+                                    Number.parseFloat(row.multiplier) >= 1 ? "text-winning-highlight" : "text-secondary-text"
                                 )}
                             >
                                 {row.win}
