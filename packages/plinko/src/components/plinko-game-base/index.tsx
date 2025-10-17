@@ -60,7 +60,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameMessageHandler: gameMessageHandler,
                 durations: props.durations,
                 roundStateHandler,
-                runGame: () => {}, // Will be set by GameBase
+                runGame: () => { }, // Will be set by GameBase
                 gameId: props.id,
                 gameStateContextModel: () => props.gameStateContextModel,
                 gameRoundDataHandler: gameRoundDataHandler,
@@ -103,9 +103,9 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderLeftSide() {
         return (
             <div className="col-span-12 mb-3">
-                <div className="flex flex-col md:flex-row-reverse md:mx-3">
-                    <div className="w-full md:w-8/12">{this.renderGameFrame()}</div>
-                    <div className="w-full md:w-4/12">{this.renderBetControl()}</div>
+                <div className="flex flex-col lg:flex-row-reverse lg:mx-3">
+                    <div className="w-full lg:w-8/12">{this.renderGameFrame()}</div>
+                    <div className="w-full lg:w-4/12">{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>
@@ -137,7 +137,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<HotKeyIcon key="hot-key-icon" />,<LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
+        return <MenuIconWrapper items={[<HotKeyIcon key="hot-key-icon" />, <LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
     }
 
     renderPFSettingModal() {

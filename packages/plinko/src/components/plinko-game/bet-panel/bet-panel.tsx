@@ -100,8 +100,8 @@ const BetControl = () => {
     const isManualTab = tabIndex === 0;
 
     return (
-        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end md:flex-col-reverse md:bg-primary-bg md:py-4 md:px-0 md:mt-0 md:h-full">
-            <div className="md:px-3">
+        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full">
+            <div className="lg:px-3">
                 {isManualTab ? (
                     <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
                         {t("glossary_bet")}
@@ -112,7 +112,7 @@ const BetControl = () => {
                     </button>
                 )}
             </div>
-            <div className="flex flex-col md:flex-col-reverse rounded-t-xl bg-primary-bg md:gap-2">
+            <div className="flex flex-col lg:flex-col-reverse rounded-t-xl bg-primary-bg lg:gap-2">
                 <BetForm
                     isManualTab={isManualTab}
                     isDisabled={isProcessing || isAutoBet}
