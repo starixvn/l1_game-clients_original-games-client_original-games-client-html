@@ -468,12 +468,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                        this.roundStateHandler.determineRoundBaseState({
-                            roundRemainingTime: this.roundTimeCounter,
-                            wholeRound: durations.wholeRound,
-                            remainingTime,
-                            durations,
-                        })
+                    this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    })
                     ],
                 ...newGameState,
             });

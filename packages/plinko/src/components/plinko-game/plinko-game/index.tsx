@@ -34,10 +34,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
             ref={mainContainerRef}
             className={`flex flex-col items-center justify-center relative ${isMobile ? 'min-h-full' : ''}`}
             style={{
-                ...(finalScale < 1 ? {
-                    transform: `scale(${finalScale})`,
-                    transformOrigin: 'top center',
-                } : {}),
                 // Hide component until scaling is ready to prevent flash on mobile
                 ...(!isReady && isMobile ? {
                     opacity: 0,
@@ -45,25 +41,50 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
                 } : {})
             }}
         >
+            {/* Game content container with truly fixed dimensions */}
             <div
-                className="rounded-lg mx-auto w-full overflow-x-hidden pt-5"
-                style={{ height: `${baseGameHeight}px` }}
+                className="flex flex-col items-center justify-center relative"
+                style={{
+                    // Truly fixed dimensions that don't depend on scaled content
+                    width: '100%',
+                    height: `${baseGameHeight}px`, // Fixed height prevents layout shifts
+                    // Fixed width to prevent viewport changes
+                    minWidth: '100%',
+                    maxWidth: '100%',
+                    // Ensure proper stacking
+                    zIndex: 1,
+                }}
             >
+                {/* Scaled wrapper that doesn't affect document flow */}
                 <div
-                    ref={canvasContainerRef}
-                    className="absolute origin-top left-1/2 z-[-1]"
                     style={{
-                        transform: `translateX(-50%) translateY(${(numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT)}px) scale(${scaleValue})`,
+                        ...(finalScale < 1 ? {
+                            transform: `scale(${finalScale})`,
+                            transformOrigin: 'top center',
+                        } : {}),
                     }}
                 >
-                    <PlinkoCanvas />
-                </div>
-                <div
-                    ref={slotsContainerRef}
-                    className="absolute left-0 w-full flex items-center justify-center origin-top"
-                    style={{ top: `${baseGameHeight - 30}px` }}
-                >
-                    <Slots />
+                    <div
+                        className="rounded-lg mx-auto w-full overflow-x-hidden pt-5"
+                        style={{ height: `${baseGameHeight}px` }}
+                    >
+                        <div
+                            ref={canvasContainerRef}
+                            className="absolute origin-top left-1/2 z-[-1]"
+                            style={{
+                                transform: `translateX(-50%) translateY(${(numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT)}px) scale(${scaleValue})`,
+                            }}
+                        >
+                            <PlinkoCanvas />
+                        </div>
+                        <div
+                            ref={slotsContainerRef}
+                            className="absolute left-0 w-full flex items-center justify-center origin-top"
+                            style={{ top: `${baseGameHeight - 30}px` }}
+                        >
+                            <Slots />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

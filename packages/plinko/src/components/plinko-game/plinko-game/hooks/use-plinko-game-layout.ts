@@ -15,6 +15,7 @@ export const usePlinkoGameLayout = () => {
     const baseGameHeight = isStackedLayout && window.innerHeight < CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD
         ? Math.max(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT, window.innerHeight * CANVAS_CONSTANTS.MOBILE_HEIGHT_FACTOR)
         : CANVAS_CONSTANTS.BASE_GAME_HEIGHT;
+
     return {
         mainContainerRef,
         canvasContainerRef,

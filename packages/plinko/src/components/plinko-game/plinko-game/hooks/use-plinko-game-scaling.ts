@@ -285,6 +285,7 @@ export const usePlinkoGameScaling = ({
         // Apply layout optimization inline
         const optimizedScale = applyLayoutOptimization(calculatedScale);
 
+
         // Cache the final result
         finalScaleRef.current = optimizedScale;
 

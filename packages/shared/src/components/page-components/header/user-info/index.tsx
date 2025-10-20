@@ -12,12 +12,13 @@ export const UserInfo: React.FC<{
     // Use userInfoRed from store if available, otherwise use from authorizeInfo
     const userInfo = {
         ...authorizeInfo?.user,
-        red: userInfoRed !== null ? userInfoRed : authorizeInfo?.user?.red || 0,
+        red: userInfoRed === null ? authorizeInfo?.user?.red || 0 : userInfoRed,
     };
 
+
     return (
-        <div className={`${customizeClass}`} data-testid="balance">
-            <span id="user-info_balance">
+        <div className={`${customizeClass} flex-shrink-0`} data-testid="balance">
+            <span id="user-info_balance" className="flex items-center gap-1 whitespace-nowrap">
                 <UserAmount amount={userInfo?.red || 0} />
                 <UserCurrency currency={userInfo.currency} isDisplayPlayerCurrency={userInfo.isDisplayPlayerCurrency} />
             </span>
@@ -29,10 +30,10 @@ const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
     return useMemo(() => {
         return (
             <>
-                <span data-testid="amount" className="font-semibold text-base leading-[26px]">
+                <span data-testid="amount" className="font-semibold text-base leading-[26px] flex-shrink-0">
                     {numberRoundDownWithCommas(amount)}
                 </span>
-                <span>{` `}</span>
+                <span className="flex-shrink-0">{` `}</span>
             </>
         );
     }, [amount]);
@@ -45,7 +46,7 @@ const UserCurrency: React.FC<{ currency: string; isDisplayPlayerCurrency: boolea
         }
 
         return (
-            <span data-testid="currency" className="font-semibold text-base leading-[26px]">
+            <span data-testid="currency" className="font-semibold text-base leading-[26px] flex-shrink-0">
                 {currency}
             </span>
         );

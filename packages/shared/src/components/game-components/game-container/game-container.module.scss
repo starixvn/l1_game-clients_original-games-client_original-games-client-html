@@ -18,6 +18,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    /* Ensure stable dimensions that don't depend on content */
+    width: 100%;
+    min-height: 0;
+    /* Prevent content from affecting layout calculations */
+    contain: layout;
 }
 
 @media (-webkit-min-device-pixel-ratio: 1.5) {
