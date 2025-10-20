@@ -37,12 +37,10 @@ export interface PegEffect {
     x: number;
     y: number;
     radius: number;
+    maxRadius: number;
     color: string;
-    borderRadius: number;
-    borderColor: string;
+    opacity: number;
     speed: number;
-    maxSpeed: number;
-    elapsed: number;
 }
 
 export interface GlowParticle {

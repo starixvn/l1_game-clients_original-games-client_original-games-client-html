@@ -1,7 +1,7 @@
 import { useCallback, useRef, useEffect } from "react";
 import { Bodies, Body } from "matter-js";
 import { BallBody, PegBody } from "../type";
-import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
+import { BALL_BODY_OPTIONS, PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { buildVersion } from "@shared/constants";
 import { usePlinkoBallHitPinSound } from "../../hooks/use-sound";
@@ -13,7 +13,7 @@ export const useBall = () => {
     const playPlinkoBallHitPinSound = usePlinkoBallHitPinSound();
     const playPlinkoBallHitPinSoundRef = useRef(playPlinkoBallHitPinSound);
     playPlinkoBallHitPinSoundRef.current = playPlinkoBallHitPinSound;
-    
+
     useEffect(() => {
         const image = new Image();
         image.onload = () => {
@@ -30,16 +30,7 @@ export const useBall = () => {
     const createBall = useCallback((finish: PlinkoFinish) => {
         const { width, ballConfig } = PlinkoCanvasConfig;
         const x = width / 2;
-        const options = {
-            restitution: 0.1,
-            friction: 0,
-            frictionAir: 0.01,
-            collisionFilter: {
-                group: -1,
-            },
-        };
-
-        const ball = Bodies.circle(x, 0, ballConfig.radius, options) as BallBody;
+        const ball = Bodies.circle(x, 0, ballConfig.radius, BALL_BODY_OPTIONS) as BallBody;
         ball.label = PLINKO_OBJECTS.BALL;
         ball.finish = finish;
         ball.collidedRowIndexes = [];
@@ -63,9 +54,7 @@ export const useBall = () => {
         const { pegRadius, ballConfig } = PlinkoCanvasConfig;
         if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
             const road = body.finish?.result[peg.rowIndex];
-            
-            Body.setPosition(body, {x: peg.position.x,y: peg.position.y - (peg.circleRadius || pegRadius) * 2,});
-
+            Body.setPosition(body, { x: peg.position.x, y: peg.position.y - pegRadius - ballConfig.radius });
             setTimeout(() => {
                 Body.setVelocity(body, {
                     x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,

@@ -8,7 +8,7 @@ export const CANVAS_CONSTANTS = {
     /** Original canvas width in pixels */
     ORIGINAL_WIDTH: 1050,
     /** Base game height in pixels */
-    BASE_GAME_HEIGHT: 600,
+    BASE_GAME_HEIGHT: 575,
     /** Minimum game height for mobile devices */
     MIN_MOBILE_HEIGHT: 500,
     /** Mobile height factor for small screens */
@@ -20,9 +20,9 @@ export const CANVAS_CONSTANTS = {
 // Peg Configuration Constants
 export const PEG_CONSTANTS = {
     /** Radius of pegs in pixels */
-    RADIUS: 8.5,
+    RADIUS: 7.5,
     /** Gap multiplier for peg spacing */
-    MAP_GAP: 3.4,
+    MAP_GAP: 3.6,
     /** Initial number of columns */
     INITIAL_COLUMNS: 3,
     /** Visual margin multiplier for peg effects */
@@ -52,7 +52,6 @@ export const SCALING_THRESHOLDS = {
     },
 } as const;
 
-
 // Buffer Factors for Safe Scaling
 export const BUFFER_FACTORS = {
     /** Buffer factor for peg safe scale with visual margin multiplier 2 */
@@ -60,7 +59,6 @@ export const BUFFER_FACTORS = {
     /** Buffer factor for peg safe scale with visual margin multiplier 1.2 */
     PEG_SAFE_SCALE_LOW: 0.88,
 } as const;
-
 
 // Visual Effect Constants
 export const VISUAL_CONSTANTS = {
@@ -95,4 +93,3 @@ export const DEFAULT_VALUES = {
     /** Default pegs span visual margin multiplier */
     DEFAULT_PEGS_SPAN_MARGIN_MULTIPLIER: 0.5,
 } as const;
-

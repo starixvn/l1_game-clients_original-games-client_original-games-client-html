@@ -36,30 +36,27 @@ export const usePeg = () => {
             return;
         }
         const { pegRadius } = PlinkoCanvasConfig;
-        
-        // Save context state
-        context.save();
-        
         // Layer 1: Bottom layer
         context.fillStyle = "#000";
         context.beginPath();
-        context.arc(0, 3, pegRadius + 3.5, 0, Math.PI * 2);
+        context.arc(0, 2.5, pegRadius + 2.5, 0, Math.PI * 2);
         context.fill();
-
 
         // Layer 2
         context.fillStyle = "#6542FF";
         context.beginPath();
-        context.arc(0, 4, pegRadius, 0, Math.PI * 2);
+        context.arc(0, 2.5, pegRadius, 0, Math.PI * 2);
         context.fill();
-        
+
         // Layer 3
         context.fillStyle = "#FFFFFF";
         context.beginPath();
         context.arc(0, 0, pegRadius, 0, Math.PI * 2);
         context.fill();
-
-        context.restore();
+        context.fillStyle = "#BDD9E4";
+        context.beginPath();
+        context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
+        context.fill();
     }, []);
 
     return {

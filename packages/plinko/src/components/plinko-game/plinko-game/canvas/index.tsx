@@ -76,13 +76,13 @@ const PlinkoCanvas = () => {
                 // collision with peg
                 if (object?.label === PLINKO_OBJECTS.PEG) {
                     createPegEffect(object);
-                    handleRoad(ball, object);               
+                    handleRoad(ball, object);
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
                     const slotBody = object as SlotBody;
-                    const ballBody = ball as BallBody;               
-                    
+                    const ballBody = ball as BallBody;
+
                     setFinishedBall(ballBody.finish);
                     playPlinkoBallHitWinSoundRef.current();
                     // Log validation data
@@ -200,8 +200,8 @@ const PlinkoCanvas = () => {
         }
 
         const engine = Engine.create();
+        engine.timing.timeScale = 2;
         engineRef.current = engine;
-        engineRef.current.timing.timeScale = 1.5;
 
         return engine;
     }, []);
@@ -270,7 +270,7 @@ const PlinkoCanvas = () => {
             clearLogs,
             getLogs,
         };
-        
+
         return () => {
             delete (window as any).plinkoSlotValidation;
         };

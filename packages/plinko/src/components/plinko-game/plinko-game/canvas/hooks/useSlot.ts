@@ -14,7 +14,7 @@ export const useSlot = () => {
             const gap = pegRadius * 2 * mapGap;
             const space = (width - gap * numberOfSlots) / 2;
             const x = space + col * gap - pegRadius * mapGap;
-            const y = numberOfSlots * pegRadius * 2 * mapGap - 30;
+            const y = numberOfSlots * pegRadius * 2 * mapGap - 20;
             const options = {
                 isSensor: true,
                 isStatic: true,
@@ -33,7 +33,7 @@ export const useSlot = () => {
         }
         context.fillStyle = "#d9ead3";
         const width = body.bounds.max.x - body.bounds.min.x;
-        const height = 30;
+        const height = 1;
         context.fillRect(-width / 2, 0, width, height);
     }, []);
 
