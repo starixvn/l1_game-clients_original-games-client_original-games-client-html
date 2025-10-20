@@ -5,6 +5,7 @@ import usePFStore from "@shared/stores/pf-store/pf-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
+    private static readonly PAGE_SIZE = 10;
     // Override to include winAmount and reachMaxWin support
     protected latestFinish: {
         roundId: number;
@@ -17,17 +18,13 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     } | null = null;
 
     // Plinko-specific state for rolling window display
-    private readonly loadedServerPages: Set<number> = new Set(); // Track loaded server pages
     private readonly expandedLoadedPages: Set<number> = new Set(); // Track pages loaded during expanded state
+    private expandedRequestedPages: number = 1; // Track total pages requested during expansion (starts at 1 for initial page)
 
-    // Track finished ball round IDs to handle multiple concurrent balls
-    private readonly finishedRoundIds: Set<number> = new Set();
 
     // Track pending bets by round ID (since Plinko has one round per ball)
     private readonly pendingBetsByRound: Map<number, any[]> = new Map();
 
-    // Track if we've switched to server pagination mode
-    private hasSwitchedToServerMode = false;
 
     private unsubscribeFinishedBall: (() => void) | null = null;
 
@@ -41,29 +38,17 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             (state) => state.finishedBall,
             (finishedBall, previousFinishedBall) => {
                 if (finishedBall && finishedBall.roundId !== previousFinishedBall?.roundId) {
-                    // Track this round ID as finished
-                    this.finishedRoundIds.add(finishedBall.roundId);
-                    
-                    // Check if we can flush any pending bets for finished balls
-                    this.checkAndFlushFinishedBets();
+                    // Check if we have pending bets for this finished round
+                    if (this.pendingBetsByRound.has(finishedBall.roundId)) {
+                        this.flushBetLogForRound(finishedBall.roundId);
+                        // Remove the processed bet
+                        this.pendingBetsByRound.delete(finishedBall.roundId);
+                    }
                 }
             }
         );
     }
 
-    private checkAndFlushFinishedBets() {
-        // Check each finished round ID against our pending bets
-        const finishedRoundIdsArray = Array.from(this.finishedRoundIds);
-        for (const finishedRoundId of finishedRoundIdsArray) {
-            if (this.pendingBetsByRound.has(finishedRoundId)) {
-                this.flushBetLogForRound(finishedRoundId);
-                
-                // Remove from both maps after processing
-                this.pendingBetsByRound.delete(finishedRoundId);
-                this.finishedRoundIds.delete(finishedRoundId);
-            }
-        }
-    }
 
     private flushBetLogForRound(roundId: number) {
         const betHistoryStore = useBetHistoryStore.getState();
@@ -142,8 +127,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     private trackLoadedPage(data: any) {
         if (data.history?.page) {
             const pageNumber = data.history.page;
-            this.loadedServerPages.add(pageNumber);
-
             const betHistoryStore = useBetHistoryStore.getState();
             if (betHistoryStore.isExpanded) {
                 this.expandedLoadedPages.add(pageNumber);
@@ -183,10 +166,11 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
     private addPlinkoBetToPending(action: any) {
         const pfStore = usePFStore.getState();
-        
+
         const roundId = Number(action.finish.roundId) || 0;
         const betAmount = Number(action.finish.amount) || 0;
         const winAmount = Number(action.finish.winAmount) || 0;
+        const reachMaxWin = Boolean(action.finish.reachMaxWin);
 
         if (betAmount > 0) {
             const clientSeed = pfStore.pfClientSeedSetting?.useManualClientSeed
@@ -197,6 +181,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 time: action.finish.time,
                 amount: betAmount,
                 winAmount: winAmount, // Store win amount per bet
+                reachMaxWin: reachMaxWin, // Store reachMaxWin per bet
                 choice: `plinko-${action.ownBets.gameMode}-${action.ownBets.numberOfRows}`,
                 clientSeed,
                 roundId: roundId, // Include round ID for tracking
@@ -213,49 +198,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         }
     }
 
-    protected flushBetLogIfAny(roundId: number) {
-        const betHistoryStore = useBetHistoryStore.getState();
-
-        if (!betHistoryStore.hasPendingBets() || !this.latestFinish?.settlementResult) {
-            return;
-        }
-
-        const pendingDetails = betHistoryStore.pendingBetDetails;
-        const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
-
-        const { winAmount: betwin } = this.latestFinish;
-
-        const resultData = {
-            result: this.latestFinish.result,
-            settlementResult: this.latestFinish.settlementResult,
-            odds: this.latestFinish.odds || {}, // Use odds from endBet event
-        };
-
-        const betLog = this.createPlinkoBetLog(
-            roundId,
-            totalAmount,
-            betwin,
-            pendingDetails,
-            betHistoryStore.pendingFirstBetTime,
-            resultData
-        );
-        const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === roundId);
-
-        if (!exists) {
-            betHistoryStore.appendBetLogs([betLog], {
-                updatePagination: true,
-                source: "pending_bet_flush",
-            });
-
-            const updatedBetLogs = betHistoryStore.betLogs;
-            if (updatedBetLogs.length >= 10 && !this.hasSwitchedToServerMode) {
-                this.hasSwitchedToServerMode = true;
-            }
-        }
-
-        betHistoryStore.clearPendingBets();
-        this.resetPendingLocalCache();
-    }
 
     protected createPlinkoBetLog(
         roundId: number,
@@ -267,29 +209,28 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     ) {
         const baseBetLog = super.createBetLog(roundId, totalAmount, betwin, pendingDetails, firstBetTime, resultData);
 
-        // Add reachMaxWin flag to the bet log
+        // Add reachMaxWin flag to the bet log (use from the specific bet)
         return {
             ...baseBetLog,
-            reachMaxWin: this.latestFinish?.reachMaxWin || false,
+            reachMaxWin: pendingDetails[0]?.reachMaxWin || false,
         };
     }
 
     resetHistory() {
         super.resetHistory();
-        this.loadedServerPages.clear();
         this.expandedLoadedPages.clear();
-        this.finishedRoundIds.clear();
+        this.expandedRequestedPages = 1;
         this.pendingBetsByRound.clear();
-        this.hasSwitchedToServerMode = false;
     }
 
     resetLoadedPages() {
         const betHistoryStore = useBetHistoryStore.getState();
 
         this.expandedLoadedPages.clear();
+        this.expandedRequestedPages = 1;
 
         if (betHistoryStore.serverTotalPages > 0) {
-            const page1Logs = betHistoryStore.betLogs.slice(0, 10);
+            const page1Logs = betHistoryStore.betLogs.slice(0, PlinkoBetHistoryHandler.PAGE_SIZE);
             betHistoryStore.setBetLogs(page1Logs);
         }
 
@@ -302,6 +243,9 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const betHistoryStore = useBetHistoryStore.getState();
 
         if (betHistoryStore.isExpanded) {
+            // Already expanded, load next 2 pages
+            const pagesToLoad = Math.min(2, betHistoryStore.serverTotalPages - this.expandedRequestedPages);
+            this.expandedRequestedPages += pagesToLoad;
             this.loadNextTwoPages();
             return;
         }
@@ -309,9 +253,10 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         betHistoryStore.setIsExpanded(true);
 
         if (betHistoryStore.serverTotalPages === 0) {
-            this.hasSwitchedToServerMode = true;
             this.requestHistory(1);
         } else if (betHistoryStore.serverTotalPages > 1) {
+            // Load next 2 pages (pages 2 and 3)
+            this.expandedRequestedPages = 3; // page 1 + 2 additional pages
             this.loadNextTwoPages();
         }
     }
@@ -319,6 +264,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     collapse() {
         const betHistoryStore = useBetHistoryStore.getState();
         betHistoryStore.setIsExpanded(false);
+        this.expandedRequestedPages = 1; // Reset to initial state
 
         if (betHistoryStore.serverTotalPages > 0) {
             this.resetLoadedPages();
@@ -352,21 +298,25 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const betHistoryStore = useBetHistoryStore.getState();
 
         if (!betHistoryStore.isExpanded) {
-            return betHistoryStore.betLogs.slice(0, 10);
+            // Collapsed: Always show only 10 most recent records
+            return betHistoryStore.betLogs.slice(0, PlinkoBetHistoryHandler.PAGE_SIZE);
         } else {
-            if (this.hasSwitchedToServerMode || betHistoryStore.serverTotalPages > 0) {
-                const totalLoadedPages = 1 + this.expandedLoadedPages.size;
-                const expectedRecords = totalLoadedPages * 10;
-                const hasLoadedAllPages = totalLoadedPages >= betHistoryStore.serverTotalPages;
+            // Expanded: Show records based on requested pages, slice oldest if needed
+            if (betHistoryStore.serverTotalPages > 0) {
+                const expectedRecords = this.expandedRequestedPages * PlinkoBetHistoryHandler.PAGE_SIZE;
 
-                if (hasLoadedAllPages) {
+                if (this.expandedRequestedPages >= betHistoryStore.serverTotalPages) {
+                    // At max pages: show all records, new bets just append without slicing
                     return betHistoryStore.betLogs;
-                } else if (betHistoryStore.betLogs.length <= expectedRecords) {
-                    return betHistoryStore.betLogs;
+                } else if (betHistoryStore.betLogs.length > expectedRecords) {
+                    // Not at max pages and too many records: slice oldest to maintain expected count
+                    return betHistoryStore.betLogs.slice(0, expectedRecords); // Keep most recent records (first N since sorted desc)
                 } else {
-                    return betHistoryStore.betLogs.slice(0, expectedRecords);
+                    // Show all available records up to expected count
+                    return betHistoryStore.betLogs;
                 }
             } else {
+                // No server pagination: show all records
                 return betHistoryStore.betLogs;
             }
         }
@@ -379,7 +329,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         }
 
         // Clean up local tracking
-        this.finishedRoundIds.clear();
         this.pendingBetsByRound.clear();
 
         super.cleanup();

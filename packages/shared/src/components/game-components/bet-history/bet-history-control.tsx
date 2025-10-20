@@ -91,7 +91,16 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ tabContent
                 />
             </div>
 
-            <div className={`${styles["bet-history-container"]} w-full rounded-xl p-2 border-stroke`}>{tabContent[activeTabIndex]}</div>
+            <div className={`${styles["bet-history-container"]} w-full rounded-xl p-2 border-stroke`}>
+                {tabContent.map((content, index) => (
+                    <div
+                        key={index}
+                        className={activeTabIndex === index ? 'block' : 'hidden'}
+                    >
+                        {content}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
