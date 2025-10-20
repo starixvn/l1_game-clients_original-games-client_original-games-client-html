@@ -8,7 +8,7 @@ import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
-import { usePlinkoBallHitWinSound } from "@shared/react-hooks/use-sound";
+import { usePlinkoBallHitWinSound } from "../hooks/use-sound";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,8 +17,8 @@ const PlinkoCanvas = () => {
     const animationRef = useRef<number | null>(null);
     const pegEffectsRef = useRef<PegEffect[]>([]);
     const pegIdRef = useRef<number>(0);
-    const { finish, setFinishedBall } = usePlinkoGameStore(
-        useShallow((state) => ({ finish: state.finish, setFinishedBall: state.actions.setFinishedBall }))
+    const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
+        useShallow((state) => ({ finish: state.finish, setFinishedBall: state.actions.setFinishedBall, numberOfDroppingBall: state.numberOfDroppingBall }))
     );
 
     // Peg hook
@@ -228,9 +228,14 @@ const PlinkoCanvas = () => {
         if (finish) {
             const ballBody = createBall(finish);
             addObjects([ballBody]);
-            useGameStore.getState().resetBettingInfo();
         }
     }, [finish, createBall, addObjects]);
+
+    useEffect(() => {
+        if (numberOfDroppingBall === 0) {
+            useGameStore.getState().resetBettingInfo();
+        }
+    }, [numberOfDroppingBall]);
 
     // Expose logger functions to window for debugging
     useEffect(() => {

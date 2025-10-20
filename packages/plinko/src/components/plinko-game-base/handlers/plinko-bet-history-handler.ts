@@ -40,11 +40,9 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         this.unsubscribeFinishedBall = usePlinkoGameStore.subscribe(
             (state) => state.finishedBall,
             (finishedBall, previousFinishedBall) => {
-                console.log("PlinkoBetHistoryHandler: finishedBall changed", finishedBall);
                 if (finishedBall && finishedBall.roundId !== previousFinishedBall?.roundId) {
                     // Track this round ID as finished
                     this.finishedRoundIds.add(finishedBall.roundId);
-                    console.log("PlinkoBetHistoryHandler: Added round ID to finished set:", finishedBall.roundId);
                     
                     // Check if we can flush any pending bets for finished balls
                     this.checkAndFlushFinishedBets();
@@ -58,7 +56,6 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         const finishedRoundIdsArray = Array.from(this.finishedRoundIds);
         for (const finishedRoundId of finishedRoundIdsArray) {
             if (this.pendingBetsByRound.has(finishedRoundId)) {
-                console.log("PlinkoBetHistoryHandler: Flushing bet for finished round ID:", finishedRoundId);
                 this.flushBetLogForRound(finishedRoundId);
                 
                 // Remove from both maps after processing

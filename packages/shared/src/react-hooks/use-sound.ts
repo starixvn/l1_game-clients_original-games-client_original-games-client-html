@@ -88,11 +88,3 @@ export const usePopUpWinningSound = () => {
 export const useDiceShakingRollingSound = () => {
     return usePlaySound(resourceMp3.diceShakingRolling);
 };
-
-export const usePlinkoBallHitPinSound = () => {
-    return usePlaySound(resourceMp3.plinkoBallHitPin);
-};
-
-export const usePlinkoBallHitWinSound = () => {
-    return usePlaySound(resourceMp3.plinkoBallHitWin);
-};

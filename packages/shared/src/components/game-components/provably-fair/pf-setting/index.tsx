@@ -19,7 +19,6 @@ import { randomNumberSeries } from "@shared/helpers/number-helper";
 const NUMBER_VALUES = "0123456789";
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
-const PFPublishMessage = "pf";
 export const TIME_OUT = 5000;
 
 const SECTION_TITLE_CLASS = Styles["section-title"];

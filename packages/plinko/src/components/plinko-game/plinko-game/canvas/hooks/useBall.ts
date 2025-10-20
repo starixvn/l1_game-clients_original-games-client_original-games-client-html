@@ -4,7 +4,7 @@ import { BallBody, PegBody } from "../type";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { buildVersion } from "@shared/constants";
-import { usePlinkoBallHitPinSound } from "@shared/react-hooks/use-sound";
+import { usePlinkoBallHitPinSound } from "../../hooks/use-sound";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const useBall = () => {
