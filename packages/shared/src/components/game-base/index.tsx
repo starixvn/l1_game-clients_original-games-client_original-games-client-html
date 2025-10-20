@@ -1,7 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
-import * as Sentry from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import { InitSocketIO, writeDebugLog } from "@shared/helpers";
 import { AnalyticsHelper } from "@shared/helpers/analytic-helper";
@@ -209,12 +208,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onStart() {
-        const transaction = Sentry?.startInactiveSpan({
-            name: `${this.props.gameName} /load-game`,
+        const transaction = (window as any).Sentry?.startTransaction({
+            name: this.props.gameName,
             op: "game.load",
-            attributes: { description: `${this.props.gameName} Game initial load` },
-            forceTransaction: true,
-            parentSpan: null,
+            description: `Loading game: ${this.props.gameName}`,
+        });
+
+        (window as any).Sentry?.getCurrentHub()?.configureScope((scope) => {
+            scope.setSpan(transaction);
         });
 
         try {
@@ -227,9 +228,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             this.connectToGameService();
             this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
         } catch (error) {
-            Sentry.captureException(error);
+            (window as any).Sentry?.captureException(error);
+            transaction?.setStatus("internal_error");
         } finally {
-            transaction.end();
+            transaction?.finish();
         }
     }
 

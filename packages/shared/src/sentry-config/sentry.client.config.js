@@ -12,6 +12,10 @@ if (sentryConfig) {
     Sentry.init({
         ...sentryConfig,
         tracesSampleRate: 1.0,
-        ignoreErrors: ["Network Error"]
+        ignoreErrors: ["Network Error"],
+        beforeSendTransaction(event) {
+            event.transaction = "Load Game/" + event.transaction.replace(/^.*\//, "") || window.location.pathname;
+            return event;
+        },
     });
 }
