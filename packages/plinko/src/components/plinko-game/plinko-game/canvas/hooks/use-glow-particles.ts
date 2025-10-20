@@ -26,9 +26,10 @@ export const useGlowParticles = (config: Partial<GlowParticleConfig> = {}) => {
         ...config,
     }), [config]);
 
+    // eslint-disable sonarjs/pseudo-random
     const createParticle = useCallback((
-        baseX: number, 
-        baseY: number, 
+        baseX: number,
+        baseY: number,
         positionConfig: Partial<PositionConfig> = {}
     ): GlowParticle => {
         const colorIndex = Math.floor(Math.random() * mergedConfig.colors.length);
@@ -75,6 +76,7 @@ export const useGlowParticles = (config: Partial<GlowParticleConfig> = {}) => {
             maxDrift: maxDrift,
         };
     }, [mergedConfig]);
+    // eslint-enable sonarjs/pseudo-random
 
     // Khởi tạo particles
     const initializeParticles = useCallback(() => {

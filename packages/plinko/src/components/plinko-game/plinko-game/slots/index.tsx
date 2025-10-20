@@ -46,7 +46,7 @@ const Slots = () => {
 
     const formatOdds = useCallback((odds: number) => {
         if (odds >= 1000) {
-            return odds / 1000 + "K";
+            return `${odds / 1000}K`;
         }
         return odds;
     }, []);

@@ -19,7 +19,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
 
     // Plinko-specific state for rolling window display
     private readonly expandedLoadedPages: Set<number> = new Set(); // Track pages loaded during expanded state
-    private expandedRequestedPages: number = 1; // Track total pages requested during expansion (starts at 1 for initial page)
+    private expandedRequestedPages = 1; // Track total pages requested during expansion (starts at 1 for initial page)
 
 
     // Track pending bets by round ID (since Plinko has one round per ball)
@@ -53,7 +53,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     private flushBetLogForRound(roundId: number) {
         const betHistoryStore = useBetHistoryStore.getState();
         const pendingBets = this.pendingBetsByRound.get(roundId);
-        
+
         if (!pendingBets || pendingBets.length === 0 || !this.latestFinish?.settlementResult) {
             return;
         }
@@ -155,7 +155,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         if (action?.finish) {
             // Extract bet data from endBet message (Plinko doesn't send separate ownBets)
             this.addPlinkoBetToPending(action);
-            
+
             // Process the finish data
             this.handleFinish({ finish: action.finish });
 
@@ -189,7 +189,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 settlementResult: action.finish.settlementResult,
                 odds: action.finish.odds || {},
             };
-            
+
             // Store this bet for the specific round ID
             if (!this.pendingBetsByRound.has(roundId)) {
                 this.pendingBetsByRound.set(roundId, []);

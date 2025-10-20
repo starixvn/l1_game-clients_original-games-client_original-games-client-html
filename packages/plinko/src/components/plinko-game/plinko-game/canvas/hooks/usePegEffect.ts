@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { PegBody, PegEffect } from "../type";
-import { PlinkoCanvasConfig } from "../constant";
 
 interface UsePegEffectProps {
     pegEffectsRef: React.RefObject<PegEffect[]>;
