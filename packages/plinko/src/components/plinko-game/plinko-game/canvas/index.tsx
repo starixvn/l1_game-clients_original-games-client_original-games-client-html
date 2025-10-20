@@ -3,7 +3,7 @@
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
 import { BallBody, PegEffect, SlotBody } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect, useSlotValidationLogger } from "./hooks";
+import { useSlot, usePeg, useBall, usePegEffect, useSlotValidationLogger, useGlowParticles } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
@@ -38,6 +38,21 @@ const PlinkoCanvas = () => {
 
     // Slot validation logger hook
     const { logValidation, downloadLogs, clearLogs, getLogs } = useSlotValidationLogger();
+
+    // Glow particles hook
+    const { initializeParticles, updateParticles, drawParticles } = useGlowParticles({
+        positions: [
+            { x: 150, y: 100, particleCount: 2, driftSpeed: 0.02, maxDrift: 60 }, 
+            { x: 180, y: 270, particleCount: 4, driftSpeed: 0.04, maxDrift: 90 },
+            { x: 120, y: 470, particleCount: 2, driftSpeed: 0.05, maxDrift: 40 },
+            { x: 850, y: 100, particleCount: 3, driftSpeed: 0.05, maxDrift: 60 },
+            { x: 850, y: 250, particleCount: 4, driftSpeed: 0.04, maxDrift: 80 },
+            { x: 910, y: 450, particleCount: 2, driftSpeed: 0.13, maxDrift: 40 },
+        ],
+        particleCount: 3,
+        driftSpeed: 0.03,
+        maxDrift: 100,  
+    });
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -164,6 +179,10 @@ const PlinkoCanvas = () => {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Update and draw glow particles
+        updateParticles(16);
+        drawParticles(context);
+
         // draw effects first (behind objects)
         drawPegEffect?.(context);
 
@@ -209,6 +228,7 @@ const PlinkoCanvas = () => {
         }
 
         generateMap();
+        //initializeParticles(); // Khởi tạo glow particles
         Events.on(engine, "collisionStart", handleCollision);
         const runner = startRunner();
         animate();
@@ -230,6 +250,12 @@ const PlinkoCanvas = () => {
             addObjects([ballBody]);
         }
     }, [finish, createBall, addObjects]);
+
+    // Ensure particles are initialized
+    useEffect(() => {
+        console.log("Canvas mounted, initializing particles...");
+        initializeParticles();
+    }, []);
 
     useEffect(() => {
         if (numberOfDroppingBall === 0) {

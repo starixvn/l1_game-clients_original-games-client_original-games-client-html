@@ -49,7 +49,7 @@ const BetForm = ({
 
     useEffect(() => {
         setBetAmount(betAmount, minBet, maxBet);
-    }, [minBet, maxBet, betAmount]);
+    }, [minBet, maxBet]);
 
     return (
         <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
