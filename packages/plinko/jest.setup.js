@@ -97,29 +97,6 @@ const mockPhysicsLogger = {
     exportLogs: jest.fn(() => ""),
 };
 
-// Mock the physics module globally
-jest.mock("./src/features/game/components/ball/physics", () => ({
-    physicsLogger: mockPhysicsLogger,
-    physicsConfig: {
-        engine: {
-            engineGravity: 0.8,
-        },
-    },
-    calculateBallSize: jest.fn(() => 5),
-    getBallPhysicsTweaks: jest.fn(() => ({})),
-    getMiddleDropPosition: jest.fn(() => 300),
-    BALL_CONSTANTS: {
-        SPAWN: {
-            MIN_SPAWN_INTERVAL_AUTO_BET: 100,
-        },
-    },
-    initializePhysicsEngine: jest.fn(() => ({
-        engine: {},
-        world: { bodies: [], gravity: { y: 0.8 } },
-        isReady: true,
-    })),
-}));
-
 // Provide a global ResizeObserver mock for jsdom/Jest environment
 if (!global.ResizeObserver) {
     global.ResizeObserver = class {
