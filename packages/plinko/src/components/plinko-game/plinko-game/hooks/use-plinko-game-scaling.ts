@@ -16,9 +16,9 @@ interface UsePlinkoGameScalingProps {
 
 // Optimized dimension tracking with ResizeObserver
 class DimensionTracker {
-    private resizeObserver: ResizeObserver | null = null;
+    private readonly resizeObserver: ResizeObserver | null = null;
     private element: HTMLElement | null = null;
-    private listeners: Set<(rect: DOMRectReadOnly) => void> = new Set();
+    private readonly listeners: Set<(rect: DOMRectReadOnly) => void> = new Set();
     private lastRect: DOMRectReadOnly | null = null;
     private debounceTimer: number | null = null;
 
@@ -34,7 +34,7 @@ class DimensionTracker {
         }
     }
 
-    private handleResize = (rect: DOMRectReadOnly) => {
+    private readonly handleResize = (rect: DOMRectReadOnly) => {
         // Skip if dimensions haven't meaningfully changed (sub-pixel changes)
         if (this.lastRect &&
             Math.abs(this.lastRect.width - rect.width) < 1 &&
@@ -61,7 +61,9 @@ class DimensionTracker {
     };
 
     observe(element: HTMLElement | null) {
-        if (this.element === element) return;
+        if (this.element === element) {
+            return;
+        }
 
         // Clean up previous observation
         if (this.resizeObserver && this.element) {
@@ -210,7 +212,9 @@ export const usePlinkoGameScaling = ({
     const scaleValue = PLINKO_CANVAS_SCALE[numberOfRows];
     const [isInitialized, setIsInitialized] = useState(false);
     const [dimensions, setDimensions] = useState<DOMRectReadOnly | null>(null);
-    const finalScaleRef = useRef<number>(DEFAULT_VALUES.NO_SCALE);
+    // Start with safe mobile scale to prevent flash of oversized content
+    const [isReady, setIsReady] = useState(!isMobile);
+    const finalScaleRef = useRef<number>(isMobile ? SCALING_THRESHOLDS.MOBILE.MIN_SCALE : DEFAULT_VALUES.NO_SCALE);
     const dimensionTrackerRef = useRef<DimensionTracker | null>(null);
     const lastCalculationTimeRef = useRef<number>(0);
 
@@ -241,25 +245,25 @@ export const usePlinkoGameScaling = ({
 
     // Subscribe to dimension changes
     useEffect(() => {
-        if (!dimensionTrackerRef.current) return;
+        if (!dimensionTrackerRef.current) {
+            return undefined;
+        }
 
-        const unsubscribe = dimensionTrackerRef.current.subscribe((rect) => {
+        return dimensionTrackerRef.current.subscribe((rect) => {
             setDimensions(rect);
         });
-
-        return unsubscribe;
     }, []);
 
     // Calculate final scale with throttling
     const finalScale = useMemo(() => {
-        // Return cached value if already calculated
-        if (finalScaleRef.current !== DEFAULT_VALUES.NO_SCALE) {
+        // Return cached value if already calculated and ready
+        if (finalScaleRef.current !== (isMobile ? SCALING_THRESHOLDS.MOBILE.MIN_SCALE : DEFAULT_VALUES.NO_SCALE) && isReady) {
             return finalScaleRef.current;
         }
 
         // Only calculate on mobile devices
         if (!isInitialized || !isMobile || !dimensions) {
-            return DEFAULT_VALUES.NO_SCALE;
+            return isMobile ? SCALING_THRESHOLDS.MOBILE.MIN_SCALE : DEFAULT_VALUES.NO_SCALE;
         }
 
         // Throttle calculations to prevent excessive computation
@@ -284,6 +288,11 @@ export const usePlinkoGameScaling = ({
         // Cache the final result
         finalScaleRef.current = optimizedScale;
 
+        // Mark as ready once we have calculated the scale
+        if (!isReady) {
+            setIsReady(true);
+        }
+
         return optimizedScale;
     }, [
         isInitialized,
@@ -292,11 +301,13 @@ export const usePlinkoGameScaling = ({
         dimensions?.height,
         scaleValue, // expectedMainWidth depends on this
         numberOfRows,
-        gameFrameWrapperRef?.current
+        gameFrameWrapperRef?.current,
+        isReady
     ]);
 
     return {
         scaleValue,
-        finalScale
+        finalScale,
+        isReady
     };
 };

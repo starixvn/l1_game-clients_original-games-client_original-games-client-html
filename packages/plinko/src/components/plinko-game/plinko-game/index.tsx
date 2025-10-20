@@ -16,7 +16,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
 }) => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
 
-    const { scaleValue, finalScale } = usePlinkoGameScaling({
+    const { scaleValue, finalScale, isReady } = usePlinkoGameScaling({
         numberOfRows,
         gameFrameWrapperRef: gameFrameWrapperWithoutBackgroundRef
     });
@@ -33,10 +33,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
         <div
             ref={mainContainerRef}
             className={`flex flex-col items-center justify-center relative ${isMobile ? 'min-h-full' : ''}`}
-            style={finalScale < 1 ? {
-                transform: `scale(${finalScale})`,
-                transformOrigin: 'top center',
-            } : {}}
+            style={{
+                ...(finalScale < 1 ? {
+                    transform: `scale(${finalScale})`,
+                    transformOrigin: 'top center',
+                } : {}),
+                // Hide component until scaling is ready to prevent flash on mobile
+                ...(!isReady && isMobile ? {
+                    opacity: 0,
+                    pointerEvents: 'none',
+                } : {})
+            }}
         >
             <div
                 className="rounded-lg mx-auto w-full overflow-x-hidden pt-5"
