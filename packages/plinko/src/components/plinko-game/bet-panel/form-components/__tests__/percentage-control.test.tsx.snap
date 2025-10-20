@@ -4,9 +4,17 @@ exports[`PercentageControl Rendering should render label and control elements 1`
 <div>
   <div>
     <div
-      class="text-sm md:text-base mb-2 font-semibold"
+      class="flex justify-between "
     >
-      test_title
+      <div
+        class="text-sm md:text-base mb-2 font-semibold"
+      >
+        test_title
+      </div>
+      <i
+        class="icon-guide text-lg w-[18px] h-[18px] cursor-pointer before:text-white before:content-['\\e90a']"
+        data-testid="icon-guide-testid"
+      />
     </div>
     <div
       class="flex flex-row gap-2"

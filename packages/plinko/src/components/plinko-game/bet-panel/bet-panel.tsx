@@ -101,17 +101,21 @@ const BetControl = () => {
 
     return (
         <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full">
-            <div className="lg:px-3">
-                {isManualTab ? (
-                    <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
-                        {t("glossary_bet")}
-                    </button>
-                ) : (
-                    <button className={buttonClass} onClick={handleAutoBetClick}>
-                        {isAutoBet ? t("stop_auto_bet") : t("start_auto_bet")}
-                    </button>
-                )}
+            <div className="relative">
+                <div className="lg:px-3">
+                    {isManualTab ? (
+                        <button className={buttonClass} onClick={handleBetClick} disabled={isProcessing}>
+                            {t("glossary_bet")}
+                        </button>
+                    ) : (
+                        <button className={buttonClass} onClick={handleAutoBetClick}>
+                            {isAutoBet ? t("stop_auto_bet") : t("start_auto_bet")}
+                        </button>
+                    )}
+                </div>
+                <div className="hidden lg:block absolute -top-3 h-[1px] w-full bg-[#2934454D] shadow-[0_-4px_20px_2px_#000000]"></div>
             </div>
+
             <div className="flex flex-col lg:flex-col-reverse rounded-t-xl bg-primary-bg lg:gap-2">
                 <BetForm
                     isManualTab={isManualTab}

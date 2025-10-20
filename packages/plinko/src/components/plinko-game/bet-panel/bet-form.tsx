@@ -16,7 +16,6 @@ const BetForm = ({
     isAutoBet: boolean;
     setIsAutoBet: (isAutoBet: boolean) => void;
 }) => {
-
     const { gameMinBet, gameMaxBet, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameMinBet: state.gameConfigs?.minBet ?? 0,
@@ -52,7 +51,7 @@ const BetForm = ({
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[34.5rem] md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle">
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
             <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />

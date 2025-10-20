@@ -15,6 +15,7 @@ describe("PercentageControl", () => {
         setPercentage: jest.fn(),
         isDisabled: false,
         title: "test_title",
+        showAutoBetInstruction: jest.fn(),
     };
 
     beforeEach(() => {
@@ -88,6 +89,18 @@ describe("PercentageControl", () => {
             // Assert
             expect(mockSetIsIncreaseOn).toHaveBeenCalledWith(true);
             expect(mockSetPercentage).toHaveBeenCalledWith(0);
+        });
+
+        it("should call showAutoBetInstruction when click icon", () => {
+            // Arrange
+            const mockShowAutoBetInstruction = jest.fn();
+            render(<PercentageControl {...defaultProps} showAutoBetInstruction={mockShowAutoBetInstruction} />);
+
+            // Act
+            fireEvent.click(screen.getByTestId("icon-guide-testid"));
+
+            // Assert
+            expect(mockShowAutoBetInstruction).toHaveBeenCalled();
         });
     });
 

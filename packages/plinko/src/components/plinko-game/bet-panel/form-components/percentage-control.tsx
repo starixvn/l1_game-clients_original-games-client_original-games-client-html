@@ -9,6 +9,7 @@ interface PercentageControlProps {
     setPercentage: (percentage: number) => void;
     isDisabled: boolean;
     title: string;
+    showAutoBetInstruction: () => void;
 }
 const buttons = [
     {
@@ -27,6 +28,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     setPercentage,
     isDisabled,
     title,
+    showAutoBetInstruction,
 }) => {
     const { t } = useCommonTranslate();
 
@@ -43,7 +45,14 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
 
     return (
         <div>
-            <Label title={title} />
+            <div className="flex justify-between ">
+                <Label title={title} />
+                <i
+                    className="icon-guide text-lg w-[18px] h-[18px] cursor-pointer before:text-white before:content-['\e90a']"
+                    onClick={showAutoBetInstruction}
+                    data-testid="icon-guide-testid"
+                />
+            </div>
             <div className="flex flex-row gap-2">
                 <div className="flex flex-1 items-center input p-1 gap-1 rounded-lg h-11">
                     {buttons.map((button) => (

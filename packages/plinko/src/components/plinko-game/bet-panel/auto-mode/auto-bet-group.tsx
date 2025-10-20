@@ -33,7 +33,7 @@ const AutoBetGroup = ({
     const { t } = useTranslate(ResourceTypes.COMMON);
     const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, finish,  } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
@@ -58,7 +58,7 @@ const AutoBetGroup = ({
     const getBetAmount = (isWin: boolean) => {
         const percentage = isWin ? onWinPercentage : onLossPercentage;
         const newInitialBetAmount = updateInitialBetAmount(isWin, isIncreaseOnWin, isIncreaseOnLoss);
-        
+
         if (newInitialBetAmount) {
             setInitialBetAmount(newInitialBetAmount);
             return newInitialBetAmount;
@@ -68,18 +68,17 @@ const AutoBetGroup = ({
         return Math.min(newBetAmount, maxBet);
     };
 
-
     useEffect(() => {
-        if(!isAutoBet){
+        if (!isAutoBet) {
             setInitialBetAmount(betAmount);
         }
     }, [betAmount, isAutoBet]);
 
     const updateInitialBetAmount = (isWin: boolean, isIncreaseOnWin: boolean, isIncreaseOnLoss: boolean) => {
         const betAmount = Math.min(initialBetAmount, maxBet);
-        
+
         if (isWin) {
-            if (!isIncreaseOnWin) {   
+            if (!isIncreaseOnWin) {
                 return betAmount;
             }
         } else {
@@ -141,6 +140,7 @@ const AutoBetGroup = ({
                     percentage={onWinPercentage}
                     setPercentage={setOnWinPercentage}
                     isDisabled={isDisabled}
+                    showAutoBetInstruction={() => setIsShowAutoBetInstruction(true)}
                 />
             </div>
             <div>
@@ -151,6 +151,7 @@ const AutoBetGroup = ({
                     percentage={onLossPercentage}
                     setPercentage={setOnLossPercentage}
                     isDisabled={isDisabled}
+                    showAutoBetInstruction={() => setIsShowAutoBetInstruction(true)}
                 />
             </div>
             <div>
@@ -160,9 +161,9 @@ const AutoBetGroup = ({
                 <StopOnControl title={t("stop_on_loss")} value={stopOnLoss} setValue={setStopOnLoss} isDisabled={isDisabled} />
             </div>
             <div>
-                <div onClick={() => setIsShowAutoBetInstruction(true)} className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-sm md:text-base font-semibold">{t("how_to_use_auto_bet")}</span>
-                    <i className="icon icon-back text-xl scale-x-[-1]" />
+                <div className="flex items-center gap-2">
+                    <i className="icon icon-guide text-xl before:text-[#9C9C9C] before:content-['\e90a']" />
+                    <span className="text-sm md:text-base font-semibold text-[#9C9C9C]">{t("how_to_use_auto_bet")}</span>
                 </div>
                 {isShowAutoBetInstruction && <AutoBetInstruction setIsShowAutoBetInstruction={setIsShowAutoBetInstruction} />}
             </div>

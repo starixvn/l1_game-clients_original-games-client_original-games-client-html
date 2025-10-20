@@ -324,18 +324,18 @@ describe("BetForm", () => {
                 "md:gap-4",
                 "md:px-3",
                 "md:py-3",
-                "md:h-[34.5rem]",
+                "md:h-[30.75rem]",
                 "md:overflow-y-auto"
             );
         });
 
-        it("should have scrollbar hidden classes", () => {
+        it("should have scrollbar scrollbar-hide-on-idle", () => {
             // Arrange
             const { container } = render(<BetForm {...defaultProps} />);
 
             // Act & Assert
             const formContainer = container.firstChild;
-            expect(formContainer).toHaveClass("[&::-webkit-scrollbar]:hidden", "[-ms-overflow-style:none]", "[scrollbar-width:none]");
+            expect(formContainer).toHaveClass("scrollbar-hide-on-idle");
         });
     });
 });
