@@ -4,7 +4,7 @@ import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { PLINKO_CANVAS_SCALE } from "../constant";
 import useGameStore from "@shared/stores/game-store/game-store";
 import Tooltip from "./tooltip";
-import { getMultiplierColor } from "@plinko/lib/utils/colors-util";
+import { getMultiplierColor } from "@plinko/shared/colors-util";
 
 const Slots = () => {
     const gameConfigs = useGameStore((state) => state.gameConfigs);
