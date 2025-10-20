@@ -72,10 +72,24 @@ export const VISUAL_CONSTANTS = {
     CANVAS_TRANSFORM_OFFSET_FACTOR: 8,
 } as const;
 
+// Mobile Scaling Optimization Constants
+export const MOBILE_SCALING_OPTIMIZATION = {
+    /** Debounce delay for resize calculations (ms) */
+    RESIZE_DEBOUNCE_DELAY: 100,
+    /** Minimum time between scaling recalculations (ms) */
+    MIN_RECALCULATION_INTERVAL: 200,
+    /** Layout optimization threshold */
+    LAYOUT_OPTIMIZATION_THRESHOLD: 0.7,
+    /** Layout optimization multiplier */
+    LAYOUT_OPTIMIZATION_MULTIPLIER: 0.9,
+    /** Minimum acceptable scale to ensure visibility */
+    MIN_ACCEPTABLE_SCALE: 0.7,
+} as const;
+
 // Default Values
 export const DEFAULT_VALUES = {
     /** Default scale when no scaling is needed */
-    NO_SCALE: 1,
+    NO_SCALE: 1 as number,
     /** Default visual margin multiplier */
     DEFAULT_VISUAL_MARGIN_MULTIPLIER: 2,
     /** Default pegs span visual margin multiplier */

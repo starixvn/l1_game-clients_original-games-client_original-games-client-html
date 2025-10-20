@@ -87,6 +87,9 @@ src/
 
 ### 📖 Component Documentation
 
+-   **[PLINKO_GAME_IMPLEMENTATION_GUIDE.md](./PLINKO_GAME_IMPLEMENTATION_GUIDE.md)** - Complete Plinko game implementation guide (Canvas, Physics, Mobile Scaling)
+-   **[PLINKO_IMPLEMENTATION_ANALYSIS.md](./PLINKO_IMPLEMENTATION_ANALYSIS.md)** - Deep analysis of PROs/CONs and performance enhancement recommendations
+-   **[MOBILE_SCALING_OPTIMIZATION.md](./MOBILE_SCALING_OPTIMIZATION.md)** - Mobile scaling performance optimization implementation
 -   **[README_BET_AMOUNT_INPUT.md](./README_BET_AMOUNT_INPUT.md)** - Bet amount input component guide
 -   **[LOGGING_README.md](./LOGGING_README.md)** - Logging system documentation
 
