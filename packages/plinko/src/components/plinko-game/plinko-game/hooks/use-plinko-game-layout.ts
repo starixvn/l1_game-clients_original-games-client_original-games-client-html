@@ -4,18 +4,7 @@ import {
     CANVAS_CONSTANTS
 } from "../constants/scaling-constants";
 
-interface UsePlinkoGameLayoutProps {
-    numberOfRows: number;
-    finalScale: number;
-    gameFrameWrapperRef: React.RefObject<HTMLDivElement>;
-}
-
-
-export const usePlinkoGameLayout = ({
-    numberOfRows,
-    finalScale,
-    gameFrameWrapperRef
-}: UsePlinkoGameLayoutProps) => {
+export const usePlinkoGameLayout = () => {
 
     const mainContainerRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
