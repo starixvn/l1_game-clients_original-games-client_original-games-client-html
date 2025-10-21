@@ -97,7 +97,7 @@ const PFVerification: FC = () => {
                                 const rawDigit = verifyInfo.rawDigits[index];
                                 return (
                                     <span style={{ display: "block" }} key={`${rawDigit}-${index}`}>
-                                        {rawDigit} {"=>"} {item} {"mode 2 ="} {item % 2}
+                                        {rawDigit} {"=>"} {item} {"mod 2 ="} {item % 2}
                                     </span>
                                 );
                             })}

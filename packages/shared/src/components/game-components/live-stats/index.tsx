@@ -24,7 +24,6 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
     const [dragEnabled, setDragEnabled] = useState(true);
     const [position, setPosition] = useState<{ x: number; y: number }>({ x: 150, y: -910 });
 
-    // Default values for winAmount and amount if not provided
     const { winAmount, amount } = data ?? { winAmount: 0, amount: 0 };
 
     const handleCloseModal = () => {
@@ -70,7 +69,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
         isShowLiveStats && (
             <Draggable disabled={!dragEnabled} onDrag={onDrag} defaultPosition={{ x: isMobile ? 86 : 1030, y: isMobile ? -1223 : -1230 }}>
                 <div
-                    className="z-[301] absolute"
+                    className="z-[99999] fixed"
                     style={{
                         transform: `translate(${position.x}px,${position.y}px)`,
                     }}
