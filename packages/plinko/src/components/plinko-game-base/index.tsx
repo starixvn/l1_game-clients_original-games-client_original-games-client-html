@@ -121,8 +121,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col lg:flex-row-reverse lg:mx-3">
-                    <div className="w-full lg:w-8/12" style={{ height: `${isMobile ? '360px' : ''}` }}>{this.renderGameFrame()}</div>
-                    <div className="w-full lg:w-4/12" style={{ zIndex: isMobile ? 100 : 0 }} >{this.renderBetControl()}</div>
+                    <div className={`w-full lg:w-8/12 ${isMobile ? 'h-[360px]' : 'h-full'}`}>{this.renderGameFrame()}</div>
+                    <div className={`w-full lg:w-4/12 ${isMobile ? 'z-[100]' : 'z-0'}`}>{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>
