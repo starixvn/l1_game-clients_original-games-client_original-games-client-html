@@ -2,7 +2,7 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, PegEffect, SlotBody } from "./type";
+import { BallBody, PegEffect } from "./type";
 import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
