@@ -63,27 +63,27 @@ const HotKeyContent = ({ translate, isToggleHotKey, handleToggleHotKey }: { tran
     return (
         <div className="flex flex-col gap-2">
             <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("place_bet")}</div>
-                <h1>Space</h1>
+                <div>{translate("hot_key_place_bet")}:</div>
+                <div>Space</div>
             </div>
             <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("double_bet")}</div>
-                <h1>D</h1>
+                <div>{translate("hot_key_double_bet")}:</div>
+                <div>D</div>
             </div>
             <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("half_bet")}</div>
-                <h1>S</h1>
+                <div>{translate("hot_key_half_bet")}:</div>
+                <div>S</div>
             </div>
             <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("min_bet")}</div>
-                <h1>A</h1>
+                <div>{translate("hot_key_min_bet")}:</div>
+                <div>A</div>
             </div>
             <div className="flex items-center gap-2">
                 <label className={styles.switch}>
                     <input type="checkbox" checked={isToggleHotKey} onChange={handleToggleHotKey} />
                     <span className={styles.slider}></span>
                 </label>
-                <div>{ isToggleHotKey ? translate("on") : translate("off")}</div>
+                <div>{ isToggleHotKey ? translate("hot_key_on") : translate("hot_key_off")}</div>
             </div>
         </div>
     );

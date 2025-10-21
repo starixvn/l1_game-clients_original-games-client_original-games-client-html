@@ -10,7 +10,9 @@ export interface PlinkoRound extends Round {
 }
 const RoundMultiplierHistory = () => {
     const roundHistory = useGameStore((state) => state.roundHistory);
+    const endBet = useGameStore((state) => state.endBet);
     const finish = usePlinkoGameStore((state) => state.finishedBall);
+    
     const [data, setData] = useState<PlinkoRound[]>([]);
     const isInitializedRef = useRef(false);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -33,13 +35,25 @@ const RoundMultiplierHistory = () => {
         }
     }, [roundHistory]);
 
+    useEffect(() => {
+        if (endBet) {
+            isInitializedRef.current = true;
+        }
+    }, [endBet]);
+
     if (!data.length) {
         return null;
     }
 
     return (
-        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto"
-        style={{ maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" }}>
+        <div
+            className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto"
+            style={
+                data.length === 10
+                    ? { maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" }
+                    : undefined
+            }
+        >
             <div className="flex justify-end gap-1 overflow-x-auto ">
                 {[...data].map((round, index) => (
                     <div key={round.roundId} className={`${isAnimating ? "animate-slide-to-left" : ""}`}>
