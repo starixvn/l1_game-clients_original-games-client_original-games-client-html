@@ -20,7 +20,14 @@ const AutoBetGroup = ({
     handleBetAmountChange: (amount: number) => void;
     maxBet: number;
 }) => {
-    const [numberOfBets, setNumberOfBets] = useState<number>(10);
+    const [numberOfBets, setNumberOfBets] = useState<number>(() => {
+        const oldValue = StorageHelper.get<number>(PLINKO_STORAGE_KEYS.NUMBER_OF_BETS);
+        if (oldValue === 0) {
+            return Infinity;
+        } else {
+            return oldValue ?? 10;
+        }
+    });
     const [isIncreaseOnWin, setIsIncreaseOnWin] = useState(false);
     const [onWinPercentage, setOnWinPercentage] = useState(0);
     const [isIncreaseOnLoss, setIsIncreaseOnLoss] = useState(false);
@@ -118,15 +125,18 @@ const AutoBetGroup = ({
     }, [finish]);
 
     useEffect(() => {
-        if (numberOfDroppingBall === 0) {
+        if (numberOfDroppingBall > 0) {
+            return;
+        }
+        if (numberOfBets === 0) {
             const oldValue = StorageHelper.get<number>(PLINKO_STORAGE_KEYS.NUMBER_OF_BETS);
             if (oldValue === 0) {
                 setNumberOfBets(Infinity);
             } else {
                 setNumberOfBets(oldValue ?? 10);
             }
-            setIsAutoBet(false);
         }
+        setIsAutoBet(false);
     }, [numberOfDroppingBall]);
 
     useEffect(() => {
