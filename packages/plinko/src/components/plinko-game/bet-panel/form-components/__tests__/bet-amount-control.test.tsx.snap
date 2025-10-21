@@ -4,9 +4,20 @@ exports[`BetAmountControl Rendering should render label and input field 1`] = `
 <div>
   <div>
     <div
-      class="text-sm md:text-base mb-2 font-semibold"
+      class="flex items-center gap-2"
     >
-      bet_amount
+      <div
+        class="text-sm md:text-base mb-2 font-semibold"
+      >
+        bet_amount
+      </div>
+      <div
+        class="cursor-pointer mb-2"
+      >
+        <i
+          class="icon-cirlce-info text-base right-5"
+        />
+      </div>
     </div>
     <div
       class="relative"
