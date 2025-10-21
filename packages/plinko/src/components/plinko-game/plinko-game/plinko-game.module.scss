@@ -83,6 +83,6 @@
   justify-content: center;
   transform-origin: top center; // origin-top
 
-  // Position based on game height with fixed offset
-  top: calc(var(--game-height, 600px) - 45px);
+  // Position based on canvas position to ensure slots stay below canvas
+  top: calc(var(--game-height, 600px) - 45px + var(--canvas-y-translation, 0px));
 }

@@ -29,10 +29,14 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
         baseGameHeight
     } = usePlinkoGameLayout();
 
+    // Calculate canvas Y translation for consistent positioning
+    const canvasYTranslation = (numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
+
     // CSS custom properties for dynamic values
     const cssVariables = {
         '--game-height': `${baseGameHeight}px`,
-        '--canvas-transform': `translateX(-50%) translateY(${(numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT)}px) scale(${scaleValue})`,
+        '--canvas-transform': `translateX(-50%) translateY(${canvasYTranslation}px) scale(${scaleValue})`,
+        '--canvas-y-translation': `${canvasYTranslation}px`,
         '--final-scale': finalScale.toString()
     };
 
@@ -56,7 +60,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
                         <div
                             ref={canvasContainerRef}
                             className={styles["canvas-container"]}
-                            style={{height: 0}}
+                            style={{ height: 0 }}
                         >
                             <PlinkoCanvas />
                         </div>
