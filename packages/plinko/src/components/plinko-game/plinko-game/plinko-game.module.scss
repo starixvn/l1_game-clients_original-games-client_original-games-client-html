@@ -84,5 +84,5 @@
   transform-origin: top center; // origin-top
 
   // Position based on game height with fixed offset
-  top: calc(var(--game-height, 600px) - 30px);
+  top: calc(var(--game-height, 600px) - 45px);
 }
