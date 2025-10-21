@@ -164,7 +164,6 @@ const PlinkoCanvas = () => {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-
         // draw effects first (behind objects)
         drawPegEffect?.(context);
 
@@ -210,7 +209,6 @@ const PlinkoCanvas = () => {
         }
 
         generateMap();
-        //initializeParticles(); // Khởi tạo glow particles
         Events.on(engine, "collisionStart", handleCollision);
         const runner = startRunner();
         animate();
