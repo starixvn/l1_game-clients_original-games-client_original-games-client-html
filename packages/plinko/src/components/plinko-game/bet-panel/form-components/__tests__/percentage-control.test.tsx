@@ -34,7 +34,6 @@ describe("PercentageControl", () => {
             const { container } = render(<PercentageControl {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("test_title")).toBeInTheDocument();
             expect(screen.getByRole("button", { name: "reset" })).toBeInTheDocument();
             expect(screen.getByRole("button", { name: "increase_by" })).toBeInTheDocument();

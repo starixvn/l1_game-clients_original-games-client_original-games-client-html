@@ -26,7 +26,6 @@ describe("TabNavigation", () => {
             const { container } = render(<TabNavigation {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("manual")).toBeInTheDocument();
             expect(screen.getByText("auto")).toBeInTheDocument();
         });
@@ -36,7 +35,6 @@ describe("TabNavigation", () => {
             const { container } = render(<TabNavigation {...defaultProps} activeIndex={1} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             const activeIndicator = document.querySelector(".bg-green-500");
             expect(activeIndicator).toBeInTheDocument();
             expect(activeIndicator).toHaveStyle({

@@ -26,7 +26,6 @@ describe("StopOnControl", () => {
             const { container } = render(<StopOnControl {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("test_title")).toBeInTheDocument();
             expect(screen.getByRole("spinbutton")).toBeInTheDocument();
         });

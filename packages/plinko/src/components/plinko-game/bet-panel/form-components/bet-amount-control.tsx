@@ -62,7 +62,6 @@ const BetAmountControl = ({
                         handleBetAmountChange(amount ? +amount : minBet);
                         setAmount(betAmount);
                     }}
-                    inputMode="decimal"
                     className="input text-white text-sm rounded-lg pl-3 pr-[10.5rem] input-focus w-full h-11 disabled:opacity-50"
                     disabled={isDisabled}
                 />

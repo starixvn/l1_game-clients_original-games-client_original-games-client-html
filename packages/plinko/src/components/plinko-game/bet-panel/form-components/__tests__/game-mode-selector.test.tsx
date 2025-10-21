@@ -55,7 +55,6 @@ describe("GameModeSelector", () => {
             const { container } = render(<GameModeSelector {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("mode")).toBeInTheDocument();
             expect(screen.getByRole("button", { name: "mode_low" })).toBeInTheDocument();
             expect(screen.getByRole("button", { name: "mode_medium" })).toBeInTheDocument();

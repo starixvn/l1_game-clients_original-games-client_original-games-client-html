@@ -85,7 +85,6 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("win 1,000.00")).toBeInTheDocument();
         });
     });

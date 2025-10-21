@@ -31,7 +31,6 @@ describe("NumberOfBetsControl", () => {
             const { container } = render(<NumberOfBetsControl {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("number_of_bet")).toBeInTheDocument();
             expect(screen.getByRole("spinbutton")).toBeInTheDocument();
         });

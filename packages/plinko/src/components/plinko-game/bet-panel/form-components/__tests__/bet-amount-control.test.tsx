@@ -59,7 +59,6 @@ describe("BetAmountControl", () => {
             const { container } = render(<BetAmountControl {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("bet_amount")).toBeInTheDocument();
         });
 

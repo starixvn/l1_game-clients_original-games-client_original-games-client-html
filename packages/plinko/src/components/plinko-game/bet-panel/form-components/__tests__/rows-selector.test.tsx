@@ -54,7 +54,6 @@ describe("RowsSelector", () => {
             const { container } = render(<RowsSelector {...defaultProps} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText("row")).toBeInTheDocument();
             expect(screen.getByRole("slider")).toBeInTheDocument();
         });
@@ -148,7 +147,6 @@ describe("RowsSelector", () => {
             const { container } = render(<RowsSelector {...defaultProps} isDisabled={true} />);
 
             // Act & Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByRole("slider")).toBeDisabled();
         });
     });

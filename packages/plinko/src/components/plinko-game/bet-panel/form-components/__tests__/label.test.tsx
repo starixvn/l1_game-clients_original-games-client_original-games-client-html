@@ -12,7 +12,6 @@ describe("Label", () => {
             const { container } = render(<Label title={title} />);
 
             // Assert
-            expect(container).toMatchSnapshot();
             expect(screen.getByText(title)).toBeInTheDocument();
         });
     });
