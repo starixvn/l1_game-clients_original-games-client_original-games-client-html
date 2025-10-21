@@ -75,22 +75,6 @@
     }
 }
 
-@keyframes float-particle {
-    0% {
-        transform: translateX(0) translateY(0) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(60px) translateY(-40px) rotate(360deg);
-        opacity: 0;
-    }
-}
 
 @keyframes pulse-particle {
     0%, 100% {
@@ -137,53 +121,50 @@
     }
 }
 
-// Particle positions - gradual increase from bottom to top, most on left/right edges
-// Bottom area (60-100% top) - 4 particles (fewest, concentrated on edges)
-.particle-1 { top: 75%; left: 15%; width: 4px; height: 4px; animation-delay: 3.5s; animation-duration: 10s; }
-.particle-2 { top: 85%; left: 85%; width: 3px; height: 3px; animation-delay: 3.2s; animation-duration: 11s; }
-.particle-3 { top: 65%; left: 8%; width: 3.5px; height: 3.5px; animation-delay: 3.9s; animation-duration: 17s; }
-.particle-4 { top: 90%; left: 92%; width: 3px; height: 3px; animation-delay: 4.8s; animation-duration: 17s; }
+// Particle positions - most on top left/right, decreasing from top to bottom
+// Top area (0-30% top) - 15 particles (most, heavily concentrated on left/right edges)
+.particle-1 { top: 5%; left: 5%; width: 3px; height: 3px; animation-delay: 0s; animation-duration: 12s; }
+.particle-2 { top: 8%; left: 12%; width: 3.5px; height: 3.5px; animation-delay: 0.5s; animation-duration: 10s; }
+.particle-3 { top: 12%; left: 8%; width: 4px; height: 4px; animation-delay: 1.2s; animation-duration: 13s; }
+.particle-4 { top: 3%; left: 18%; width: 3px; height: 3px; animation-delay: 0.8s; animation-duration: 11s; }
+.particle-5 { top: 15%; left: 15%; width: 3.5px; height: 3.5px; animation-delay: 1.8s; animation-duration: 12s; }
+.particle-6 { top: 8%; left: 85%; width: 3px; height: 3px; animation-delay: 2s; animation-duration: 15s; }
+.particle-7 { top: 5%; left: 92%; width: 3.5px; height: 3.5px; animation-delay: 1s; animation-duration: 13s; }
+.particle-8 { top: 12%; left: 88%; width: 4px; height: 4px; animation-delay: 2.5s; animation-duration: 11s; }
+.particle-9 { top: 18%; left: 6%; width: 3px; height: 3px; animation-delay: 0.3s; animation-duration: 13s; }
+.particle-10 { top: 22%; left: 12%; width: 3.5px; height: 3.5px; animation-delay: 1.5s; animation-duration: 11s; }
+.particle-11 { top: 25%; left: 82%; width: 3px; height: 3px; animation-delay: 2.8s; animation-duration: 16s; }
+.particle-12 { top: 28%; left: 88%; width: 3.5px; height: 3.5px; animation-delay: 1.1s; animation-duration: 14s; }
+.particle-13 { top: 20%; left: 95%; width: 3px; height: 3px; animation-delay: 3.2s; animation-duration: 15s; }
+.particle-14 { top: 10%; left: 78%; width: 3.5px; height: 3.5px; animation-delay: 0.7s; animation-duration: 16s; }
+.particle-15 { top: 6%; left: 72%; width: 3px; height: 3px; animation-delay: 1.3s; animation-duration: 14s; }
 
-// Lower middle area (40-60% top) - 6 particles (more, still edge-focused)
-.particle-5 { top: 45%; left: 12%; width: 3px; height: 3px; animation-delay: 5.0s; animation-duration: 18s; }
-.particle-6 { top: 55%; left: 88%; width: 3.5px; height: 3.5px; animation-delay: 2.5s; animation-duration: 13s; }
-.particle-7 { top: 40%; left: 6%; width: 3.5px; height: 3.5px; animation-delay: 2.1s; animation-duration: 18s; }
-.particle-8 { top: 50%; left: 94%; width: 3.5px; height: 3.5px; animation-delay: 3.0s; animation-duration: 17s; }
-.particle-9 { top: 45%; left: 25%; width: 3.5px; height: 3.5px; animation-delay: 3.3s; animation-duration: 12s; }
-.particle-10 { top: 55%; left: 75%; width: 4px; height: 4px; animation-delay: 4.6s; animation-duration: 13s; }
+// Upper middle area (30-50% top) - 7 particles (less, still edge-focused)
+.particle-16 { top: 35%; left: 8%; width: 3px; height: 3px; animation-delay: 4.2s; animation-duration: 12s; }
+.particle-17 { top: 40%; left: 15%; width: 3.5px; height: 3.5px; animation-delay: 4.9s; animation-duration: 17s; }
+.particle-18 { top: 45%; left: 5%; width: 3px; height: 3px; animation-delay: 3.8s; animation-duration: 13s; }
+.particle-19 { top: 38%; left: 85%; width: 3.5px; height: 3.5px; animation-delay: 3.1s; animation-duration: 11s; }
+.particle-20 { top: 42%; left: 92%; width: 3px; height: 3px; animation-delay: 5.1s; animation-duration: 18s; }
+.particle-21 { top: 48%; left: 88%; width: 3.5px; height: 3.5px; animation-delay: 2.5s; animation-duration: 14s; }
+.particle-22 { top: 32%; left: 75%; width: 3px; height: 3px; animation-delay: 3.5s; animation-duration: 16s; }
 
-// Upper middle area (20-40% top) - 8 particles (more edge concentration)
-.particle-11 { top: 25%; left: 50%; width: 3.5px; height: 3.5px; animation-delay: 4.2s; animation-duration: 12s; }
-.particle-12 { top: 30%; left: 35%; width: 3px; height: 3px; animation-delay: 4.9s; animation-duration: 17s; }
-.particle-13 { top: 35%; left: 65%; width: 3px; height: 3px; animation-delay: 5.5s; animation-duration: 20s; }
-.particle-14 { top: 28%; left: 2%; width: 4px; height: 4px; animation-delay: 3.8s; animation-duration: 13s; }
-.particle-15 { top: 35%; left: 98%; width: 3.5px; height: 3.5px; animation-delay: 3.1s; animation-duration: 11s; }
-.particle-16 { top: 25%; left: 95%; width: 3px; height: 3px; animation-delay: 5.1s; animation-duration: 18s; }
-.particle-17 { top: 22%; left: 5%; width: 3px; height: 3px; animation-delay: 2.5s; animation-duration: 14s; }
-.particle-18 { top: 20%; left: 22%; width: 3px; height: 3px; animation-delay: 3.2s; animation-duration: 15s; }
+// Lower middle area (50-70% top) - 4 particles (fewer)
+.particle-23 { top: 55%; left: 12%; width: 3px; height: 3px; animation-delay: 3.2s; animation-duration: 15s; }
+.particle-24 { top: 60%; left: 8%; width: 3.5px; height: 3.5px; animation-delay: 4.6s; animation-duration: 13s; }
+.particle-25 { top: 58%; left: 88%; width: 3px; height: 3px; animation-delay: 5.5s; animation-duration: 20s; }
+.particle-26 { top: 52%; left: 85%; width: 3.5px; height: 3.5px; animation-delay: 2.1s; animation-duration: 17s; }
 
-// Top area (0-20% top) - 12 particles (most, heavily concentrated on edges)
-.particle-19 { top: 8%; left: 15%; width: 4px; height: 4px; animation-delay: 0s; animation-duration: 12s; }
-.particle-20 { top: 5%; left: 8%; width: 3px; height: 3px; animation-delay: 0.5s; animation-duration: 10s; }
-.particle-21 { top: 12%; left: 22%; width: 3.5px; height: 3.5px; animation-delay: 1.2s; animation-duration: 13s; }
-.particle-22 { top: 3%; left: 5%; width: 4px; height: 4px; animation-delay: 0.8s; animation-duration: 11s; }
-.particle-23 { top: 8%; left: 25%; width: 3.5px; height: 3.5px; animation-delay: 1.8s; animation-duration: 12s; }
-.particle-24 { top: 12%; left: 35%; width: 3.5px; height: 3.5px; animation-delay: 2s; animation-duration: 15s; }
-.particle-25 { top: 10%; left: 65%; width: 4.5px; height: 4.5px; animation-delay: 1s; animation-duration: 13s; }
-.particle-26 { top: 15%; left: 75%; width: 3px; height: 3px; animation-delay: 3s; animation-duration: 11s; }
-.particle-27 { top: 6%; left: 85%; width: 4px; height: 4px; animation-delay: 0.3s; animation-duration: 13s; }
-.particle-28 { top: 15%; left: 92%; width: 3px; height: 3px; animation-delay: 1.5s; animation-duration: 11s; }
-.particle-29 { top: 18%; left: 78%; width: 3.5px; height: 3.5px; animation-delay: 2.8s; animation-duration: 16s; }
-.particle-30 { top: 8%; left: 72%; width: 3px; height: 3px; animation-delay: 1.1s; animation-duration: 14s; }
+// Bottom area (70-100% top) - 2 particles (fewest)
+.particle-27 { top: 75%; left: 15%; width: 3px; height: 3px; animation-delay: 3.5s; animation-duration: 10s; }
+.particle-28 { top: 85%; left: 85%; width: 3px; height: 3px; animation-delay: 3.2s; animation-duration: 11s; }
 
 // Mobile responsive design - 24 particles, most on top left/right, decreasing to bottom
 @media (max-width: 768px) {
-    // Hide desktop particles on mobile (1-30)
+    // Hide desktop particles on mobile (1-28)
     .particle-1, .particle-2, .particle-3, .particle-4, .particle-5, .particle-6, .particle-7, .particle-8,
     .particle-9, .particle-10, .particle-11, .particle-12, .particle-13, .particle-14, .particle-15,
     .particle-16, .particle-17, .particle-18, .particle-19, .particle-20, .particle-21, .particle-22,
-    .particle-23, .particle-24, .particle-25, .particle-26, .particle-27, .particle-28, .particle-29,
-    .particle-30 {
+    .particle-23, .particle-24, .particle-25, .particle-26, .particle-27, .particle-28 {
         display: none;
     }
 
