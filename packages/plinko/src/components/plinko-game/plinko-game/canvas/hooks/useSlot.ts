@@ -1,16 +1,24 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import { Bodies, Body } from "matter-js";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { SlotBody } from "../type";
 import { useGameStore } from "@shared/stores/game-store";
 import { getMultiplierColor } from "@plinko/shared/colors-util";
+import { numberWithCommas } from "@shared";
 
 export const useSlot = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
     const gameConfigs = useGameStore((state) => state.gameConfigs);
     const gameMode = usePlinkoGameStore((state) => state.gameMode);
     const finishedBall = usePlinkoGameStore((state) => state.finishedBall);
+    const betAmount = usePlinkoGameStore((state) => state.betAmount);
+
+    // Tooltip state
+    const [hoveredSlotIndex, setHoveredSlotIndex] = useState<number | null>(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isTouchDevice = useRef(false);
 
     // Get odds data for rendering multipliers
     const odds = useMemo(() => {
@@ -29,6 +37,24 @@ export const useSlot = () => {
         15: 9,
         16: 9,
     }), []);
+
+    // Calculate probability for a slot (binomial coefficient)
+    const calculateProbability = useCallback((slotIndex: number) => {
+        const binomial = (n: number, k: number) => {
+            if (k > n) { return 0; }
+            let result = 1;
+            for (let i = 0; i < k; i++) {
+                result *= (n - i) / (i + 1);
+            }
+            return result;
+        };
+        return binomial(numberOfRows, slotIndex) / Math.pow(2, numberOfRows);
+    }, [numberOfRows]);
+
+    // Check if touch device
+    useEffect(() => {
+        isTouchDevice.current = "ontouchstart" in globalThis || navigator.maxTouchPoints > 0;
+    }, []);
 
     const createSlots = useCallback(() => {
         const slots: Body[] = [];
@@ -119,8 +145,193 @@ export const useSlot = () => {
         context.shadowBlur = 0;
     }, [odds, finishedBall, numberOfRows, gameMode, fontSizes]);
 
+    // Draw tooltip on canvas
+    const drawTooltip = useCallback((context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+        if (hoveredSlotIndex === null || !odds || hoveredSlotIndex >= odds.length) {
+            return;
+        }
+
+        const slotOdds = odds[hoveredSlotIndex];
+        const probability = calculateProbability(hoveredSlotIndex);
+        const winAmount = betAmount * slotOdds;
+
+        // Tooltip dimensions and positioning
+        // mousePosition is in screen coords relative to canvas element
+        // Convert to canvas coordinates for proper positioning on scaled canvas
+        const rect = canvas.getBoundingClientRect();
+        const canvasX = (mousePosition.x / rect.width) * canvas.width;
+        const canvasY = (mousePosition.y / rect.height) * canvas.height;
+
+        const tooltipWidth = 266;
+        const tooltipHeight = 60;
+        const tooltipX = Math.max(10, Math.min(canvasX - tooltipWidth / 2, canvas.width - tooltipWidth - 10));
+        const tooltipY = canvasY - tooltipHeight - 10;
+
+        // Draw tooltip background with gradient
+        const gradient = context.createLinearGradient(tooltipX, tooltipY, tooltipX, tooltipY + tooltipHeight);
+        gradient.addColorStop(0, "#093B77");
+        gradient.addColorStop(1, "#031122");
+        context.fillStyle = gradient;
+        context.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        // Draw tooltip border
+        context.strokeStyle = "#031122";
+        context.lineWidth = 1;
+        context.strokeRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        // Draw tooltip content
+        context.fillStyle = "#ffffff";
+        context.font = "bold 12px Arial";
+        context.textAlign = "left";
+
+        // Win Amount section
+        const winAmountX = tooltipX + 12;
+        const winAmountY = tooltipY + 16;
+        context.fillText("Win Amount", winAmountX, winAmountY);
+
+        // Win amount box
+        context.fillStyle = "#101721";
+        context.fillRect(winAmountX, winAmountY + 4, 130, 36);
+        context.strokeStyle = "#2B3648";
+        context.strokeRect(winAmountX, winAmountY + 4, 130, 36);
+
+        // Win amount text
+        context.fillStyle = "#ffffff";
+        context.font = "14px Arial";
+        context.fillText(`$${numberWithCommas(winAmount)}`, winAmountX + 8, winAmountY + 26);
+
+        // Chance section
+        const chanceX = tooltipX + 152;
+        const chanceY = tooltipY + 16;
+        context.font = "bold 12px Arial";
+        context.fillText("Chance", chanceX, chanceY);
+
+        // Chance box
+        context.fillStyle = "#101721";
+        context.fillRect(chanceX, chanceY + 4, 100, 36);
+        context.strokeStyle = "#2B3648";
+        context.strokeRect(chanceX, chanceY + 4, 100, 36);
+
+        // Chance text
+        context.fillStyle = "#ffffff";
+        context.font = "14px Arial";
+        context.fillText(`${numberWithCommas(probability * 100, 4)}%`, chanceX + 8, chanceY + 26);
+
+        // Draw arrow pointing down
+        const arrowX = mousePosition.x;
+        const arrowY = tooltipY + tooltipHeight;
+        context.fillStyle = "#031122";
+        context.beginPath();
+        context.moveTo(arrowX, arrowY);
+        context.lineTo(arrowX - 6, arrowY - 6);
+        context.lineTo(arrowX + 6, arrowY - 6);
+        context.closePath();
+        context.fill();
+    }, [hoveredSlotIndex, odds, mousePosition, betAmount, calculateProbability]);
+
+    // Mouse/touch event handlers
+    const handleMouseMove = useCallback((event: MouseEvent, canvas: HTMLCanvasElement) => {
+        if (isTouchDevice.current) return;
+
+        const rect = canvas.getBoundingClientRect();
+        // Get screen coordinates relative to canvas element
+        const screenX = event.clientX - rect.left;
+        const screenY = event.clientY - rect.top;
+
+        // Transform to canvas coordinates (accounting for CSS scaling)
+        // The canvas element is scaled, so we need to map screen coords to canvas coords
+        const canvasX = (screenX / rect.width) * canvas.width;
+        const canvasY = (screenY / rect.height) * canvas.height;
+
+        setMousePosition({ x: screenX, y: screenY }); // Keep screen coords for tooltip positioning
+
+        // Check if mouse is over a slot (in canvas coordinates)
+        const { pegRadius, mapGap } = PlinkoCanvasConfig;
+        const gap = pegRadius * 2 * mapGap;
+        const numberOfSlots = numberOfRows + 1;
+        const slotY = (numberOfRows + 1.5) * gap;
+
+        // Check Y proximity (within slot height + some margin) - align with visual slot position
+        if (Math.abs(canvasY - (slotY - 35)) < 40) {
+            // Check X position for each slot
+            for (let col = 0; col < numberOfSlots; col++) {
+                const space = (PlinkoCanvasConfig.width - gap * numberOfSlots) / 2;
+                const slotX = space + (col + 1) * gap - pegRadius * mapGap;
+                if (Math.abs(canvasX - slotX) < 25) { // 50px slot width / 2
+                    setHoveredSlotIndex(col);
+                    return;
+                }
+            }
+        }
+
+        setHoveredSlotIndex(null);
+    }, [numberOfRows]);
+
+    const handleMouseLeave = useCallback(() => {
+        if (!isTouchDevice.current) {
+            setHoveredSlotIndex(null);
+        }
+    }, []);
+
+    const handleTouchStart = useCallback((event: TouchEvent, canvas: HTMLCanvasElement) => {
+        if (touchTimeoutRef.current) {
+            clearTimeout(touchTimeoutRef.current);
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const touch = event.touches[0];
+        const screenX = touch.clientX - rect.left;
+        const screenY = touch.clientY - rect.top;
+
+        // Transform to canvas coordinates
+        const canvasX = (screenX / rect.width) * canvas.width;
+        const canvasY = (screenY / rect.height) * canvas.height;
+
+        setMousePosition({ x: screenX, y: screenY });
+
+        touchTimeoutRef.current = setTimeout(() => {
+            // Same slot detection logic as mouse move
+            const { pegRadius, mapGap } = PlinkoCanvasConfig;
+            const gap = pegRadius * 2 * mapGap;
+            const numberOfSlots = numberOfRows + 1;
+            const slotY = (numberOfRows + 1.5) * gap;
+
+            if (Math.abs(canvasY - (slotY - 35)) < 40) {
+                for (let col = 0; col < numberOfSlots; col++) {
+                    const space = (PlinkoCanvasConfig.width - gap * numberOfSlots) / 2;
+                    const slotX = space + (col + 1) * gap - pegRadius * mapGap;
+                    if (Math.abs(canvasX - slotX) < 25) {
+                        setHoveredSlotIndex(col);
+                        return;
+                    }
+                }
+            }
+
+            setHoveredSlotIndex(null);
+        }, 300);
+    }, [numberOfRows]);
+
+    const handleTouchEnd = useCallback(() => {
+        if (touchTimeoutRef.current) {
+            clearTimeout(touchTimeoutRef.current);
+            touchTimeoutRef.current = null;
+        }
+    }, []);
+
+    const handleTouchMove = useCallback(() => {
+        if (touchTimeoutRef.current) {
+            handleTouchEnd();
+        }
+    }, [handleTouchEnd]);
+
     return {
         createSlots,
         drawSlot,
+        drawTooltip,
+        handleMouseMove,
+        handleMouseLeave,
+        handleTouchStart,
+        handleTouchEnd,
+        handleTouchMove,
     };
 };

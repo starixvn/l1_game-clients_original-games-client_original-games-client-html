@@ -29,7 +29,16 @@ const PlinkoCanvas = () => {
     const { createPegs, drawPeg } = usePeg();
 
     // Multiplier hook
-    const { createSlots, drawSlot } = useSlot();
+    const {
+        createSlots,
+        drawSlot,
+        drawTooltip,
+        handleMouseMove,
+        handleMouseLeave,
+        handleTouchStart,
+        handleTouchEnd,
+        handleTouchMove
+    } = useSlot();
 
     // Ball hook
     const { createBall, drawBall, handleRoad } = useBall();
@@ -165,8 +174,12 @@ const PlinkoCanvas = () => {
         sceneObjectsRef.current.forEach((obj) => {
             drawSceneObject(obj);
         });
+
+        // Draw tooltip on top
+        drawTooltip(context, canvas);
+
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawPegEffect]);
+    }, [drawSceneObject, drawPegEffect, drawTooltip]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
@@ -188,7 +201,6 @@ const PlinkoCanvas = () => {
         canvas.height = height;
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
-        canvas.style.pointerEvents = "none";
 
         const runner = Runner.create();
         Runner.run(runner, engineRef.current);
@@ -234,6 +246,32 @@ const PlinkoCanvas = () => {
             useGameStore.getState().resetBettingInfo();
         }
     }, [numberOfDroppingBall]);
+
+    // Add event listeners for tooltips
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const mouseMoveHandler = (event: MouseEvent) => handleMouseMove(event, canvas);
+        const mouseLeaveHandler = () => handleMouseLeave();
+        const touchStartHandler = (event: TouchEvent) => handleTouchStart(event, canvas);
+        const touchEndHandler = () => handleTouchEnd();
+        const touchMoveHandler = () => handleTouchMove();
+
+        canvas.addEventListener('mousemove', mouseMoveHandler);
+        canvas.addEventListener('mouseleave', mouseLeaveHandler);
+        canvas.addEventListener('touchstart', touchStartHandler);
+        canvas.addEventListener('touchend', touchEndHandler);
+        canvas.addEventListener('touchmove', touchMoveHandler);
+
+        return () => {
+            canvas.removeEventListener('mousemove', mouseMoveHandler);
+            canvas.removeEventListener('mouseleave', mouseLeaveHandler);
+            canvas.removeEventListener('touchstart', touchStartHandler);
+            canvas.removeEventListener('touchend', touchEndHandler);
+            canvas.removeEventListener('touchmove', touchMoveHandler);
+        };
+    }, [handleMouseMove, handleMouseLeave, handleTouchStart, handleTouchEnd, handleTouchMove]);
 
     return <canvas ref={canvasRef} />;
 };
