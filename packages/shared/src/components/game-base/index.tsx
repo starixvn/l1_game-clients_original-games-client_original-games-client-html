@@ -1,6 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
+import * as Sentry from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import { InitSocketIO, writeDebugLog } from "@shared/helpers";
 import { AnalyticsHelper } from "@shared/helpers/analytic-helper";
@@ -208,31 +209,14 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onStart() {
-        const transaction = (window as any).Sentry?.startTransaction({
-            name: this.props.gameName,
-            op: "game.load",
-            description: `Loading game: ${this.props.gameName}`,
-        });
-
-        (window as any).Sentry?.getCurrentHub()?.configureScope((scope) => {
-            scope.setSpan(transaction);
-        });
-
-        try {
-            this.socket?.disconnect();
-            this.socket = null;
-            this.gameMessageHandler.clearAllHandlers();
-            this.props.dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
-            this.clearDisconnectTimeout();
-            this.registerHandlers();
-            this.connectToGameService();
-            this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
-        } catch (error) {
-            (window as any).Sentry?.captureException(error);
-            transaction?.setStatus("internal_error");
-        } finally {
-            transaction?.finish();
-        }
+        this.socket?.disconnect();
+        this.socket = null;
+        this.gameMessageHandler.clearAllHandlers();
+        this.props.dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
+        this.clearDisconnectTimeout();
+        this.registerHandlers();
+        this.connectToGameService();
+        this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
     }
 
     onPreloadResourceDone = () => {

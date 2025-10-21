@@ -13,9 +13,31 @@ if (sentryConfig) {
         ...sentryConfig,
         tracesSampleRate: 1.0,
         ignoreErrors: ["Network Error"],
-        beforeSendTransaction(event) {
-            event.transaction = "Load Game/" + event.transaction.replace(/^.*\//, "") || window.location.pathname;
-            return event;
+        beforeSendTransaction(transaction) {
+            if (typeof window === "undefined") {
+                return transaction;
+            }
+
+            if (transaction.transaction === "/") {
+                const urlParams = new URLSearchParams(window.location.search);
+                const gameId = urlParams.get("game") || process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+                const gameSettings = appSettings.gameSettings?.[gameId];
+                const gameName = gameSettings?.gameName || `Game-${gameId}`;
+
+                transaction.transaction = `${gameName} ${transaction.transaction}`;
+                transaction.tags = {
+                    ...transaction.tags,
+                    gameId,
+                    gameName: gameSettings?.gameName || `Game-${gameId}`,
+                };
+            }
+
+            return transaction;
         },
+        integrations: [
+            Sentry.browserTracingIntegration({
+                enablePageLoadSpans: true,
+            }),
+        ],
     });
 }
