@@ -45,7 +45,12 @@ const BetAmountControl = ({
 
     return (
         <div>
-            <Label title={t("bet_amount")} />
+            <div className="flex items-center gap-2">
+                <Label title={t("bet_amount")} />
+                <div className="cursor-pointer mb-2">
+                    <i className="icon-cirlce-info text-base right-5"></i>
+                </div>
+            </div>
             <div className="relative">
                 <input
                     type="number"

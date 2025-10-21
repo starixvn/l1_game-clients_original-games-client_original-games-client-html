@@ -35,7 +35,7 @@ const PlinkoBetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
                 isOpen={isShowBetDetail}
                 onCloseModal={handleCloseModal}
                 enableBackdrop={true}
-                extendedClassName="w-full h-fit left-0 top-auto md:top-1/2 md:-translate-y-1/2 left-1/2 -translate-x-1/2 md:max-w-3xl bg-[linear-gradient(180deg,_#0854B2_0%,_#05264D_38.5%,_#060D15_100%)]"
+                extendedClassName="w-full bg-image-none h-fit left-0 top-auto md:top-1/2 md:-translate-y-1/2 left-1/2 -translate-x-1/2 md:max-w-3xl bg-[linear-gradient(180deg,_#0854B2_0%,_#05264D_38.5%,_#060D15_100%)]"
             >
                 <div
                 id="plinko-bet-detail-modal"
@@ -60,7 +60,7 @@ const PlinkoBetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
                 </div>
 
                 {/* Content - Flexible height */}
-                <div className="md:mb-0 mb-7">{children}</div>
+                <div className="md:mb-0 mb-10">{children}</div>
             </div>
             </BaseDialog>,
             dashboardElement

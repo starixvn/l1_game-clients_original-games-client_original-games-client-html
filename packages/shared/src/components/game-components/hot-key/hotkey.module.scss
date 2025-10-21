@@ -1,52 +1,61 @@
-/* The switch - the box around the slider */
 .switch {
-    font-size: 17px;
     position: relative;
-    display: inline-block;
-    width: 62px;
-    height: 35px;
-   }
-   
-   /* Hide default HTML checkbox */
-   .switch input {
-    opacity: 1;
-    width: 0;
-    height: 0;
-   }
-   
-   /* The slider */
-   .slider {
-    position: absolute;
+    height: 12px;
+    width: 36px;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0px;
-    background: #fff;
-    transition: .4s;
-    border-radius: 30px;
-    border: 1px solid #ccc;
-   }
-   
-   .slider:before {
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 9999px;
+    background-color: #FFF;
+    transition: all .3s ease;
+  }
+  
+  .switch:checked {
+    background-color: #00C950;
+  }
+
+  .switch:checked:before {
+    background-color: #8EFF77;
+    border: 1px solid #8EFF77;
+  }
+  
+  .switch::before {
     position: absolute;
     content: "";
-    height: 1.9em;
-    width: 1.9em;
-    border-radius: 16px;
-    left: 1.2px;
-    top: 0;
-    bottom: 0;
-    background-color: white;
-    box-shadow: 0 2px 5px #999999;
-    transition: .4s;
-   }
-   
-   input:checked + .slider {
-    background-color: #5fdd54;
-    border: 1px solid transparent;
-   }
-   
-   input:checked + .slider:before {
-    transform: translateX(1.5em);
-   }
+    left: calc(1.5rem - 1.6rem);
+    top: calc(1.5rem - 1.8rem);
+    display: block;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    border: 1px solid #FFF;
+    border-radius: 9999px;
+    background-color: #FFF;
+    box-shadow: 0 3px 10px rgba(100, 116, 139, 0.327);
+    transition: all .3s ease;
+  }
+  
+  .switch:checked:before {
+    transform: translateX(100%);
+  }
+
+.hotkeyPopup {
+    background: var(--sound-setting-background);
+    border-radius: 16px !important;
+    color: #b3bec1;
+    padding: 12px 16px;
+    top: 23%;
+    min-width: 320px;
+}
+
+.key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    background: #212D3D99;
+    border-radius: 8px;
+    color: #fff;
+    font-style: bold;
+    font-weight: 600;
+}

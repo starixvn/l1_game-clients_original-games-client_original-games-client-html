@@ -56,6 +56,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
                         <div
                             ref={canvasContainerRef}
                             className={styles["canvas-container"]}
+                            style={{height: 0}}
                         >
                             <PlinkoCanvas />
                         </div>

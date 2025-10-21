@@ -11,8 +11,6 @@ import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { isMobile } from "react-device-detect";
 import { AreaChart, Area, XAxis, YAxis } from "recharts";
 
-// Register Chart.js components
-
 const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number } }): ReactElement => {
     const isShowLiveStats = usePopupStore((state) => state.isShowLiveStats);
     const toggleLiveStats = usePopupStore((state) => state.toggleLiveStats);
@@ -60,6 +58,14 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
         });
     };
 
+    const handleReset = () => {
+        setNetProfitHistory([{ x: 0, y: 0 }]);
+        setTotalBetAmount(0);
+        setTotalWinAmount(0);
+        setLostRound(0);
+        setWinRound(0);
+    };
+
     return (
         isShowLiveStats && (
             <Draggable disabled={!dragEnabled} onDrag={onDrag} defaultPosition={{ x: isMobile ? 86 : 1030, y: isMobile ? -1223 : -1230 }}>
@@ -84,19 +90,30 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                             })}
                         >
                             {/* Header */}
-                            <div className="flex items-center px-5 text-base font-semibold text-primary-text text-center flex-shrink-0">
+                            <div className="flex items-center px-3 gap-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
+                                <button
+                                    className="cursor-pointer ml-auto relative z-10"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        clickSound();
+                                        handleReset();
+                                    }}
+                                >
+                                    <i className="icon-reset" style={{ fontSize: "22px" }}></i>
+                                </button>
                                 <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">
                                     {translate("live_stats")}
                                 </div>
-                                <span
+                                <button
                                     className="cursor-pointer ml-auto relative z-10"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.preventDefault();
                                         clickSound();
                                         handleCloseModal();
                                     }}
                                 >
-                                    <i className="icon-close text-sm w-4 h-4"></i>
-                                </span>
+                                    <i className="icon-close" style={{ fontSize: "14px" }}></i>
+                                </button>
                             </div>
 
                             {/* Content */}
@@ -162,51 +179,40 @@ const LiveStats = ({
     return useMemo(() => {
         return (
             <div className="h-full border-none flex flex-col justify-center items-center">
-                <div id="information" className="flex justify-between  pt-1  w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
-                    <div className="flex flex-col justify-between flex-1 px-5 gap-1">
-                        <div className="flex flex-col items-center">
+                <div id="information" className="flex justify-between  pt-1 w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
+                    <div className="flex flex-col items-start flex-1 px-3 gap-1">
+                        <div className="flex flex-col items-start">
                             {t("profit")}
                             <div className={profitColorClass}>{numberWithCommas(profitAmount)}</div>
                         </div>
-                        <div className="flex flex-col items-center">
+                        <div className="flex flex-col items-start">
                             {t("bet_amount")}
                             <div>{numberWithCommas(totalBetAmount)}</div>
                         </div>
                     </div>
-                    <div className="flex  flex-col flex-1 px-5 gap-1">
-                        <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-start flex-1 px-3 gap-1">
+                        <div className="flex flex-col items-start">
                             {t("wins")}
                             <div className={winsColorClass}>{numberWithCommas(winRound)}</div>
                         </div>
-                        <div className="flex flex-col items-center">
+                        <div className="flex flex-col items-start">
                             {t("losses")}
                             <div className={cn(lostRound > 0 ? "text-red-500" : "")}>{numberWithCommas(lostRound)}</div>
                         </div>
                     </div>
                 </div>
                 <div id="my-chart" className="w-full h-auto">
-                    {netProfitHistory.length > 0 ? (
-                            <AreaChart width={228} height={150} data={netProfitHistory}>
-                                <XAxis dataKey="x" hide />
-                                <YAxis hide domain={[-100, 100]} />
-                                <defs>
-                                    <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
-                                        <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
-                                    </linearGradient>
-                                </defs>
-                                <Area
-                                    type="monotone"
-                                    dataKey="y"
-                                    stroke="#000"
-                                    fill="url(#splitColor)"
-                                    isAnimationActive={false}
-                                    baseLine={0}
-                                />
-                            </AreaChart>
-                    ) : (
-                        <div className="flex items-center justify-center h-full text-gray-500">No data available</div>
-                    )}
+                    <AreaChart width={228} height={150} data={netProfitHistory}>
+                        <XAxis dataKey="x" hide />
+                        <YAxis hide domain={[-100, 100]} />
+                        <defs>
+                            <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
+                                <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
+                            </linearGradient>
+                        </defs>
+                        <Area type="monotone" dataKey="y" stroke="#000" fill="url(#splitColor)" isAnimationActive={false} baseLine={0} />
+                    </AreaChart>
                 </div>
             </div>
         );
