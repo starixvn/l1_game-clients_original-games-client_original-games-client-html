@@ -8,7 +8,7 @@ exports[`StopOnControl Rendering should render label and input field 1`] = `
     </div>
     <input
       class="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
-      inputmode="numeric"
+      inputmode="decimal"
       maxlength="22"
       pattern="[0-9]*"
       step="0.01"

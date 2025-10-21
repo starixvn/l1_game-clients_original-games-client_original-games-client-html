@@ -23,7 +23,7 @@ const StopOnControl = ({
                 value={value?.toString() || "0"}
                 onChange={(e) => setValue(Math.abs(+e.target.value))}
                 onBlur={(e) => setValue(Number((+e.target.value).toFixed(2)))}
-                inputMode="numeric"
+                inputMode="decimal"
                 className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50"
                 disabled={isDisabled}
             />
