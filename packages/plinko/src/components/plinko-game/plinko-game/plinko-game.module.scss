@@ -73,16 +73,3 @@
   transform: var(--canvas-transform, translateX(-50%) scale(1));
 }
 
-.slots-container {
-  // Slots absolute positioning
-  position: absolute;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: top center; // origin-top
-
-  // Position based on canvas position to ensure slots stay below canvas
-  top: calc(var(--game-height, 600px) - 45px + var(--canvas-y-translation, 0px));
-}

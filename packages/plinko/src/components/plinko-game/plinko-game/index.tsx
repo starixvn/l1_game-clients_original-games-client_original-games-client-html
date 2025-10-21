@@ -2,7 +2,6 @@
 import React from "react";
 import { isMobile } from "react-device-detect";
 import PlinkoCanvas from "./canvas";
-import Slots from "./slots";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { usePlinkoGameScaling, usePlinkoGameLayout } from "./hooks";
 import { VISUAL_CONSTANTS, CANVAS_CONSTANTS } from "./constants/scaling-constants";
@@ -25,7 +24,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
     const {
         mainContainerRef,
         canvasContainerRef,
-        slotsContainerRef,
         baseGameHeight
     } = usePlinkoGameLayout();
 
@@ -63,12 +61,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
                             style={{ height: 0 }}
                         >
                             <PlinkoCanvas />
-                        </div>
-                        <div
-                            ref={slotsContainerRef}
-                            className={styles["slots-container"]}
-                        >
-                            <Slots />
                         </div>
                     </div>
                 </div>

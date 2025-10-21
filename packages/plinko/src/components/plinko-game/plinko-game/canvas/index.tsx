@@ -29,7 +29,7 @@ const PlinkoCanvas = () => {
     const { createPegs, drawPeg } = usePeg();
 
     // Multiplier hook
-    const { createSlots } = useSlot();
+    const { createSlots, drawSlot } = useSlot();
 
     // Ball hook
     const { createBall, drawBall, handleRoad } = useBall();
@@ -95,9 +95,10 @@ const PlinkoCanvas = () => {
             context.rotate(angle);
             drawBall(body, context);
             drawPeg(body, context);
+            drawSlot(body, context);
             context.restore();
         },
-        [drawBall, drawPeg]
+        [drawBall, drawPeg, drawSlot]
     );
 
     // Clear all objects

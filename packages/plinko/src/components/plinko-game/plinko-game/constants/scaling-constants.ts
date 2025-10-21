@@ -64,8 +64,6 @@ export const BUFFER_FACTORS = {
 export const VISUAL_CONSTANTS = {
     /** Z-index for logger controls */
     LOGGER_Z_INDEX: 10000,
-    /** Slots container offset from bottom */
-    SLOTS_BOTTOM_OFFSET: 30,
     /** Canvas transform offset factor */
     CANVAS_TRANSFORM_OFFSET_FACTOR: 8,
 } as const;
