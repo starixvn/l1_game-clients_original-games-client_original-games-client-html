@@ -25,16 +25,11 @@ export const WinningAmountEffect = () => {
         return <div className="h-10"></div>;
     }
 
-    if (isMobile) {
-        return (
-            <div className="md:relative absolute bottom-[-10px] left-0 right-0 h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl z-[200]">
-                {t("win")} {numberWithCommas(winAmount, 2)}
-            </div>
-        );
-    }
+    const baseClasses = "h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl";
+    const mobileClasses = isMobile ? "absolute bottom-[-10px] left-0 right-0 z-[200]" : "relative top-[-10px]";
 
     return (
-        <div className="h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl">
+        <div className={`${baseClasses} ${mobileClasses}`}>
             {t("win")} {numberWithCommas(winAmount, 2)}
         </div>
     );

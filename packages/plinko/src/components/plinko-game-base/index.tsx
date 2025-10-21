@@ -109,7 +109,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                         gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef}
                     />
                     <WinningAmountEffect />
-                    {this.renderNotice()}
+                    <div> {this.renderNotice()}</div>
+
                 </div>
 
             </div>
@@ -145,6 +146,20 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderRightSide(): JSX.Element {
         // Plinko doesn't need a right side panel
         return <></>;
+    }
+
+    renderNotice(): JSX.Element {
+        const notice = super.renderNotice();
+        if (!notice) {
+            return notice;
+        }
+
+        // Apply mobile positioning similar to WinningAmountEffect
+        return (
+            <div className="md:relative absolute bottom-[-10px] left-0 right-0 z-[200]">
+                {notice}
+            </div>
+        );
     }
 
     renderBetDetailModal(): JSX.Element {

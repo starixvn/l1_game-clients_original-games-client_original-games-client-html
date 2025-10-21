@@ -3,6 +3,7 @@ import { useGameStore } from "@shared/stores";
 import React, { useEffect, useRef, useState } from "react";
 import RoundMultiplierItem from "./round-multiplier-item";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
+import { isMobile } from "react-device-detect";
 
 export interface PlinkoRound extends Round {
     gameMode: number;
@@ -12,7 +13,7 @@ const RoundMultiplierHistory = () => {
     const roundHistory = useGameStore((state) => state.roundHistory);
     const endBet = useGameStore((state) => state.endBet);
     const finish = usePlinkoGameStore((state) => state.finishedBall);
-    
+
     const [data, setData] = useState<PlinkoRound[]>([]);
     const isInitializedRef = useRef(false);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -47,7 +48,7 @@ const RoundMultiplierHistory = () => {
 
     return (
         <div
-            className="absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center max-w-[40rem] mx-auto"
+            className={`absolute left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center mx-auto ${isMobile ? "top-[5px]" : "top-[10px]"}`}
             style={
                 data.length === 10
                     ? { maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" }
