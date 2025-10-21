@@ -18,7 +18,6 @@ const StopOnControl = ({
             <input
                 type="number"
                 step={0.01}
-                pattern="[0-9]*"
                 maxLength={22}
                 value={value?.toString() || "0"}
                 onChange={(e) => setValue(Math.abs(+e.target.value))}

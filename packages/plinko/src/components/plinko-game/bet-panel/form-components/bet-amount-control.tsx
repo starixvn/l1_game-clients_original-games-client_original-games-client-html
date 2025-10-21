@@ -55,7 +55,6 @@ const BetAmountControl = ({
                 <input
                     type="number"
                     step={0.01}
-                    pattern="[0-9]*"
                     value={amount?.toString() || "0"}
                     onChange={onChange}
                     onBlur={() => {
