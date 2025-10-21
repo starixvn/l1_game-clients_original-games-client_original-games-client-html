@@ -38,7 +38,7 @@ const BetAmountControl = ({
     }, [betAmount]);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Math.abs(+e.target.value);
+        const value = Math.abs(+e.target.value || 0);
         const maxValue = 999999999;
         setAmount(Math.min(value, maxValue));
     };
@@ -54,9 +54,9 @@ const BetAmountControl = ({
             <div className="relative">
                 <input
                     type="number"
-                    step={1}
+                    step={0.01}
                     pattern="[0-9]*"
-                    value={amount}
+                    value={amount?.toString() || "0"}
                     onChange={onChange}
                     onBlur={() => {
                         handleBetAmountChange(amount ? +amount : minBet);

@@ -11,7 +11,7 @@ exports[`StopOnControl Rendering should render label and input field 1`] = `
       inputmode="numeric"
       maxlength="22"
       pattern="[0-9]*"
-      step="1"
+      step="0.01"
       type="number"
       value="100"
     />

@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import Label from "./label";
 import { useCommonTranslate } from "@shared/react-hooks";
+import IconInfoPercentageControl from "./icon-info-percentage-control";
 
 interface PercentageControlProps {
     isIncreaseOn: boolean;
@@ -9,7 +10,7 @@ interface PercentageControlProps {
     setPercentage: (percentage: number) => void;
     isDisabled: boolean;
     title: string;
-    showAutoBetInstruction: () => void;
+    type: "on_win" | "on_loss";
 }
 const buttons = [
     {
@@ -28,7 +29,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     setPercentage,
     isDisabled,
     title,
-    showAutoBetInstruction,
+    type,
 }) => {
     const { t } = useCommonTranslate();
 
@@ -38,20 +39,16 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Math.abs(parseInt(e.target.value));
+        const value = Math.abs(parseInt(e.target.value || "0"));
         const maxValue = 10000;
         setPercentage(Math.min(value, maxValue));
     };
 
     return (
         <div>
-            <div className="flex justify-between ">
+            <div className="flex gap-2 relative">
                 <Label title={title} />
-                <i
-                    className="icon-guide text-lg w-[18px] h-[18px] cursor-pointer before:text-white before:content-['\e90a']"
-                    onClick={showAutoBetInstruction}
-                    data-testid="icon-guide-testid"
-                />
+                <IconInfoPercentageControl type={type} />
             </div>
             <div className="flex flex-row gap-2">
                 <div className="flex flex-1 items-center input p-1 gap-1 rounded-lg h-11">
@@ -73,7 +70,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                         type="number"
                         step={1}
                         pattern="[0-9]*"
-                        value={percentage}
+                        value={percentage?.toString() || "0"}
                         onChange={onChange}
                         inputMode="numeric"
                         disabled={!isIncreaseOn || isDisabled}

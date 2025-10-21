@@ -51,7 +51,7 @@ const BetForm = ({
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle">
+        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:max-h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle">
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
             <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />

@@ -324,7 +324,7 @@ describe("BetForm", () => {
                 "md:gap-4",
                 "md:px-3",
                 "md:py-3",
-                "md:h-[30.75rem]",
+                "md:max-h-[30.75rem]",
                 "md:overflow-y-auto"
             );
         });

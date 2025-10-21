@@ -3,9 +3,9 @@ import Label from "./label";
 import { useCommonTranslate } from "@shared/react-hooks";
 
 const BUTTONS_NUMBER_OF_BETS = [
-    { text: "∞", value: Infinity },
     { text: "10", value: 10 },
     { text: "100", value: 100 },
+    { text: "∞", value: Infinity },
 ];
 
 const NumberOfBetsControl = ({
@@ -19,7 +19,7 @@ const NumberOfBetsControl = ({
 }) => {
     const { t } = useCommonTranslate();
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Math.abs(parseInt(e.target.value));
+        const value = Math.abs(parseInt(e.target.value || "0"));
         const maxValue = 99999999;
         setNumberOfBets(Math.min(value, maxValue));
     };
@@ -32,7 +32,7 @@ const NumberOfBetsControl = ({
                     type="number"
                     step={1}
                     pattern="[0-9]*"
-                    value={numberOfBets}
+                    value={numberOfBets?.toString() || "0"}
                     onChange={onChange}
                     onFocus={() => (numberOfBets === Infinity ? setNumberOfBets(0) : setNumberOfBets(numberOfBets))}
                     onBlur={() => setNumberOfBets(!numberOfBets ? Infinity : numberOfBets)}

@@ -7,6 +7,12 @@ jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn().mockReturnValue({ t: jest.fn((key) => key) }),
 }));
 
+jest.mock("../icon-info-percentage-control", () => {
+    return function MockIconInfoPercentageControl({ type }: { type: "on_win" | "on_loss" }) {
+        return <div>IconInfoPercentageControl</div>;
+    };
+});
+
 describe("PercentageControl", () => {
     const defaultProps = {
         isIncreaseOn: false,
@@ -15,7 +21,7 @@ describe("PercentageControl", () => {
         setPercentage: jest.fn(),
         isDisabled: false,
         title: "test_title",
-        showAutoBetInstruction: jest.fn(),
+        type: "on_win" as const,
     };
 
     beforeEach(() => {
@@ -89,18 +95,6 @@ describe("PercentageControl", () => {
             // Assert
             expect(mockSetIsIncreaseOn).toHaveBeenCalledWith(true);
             expect(mockSetPercentage).toHaveBeenCalledWith(0);
-        });
-
-        it("should call showAutoBetInstruction when click icon", () => {
-            // Arrange
-            const mockShowAutoBetInstruction = jest.fn();
-            render(<PercentageControl {...defaultProps} showAutoBetInstruction={mockShowAutoBetInstruction} />);
-
-            // Act
-            fireEvent.click(screen.getByTestId("icon-guide-testid"));
-
-            // Assert
-            expect(mockShowAutoBetInstruction).toHaveBeenCalled();
         });
     });
 

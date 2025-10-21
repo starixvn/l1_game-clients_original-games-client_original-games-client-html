@@ -3,7 +3,7 @@
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
 import { BallBody, PegEffect, SlotBody } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect, useSlotValidationLogger } from "./hooks";
+import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
@@ -18,7 +18,11 @@ const PlinkoCanvas = () => {
     const pegEffectsRef = useRef<PegEffect[]>([]);
     const pegIdRef = useRef<number>(0);
     const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
-        useShallow((state) => ({ finish: state.finish, setFinishedBall: state.actions.setFinishedBall, numberOfDroppingBall: state.numberOfDroppingBall }))
+        useShallow((state) => ({
+            finish: state.finish,
+            setFinishedBall: state.actions.setFinishedBall,
+            numberOfDroppingBall: state.numberOfDroppingBall,
+        }))
     );
 
     // Peg hook
@@ -35,9 +39,6 @@ const PlinkoCanvas = () => {
         pegEffectsRef,
         pegIdRef,
     });
-
-    // Slot validation logger hook
-    const { logValidation, downloadLogs, clearLogs, getLogs } = useSlotValidationLogger();
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -65,18 +66,10 @@ const PlinkoCanvas = () => {
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
-                    const slotBody = object as SlotBody;
                     const ballBody = ball as BallBody;
 
                     setFinishedBall(ballBody.finish);
                     playPlinkoBallHitWinSoundRef.current();
-                    // Log validation data
-                    logValidation({
-                        slotIndex: slotBody.slotIndex,
-                        settlementResultSlotIndex: ballBody.finish?.settlementResult.slotIndex,
-                        ballId: ballBody.id?.toString(),
-                        gameRoundId: ballBody.finish?.roundId,
-                    });
 
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
@@ -84,7 +77,7 @@ const PlinkoCanvas = () => {
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall, logValidation]
+        [createPegEffect, handleRoad, setFinishedBall]
     );
 
     // Draw scene object
@@ -226,29 +219,20 @@ const PlinkoCanvas = () => {
     // Add ball
     useEffect(() => {
         if (finish) {
+            if (document.hidden) {
+                setFinishedBall(finish);
+                return;
+            }
             const ballBody = createBall(finish);
             addObjects([ballBody]);
         }
-    }, [finish, createBall, addObjects]);
+    }, [finish, createBall, addObjects, setFinishedBall]);
 
     useEffect(() => {
         if (numberOfDroppingBall === 0) {
             useGameStore.getState().resetBettingInfo();
         }
     }, [numberOfDroppingBall]);
-
-    // Expose logger functions to window for debugging
-    useEffect(() => {
-        (window as any).plinkoSlotValidation = {
-            downloadLogs,
-            clearLogs,
-            getLogs,
-        };
-
-        return () => {
-            delete (window as any).plinkoSlotValidation;
-        };
-    }, [downloadLogs, clearLogs, getLogs]);
 
     return <canvas ref={canvasRef} />;
 };

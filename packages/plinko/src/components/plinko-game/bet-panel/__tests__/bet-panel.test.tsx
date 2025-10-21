@@ -174,7 +174,8 @@ describe("BetControl", () => {
                 "lg:py-4",
                 "lg:px-0",
                 "lg:mt-0",
-                "lg:h-full"
+                "lg:h-full",
+                "lg:min-h-[38.5rem]"
             );
         });
     });

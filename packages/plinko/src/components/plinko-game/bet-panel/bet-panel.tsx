@@ -100,7 +100,7 @@ const BetControl = () => {
     const isManualTab = tabIndex === 0;
 
     return (
-        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full">
+        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full lg:min-h-[38.5rem]">
             <div className="relative">
                 <div className="lg:px-3">
                     {isManualTab ? (
@@ -113,7 +113,9 @@ const BetControl = () => {
                         </button>
                     )}
                 </div>
-                <div className="hidden lg:block absolute -top-3 h-[1px] w-full bg-[#2934454D] shadow-[0_-4px_20px_2px_#000000]"></div>
+                {!isManualTab && (
+                    <div className="hidden lg:block absolute -top-3 h-[1px] w-full bg-[#2934454D] shadow-[0_-4px_20px_2px_#000000]"></div>
+                )}
             </div>
 
             <div className="flex flex-col lg:flex-col-reverse rounded-t-xl bg-primary-bg lg:gap-2">

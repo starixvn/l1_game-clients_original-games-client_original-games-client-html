@@ -25,17 +25,17 @@ exports[`NumberOfBetsControl Rendering should render label and input field 1`] =
         <button
           class="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
         >
-          ∞
-        </button>
-        <button
-          class="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
-        >
           10
         </button>
         <button
           class="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
         >
           100
+        </button>
+        <button
+          class="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
+        >
+          ∞
         </button>
       </div>
     </div>
