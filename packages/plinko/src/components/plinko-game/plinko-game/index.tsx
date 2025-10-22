@@ -30,7 +30,7 @@ export const mapCanvasYToContainerY = (
     // Calculate canvas Y translation to keep slots at consistent position
     const totalScale = scaleValue * finalScale;
     const slotCanvasY = getSlotCanvasY(0, numberOfRows);
-    const targetSlotY = 567; // Reference position
+    const targetSlotY = 567 * finalScale; // Scale target position by finalScale
     const canvasYTranslation = targetSlotY - (slotCanvasY * totalScale);
 
     // Apply canvas scaling transformation
@@ -81,33 +81,30 @@ export const testSlotPositionStability = () => {
     console.log('Testing that slot Y positions remain stable when numberOfRows changes');
 
     const baseGameHeight = 575;
-    const finalScale = 1;
 
-    // Test with different numberOfRows and scaleValue combinations (like in your logs)
+    // Test with different scenarios
     const testCases = [
-        { rows: 8, scaleValue: 1.125 },
-        { rows: 9, scaleValue: 1 },
-        { rows: 10, scaleValue: 0.905 },
-        { rows: 11, scaleValue: 0.82 },
-        { rows: 12, scaleValue: 0.755 },
-        { rows: 13, scaleValue: 0.695 },
-        { rows: 14, scaleValue: 0.645 },
-        { rows: 15, scaleValue: 0.602 },
+        // Desktop cases (finalScale = 1)
+        { rows: 8, scaleValue: 1.125, finalScale: 1, expectedTarget: 567 },
+        { rows: 9, scaleValue: 1, finalScale: 1, expectedTarget: 567 },
+        { rows: 10, scaleValue: 0.905, finalScale: 1, expectedTarget: 567 },
+        { rows: 11, scaleValue: 0.82, finalScale: 1, expectedTarget: 567 },
+        { rows: 12, scaleValue: 0.755, finalScale: 1, expectedTarget: 567 },
+        { rows: 13, scaleValue: 0.695, finalScale: 1, expectedTarget: 567 },
+        { rows: 14, scaleValue: 0.645, finalScale: 1, expectedTarget: 567 },
+        { rows: 15, scaleValue: 0.602, finalScale: 1, expectedTarget: 567 },
+        // Mobile case (finalScale = 0.6)
+        { rows: 10, scaleValue: 0.905, finalScale: 0.6, expectedTarget: 567 * 0.6 },
     ];
 
-    console.log('Target slot Y position should be: 567');
+    console.log('Testing that slots appear at consistent target positions');
     console.log('');
 
-    for (const { rows, scaleValue } of testCases) {
+    for (const { rows, scaleValue, finalScale, expectedTarget } of testCases) {
         // Calculate slot position using the FIXED formula
         const slotY = mapSlotYToContainerY(0, rows, baseGameHeight, scaleValue, finalScale);
 
-        // Calculate what it would be with the OLD formula for comparison
-        const oldCanvasYTranslation = (rows + rows / 8) * (baseGameHeight / 575);
-        const oldSlotCanvasY = getSlotCanvasY(0, rows);
-        const oldSlotY = (oldSlotCanvasY * scaleValue * finalScale) + oldCanvasYTranslation;
-
-        console.log(`Rows: ${rows.toString().padStart(2)} | Scale: ${scaleValue.toFixed(3).padStart(5)} | Fixed: ${slotY.toFixed(2).padStart(7)} | Old: ${oldSlotY.toFixed(2).padStart(7)} | Diff: ${(slotY - oldSlotY).toFixed(2)}`);
+        console.log(`Rows: ${rows.toString().padStart(2)} | Scale: ${scaleValue.toFixed(3).padStart(5)} | finalScale: ${finalScale.toFixed(1).padStart(3)} | Target: ${expectedTarget.toFixed(1).padStart(6)} | Actual: ${slotY.toFixed(2).padStart(7)} | Match: ${Math.abs(slotY - expectedTarget) < 0.01 ? '✅' : '❌'}`);
     }
 
     console.log('=== END TEST ===');
@@ -132,8 +129,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
     // We want slots to appear at a consistent Y position in the container regardless of numberOfRows
     const totalScale = scaleValue * finalScale;
     const slotCanvasY = getSlotCanvasY(0, numberOfRows);
-    // Target slot position (based on numberOfRows=9, scaleValue=1 reference point: 567)
-    const targetSlotY = 567;
+    // Target slot position scaled by finalScale to account for mobile/desktop differences
+    const targetSlotY = 567 * finalScale;
     const canvasYTranslation = targetSlotY - (slotCanvasY * totalScale);
 
     // Calculate and log slot positions for debugging
