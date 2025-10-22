@@ -75,40 +75,6 @@ export const mapSlotYToContainerY = (
     return mapCanvasYToContainerY(canvasY, numberOfRows, baseGameHeight, scaleValue, finalScale);
 };
 
-// Test function to demonstrate the fix - shows slot positions remain stable
-export const testSlotPositionStability = () => {
-    console.log('=== SLOT POSITION STABILITY TEST ===');
-    console.log('Testing that slot Y positions remain stable when numberOfRows changes');
-
-    const baseGameHeight = 575;
-
-    // Test with different scenarios
-    const testCases = [
-        // Desktop cases (finalScale = 1)
-        { rows: 8, scaleValue: 1.125, finalScale: 1, expectedTarget: 567 },
-        { rows: 9, scaleValue: 1, finalScale: 1, expectedTarget: 567 },
-        { rows: 10, scaleValue: 0.905, finalScale: 1, expectedTarget: 567 },
-        { rows: 11, scaleValue: 0.82, finalScale: 1, expectedTarget: 567 },
-        { rows: 12, scaleValue: 0.755, finalScale: 1, expectedTarget: 567 },
-        { rows: 13, scaleValue: 0.695, finalScale: 1, expectedTarget: 567 },
-        { rows: 14, scaleValue: 0.645, finalScale: 1, expectedTarget: 567 },
-        { rows: 15, scaleValue: 0.602, finalScale: 1, expectedTarget: 567 },
-        // Mobile case (finalScale = 0.6)
-        { rows: 10, scaleValue: 0.905, finalScale: 0.6, expectedTarget: 567 * 0.6 },
-    ];
-
-    console.log('Testing that slots appear at consistent target positions');
-    console.log('');
-
-    for (const { rows, scaleValue, finalScale, expectedTarget } of testCases) {
-        // Calculate slot position using the FIXED formula
-        const slotY = mapSlotYToContainerY(0, rows, baseGameHeight, scaleValue, finalScale);
-
-        console.log(`Rows: ${rows.toString().padStart(2)} | Scale: ${scaleValue.toFixed(3).padStart(5)} | finalScale: ${finalScale.toFixed(1).padStart(3)} | Target: ${expectedTarget.toFixed(1).padStart(6)} | Actual: ${slotY.toFixed(2).padStart(7)} | Match: ${Math.abs(slotY - expectedTarget) < 0.01 ? '✅' : '❌'}`);
-    }
-
-    console.log('=== END TEST ===');
-};
 
 const PlinkoGame: React.FC<PlinkoGameProps> = ({
     gameFrameWrapperWithoutBackgroundRef
@@ -133,15 +99,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
     const targetSlotY = 567 * finalScale;
     const canvasYTranslation = targetSlotY - (slotCanvasY * totalScale);
 
-    // Calculate and log slot positions for debugging
-    const slotContainerY = mapSlotYToContainerY(0, numberOfRows, baseGameHeight, scaleValue, finalScale);
-
-    console.log('Slot Position Analysis:');
-    console.log(`- numberOfRows: ${numberOfRows}`);
-    console.log(`- slotCanvasY: ${slotCanvasY}`);
-    console.log(`- canvasYTranslation: ${canvasYTranslation}`);
-    console.log(`- slotContainerY: ${slotContainerY}`);
-
     // CSS custom properties for dynamic values
     const cssVariables = {
         '--game-height': `${baseGameHeight}px`,
@@ -151,26 +108,13 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
         '--final-scale': finalScale.toString()
     };
 
-    console.log('CSS Variables Debug:');
-    console.log(`- --game-height: ${cssVariables['--game-height']}`);
-    console.log(`- --canvas-y-translation: ${cssVariables['--canvas-y-translation']}`);
-    console.log(`- canvasYTranslation: ${canvasYTranslation}`);
-
     return (
         <div
             ref={mainContainerRef}
             className={`${styles["plinko-game"]} ${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''} ${finalScale < 1 ? styles.scaled : ''}`}
             style={cssVariables as React.CSSProperties}
         >
-            <PlinkoCanvas totalScale={(() => {
-                const calculatedTotalScale = scaleValue * finalScale;
-                console.log('PlinkoGame Debug Info:');
-                console.log(`- scaleValue: ${scaleValue}`);
-                console.log(`- finalScale: ${finalScale}`);
-                console.log(`- totalScale passed to canvas: ${calculatedTotalScale}`);
-                console.log(`- baseGameHeight: ${baseGameHeight}`);
-                return calculatedTotalScale;
-            })()} />
+            <PlinkoCanvas totalScale={scaleValue * finalScale} />
         </div>
     );
 };

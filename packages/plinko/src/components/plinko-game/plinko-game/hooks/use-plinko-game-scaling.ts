@@ -127,7 +127,7 @@ function calculateMobileScalingPure(
     containerRef?: React.RefObject<HTMLDivElement>
 ): number {
     // Create optimized cache key (avoid string concatenation)
-    const cacheKey = `${expectedMainWidth | 0}-${frameRect.width | 0}-${frameRect.height | 0}-${numberOfRows}`;
+    const cacheKey = `${Math.trunc(expectedMainWidth)}-${Math.trunc(frameRect.width)}-${Math.trunc(frameRect.height)}-${numberOfRows}`;
 
     // Return cached result if available
     const cached = scalingCache.get(cacheKey);
@@ -305,13 +305,6 @@ export const usePlinkoGameScaling = ({
         gameFrameWrapperRef?.current,
         isReady
     ]);
-
-    console.log('Scaling Hook Debug Info:');
-    console.log(`- scaleValue: ${scaleValue}`);
-    console.log(`- finalScale: ${finalScale}`);
-    console.log(`- isReady: ${isReady}`);
-    console.log(`- expectedMainWidth: ${expectedMainWidth}`);
-    console.log(`- numberOfRows: ${numberOfRows}`);
 
     return {
         scaleValue,
