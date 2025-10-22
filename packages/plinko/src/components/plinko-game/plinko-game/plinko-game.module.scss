@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: -1;
+  z-index: 0;
 
   // Fixed dimensions
   width: 100%;
@@ -49,6 +49,7 @@
       transform: translateX(-50%) translateY(var(--canvas-y-translation, 0px));
       z-index: 9999;
       transform-origin: top center;
+      pointer-events: auto;
     }
   }
 }

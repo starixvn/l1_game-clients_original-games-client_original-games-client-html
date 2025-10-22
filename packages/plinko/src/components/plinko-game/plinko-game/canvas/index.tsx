@@ -42,7 +42,7 @@ const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
         handleTouchStart,
         handleTouchEnd,
         handleTouchMove
-    } = useSlot({ totalScale });
+    } = useSlot();
 
     // Ball hook
     const { createBall, drawBall, handleRoad } = useBall();

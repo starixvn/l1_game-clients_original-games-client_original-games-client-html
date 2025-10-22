@@ -7,11 +7,7 @@ import { useGameStore } from "@shared/stores/game-store";
 import { getMultiplierColor } from "@plinko/shared/colors-util";
 import { numberWithCommas } from "@shared";
 
-interface UseSlotProps {
-    totalScale: number;
-}
-
-export const useSlot = ({ totalScale }: UseSlotProps) => {
+export const useSlot = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
     const gameConfigs = useGameStore((state) => state.gameConfigs);
     const gameMode = usePlinkoGameStore((state) => state.gameMode);
@@ -151,7 +147,9 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
 
     // Draw tooltip on canvas
     const drawTooltip = useCallback((context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+        console.log('drawTooltip called with hoveredSlotIndex:', hoveredSlotIndex);
         if (hoveredSlotIndex === null || !odds || hoveredSlotIndex >= odds.length) {
+            console.log('drawTooltip early return - no hovered slot or invalid odds');
             return;
         }
 
@@ -163,14 +161,13 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         // mousePosition is in screen coords relative to canvas element
         // Convert to canvas coordinates for proper positioning on scaled canvas
         const rect = canvas.getBoundingClientRect();
-        const visualCenterX = rect.width / 2;
-        const tooltipCanvasX = ((mousePosition.x - visualCenterX) / totalScale) + (canvas.width / 2);
-        const tooltipCanvasY = mousePosition.y / totalScale;
+        const canvasX = (mousePosition.x / rect.width) * canvas.width;
+        const canvasY = (mousePosition.y / rect.height) * canvas.height;
 
         const tooltipWidth = 266;
         const tooltipHeight = 60;
-        const tooltipX = Math.max(10, Math.min(tooltipCanvasX - tooltipWidth / 2, canvas.width - tooltipWidth - 10));
-        const tooltipY = tooltipCanvasY - tooltipHeight - 10;
+        const tooltipX = Math.max(10, Math.min(canvasX - tooltipWidth / 2, canvas.width - tooltipWidth - 10));
+        const tooltipY = canvasY - tooltipHeight - 10;
 
         // Draw tooltip background with gradient
         const gradient = context.createLinearGradient(tooltipX, tooltipY, tooltipX, tooltipY + tooltipHeight);
@@ -223,7 +220,7 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         context.fillText(`${numberWithCommas(probability * 100, 4)}%`, chanceX + 8, chanceY + 26);
 
         // Draw arrow pointing down
-        const arrowX = mousePosition.x;
+        const arrowX = canvasX;
         const arrowY = tooltipY + tooltipHeight;
         context.fillStyle = "#031122";
         context.beginPath();
@@ -232,11 +229,14 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         context.lineTo(arrowX + 6, arrowY - 6);
         context.closePath();
         context.fill();
-    }, [hoveredSlotIndex, odds, mousePosition, betAmount, calculateProbability, totalScale]);
+        console.log('Tooltip drawn successfully');
+    }, [hoveredSlotIndex, odds, mousePosition, betAmount, calculateProbability]);
 
     // Mouse/touch event handlers
     const handleMouseMove = useCallback((event: MouseEvent, canvas: HTMLCanvasElement) => {
         if (isTouchDevice.current) return;
+
+        console.log('Mouse move event detected');
 
         const rect = canvas.getBoundingClientRect();
         // Get screen coordinates relative to canvas element
@@ -244,10 +244,10 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         const screenY = event.clientY - rect.top;
 
         // Transform to canvas coordinates (accounting for CSS scaling)
-        // The canvas is visually scaled by totalScale and centered, so we need to convert back to original canvas coords
-        const visualCenterX = rect.width / 2;
-        const canvasX = ((screenX - visualCenterX) / totalScale) + (canvas.width / 2);
-        const canvasY = screenY / totalScale;
+        const canvasX = (screenX / rect.width) * canvas.width;
+        const canvasY = (screenY / rect.height) * canvas.height;
+
+        console.log('Mouse coords - screen:', screenX, screenY, 'canvas:', canvasX, canvasY);
 
         setMousePosition({ x: screenX, y: screenY }); // Keep screen coords for tooltip positioning
 
@@ -257,6 +257,8 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         const numberOfSlots = numberOfRows + 1;
         const slotY = (numberOfRows + 1.5) * gap;
 
+        console.log('Slot check - canvasY:', canvasY, 'slotY:', slotY, 'slotY-35:', slotY - 35, 'diff:', Math.abs(canvasY - (slotY - 35)));
+
         // Check Y proximity (within slot height + some margin) - align with visual slot position
         if (Math.abs(canvasY - (slotY - 35)) < 40) {
             // Check X position for each slot
@@ -264,6 +266,7 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
                 const space = (PlinkoCanvasConfig.width - gap * numberOfSlots) / 2;
                 const slotX = space + (col + 1) * gap - pegRadius * mapGap;
                 if (Math.abs(canvasX - slotX) < 25) { // 50px slot width / 2
+                    console.log('Setting hovered slot index to:', col);
                     setHoveredSlotIndex(col);
                     return;
                 }
@@ -271,7 +274,7 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         }
 
         setHoveredSlotIndex(null);
-    }, [numberOfRows, totalScale]);
+    }, [numberOfRows]);
 
     const handleMouseLeave = useCallback(() => {
         if (!isTouchDevice.current) {
@@ -290,9 +293,8 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
         const screenY = touch.clientY - rect.top;
 
         // Transform to canvas coordinates (accounting for CSS scaling)
-        const visualCenterX = rect.width / 2;
-        const canvasX = ((screenX - visualCenterX) / totalScale) + (canvas.width / 2);
-        const canvasY = screenY / totalScale;
+        const canvasX = (screenX / rect.width) * canvas.width;
+        const canvasY = (screenY / rect.height) * canvas.height;
 
         setMousePosition({ x: screenX, y: screenY });
 
@@ -316,7 +318,7 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
 
             setHoveredSlotIndex(null);
         }, 300);
-    }, [numberOfRows, totalScale]);
+    }, [numberOfRows]);
 
     const handleTouchEnd = useCallback(() => {
         if (touchTimeoutRef.current) {
