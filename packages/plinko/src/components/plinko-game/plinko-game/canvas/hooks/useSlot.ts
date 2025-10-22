@@ -30,12 +30,12 @@ export const useSlot = () => {
         8: 18,
         9: 16,
         10: 14,
-        11: 13,
-        12: 12,
-        13: 11,
-        14: 10,
-        15: 9,
-        16: 9,
+        11: 14,
+        12: 14,
+        13: 14,
+        14: 16,
+        15: 16,
+        16: 16,
     }), []);
 
     // Calculate probability for a slot (binomial coefficient)
