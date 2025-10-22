@@ -23,7 +23,6 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
 
     const {
         mainContainerRef,
-        canvasContainerRef,
         baseGameHeight
     } = usePlinkoGameLayout();
 
@@ -41,16 +40,10 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
     return (
         <div
             ref={mainContainerRef}
-            className={`${styles["plinko-game"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''}`}
+            className={`${styles["plinko-game"]} ${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''} ${finalScale < 1 ? styles.scaled : ''}`}
+            style={cssVariables as React.CSSProperties}
         >
-            {/* Canvas container - handles game area dimensions, frame styling, and canvas positioning */}
-            <div
-                ref={canvasContainerRef}
-                className={`${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${finalScale < 1 ? styles.scaled : ''}`}
-                style={cssVariables as React.CSSProperties}
-            >
-                <PlinkoCanvas />
-            </div>
+            <PlinkoCanvas />
         </div>
     );
 };

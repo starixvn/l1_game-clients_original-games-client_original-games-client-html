@@ -1,16 +1,30 @@
 /**
- * PlinkoGame Component Styles - Ultra-Simplified Structure
- * Handles the main container with combined game content + canvas positioning
+ * PlinkoGame Component Styles - Minimal Structure
+ * Single container handling all game layout, styling, and canvas positioning
  */
 
 .plinko-game {
-  // Main container - flexbox centering
+  // Ultra-combined: main container + game area + frame + canvas positioning
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: -1;
+
+  // Fixed dimensions
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+
+  // Dynamic height via CSS custom property
+  height: var(--game-height, 600px);
+
+  // Game frame styling
+  border-radius: 0.5rem; // rounded-lg
+  margin: 0 auto; // mx-auto
+  overflow-x: hidden;
+  padding-top: 1.25rem; // pt-5
 
   // Mobile-specific full height
   &.mobile {
@@ -22,34 +36,10 @@
     opacity: 0;
     pointer-events: none;
   }
-}
-
-.game-content-container {
-  // Combined: fixed dimensions + game frame + canvas positioning + scaling
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  // Fixed dimensions
-  width: 100%;
-  min-width: 100%;
-  max-width: 100%;
-  z-index: 1;
-
-  // Dynamic height via CSS custom property
-  height: var(--game-height, 600px);
-
-  // Game frame styling
-  border-radius: 0.5rem; // rounded-lg
-  margin: 0 auto; // mx-auto
-  overflow-x: hidden;
-  padding-top: 1.25rem; // pt-5
 
   // Canvas positioning when combined with .canvas-container
   &.canvas-container {
-    position: relative; // Change from absolute to relative for proper containment
+    position: relative; // Relative positioning for canvas containment
 
     // Canvas absolute positioning within this container
     canvas {
