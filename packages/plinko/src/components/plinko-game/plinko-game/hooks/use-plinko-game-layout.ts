@@ -7,6 +7,8 @@ import {
 export const usePlinkoGameLayout = () => {
 
     const mainContainerRef = useRef<HTMLDivElement>(null);
+    const canvasContainerRef = useRef<HTMLDivElement>(null);
+    const slotsContainerRef = useRef<HTMLDivElement>(null);
 
     // Use mobile-like height calculation on mobile/tablet devices
     const isStackedLayout = isMobile;
@@ -16,6 +18,8 @@ export const usePlinkoGameLayout = () => {
 
     return {
         mainContainerRef,
+        canvasContainerRef,
+        slotsContainerRef,
         baseGameHeight
     };
 };
