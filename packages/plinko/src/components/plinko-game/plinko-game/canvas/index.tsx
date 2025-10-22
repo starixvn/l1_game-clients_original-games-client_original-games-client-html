@@ -10,7 +10,11 @@ import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
 import { usePlinkoBallHitWinSound } from "../hooks/use-sound";
 
-const PlinkoCanvas = () => {
+interface PlinkoCanvasProps {
+    totalScale: number;
+}
+
+const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine | null>(null);
     const sceneObjectsRef = useRef<Body[]>([]);
@@ -38,7 +42,7 @@ const PlinkoCanvas = () => {
         handleTouchStart,
         handleTouchEnd,
         handleTouchMove
-    } = useSlot();
+    } = useSlot({ totalScale });
 
     // Ball hook
     const { createBall, drawBall, handleRoad } = useBall();

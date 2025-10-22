@@ -43,7 +43,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
             className={`${styles["plinko-game"]} ${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''} ${finalScale < 1 ? styles.scaled : ''}`}
             style={cssVariables as React.CSSProperties}
         >
-            <PlinkoCanvas />
+            <PlinkoCanvas totalScale={scaleValue * finalScale} />
         </div>
     );
 };
