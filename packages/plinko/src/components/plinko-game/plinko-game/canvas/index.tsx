@@ -175,9 +175,9 @@ const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
         drawPegEffect?.(context);
 
         // Draw all scene objects
-        sceneObjectsRef.current.forEach((obj) => {
+        for (const obj of sceneObjectsRef.current) {
             drawSceneObject(obj);
-        });
+        }
 
         // Draw tooltip on top
         drawTooltip(context, canvas);
@@ -208,21 +208,8 @@ const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
         const visualWidth = width * totalScale;
         const visualHeight = height * totalScale;
 
-        console.log('Canvas Debug Info:');
-        console.log(`- Original dimensions: ${width}x${height}`);
-        console.log(`- totalScale: ${totalScale}`);
-        console.log(`- Calculated visual dimensions: ${visualWidth}x${visualHeight}`);
-
         canvas.style.width = `${visualWidth}px`;
         canvas.style.height = `${visualHeight}px`;
-
-        // Check parent container dimensions
-        const parentElement = canvas.parentElement;
-        if (parentElement) {
-            const parentRect = parentElement.getBoundingClientRect();
-            console.log(`- Parent container dimensions: ${parentRect.width}x${parentRect.height}`);
-            console.log(`- Canvas will fit parent: ${visualWidth <= parentRect.width && visualHeight <= parentRect.height}`);
-        }
 
         const runner = Runner.create();
         Runner.run(runner, engineRef.current);

@@ -147,9 +147,7 @@ export const useSlot = () => {
 
     // Draw tooltip on canvas
     const drawTooltip = useCallback((context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-        console.log('drawTooltip called with hoveredSlotIndex:', hoveredSlotIndex);
         if (hoveredSlotIndex === null || !odds || hoveredSlotIndex >= odds.length) {
-            console.log('drawTooltip early return - no hovered slot or invalid odds');
             return;
         }
 
@@ -229,14 +227,11 @@ export const useSlot = () => {
         context.lineTo(arrowX + 6, arrowY - 6);
         context.closePath();
         context.fill();
-        console.log('Tooltip drawn successfully');
     }, [hoveredSlotIndex, odds, mousePosition, betAmount, calculateProbability]);
 
     // Mouse/touch event handlers
     const handleMouseMove = useCallback((event: MouseEvent, canvas: HTMLCanvasElement) => {
         if (isTouchDevice.current) return;
-
-        console.log('Mouse move event detected');
 
         const rect = canvas.getBoundingClientRect();
         // Get screen coordinates relative to canvas element
@@ -247,8 +242,6 @@ export const useSlot = () => {
         const canvasX = (screenX / rect.width) * canvas.width;
         const canvasY = (screenY / rect.height) * canvas.height;
 
-        console.log('Mouse coords - screen:', screenX, screenY, 'canvas:', canvasX, canvasY);
-
         setMousePosition({ x: screenX, y: screenY }); // Keep screen coords for tooltip positioning
 
         // Check if mouse is over a slot (in canvas coordinates)
@@ -257,8 +250,6 @@ export const useSlot = () => {
         const numberOfSlots = numberOfRows + 1;
         const slotY = (numberOfRows + 1.5) * gap;
 
-        console.log('Slot check - canvasY:', canvasY, 'slotY:', slotY, 'slotY-35:', slotY - 35, 'diff:', Math.abs(canvasY - (slotY - 35)));
-
         // Check Y proximity (within slot height + some margin) - align with visual slot position
         if (Math.abs(canvasY - (slotY - 35)) < 40) {
             // Check X position for each slot
@@ -266,7 +257,6 @@ export const useSlot = () => {
                 const space = (PlinkoCanvasConfig.width - gap * numberOfSlots) / 2;
                 const slotX = space + (col + 1) * gap - pegRadius * mapGap;
                 if (Math.abs(canvasX - slotX) < 25) { // 50px slot width / 2
-                    console.log('Setting hovered slot index to:', col);
                     setHoveredSlotIndex(col);
                     return;
                 }
