@@ -2,7 +2,8 @@ import {
     PEG_CONSTANTS,
     CANVAS_CONSTANTS,
     BUFFER_FACTORS,
-    DEFAULT_VALUES
+    DEFAULT_VALUES,
+    VISUAL_CONSTANTS
 } from "../constants/scaling-constants";
 
 /**
@@ -71,6 +72,35 @@ export const calculatePegSafeScale = (
     }
 
     return DEFAULT_VALUES.NO_SCALE; // No cutoff detected
+};
+
+/**
+ * Calculate the Y position of the last peg in canvas coordinates
+ */
+export const calculateLastPegY = (numberOfRows: number): number => {
+    const { gap } = calculatePegPositions(numberOfRows);
+    return numberOfRows * gap;
+};
+
+/**
+ * Calculate the position of the last peg in game-frame coordinates after canvas transforms
+ */
+export const calculateLastPegPositionInGameFrame = (
+    numberOfRows: number,
+    scaleValue: number,
+    baseGameHeight: number
+): number => {
+    const lastPegY = calculateLastPegY(numberOfRows);
+
+    // Apply scaling to the canvas coordinate
+    const scaledY = lastPegY * scaleValue;
+
+    // Calculate the translateY value from the canvas transform
+    const translateYValue = (numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) *
+        (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
+
+    // The final Y position in game-frame coordinates
+    return scaledY + translateYValue;
 };
 
 /**

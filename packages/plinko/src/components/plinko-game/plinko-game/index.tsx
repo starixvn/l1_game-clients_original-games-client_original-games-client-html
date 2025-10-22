@@ -26,14 +26,20 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
         mainContainerRef,
         canvasContainerRef,
         slotsContainerRef,
-        baseGameHeight
-    } = usePlinkoGameLayout();
+        baseGameHeight,
+        slotsTopPosition
+    } = usePlinkoGameLayout({
+        numberOfRows,
+        scaleValue,
+        finalScale
+    });
 
     // CSS custom properties for dynamic values
     const cssVariables = {
         '--game-height': `${baseGameHeight}px`,
         '--canvas-transform': `translateX(-50%) translateY(${(numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT)}px) scale(${scaleValue})`,
-        '--final-scale': finalScale.toString()
+        '--final-scale': finalScale.toString(),
+        '--slots-top': `${slotsTopPosition}px`
     };
 
     return (

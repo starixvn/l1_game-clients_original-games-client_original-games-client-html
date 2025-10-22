@@ -31,7 +31,9 @@ describe("usePlinkoGameLayout", () => {
     describe("Initialization", () => {
         it("should initialize hook with correct refs on desktop", () => {
             // Arrange & Act
-            const { result } = renderHook(() => usePlinkoGameLayout());
+            const { result } = renderHook(() =>
+                usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 })
+            );
 
             // Assert
             expect(result.current.mainContainerRef).toBeDefined();
@@ -47,7 +49,9 @@ describe("usePlinkoGameLayout", () => {
             require("react-device-detect").isMobile = true;
 
             // Act
-            const { result } = renderHook(() => usePlinkoGameLayout());
+            const { result } = renderHook(() =>
+                usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 })
+            );
 
             // Assert
             expect(result.current.mainContainerRef).toBeDefined();
@@ -57,7 +61,9 @@ describe("usePlinkoGameLayout", () => {
 
         it("should return refs that can be assigned", () => {
             // Arrange & Act
-            const { result } = renderHook(() => usePlinkoGameLayout());
+            const { result } = renderHook(() =>
+                usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 })
+            );
 
             // Act - Simulate ref assignment (normally done by React)
             const mockDiv = document.createElement('div');
@@ -78,7 +84,7 @@ describe("usePlinkoGameLayout", () => {
                 require("react-device-detect").isMobile = false;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
@@ -86,7 +92,7 @@ describe("usePlinkoGameLayout", () => {
 
             it("should maintain consistent base game height across multiple renders", () => {
                 // Arrange & Act
-                const { result, rerender } = renderHook(() => usePlinkoGameLayout());
+                const { result, rerender } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 const firstHeight = result.current.baseGameHeight;
                 rerender();
@@ -108,7 +114,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD + 100;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
@@ -124,7 +130,7 @@ describe("usePlinkoGameLayout", () => {
                 );
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(expectedHeight);
@@ -136,7 +142,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = verySmallHeight;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT);
@@ -151,7 +157,7 @@ describe("usePlinkoGameLayout", () => {
                 const expectedHeight = CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(expectedHeight);
@@ -163,7 +169,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
@@ -175,7 +181,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = veryLargeHeight;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.BASE_GAME_HEIGHT);
@@ -186,7 +192,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = 0;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT);
@@ -197,7 +203,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = -100;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 expect(result.current.baseGameHeight).toBe(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT);
@@ -210,7 +216,7 @@ describe("usePlinkoGameLayout", () => {
                 require("react-device-detect").isMobile = false;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 // Note: isStackedLayout is not directly exposed, but we can infer it from baseGameHeight logic
@@ -223,7 +229,7 @@ describe("usePlinkoGameLayout", () => {
                 mockInnerHeightValue = CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD - 100;
 
                 // Act
-                const { result } = renderHook(() => usePlinkoGameLayout());
+                const { result } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
                 // Assert
                 // When isMobile is true and height is below threshold, mobile height calculation is used
@@ -240,7 +246,7 @@ describe("usePlinkoGameLayout", () => {
 
             // Act & Assert - Should not throw
             expect(() => {
-                renderHook(() => usePlinkoGameLayout());
+                renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
             }).not.toThrow();
         });
 
@@ -251,7 +257,7 @@ describe("usePlinkoGameLayout", () => {
 
             // Act & Assert - Should not throw
             expect(() => {
-                renderHook(() => usePlinkoGameLayout());
+                renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
             }).not.toThrow();
         });
     });
@@ -259,7 +265,7 @@ describe("usePlinkoGameLayout", () => {
     describe("Performance and Stability", () => {
         it("should maintain stable references across renders", () => {
             // Arrange & Act
-            const { result, rerender } = renderHook(() => usePlinkoGameLayout());
+            const { result, rerender } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
             const firstRefs = {
                 main: result.current.mainContainerRef,
@@ -283,7 +289,7 @@ describe("usePlinkoGameLayout", () => {
 
         it("should not cause unnecessary re-renders when dependencies don't change", () => {
             // Arrange & Act
-            const { result, rerender } = renderHook(() => usePlinkoGameLayout());
+            const { result, rerender } = renderHook(() => usePlinkoGameLayout({ numberOfRows: 8, scaleValue: 1, finalScale: 1 }));
 
             const firstHeight = result.current.baseGameHeight;
             rerender();
