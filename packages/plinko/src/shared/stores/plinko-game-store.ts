@@ -23,16 +23,16 @@ export type PlinkoGameStore = {
 export const usePlinkoGameStore = create<PlinkoGameStore>()(
     subscribeWithSelector((set) => {
         return {
-            betAmount: 1,
+            betAmount: 0,
             gameMode: GAME_MODES.MEDIUM,
-            numberOfRows: 10,
+            numberOfRows: NUMBER_OF_ROWS.MAX,
             finish: null,
             numberOfDroppingBall: 0,
             finishedBall: null,
             actions: {
                 setBetAmount: (betAmount: number, minBet: number, maxBet: number) => {
                     if (betAmount === 0) {
-                        set({ betAmount });
+                        set({ betAmount: 0 });
                         return;
                     }
                     if (betAmount < minBet) {

@@ -38,13 +38,12 @@ const AutoBetGroup = ({
     const { t } = useTranslate(ResourceTypes.COMMON);
     const socket = useGameStore((state) => state.socket);
     const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, finish, numberOfDroppingBall } = usePlinkoGameStore(
+    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             gameMode: state.gameMode,
             numberOfRows: state.numberOfRows,
             finish: state.finish,
-            numberOfDroppingBall: state.numberOfDroppingBall,
         }))
     );
     const [initialBetAmount, setInitialBetAmount] = useState(0);
@@ -112,32 +111,25 @@ const AutoBetGroup = ({
             return;
         }
         setTotalNetProfit(newTotalNetProfit);
-        const newNumberOfBets = numberOfBets - 1;
-        setNumberOfBets(newNumberOfBets);
         // Note: Ball spawning is controlled by MIN_SPAWN_INTERVAL_AUTO_BET (1500ms) in ball-constants.ts
         // This prevents physics engine overload during rapid auto-betting
         const newBetAmount = getBetAmount(isWin);
         handleBetAmountChange(newBetAmount);
 
+        const newNumberOfBets = numberOfBets - 1;
+        setNumberOfBets(newNumberOfBets);
         if (newNumberOfBets > 0) {
             handleBetClick(newBetAmount);
-        }
-    }, [finish]);
-
-    useEffect(() => {
-        if (numberOfDroppingBall > 0) {
-            return;
-        }
-        if (numberOfBets === 0) {
+        } else {
             const oldValue = StorageHelper.get<number>(PLINKO_STORAGE_KEYS.NUMBER_OF_BETS);
             if (oldValue === 0) {
                 setNumberOfBets(Infinity);
             } else {
                 setNumberOfBets(oldValue ?? 10);
             }
+            setIsAutoBet(false);
         }
-        setIsAutoBet(false);
-    }, [numberOfDroppingBall]);
+    }, [finish]);
 
     useEffect(() => {
         if (!isAutoBet) {
@@ -157,7 +149,11 @@ const AutoBetGroup = ({
     return (
         <div className="flex flex-col gap-4">
             <div>
-                <NumberOfBetsControl numberOfBets={numberOfBets} setNumberOfBets={handleSetNumberOfBets} isDisabled={isDisabled} />
+                <NumberOfBetsControl
+                    numberOfBets={numberOfBets}
+                    setNumberOfBets={handleSetNumberOfBets}
+                    isDisabled={isDisabled && isAutoBet}
+                />
             </div>
             <div>
                 <PercentageControl

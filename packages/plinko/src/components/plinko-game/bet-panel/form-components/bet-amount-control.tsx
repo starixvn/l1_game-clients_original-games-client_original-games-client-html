@@ -37,14 +37,12 @@ const BetAmountControl = ({
     const { t } = useCommonTranslate();
 
     useEffect(() => {
-        setAmount(betAmount);
-    }, [betAmount]);
+        minBet && setTimeout(() => handleBetAmountChange(minBet), 0);
+    }, [minBet]);
 
     useEffect(() => {
-        if (amount === 0) {
-            setAmount(minBet);
-        }
-    }, [minBet]);
+        setAmount(betAmount);
+    }, [betAmount]);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.abs(+e.target.value || 0);
