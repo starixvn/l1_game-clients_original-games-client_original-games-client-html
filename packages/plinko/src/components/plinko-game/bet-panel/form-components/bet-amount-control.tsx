@@ -1,9 +1,9 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import Label from "./label";
-import { useCommonTranslate } from "@shared/react-hooks";
+import { useClickOutside, useCommonTranslate } from "@shared/react-hooks";
 
 const BetAmountControl = ({
     handleBetAmountChange,
@@ -12,6 +12,9 @@ const BetAmountControl = ({
     handleBetAmountChange: (amount: number) => void;
     isDisabled: boolean;
 }) => {
+    const [isShowPopOver, setIsShowPopOver] = useState(false);
+    const popOverRef = useRef<HTMLDivElement>(null);
+    useClickOutside([popOverRef], () => setIsShowPopOver(false));
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
@@ -37,6 +40,12 @@ const BetAmountControl = ({
         setAmount(betAmount);
     }, [betAmount]);
 
+    useEffect(() => {
+        if (amount === 0) {
+            setAmount(minBet);
+        }
+    }, [minBet]);
+
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.abs(+e.target.value || 0);
         const maxValue = 999999999;
@@ -47,8 +56,20 @@ const BetAmountControl = ({
         <div>
             <div className="flex items-center gap-2">
                 <Label title={t("bet_amount")} />
-                <div className="cursor-pointer mb-2">
-                    <i className="icon-cirlce-info text-base right-5"></i>
+                <div>
+                    <i className="icon-cirlce-info text-base cursor-pointer mb-2" onClick={() => setIsShowPopOver(true)} />
+
+                    {isShowPopOver && (
+                        <div
+                            ref={popOverRef}
+                            className={`absolute -translate-y-[200%] -translate-x-[calc(50%-35px)] bg-[#2993f5] text-white text-sm px-4 py-2 rounded-lg pointer-events-none flex flex-col gap-1 z-10`}
+                        >
+                            <div
+                                className={`absolute -bottom-[6px] left-[calc(35%+10px)] -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#2993f5]`}
+                            ></div>
+                            {t("pop_over_demo_mode")}
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="relative">
@@ -58,7 +79,7 @@ const BetAmountControl = ({
                     value={amount?.toString() || "0"}
                     onChange={onChange}
                     onBlur={() => {
-                        handleBetAmountChange(amount ? +amount : minBet);
+                        handleBetAmountChange(+amount);
                         setAmount(betAmount);
                     }}
                     className="input text-white text-sm rounded-lg pl-3 pr-[10.5rem] input-focus w-full h-11 disabled:opacity-50"

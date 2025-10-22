@@ -15,6 +15,7 @@ jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
 // Mock the hooks
 jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn(),
+    useClickOutside: jest.fn(),
 }));
 
 describe("BetAmountControl", () => {
@@ -173,7 +174,7 @@ describe("BetAmountControl", () => {
             fireEvent.blur(input);
 
             // Assert
-            expect(defaultProps.handleBetAmountChange).toHaveBeenCalledWith(10); // minBet
+            expect(defaultProps.handleBetAmountChange).toHaveBeenCalledWith(0);
         });
     });
 

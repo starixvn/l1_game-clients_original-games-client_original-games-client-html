@@ -31,6 +31,10 @@ export const usePlinkoGameStore = create<PlinkoGameStore>()(
             finishedBall: null,
             actions: {
                 setBetAmount: (betAmount: number, minBet: number, maxBet: number) => {
+                    if (betAmount === 0) {
+                        set({ betAmount });
+                        return;
+                    }
                     if (betAmount < minBet) {
                         set({ betAmount: minBet });
                         return;
