@@ -43,18 +43,13 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
             ref={mainContainerRef}
             className={`${styles["plinko-game"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''}`}
         >
-            {/* Game content container - combines fixed dimensions and frame styling */}
+            {/* Canvas container - handles game area dimensions, frame styling, and canvas positioning */}
             <div
-                className={`${styles["game-content-container"]} ${styles["game-frame"]}`}
+                ref={canvasContainerRef}
+                className={`${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${finalScale < 1 ? styles.scaled : ''}`}
                 style={cssVariables as React.CSSProperties}
             >
-                {/* Canvas container with transforms */}
-                <div
-                    ref={canvasContainerRef}
-                    className={`${styles["canvas-container"]} ${finalScale < 1 ? styles.scaled : ''}`}
-                >
-                    <PlinkoCanvas />
-                </div>
+                <PlinkoCanvas />
             </div>
         </div>
     );

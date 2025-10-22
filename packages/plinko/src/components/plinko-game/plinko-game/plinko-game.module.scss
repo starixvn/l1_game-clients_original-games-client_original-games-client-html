@@ -1,6 +1,6 @@
 /**
- * PlinkoGame Component Styles - Simplified Structure
- * Handles the consolidated container-frame-canvas layout
+ * PlinkoGame Component Styles - Ultra-Simplified Structure
+ * Handles the main container with combined game content + canvas positioning
  */
 
 .plinko-game {
@@ -25,7 +25,7 @@
 }
 
 .game-content-container {
-  // Fixed dimensions container that doesn't scale + game frame styling
+  // Combined: fixed dimensions + game frame + canvas positioning + scaling
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,27 +41,30 @@
   // Dynamic height via CSS custom property
   height: var(--game-height, 600px);
 
-  // Game frame styling combined
+  // Game frame styling
   border-radius: 0.5rem; // rounded-lg
   margin: 0 auto; // mx-auto
   overflow-x: hidden;
   padding-top: 1.25rem; // pt-5
-}
 
-.canvas-container {
-  // Canvas absolute positioning + scaling wrapper functionality
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: -1; // z-[-1]
-  transform-origin: top center; // origin-top
+  // Canvas positioning when combined with .canvas-container
+  &.canvas-container {
+    position: relative; // Change from absolute to relative for proper containment
 
-  // Complex transform handled by CSS custom property
-  transform: var(--canvas-transform, translateX(-50%) scale(1));
+    // Canvas absolute positioning within this container
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: var(--canvas-transform, translateX(-50%) scale(1));
+      z-index: -1;
+      transform-origin: top center;
+    }
 
-  // Scaling behavior from scaled-wrapper
-  &.scaled {
-    transform: var(--canvas-transform, translateX(-50%) scale(1)) scale(var(--final-scale, 1));
+    // Scaling behavior
+    &.scaled canvas {
+      transform: var(--canvas-transform, translateX(-50%) scale(1)) scale(var(--final-scale, 1));
+    }
   }
 }
 
