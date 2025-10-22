@@ -43,25 +43,17 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
             ref={mainContainerRef}
             className={`${styles["plinko-game"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''}`}
         >
-            {/* Game content container with truly fixed dimensions */}
+            {/* Game content container - combines fixed dimensions and frame styling */}
             <div
-                className={styles["game-content-container"]}
+                className={`${styles["game-content-container"]} ${styles["game-frame"]}`}
                 style={cssVariables as React.CSSProperties}
             >
-                {/* Scaled wrapper that doesn't affect document flow */}
+                {/* Canvas container with transforms */}
                 <div
-                    className={`${styles["scaled-wrapper"]} ${finalScale < 1 ? styles.scaled : ''}`}
+                    ref={canvasContainerRef}
+                    className={`${styles["canvas-container"]} ${finalScale < 1 ? styles.scaled : ''}`}
                 >
-                    <div
-                        className={styles["game-frame"]}
-                    >
-                        <div
-                            ref={canvasContainerRef}
-                            className={styles["canvas-container"]}
-                        >
-                            <PlinkoCanvas />
-                        </div>
-                    </div>
+                    <PlinkoCanvas />
                 </div>
             </div>
         </div>
