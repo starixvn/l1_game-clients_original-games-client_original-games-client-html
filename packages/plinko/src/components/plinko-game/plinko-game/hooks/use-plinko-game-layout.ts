@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import {
     CANVAS_CONSTANTS,
@@ -20,15 +20,16 @@ export const usePlinkoGameLayout = ({
     const mainContainerRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const slotsContainerRef = useRef<HTMLDivElement>(null);
+    const [slotsTopPosition, setSlotsTopPosition] = useState<number>(0);
 
     // Use mobile-like height calculation on mobile/tablet devices
     const isStackedLayout = isMobile;
-    const baseGameHeight = isStackedLayout && window.innerHeight < CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD
-        ? Math.max(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT, window.innerHeight * CANVAS_CONSTANTS.MOBILE_HEIGHT_FACTOR)
+    const baseGameHeight = isStackedLayout && globalThis.innerHeight < CANVAS_CONSTANTS.SMALL_SCREEN_THRESHOLD
+        ? Math.max(CANVAS_CONSTANTS.MIN_MOBILE_HEIGHT, globalThis.innerHeight * CANVAS_CONSTANTS.MOBILE_HEIGHT_FACTOR)
         : CANVAS_CONSTANTS.BASE_GAME_HEIGHT;
 
-    // Calculate slots position synchronously to avoid initial positioning issues
-    const slotsTopPosition = (() => {
+    // Calculate slots position
+    const calculateSlotsPosition = () => {
         // Calculate where the last peg is positioned after canvas transforms
 
         // From usePeg hook: gap = pegRadius * 2 * mapGap = 7.5 * 2 * 3.6 = 54
@@ -50,7 +51,39 @@ export const usePlinkoGameLayout = ({
 
         // Ensure slots don't go below the game area
         return Math.min(slotsTop, baseGameHeight - 50);
-    })();
+    };
+
+    // Initialize position synchronously
+    useEffect(() => {
+        setSlotsTopPosition(calculateSlotsPosition());
+    }, [numberOfRows, scaleValue, finalScale, baseGameHeight]);
+
+    // Handle layout changes (scrolling, content loading, etc.)
+    useEffect(() => {
+        const handleLayoutChange = () => {
+            // Small delay to let layout settle
+            setTimeout(() => {
+                if (canvasContainerRef.current && mainContainerRef.current) {
+                    setSlotsTopPosition(calculateSlotsPosition());
+                }
+            }, 50);
+        };
+
+        // Listen for scroll events
+        globalThis.addEventListener('scroll', handleLayoutChange, { passive: true });
+
+        // Listen for resize events
+        globalThis.addEventListener('resize', handleLayoutChange);
+
+        // Listen for orientation change (mobile)
+        globalThis.addEventListener('orientationchange', handleLayoutChange);
+
+        return () => {
+            globalThis.removeEventListener('scroll', handleLayoutChange);
+            globalThis.removeEventListener('resize', handleLayoutChange);
+            globalThis.removeEventListener('orientationchange', handleLayoutChange);
+        };
+    }, [numberOfRows, scaleValue, finalScale, baseGameHeight]);
 
     return {
         mainContainerRef,
