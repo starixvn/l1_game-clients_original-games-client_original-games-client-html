@@ -40,7 +40,7 @@
   // Canvas positioning when combined with .canvas-container
   &.canvas-container {
     position: relative; // Relative positioning for canvas containment
-
+    overflow: hidden;
     // Canvas absolute positioning within this container
     canvas {
       position: absolute;

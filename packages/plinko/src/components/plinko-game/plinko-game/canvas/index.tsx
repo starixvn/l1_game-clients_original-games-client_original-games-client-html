@@ -259,7 +259,9 @@ const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
     // Add event listeners for tooltips
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas) {
+            return undefined;
+        }
 
         const mouseMoveHandler = (event: MouseEvent) => handleMouseMove(event, canvas);
         const mouseLeaveHandler = () => handleMouseLeave();

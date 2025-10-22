@@ -37,9 +37,7 @@ export const mapCanvasYToContainerY = (
     const scaledCanvasY = canvasY * totalScale;
 
     // Apply CSS translation (canvas is translated vertically by canvasYTranslation)
-    const containerY = scaledCanvasY + canvasYTranslation;
-
-    return containerY;
+    return scaledCanvasY + canvasYTranslation;
 };
 
 /**
