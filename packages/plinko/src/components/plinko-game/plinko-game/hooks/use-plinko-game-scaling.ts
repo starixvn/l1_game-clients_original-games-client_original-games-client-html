@@ -306,6 +306,13 @@ export const usePlinkoGameScaling = ({
         isReady
     ]);
 
+    console.log('Scaling Hook Debug Info:');
+    console.log(`- scaleValue: ${scaleValue}`);
+    console.log(`- finalScale: ${finalScale}`);
+    console.log(`- isReady: ${isReady}`);
+    console.log(`- expectedMainWidth: ${expectedMainWidth}`);
+    console.log(`- numberOfRows: ${numberOfRows}`);
+
     return {
         scaleValue,
         finalScale,

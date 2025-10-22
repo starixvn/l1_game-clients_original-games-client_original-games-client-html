@@ -46,14 +46,9 @@
       position: absolute;
       top: 0;
       left: 50%;
-      transform: var(--canvas-transform, translateX(-50%) scale(1));
+      transform: translateX(-50%) translateY(var(--canvas-y-translation, 0px));
       z-index: -1;
       transform-origin: top center;
-    }
-
-    // Scaling behavior
-    &.scaled canvas {
-      transform: var(--canvas-transform, translateX(-50%) scale(1)) scale(var(--final-scale, 1));
     }
   }
 }

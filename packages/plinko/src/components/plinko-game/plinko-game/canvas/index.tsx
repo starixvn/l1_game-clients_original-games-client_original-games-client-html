@@ -203,13 +203,31 @@ const PlinkoCanvas: React.FC<PlinkoCanvasProps> = ({ totalScale }) => {
         const { width, height } = PlinkoCanvasConfig;
         canvas.width = width;
         canvas.height = height;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+
+        // Set visual dimensions to match the scaled size
+        const visualWidth = width * totalScale;
+        const visualHeight = height * totalScale;
+
+        console.log('Canvas Debug Info:');
+        console.log(`- Original dimensions: ${width}x${height}`);
+        console.log(`- totalScale: ${totalScale}`);
+        console.log(`- Calculated visual dimensions: ${visualWidth}x${visualHeight}`);
+
+        canvas.style.width = `${visualWidth}px`;
+        canvas.style.height = `${visualHeight}px`;
+
+        // Check parent container dimensions
+        const parentElement = canvas.parentElement;
+        if (parentElement) {
+            const parentRect = parentElement.getBoundingClientRect();
+            console.log(`- Parent container dimensions: ${parentRect.width}x${parentRect.height}`);
+            console.log(`- Canvas will fit parent: ${visualWidth <= parentRect.width && visualHeight <= parentRect.height}`);
+        }
 
         const runner = Runner.create();
         Runner.run(runner, engineRef.current);
         return runner;
-    }, []);
+    }, [totalScale]);
 
     // Initialize component
     useEffect(() => {

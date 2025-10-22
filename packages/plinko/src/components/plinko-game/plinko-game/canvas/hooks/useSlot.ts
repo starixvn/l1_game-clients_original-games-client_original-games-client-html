@@ -155,8 +155,6 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
             return;
         }
 
-        console.log(`Drawing tooltip for slot ${hoveredSlotIndex}`);
-
         const slotOdds = odds[hoveredSlotIndex];
         const probability = calculateProbability(hoveredSlotIndex);
         const winAmount = betAmount * slotOdds;
@@ -266,7 +264,6 @@ export const useSlot = ({ totalScale }: UseSlotProps) => {
                 const space = (PlinkoCanvasConfig.width - gap * numberOfSlots) / 2;
                 const slotX = space + (col + 1) * gap - pegRadius * mapGap;
                 if (Math.abs(canvasX - slotX) < 25) { // 50px slot width / 2
-                    console.log(`Hovering over slot ${col}, canvasX: ${canvasX}, slotX: ${slotX}`);
                     setHoveredSlotIndex(col);
                     return;
                 }

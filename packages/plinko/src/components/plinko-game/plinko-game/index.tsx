@@ -33,9 +33,15 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
     const cssVariables = {
         '--game-height': `${baseGameHeight}px`,
         '--canvas-transform': `translateX(-50%) translateY(${canvasYTranslation}px) scale(${scaleValue})`,
+        '--canvas-transform-no-scale': `translateX(-50%) translateY(${canvasYTranslation}px)`,
         '--canvas-y-translation': `${canvasYTranslation}px`,
         '--final-scale': finalScale.toString()
     };
+
+    console.log('CSS Variables Debug:');
+    console.log(`- --game-height: ${cssVariables['--game-height']}`);
+    console.log(`- --canvas-y-translation: ${cssVariables['--canvas-y-translation']}`);
+    console.log(`- canvasYTranslation: ${canvasYTranslation}`);
 
     return (
         <div
@@ -43,7 +49,15 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({
             className={`${styles["plinko-game"]} ${styles["game-content-container"]} ${styles["game-frame"]} ${styles["canvas-container"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''} ${finalScale < 1 ? styles.scaled : ''}`}
             style={cssVariables as React.CSSProperties}
         >
-            <PlinkoCanvas totalScale={scaleValue * finalScale} />
+            <PlinkoCanvas totalScale={(() => {
+                const calculatedTotalScale = scaleValue * finalScale;
+                console.log('PlinkoGame Debug Info:');
+                console.log(`- scaleValue: ${scaleValue}`);
+                console.log(`- finalScale: ${finalScale}`);
+                console.log(`- totalScale passed to canvas: ${calculatedTotalScale}`);
+                console.log(`- baseGameHeight: ${baseGameHeight}`);
+                return calculatedTotalScale;
+            })()} />
         </div>
     );
 };
