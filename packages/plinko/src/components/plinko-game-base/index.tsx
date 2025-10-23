@@ -23,7 +23,7 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-import { isMobile } from "react-device-detect";
+
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
@@ -46,8 +46,6 @@ const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
-    private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
-    private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
 
     constructor(props: GameBaseProps) {
@@ -98,11 +96,11 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame(): JSX.Element {
         return (
-            <div ref={this.gameFrameWrapperRef} className="relative h-full" id="plinko-game-frame-wrapper">
+            <div className="relative h-full">
                 <Background />
-                <div ref={this.gameFrameWrapperWithoutBackgroundRef} id="plinko-game-frame-wrapper-without-background">
+                <div>
                     <RoundMultiplierHistory />
-                    <PlinkoGame gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef} />
+                    <PlinkoGame />
                     <WinningAmountEffect />
                     <div> {this.renderNotice()}</div>
                 </div>
@@ -114,8 +112,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col lg:flex-row-reverse lg:mx-3">
-                    <div className={`w-full lg:w-8/12 ${isMobile ? "h-[360px]" : "h-full"}`}>{this.renderGameFrame()}</div>
-                    <div className={`w-full lg:w-4/12 ${isMobile ? "z-[100]" : "z-0"}`}>{this.renderBetControl()}</div>
+                    <div className={`w-full lg:w-8/12 lg:flex-1`}>{this.renderGameFrame()}</div>
+                    <div className={`w-full lg:w-4/12`}>{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>

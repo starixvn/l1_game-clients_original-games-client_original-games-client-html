@@ -1,83 +1,45 @@
 "use client";
-import React from "react";
-import { isMobile } from "react-device-detect";
 import PlinkoCanvas from "./canvas";
-import Slots from "./slots";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
-import { usePlinkoGameScaling, usePlinkoGameLayout } from "./hooks";
-import { VISUAL_CONSTANTS, CANVAS_CONSTANTS } from "./constants/scaling-constants";
-import styles from "./plinko-game.module.scss";
+import { PLINKO_CANVAS_SCALE } from "./constant";
+import Slots from "./slots";
 
-interface PlinkoGameProps {
-    gameFrameWrapperWithoutBackgroundRef?: React.RefObject<HTMLDivElement>;
-}
-
-const PlinkoGame: React.FC<PlinkoGameProps> = ({
-    gameFrameWrapperWithoutBackgroundRef
-}) => {
+const widthSlots = {
+    8: 88,
+    9: 88,
+    10: 88,
+    11: 86,
+    12: 86,
+    13: 85,
+    14: 85,
+    15: 84,
+    16: 84,
+};
+const Game = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
 
-    const { scaleValue, finalScale, isReady } = usePlinkoGameScaling({
-        numberOfRows,
-        gameFrameWrapperRef: gameFrameWrapperWithoutBackgroundRef
-    });
-
-    const {
-        mainContainerRef,
-        canvasContainerRef,
-        slotsContainerRef,
-        baseGameHeight,
-        slotsTopPosition
-    } = usePlinkoGameLayout({
-        numberOfRows,
-        scaleValue,
-        finalScale
-    });
-
-    // CSS custom properties for dynamic values
-    const cssVariables = {
-        '--game-height': `${baseGameHeight}px`,
-        '--canvas-transform': `translateX(-50%) translateY(${(numberOfRows + numberOfRows / VISUAL_CONSTANTS.CANVAS_TRANSFORM_OFFSET_FACTOR) * (baseGameHeight / CANVAS_CONSTANTS.BASE_GAME_HEIGHT)}px) scale(${scaleValue})`,
-        '--final-scale': finalScale.toString(),
-        '--slots-top': `${slotsTopPosition}px`
-    };
-
     return (
-        <div
-            ref={mainContainerRef}
-            className={`${styles["plinko-game"]} ${isMobile ? styles.mobile : ''} ${!isReady && isMobile ? styles.loading : ''}`}
-        >
-            {/* Game content container with truly fixed dimensions */}
-            <div
-                className={styles["game-content-container"]}
-                style={cssVariables as React.CSSProperties}
-            >
-                {/* Scaled wrapper that doesn't affect document flow */}
+        <div className="flex flex-col items-center justify-center">
+            <div className="relative rounded-lg mx-auto w-full max-w-[550px] overflow-hidden pt-5">
                 <div
-                    className={`${styles["scaled-wrapper"]} ${finalScale < 1 ? styles.scaled : ''}`}
+                    className="absolute origin-top z-[-1]"
+                    style={{
+                        transform: `translateY(${numberOfRows + numberOfRows / 8}px) scale(${PLINKO_CANVAS_SCALE[numberOfRows]})`,
+                    }}
                 >
+                    <PlinkoCanvas />
+                </div>
+                <div className="relative aspect-[660/550] mx-auto">
                     <div
-                        className={styles["game-frame"]}
+                        className="absolute -bottom-[12px] left-1/2 -translate-x-1/2 h-[30px] translate-y-[100%]"
+                        style={{ width: `${widthSlots[numberOfRows]}%` }}
                     >
-                        <div
-                            ref={canvasContainerRef}
-                            className={styles["canvas-container"]}
-                        >
-                            <PlinkoCanvas />
-                        </div>
-                        <div
-                            ref={slotsContainerRef}
-                            className={styles["slots-container"]}
-                        >
-                            <Slots />
-                        </div>
+                        <Slots />
                     </div>
                 </div>
+                <div className="h-[50px]"></div>
             </div>
         </div>
     );
 };
-
-PlinkoGame.displayName = 'PlinkoGame';
-export default PlinkoGame;
-
+export default Game;

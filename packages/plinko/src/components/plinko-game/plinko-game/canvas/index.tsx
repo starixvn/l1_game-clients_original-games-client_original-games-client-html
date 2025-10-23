@@ -185,9 +185,9 @@ const PlinkoCanvas = () => {
         const { width, height } = PlinkoCanvasConfig;
         canvas.width = width;
         canvas.height = height;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+        canvas.style.width = `170%`;
         canvas.style.pointerEvents = "none";
+        canvas.style.transform = `translateX(-20.5%)`;
 
         const runner = Runner.create();
         Runner.run(runner, engineRef.current);

@@ -1,7 +1,6 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-import { PLINKO_CANVAS_SCALE } from "../constant";
 import useGameStore from "@shared/stores/game-store/game-store";
 import Tooltip from "./tooltip";
 import { getMultiplierColor } from "@plinko/shared/colors-util";
@@ -19,6 +18,7 @@ const fontSizes = {
 };
 
 const Slots = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
     const gameConfigs = useGameStore((state) => state.gameConfigs);
     const { numberOfRows, gameMode, finishedBall } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -29,6 +29,7 @@ const Slots = () => {
     );
 
     const [localFinishedBall, setLocalFinishedBall] = useState(finishedBall);
+    const [slotDimensions, setSlotDimensions] = useState({ width: 57, marginX: 2, marginY: 1 });
 
     useEffect(() => {
         if (!finishedBall) {
@@ -55,26 +56,68 @@ const Slots = () => {
         return gameConfigs?.odds?.[gameMode][numberOfRows] as unknown as number[];
     }, [gameMode, numberOfRows, gameConfigs]);
 
-    return odds?.map((item, index) => {
-        const isHit = localFinishedBall?.settlementResult?.slotIndex === index;
+    useEffect(() => {
+        const updateDimensions = () => {
+            if (!containerRef.current || !odds?.length) {
+                return;
+            }
 
-        return (
-            <Tooltip key={`slot-${index}-${numberOfRows}`} index={index} totalItems={odds.length} odds={item}>
-                <span
-                    key={`${index}-${item}`}
-                    className={` ${isHit ? "animate-slide-down" : ""}  flex items-center justify-center text-white font-bold h-[30px]
+            const containerWidth = containerRef.current.offsetWidth;
+            const totalSlots = odds.length;
+
+            // Calculate slot width based on container width and number of slots
+            // Using a base ratio to maintain proportions
+            const baseSlotWidth = 57;
+            const baseMargin = 2;
+            const baseMarginY = 0;
+            const baseTotalWidth = totalSlots * (baseSlotWidth + baseMargin * 2);
+
+            // Scale factor based on container width
+            const scaleFactor = containerWidth / baseTotalWidth;
+
+            setSlotDimensions({
+                width: baseSlotWidth * scaleFactor,
+                marginX: baseMargin * scaleFactor,
+                marginY: baseMarginY * scaleFactor * 200,
+            });
+        };
+
+        updateDimensions();
+
+        const resizeObserver = new ResizeObserver(updateDimensions);
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => resizeObserver.disconnect();
+    }, [odds, numberOfRows]);
+
+    return (
+        <div ref={containerRef} className="flex items-center justify-center">
+            {odds?.map((item, index) => {
+                const isHit = localFinishedBall?.settlementResult?.slotIndex === index;
+
+                return (
+                    <Tooltip key={`slot-${index}-${numberOfRows}`} index={index} totalItems={odds.length} odds={item}>
+                        <span
+                            key={`${index}-${item}`}
+                            className={` ${
+                                isHit ? "animate-slide-down" : ""
+                            }  flex items-center justify-center text-white font-bold h-[30px]
             rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]`}
-                    style={{
-                        width: `${50 * PLINKO_CANVAS_SCALE[numberOfRows]}px`,
-                        margin: `0 ${2 * PLINKO_CANVAS_SCALE[numberOfRows]}px`,
-                        backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
-                        fontSize: `${fontSizes[numberOfRows]}rem`,
-                    }}
-                >
-                    {formatOdds(item)}
-                </span>
-            </Tooltip>
-        );
-    });
+                            style={{
+                                width: `${slotDimensions.width}px`,
+                                margin: `${slotDimensions.marginY}px ${slotDimensions.marginX}px 0`,
+                                backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
+                                fontSize: `${fontSizes[numberOfRows]}rem`,
+                            }}
+                        >
+                            {formatOdds(item)}
+                        </span>
+                    </Tooltip>
+                );
+            })}
+        </div>
+    );
 };
 export default Slots;
