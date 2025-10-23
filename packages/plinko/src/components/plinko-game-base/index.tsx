@@ -17,6 +17,7 @@ import {
     PlinkoGameSoundHandler,
     PlinkoInGameHandler,
     PlinkoStateHandler,
+    PlinkoSyncBalanceHandler,
 } from "./handlers";
 import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
@@ -47,6 +48,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly gameFrameWrapperRef = React.createRef<HTMLDivElement>();
     private readonly gameFrameWrapperWithoutBackgroundRef = React.createRef<HTMLDivElement>();
+    private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
 
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
@@ -64,7 +66,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameMessageHandler: gameMessageHandler,
                 durations: props.durations,
                 roundStateHandler,
-                runGame: () => { }, // Will be set by GameBase
+                runGame: () => {}, // Will be set by GameBase
                 gameId: props.id,
                 gameStateContextModel: () => props.gameStateContextModel,
                 gameRoundDataHandler: gameRoundDataHandler,
@@ -76,11 +78,13 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             dispatch: props.dispatch,
             gameMessageHandler: gameMessageHandler,
         });
+        this.syncBalanceHandler = new PlinkoSyncBalanceHandler();
     }
 
     registerHandlers() {
         super.registerHandlers();
         this.inGameHandler.registerEvents();
+        this.syncBalanceHandler.registerEvents();
     }
 
     handleRemainingTime(_): void {
@@ -94,25 +98,14 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderGameFrame(): JSX.Element {
         return (
-            <div
-                ref={this.gameFrameWrapperRef}
-                className="relative h-full"
-                id="plinko-game-frame-wrapper"
-            >
+            <div ref={this.gameFrameWrapperRef} className="relative h-full" id="plinko-game-frame-wrapper">
                 <Background />
-                <div
-                    ref={this.gameFrameWrapperWithoutBackgroundRef}
-                    id="plinko-game-frame-wrapper-without-background"
-                >
+                <div ref={this.gameFrameWrapperWithoutBackgroundRef} id="plinko-game-frame-wrapper-without-background">
                     <RoundMultiplierHistory />
-                    <PlinkoGame
-                        gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef}
-                    />
+                    <PlinkoGame gameFrameWrapperWithoutBackgroundRef={this.gameFrameWrapperWithoutBackgroundRef} />
                     <WinningAmountEffect />
                     <div> {this.renderNotice()}</div>
-
                 </div>
-
             </div>
         );
     }
@@ -121,8 +114,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="col-span-12 mb-3">
                 <div className="flex flex-col lg:flex-row-reverse lg:mx-3">
-                    <div className={`w-full lg:w-8/12 ${isMobile ? 'h-[360px]' : 'h-full'}`}>{this.renderGameFrame()}</div>
-                    <div className={`w-full lg:w-4/12 ${isMobile ? 'z-[100]' : 'z-0'}`}>{this.renderBetControl()}</div>
+                    <div className={`w-full lg:w-8/12 ${isMobile ? "h-[360px]" : "h-full"}`}>{this.renderGameFrame()}</div>
+                    <div className={`w-full lg:w-4/12 ${isMobile ? "z-[100]" : "z-0"}`}>{this.renderBetControl()}</div>
                 </div>
                 {this.renderMenu()}
             </div>
@@ -155,11 +148,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         }
 
         // Apply mobile positioning similar to WinningAmountEffect
-        return (
-            <div className="md:relative absolute bottom-[-10px] left-0 right-0 z-[200]">
-                {notice}
-            </div>
-        );
+        return <div className="md:relative absolute bottom-[-10px] left-0 right-0 z-[200]">{notice}</div>;
     }
 
     renderBetDetailModal(): JSX.Element {
@@ -168,7 +157,17 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<HotKeyIcon key="hot-key-icon" />, <LiveStatsIcon key="live-stats-icon" />, <SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />, <PFIcon key="pf-icon" />]} />;
+        return (
+            <MenuIconWrapper
+                items={[
+                    <HotKeyIcon key="hot-key-icon" />,
+                    <LiveStatsIcon key="live-stats-icon" />,
+                    <SoundIcon key="sound-icon" />,
+                    <GuideIcon key="guide-icon" />,
+                    <PFIcon key="pf-icon" />,
+                ]}
+            />
+        );
     }
 
     renderPFSettingModal() {
