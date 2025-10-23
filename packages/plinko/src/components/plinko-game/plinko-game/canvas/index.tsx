@@ -8,7 +8,7 @@ import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
-import { usePlinkoBallHitWinSound } from "../hooks/use-sound";
+import { usePlinkoBallHitWinSound } from "@plinko/shared/hooks/use-sound";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);

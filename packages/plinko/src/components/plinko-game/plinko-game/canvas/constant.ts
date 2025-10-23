@@ -1,5 +1,4 @@
 import { IPlinkoCanvasConfig } from "./type";
-import { CANVAS_CONSTANTS, PEG_CONSTANTS } from "../constants/scaling-constants";
 import { IBodyDefinition } from "matter-js";
 
 export const PLINKO_OBJECTS = {
@@ -9,10 +8,10 @@ export const PLINKO_OBJECTS = {
 } as const;
 
 export const PlinkoCanvasConfig: IPlinkoCanvasConfig = {
-    width: CANVAS_CONSTANTS.ORIGINAL_WIDTH,
+    width: 1050,
     height: 1000,
-    pegRadius: PEG_CONSTANTS.RADIUS,
-    mapGap: PEG_CONSTANTS.MAP_GAP,
+    pegRadius: 7.5,
+    mapGap: 3.6,
     ballConfig: {
         radius: 14,
         offsetVelocityX: 1,

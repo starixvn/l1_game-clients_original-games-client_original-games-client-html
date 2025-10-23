@@ -49,7 +49,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.firstChild).toHaveClass("h-7");
+            expect(container.firstChild).toHaveClass("md:h-10");
             expect(container.textContent).toBe("");
         });
 
@@ -61,7 +62,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.firstChild).toHaveClass("h-7");
+            expect(container.firstChild).toHaveClass("md:h-10");
             expect(container.textContent).toBe("");
         });
 
@@ -73,7 +75,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.firstChild).toHaveClass("h-7");
+            expect(container.firstChild).toHaveClass("md:h-10");
             expect(container.textContent).toBe("");
         });
 
@@ -111,7 +114,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.firstChild).toHaveClass("h-7");
+            expect(container.firstChild).toHaveClass("md:h-10");
             expect(container.textContent).toBe("");
         });
 
@@ -123,7 +127,8 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-10");
+            expect(container.firstChild).toHaveClass("h-7");
+            expect(container.firstChild).toHaveClass("md:h-10");
             expect(container.textContent).toBe("");
         });
     });

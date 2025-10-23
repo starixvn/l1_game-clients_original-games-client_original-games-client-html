@@ -20,7 +20,7 @@ const Game = () => {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="relative rounded-lg mx-auto w-full max-w-[550px] overflow-hidden pt-5">
+            <div className="relative rounded-lg mx-auto w-full max-w-[550px] overflow-hidden pt-3 lg:pt-5">
                 <div
                     className="absolute origin-top z-[-1]"
                     style={{

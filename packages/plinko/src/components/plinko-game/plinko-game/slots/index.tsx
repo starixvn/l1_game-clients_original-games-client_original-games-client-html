@@ -4,8 +4,22 @@ import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import useGameStore from "@shared/stores/game-store/game-store";
 import Tooltip from "./tooltip";
 import { getMultiplierColor } from "@plinko/shared/colors-util";
+import { cn } from "@shared";
+import { isDesktop } from "react-device-detect";
 
 const fontSizes = {
+    8: 1.125,
+    9: 1.125,
+    10: 1,
+    11: 0.875,
+    12: 0.75,
+    13: 0.75,
+    14: 0.675,
+    15: 0.6,
+    16: 0.6,
+};
+
+const fontSizesDesktop = {
     8: 1.125,
     9: 1.125,
     10: 1,
@@ -14,7 +28,7 @@ const fontSizes = {
     13: 0.875,
     14: 0.75,
     15: 0.75,
-    16: 0.75,
+    16: 0.7,
 };
 
 const Slots = () => {
@@ -101,15 +115,16 @@ const Slots = () => {
                     <Tooltip key={`slot-${index}-${numberOfRows}`} index={index} totalItems={odds.length} odds={item}>
                         <span
                             key={`${index}-${item}`}
-                            className={` ${
-                                isHit ? "animate-slide-down" : ""
-                            }  flex items-center justify-center text-white font-bold h-[30px]
-            rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]`}
+                            className={cn(
+                                isHit ? "animate-slide-down" : "",
+                                "flex items-center justify-center text-white font-bold h-[30px]",
+                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
+                            )}
                             style={{
                                 width: `${slotDimensions.width}px`,
                                 margin: `${slotDimensions.marginY}px ${slotDimensions.marginX}px 0`,
                                 backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
-                                fontSize: `${fontSizes[numberOfRows]}rem`,
+                                fontSize: isDesktop ? `${fontSizesDesktop[numberOfRows]}rem` : `${fontSizes[numberOfRows]}rem`,
                             }}
                         >
                             {formatOdds(item)}

@@ -2,7 +2,6 @@ import { memo, useEffect, useRef, useState } from "react";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useCommonTranslate } from "@shared";
 import { numberWithCommas } from "@shared/helpers";
-import { isMobile } from "react-device-detect";
 
 export const WinningAmountEffect = () => {
     const finish = usePlinkoGameStore((state) => state.finishedBall);
@@ -22,14 +21,11 @@ export const WinningAmountEffect = () => {
     }, [finish]);
 
     if (!winAmount) {
-        return <div className="h-10"></div>;
+        return <div className="h-7 md:h-10"></div>;
     }
 
-    const baseClasses = "h-10 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl";
-    const mobileClasses = isMobile ? "absolute bottom-[-10px] left-0 right-0 z-[200]" : "relative top-[-10px]";
-
     return (
-        <div className={`${baseClasses} ${mobileClasses}`}>
+        <div className={`h-7 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl md:h-10`}>
             {t("win")} {numberWithCommas(winAmount, 2)}
         </div>
     );
