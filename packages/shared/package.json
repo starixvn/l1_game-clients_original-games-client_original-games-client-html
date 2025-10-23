@@ -10,7 +10,7 @@
         "dev": "tsc --watch"
     },
     "dependencies": {
-        "@sentry/nextjs": "^9.41.0",
+        "@sentry/nextjs": "^10.19.0",
         "@tolgee/format-icu": "^5.28.6",
         "@tolgee/react": "^5.28.6",
         "@use-gesture/react": "^10.3.1",
