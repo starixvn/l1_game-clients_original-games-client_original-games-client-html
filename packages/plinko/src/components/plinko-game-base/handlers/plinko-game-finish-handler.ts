@@ -4,7 +4,6 @@ import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 export class PlinkoGameFinishHandler extends GameFinishHandler {
     handleFinishHandler(data) {
-        super.handleFinishHandler(data);
         this.handlePlinkoFinish(data.finish);
     }
 

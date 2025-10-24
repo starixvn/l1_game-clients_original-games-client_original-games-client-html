@@ -3,10 +3,9 @@ import { PegBody, PegEffect } from "../type";
 
 interface UsePegEffectProps {
     pegEffectsRef: React.RefObject<PegEffect[]>;
-    pegIdRef: React.RefObject<number>;
 }
 
-export const usePegEffect = ({ pegEffectsRef, pegIdRef }: UsePegEffectProps) => {
+export const usePegEffect = ({ pegEffectsRef }: UsePegEffectProps) => {
     const createPegEffect = useCallback(
         (body: PegBody) => {
             const pegEffect: PegEffect = {
@@ -21,7 +20,7 @@ export const usePegEffect = ({ pegEffectsRef, pegIdRef }: UsePegEffectProps) => 
 
             pegEffectsRef.current.push(pegEffect);
         },
-        [pegEffectsRef, pegIdRef]
+        [pegEffectsRef]
     );
 
     const drawPegEffect = useCallback(

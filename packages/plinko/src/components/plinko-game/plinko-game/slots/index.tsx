@@ -43,7 +43,7 @@ const Slots = () => {
     );
 
     const [localFinishedBall, setLocalFinishedBall] = useState(finishedBall);
-    const [slotDimensions, setSlotDimensions] = useState({ width: 57, marginX: 2, marginY: 1 });
+    const [slotDimensions, setSlotDimensions] = useState({ width: 57, marginX: 2 });
 
     useEffect(() => {
         if (!finishedBall) {
@@ -83,7 +83,6 @@ const Slots = () => {
             // Using a base ratio to maintain proportions
             const baseSlotWidth = 57;
             const baseMargin = 2;
-            const baseMarginY = 0;
             const baseTotalWidth = totalSlots * (baseSlotWidth + baseMargin * 2);
 
             // Scale factor based on container width
@@ -92,7 +91,6 @@ const Slots = () => {
             setSlotDimensions({
                 width: baseSlotWidth * scaleFactor,
                 marginX: baseMargin * scaleFactor,
-                marginY: baseMarginY * scaleFactor * 200,
             });
         };
 
@@ -122,7 +120,7 @@ const Slots = () => {
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
-                                margin: `${slotDimensions.marginY}px ${slotDimensions.marginX}px 0`,
+                                margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
                                 fontSize: isDesktop ? `${fontSizesDesktop[numberOfRows]}rem` : `${fontSizes[numberOfRows]}rem`,
                             }}

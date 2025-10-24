@@ -25,7 +25,7 @@ export const WinningAmountEffect = () => {
     }
 
     return (
-        <div className={`h-7 py-3 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl md:h-10`}>
+        <div className={`h-7 pt-1 text-center text-[var(--color-winning-highlight)] text-lg font-bold uppercase md:text-xl md:h-10`}>
             {t("win")} {numberWithCommas(winAmount, 2)}
         </div>
     );

@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo } from "react";
 import { sendBalanceUpdateToParent } from "../utils/iframe-messages";
 import { usePlayerContext } from "../react-contexts/auth";
 import { useGlobalEventsStore } from "../stores/global-events-store/global-events-store";
-import { getBalance } from '@shared/services/auth-service';
+import { getBalance } from "@shared/services/auth-service";
 
 export const useBalanceSync = () => {
     const { session, authorizeInfo } = usePlayerContext();
@@ -12,10 +12,13 @@ export const useBalanceSync = () => {
     const lastBalanceRef = useRef<number | null>(null);
     const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const userInfo = useMemo(() => ({
-        ...authorizeInfo?.user,
-        red: userInfoRed !== null ? userInfoRed : authorizeInfo?.user?.red || 0,
-    }), [authorizeInfo?.user, userInfoRed]);
+    const userInfo = useMemo(
+        () => ({
+            ...authorizeInfo?.user,
+            red: userInfoRed !== null ? userInfoRed : authorizeInfo?.user?.red || 0,
+        }),
+        [authorizeInfo?.user, userInfoRed]
+    );
 
     const updateBalance = (balance: number) => {
         if (lastBalanceRef.current !== balance) {
@@ -36,7 +39,6 @@ export const useBalanceSync = () => {
             if (balance !== undefined && balance !== null && balance >= 0) {
                 updateBalance(balance);
             }
-
         } catch (error) {
             console.error("Error sending balance update to parent:", error);
         }
@@ -67,6 +69,7 @@ export const useBalanceSync = () => {
         pollBalance();
 
         // Set up polling interval (5 seconds)
+        pollingIntervalRef.current && clearInterval(pollingIntervalRef.current);
         pollingIntervalRef.current = setInterval(pollBalance, 5000);
 
         // Cleanup function

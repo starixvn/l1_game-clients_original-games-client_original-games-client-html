@@ -2,8 +2,8 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, PegEffect } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect } from "./hooks";
+import { BallBody, ExplosionEffect, PegEffect } from "./type";
+import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useShallow } from "zustand/shallow";
@@ -16,7 +16,8 @@ const PlinkoCanvas = () => {
     const sceneObjectsRef = useRef<Body[]>([]);
     const animationRef = useRef<number | null>(null);
     const pegEffectsRef = useRef<PegEffect[]>([]);
-    const pegIdRef = useRef<number>(0);
+    const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
+
     const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
             finish: state.finish,
@@ -35,10 +36,10 @@ const PlinkoCanvas = () => {
     const { createBall, drawBall, handleRoad } = useBall();
 
     // Peg effect hook
-    const { createPegEffect, drawPegEffect } = usePegEffect({
-        pegEffectsRef,
-        pegIdRef,
-    });
+    const { createPegEffect, drawPegEffect } = usePegEffect({ pegEffectsRef });
+
+    // Explosion effect hook
+    const { createExplosionEffect, drawExplosionEffect } = useExplosionEffect({ explosionEffectsRef });
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -71,13 +72,15 @@ const PlinkoCanvas = () => {
                     setFinishedBall(ballBody.finish);
                     playPlinkoBallHitWinSoundRef.current();
 
+                    createExplosionEffect(ball);
+
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
                     sceneObjectsRef.current.splice(sceneObjectsRef.current.indexOf(ball), 1);
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall]
+        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect]
     );
 
     // Draw scene object
@@ -164,8 +167,12 @@ const PlinkoCanvas = () => {
         sceneObjectsRef.current.forEach((obj) => {
             drawSceneObject(obj);
         });
+
+        // Draw explosion effects
+        drawExplosionEffect?.(context);
+
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawPegEffect]);
+    }, [drawSceneObject, drawPegEffect, drawExplosionEffect]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {

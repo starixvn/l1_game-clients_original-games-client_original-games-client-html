@@ -119,7 +119,7 @@ const AutoBetGroup = ({
         const newNumberOfBets = numberOfBets - 1;
         setNumberOfBets(newNumberOfBets);
         if (newNumberOfBets > 0) {
-            const ms = newBetAmount === 0 ? Math.floor(Math.random() * 101) + 500 : 0; // NOSONAR
+            const ms = newBetAmount === 0 ? Math.floor(Math.random() * 101) + 200 : 0; // NOSONAR
             setTimeout(() => handleBetClick(newBetAmount), ms);
         } else {
             const oldValue = StorageHelper.get<number>(PLINKO_STORAGE_KEYS.NUMBER_OF_BETS);
