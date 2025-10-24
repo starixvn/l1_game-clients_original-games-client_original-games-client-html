@@ -1,4 +1,5 @@
 import { buildLocalStorageKey } from "@shared/helpers";
+import { getCurrentGameMultipliers } from "./game-config";
 
 export const GAME_MODES = {
     LOW: 0,
@@ -16,11 +17,19 @@ export const PLINKO_MODE = {
     MEDIUM: 1,
     HIGH: 2,
 };
+
+// Dynamic multiplier colors based on current game
 export const MULTIPLIER_COLORS = {
-    [PLINKO_MODE.LOW]: ["#B8590B", "#FF7400", "#FF8D00", "#FFA700", "#FFCE00", "#FFDC48"],
-    [PLINKO_MODE.MEDIUM]: ["#3423EB", "#4E3EFF", "#7D71FF", "#948BFF", "#ACA4FF", "#C3BEFF"],
-    [PLINKO_MODE.HIGH]: ["#A3080A", "#DF272A", "#FA3F42", "#FF686C", "#FF9193", "#FFB4B6"],
+    [PLINKO_MODE.LOW]: () => getCurrentGameMultipliers().LOW.colors,
+    [PLINKO_MODE.MEDIUM]: () => getCurrentGameMultipliers().MEDIUM.colors,
+    [PLINKO_MODE.HIGH]: () => getCurrentGameMultipliers().HIGH.colors,
 };
+
+// For backward compatibility, provide static access to multiplier colors
+// This will throw an error if called before game config is initialized
+export function getMultiplierColors(mode: number): string[] {
+    return MULTIPLIER_COLORS[mode]();
+}
 
 export const PLINKO_STORAGE_KEYS = {
     NUMBER_OF_BETS: buildLocalStorageKey("numberOfBets"),
