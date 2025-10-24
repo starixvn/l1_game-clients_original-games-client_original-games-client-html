@@ -25,5 +25,32 @@
             "optionalPaths": [],
             "cachePaths": []
         }
+    },
+    "159": {
+        "id": 159,
+        "gameName": "PlinkoX",
+        "tolgeeNamespace": "Plinko",
+        "socketInfo": {
+            "namespace": "plinkox",
+            "path": "plinkox"
+        },
+        "durations": {
+            "wholeRound": 60,
+            "wholeTurn": 60,
+            "placingBets": 0,
+            "lockingBet": 0,
+            "showResult": 0,
+            "resultAnimation": 0,
+            "beforePlaceBet": 0,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 10,
+        "gamePath": "plinko-x",
+        "gameResourceConfigs": {
+            "path": "plinko-x",
+            "optionalPaths": [],
+            "cachePaths": []
+        }
     }
 }

@@ -1,14 +1,17 @@
 import { memo } from "react";
 import Image from "next/image";
 import { buildVersion } from "@shared/constants";
+import { getCurrentGameAssets } from "../../../game-config";
 import ParticlesContainer from "./particles";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const Background: React.FC = () => {
+    const gameAssets = getCurrentGameAssets();
+
     return (
         <>
             <Image
-                src={`${basePath}/static/images/background/bg.webp?v=${buildVersion}`}
+                src={`${basePath}${gameAssets.backgroundImage}?v=${buildVersion}`}
                 alt="Background"
                 fill
                 className={`absolute top-0 z-[-100] bg-size-[100%_100%] bg-position-center bg-no-repeat w-[calc(100%+24px)] h-full md:left-0 md:w-full md:rounded-tr-xl`}

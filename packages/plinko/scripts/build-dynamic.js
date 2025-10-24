@@ -19,11 +19,19 @@ const env = {
     NEXT_PUBLIC_BASE_PATH: basePath,
 };
 
-// Run the build command
-const buildCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-const buildArgs = ["run", "build:standalone"];
+// Run the actual build commands directly with dynamic environment variables
+const { exec } = require("child_process");
 
-const child = spawn(buildCommand, buildArgs, {
+// Build the command string with dynamic environment variables
+const generateTolgeeCommand = `cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} npm run generate-tolgee-data && cd packages/plinko`;
+const buildCommand = `cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} NEXT_PUBLIC_BASE_PATH=/game-${gameId} next build`;
+
+const fullCommand = `${generateTolgeeCommand} && ${buildCommand}`;
+
+console.log(`Building for game ID: ${gameId}`);
+console.log("Command:", fullCommand);
+
+const child = exec(fullCommand, {
     stdio: "inherit",
     env: env,
     cwd: path.dirname(__filename),

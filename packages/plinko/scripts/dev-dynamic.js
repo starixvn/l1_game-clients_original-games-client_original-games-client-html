@@ -19,11 +19,19 @@ const env = {
     NEXT_PUBLIC_BASE_PATH: basePath,
 };
 
-// Run the dev command
-const devCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-const devArgs = ["run", "dev"];
+// Run the actual dev commands directly with dynamic environment variables
+const { exec } = require("child_process");
 
-const child = spawn(devCommand, devArgs, {
+// Build the command string with dynamic environment variables
+const generateTolgeeCommand = `cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} npm run generate-tolgee-data && cd packages/plinko`;
+const devCommand = `cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} NEXT_PUBLIC_BASE_PATH= PORT=3003 FAST_REFRESH=false node custom-server.js`;
+
+const fullCommand = `${generateTolgeeCommand} && ${devCommand}`;
+
+console.log(`Running dev server for game ID: ${gameId}`);
+console.log("Command:", fullCommand);
+
+const child = exec(fullCommand, {
     stdio: "inherit",
     env: env,
     cwd: path.dirname(__filename),
