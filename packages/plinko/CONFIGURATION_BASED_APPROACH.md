@@ -58,6 +58,24 @@ npm run build:plinko-x
 NEXT_PUBLIC_DEFAULT_GAME_ID=159 npm run build:standalone
 ```
 
+### Docker Deployment
+
+```bash
+# Build Docker images
+npm run docker:build:plinko      # Build Plinko image
+npm run docker:build:plinko-x    # Build Plinko X image
+
+# Run Docker containers
+npm run docker:run:plinko        # Run Plinko on port 5000
+npm run docker:run:plinko-x      # Run Plinko X on port 5001
+
+# Manual Docker commands
+docker build -f Dockerfile -t plinko:latest .
+docker build -f Dockerfile.plinko-x -t plinko-x:latest .
+docker run -p 5000:5000 plinko:latest
+docker run -p 5001:5000 plinko-x:latest
+```
+
 ### Dynamic Scripts
 
 The package includes dynamic scripts that read from environment variables:
@@ -107,6 +125,14 @@ To add a new game variant:
 "dev:plinko-pro": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=200 npm run dev",
 "build:plinko-pro": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=200 npm run build:standalone"
 ```
+
+5. **Create Dockerfile** (if deploying separately):
+    - Copy `Dockerfile.plinko-x` and update game ID and paths
+    - Add Docker build scripts to `package.json`
+
+### Build-Time Configuration
+
+The `games/games.tsx` file uses build-time environment variables to determine the game configuration. This ensures proper TypeScript compilation and static optimization.
 
 ## Current Game Differences
 
