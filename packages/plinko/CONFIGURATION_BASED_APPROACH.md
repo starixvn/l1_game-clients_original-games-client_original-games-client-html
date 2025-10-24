@@ -164,6 +164,16 @@ NEXT_PUBLIC_DEFAULT_GAME_ID=145 npm run build:standalone
 NEXT_PUBLIC_DEFAULT_GAME_ID=159 npm run build:standalone
 ```
 
+### Game Availability Validation
+
+The shared splash-screen component validates game availability using a whitelist of known game IDs:
+
+```typescript
+const knownGameIds = [145, 148, 159, 150]; // Plinko, SeDie Multiplayer, Plinko X, Baccarat
+```
+
+Games in this list bypass lobby/offer validation and can be deep-linked directly. Add new game IDs to this array when deploying new games.
+
 ## Current Game Differences
 
 ### Plinko (ID 145)
