@@ -14,6 +14,10 @@
         "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=145 NEXT_PUBLIC_BASE_PATH= PORT=3003 node custom-server.js",
         "dev:dynamic": "node scripts/dev-dynamic.js",
         "build:dynamic": "node scripts/build-dynamic.js",
+        "docker:build:plinko": "docker build -f Dockerfile -t plinko:latest .",
+        "docker:build:plinko-x": "docker build -f Dockerfile.plinko-x -t plinko-x:latest .",
+        "docker:run:plinko": "docker run -p 5000:5000 plinko:latest",
+        "docker:run:plinko-x": "docker run -p 5001:5000 plinko-x:latest",
         "proxy": "node ../../reverse-proxy.js",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },

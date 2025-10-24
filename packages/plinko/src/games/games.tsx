@@ -1,12 +1,16 @@
 import React from "react";
 import { Games, GameConfig } from "@shared/components/game-components/games";
-import { GAME_ID } from "../game-config";
 import PlinkoGame from "../page";
 
+// Get game ID from environment variable at build time
+const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID
+    ? parseInt(process.env.NEXT_PUBLIC_DEFAULT_GAME_ID)
+    : 145; // Default to Plinko
+
 const gameConfig: GameConfig = {
-    gameId: GAME_ID,
+    gameId: gameId,
     component: PlinkoGame,
-    name: "Plinko",
+    name: gameId === 145 ? "Plinko" : "Plinko X",
 };
 
 export const PlinkoGames: React.FC<any> = (props) => {

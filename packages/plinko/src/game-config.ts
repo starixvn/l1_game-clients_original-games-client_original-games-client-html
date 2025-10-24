@@ -102,15 +102,5 @@ export function getCurrentGameUITheme() {
     return getGameUITheme(getCurrentGameId());
 }
 
-// Export individual properties for backward compatibility (will throw error if not initialized)
-export const GAME_ID = () => getCurrentGameId();
-export const GAME_NAME = () => {
-    const gameId = getCurrentGameId();
-    return gameId === 145 ? "Plinko" : "Plinko X";
-};
+// Export version for backward compatibility
 export const GAME_VERSION = "1.0.0";
-export const GAME_DESCRIPTION = () => {
-    const gameId = getCurrentGameId();
-    return gameId === 145 ? "Exciting Plinko game with physics-based ball dropping" :
-        "Enhanced Plinko X game with advanced physics and new features";
-};
