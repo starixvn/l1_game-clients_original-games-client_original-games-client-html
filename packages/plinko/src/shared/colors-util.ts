@@ -1,4 +1,4 @@
-import { MULTIPLIER_COLORS } from "@plinko/constants";
+import { getMultiplierColors } from "@plinko/constants";
 
 export function generateMultiplierColor(mode: number, numberOfRows: number): string[] {
     if (numberOfRows < 8) {
@@ -15,7 +15,7 @@ export function generateMultiplierColor(mode: number, numberOfRows: number): str
         }
 
         // Ensure we have valid color data
-        const modeColors = MULTIPLIER_COLORS[mode];
+        const modeColors = getMultiplierColors(mode);
         if (!modeColors || !Array.isArray(modeColors)) {
             colors[i] = "#FFDC48"; // Default fallback
         } else {
@@ -30,8 +30,7 @@ export function getMultiplierColor(slotIndex: number, gameMode: number, numberOf
     const colors = generateMultiplierColor(gameMode, numberOfRows);
     // Handle out-of-bounds indices by returning a default color
     if (slotIndex < 0 || slotIndex >= colors.length) {
-        const modeColors = MULTIPLIER_COLORS[gameMode];
-        return (modeColors && modeColors[0])
+        return getMultiplierColors(gameMode)?.[0] || "#FFDC48";
     }
     return colors[slotIndex];
 }
