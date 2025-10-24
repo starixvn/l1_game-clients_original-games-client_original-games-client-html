@@ -51,10 +51,13 @@ export function initializeGameConfig(gameId: number): GameConfig {
 let currentGameId: number | null = null;
 
 // Initialize game configuration at module load time if NEXT_PUBLIC_DEFAULT_GAME_ID is set
+// This serves as a fallback, but page-level initialization takes priority
 const defaultGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
 if (defaultGameId && !isNaN(Number(defaultGameId))) {
     try {
-        initializeGameConfig(Number(defaultGameId));
+        const envGameId = Number(defaultGameId);
+        console.log(`Module-level game config initialization with env var: ${envGameId}`);
+        initializeGameConfig(envGameId);
     } catch (error) {
         // Silently fail during initialization - configuration will be set later
         console.warn('Failed to initialize game config at module load:', error);

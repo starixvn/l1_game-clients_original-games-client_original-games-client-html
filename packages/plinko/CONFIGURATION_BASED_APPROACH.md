@@ -130,9 +130,39 @@ To add a new game variant:
     - Copy `Dockerfile.plinko-x` and update game ID and paths
     - Add Docker build scripts to `package.json`
 
+### Runtime Game ID Detection (Priority System)
+
+The application uses a priority system to determine which game to load:
+
+1. **Environment Variable** (Highest Priority)
+
+    - `NEXT_PUBLIC_DEFAULT_GAME_ID` environment variable
+    - Used for dedicated game servers (e.g., Plinko X server always serves game ID 159)
+    - Example: `NEXT_PUBLIC_DEFAULT_GAME_ID=159 npm run dev-plinko-x`
+
+2. **URL Path Extraction** (Medium Priority)
+
+    - Extracts game ID from URL patterns like `/game-159` → game ID 159
+    - Used for multi-game deployments where one server serves multiple games
+    - Example: `/game-145` loads Plinko, `/game-159` loads Plinko X
+
+3. **Default Fallback** (Lowest Priority)
+    - Defaults to game ID 145 (Plinko) if no other method applies
+
+**Server-Side Rendering**: Game ID is extracted during SSR using `getInitialProps`
+**Client-Side Navigation**: Game ID is extracted from the router path with `useEffect`
+
 ### Build-Time Configuration
 
-The `games/games.tsx` file uses build-time environment variables to determine the game configuration. This ensures proper TypeScript compilation and static optimization.
+While the application can now detect games dynamically from URLs, you can still build specific versions using environment variables for optimization:
+
+```bash
+# Build Plinko-specific version
+NEXT_PUBLIC_DEFAULT_GAME_ID=145 npm run build:standalone
+
+# Build Plinko X-specific version
+NEXT_PUBLIC_DEFAULT_GAME_ID=159 npm run build:standalone
+```
 
 ## Current Game Differences
 
