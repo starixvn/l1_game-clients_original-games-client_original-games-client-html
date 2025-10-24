@@ -18,7 +18,7 @@ export interface GameAssetsConfig {
 }
 
 /**
- * Plinko (Game ID 145) asset configuration
+ * Plinko (Game ID 145) asset configuration - matches master branch exactly
  */
 export const plinkoAssets: GameAssetsConfig = {
     backgroundImage: "/static/images/background/bg.webp",
@@ -46,13 +46,12 @@ export const plinkoAssets: GameAssetsConfig = {
 };
 
 /**
- * Plinko X (Game ID 159) asset configuration
- * Uses the same assets as Plinko since business logic is identical
- * Can be easily customized later with different assets if needed
+ * Plinko X (Game ID 159) asset configuration - matches master branch exactly
+ * Same assets as Plinko for now, can be customized later
  */
 export const plinkoXAssets: GameAssetsConfig = {
-    backgroundImage: "/static/images/background/bg.webp", // Same background for now
-    gameIcon: "/static/images/plinko/ball.png", // Same icon for now
+    backgroundImage: "/static/images/background/bg.webp",
+    gameIcon: "/static/images/plinko/ball.png",
     soundFiles: {
         ballHitPin: "/static/sounds/ball-hit-pin.mp3",
         ballHitWin: "/static/sounds/ball-hit-win.mp3",
@@ -72,7 +71,7 @@ export const plinkoXAssets: GameAssetsConfig = {
         "/static/fonts/Montserrat-Bold.ttf",
         "/static/fonts/BebasNeue-Regular.ttf"
     ],
-    resourcePath: "plinko-x"
+    resourcePath: "plinko"
 };
 
 /**

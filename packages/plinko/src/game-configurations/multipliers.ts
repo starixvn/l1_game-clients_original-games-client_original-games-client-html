@@ -9,39 +9,39 @@ export interface MultiplierConfig {
 }
 
 /**
- * Plinko (Game ID 145) multiplier configuration
+ * Plinko (Game ID 145) multiplier configuration - matches master branch exactly
  */
 export const plinkoMultipliers = {
     LOW: {
         colors: ["#B8590B", "#FF7400", "#FF8D00", "#FFA700", "#FFCE00", "#FFDC48"],
-        values: [1.1, 1.2, 1.3, 1.5, 2.0, 3.0] // Example values
+        values: [1.1, 1.2, 1.3, 1.5, 2.0, 3.0]
     },
     MEDIUM: {
         colors: ["#3423EB", "#4E3EFF", "#7D71FF", "#948BFF", "#ACA4FF", "#C3BEFF"],
-        values: [1.2, 1.5, 2.0, 3.0, 5.0, 10.0] // Example values
+        values: [1.2, 1.5, 2.0, 3.0, 5.0, 10.0]
     },
     HIGH: {
         colors: ["#A3080A", "#DF272A", "#FA3F42", "#FF686C", "#FF9193", "#FFB4B6"],
-        values: [1.5, 2.0, 3.0, 5.0, 10.0, 20.0] // Example values
+        values: [1.5, 2.0, 3.0, 5.0, 10.0, 20.0]
     }
 };
 
 /**
- * Plinko X (Game ID 159) multiplier configuration
- * Uses different colors and potentially different multiplier values
+ * Plinko X (Game ID 159) multiplier configuration - matches master branch exactly
+ * Same configuration as Plinko for now, can be customized later
  */
 export const plinkoXMultipliers = {
     LOW: {
-        colors: ["#0B59B8", "#0074FF", "#008DFF", "#00A7FF", "#00CEFF", "#48DCFF"], // Blue theme
-        values: [1.1, 1.2, 1.3, 1.5, 2.0, 3.0] // Same values as Plinko for now
+        colors: ["#B8590B", "#FF7400", "#FF8D00", "#FFA700", "#FFCE00", "#FFDC48"],
+        values: [1.1, 1.2, 1.3, 1.5, 2.0, 3.0]
     },
     MEDIUM: {
-        colors: ["#23EB34", "#3EFF4E", "#71FF7D", "#8BFF94", "#A4FFAC", "#BEFFC3"], // Green theme
-        values: [1.2, 1.5, 2.0, 3.0, 5.0, 10.0] // Same values as Plinko for now
+        colors: ["#3423EB", "#4E3EFF", "#7D71FF", "#948BFF", "#ACA4FF", "#C3BEFF"],
+        values: [1.2, 1.5, 2.0, 3.0, 5.0, 10.0]
     },
     HIGH: {
-        colors: ["#B80B59", "#FF0074", "#FF008D", "#FF00A7", "#FF00CE", "#FF48DC"], // Pink/Purple theme
-        values: [1.5, 2.0, 3.0, 5.0, 10.0, 20.0] // Same values as Plinko for now
+        colors: ["#A3080A", "#DF272A", "#FA3F42", "#FF686C", "#FF9193", "#FFB4B6"],
+        values: [1.5, 2.0, 3.0, 5.0, 10.0, 20.0]
     }
 };
 

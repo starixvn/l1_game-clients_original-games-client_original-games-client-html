@@ -20,7 +20,7 @@ export interface UIThemeConfig {
 }
 
 /**
- * Plinko (Game ID 145) UI theme configuration
+ * Plinko (Game ID 145) UI theme configuration - matches master branch
  */
 export const plinkoTheme: UIThemeConfig = {
     primaryColor: "#FF7400",
@@ -39,23 +39,23 @@ export const plinkoTheme: UIThemeConfig = {
 };
 
 /**
- * Plinko X (Game ID 159) UI theme configuration
- * Uses a different color scheme (blue/purple theme)
+ * Plinko X (Game ID 159) UI theme configuration - matches master branch for now
+ * Can be customized later with different colors
  */
 export const plinkoXTheme: UIThemeConfig = {
-    primaryColor: "#0074FF",
-    secondaryColor: "#00A7FF",
-    accentColor: "#00CEFF",
-    backgroundColor: "#0f0f23", // Darker blue-tinted background
+    primaryColor: "#FF7400",
+    secondaryColor: "#FFA700",
+    accentColor: "#FFCE00",
+    backgroundColor: "#1a1a1a",
     textColor: "#ffffff",
-    borderColor: "#1a237e", // Dark blue border
+    borderColor: "#333333",
     buttonStyles: {
-        primary: "bg-blue-500 hover:bg-blue-600 text-white",
-        secondary: "bg-purple-600 hover:bg-purple-700 text-white",
+        primary: "bg-orange-500 hover:bg-orange-600 text-white",
+        secondary: "bg-gray-600 hover:bg-gray-700 text-white",
         danger: "bg-red-500 hover:bg-red-600 text-white"
     },
-    panelBackground: "bg-blue-900",
-    gameAreaBackground: "bg-indigo-950"
+    panelBackground: "bg-gray-800",
+    gameAreaBackground: "bg-black"
 };
 
 /**
