@@ -6,19 +6,40 @@ const app = express();
 const PORT = process.env.PROXY_PORT || 3000;
 
 // Game service targets - use localhost for development
-const SEDIE_TARGET = "http://localhost:5000";
-const BACCARAT_TARGET = "http://localhost:5002";
+let SEDIE_TARGET = "http://localhost:5000";
+let BACCARAT_TARGET = "http://localhost:5002";
+let PLINKO_TARGET = "http://localhost:5003";
+let PLINKO_X_TARGET = "http://localhost:5004";
+
+// Use custom targets if specified via environment variables
+const targetHost = process.env.TARGET_HOST;
+if (targetHost) {
+    // For specific game proxying
+    if (targetHost.includes("5003")) {
+        PLINKO_TARGET = targetHost;
+    } else if (targetHost.includes("5004")) {
+        PLINKO_X_TARGET = targetHost;
+    } else if (targetHost.includes("5000")) {
+        SEDIE_TARGET = targetHost;
+    } else if (targetHost.includes("5002")) {
+        BACCARAT_TARGET = targetHost;
+    }
+}
 
 // Simulate the deployment environment where requests come in with game-specific prefixes
 console.log(`🚀 Starting Unified Reverse Proxy Server`);
 console.log(`  - Proxy Port: ${PORT}`);
 console.log(`  - Sedie Target: ${SEDIE_TARGET} (Game ID: 148)`);
 console.log(`  - Baccarat Target: ${BACCARAT_TARGET} (Game ID: 150)`);
-console.log(`  - Base Paths: /game-148, /game-150`);
+console.log(`  - Plinko Target: ${PLINKO_TARGET} (Game ID: 145)`);
+console.log(`  - Plinko X Target: ${PLINKO_X_TARGET} (Game ID: 159)`);
+console.log(`  - Base Paths: /game-148, /game-150, /game-145, /game-159`);
 console.log(`  - Environment: Simulating deployment environment`);
 console.log(`  - Access URLs:`);
 console.log(`   - Sedie: http://localhost:${PORT}/game-148`);
 console.log(`   - Baccarat: http://localhost:${PORT}/game-150`);
+console.log(`   - Plinko: http://localhost:${PORT}/game-145`);
+console.log(`   - Plinko X: http://localhost:${PORT}/game-159`);
 console.log("");
 
 // Middleware to log all incoming requests
@@ -82,6 +103,60 @@ app.use(
     })
 );
 
+// Proxy middleware for Plinko game (Game ID 145) - strips /game-145 prefix
+app.use(
+    "/game-145",
+    createProxyMiddleware({
+        target: PLINKO_TARGET,
+        changeOrigin: true,
+        pathRewrite: {
+            "^/game-145": "", // Remove /game-145 prefix when forwarding
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            const timestamp = new Date().toISOString();
+            const targetUrl = `${PLINKO_TARGET}${req.url.replace("/game-145", "")}`;
+            console.log(`🔄 [${timestamp}] [PLINKO] Proxying: ${req.method} ${req.url} → ${targetUrl}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            const timestamp = new Date().toISOString();
+            const statusCode = proxyRes.statusCode;
+            const statusEmoji = statusCode >= 200 && statusCode < 300 ? "✅" : statusCode >= 400 ? "❌" : "⚠️";
+            console.log(`📨 [${timestamp}] [PLINKO] ${req.method} ${req.url} → ${statusCode} ${statusEmoji}`);
+        },
+        onError: (err, req, res) => {
+            const timestamp = new Date().toISOString();
+            console.error(`❌ [${timestamp}] [PLINKO] Proxy Error for ${req.method} ${req.url}:`, err.message);
+        },
+    })
+);
+
+// Proxy middleware for Plinko X game (Game ID 159) - strips /game-159 prefix
+app.use(
+    "/game-159",
+    createProxyMiddleware({
+        target: PLINKO_X_TARGET,
+        changeOrigin: true,
+        pathRewrite: {
+            "^/game-159": "", // Remove /game-159 prefix when forwarding
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            const timestamp = new Date().toISOString();
+            const targetUrl = `${PLINKO_X_TARGET}${req.url.replace("/game-159", "")}`;
+            console.log(`🔄 [${timestamp}] [PLINKO-X] Proxying: ${req.method} ${req.url} → ${targetUrl}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            const timestamp = new Date().toISOString();
+            const statusCode = proxyRes.statusCode;
+            const statusEmoji = statusCode >= 200 && statusCode < 300 ? "✅" : statusCode >= 400 ? "❌" : "⚠️";
+            console.log(`📨 [${timestamp}] [PLINKO-X] ${req.method} ${req.url} → ${statusCode} ${statusEmoji}`);
+        },
+        onError: (err, req, res) => {
+            const timestamp = new Date().toISOString();
+            console.error(`❌ [${timestamp}] [PLINKO-X] Proxy Error for ${req.method} ${req.url}:`, err.message);
+        },
+    })
+);
+
 // Handle direct requests (for debugging)
 app.get("/", (req, res) => {
     res.send(`
@@ -91,6 +166,8 @@ app.get("/", (req, res) => {
         <ul>
             <li><a href="/game-148">SeDie Multiplayer (Game ID: 148)</a> - Target: ${SEDIE_TARGET}</li>
             <li><a href="/game-150">Baccarat Multiplayer (Game ID: 150)</a> - Target: ${BACCARAT_TARGET}</li>
+            <li><a href="/game-145">Plinko (Game ID: 145)</a> - Target: ${PLINKO_TARGET}</li>
+            <li><a href="/game-159">Plinko X (Game ID: 159)</a> - Target: ${PLINKO_X_TARGET}</li>
         </ul>
         <hr>
         <h3>Recent Logs:</h3>
@@ -122,6 +199,16 @@ app.get("/health", (req, res) => {
                 target: BACCARAT_TARGET,
                 base_path: "/game-150",
             },
+            plinko: {
+                game_id: 145,
+                target: PLINKO_TARGET,
+                base_path: "/game-145",
+            },
+            "plinko-x": {
+                game_id: 159,
+                target: PLINKO_X_TARGET,
+                base_path: "/game-159",
+            },
         },
         proxy_port: PORT,
     });
@@ -133,11 +220,17 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`🌐 Access games at:`);
     console.log(`   - SeDie: http://localhost:${PORT}/game-148`);
     console.log(`   - Baccarat: http://localhost:${PORT}/game-150`);
+    console.log(`   - Plinko: http://localhost:${PORT}/game-145`);
+    console.log(`   - Plinko X: http://localhost:${PORT}/game-159`);
     console.log(`🔍 Health check: http://localhost:${PORT}/health`);
     console.log("");
     console.log("This proxy simulates the exact deployment environment where:");
-    console.log("  - External URLs: http://domain/game-148/... and http://domain/game-150/...");
-    console.log("  - Internal forwarding: http://sedie-multiplayer:5000/... and http://baccarat-multiplayer:5001/...");
+    console.log(
+        "  - External URLs: http://domain/game-148/..., http://domain/game-150/..., http://domain/game-145/..., http://domain/game-159/..."
+    );
+    console.log(
+        "  - Internal forwarding: http://sedie-multiplayer:5000/..., http://baccarat-multiplayer:5002/..., http://plinko:5003/..., http://plinko-x:5004/..."
+    );
     console.log("  - BasePaths are stripped during proxying");
     console.log("");
 });

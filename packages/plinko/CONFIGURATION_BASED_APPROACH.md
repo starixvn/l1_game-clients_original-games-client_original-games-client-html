@@ -76,6 +76,35 @@ docker run -p 5000:5000 plinko:latest
 docker run -p 5001:5000 plinko-x:latest
 ```
 
+### Local Development with Proxy
+
+For local development that simulates the production deployment environment with game-specific subpaths:
+
+```bash
+# From root directory - start Plinko with proxy (simulates /game-145/)
+npm run dev:proxy-plinko
+# Access: http://localhost:3002/game-145/
+
+# From root directory - start Plinko X with proxy (simulates /game-159/)
+npm run dev:proxy-plinko-x
+# Access: http://localhost:3003/game-159/
+
+# Compare with existing games:
+npm run dev:proxy-sedie-multiplayer    # http://localhost:3000/game-148/
+npm run dev:proxy-baccarat-multiplayer # http://localhost:3001/game-150/
+```
+
+**What the proxy commands do:**
+
+1. Start the game server on its assigned port (5003 for Plinko, 5004 for Plinko X)
+2. Start a reverse proxy that strips the game prefix and forwards requests
+3. Simulate production URLs like `l2-original-games-client1.lumigame.com/game-159/`
+
+**Port assignments:**
+
+-   Plinko: Game server (5003) + Proxy (3002) → `http://localhost:3002/game-145/`
+-   Plinko X: Game server (5004) + Proxy (3003) → `http://localhost:3003/game-159/`
+
 ### Dynamic Scripts
 
 The package includes dynamic scripts that read from environment variables:
