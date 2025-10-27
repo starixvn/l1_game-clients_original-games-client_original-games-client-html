@@ -132,25 +132,39 @@ To add a new game variant:
 
 ### Runtime Game ID Detection (Priority System)
 
-The application uses a priority system to determine which game to load:
+The application uses a sophisticated priority system to determine which game to load, supporting both dedicated servers and multi-game deployments:
 
-1. **Environment Variable** (Highest Priority)
+#### **Priority Order (Highest to Lowest):**
+
+1. **Environment Variable** (Dedicated Servers)
 
     - `NEXT_PUBLIC_DEFAULT_GAME_ID` environment variable
     - Used for dedicated game servers (e.g., Plinko X server always serves game ID 159)
-    - Example: `NEXT_PUBLIC_DEFAULT_GAME_ID=159 npm run dev-plinko-x`
+    - Example: `NEXT_PUBLIC_DEFAULT_GAME_ID=159` in Docker
+    - **Always takes priority** for dedicated deployments
 
-2. **URL Path Extraction** (Medium Priority)
+2. **URL Path Extraction** (Multi-Game Servers)
 
     - Extracts game ID from URL patterns like `/game-159` → game ID 159
     - Used for multi-game deployments where one server serves multiple games
     - Example: `/game-145` loads Plinko, `/game-159` loads Plinko X
+    - **Takes priority** when no environment variable is set
 
-3. **Default Fallback** (Lowest Priority)
-    - Defaults to game ID 145 (Plinko) if no other method applies
+3. **URL Query Parameter** (External Systems)
+
+    - Reads `gameId` from URL query parameters (e.g., `?gameId=145`)
+    - Used as fallback for external systems that pass game ID via query params
+    - **Only used** when neither environment variable nor URL path provide game ID
+
+4. **Default Fallback** (Lowest Priority)
+    - Defaults to game ID 148 (SeDie) if no other method applies
+
+#### **Implementation Details:**
 
 **Server-Side Rendering**: Game ID is extracted during SSR using `getInitialProps`
 **Client-Side Navigation**: Game ID is extracted from the router path with `useEffect`
+**Splash Screen Logic**: Handles all priority detection and passes correct game ID to dashboard
+**Game Component**: Provides additional client-side validation and URL path detection
 
 ### Build-Time Configuration
 
