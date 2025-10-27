@@ -25,9 +25,15 @@ export function parseContextFromURL(): URLContextModel | undefined {
         return;
     }
 
-    const token = params.get("token");
+    let token = params.get("token");
     const language = params.get("lang");
     const redirectUrl = params.get("rurl");
+
+    const param = params.get("params");
+
+    if (param) {
+        token = param;
+    }
 
     return { token, language, redirectUrl };
 }
