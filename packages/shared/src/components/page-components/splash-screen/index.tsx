@@ -306,9 +306,56 @@ const SplashScreen: React.FC = () => {
             logger.info("🎮 [SPLASH] Game configuration started", {
                 defaultGameId,
                 hasAuthorizeInfo: !!authorizeInfo,
+                envVar: process.env.NEXT_PUBLIC_DEFAULT_GAME_ID
             });
 
             let toLoadGameId = defaultGameId;
+
+            // Check for URL path-based game ID (e.g., /game-159/)
+            const urlPath = typeof window !== 'undefined' ? window.location.pathname : '';
+            const pathGameIdMatch = urlPath.match(/\/game-(\d+)/);
+            if (pathGameIdMatch) {
+                const pathGameId = parseInt(pathGameIdMatch[1]);
+                logger.info('🎮 [SPLASH] Game ID detected from URL path', {
+                    urlPath,
+                    pathGameId,
+                    defaultGameId
+                });
+                // For dedicated servers, prioritize environment variable
+                // For multi-game servers, prioritize URL path
+                if (process.env.NEXT_PUBLIC_DEFAULT_GAME_ID) {
+                    // Dedicated server: keep environment variable priority
+                    toLoadGameId = defaultGameId;
+                    logger.info('🎮 [SPLASH] Using environment variable (dedicated server)', { toLoadGameId });
+                } else {
+                    // Multi-game server: use URL path
+                    toLoadGameId = pathGameId;
+                    logger.info('🎮 [SPLASH] Using URL path (multi-game server)', { toLoadGameId });
+                }
+            }
+
+            // Check for URL query parameter gameId (fallback for external systems)
+            if (typeof window !== 'undefined') {
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryGameId = urlParams.get('gameId');
+                if (queryGameId && !isNaN(Number(queryGameId))) {
+                    const parsedQueryGameId = Number(queryGameId);
+                    logger.info('🎮 [SPLASH] Game ID detected from URL query parameter', {
+                        queryGameId: parsedQueryGameId,
+                        currentToLoadGameId: toLoadGameId
+                    });
+                    // Only override if we don't have a path-based or environment-based game ID
+                    if (!pathGameIdMatch && !process.env.NEXT_PUBLIC_DEFAULT_GAME_ID) {
+                        toLoadGameId = parsedQueryGameId;
+                        logger.info('🎮 [SPLASH] Using URL query parameter (no path/env override)', { toLoadGameId });
+                    } else {
+                        logger.info('🎮 [SPLASH] Ignoring URL query parameter (path/env takes priority)', {
+                            queryGameId: parsedQueryGameId,
+                            finalGameId: toLoadGameId
+                        });
+                    }
+                }
+            }
 
             logger.debug("🎮 [SPLASH] Initial game selection", {
                 defaultGameId,
