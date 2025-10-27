@@ -11,12 +11,29 @@ export default class extends Document<{ headScript?: string }> {
 
         // Always use single env config script now
         const headScript = `${BASE_PATH}/c.js`;
+
+        // Debug logging for basePath issues
+        console.log('📄 DOCUMENT getInitialProps:', {
+            BASE_PATH,
+            headScript,
+            url: ctx.req?.url,
+            env_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH
+        });
+
         return { ...initialProps, headScript };
     }
 
     render() {
         const headScript = (this.props as any)?.headScript || `${BASE_PATH}/c.js`;
         const configFileWithVersion = `${headScript}?${buildVersion}`;
+
+        // Debug logging for render phase
+        console.log('📄 DOCUMENT render:', {
+            BASE_PATH,
+            headScript,
+            configFileWithVersion,
+            props_headScript: (this.props as any)?.headScript
+        });
 
         return (
             <Html>
