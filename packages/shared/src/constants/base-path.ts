@@ -1,7 +1,18 @@
 // Centralized basePath configuration for better maintainability
 // This is the single source of truth for basePath across the entire application
 
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+export const BASE_PATH = rawBasePath;
+
+// Debug logging in development
+if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    console.log('🔧 BASE_PATH Debug:', {
+        BASE_PATH,
+        rawBasePath,
+        envVar: process.env.NEXT_PUBLIC_BASE_PATH,
+        userAgent: navigator.userAgent.substring(0, 50)
+    });
+}
 
 // For SCSS usage - can be imported in SCSS files
 export const BASE_PATH_SCSS = BASE_PATH || "/";

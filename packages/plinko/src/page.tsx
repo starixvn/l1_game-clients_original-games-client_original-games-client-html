@@ -58,6 +58,15 @@ const PlinkoPage = (props: any) => {
         initializeGameConfig(gameId);
         updateGameConfig(gameId);
 
+        // Debug: Environment and basePath check
+        console.log('🔍 DEBUG: Environment check:', {
+            gameId,
+            NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
+            NEXT_PUBLIC_DEFAULT_GAME_ID: process.env.NEXT_PUBLIC_DEFAULT_GAME_ID,
+            currentPath: window.location.pathname,
+            currentHref: window.location.href
+        });
+
         // Debug: Monitor for unexpected redirects (comprehensive)
         console.log('🔍 DEBUG: Page loaded, monitoring for redirects...', { gameId, currentPath: window.location.pathname });
 
