@@ -79,7 +79,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                         isOpen={isShowLiveStats}
                         enableBackdrop={false}
                         onCloseModal={handleCloseModal}
-                        extendedClassName="h-[302px] w-[254px] top-[200px] left-[50px]"
+                        extendedClassName="h-[310px] w-[254px] top-[200px] left-[50px] rounded-b-xl"
                     >
                         <div
                             id="live-stats"
@@ -89,7 +89,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                             })}
                         >
                             {/* Header */}
-                            <div className="flex items-center px-3 gap-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
+                            <div className="flex items-center px-4 gap-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
                                 <button
                                     className="cursor-pointer ml-auto relative z-10"
                                     onClick={(e) => {
@@ -100,7 +100,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                                 >
                                     <i className="icon-reset" style={{ fontSize: "22px" }}></i>
                                 </button>
-                                <div className="flex flex-1 items-center justify-center font-semibold text-lg leading-[22px]">
+                                <div className="flex flex-1 items-center justify-center font-semibold leading-[22px]">
                                     {translate("live_stats")}
                                 </div>
                                 <button
@@ -177,28 +177,31 @@ const LiveStats = ({
 
     return useMemo(() => {
         return (
-            <div className="h-full border-none flex flex-col justify-center items-center">
-                <div id="information" className="flex justify-between  pt-1 w-[228px] h-[102px] bg-[#00000080] rounded-[12px]">
-                    <div className="flex flex-col items-start flex-1 px-3 gap-1">
-                        <div className="flex flex-col items-start">
-                            {t("profit")}
-                            <div className={profitColorClass}>{numberWithCommas(profitAmount)}</div>
+            <div className="h-full border-none flex flex-col justify-center items-center ">
+                <div
+                    id="information"
+                    className="text-sm md:text-base font-semibold flex justify-between items-center w-[228px] min-h-[102px] bg-[#00000080] rounded-[16px] "
+                >
+                        <div className="flex flex-col items-start flex-1 px-3">
+                            <div className="flex flex-col items-start">
+                                {t("profit")}
+                                <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
+                            </div>
+                            <div className="flex flex-col items-start">
+                                {t("bet_amount")}
+                                <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
+                            </div>
                         </div>
-                        <div className="flex flex-col items-start">
-                            {t("bet_amount")}
-                            <div>{numberWithCommas(totalBetAmount)}</div>
+                        <div className="flex flex-col items-start flex-1 px-3">
+                            <div className="flex flex-col items-start">
+                                {t("wins")}
+                                <div className={`${winsColorClass} font-[400]`}>{numberWithCommas(winRound)}</div>
+                            </div>
+                            <div className="flex flex-col items-start">
+                                {t("losses")}
+                                <div className={cn(lostRound > 0 ? "text-red-500" : "", "font-[400]")}>{numberWithCommas(lostRound)}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col items-start flex-1 px-3 gap-1">
-                        <div className="flex flex-col items-start">
-                            {t("wins")}
-                            <div className={winsColorClass}>{numberWithCommas(winRound)}</div>
-                        </div>
-                        <div className="flex flex-col items-start">
-                            {t("losses")}
-                            <div className={cn(lostRound > 0 ? "text-red-500" : "")}>{numberWithCommas(lostRound)}</div>
-                        </div>
-                    </div>
                 </div>
                 <div id="my-chart" className="w-full h-auto">
                     <AreaChart width={228} height={150} data={netProfitHistory}>
