@@ -58,7 +58,7 @@ ENV NEXT_PUBLIC_GAME_PACKAGE=plinko-x
 
 # Obfuscate deployment configs and build
 RUN yarn obfuscator-config-file
-RUN yarn build:standalone
+RUN yarn build:standalone-plinko-x
 
 FROM base AS runner
 
