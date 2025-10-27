@@ -8,7 +8,7 @@ import { usePlinkoBallHitPinSound } from "@plinko/shared/hooks/use-sound";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-export const useBall = () => {
+export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => {
     const ballImageRef = useRef<HTMLImageElement | null>(null);
     const imageLoadedRef = useRef(false);
     const playPlinkoBallHitPinSound = usePlinkoBallHitPinSound();
@@ -38,17 +38,37 @@ export const useBall = () => {
         return ball;
     }, []);
 
-    const drawBall = useCallback((body: BallBody, context: CanvasRenderingContext2D) => {
-        if (body.label !== PLINKO_OBJECTS.BALL) {
-            return;
-        }
-        const { ballConfig } = PlinkoCanvasConfig;
+    const drawBalls = useCallback(
+        (context: CanvasRenderingContext2D) => {
+            if (!context) {
+                return;
+            }
+            const { ballConfig } = PlinkoCanvasConfig;
 
-        // Draw the image if it's loaded
-        if (imageLoadedRef.current && ballImageRef.current) {
-            context.drawImage(ballImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2, ballConfig.radius * 2);
-        }
-    }, []);
+            ballsRef.current.forEach((body: Body) => {
+                const x = body.position.x;
+                const y = body.position.y;
+                context.save();
+                context.translate(x, y);
+                if (imageLoadedRef.current && ballImageRef.current) {
+                    context.drawImage(
+                        ballImageRef.current,
+                        -ballConfig.radius,
+                        -ballConfig.radius,
+                        ballConfig.radius * 2,
+                        ballConfig.radius * 2
+                    );
+                } else {
+                    context.fillStyle = "#FED701";
+                    context.beginPath();
+                    context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
+                    context.fill();
+                }
+                context.restore();
+            });
+        },
+        [ballsRef]
+    );
 
     const handleRoad = useCallback((body: BallBody, peg: PegBody) => {
         Body.setStatic(body, true);
@@ -56,12 +76,10 @@ export const useBall = () => {
         if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
             const road = body.finish?.result[peg.rowIndex];
             Body.setPosition(body, { x: peg.position.x, y: peg.position.y - pegRadius - ballConfig.radius });
-            setTimeout(() => {
-                Body.setVelocity(body, {
-                    x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,
-                    y: ballConfig.offsetVelocityY,
-                });
-            }, 0);
+            Body.setVelocity(body, {
+                x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,
+                y: ballConfig.offsetVelocityY,
+            });
             playPlinkoBallHitPinSoundRef.current();
             body.collidedRowIndexes?.push(peg.rowIndex);
         }
@@ -69,7 +87,7 @@ export const useBall = () => {
     }, []);
 
     return {
-        drawBall,
+        drawBalls,
         createBall,
         handleRoad,
     };

@@ -29,10 +29,6 @@ export interface PegBody extends Body {
     side?: string;
 }
 
-export interface SlotBody extends Body {
-    slotIndex?: number;
-}
-
 export interface PegEffect {
     x: number;
     y: number;

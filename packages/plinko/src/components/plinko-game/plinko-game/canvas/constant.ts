@@ -10,10 +10,10 @@ export const PLINKO_OBJECTS = {
 export const PlinkoCanvasConfig: IPlinkoCanvasConfig = {
     width: 1050,
     height: 1000,
-    pegRadius: 7.5,
-    mapGap: 3.6,
+    pegRadius: 7,
+    mapGap: 3.8,
     ballConfig: {
-        radius: 14,
+        radius: 16,
         offsetVelocityX: 1,
         offsetVelocityY: 0,
     },
@@ -22,7 +22,7 @@ export const PlinkoCanvasConfig: IPlinkoCanvasConfig = {
 export const BALL_BODY_OPTIONS: IBodyDefinition = {
     restitution: 0,
     friction: 0,
-    frictionAir: 0.05,
+    frictionAir: 0.07,
     collisionFilter: {
         group: -1,
     },

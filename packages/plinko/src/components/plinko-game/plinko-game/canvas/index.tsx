@@ -14,6 +14,7 @@ const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine | null>(null);
     const sceneObjectsRef = useRef<Body[]>([]);
+    const ballsRef = useRef<Body[]>([]);
     const animationRef = useRef<number | null>(null);
     const pegEffectsRef = useRef<PegEffect[]>([]);
     const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
@@ -30,10 +31,10 @@ const PlinkoCanvas = () => {
     const { createPegs, drawPeg } = usePeg();
 
     // Multiplier hook
-    const { createSlots } = useSlot();
+    const { createSlot } = useSlot();
 
     // Ball hook
-    const { createBall, drawBall, handleRoad } = useBall();
+    const { createBall, drawBalls, handleRoad } = useBall({ ballsRef });
 
     // Peg effect hook
     const { createPegEffect, drawPegEffect } = usePegEffect({ pegEffectsRef });
@@ -76,7 +77,7 @@ const PlinkoCanvas = () => {
 
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
-                    sceneObjectsRef.current.splice(sceneObjectsRef.current.indexOf(ball), 1);
+                    ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
                 }
             }
         },
@@ -96,11 +97,10 @@ const PlinkoCanvas = () => {
             context.save();
             context.translate(x, y);
             context.rotate(angle);
-            drawBall(body, context);
             drawPeg(body, context);
             context.restore();
         },
-        [drawBall, drawPeg]
+        [drawPeg]
     );
 
     // Clear all objects
@@ -109,7 +109,9 @@ const PlinkoCanvas = () => {
             Composite.clear(engineRef.current.world, true);
         }
         sceneObjectsRef.current = [];
+        ballsRef.current = [];
         pegEffectsRef.current = [];
+        explosionEffectsRef.current = [];
         if (canvasRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -142,9 +144,9 @@ const PlinkoCanvas = () => {
 
         clear();
         const pegs = createPegs();
-        const slots = createSlots();
-        addObjects([...pegs, ...slots]);
-    }, [clear, createPegs, createSlots, addObjects]);
+        const slot = createSlot();
+        addObjects([...pegs, slot]);
+    }, [clear, createPegs, createSlot, addObjects]);
 
     // Animation loop
     const animate = useCallback(() => {
@@ -160,19 +162,22 @@ const PlinkoCanvas = () => {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        // draw effects first (behind objects)
-        drawPegEffect?.(context);
-
         // Draw all scene objects
         sceneObjectsRef.current.forEach((obj) => {
             drawSceneObject(obj);
         });
 
+        // draw effects first (behind objects)
+        drawPegEffect?.(context);
+
+        // draw balls
+        drawBalls?.(context);
+
         // Draw explosion effects
         drawExplosionEffect?.(context);
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawPegEffect, drawExplosionEffect]);
+    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
@@ -181,7 +186,7 @@ const PlinkoCanvas = () => {
         }
 
         const engine = Engine.create();
-        engine.timing.timeScale = 2;
+        engine.timing.timeScale = 2.2;
         engineRef.current = engine;
 
         return engine;
@@ -230,8 +235,12 @@ const PlinkoCanvas = () => {
                 setFinishedBall(finish);
                 return;
             }
+            if (!engineRef.current) {
+                return;
+            }
             const ballBody = createBall(finish);
-            addObjects([ballBody]);
+            Composite.add(engineRef.current.world, ballBody);
+            ballsRef.current.push(ballBody);
         }
     }, [finish, createBall, addObjects, setFinishedBall]);
 

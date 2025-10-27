@@ -2,29 +2,20 @@ import { useCallback } from "react";
 import { Bodies, Body } from "matter-js";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
-import { SlotBody } from "../type";
 
 export const useSlot = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
-    const createSlots = useCallback(() => {
-        const slots: Body[] = [];
+    const createSlot = useCallback(() => {
         const { width, pegRadius, mapGap } = PlinkoCanvasConfig;
         const numberOfSlots = numberOfRows + 1;
-        for (let col = 1; col <= numberOfSlots; col++) {
-            const gap = pegRadius * 2 * mapGap;
-            const space = (width - gap * numberOfSlots) / 2;
-            const x = space + col * gap - pegRadius * mapGap;
-            const y = numberOfSlots * pegRadius * 2 * mapGap - 20;
-            const options = {
-                isSensor: true,
-                isStatic: true,
-            };
-            const body = Bodies.rectangle(x, y, gap - 6, 1, options) as SlotBody;
-            body.label = PLINKO_OBJECTS.SLOT;
-            body.slotIndex = col - 1; // Slot index starts from 0
-            slots.push(body);
-        }
-        return slots;
+        const x = 0;
+        const y = numberOfSlots * pegRadius * 2 * mapGap;
+        const options = {
+            isStatic: true,
+        };
+        const body = Bodies.rectangle(x, y, width * 2, 1, options);
+        body.label = PLINKO_OBJECTS.SLOT;
+        return body;
     }, [numberOfRows]);
 
     const drawSlot = useCallback((body: Body, context: CanvasRenderingContext2D) => {
@@ -38,7 +29,7 @@ export const useSlot = () => {
     }, []);
 
     return {
-        createSlots,
+        createSlot,
         drawSlot,
     };
 };

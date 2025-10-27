@@ -25,7 +25,7 @@ const Background: React.FC = () => {
                     style={{ backgroundImage: `url('${basePath}/static/images/background/polygon.webp?v=${buildVersion}')` }}
                 ></div>
             </div>
-            <div className="hidden md:block absolute bottom-0 w-full h-[100px] bg-gradient-to-b from-[#17193F00] to-[#070D16]"></div>
+            <div className="hidden md:block absolute bottom-0 w-full h-[100px] z-[-10] bg-gradient-to-b from-[#17193F00] to-[#070D16]"></div>
         </>
     );
 };

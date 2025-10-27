@@ -4,6 +4,7 @@ import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import AutoBetGroup from "./auto-mode/auto-bet-group";
 import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
+import { cn } from "@shared";
 
 const BetForm = ({
     isManualTab,
@@ -51,7 +52,12 @@ const BetForm = ({
     }, [minBet, maxBet]);
 
     return (
-        <div className="flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:max-h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle">
+        <div
+            className={cn(
+                "flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:max-h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle",
+                !isManualTab && "lg:hover:pr-[9px]"
+            )}
+        >
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
             <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />

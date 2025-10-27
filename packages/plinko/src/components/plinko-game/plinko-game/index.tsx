@@ -31,7 +31,7 @@ const Game = () => {
                 </div>
                 <div className="relative aspect-[660/550] mx-auto">
                     <div
-                        className="absolute -bottom-[12px] left-1/2 -translate-x-1/2 h-[30px] translate-y-[100%]"
+                        className="absolute -bottom-[14px] left-1/2 -translate-x-1/2 h-[30px] translate-y-[100%]"
                         style={{ width: `${widthSlots[numberOfRows]}%` }}
                     >
                         <Slots />

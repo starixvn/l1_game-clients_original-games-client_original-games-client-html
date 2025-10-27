@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { isMobileOnly } from "react-device-detect";
-
-import { useClickSound } from '@shared/react-hooks';
-import { useModalStack, modalStackManager } from '@shared/utils/modal-stack-manager';
+import { useClickSound } from "@shared/react-hooks";
+import { useModalStack, modalStackManager } from "@shared/utils/modal-stack-manager";
 import { ModalType } from "./type";
-import { cn } from '@shared/utils/merge-tailwind-util';
+import { cn } from "@shared/utils/merge-tailwind-util";
 
 const HeaderHeightInPixel = 55;
 
@@ -67,14 +65,12 @@ const BaseDialog: React.FC<Props> = ({
         if (enableBackdrop) {
             document.getElementById("dashboard")?.classList.add(className);
             document.body.classList.add(className);
-            isMobileOnly && document.documentElement.classList.add(className);
         }
 
         return () => {
             document.body.classList.remove(className);
             if (enableBackdrop && !isOverlap) {
                 document.getElementById("dashboard")?.classList.remove(className);
-                isMobileOnly && document.documentElement.classList.remove(className);
             }
         };
     }, [enableBackdrop, isOverlap, isBlockScroll]);

@@ -8,11 +8,15 @@ interface UseSlotEffectProps {
 }
 
 export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) => {
+    const random = useCallback((min: number, max: number): number => {
+        return Math.random() * (max - min) + min; // NOSONAR
+    }, []);
+
     const createExplosionEffect = useCallback(
         (body: Body) => {
             // Fire colors for slot firing effect
             const fireColors = ["#ff6b35", "#ff8c42", "#ffa726", "#ffb74d"]; // orange fire
-            const color = fireColors[Math.floor(Math.random() * fireColors.length)]; // NOSONAR
+            const color = fireColors[Math.floor(random(0, fireColors.length))];
 
             // Calculate slot width based on the same formula used in useSlot.ts
             const { pegRadius, mapGap } = PlinkoCanvasConfig;
@@ -38,25 +42,25 @@ export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) 
             // Phase 2: Explosion particles shooting upward
             for (let i = 0; i < 8; i++) {
                 // Slight randomness
-                const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.3; // NOSONAR
-                const velocity = 8 + Math.random() * 4; // NOSONAR
+                const angle = (Math.PI * 2 * i) / 8 + random(-0.5, 0.5) * 0.3;
+                const velocity = random(8, 12);
                 const vx = Math.cos(angle) * velocity * 0.3; // Less horizontal movement
                 const vy = -Math.abs(Math.sin(angle)) * velocity; // Always upward
 
                 const explosionParticle: ExplosionEffect = {
                     x: body.position.x,
                     y: body.position.y,
-                    radius: 2 + Math.random() * 3, // NOSONAR
-                    maxRadius: 2 + Math.random() * 3 + 40, // NOSONAR
+                    radius: random(2, 5),
+                    maxRadius: random(42, 45),
                     color: color,
-                    opacity: 0.9 + Math.random() * 0.1, // NOSONAR
-                    speed: 0.5 + Math.random() * 0.3, // NOSONAR
+                    opacity: random(0.9, 1.0),
+                    speed: random(0.5, 0.8),
                     vx: vx,
                     vy: vy,
-                    columnWidth: 2 + Math.random() * 2, // NOSONAR
+                    columnWidth: random(2, 4),
                     gradient: false, // No gradient for particles
-                    initialOpacity: 0.9 + Math.random() * 0.1, // NOSONAR
-                    fadeSpeed: 0.03 + Math.random() * 0.02, // NOSONAR
+                    initialOpacity: random(0.9, 1.0),
+                    fadeSpeed: random(0.03, 0.05),
                     phase: "explosion", // Track animation phase
                 };
 
