@@ -98,6 +98,11 @@ function createCustomServer(gameName) {
                 res.sendFile(path.join(__dirname, "..", "..", gameName, "public", "favicons", "favicon.ico"));
             });
 
+            // Handle health check requests directly
+            server.get("/health", (req, res) => {
+                res.status(200).send("healthy");
+            });
+            
             // Handle Next.js image optimization URLs before Next.js processes them
             server.use("/_next/image", (req, res, next) => {
                 console.log(`🖼️  [Image Optimization] Intercepting Next.js image URL: ${req.url}`);
