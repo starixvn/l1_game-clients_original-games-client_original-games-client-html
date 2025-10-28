@@ -58,6 +58,8 @@ export const verifySession = async (): Promise<SSOResponse> => {
                     isUM: verifySessionResponse.isUM,
                     isSuccessful: verifySessionResponse.isSuccessful
                 });
+                
+                userSession.isAuthenticated = true;
                 StorageHelper.set(localStorageKeys.session, userSession);
                 AnalyticsHelper.setPlayerSession(userSession);
             } else {
