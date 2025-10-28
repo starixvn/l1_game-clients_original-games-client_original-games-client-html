@@ -81,13 +81,13 @@ docker run -p 5001:5000 plinko-x:latest
 For local development that simulates the production deployment environment with game-specific subpaths:
 
 ```bash
-# From root directory - start Plinko with proxy (simulates /game-145/)
+# From root directory - start Plinko with proxy (simulates /site-145/)
 npm run dev:proxy-plinko
-# Access: http://localhost:3002/game-145/
+# Access: http://localhost:3002/site-145/
 
-# From root directory - start Plinko X with proxy (simulates /game-159/)
+# From root directory - start Plinko X with proxy (simulates /site-159/)
 npm run dev:proxy-plinko-x
-# Access: http://localhost:3003/game-159/
+# Access: http://localhost:3003/site-159/
 
 # Compare with existing games:
 npm run dev:proxy-sedie-multiplayer    # http://localhost:3000/game-148/
@@ -98,12 +98,12 @@ npm run dev:proxy-baccarat-multiplayer # http://localhost:3001/game-150/
 
 1. Start the game server on its assigned port (5003 for Plinko, 5004 for Plinko X)
 2. Start a reverse proxy that strips the game prefix and forwards requests
-3. Simulate production URLs like `l2-original-games-client1.lumigame.com/game-159/`
+3. Simulate production URLs like `l2-original-games-client1.lumigame.com/site-159/`
 
 **Port assignments:**
 
--   Plinko: Game server (5003) + Proxy (3002) → `http://localhost:3002/game-145/`
--   Plinko X: Game server (5004) + Proxy (3003) → `http://localhost:3003/game-159/`
+-   Plinko: Game server (5003) + Proxy (3002) → `http://localhost:3002/site-145/`
+-   Plinko X: Game server (5004) + Proxy (3003) → `http://localhost:3003/site-159/`
 
 ### Dynamic Scripts
 
@@ -174,9 +174,9 @@ The application uses a sophisticated priority system to determine which game to 
 
 2. **URL Path Extraction** (Multi-Game Servers)
 
-    - Extracts game ID from URL patterns like `/game-159` → game ID 159
+    - Extracts game ID from URL patterns like `/site-159` → game ID 159
     - Used for multi-game deployments where one server serves multiple games
-    - Example: `/game-145` loads Plinko, `/game-159` loads Plinko X
+    - Example: `/site-145` loads Plinko, `/site-159` loads Plinko X
     - **Takes priority** when no environment variable is set
 
 3. **URL Query Parameter** (External Systems)
