@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServiceName } from "@shared/game-config";
 
 export default function health(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -12,7 +13,13 @@ export default function health(req: NextApiRequest, res: NextApiResponse) {
         }
 
         // Basic health check response
-        const healthResponse = "healthy";
+        const healthResponse = {
+            status: "ok",
+            time: new Date().toISOString(),
+            timestamp: Date.now(),
+            service: getServiceName(),
+            version: process.env.npm_package_version || "1.0.0"
+        };
 
         return res.status(200).json(healthResponse);
     } catch (error) {

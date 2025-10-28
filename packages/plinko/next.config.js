@@ -26,7 +26,7 @@ const nextConfig = {
         return [
             {
                 source: `${basePath}/api/health`,
-                destination: "/health",
+                destination: "/api/health",
             },
         ];
     },
