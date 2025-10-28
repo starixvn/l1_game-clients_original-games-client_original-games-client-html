@@ -341,7 +341,7 @@ describe("BetControl", () => {
             const betButton = screen.getByRole("button", { name: "glossary_bet" });
             expect(betButton).toHaveClass(
                 "text-sm",
-                "font-bold",
+                "font-semibold",
                 "w-full",
                 "h-11",
                 "rounded-xl",
