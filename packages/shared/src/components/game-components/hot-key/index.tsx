@@ -85,8 +85,10 @@ const HotKeyContent = ({
                 <div className={styles.key}>A</div>
             </div>
             <div className="flex items-center gap-2 mb-2 ml-1">
-                <input className={styles.switch} type="checkbox" checked={isToggleHotKey} onChange={handleToggleHotKey} />
-                <div className="font-semibold text-sm md:text-base text-white">{isToggleHotKey ? translate("hot_key_enable") : translate("hot_key_disable")}</div>
+                <input className="input-checkbox" type="checkbox" checked={isToggleHotKey} onChange={handleToggleHotKey} />
+                <div className="font-semibold text-sm md:text-base text-white">
+                    {isToggleHotKey ? translate("hot_key_enable") : translate("hot_key_disable")}
+                </div>
             </div>
         </div>
     );

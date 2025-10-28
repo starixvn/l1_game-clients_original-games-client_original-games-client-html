@@ -27,7 +27,9 @@ const Tooltip: React.FC<TooltipProps> = ({ children, index, totalItems, odds, cl
 
     const probability = useMemo(() => {
         const binomial = (n: number, k: number) => {
-            if (k > n) { return 0; }
+            if (k > n) {
+                return 0;
+            }
             let result = 1;
             for (let i = 0; i < k; i++) {
                 result *= (n - i) / (i + 1);
@@ -126,22 +128,22 @@ const Tooltip: React.FC<TooltipProps> = ({ children, index, totalItems, odds, cl
                     <div
                         ref={tooltipRef}
                         className={cn(
-                            "absolute bottom-[34px] left-0 flex flex-row gap-3 w-[266px] bg-gradient-to-b from-[#093B77] to-[#031122] text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity duration-300 pointer-events-none z-10 whitespace-nowrap",
+                            "absolute bottom-[34px] left-0 flex flex-row gap-3 w-[266px] bg-gradient-to-b from-[#093B77] to-[#031122] text-white text-xs p-3 rounded-lg shadow-lg transition-opacity duration-300 pointer-events-none z-10 whitespace-nowrap",
                             className
                         )}
                         style={{
                             transform: `translateX(${Math.max((-index * 100) / totalItems, -80)}%)`,
                         }}
                     >
-                        <div className="text-start">
+                        <div>
                             <div className="font-semibold text-sm mb-1">{t("win_amount")}</div>
-                            <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[130px] rounded-[8px] px-2 py-1 flex items-center justify-start">
+                            <div className="input h-[36px] w-[130px] rounded-[8px] px-2 flex items-center">
                                 ${numberWithCommas(winAmount)}
                             </div>
                         </div>
-                        <div className="text-start">
+                        <div>
                             <div className="font-semibold text-sm mb-1">{t("chance")}</div>
-                            <div className="border-[1px] border-[#2B3648] bg-[#101721] h-[36px] w-[100px] rounded-[8px] px-2 py-1 flex items-center justify-start">
+                            <div className="input h-[36px] w-[100px] rounded-[8px] px-2 flex items-center">
                                 {numberWithCommas(probability * 100, 4)}%
                             </div>
                         </div>
