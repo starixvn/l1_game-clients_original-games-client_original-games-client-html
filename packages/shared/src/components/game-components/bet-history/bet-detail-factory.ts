@@ -15,7 +15,7 @@ export function createBetDetailData(
     row: BetHistoryTableRow
 ): BetDetailData {
     // Plinko-specific bet detail logic
-    if (gameId === '145') {
+    if (gameId === '145' || gameId === '159') {
         return {
             drawInfo: {
                 roundId: roundId,
