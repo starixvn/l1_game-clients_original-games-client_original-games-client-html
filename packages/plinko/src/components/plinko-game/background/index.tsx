@@ -13,7 +13,7 @@ const Background: React.FC = () => {
                 fill
                 className={`absolute top-0 z-[-100] bg-size-[100%_100%] bg-position-center bg-no-repeat w-[calc(100%+24px)] h-full md:left-0 md:w-full md:rounded-tr-xl`}
             />
-            <div className="absolute z-[-10] top-0 w-full h-[100px] bg-gradient-to-b from-[#070D16] to-[#17193F00]"></div>
+            <div className="absolute z-[-10] top-0 w-full h-[100px] opacity-70 bg-gradient-to-b from-[#070D16] to-[#17193F00]"></div>
 
             <div className="absolute z-[-100] h-[862px] w-full overflow-hidden md:h-full">
                 {/* CSS-based particle effects */}
