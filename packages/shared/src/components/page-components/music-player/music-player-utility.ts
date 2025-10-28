@@ -19,7 +19,7 @@ export const controlMusic = ({ audioContext, isPlaying, play, pause }: ControlMu
                     .catch(() => {
                         play();
                     });
-            }, 100); // Wait a little bit to update audio context state on Safari
+            }, 500); // Wait a little bit to update audio context state on Safari
         } else {
             play();
         }
