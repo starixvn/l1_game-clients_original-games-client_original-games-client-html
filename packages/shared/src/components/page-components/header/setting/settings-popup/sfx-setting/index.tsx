@@ -18,7 +18,7 @@ const SoundSetting = () => {
             enabledSound: state.enabledSound,
         }))
     );
-    
+
     const clickSound = useClickSound();
 
     const { t } = useTranslator();
@@ -72,7 +72,7 @@ const SoundSetting = () => {
         <div className={`${Styles["row"]} `}>
             <div className={Styles["text"]}>{t("lobby_sound_effect")}</div>
             <div className={Styles["setting-item-container"]}>
-                <div className={`${Styles["icon"]} ${Styles["switch"]} rounded-[10px] h-8 w-8 bg-[#212D3D66]`}>
+                <div className={`${Styles["icon"]} ${Styles["switch"]} rounded-[10px] h-8 w-8 bg-[#212D3D66] text-[16px]`}>
                     <button className={`${Styles["button"]}`} onClick={toggle}>
                         <span className={`icon-sound-${enabledSound ? "on" : "off"}`}></span>
                     </button>

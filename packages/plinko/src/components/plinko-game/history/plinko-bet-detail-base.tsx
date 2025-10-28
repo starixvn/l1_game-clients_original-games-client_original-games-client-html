@@ -5,9 +5,7 @@ import usePopupStore from "@shared/stores/popup-store/popup-store";
 import { FC, ReactNode, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { DrawInfo } from "@shared/components/game-base/type";
-import {
-    displayWinAmount,
-} from "@shared/components/game-components/bet-history/bet-detail-utils";
+import { displayWinAmount } from "@shared/components/game-components/bet-history/bet-detail-utils";
 import { PlinkoBetDetailTable } from "./plinko-bet-detail-table";
 
 const PlinkoBetDetailBase: FC<{
@@ -19,7 +17,7 @@ const PlinkoBetDetailBase: FC<{
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
 
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
-    
+
     const { drawInfo, betLogDetails } = betDetailData || {};
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
@@ -58,7 +56,7 @@ const PlinkoBetDetailBase: FC<{
                 className="clickable flex items-center gap-2 text-[#00C950] text-sm md:text-base font-medium w-fit"
                 onClick={handleClickProvablyFair}
             >
-                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
+                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full text-[20px]"></span>
                 <span className="underline">{translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}</span>
             </button>
         );
@@ -75,10 +73,7 @@ const PlinkoBetDetailBase: FC<{
             {renderButtonProvablyFair()}
 
             <div className="min-h-0">
-                <PlinkoBetDetailTable
-                    data={tableData}
-                    emptyMessage={translateCommon("no_data")}
-                />
+                <PlinkoBetDetailTable data={tableData} emptyMessage={translateCommon("no_data")} />
             </div>
         </div>
     );

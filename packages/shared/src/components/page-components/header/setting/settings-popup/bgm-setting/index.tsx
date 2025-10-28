@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from '@shared/helpers';
-import { useClickSound, useTranslator } from '@shared/react-hooks';
-import useDebounce from '@shared/react-hooks/use-debounce';
+import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from "@shared/helpers";
+import { useClickSound, useTranslator } from "@shared/react-hooks";
+import useDebounce from "@shared/react-hooks/use-debounce";
 import Styles from "../settings-popup.module.scss";
 import VolumeSetting from "../volume-setting";
 import { useSettingStore } from "@shared/stores/setting-store";
@@ -13,12 +13,14 @@ const MusicSetting = () => {
     const clickSound = useClickSound();
 
     const { t } = useTranslator();
-    const  {updateVolumeMusic, toggleMusic, enabledMusic, volumeMusic} = useSettingStore(useShallow((state) => ({
-        updateVolumeMusic: state.updateVolumeMusic,
-        toggleMusic: state.toggleMusic,
-        enabledMusic: state.enabledMusic,
-        volumeMusic: state.volumeMusic,
-    })));
+    const { updateVolumeMusic, toggleMusic, enabledMusic, volumeMusic } = useSettingStore(
+        useShallow((state) => ({
+            updateVolumeMusic: state.updateVolumeMusic,
+            toggleMusic: state.toggleMusic,
+            enabledMusic: state.enabledMusic,
+            volumeMusic: state.volumeMusic,
+        }))
+    );
 
     const [volumeMusicVal, setVolumeMusicVal] = useState(volumeMusic);
     const [debounceVolumeMusicVal, setDebounceVolumeMusicVal] = useState(volumeMusic);
@@ -76,7 +78,7 @@ const MusicSetting = () => {
         <div className={`${Styles["row"]} `}>
             <div className={Styles["text"]}>{t("lobby_background_music")}</div>
             <div className={Styles["setting-item-container"]}>
-                <div className={`${Styles["icon"]} ${Styles["switch"]} rounded-[10px] h-8 w-8 bg-[#212D3D66]`}>
+                <div className={`${Styles["icon"]} ${Styles["switch"]} rounded-[10px] h-8 w-8 bg-[#212D3D66] text-[16px]`}>
                     <button className={`${Styles["button"]}`} onClick={toggle}>
                         <span className={`icon-music-${enabledMusic ? "on" : "off"}`}></span>
                     </button>

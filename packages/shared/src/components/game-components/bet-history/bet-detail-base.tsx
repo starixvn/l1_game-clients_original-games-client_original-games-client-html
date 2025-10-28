@@ -22,7 +22,6 @@ const BetDetailBase: FC<{
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
-
     const tableData = useMemo(() => {
         if (!drawInfo || !betLogDetails) {
             return [];
@@ -60,7 +59,7 @@ const BetDetailBase: FC<{
                 className="clickable flex items-center gap-2 text-[#00C950] text-sm md:text-base font-medium w-fit"
                 onClick={handleClickProvablyFair}
             >
-                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full"></span>
+                <span className="icon-pf flex justify-center items-center bg-gradient-to-b from-[#2DC555] to-[#1C8E3A] w-8 h-8 rounded-full text-[20px]"></span>
                 <span className="underline">{translateCommon("pf_title_provably_fair").capitalizeFirstLetter()}</span>
             </button>
         );

@@ -40,6 +40,7 @@ import { BetHistoryTable } from "../game-components/bet-history/bet-history-tabl
 import ChipControlPanel from "../game-components/chip-slider";
 import useGameStore from "@shared/stores/game-store/game-store";
 import BetHistoryControl from "../game-components/bet-history/bet-history-control";
+import { usePFStore } from "@shared/stores";
 const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
 const PFSettingModal = dynamic(() => import("../game-components/provably-fair/pf-setting"), { ssr: false });
 const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false });
@@ -217,6 +218,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.registerHandlers();
         this.connectToGameService();
         this.gameMessageHandler.broadcastGameEvent({ [messageEventType.UPDATE_PLAYER_BALANCE]: true });
+        usePFStore.getState().initializePF(this.props.id, (this.context as PlayerContextModel).authorizeInfo.user.name);
     }
 
     onPreloadResourceDone = () => {
@@ -452,12 +454,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                    this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    })
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
                     ],
                 ...newGameState,
             });

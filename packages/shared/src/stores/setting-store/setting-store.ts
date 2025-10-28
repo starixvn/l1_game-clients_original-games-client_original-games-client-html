@@ -1,18 +1,16 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { AudioSettingsSlice, createAudioSettingsSlice } from './audio-settings-slice';
-import { UISettingsSlice, createUISettingsSlice } from './ui-settings-slice';
-import { GameSettingsSlice, createGameSettingsSlice } from './game-settings-slice';
-import { localStorageKeys } from '@shared/helpers';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { AudioSettingsSlice, createAudioSettingsSlice } from "./audio-settings-slice";
+import { UISettingsSlice, createUISettingsSlice } from "./ui-settings-slice";
+import { GameSettingsSlice, createGameSettingsSlice } from "./game-settings-slice";
+import { localStorageKeys } from "@shared/helpers";
 import { getAppSettings } from "@shared/app-settings";
 
 function getSettingStoreKey(): string {
     try {
         return localStorageKeys.settingStore;
     } catch (error) {
-        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname 
-            ? globalThis.location.hostname 
-            : 'localhost';
+        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname ? globalThis.location.hostname : "localhost";
         return `${hostname}.setting-store.${getAppSettings().appType}`;
     }
 }
@@ -20,7 +18,9 @@ function getSettingStoreKey(): string {
 export type SettingStore = {
     // Global actions
     resetAllSettings: () => void;
-} & AudioSettingsSlice & UISettingsSlice & GameSettingsSlice;
+} & AudioSettingsSlice &
+    UISettingsSlice &
+    GameSettingsSlice;
 
 export const useSettingStore = create<SettingStore>()(
     persist(
@@ -44,12 +44,12 @@ export const useSettingStore = create<SettingStore>()(
         },
         {
             name: getSettingStoreKey(),
-            // Only persist audio settings
             partialize: (state) => ({
                 enabledMusic: state.enabledMusic,
                 enabledSound: state.enabledSound,
                 volumeMusic: state.volumeMusic,
                 volumeSFX: state.volumeSFX,
+                isToggleHotKey: state.isToggleHotKey,
             }),
         }
     )

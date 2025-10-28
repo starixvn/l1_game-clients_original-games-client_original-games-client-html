@@ -10,16 +10,14 @@ function getPFStoreKey(): string {
     try {
         return localStorageKeys.pfStore;
     } catch (error) {
-        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname 
-            ? globalThis.location.hostname 
-            : 'localhost';
+        const hostname = typeof globalThis !== "undefined" && globalThis.location?.hostname ? globalThis.location.hostname : "localhost";
         return `${hostname}.pf-store.${getAppSettings().appType}`;
     }
 }
 
 export type PFStore = {
     registerEvent: (message: any) => void;
-    initializePF: (gameId: number, uid: number) => void;
+    initializePF: (gameId: number, uid: string) => void;
 } & PFSettingsSlice &
     PFVerificationSlice &
     PFBetsSlice;

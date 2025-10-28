@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { PFClientSeedSetting } from '@shared/components/game-base/type';
+import { PFClientSeedSetting } from "@shared/components/game-base/type";
 import { localStorageKeys, randomNumberSeries, StorageHelper } from "../../helpers";
 
 export interface PFSettingsSlice {
@@ -9,14 +9,14 @@ export interface PFSettingsSlice {
     serverSeedHash: string;
     expandGuideFirst: boolean;
     gameId: number;
-    uid: number;
+    uid: string;
 
     // Actions
     togglePFSetting: (isShow: boolean) => void;
     updatePFClientSeedSetting: (setting: Partial<PFClientSeedSetting>) => void;
     updateServerSeedHash: (hash: string) => void;
     toggleExpandGuideFirst: (isExpand: boolean) => void;
-    initializePFSettings: (gameId: number, uid: number) => void;
+    initializePFSettings: (gameId: number, uid: string) => void;
     registerPFSettingsEvent: (message: any) => void;
 }
 
@@ -36,13 +36,13 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
     serverSeedHash: "",
     expandGuideFirst: false,
     gameId: 0,
-    uid: 0,
+    uid: "",
 
     // Actions
     registerPFSettingsEvent: (message) => {
         Object.values(EVENT_TYPE).forEach((event) => {
             if (message[event] !== undefined) {
-                if(event === EVENT_TYPE.PF) {
+                if (event === EVENT_TYPE.PF) {
                     set({ serverSeedHash: message[event].serverSeedHash });
                 } else {
                     set({ [event]: message[event] });
@@ -112,9 +112,8 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
             if (storedPFSetting) {
                 finalPFSetting = {
                     ...storedPFSetting,
-                    manualClientSeed: storedPFSetting.manualClientSeed?.length > 0
-                        ? storedPFSetting.manualClientSeed
-                        : storedPFSetting.randomClientSeed,
+                    manualClientSeed:
+                        storedPFSetting.manualClientSeed?.length > 0 ? storedPFSetting.manualClientSeed : storedPFSetting.randomClientSeed,
                 };
             }
 
@@ -127,4 +126,4 @@ export const createPFSettingsSlice: StateCreator<PFSettingsSlice> = (set, get) =
             set(defaultSettings);
         }
     },
-}); 
+});
