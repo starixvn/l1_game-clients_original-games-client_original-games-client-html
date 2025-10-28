@@ -21,7 +21,7 @@ export default function health(req: NextApiRequest, res: NextApiResponse) {
             version: process.env.npm_package_version || "1.0.0"
         };
 
-        return res.status(200).json(healthResponse);
+        return res.status(200).send(healthResponse);
     } catch (error) {
         console.error('Health check error:', error);
 
