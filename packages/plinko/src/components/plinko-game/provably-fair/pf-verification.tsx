@@ -25,8 +25,8 @@ const PFVerification: FC = () => {
     const { t } = useTranslator();
     const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
 
-    const NUMBER_OF_ROWS = useMemo(() => betDetailData.betLogDetails[0].choice, [betDetailData.betLogDetails[0].choice]);
-    const gameMode = useMemo(() => betDetailData.betLogDetails[0].gameMode, [betDetailData.betLogDetails[0].gameMode]);
+    const NUMBER_OF_ROWS = useMemo(() => betDetailData.betLogDetails[0]?.choice, [betDetailData.betLogDetails[0]?.choice]);
+    const gameMode = useMemo(() => betDetailData.betLogDetails[0]?.gameMode, [betDetailData.betLogDetails[0]?.gameMode]);
 
     const verifyInfo = useMemo(
         () =>
@@ -83,7 +83,7 @@ const PFVerification: FC = () => {
                 <div className="flex items-center justify-between gap-4 ">
                     {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}: {t(`${tolgeeNamespace}.${gameModeMap[gameMode]}`)}
                     <div className="flex gap-2 items-center">
-                        {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0].choice}
+                        {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0]?.choice}
                     </div>
                 </div>
                 <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-1">
