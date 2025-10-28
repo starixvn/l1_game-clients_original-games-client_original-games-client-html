@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const next = require("next");
+const cors = require("cors");
 
 // Factory function to create a custom server for a specific game
 function createCustomServer(gameName) {
@@ -58,6 +59,14 @@ function createCustomServer(gameName) {
     app.prepare()
         .then(() => {
             const server = express();
+
+            // Configure CORS
+            server.use(cors({
+                origin: "*",
+                credentials: true,
+                methods: ["GET", "POST", "OPTIONS"],
+                allowedHeaders: ["Content-Type", "Authorization"],
+            }));
 
             // Add comprehensive logging middleware FIRST to catch ALL requests
             server.use((req, res, next) => {
