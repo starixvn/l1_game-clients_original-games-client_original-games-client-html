@@ -19,7 +19,7 @@ export function initializeGameConfig(gameId: number): GameConfig {
                 gameName: "Plinko",
                 gameVersion: "1.0.0",
                 gameDescription: "Exciting Plinko game with physics-based ball dropping",
-                assetPath: "/game-145",
+                assetPath: "/site-145",
                 serviceName: "plinko"
             };
             break;
@@ -29,7 +29,7 @@ export function initializeGameConfig(gameId: number): GameConfig {
                 gameName: "Plinko X",
                 gameVersion: "1.0.0",
                 gameDescription: "Enhanced Plinko X game with advanced physics and new features",
-                assetPath: "/game-159",
+                assetPath: "/site-159",
                 serviceName: "plinkox"
             };
             break;

@@ -10,7 +10,7 @@ const path = require("path");
 
 // Get environment variables with defaults
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "145";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-145";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-145";
 
 // Set environment variables for the dev process
 const env = {

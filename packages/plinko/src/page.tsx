@@ -11,7 +11,7 @@ import PlinkoGameBase from "./components/plinko-game-base";
 
 // Helper function to extract game ID from URL path
 const extractGameIdFromPath = (path: string): number => {
-    const pathGameIdMatch = path.match(/\/game-(\d+)/);
+    const pathGameIdMatch = path.match(/\/site-(\d+)/);
     return pathGameIdMatch ? parseInt(pathGameIdMatch[1]) : null; // Return null if no match
 };
 
@@ -75,7 +75,7 @@ const PlinkoPage = (props: any) => {
 
         const checkRedirect = () => {
             redirectCheckCount++;
-            const expectedPath = gameId === 159 ? '/game-159/' : '/game-145/';
+            const expectedPath = gameId === 159 ? '/site-159/' : '/site-145/';
             const currentPath = window.location.pathname;
             const currentHref = window.location.href;
 

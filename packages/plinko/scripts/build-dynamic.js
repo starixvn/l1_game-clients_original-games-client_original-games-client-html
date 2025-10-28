@@ -10,7 +10,7 @@ const path = require("path");
 
 // Get environment variables with defaults
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "145";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-145";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-145";
 
 // Set environment variables for the build process
 const env = {
@@ -24,7 +24,7 @@ const { exec } = require("child_process");
 
 // Build the command string with dynamic environment variables
 const generateTolgeeCommand = `cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} npm run generate-tolgee-data && cd packages/plinko`;
-const buildCommand = `cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} NEXT_PUBLIC_BASE_PATH=/game-${gameId} next build`;
+const buildCommand = `cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} NEXT_PUBLIC_BASE_PATH=/site-${gameId} next build`;
 
 const fullCommand = `${generateTolgeeCommand} && ${buildCommand}`;
 
