@@ -4,7 +4,7 @@ export function createBetHistoryHandler(props: BetHistoryHandlerProps): BetHisto
     const { gameId } = props;
 
     // Try to load game-specific handler factory
-    if (gameId === '145') {
+    if (gameId === '145' || gameId === '159') {
         // Plinko uses a different handler
         try {
             const { PlinkoBetHistoryHandler } = require("@plinko/components/plinko-game-base/handlers/plinko-bet-history-handler");
