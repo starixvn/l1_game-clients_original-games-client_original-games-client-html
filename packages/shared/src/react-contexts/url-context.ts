@@ -4,6 +4,7 @@ import { StorageHelper, localStorageKeys } from "../helpers/storage-helper";
 import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
+import { URLParams } from "@shared/constants/url-params";
 
 export type URLContextModel = {
     token?: string;
@@ -32,7 +33,12 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const param = params.get("params");
 
     if (param) {
-        token = param;
+        const decodedUrl = GameUtils.base64Decode(param);
+        const urlSearchParams = new URLSearchParams(decodedUrl);
+        StorageHelper.set(localStorageKeys.session, { 
+            ss: urlSearchParams.get(URLParams.session), 
+            username: urlSearchParams.get(URLParams.username), 
+            language: urlSearchParams.get(URLParams.language) });
     }
 
     return { token, language, redirectUrl };
