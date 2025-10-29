@@ -10,7 +10,7 @@ const path = require("path");
 
 // Get environment variables with defaults
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "150";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-150";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-150";
 
 console.log(`Starting baccarat-multiplayer development server with:`);
 console.log(`  Game ID: ${gameId}`);

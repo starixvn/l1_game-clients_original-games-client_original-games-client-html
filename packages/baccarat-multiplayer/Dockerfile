@@ -52,7 +52,7 @@ COPY packages/shared packages/shared
 WORKDIR /app/packages/baccarat-multiplayer
 
 # Set Next.js basePath and game ID for production deployment
-ENV NEXT_PUBLIC_BASE_PATH=/game-150
+ENV NEXT_PUBLIC_BASE_PATH=/site-150
 ENV NEXT_PUBLIC_DEFAULT_GAME_ID=150
 ENV NEXT_PUBLIC_GAME_PACKAGE=baccarat-multiplayer
 
@@ -66,7 +66,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Ensure base path is set for runtime
-ENV NEXT_PUBLIC_BASE_PATH=/game-150
+ENV NEXT_PUBLIC_BASE_PATH=/site-150
 
 RUN addgroup --system --gid 1001 nodejs  \
      && adduser --system --uid 1001 nextjs \

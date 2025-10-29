@@ -52,7 +52,7 @@ COPY packages/shared packages/shared
 WORKDIR /app/packages/sedie-multiplayer
 
 # Set Next.js basePath and game ID for production deployment
-ENV NEXT_PUBLIC_BASE_PATH=/game-148
+ENV NEXT_PUBLIC_BASE_PATH=/site-148
 ENV NEXT_PUBLIC_DEFAULT_GAME_ID=148
 
 # Obfuscate deployment configs and build
@@ -65,7 +65,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Ensure environment variables are available in the runner stage
-ENV NEXT_PUBLIC_BASE_PATH=/game-148
+ENV NEXT_PUBLIC_BASE_PATH=/site-148
 ENV NEXT_PUBLIC_DEFAULT_GAME_ID=148
 
 RUN addgroup --system --gid 1001 nodejs  \
