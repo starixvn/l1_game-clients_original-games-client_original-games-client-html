@@ -31,6 +31,19 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const redirectUrl = params.get("rurl");
 
     const param = params.get("params");
+    const lobbyUrl = params.get("lurl");
+    const parentUrl = params.get("purl");
+    const returnUrl = params.get("rurl");
+
+    if(lobbyUrl) {
+        StorageHelper.set(localStorageKeys.lobbyUrl, lobbyUrl);
+    }
+    if(parentUrl) {
+        StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
+    }
+    if(returnUrl) {
+        StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
+    }
 
     handleURLParams(param);
 
@@ -45,11 +58,7 @@ const handleURLParams = (param: string) => {
             ss: urlSearchParams.get(URLParams.session), 
             username: urlSearchParams.get(URLParams.username), 
             language: urlSearchParams.get(URLParams.language) });
-
-        StorageHelper.set(localStorageKeys.parentUrl, urlSearchParams.get(URLParams.parentUrl));
-        StorageHelper.set(localStorageKeys.returnUrl, urlSearchParams.get(URLParams.returnUrl));
-        StorageHelper.set(localStorageKeys.lobbyUrl, urlSearchParams.get(URLParams.lobbyUrl));
-
+       
         StorageHelper.set(localStorageKeys.settingStore, {
             enabledMusic: urlSearchParams.get(URLParams.musicEnable),
             enabledSound: urlSearchParams.get(URLParams.sfxEnable),
