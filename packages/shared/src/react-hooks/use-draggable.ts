@@ -11,7 +11,7 @@ interface UseDraggableOptions {
 interface UseDraggableReturn {
     position: { x: number; y: number };
     isDragging: boolean;
-    handleMouseDown: (e: React.MouseEvent<HTMLElement>) => void;
+    handleMouseDown: (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => void;
     setPosition: (position: { x: number; y: number }) => void;
 }
 
@@ -38,16 +38,26 @@ export const useDraggable = (options: UseDraggableOptions = {}): UseDraggableRet
     );
 
     const handleMouseDown = useCallback(
-        (e: React.MouseEvent<HTMLElement>) => {
+        (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
             // Don't start dragging if clicking on buttons or interactive elements
             if ((e.target as HTMLElement).closest("button, input, textarea, select")) {
                 return;
             }
 
+            // Prevent default behavior on touch to avoid scrolling
+            if ("touches" in e) {
+                e.preventDefault();
+            }
+
             setIsDragging(true);
+
+            // Handle both mouse and touch events
+            const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+            const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
             setDragOffset({
-                x: e.clientX - position.x,
-                y: e.clientY - position.y,
+                x: clientX - position.x,
+                y: clientY - position.y,
             });
 
             if (onDragStart) {
@@ -58,8 +68,13 @@ export const useDraggable = (options: UseDraggableOptions = {}): UseDraggableRet
     );
 
     const handleMouseMove = useCallback(
-        (e: MouseEvent) => {
+        (e: MouseEvent | TouchEvent) => {
             if (isDragging) {
+                // Prevent default behavior on touch to avoid scrolling during drag
+                if ("touches" in e) {
+                    e.preventDefault();
+                }
+
                 // Clear previous debounce timer
                 if (debounceTimerRef.current) {
                     clearTimeout(debounceTimerRef.current);
@@ -67,8 +82,12 @@ export const useDraggable = (options: UseDraggableOptions = {}): UseDraggableRet
 
                 // Set new debounced position update
                 debounceTimerRef.current = setTimeout(() => {
-                    const newX = e.clientX - dragOffset.x;
-                    const newY = e.clientY - dragOffset.y;
+                    // Handle both mouse and touch events
+                    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+                    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+                    const newX = clientX - dragOffset.x;
+                    const newY = clientY - dragOffset.y;
                     const clampedPosition = clampPosition(newX, newY);
                     setPosition(clampedPosition);
                 }, 10); // 10ms debounce for smooth dragging
@@ -93,16 +112,24 @@ export const useDraggable = (options: UseDraggableOptions = {}): UseDraggableRet
 
     useEffect(() => {
         if (isDragging) {
+            // Add both mouse and touch event listeners
+            // Touch listeners need { passive: false } to allow preventDefault()
             window.addEventListener("mousemove", handleMouseMove);
             window.addEventListener("mouseup", handleMouseUp);
+            window.addEventListener("touchmove", handleMouseMove, { passive: false });
+            window.addEventListener("touchend", handleMouseUp);
         } else {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("touchmove", handleMouseMove as EventListener);
+            window.removeEventListener("touchend", handleMouseUp);
         }
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("touchmove", handleMouseMove as EventListener);
+            window.removeEventListener("touchend", handleMouseUp);
 
             // Clear debounce timer on cleanup
             if (debounceTimerRef.current) {

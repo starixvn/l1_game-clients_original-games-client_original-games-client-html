@@ -75,13 +75,13 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
 
     return (
         isShowLiveStats && (
-            <div className="z-[99999] absolute" style={{ top: position.y, left: position.x }}>
+            <div className="z-[200] absolute" style={{ top: position.y, left: position.x }}>
                 <BaseDialog
                     type={ModalType.Full}
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName={`absolute h-fit w-[${MODAL_SIZE.WIDTH}px] top-0 rounded-b-xl`}
+                    extendedClassName="absolute h-fit w-[250px] top-0 rounded-b-xl"
                 >
                     <div
                         id="live-stats"
@@ -96,7 +96,9 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                                 "cursor-grabbing": isDragging,
                             }
                         )}
+                        style={{ touchAction: "none" }}
                         onMouseDown={handleMouseDown}
+                        onTouchStart={handleMouseDown}
                     >
                         {/* Header */}
                         <div
