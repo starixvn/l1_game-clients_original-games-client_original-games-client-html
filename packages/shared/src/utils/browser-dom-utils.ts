@@ -8,11 +8,9 @@ export class BrowserDomUtils {
     }
 
     public static postMessageToParent(data: unknown) {
-        const parentUrl = StorageHelper.get<string>(localStorageKeys.parentUrl);
-        console.log("parentUrl", parentUrl);
-        if (parentUrl) {
-            const url = GameUtils.base64Decode(parentUrl);
-            console.log("url", url);
+        const lobbyUrl = StorageHelper.get<string>(localStorageKeys.lobbyUrl);
+        if (lobbyUrl) {
+            const url = GameUtils.base64Decode(lobbyUrl);
             window.parent?.postMessage(data, url);
         }
     }
