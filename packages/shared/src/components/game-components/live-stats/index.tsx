@@ -1,5 +1,5 @@
 import { usePopupStore } from "@shared/stores";
-import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
+import { useClickSound, useCommonTranslate, useDraggable } from "@shared/react-hooks";
 import { memo, ReactElement, useEffect, useMemo, useState } from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BaseDialog from "../base-dialog";
@@ -7,13 +7,18 @@ import { ModalType } from "../base-dialog/type";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources/type";
 import { numberWithCommas } from "@shared/helpers";
-import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
-import { isMobile } from "react-device-detect";
 import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { useShallow } from "zustand/shallow";
+
+const MODAL_SIZE = {
+    WIDTH: 250,
+    HEIGHT: 320,
+};
 
 const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number } }): ReactElement => {
-    const isShowLiveStats = usePopupStore((state) => state.isShowLiveStats);
-    const toggleLiveStats = usePopupStore((state) => state.toggleLiveStats);
+    const { isShowLiveStats, toggleLiveStats, x, y } = usePopupStore(
+        useShallow((state) => ({ isShowLiveStats: state.isShowLiveStats, toggleLiveStats: state.toggleLiveStats, x: state.x, y: state.y }))
+    );
     const { t: translate } = useCommonTranslate();
     const clickSound = useClickSound();
     const [totalWinAmount, setTotalWinAmount] = useState(0);
@@ -21,14 +26,24 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
     const [netProfitHistory, setNetProfitHistory] = useState<{ x: number; y: number }[]>([]);
     const [lostRound, setLostRound] = useState(0);
     const [winRound, setWinRound] = useState(0);
-    const [dragEnabled, setDragEnabled] = useState(true);
-    const [position, setPosition] = useState<{ x: number; y: number }>({ x: 150, y: -910 });
 
     const { winAmount, amount } = data ?? { winAmount: 0, amount: 0 };
+
+    // Use draggable hook for drag functionality
+    const { position, isDragging, handleMouseDown, setPosition } = useDraggable({
+        initialPosition: { x: 0, y: 0 },
+        elementWidth: MODAL_SIZE.WIDTH, // Modal width
+        elementHeight: MODAL_SIZE.HEIGHT, // Modal height
+    });
 
     const handleCloseModal = () => {
         toggleLiveStats(false);
     };
+
+    useEffect(() => {
+        setPosition({ x: x - MODAL_SIZE.WIDTH / 2, y: y - MODAL_SIZE.HEIGHT + scrollY });
+    }, [x, y, setPosition]);
+
     useEffect(() => {
         const roundNetProfit = Number((winAmount - amount).toFixed(2));
         setTotalBetAmount((prev) => prev + amount);
@@ -50,13 +65,6 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
         });
     }, [data]);
 
-    const onDrag = (event: DraggableEvent, data: DraggableData) => {
-        setPosition({
-            x: position.x + data.deltaX,
-            y: position.y + data.deltaY,
-        });
-    };
-
     const handleReset = () => {
         setNetProfitHistory([{ x: 0, y: 0 }]);
         setTotalBetAmount(0);
@@ -67,70 +75,75 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
 
     return (
         isShowLiveStats && (
-            <Draggable disabled={!dragEnabled} onDrag={onDrag} defaultPosition={{ x: isMobile ? 86 : 1030, y: isMobile ? -1223 : -1230 }}>
-                <div
-                    className="z-[99999] fixed"
-                    style={{
-                        transform: `translate(${position.x}px,${position.y}px)`,
-                    }}
+            <div className="z-[99999] absolute" style={{ top: position.y, left: position.x }}>
+                <BaseDialog
+                    type={ModalType.Full}
+                    isOpen={isShowLiveStats}
+                    enableBackdrop={false}
+                    onCloseModal={handleCloseModal}
+                    extendedClassName={`absolute h-fit w-[${MODAL_SIZE.WIDTH}px] top-0 rounded-b-xl`}
                 >
-                    <BaseDialog
-                        type={ModalType.Full}
-                        isOpen={isShowLiveStats}
-                        enableBackdrop={false}
-                        onCloseModal={handleCloseModal}
-                        extendedClassName="h-[310px] w-[254px] top-[200px] left-[50px] rounded-b-xl"
-                    >
-                        <div
-                            id="live-stats"
-                            className={cn("flex flex-col h-full w-full gap-3 rounded-t-2xl", {
+                    <div
+                        id="live-stats"
+                        className={cn(
+                            "flex flex-col h-full w-full gap-3 rounded-t-2xl",
+                            {
                                 flex: isShowLiveStats,
                                 hidden: !isShowLiveStats,
-                            })}
+                            },
+                            {
+                                "cursor-grab": !isDragging,
+                                "cursor-grabbing": isDragging,
+                            }
+                        )}
+                        onMouseDown={handleMouseDown}
+                    >
+                        {/* Header */}
+                        <div
+                            className={cn(
+                                "flex items-center px-4 gap-2 text-base font-semibold text-primary-text text-center flex-shrink-0 select-none"
+                            )}
                         >
-                            {/* Header */}
-                            <div className="flex items-center px-4 gap-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
-                                <button
-                                    className="cursor-pointer ml-auto relative z-10"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        clickSound();
-                                        handleReset();
-                                    }}
-                                >
-                                    <i className="icon-reset" style={{ fontSize: "22px" }}></i>
-                                </button>
-                                <div className="flex flex-1 items-center justify-center font-semibold leading-[22px]">
-                                    {translate("live_stats")}
-                                </div>
-                                <button
-                                    className="cursor-pointer ml-auto relative z-10"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        clickSound();
-                                        handleCloseModal();
-                                    }}
-                                >
-                                    <i className="icon-close" style={{ fontSize: "14px" }}></i>
-                                </button>
+                            <button
+                                className="cursor-pointer ml-auto relative z-10"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    clickSound();
+                                    handleReset();
+                                }}
+                            >
+                                <i className="icon-reset" style={{ fontSize: "22px" }}></i>
+                            </button>
+                            <div className="flex flex-1 items-center justify-center font-semibold leading-[22px]">
+                                {translate("live_stats")}
                             </div>
-
-                            {/* Content */}
-                            <div className="flex-1 min-h-0 overflow-hidden px-3">
-                                {
-                                    <WrapperLiveStats
-                                        totalBetAmount={totalBetAmount}
-                                        totalWinAmount={totalWinAmount}
-                                        netProfitHistory={netProfitHistory}
-                                        lostRound={lostRound}
-                                        winRound={winRound}
-                                    />
-                                }
-                            </div>
+                            <button
+                                className="cursor-pointer ml-auto relative z-10 p-1 pr-0"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    clickSound();
+                                    handleCloseModal();
+                                }}
+                            >
+                                <i className="icon-close" style={{ fontSize: "14px" }}></i>
+                            </button>
                         </div>
-                    </BaseDialog>
-                </div>
-            </Draggable>
+
+                        {/* Content */}
+                        <div className="flex-1 min-h-0 overflow-hidden px-3">
+                            {
+                                <WrapperLiveStats
+                                    totalBetAmount={totalBetAmount}
+                                    totalWinAmount={totalWinAmount}
+                                    netProfitHistory={netProfitHistory}
+                                    lostRound={lostRound}
+                                    winRound={winRound}
+                                />
+                            }
+                        </div>
+                    </div>
+                </BaseDialog>
+            </div>
         )
     );
 };
@@ -182,26 +195,26 @@ const LiveStats = ({
                     id="information"
                     className="text-sm md:text-base font-semibold flex justify-between items-center w-[228px] min-h-[102px] bg-[#00000080] rounded-[16px] "
                 >
-                        <div className="flex flex-col items-start flex-1 px-3">
-                            <div className="flex flex-col items-start">
-                                {t("profit")}
-                                <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
-                            </div>
-                            <div className="flex flex-col items-start">
-                                {t("bet_amount")}
-                                <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
-                            </div>
+                    <div className="flex flex-col items-start flex-1 px-3">
+                        <div className="flex flex-col items-start">
+                            {t("profit")}
+                            <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
                         </div>
-                        <div className="flex flex-col items-start flex-1 px-3">
-                            <div className="flex flex-col items-start">
-                                {t("wins")}
-                                <div className={`${winsColorClass} font-[400]`}>{numberWithCommas(winRound)}</div>
-                            </div>
-                            <div className="flex flex-col items-start">
-                                {t("losses")}
-                                <div className={cn(lostRound > 0 ? "text-red-500" : "", "font-[400]")}>{numberWithCommas(lostRound)}</div>
-                            </div>
+                        <div className="flex flex-col items-start">
+                            {t("bet_amount")}
+                            <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
                         </div>
+                    </div>
+                    <div className="flex flex-col items-start flex-1 px-3">
+                        <div className="flex flex-col items-start">
+                            {t("wins")}
+                            <div className={`${winsColorClass} font-[400]`}>{numberWithCommas(winRound)}</div>
+                        </div>
+                        <div className="flex flex-col items-start">
+                            {t("losses")}
+                            <div className={cn(lostRound > 0 ? "text-red-500" : "", "font-[400]")}>{numberWithCommas(lostRound)}</div>
+                        </div>
+                    </div>
                 </div>
                 <div id="my-chart" className="w-full h-auto">
                     <AreaChart width={228} height={150} data={netProfitHistory}>

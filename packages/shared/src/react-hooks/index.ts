@@ -6,6 +6,7 @@ export * from "./use-bet-history";
 export * from "./use-click-outside";
 export * from "./use-client-seed-pf";
 export * from "./use-debounce";
+export * from "./use-draggable";
 export * from "./use-high-light";
 export * from "./use-low-performance-device";
 export * from "./use-memoried-image";

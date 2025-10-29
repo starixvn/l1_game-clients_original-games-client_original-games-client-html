@@ -28,7 +28,6 @@
         "react-chartjs-2": "^5.2.0",
         "react-device-detect": "^2.2.3",
         "react-dom": "^18.2.0",
-        "react-draggable": "^4.5.0",
         "react-router-dom": "^6.21.2",
         "react-slick": "^0.29.0",
         "recharts": "^3.2.1",

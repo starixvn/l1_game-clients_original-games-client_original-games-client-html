@@ -4,19 +4,19 @@ import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import { RoundState } from "../../game-base/type";
 import Styles from "./menu-icon.module.scss";
 const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
-type Props = { name: string; iconName?: string; onClick?: () => void; isActive?: boolean };
+type Props = { name: string; iconName?: string; onClick?: (e?: any) => void; isActive?: boolean };
 
 export const MenuIcon = ({ name, iconName, onClick, isActive = false }: Props) => {
     const { roundState } = useGameStateContext();
     const clickSound = useClickSound();
     const { t } = useCommonTranslate();
 
-    const handleClick = () => {
+    const handleClick = (e?: any) => {
         if (roundState === RoundState.None) {
             return;
         }
         clickSound();
-        onClick?.();
+        onClick?.(e);
     };
 
     return (
