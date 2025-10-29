@@ -4,6 +4,7 @@ import { BrowserDomUtils } from "@shared/utils/browser-dom-utils";
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 
 const BackLobbyButton = () => {
+    
     const handleBackToLobby = () => {
         const params = getBaseSessionInfo();
         BrowserDomUtils.postMessageToParent({ ...params, backLobby: true });
