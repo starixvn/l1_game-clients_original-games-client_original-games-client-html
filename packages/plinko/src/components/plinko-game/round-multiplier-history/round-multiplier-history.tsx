@@ -46,11 +46,11 @@ const RoundMultiplierHistory = () => {
     }
 
     return (
-        <div
-            className={`absolute top-[10px] left-1/2 -translate-x-1/2 round-multiplier-history flex justify-center mx-auto`}
-            style={data.length === 10 ? { maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" } : undefined}
-        >
-            <div className="flex justify-end gap-1 overflow-x-auto ">
+        <div className={`absolute top-[10px] w-full flex justify-center`}>
+            <div
+                className="flex justify-end gap-1 overflow-x-auto "
+                style={data.length === 10 ? { maskImage: "linear-gradient(to right, rgba(8, 14, 24, 0) 0.2%, #080E19 8%)" } : undefined}
+            >
                 {[...data].map((round, index) => (
                     <div key={round.roundId || index} className={`${isAnimating ? "animate-slide-to-left" : ""}`}>
                         <RoundMultiplierItem key={round.roundId} round={round} isWin={round.settlementResult.multiplier >= 1} />

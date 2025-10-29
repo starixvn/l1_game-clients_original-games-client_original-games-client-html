@@ -8,27 +8,27 @@ import { cn } from "@shared";
 import { isDesktop } from "react-device-detect";
 
 const fontSizes = {
-    8: 1.125,
-    9: 1.125,
-    10: 1,
-    11: 0.875,
-    12: 0.75,
-    13: 0.75,
-    14: 0.675,
-    15: 0.6,
-    16: 0.6,
+    8: 18,
+    9: 18,
+    10: 16,
+    11: 14,
+    12: 12,
+    13: 12,
+    14: 11,
+    15: 10,
+    16: 9,
 };
 
 const fontSizesDesktop = {
-    8: 1.125,
-    9: 1.125,
-    10: 1,
-    11: 1,
-    12: 0.875,
-    13: 0.875,
-    14: 0.75,
-    15: 0.75,
-    16: 0.7,
+    8: 18,
+    9: 18,
+    10: 16,
+    11: 16,
+    12: 14,
+    13: 14,
+    14: 12,
+    15: 12,
+    16: 12,
 };
 
 const Slots = () => {
@@ -122,7 +122,7 @@ const Slots = () => {
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
-                                fontSize: isDesktop ? `${fontSizesDesktop[numberOfRows]}rem` : `${fontSizes[numberOfRows]}rem`,
+                                fontSize: isDesktop ? `${fontSizesDesktop[numberOfRows]}px` : `${fontSizes[numberOfRows]}px`,
                             }}
                         >
                             {formatOdds(item)}
