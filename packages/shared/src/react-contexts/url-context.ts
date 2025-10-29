@@ -32,6 +32,12 @@ export function parseContextFromURL(): URLContextModel | undefined {
 
     const param = params.get("params");
 
+    handleURLParams(param);
+
+    return { token, language, redirectUrl };
+}
+
+const handleURLParams = (param: string) => {
     if (param) {
         const decodedUrl = GameUtils.base64Decode(param);
         const urlSearchParams = new URLSearchParams(decodedUrl);
@@ -39,9 +45,16 @@ export function parseContextFromURL(): URLContextModel | undefined {
             ss: urlSearchParams.get(URLParams.session), 
             username: urlSearchParams.get(URLParams.username), 
             language: urlSearchParams.get(URLParams.language) });
-    }
 
-    return { token, language, redirectUrl };
+        StorageHelper.set(localStorageKeys.parentUrl, urlSearchParams.get(URLParams.parentUrl));
+        StorageHelper.set(localStorageKeys.returnUrl, urlSearchParams.get(URLParams.returnUrl));
+        StorageHelper.set(localStorageKeys.lobbyUrl, urlSearchParams.get(URLParams.lobbyUrl));
+
+        StorageHelper.set(localStorageKeys.settingStore, {
+            enabledMusic: urlSearchParams.get(URLParams.musicEnable),
+            enabledSound: urlSearchParams.get(URLParams.sfxEnable),
+        });
+    }
 }
 
 export function loadURLContext(): URLContextModel {

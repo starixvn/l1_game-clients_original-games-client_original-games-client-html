@@ -43,6 +43,7 @@ const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multip
 const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
 const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key"), { ssr: false });
 const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot-key"), { ssr: false });
+const BackLobbyButton = dynamic(() => import("@shared/components/game-components/back-lobby-button"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
@@ -190,6 +191,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 ]}
             />
         );
+    }
+
+    renderBackToLobbyButton() {
+        return <BackLobbyButton />;
     }
 }
 

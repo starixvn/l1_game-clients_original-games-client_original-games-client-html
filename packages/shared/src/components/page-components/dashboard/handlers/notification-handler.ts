@@ -53,7 +53,14 @@ export class NotificationHandler {
             this.handleShowApiErrorMessage(response.apiError.errorCode, response.isDisableAccount);
         } else {
             this.updateUserBalance(response.balance, false);
+            this.updateSSOTime();
         }
+    };
+
+    updateSSOTime = () => {
+        const session = StorageHelper.get<SSOResponse>(localStorageKeys.session);
+        session.ssoTime = new Date();
+        StorageHelper.set(localStorageKeys.session, session);
     };
 
     handleShowApiErrorMessage = (errorCode: string, isDisableAccount = false) => {
