@@ -81,7 +81,7 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName="absolute h-fit w-[250px] top-0 rounded-b-xl"
+                    extendedClassName="absolute h-fit min-h-[320px] w-[250px] top-0 rounded-b-xl"
                 >
                     <div
                         id="live-stats"

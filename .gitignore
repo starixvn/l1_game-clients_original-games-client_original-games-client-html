@@ -36,7 +36,4 @@ stryker-tmp
 
 sonar-reports
 .scannerwork
-packages/sedie-multiplayer/.next
-packages/baccarat/.next
-packages/baccarat-multiplayer/.next
-packages/plinko/.next
+packages/*/.next
