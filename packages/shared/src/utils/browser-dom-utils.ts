@@ -11,6 +11,7 @@ export class BrowserDomUtils {
         const parentUrl = StorageHelper.get<string>(localStorageKeys.parentUrl);
         if (parentUrl) {
             const url = GameUtils.base64Decode(parentUrl);
+            console.log("url", url);
             window.parent?.postMessage(data, url);
         }
     }
