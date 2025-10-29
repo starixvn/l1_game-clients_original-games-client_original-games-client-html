@@ -2,10 +2,10 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect } from "./hooks";
+import { BallBody, ExplosionEffect, PegEffect, PathPreview } from "./type";
+import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
-import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
+import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
 import { usePlinkoBallHitWinSound } from "@plinko/shared/hooks/use-sound";
@@ -18,6 +18,7 @@ const PlinkoCanvas = () => {
     const animationRef = useRef<number | null>(null);
     const pegEffectsRef = useRef<PegEffect[]>([]);
     const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
+    const pathPreviewsRef = useRef<PathPreview[]>([]);
 
     const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -26,6 +27,7 @@ const PlinkoCanvas = () => {
             numberOfDroppingBall: state.numberOfDroppingBall,
         }))
     );
+    const isInstantMode = usePlinkoSettingStore((state) => state.isInstantMode);
 
     // Peg hook
     const { createPegs, drawPeg } = usePeg();
@@ -41,6 +43,9 @@ const PlinkoCanvas = () => {
 
     // Explosion effect hook
     const { createExplosionEffect, drawExplosionEffect } = useExplosionEffect({ explosionEffectsRef });
+
+    // Path preview hook
+    const { createPathPreview, drawPathPreview } = usePathPreview({ pathPreviewsRef });
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -112,6 +117,7 @@ const PlinkoCanvas = () => {
         ballsRef.current = [];
         pegEffectsRef.current = [];
         explosionEffectsRef.current = [];
+        pathPreviewsRef.current = [];
         if (canvasRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -170,6 +176,9 @@ const PlinkoCanvas = () => {
         // draw effects first (behind objects)
         drawPegEffect?.(context);
 
+        // draw path preview
+        drawPathPreview?.(context);
+
         // draw balls
         drawBalls?.(context);
 
@@ -177,7 +186,7 @@ const PlinkoCanvas = () => {
         drawExplosionEffect?.(context);
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect]);
+    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
@@ -238,11 +247,17 @@ const PlinkoCanvas = () => {
             if (!engineRef.current) {
                 return;
             }
+            if (isInstantMode) {
+                createPathPreview(finish);
+                setFinishedBall(finish);
+                return;
+            }
+
             const ballBody = createBall(finish);
             Composite.add(engineRef.current.world, ballBody);
             ballsRef.current.push(ballBody);
         }
-    }, [finish, createBall, addObjects, setFinishedBall]);
+    }, [finish, createBall, addObjects, setFinishedBall, createPathPreview]);
 
     useEffect(() => {
         if (numberOfDroppingBall === 0) {

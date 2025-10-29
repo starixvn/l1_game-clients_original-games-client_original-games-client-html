@@ -31,6 +31,11 @@ jest.mock("../form-components", () => ({
             Rows Selector
         </div>
     ),
+    FastModeSelector: ({ isDisabled }: any) => (
+        <div data-testid="fast-mode-selector" data-disabled={isDisabled}>
+            Fast Mode Selector
+        </div>
+    ),
 }));
 
 // Mock AutoBetGroup
@@ -89,6 +94,7 @@ describe("BetForm", () => {
             expect(screen.getByTestId("bet-amount-control")).toBeInTheDocument();
             expect(screen.getByTestId("game-mode-selector")).toBeInTheDocument();
             expect(screen.getByTestId("rows-selector")).toBeInTheDocument();
+            expect(screen.getByTestId("fast-mode-selector")).toBeInTheDocument();
         });
 
         it("should render AutoBetGroup when not in manual tab", () => {
@@ -114,6 +120,7 @@ describe("BetForm", () => {
             // Act & Assert
             expect(screen.getByTestId("game-mode-selector")).toHaveAttribute("data-disabled", "true");
             expect(screen.getByTestId("rows-selector")).toHaveAttribute("data-disabled", "true");
+            expect(screen.getByTestId("fast-mode-selector")).toHaveAttribute("data-disabled", "true");
         });
 
         it("should pass disabled state to AutoBetGroup when not in manual tab", () => {

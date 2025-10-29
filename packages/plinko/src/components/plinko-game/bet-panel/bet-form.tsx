@@ -3,7 +3,7 @@ import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import AutoBetGroup from "./auto-mode/auto-bet-group";
-import { BetAmountControl, GameModeSelector, RowsSelector } from "./form-components";
+import { BetAmountControl, FastModeSelector, GameModeSelector, RowsSelector } from "./form-components";
 import { cn } from "@shared";
 
 const BetForm = ({
@@ -61,7 +61,7 @@ const BetForm = ({
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
             <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
             <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
-
+            <FastModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
             {!isManualTab && (
                 <AutoBetGroup
                     isDisabled={isDisabled || numberOfDroppingBall > 0}

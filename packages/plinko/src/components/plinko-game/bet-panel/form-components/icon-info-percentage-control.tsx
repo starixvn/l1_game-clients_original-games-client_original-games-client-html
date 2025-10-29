@@ -11,7 +11,7 @@ const IconInfoPercentageControl = ({ type }: { type: "on_win" | "on_loss" }) => 
         <>
             <div className="relative">
                 <i
-                    className="icon-cirlce-info text-base cursor-pointer"
+                    className="icon-circle-info text-lg cursor-pointer"
                     data-testid="icon-guide-testid"
                     onClick={() => setIsShowGuide(true)}
                 />

@@ -55,7 +55,7 @@ const BetAmountControl = ({
             <div className="flex items-center gap-2">
                 <Label title={t("bet_amount")} />
                 <div>
-                    <i className="icon-cirlce-info text-base cursor-pointer mb-2" onClick={() => setIsShowPopOver(true)} />
+                    <i className="icon-circle-info text-lg cursor-pointer mb-2" onClick={() => setIsShowPopOver(true)} />
 
                     {isShowPopOver && (
                         <div

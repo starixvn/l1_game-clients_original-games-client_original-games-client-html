@@ -55,3 +55,9 @@ export interface ExplosionEffect {
     vx?: number; // Horizontal velocity for explosion particles
     vy?: number; // Vertical velocity for explosion particles
 }
+
+export interface PathPreview {
+    points: { x: number; y: number }[];
+    createdAt: number;
+    duration: number;
+}

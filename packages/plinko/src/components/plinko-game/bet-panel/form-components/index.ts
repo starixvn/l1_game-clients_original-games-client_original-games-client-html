@@ -5,3 +5,4 @@ export { default as NumberOfBetsControl } from "./number-of-bets-control";
 export { default as PercentageControl } from "./percentage-control";
 export { default as RowsSelector } from "./rows-selector";
 export { default as StopOnControl } from "./stop-on-control";
+export { default as FastModeSelector } from "./fast-mode-selector";
