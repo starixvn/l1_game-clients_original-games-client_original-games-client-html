@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useGameContext } from "@shared/react-contexts";
-import { useTranslator } from "@shared/react-hooks";
 import { RoundState } from "@shared/components/game-base/type";
 import PlayerBankerResult from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
@@ -86,7 +85,6 @@ const renderCardDisplay = (
 };
 
 const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ className }) => {
-    const { tolgeeNamespace } = useGameContext();
     const { roundState } = useGameStateContext();
     const gameState = useGameStateContext();
     const last = gameState?.roundData?.last;

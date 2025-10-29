@@ -27,11 +27,11 @@ import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
-const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
-const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
-const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
+const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound-icon"), { ssr: false });
+const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide-icon"), { ssr: false });
+const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf-icon"), { ssr: false });
 const PFSettingModal = dynamic(() => import("@shared/components/game-components/provably-fair/pf-setting"), { ssr: false });
-const LiveStatsIcon = dynamic(() => import("@shared/components/game-components/menu/icons/live-stats"), { ssr: false });
+const LiveStatsIcon = dynamic(() => import("@shared/components/game-components/menu/icons/live-stats-icon"), { ssr: false });
 const LiveStats = dynamic(() => import("@plinko/components/plinko-game/live-stats"), { ssr: false });
 const BetHistoryControl = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-control"), { ssr: false });
 const PlinkoBetHistoryTable = dynamic(() => import("../plinko-game/history/plinko-bet-history-table"), { ssr: false });
@@ -41,9 +41,9 @@ const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-g
 const PlinkoBetDetail = dynamic(() => import("@plinko/components/plinko-game/history"), { ssr: false });
 const RoundMultiplierHistory = dynamic(() => import("../plinko-game/round-multiplier-history/round-multiplier-history"), { ssr: false });
 const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-effect"), { ssr: false });
-const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key"), { ssr: false });
+const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key-icon"), { ssr: false });
 const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot-key"), { ssr: false });
-const BackLobbyButton = dynamic(() => import("@shared/components/game-components/back-lobby-button"), { ssr: false });
+const LobbyMenu = dynamic(() => import("@shared/components/game-components/lobby-menu"), { ssr: false });
 
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
@@ -194,7 +194,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderBackToLobbyButton() {
-        return <BackLobbyButton />;
+        return <LobbyMenu />;
     }
 }
 
