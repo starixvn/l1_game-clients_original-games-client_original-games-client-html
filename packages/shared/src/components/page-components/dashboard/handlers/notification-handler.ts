@@ -58,7 +58,7 @@ export class NotificationHandler {
     };
 
     updateSSOTime = () => {
-        const session = StorageHelper.get<SSOResponse>(localStorageKeys.session);
+        const session = StorageHelper.get<SSOResponse & { ssoTime: Date }>(localStorageKeys.session);
         session.ssoTime = new Date();
         StorageHelper.set(localStorageKeys.session, session);
     };
