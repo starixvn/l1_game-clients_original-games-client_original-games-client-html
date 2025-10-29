@@ -1,6 +1,6 @@
-import MessageTransmitter from '@shared/helpers/message-transmitter';
-import { MessageTransmitterType } from '@shared/helpers/message-transmitter/type';
-import { GameEventActionType } from '@shared/react-contexts/game-state-context/game-event-action';
+import MessageTransmitter from "@shared/helpers/message-transmitter";
+import { MessageTransmitterType } from "@shared/helpers/message-transmitter/type";
+import { GameEventActionType } from "@shared/react-contexts/game-state-context/game-event-action";
 
 export const messageEventType = {
     GAME_CONFIG: "gameConfigs",
@@ -57,7 +57,6 @@ export class GameMessageHandler {
         this.register(messageEventType.ROUND_DATA, this.handleRoundData);
         this.register(messageEventType.SIGNED_IN, this.handleSignedIn);
         this.register(messageEventType.CLIENT_SEED_DETAIL, this.handleClientSeedDetail);
-
     };
 
     getMessageTransmitter() {
@@ -73,9 +72,6 @@ export class GameMessageHandler {
     };
 
     broadcastGameMessage = (message) => {
-        if (message.endBet || message.finish) {
-            console.log('🎯 GameMessageHandler broadcastGameMessage called with endBet/finish:', message);
-        }
         // Also broadcast through the message transmitter to trigger registered handlers
         if (message[messageEventType.USER_STAKE_LEVEL]) {
             this.messageTransmitter.broadcast({ ...message, hasNotice: false });
@@ -85,9 +81,6 @@ export class GameMessageHandler {
     };
 
     broadcastGameEvent = (message) => {
-        if (message.endBet || message.finish) {
-            //console.log('🎯 GameMessageHandler broadcastGameEvent called with endBet/finish:', message);
-        }
         this.messageTransmitter.broadcast(message);
     };
 
@@ -134,8 +127,6 @@ export class GameMessageHandler {
             },
         });
     };
-
-
 
     clearAllHandlers = () => {
         this.messageTransmitter.clearAllListener();

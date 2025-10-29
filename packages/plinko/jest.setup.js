@@ -47,10 +47,6 @@ const mockCanvasContext = {
     bezierCurveTo: jest.fn(),
     rect: jest.fn(),
     roundRect: jest.fn(),
-    closePath: jest.fn(),
-    createLinearGradient: jest.fn(() => ({
-        addColorStop: jest.fn(),
-    })),
     canvas: {
         width: 800,
         height: 600,

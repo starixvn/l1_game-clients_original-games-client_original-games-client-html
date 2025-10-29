@@ -182,8 +182,12 @@ const LiveStats = ({
 
     const profitAmount = totalWinAmount - totalBetAmount;
     const getColorClass = (amount: number) => {
-        if (amount > 0) return "text-winning-highlight";
-        if (amount < 0) return "text-red-500";
+        if (amount > 0) {
+            return "text-winning-highlight";
+        }
+        if (amount < 0) {
+            return "text-red-500";
+        }
         return "text-white";
     };
 

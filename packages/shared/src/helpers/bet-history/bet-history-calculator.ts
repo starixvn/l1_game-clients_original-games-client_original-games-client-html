@@ -8,7 +8,7 @@ export interface BetWinCalculator {
      * @param resultData - Round result data {result, settlementResult, odds}
      * @returns Total winnings amount
      */
-    calculateBetWin(pendingDetails: any[], resultData: {result: any, settlementResult: any, odds: Record<string, number>}): number;
+    calculateBetWin(pendingDetails: any[], resultData: { result: any; settlementResult: any; odds: Record<string, number> }): number;
 
     /**
      * Get the game-specific identifier
@@ -16,13 +16,11 @@ export interface BetWinCalculator {
     getGameId(): string;
 }
 
-
-
 /**
  * Registry for game-specific bet win calculators
  */
 export class BetWinCalculatorRegistry {
-    private static calculators: Map<string, BetWinCalculator> = new Map();
+    private static readonly calculators: Map<string, BetWinCalculator> = new Map();
 
     /**
      * Register a calculator for a specific game
@@ -39,17 +37,15 @@ export class BetWinCalculatorRegistry {
     }
 }
 
-
-
 /**
  * Generic fallback calculator for games without specific implementation
  */
 export class GenericBetWinCalculator implements BetWinCalculator {
     getGameId(): string {
-        return 'generic';
+        return "generic";
     }
 
-    calculateBetWin(pendingDetails: any[], resultData: {result: any, settlementResult: any, odds: Record<string, number>}): number {
+    calculateBetWin(pendingDetails: any[], resultData: { result: any; settlementResult: any; odds: Record<string, number> }): number {
         let betwin = 0;
         for (const detail of pendingDetails) {
             const didWin = !!resultData.settlementResult[detail.choice];

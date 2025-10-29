@@ -1,7 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
-import * as Sentry from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import { InitSocketIO, writeDebugLog } from "@shared/helpers";
 import { AnalyticsHelper } from "@shared/helpers/analytic-helper";

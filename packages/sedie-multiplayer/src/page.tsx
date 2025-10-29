@@ -25,9 +25,9 @@ const Background = dynamic(() => import("@shared/components/game-components/back
 const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own-total-bet/own-total-bet"), { ssr: false });
 const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
 const AutoRebetIcon = dynamic(() => import("@shared/components/game-components/rebet/auto-rebet-icon"), { ssr: false });
-const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf"), { ssr: false });
-const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound"), { ssr: false });
-const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide"), { ssr: false });
+const PFIcon = dynamic(() => import("@shared/components/game-components/menu/icons/pf-icon"), { ssr: false });
+const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound-icon"), { ssr: false });
+const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide-icon"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
 
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
@@ -114,7 +114,7 @@ class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuIcons() {
-        return <MenuIconWrapper items={[<SoundIcon />, <GuideIcon />, <PFIcon />]} />;
+        return <MenuIconWrapper items={[<SoundIcon key="sound" />, <GuideIcon key="guide" />, <PFIcon key="pf" />]} />;
     }
 
     renderRightSide() {

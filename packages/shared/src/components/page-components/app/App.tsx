@@ -12,7 +12,6 @@ import { tolgee } from "@shared/tolgee";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "@shared/components/page-components/google-analytics";
 import { getGameConfig } from "@shared/game-config";
-import LoggerControls from "@shared/components/game-components/logger-controls/LoggerControls";
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();

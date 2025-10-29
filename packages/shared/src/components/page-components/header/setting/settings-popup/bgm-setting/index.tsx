@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AnalyticsHelper, localStorageKeys, StorageHelper, TrackingAction, TrackingFunction } from "@shared/helpers";
+import { AnalyticsHelper, TrackingAction, TrackingFunction } from "@shared/helpers";
 import { useClickSound, useTranslator } from "@shared/react-hooks";
 import useDebounce from "@shared/react-hooks/use-debounce";
 import Styles from "../settings-popup.module.scss";
