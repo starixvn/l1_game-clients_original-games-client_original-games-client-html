@@ -4,7 +4,7 @@ import { BrowserDomUtils } from "@shared/utils/browser-dom-utils";
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 import Image from "next/image";
 
-const BackLobbyButton = () => {
+const LobbyMenu = () => {
     const handleBackToLobby = () => {
         const params = getBaseSessionInfo();
         BrowserDomUtils.postMessageToParent({ ...params, backLobby: true });
@@ -26,8 +26,9 @@ const BackLobbyButton = () => {
     return (
         <button className="fixed top-[90px] right-[20px] z-[9999]" onClick={handleBackToLobby}>
             <Image src="/static/images/icons/home-icon.webp" alt="Back to Lobby" width={60} height={60} />
+            <Image src="/static/images/icons/menu-icon.webp" alt="Menu" width={60} height={60} />
         </button>
     );
 };
 
-export default BackLobbyButton;
+export default LobbyMenu;
