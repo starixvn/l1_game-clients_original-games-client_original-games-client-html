@@ -663,6 +663,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
+    renderBackToLobbyButton() {
+        return <></>;
+    }
+
     getRenderTemplate() {
         return (
             <>
@@ -711,7 +715,9 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
                     {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
                     {this.renderConnectFailed(roundState, disconnectReason)}
+                    {this.renderBackToLobbyButton()}
                 </GameContainer>
+
             </>
         );
     }

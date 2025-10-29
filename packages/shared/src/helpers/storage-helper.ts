@@ -136,6 +136,9 @@ export const localStorageKeys = {
     // latestGameId is deprecated due to one-game-per-session behavior
     latestGameId: buildLocalStorageKey(LATEST_GAME_ID_KEY),
     // User-specific latestGameId is deprecated and kept only for backward-compat mocks
+    parentUrl: buildLocalStorageKey("purl"),
+    returnUrl: buildLocalStorageKey("rurl"),
+    lobbyUrl: buildLocalStorageKey("lurl"),
     userLatestGameId: LATEST_GAME_ID_KEY,
 };
 
