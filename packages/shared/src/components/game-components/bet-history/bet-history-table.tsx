@@ -8,7 +8,7 @@ import { createBetHistoryHandler } from "../../game-base/handlers/bet-history-ha
 import { BetHistoryHandler } from "../../game-base/handlers/bet-history-handler";
 import { transformBetLogsToDisplayData, getWinValueColorClass, scrollBetHistoryToTop, BetHistoryDisplayData } from "./bet-history-utils";
 import styles from "./bet-history.module.scss";
-import useBetDetailStore, { BetDetailData } from "@shared/stores/bet-detail-store";
+import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import BouncingDotsLoader from "./bouncing-dots-loader";
 import { createBetDetailData } from "./bet-detail-factory";
@@ -18,7 +18,15 @@ export interface BetHistoryTableProps {
     gameId?: string;
     getDisplayedBetLogs?: (handler: BetHistoryHandler | null, betLogs: any[], isExpanded: boolean) => any[];
     getHeaderColumns?: (translateCommon: any) => any[];
-    renderToggleButton?: (totalPages: number, isExpanded: boolean, isLoading: boolean, handleToggle: () => void, styles: any, t: any, handler?: BetHistoryHandler) => React.ReactNode;
+    renderToggleButton?: (
+        totalPages: number,
+        isExpanded: boolean,
+        isLoading: boolean,
+        handleToggle: () => void,
+        styles: any,
+        t: any,
+        handler?: BetHistoryHandler
+    ) => React.ReactNode;
 }
 
 // Function to create row data for bet history table
@@ -112,7 +120,7 @@ export const BetHistoryTable = ({
     gameId,
     getDisplayedBetLogs: customGetDisplayedBetLogs,
     getHeaderColumns: customGetHeaderColumns,
-    renderToggleButton: customRenderToggleButton
+    renderToggleButton: customRenderToggleButton,
 }: BetHistoryTableProps) => {
     const { gameMessageHandler } = useGameContext();
     const { t: translateCommon } = useCommonTranslate();
@@ -242,7 +250,15 @@ export const BetHistoryTable = ({
             </div>
 
             {customRenderToggleButton
-                ? customRenderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon, betHistoryHandler || undefined)
+                ? customRenderToggleButton(
+                      totalPages,
+                      isExpanded,
+                      isLoading,
+                      handleToggleExpand,
+                      styles,
+                      translateCommon,
+                      betHistoryHandler || undefined
+                  )
                 : renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
         </>
     );

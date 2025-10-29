@@ -1,44 +1,3 @@
-.switch {
-    position: relative;
-    height: 12px;
-    width: 36px;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    border-radius: 9999px;
-    background-color: #FFF;
-    transition: all .3s ease;
-  }
-  
-  .switch:checked {
-    background-color: #00C950;
-  }
-
-  .switch:checked:before {
-    background-color: #8EFF77;
-    border: 1px solid #8EFF77;
-  }
-  
-  .switch::before {
-    position: absolute;
-    content: "";
-    left: calc(1.5rem - 1.6rem);
-    top: calc(1.5rem - 1.8rem);
-    display: block;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    border: 1px solid #FFF;
-    border-radius: 9999px;
-    background-color: #FFF;
-    box-shadow: 0 3px 10px rgba(100, 116, 139, 0.327);
-    transition: all .3s ease;
-  }
-  
-  .switch:checked:before {
-    transform: translateX(100%);
-  }
-
 .hotkeyPopup {
     background: var(--sound-setting-background);
     border-radius: 16px !important;
@@ -53,7 +12,7 @@
     align-items: center;
     justify-content: center;
     padding: 6px 12px;
-    background: #212D3D99;
+    background: #212d3d99;
     border-radius: 8px;
     color: #fff;
     font-style: bold;

@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
-import { useGameContext } from "@shared/react-contexts";
-import { useTranslator } from "@shared/react-hooks";
 import { RoundState } from "@shared/components/game-base/type";
 import PlayerBankerResult from "./player-banker-result";
 import { EmptyCardIndex } from "../shared/components/card";
 import dynamic from "next/dynamic";
 import { BaccaratResult } from "./types";
 import { determineWinner } from "./score-utils";
-
 
 interface BaccaratSettlementResultProps {
     className?: string;
@@ -20,12 +17,12 @@ const DEFAULT_RESULT: BaccaratResult = {
     banker: {
         card1: { rank: EmptyCardIndex, suit: 0 },
         card2: { rank: EmptyCardIndex, suit: 0 },
-        score: 0
+        score: 0,
     },
     player: {
         card1: { rank: EmptyCardIndex, suit: 0 },
         card2: { rank: EmptyCardIndex, suit: 0 },
-        score: 0
+        score: 0,
     },
     winner: "tie",
 };
@@ -51,7 +48,7 @@ const renderCardDisplay = (
             <PlayerBankerResult
                 playResultAnimation={false}
                 result={DEFAULT_RESULT}
-                isShowResult={false}  // Show back cards
+                isShowResult={false} // Show back cards
                 language="en"
                 isHideAllCards={false}
                 isGetResult={true}
@@ -86,10 +83,7 @@ const renderCardDisplay = (
     );
 };
 
-const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ className }) => {
-    const { durations } = useGameContext();
-    const { tolgeeNamespace } = useGameContext();
-    const { t } = useTranslator([tolgeeNamespace || ""]);
+const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = () => {
     const { roundState } = useGameStateContext();
     const gameState = useGameStateContext();
     const last = gameState?.roundData?.last;
@@ -122,18 +116,15 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
                 card1: toCard(resultData.player?.card1),
                 card2: toCard(resultData.player?.card2),
                 card3: resultData.player?.card3 ? toCard(resultData.player.card3) : undefined,
-                score: resultData.player?.score ?? 0
+                score: resultData.player?.score ?? 0,
             },
             banker: {
                 card1: toCard(resultData.banker?.card1),
                 card2: toCard(resultData.banker?.card2),
                 card3: resultData.banker?.card3 ? toCard(resultData.banker.card3) : undefined,
-                score: resultData.banker?.score ?? 0
+                score: resultData.banker?.score ?? 0,
             },
-            winner: determineWinner(
-                resultData.player?.score ?? 0,
-                resultData.banker?.score ?? 0
-            )
+            winner: determineWinner(resultData.player?.score ?? 0, resultData.banker?.score ?? 0),
         };
     };
 
@@ -218,17 +209,23 @@ const BaccaratSettlementResult: React.FC<BaccaratSettlementResultProps> = ({ cla
     }, [roundState, isUsingRoundHistoryData]);
 
     return (
-        <div
-            className="h-[64px] w-full mt-[26px] mb-[19px] z-[var(--result-animation-index)]"
-        >
-            {roundState === RoundState.DisplayResult && 
+        <div className="h-[64px] w-full mt-[26px] mb-[19px] z-[var(--result-animation-index)]">
+            {roundState === RoundState.DisplayResult && (
                 <div className="relative top-[-70px]">
                     <WinningBalanceEffect />
                 </div>
-            }
+            )}
             <div className="flex justify-center w-full h-full">
                 <div className="w-full">
-                    {renderCardDisplay(result, showCards, animationState === "open", !showCards, roundState, animationState, isUsingRoundHistoryData)}
+                    {renderCardDisplay(
+                        result,
+                        showCards,
+                        animationState === "open",
+                        !showCards,
+                        roundState,
+                        animationState,
+                        isUsingRoundHistoryData
+                    )}
                 </div>
             </div>
         </div>

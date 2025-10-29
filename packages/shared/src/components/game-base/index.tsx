@@ -1,7 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Socket } from "socket.io-client";
-import * as Sentry from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import { InitSocketIO, writeDebugLog } from "@shared/helpers";
 import { AnalyticsHelper } from "@shared/helpers/analytic-helper";
@@ -48,8 +47,8 @@ const Header = dynamic(() => import("../page-components/header"), { ssr: false }
 const Background = dynamic(() => import("../game-components/background"), { ssr: false });
 const RTP = dynamic(() => import("../game-components/rtp/rtp"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("../game-components/menu/menu-icon-wrapper"), { ssr: false });
-const GuideIcon = dynamic(() => import("../game-components/menu/icons/guide"), { ssr: false });
-const SoundIcon = dynamic(() => import("../game-components/menu/icons/sound"), { ssr: false });
+const GuideIcon = dynamic(() => import("../game-components/menu/icons/guide-icon"), { ssr: false });
+const SoundIcon = dynamic(() => import("../game-components/menu/icons/sound-icon"), { ssr: false });
 
 abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extends React.PureComponent<P, S> {
     protected socket: Socket;

@@ -2,7 +2,6 @@ import { usePopupStore } from "@shared/stores/popup-store";
 import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useClickOutside, useClickSound, useCommonTranslate } from "@shared/react-hooks";
-import { cn } from "@shared/utils";
 import { DefaultParamType, TFnType, TranslationKey } from "@tolgee/react";
 import styles from "./hotkey.module.scss";
 import { useSettingStore } from "@shared/stores/setting-store";

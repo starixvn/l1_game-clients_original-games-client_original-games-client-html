@@ -155,8 +155,7 @@ class PreloadManager {
         globalState.setActiveRequest(gameId, requestPromise);
 
         try {
-            const result = await requestPromise;
-            return result;
+            return requestPromise;
         } finally {
             globalState.cleanupRequest(gameId);
         }
@@ -168,7 +167,7 @@ class PreloadManager {
 
             // API returns { status: "ok", data: string[] }, so extract the data array
             const responseData = response?.data;
-            if (responseData && typeof responseData === 'object' && 'data' in responseData && Array.isArray(responseData.data)) {
+            if (responseData && typeof responseData === "object" && "data" in responseData && Array.isArray(responseData.data)) {
                 return responseData.data;
             } else {
                 console.warn(`[PreloadManager:createImageRequest] Unexpected response format, returning empty array`);
@@ -212,7 +211,7 @@ class PreloadManager {
     private getMemoriedImages(gameId: number): string[] {
         const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
         const cachePaths = getGameSettings(gameId)?.gameResourceConfigs?.cachePaths ?? [];
-        const cachePathsWithBase = cachePaths.map(path => basePath + path);
+        const cachePathsWithBase = cachePaths.map((path) => basePath + path);
         return MEMORIED_IMAGES.concat(cachePathsWithBase);
     }
 

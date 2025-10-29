@@ -8,7 +8,6 @@ import { useTranslator } from "@shared/react-hooks/use-translator";
 import { ResourceTypes } from "@shared/resources";
 import useGameStore from "@shared/stores/game-store/game-store";
 
-
 interface PlayerBankerResultProps {
     playResultAnimation: boolean;
     result?: BaccaratResult;
@@ -18,17 +17,16 @@ interface PlayerBankerResultProps {
     isGetResult?: boolean;
 }
 
-
 export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     const { playResultAnimation, result, isShowResult, isHideAllCards, isGetResult = false } = props;
     const [showWinner, setShowWinner] = useState(false);
     const [playerAnimationComplete, setPlayerAnimationComplete] = useState(false);
     const [bankerAnimationComplete, setBankerAnimationComplete] = useState(false);
 
-    const playerCards = useMemo(() => result ? GetPlayerCardsResult(result) : [], [result]);
-    const bankerCards = useMemo(() => result ? GetBankerCardsResult(result) : [], [result]);
+    const playerCards = useMemo(() => (result ? GetPlayerCardsResult(result) : []), [result]);
+    const bankerCards = useMemo(() => (result ? GetBankerCardsResult(result) : []), [result]);
 
-    const {t} = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
+    const { t } = useTranslator([ResourceTypes.BACCARAT_MULTIPLAYER]);
 
     // Helper function to check if result contains valid game data (not default empty result)
     const hasValidResult = (result: BaccaratResult | undefined): boolean => {
@@ -62,7 +60,15 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
 
     // Show winner when both player and banker animations are complete (live game)
     useEffect(() => {
-        if (!isGetResult && playResultAnimation && isShowResult && playerAnimationComplete && bankerAnimationComplete && !showWinner && hasValidResult(result)) {
+        if (
+            !isGetResult &&
+            playResultAnimation &&
+            isShowResult &&
+            playerAnimationComplete &&
+            bankerAnimationComplete &&
+            !showWinner &&
+            hasValidResult(result)
+        ) {
             // Add a small delay for better visual effect
             const winnerTimer = setTimeout(() => {
                 setShowWinner(true);
@@ -70,6 +76,7 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
 
             return () => clearTimeout(winnerTimer);
         }
+        return undefined;
     }, [isGetResult, playResultAnimation, isShowResult, playerAnimationComplete, bankerAnimationComplete, showWinner, result]);
 
     const handlePlayerAnimationComplete = useCallback(() => {
@@ -91,7 +98,6 @@ export default function PlayerBankerResult(props: PlayerBankerResultProps) {
     // Don't show cards during transitions when using dummy/default data
     const shouldShowCards = isShowResult && hasValidResult(result);
     const shouldHideCards = isHideAllCards || (isShowResult && !hasValidResult(result));
-
 
     const isShouldShowResult = useCallback((showWinner: boolean, result: BaccaratResult | undefined) => {
         return showWinner && result && hasValidResult(result);
