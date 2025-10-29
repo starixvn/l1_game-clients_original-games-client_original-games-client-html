@@ -1,6 +1,7 @@
 import { URLParams } from "@shared/constants/url-params";
 import { localStorageKeys, StorageHelper } from "@shared/helpers/storage-helper";
 import { BrowserDomUtils } from "@shared/utils/browser-dom-utils";
+import { SSOResponse } from "sc-user-service-client/dist/auth";
 
 const BackLobbyButton = () => {
     const handleBackToLobby = () => {
@@ -9,7 +10,7 @@ const BackLobbyButton = () => {
     }
 
     const getBaseSessionInfo = () => {
-        const sessionInfo = StorageHelper.get<{ ss: string; ssoTime: string; username: string; isAuthenticated: boolean; memberName: string; language: string }>(localStorageKeys.session);
+        const sessionInfo = StorageHelper.get<SSOResponse & { ssoTime: Date }>(localStorageKeys.session);
         return {
             [URLParams.session]: sessionInfo?.ss,
             [URLParams.time]: new Date(sessionInfo?.ssoTime).getTime(),
