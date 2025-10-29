@@ -12,7 +12,7 @@ const gameConfig: GameConfig = {
     gameName: "Baccarat Multiplayer",
     gameVersion: "1.0.0",
     gameDescription: "Multiplayer Baccarat Game",
-    assetPath: "/game-150",
+    assetPath: "/site-150",
     serviceName: "baccarat-multiplayer"
 };
 

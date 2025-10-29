@@ -12,7 +12,7 @@ const gameConfig: GameConfig = {
     gameName: "SeDie Multiplayer",
     gameVersion: "1.0.0",
     gameDescription: "Multiplayer SeDie Game",
-    assetPath: "/game-148",
+    assetPath: "/site-148",
     serviceName: "sedie-multiplayer"
 };
 

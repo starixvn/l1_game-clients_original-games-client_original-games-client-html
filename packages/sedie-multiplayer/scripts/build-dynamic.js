@@ -10,7 +10,7 @@ const path = require("path");
 
 // Get environment variables with defaults
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "148";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/game-148";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-148";
 
 console.log(`Building sedie-multiplayer with:`);
 console.log(`  Game ID: ${gameId}`);

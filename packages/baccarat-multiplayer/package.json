@@ -8,7 +8,7 @@
         "clean": "rimraf dist",
         "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 npm run generate-tolgee-data && cd packages/baccarat-multiplayer",
         "dev": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH= PORT=3002 FAST_REFRESH=false node custom-server.js",
-        "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/game-150 next build",
+        "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/site-150 next build",
         "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH= PORT=3002 node custom-server.js",
         "dev:dynamic": "node scripts/dev-dynamic.js",
         "build:dynamic": "node scripts/build-dynamic.js",
