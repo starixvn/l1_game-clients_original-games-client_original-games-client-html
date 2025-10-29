@@ -9,6 +9,7 @@ export class BrowserDomUtils {
 
     public static postMessageToParent(data: unknown) {
         const parentUrl = StorageHelper.get<string>(localStorageKeys.parentUrl);
+        console.log("parentUrl", parentUrl);
         if (parentUrl) {
             const url = GameUtils.base64Decode(parentUrl);
             console.log("url", url);
