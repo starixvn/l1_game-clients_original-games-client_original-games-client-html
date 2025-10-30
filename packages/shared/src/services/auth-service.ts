@@ -3,6 +3,7 @@ import { SSOResponse } from "sc-user-service-client/dist/auth";
 import { AnalyticsHelper, localStorageKeys, StorageHelper } from '@shared/helpers';
 import { UserClientCommunication } from "./user-client-communication";
 import { logger } from "./logger";
+import { StandaloneMode } from "@shared/utils/constant";
 
 const authService = UserClientCommunication?.getUserClientInstance()?.auth;
 const lobbyService = UserClientCommunication?.getUserClientInstance()?.lobby;
@@ -10,8 +11,10 @@ const lobbyService = UserClientCommunication?.getUserClientInstance()?.lobby;
 export const sso = async (token: string, appType: number): Promise<SSOResponse> => {
     logger.info('SSO authentication initiated', { appType, tokenLength: token?.length });
 
+    const standaloneMode = StorageHelper.get<Partial<StandaloneMode>>(localStorageKeys.standaloneMode);
+
     try {
-        const userSession = await authService?.sso(token, appType);
+        const userSession : SSOResponse & Partial<StandaloneMode> = await authService?.sso(token, appType);
 
         if (userSession?.isAuthenticated) {
             logger.info('SSO authentication successful', {
@@ -19,6 +22,16 @@ export const sso = async (token: string, appType: number): Promise<SSOResponse> 
                 isAuthenticated: userSession.isAuthenticated,
                 isUM: userSession.isUM
             });
+
+            if(standaloneMode?.isStandalone) {
+                userSession.isStandalone = true;
+                userSession.cg = standaloneMode.cg;
+                userSession.op = standaloneMode.op;
+                userSession.lang = standaloneMode.lang;
+                userSession.rurl = standaloneMode.rurl;
+                userSession.lurl = standaloneMode.lurl;
+            }
+
             StorageHelper.set(localStorageKeys.session, userSession);
         } else {
             logger.warn('SSO authentication failed - not authenticated', {
