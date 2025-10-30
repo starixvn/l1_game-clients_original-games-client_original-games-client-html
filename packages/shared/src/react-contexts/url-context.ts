@@ -32,22 +32,12 @@ export function parseContextFromURL(): URLContextModel | undefined {
 
     const param = params.get("params");
     const lobbyUrl = params.get("lurl");
-    const parentUrl = params.get("purl");
     const returnUrl = params.get("rurl");
     const isStandalone = params.get("isStandalone");
     const currencyGroup = params.get("cg");
     const op = params.get("op");
 
-    if(lobbyUrl) {
-        StorageHelper.set(localStorageKeys.lobbyUrl, lobbyUrl);
-    }
-    if(parentUrl) {
-        StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
-    }
-    if(returnUrl) {
-        StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
-    }
-
+    
     if(isStandalone) {
         const standaloneMode = {
             isStandalone: isStandalone === "true",
@@ -66,11 +56,13 @@ export function parseContextFromURL(): URLContextModel | undefined {
     return { token, language, redirectUrl };
 }
 
-const handleURLParams = (param: string) => {
+const handleURLParams = (param: any) => {
     if (param) {
         const decodedUrl = GameUtils.base64Decode(param);
-        console.log("decodedUrl", decodedUrl)
         const urlSearchParams = new URLSearchParams(decodedUrl);
+        const lobbyUrl = urlSearchParams.get(URLParams.lobbyUrl);
+        const parentUrl = urlSearchParams.get(URLParams.parentUrl);
+        const returnUrl = urlSearchParams.get(URLParams.returnUrl);
         StorageHelper.set(localStorageKeys.session, { 
             ss: urlSearchParams.get(URLParams.session), 
             username: urlSearchParams.get(URLParams.username), 
@@ -80,6 +72,16 @@ const handleURLParams = (param: string) => {
             enabledMusic: urlSearchParams.get(URLParams.musicEnable),
             enabledSound: urlSearchParams.get(URLParams.sfxEnable),
         });
+
+        if(lobbyUrl) {
+            StorageHelper.set(localStorageKeys.lobbyUrl, lobbyUrl);
+        }
+        if(parentUrl) {
+            StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
+        }
+        if(returnUrl) {
+            StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
+        }
     }
 }
 
