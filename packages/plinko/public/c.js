@@ -21,7 +21,7 @@ window.envConfig = {
     subGuideDomain: "l2-guide-1",
     enableMsgpackParser: false,
     system: "VG",
-    appType: 10,
+    appType: 1,
     useTolgeeStatic: false,
     googleAnalyticId: "G-F4HZV0YQ73",
 };
