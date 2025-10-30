@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSettingStore } from "@shared/stores/setting-store/setting-store";
 import { GameUtils } from "@shared/helpers/base-64-helper";
 import { StandaloneMode } from "@shared/utils/constant";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const LobbyMenu = () => {
     const sessionInfo = StorageHelper.get<SSOResponse & Partial<StandaloneMode>>(localStorageKeys.session);
@@ -76,8 +77,8 @@ const LobbyMenu = () => {
 
     return (
         <button className="fixed top-[90px] right-[20px] z-[9999]" onClick={handleBackToLobby}>
-            <Image src="/static/images/icons/home-icon.webp" alt="Back to Lobby" width={60} height={60} />
-            <Image src="/static/images/icons/menu-icon.webp" alt="Menu" width={60} height={60} />
+            <Image src={`${basePath}/static/images/icons/home-icon.webp`} alt="Back to Lobby" width={60} height={60} />
+            <Image src={`${basePath}/static/images/icons/menu-icon.webp`} alt="Menu" width={60} height={60} />
         </button>
     );
 };
