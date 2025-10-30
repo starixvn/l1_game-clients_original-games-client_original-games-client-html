@@ -141,6 +141,7 @@ export const localStorageKeys = {
     lobbyUrl: buildLocalStorageKey("lurl"),
     standaloneMode: buildLocalStorageKey("standaloneMode"),
     userLatestGameId: LATEST_GAME_ID_KEY,
+    appType: buildLocalStorageKey("appType"),
 };
 
 export function buildLocalStorageKey(key: string) {
