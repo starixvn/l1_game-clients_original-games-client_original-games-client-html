@@ -250,6 +250,8 @@ const PlinkoCanvas = () => {
             if (isInstantMode) {
                 createPathPreview(finish);
                 setFinishedBall(finish);
+                playPlinkoBallHitWinSoundRef.current?.();
+
                 return;
             }
 

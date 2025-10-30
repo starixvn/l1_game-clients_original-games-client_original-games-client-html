@@ -1,4 +1,4 @@
-import { useCommonTranslate } from "@shared";
+import { useClickSound, useCommonTranslate } from "@shared";
 import { memo } from "react";
 
 const tabs = ["manual", "auto"];
@@ -13,14 +13,18 @@ const TabNavigation = ({
     isDisabled: boolean;
 }) => {
     const { t } = useCommonTranslate();
-
+    const clickSound = useClickSound();
+    const handleClick = (index: number) => {
+        clickSound();
+        onChangeTab(index);
+    };
     return (
         <div className="md:px-3">
             <div className="flex">
                 {tabs.map((tab, index) => (
                     <button
                         key={tab}
-                        onClick={() => onChangeTab(index)}
+                        onClick={() => handleClick(index)}
                         className={`flex-1 p-2 text-sm relative text-white md:pt-0 disabled:opacity-50`}
                         disabled={isDisabled}
                     >

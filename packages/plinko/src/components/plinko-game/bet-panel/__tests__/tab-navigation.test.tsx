@@ -7,6 +7,7 @@ jest.mock("@shared", () => ({
     useCommonTranslate: () => ({
         t: (key: string) => key,
     }),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 describe("TabNavigation", () => {
