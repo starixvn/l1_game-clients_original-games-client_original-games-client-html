@@ -36,7 +36,11 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const isStandalone = params.get("isStandalone");
     const currencyGroup = params.get("cg");
     const op = params.get("op");
+    const appType = params.get("appType");
 
+    if(appType) {
+        StorageHelper.set(localStorageKeys.appType, appType);
+    }
     
     if(isStandalone) {
         const standaloneMode = {
