@@ -1,0 +1,40 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@shared": [
+        "../shared/src/index"
+      ],
+      "@shared/*": [
+        "../shared/src/*"
+      ],
+      "@sedie/*": [
+        "../sedie/src/*"
+      ],
+      "@sedie-multiplayer/*": [
+        "../sedie-multiplayer/src/*"
+      ],
+      "@baccarat-multiplayer/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "src/**/*",
+    "next.config.js"
+, "../shared/src/react-hooks/use-is-desktop.ts"  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next"
+  ]
+}

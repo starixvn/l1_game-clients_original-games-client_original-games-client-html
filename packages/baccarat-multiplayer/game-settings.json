@@ -1,0 +1,34 @@
+{
+    "150": {
+        "id": 150,
+        "gameName": "BaccaratMultiplayer",
+        "tolgeeNamespace": "Baccarat",
+        "socketInfo": {
+            "namespace": "baccaratmultiplayer",
+            "path": "baccaratmultiplayer"
+        },
+        "durations": {
+            "wholeRound": 33,
+            "wholeTurn": 33,
+            "placingBets": 18,
+            "lockingBet": 3,
+            "showResult": 13,
+            "resultAnimation": 6,
+            "beforePlaceBet": 3,
+            "switchRoundAnimation": 0,
+            "startNewRoundAnim": 0
+        },
+        "numberOfRoundHistory": 102,
+        "gamePath": "baccarat-multiplayer",
+        "gameResourceConfigs": {
+            "path": "baccarat-multiplayer",
+            "optionalPaths": [
+                "/static/images/baccarat/cards"
+            ],
+            "cachePaths": [
+                "/static/images/baccarat/cards/",
+                "/static/images/baccarat-multiplayer/scoreboard/bead-road/"
+            ]
+        }
+    }
+}

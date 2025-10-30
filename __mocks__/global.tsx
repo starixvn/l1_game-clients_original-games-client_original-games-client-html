@@ -16,7 +16,7 @@ jest.mock("next/config", () => () => ({
     publicRuntimeConfig: {
         proxy: {
             ssl: true,
-            subDomain: "gn-proxy",
+            subDomain: "gn-proxy1",
             path: "",
         },
         sentry: {
@@ -28,28 +28,27 @@ jest.mock("next/config", () => () => ({
         subGuideDomain: "gn-guide",
         enableMsgpackParser: false,
         system: "GN",
-        appType: 1,
+        appType: 10,
         useTolgeeStatic: false,
         socketGatewayPath: "gateway",
         gameSettings: {
-            "1001": {
-                id: 1001,
-                gameName: "BacBall",
+            "1005": {
+                id: 1005,
+                gameName: "SeBall1",
                 socketInfo: {
-                    namespace: "bacball",
-                    path: "bacball",
+                    namespace: "seball1",
+                    path: "seball1",
                 },
                 durations: {
-                    wholeRound: 122,
-                    wholeTurn: 30,
+                    wholeRound: 31,
+                    wholeTurn: 31,
                     placingBets: 20,
                     lockingBet: 3,
-                    showResult: 10,
-                    resultAnimation: 3,
-                    beforePlaceBet: 0,
-                    switchRoundAnimation: 2,
+                    showResult: 7,
+                    resultAnimation: 4,
+                    beforePlaceBet: 4,
+                    switchRoundAnimation: 0,
                 },
-                totalTurns: 4,
             },
         },
     },
@@ -64,3 +63,14 @@ jest.mock("swiper/react", () => ({
     Swiper: ({ children }) => <div data-testid="swiper-testid">{children}</div>,
     SwiperSlide: ({ children }) => <div data-testid="swiper-slide-testid">{children}</div>,
 }));
+
+// Provide a global IntersectionObserver mock for jsdom/Jest environment
+if (!(global as any).IntersectionObserver) {
+    (global as any).IntersectionObserver = class {
+        constructor(_callback?: any, _options?: any) {}
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() { return []; }
+    };
+}

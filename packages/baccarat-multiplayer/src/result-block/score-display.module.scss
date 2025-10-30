@@ -1,0 +1,97 @@
+// Score Display Styles
+.score {
+    --width-score: 68px;
+    --height-score: 38px;
+    --font-size-score: 20px;
+    width: var(--width-score);
+    height: var(--height-score);
+    position: absolute;
+    bottom: -44px;
+    border-radius: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 19px;
+    font-size: var(--font-size-score);
+    z-index: 3;
+
+    &-number {
+        font-size: 30px;
+        font-weight: 500;
+        text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+        position: relative;
+        bottom: -2px;
+        z-index: 5;
+        transform-origin: bottom;
+        animation: scoreNumberAppear 0.2s ease-in-out forwards;
+    }
+
+    &.player-score {
+        background-image: url('data:image/svg+xml,<svg width="68" height="38" viewBox="0 0 68 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 0C52.5015 0 67.5 14.9985 67.5 33.5C67.5 34.8446 67.4177 36.1704 67.2637 37.4736H0.736328C0.58228 36.1704 0.500019 34.8446 0.5 33.5C0.5 14.9985 15.4985 0 34 0Z" fill="url(%23paint0_linear_227_17565)" fill-opacity="0.95"/><defs><linearGradient id="paint0_linear_227_17565" x1="34" y1="-1.13556" x2="34" y2="37.4736" gradientUnits="userSpaceOnUse"><stop stop-color="%2301ACFF"/><stop offset="1" stop-color="%23086391"/></linearGradient></defs></svg>');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        mask: url('data:image/svg+xml,<svg width="68" height="38" viewBox="0 0 68 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 0C52.5015 0 67.5 14.9985 67.5 33.5C67.5 34.8446 67.4177 36.1704 67.2637 37.4736H0.736328C0.58228 36.1704 0.500019 34.8446 0.5 33.5C0.5 14.9985 15.4985 0 34 0Z" fill="url(%23paint0_linear_227_17565)" fill-opacity="0.95"/><defs><linearGradient id="paint0_linear_227_17565" x1="34" y1="-1.13556" x2="34" y2="37.4736" gradientUnits="userSpaceOnUse"><stop stop-color="%2301ACFF"/><stop offset="1" stop-color="%23086391"/></linearGradient></defs></svg>') no-repeat 50% 50%;
+    }
+
+    &.banker-score {
+        background-image: url('data:image/svg+xml,<svg width="68" height="38" viewBox="0 0 68 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 0C52.5015 0 67.5 14.9985 67.5 33.5C67.5 34.8446 67.4177 36.1704 67.2637 37.4736H0.736328C0.58228 36.1704 0.500019 34.8446 0.5 33.5C0.5 14.9985 15.4985 0 34 0Z" fill="url(%23paint0_linear_227_17604)" fill-opacity="0.95"/><defs><linearGradient id="paint0_linear_227_17604" x1="34" y1="-1.13556" x2="34" y2="37.4736" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF0141"/><stop offset="1" stop-color="%2391080B"/></linearGradient></defs></svg>');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        mask: url('data:image/svg+xml,<svg width="68" height="38" viewBox="0 0 68 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 0C52.5015 0 67.5 14.9985 67.5 33.5C67.5 34.8446 67.4177 36.1704 67.2637 37.4736H0.736328C0.58228 36.1704 0.500019 34.8446 0.5 33.5C0.5 14.9985 15.4985 0 34 0Z" fill="url(%23paint0_linear_227_17604)" fill-opacity="0.95"/><defs><linearGradient id="paint0_linear_227_17604" x1="34" y1="-1.13556" x2="34" y2="37.4736" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF0141"/><stop offset="1" stop-color="%2391080B"/></linearGradient></defs></svg>') no-repeat 50% 50%;
+    }
+}
+
+@keyframes scoreNumberAppear {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.blink-area {
+    transform: rotate(45deg) scale(2);
+    width: 61px;
+    height: 36px;
+    z-index: 4;
+    position: absolute;
+    top: 0px;
+    opacity: 1;
+    animation: scoreBlink 0.3s ease-in-out forwards;
+
+    &.blink-banker {
+        background: url('data:image/svg+xml,<svg width="61" height="36" viewBox="0 0 61 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M61 36H0V0H61V36Z" fill="url(%23paint0_linear_213_17219)" fill-opacity="0.9"/><defs><linearGradient id="paint0_linear_213_17219" x1="30.5" y1="-1.09091" x2="30.5" y2="36" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF0141"/><stop offset="1" stop-color="%2391080B"/></linearGradient></defs></svg>');
+    }
+
+    &.blink-player {
+        background: url('data:image/svg+xml,<svg width="63" height="38" viewBox="0 0 63 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M63 38H0V0H63V38Z" fill="url(%23paint0_linear_213_17209)" fill-opacity="0.9"/><defs><linearGradient id="paint0_linear_213_17209" x1="31.5" y1="-0.0909091" x2="31.5" y2="37" gradientUnits="userSpaceOnUse"><stop stop-color="%2301ACFF"/><stop offset="1" stop-color="%23086391"/></linearGradient></defs></svg>');
+    }
+}
+
+@keyframes scoreBlink {
+    0% {
+        opacity: 0;
+        filter: brightness(1) blur(2px);
+        top: 0;
+        left: -100px;
+    }
+
+    50% {
+        opacity: 1;
+        filter: brightness(5) blur(2px);
+    }
+
+    100% {
+        opacity: 0;
+        filter: brightness(1) blur(2px);
+        top: 0;
+        left: 40px;
+    }
+}

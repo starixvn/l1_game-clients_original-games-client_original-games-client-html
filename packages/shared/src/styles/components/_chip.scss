@@ -1,0 +1,42 @@
+.chip-container {
+    --ratio: 1;
+
+    position: relative;
+    display: grid !important;
+    grid-template-columns: var(--chip-size, 50px);
+    grid-template-rows: var(--chip-size, 50px);
+    justify-content: center;
+    align-items: center;
+    width: var(--chip-size, 50px);
+    height: var(--chip-size, 50px);
+    border-radius: 50%;
+    outline: none;
+
+    @media (width >= 48rem) {
+        grid-template-columns: 48px;
+        grid-template-rows: 48px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .chip {
+        grid-area: 1/1;
+        width: 100%;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .value {
+        grid-area: 1/1;
+        text-align: center;
+        font-family: var(--font-money);
+        font-size: var(--chip-value-font-size, 16px);
+        vertical-align: middle;
+        color: #fff;
+        z-index: 1;
+        margin-top: 1px;
+        @media (width >= 48rem) {
+            font-size: 1.25rem;
+        }
+    }
+}

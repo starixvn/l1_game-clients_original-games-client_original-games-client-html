@@ -1,0 +1,119 @@
+# SeDie Multiplayer Game - Specific Rules
+
+## Game Overview
+
+This is the SeDie Multiplayer game (Game ID: 148) built as part of the monorepo structure.
+
+## Game Specifications
+
+### Game Flow
+
+1. **Betting Phase**: Players place bets on various dice combinations
+2. **Block Bet**: Wait period after betting closes
+3. **Settlement**: Dice roll with result highlighting
+4. **Result Display**: Show win amount and multiplier
+5. **Statistics**: Display previous round results
+
+### Key Components
+
+-   **PlayerResultBoard**: Shows current round data from Zustand store
+-   **Statistics**: Display previous round results
+-   **Provably Fair**: SHA256 server seed, client seed management
+-   **Sound System**: Dice rolling and win sounds
+
+## SeDie-Specific Patterns
+
+### Component Structure
+
+```typescript
+// SeDie game components
+const SeDieGame: React.FC<SeDieGameProps> = () => {
+    const gameData = useGameStore((state) => state.playerResultBoard);
+    const bettingData = useBettingStore((state) => state.bettingInfo);
+
+    return <div className="sedie-game-container">{/* Game content */}</div>;
+};
+```
+
+### Event Handling
+
+```typescript
+// SeDie-specific event handlers
+const handleSeDieEvent = (message: any) => {
+    // Handle SeDie-specific events
+    if (message.playerResultBoard) {
+        // Update player result board
+    }
+    if (message.totalBets) {
+        // Update betting information
+    }
+};
+```
+
+### Game Logic
+
+```typescript
+// SeDie game logic helpers
+const calculateSeDieResult = (dice: number[]) => {
+    // SeDie scoring logic
+    return dice.reduce((sum, die) => sum + die, 0);
+};
+```
+
+## SeDie-Specific Rules
+
+### File Naming
+
+-   Components: `SeDie*.tsx` (e.g., `SeDieGame.tsx`, `SeDieStatistics.tsx`)
+-   Handlers: `sedie-*-handler.ts`
+-   Helpers: `sedie-helper.ts`
+-   Types: `SeDieTypes.ts`
+
+### Import Patterns
+
+```typescript
+// SeDie-specific imports
+import { SeDieGame } from "./sedie-game";
+import { useSeDieGame } from "./hooks/use-sedie-game";
+import { SeDieTypes } from "./types/sedie-types";
+```
+
+### State Management
+
+-   Use `useGameStore` for game state
+-   Use `useBettingStore` for betting state
+-   Store `playerResultBoard` in `GameStateSlice`
+-   Use `registerGameConfigEvent` for websocket updates
+
+### Websocket Events
+
+-   Event name: `'SeDieMultiplayer'` (no spaces)
+-   Listen for both `gameName` and `websocketEventName` variants
+-   Handle `playerResultBoard` and `totalBets` events
+
+### Sound Effects
+
+-   Use dice rolling sounds
+-   Use win celebration sounds
+-   Trigger sounds based on game events
+
+## Common SeDie Issues
+
+### Data Not Displaying
+
+-   Check websocket event name: `'SeDieMultiplayer'`
+-   Verify `playerResultBoard` in `GameStateSlice`
+-   Ensure `registerGameConfigEvent` is called
+
+### Sound Effects Not Playing
+
+-   Check sound file paths in `public/static/sounds/`
+-   Verify sound hook imports
+-   Ensure `useEffect` dependencies include sound functions
+
+## Development Notes
+
+-   SeDie uses dice rolling mechanics
+-   Different betting options than Baccarat
+-   Similar state management patterns
+-   Statistics display patterns

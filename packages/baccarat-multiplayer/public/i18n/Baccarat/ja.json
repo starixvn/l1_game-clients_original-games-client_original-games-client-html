@@ -1,0 +1,18 @@
+{
+    "banker_pair_shorten": "B.ペア",
+    "banker_win": "バンカー勝利",
+    "game_icon_name": "バカラ",
+    "game_name": "バカラ",
+    "glossary_banker": "バンカー",
+    "glossary_banker_pair": "B.ペア",
+    "glossary_big": "大",
+    "glossary_player": "プレイヤー",
+    "glossary_player_pair": "P.ペア",
+    "glossary_small": "小",
+    "glossary_tie": "引き分け",
+    "player_pair_shorten": "P.ペア",
+    "player_win": "プレイヤー勝利",
+    "short_banker": "B",
+    "short_player": "P",
+    "tie_win": "引き分け"
+}

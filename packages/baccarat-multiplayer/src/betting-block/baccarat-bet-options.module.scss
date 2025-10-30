@@ -1,0 +1,247 @@
+.bettingWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.subOptionsColumn {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 2; /* Above the main betting options */
+}
+
+.mainOptionsRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+}
+
+.pairOptionsRow {
+    display: flex;
+    gap: 12px;
+}
+
+.btnRipple {
+    border-radius: 0px;
+}
+
+.clickableShape {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.clickableShape > * {
+    pointer-events: all;
+}
+
+.playerShape {
+    clip-path: path("M24 0.5H116C122.351 0.5 127.5 5.64873 127.5 12V102.971C127.5 131.927 149.997 155.9 178.895 157.739C180.922 157.868 182.5 159.551 182.5 161.582V167C182.5 167.828 181.828 168.5 181 168.5H24C11.0213 168.5 0.5 157.979 0.5 145V24L0.507812 23.3936C0.829477 10.6951 11.2241 0.5 24 0.5Z");
+}
+
+.bankerShape {
+    clip-path: path("M159 0.5H67C60.6487 0.5 55.5 5.64873 55.5 12V102.971C55.5 131.927 33.0029 155.9 4.10547 157.739C2.07826 157.868 0.500142 159.551 0.5 161.582V167C0.5 167.828 1.17157 168.5 2 168.5H159C171.979 168.5 182.5 157.979 182.5 145V24L182.492 23.3936C182.171 10.6951 171.776 0.5 159 0.5Z");
+}
+
+.tieShape {
+    clip-path: path("M0.143066 0H105.143V23.5C105.143 52.4949 81.638 76 52.6431 76V76C23.6481 76 0.143066 52.4949 0.143066 23.5V0Z");
+}
+
+.anyPairShape {
+    clip-path: path("M0 12C0 5.37259 5.37258 0 12 0H93C99.6274 0 105 5.37258 105 12V73H0V12Z");
+}
+
+.betOptionBox {
+    position: relative;
+    border-radius: 12px;
+}
+
+.highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Visual sizes tuned to provided mock image */
+.betOptionBox > div {
+    height: 110px;
+    background: transparent;
+    border-radius: 12px;
+    padding: 8px 10px;
+}
+
+
+
+.playerTheme {
+    background: url("data:image/svg+xml,%3csvg width='199' height='185' viewBox='0 0 199 185' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_70_2721)'%3e%3cpath d='M124 8.00009H32C18.7452 8.00009 8 18.7453 8 32.0001V153C8 166.255 18.7452 177 32 177H189C190.105 177 191 176.105 191 175V169.582C191 167.287 189.217 165.387 186.926 165.241C158.292 163.419 136 139.663 136 110.971V20.0001C136 13.3727 130.627 8.00009 124 8.00009Z' fill='%230A0B17'/%3e%3c/g%3e%3cpath d='M32 8.50009H124C130.351 8.50009 135.5 13.6488 135.5 20.0001V110.971C135.5 139.927 157.997 163.9 186.895 165.739C188.922 165.869 190.5 167.551 190.5 169.582V175C190.5 175.829 189.828 176.5 189 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32.0001L8.50781 31.3936C8.82948 18.6952 19.2241 8.50009 32 8.50009Z' stroke='%2300E6FF'/%3e%3cmask id='mask0_70_2721' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='8' y='8' width='183' height='170'%3e%3cpath d='M32 8.50012H124C130.351 8.50012 135.5 13.6488 135.5 20.0001V110.971C135.5 139.927 157.997 163.9 186.895 165.739C188.922 165.869 190.5 167.551 190.5 169.582V175C190.5 175.829 189.828 176.5 189 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32.0001L8.50781 31.3937C8.82948 18.6953 19.2241 8.50012 32 8.50012Z' fill='%230A0B17' stroke='%2300E6FF'/%3e%3c/mask%3e%3cg mask='url(%23mask0_70_2721)'%3e%3cg filter='url(%23filter1_f_70_2721)'%3e%3cellipse cx='72.2583' cy='152.538' rx='63' ry='58.8509' fill='%2325DEFF' fill-opacity='0.5'/%3e%3cpath d='M72.2583 94.1874C106.809 94.1874 134.758 120.343 134.758 152.538C134.758 184.733 106.809 210.89 72.2583 210.89C37.7079 210.89 9.7583 184.733 9.7583 152.538C9.75849 120.343 37.708 94.1874 72.2583 94.1874Z' stroke='%2300E6FF'/%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_i_70_2721' x='8' y='8.00009' width='183' height='169' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.783333 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect1_innerShadow_70_2721'/%3e%3c/filter%3e%3cfilter id='filter1_f_70_2721' x='-180.742' y='-96.3126' width='506' height='497.702' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeGaussianBlur stdDeviation='95' result='effect1_foregroundBlur_70_2721'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                no-repeat center center;
+}
+
+.bankerTheme {
+    background: url("data:image/svg+xml,%3csvg width='207' height='193' viewBox='0 0 207 193' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_99_2703)'%3e%3cpath d='M79 12H171C184.255 12 195 22.7452 195 36V157C195 170.255 184.255 181 171 181H14C12.8954 181 12 180.105 12 179V173.582C12 171.287 13.7833 169.387 16.0741 169.241C44.7082 167.419 67 143.663 67 114.971V24C67 17.3726 72.3726 12 79 12Z' fill='%230A0B17'/%3e%3c/g%3e%3cpath d='M171 12.5H79C72.6487 12.5 67.5 17.6487 67.5 24V114.971C67.5 143.927 45.0029 167.9 16.1055 169.739C14.0783 169.868 12.5001 171.551 12.5 173.582V179C12.5 179.828 13.1716 180.5 14 180.5H171C183.979 180.5 194.5 169.979 194.5 157V36L194.492 35.3936C194.171 22.6951 183.776 12.5 171 12.5Z' stroke='%23FF9F9F'/%3e%3cmask id='mask0_99_2703' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='12' y='12' width='183' height='169'%3e%3cpath d='M171 12.5H79C72.6487 12.5 67.5 17.6487 67.5 24V114.971C67.5 143.927 45.0029 167.9 16.1055 169.739C14.0783 169.868 12.5001 171.551 12.5 173.582V179C12.5 179.828 13.1716 180.5 14 180.5H171C183.979 180.5 194.5 169.979 194.5 157V36L194.492 35.3936C194.171 22.6951 183.776 12.5 171 12.5Z' fill='%230A0B17' stroke='%23FF9F9F'/%3e%3c/mask%3e%3cg mask='url(%23mask0_99_2703)'%3e%3cg filter='url(%23filter1_f_99_2703)'%3e%3cellipse cx='128.2' cy='156.538' rx='63' ry='58.8509' fill='%23FF3F42' fill-opacity='0.5'/%3e%3cpath d='M128.2 98.1873C162.75 98.1873 190.7 124.343 190.7 156.538C190.7 188.733 162.75 214.889 128.2 214.889C93.6493 214.889 65.6997 188.733 65.6997 156.538C65.6999 124.343 93.6494 98.1873 128.2 98.1873Z' stroke='%23FF9F9F'/%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_i_99_2703' x='12' y='12' width='183' height='169' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 0.247059 0 0 0 0 0.247059 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect1_innerShadow_99_2703'/%3e%3c/filter%3e%3cfilter id='filter1_f_99_2703' x='-134.8' y='-102.313' width='526' height='517.702' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeGaussianBlur stdDeviation='100' result='effect1_foregroundBlur_99_2703'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                no-repeat center center;
+}
+
+.tieTheme {
+    background: url("data:image/svg+xml,%3csvg width='106' height='76' viewBox='0 0 106 76' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_99_2711)'%3e%3cpath d='M0.5 0H105.5V23.5C105.5 52.4949 81.9949 76 53 76V76C24.0051 76 0.5 52.4949 0.5 23.5V0Z' fill='%230A0B18'/%3e%3c/g%3e%3cpath d='M105 0.5V23.5C105 52.2188 81.7188 75.5 53 75.5C24.2812 75.5 1 52.2188 1 23.5V0.5H105Z' stroke='white' stroke-opacity='0.5'/%3e%3cmask id='mask0_99_2711' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='1' y='0' width='105' height='76'%3e%3cpath d='M1 0H106V23.5C106 52.4949 82.4949 76 53.5 76V76C24.5051 76 1 52.4949 1 23.5V0Z' fill='%230A0B18'/%3e%3c/mask%3e%3cg mask='url(%23mask0_99_2711)'%3e%3cg filter='url(%23filter1_f_99_2711)'%3e%3cellipse cx='53.3569' cy='64' rx='80' ry='26' fill='%23C5EAD3' fill-opacity='0.4'/%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_i_99_2711' x='0.5' y='0' width='105' height='76' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect1_innerShadow_99_2711'/%3e%3c/filter%3e%3cfilter id='filter1_f_99_2711' x='-106.643' y='-42' width='320' height='212' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeGaussianBlur stdDeviation='40' result='effect1_foregroundBlur_99_2711'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                no-repeat;
+    background-size: 100% 100%;
+}
+
+.anyPairTheme {
+    background: url("data:image/svg+xml,%3csvg width='105' height='73' viewBox='0 0 105 73' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_70_2748)'%3e%3cpath d='M0 12C0 5.37259 5.37258 0 12 0H93C99.6274 0 105 5.37258 105 12V73H0V12Z' fill='%230A0B18'/%3e%3c/g%3e%3cpath d='M12 0.5H93C99.3513 0.5 104.5 5.64873 104.5 12V72.5H0.5V12C0.500001 5.64873 5.64873 0.5 12 0.5Z' stroke='white' stroke-opacity='0.5'/%3e%3cdefs%3e%3cfilter id='filter0_i_70_2748' x='0' y='0' width='105' height='73' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect1_innerShadow_70_2748'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                no-repeat;
+    background-size: 100% 100%;
+}
+
+.playerShadow {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 199px;
+    height: 185px;
+    background-image: url("data:image/svg+xml,%3csvg width='199' height='185' viewBox='0 0 199 185' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_99_2698)'%3e%3cpath d='M124 8H32C18.7452 8 8 18.7452 8 32V153C8 166.255 18.7452 177 32 177H189C190.105 177 191 176.105 191 175V169.582C191 167.287 189.217 165.387 186.926 165.241C158.292 163.419 136 139.663 136 110.971V20C136 13.3726 130.627 8 124 8Z' fill='%230A0B17'/%3e%3cpath d='M32 8.5H124C130.351 8.5 135.5 13.6487 135.5 20V110.971C135.5 139.927 157.997 163.9 186.895 165.739C188.922 165.868 190.5 167.551 190.5 169.582V175C190.5 175.828 189.828 176.5 189 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32L8.50781 31.3936C8.82948 18.6951 19.2241 8.5 32 8.5Z' stroke='%2300E6FF'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_99_2698' x='0' y='0' width='199' height='185' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='4'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.784314 0 0 0 0 1 0 0 0 1 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_99_2698'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_99_2698' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.783333 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_99_2698'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+.bankerShadow {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 199px;
+    height: 185px;
+    background-image: url("data:image/svg+xml,%3csvg width='199' height='185' viewBox='0 0 199 185' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_99_2704)'%3e%3cpath d='M75 8H167C180.255 8 191 18.7452 191 32V153C191 166.255 180.255 177 167 177H10C8.89543 177 8 176.105 8 175V169.582C8 167.287 9.78334 165.387 12.0741 165.241C40.7082 163.419 63 139.663 63 110.971V20C63 13.3726 68.3726 8 75 8Z' fill='%230A0B17'/%3e%3cpath d='M167 8.5H75C68.6487 8.5 63.5 13.6487 63.5 20V110.971C63.5 139.927 41.0029 163.9 12.1055 165.739C10.0783 165.868 8.50014 167.551 8.5 169.582V175C8.5 175.828 9.17157 176.5 10 176.5H167C179.979 176.5 190.5 165.979 190.5 153V32L190.492 31.3936C190.171 18.6951 179.776 8.5 167 8.5Z' stroke='%23FF9F9F'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_99_2704' x='0' y='0' width='199' height='185' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='4'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 0.101961 0 0 0 0 0.101961 0 0 0 1 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_99_2704'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_99_2704' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 0.247059 0 0 0 0 0.247059 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_99_2704'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+.tieShadow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 114px;
+    height: 84px;
+    background-image: url("data:image/svg+xml,%3csvg width='114' height='84' viewBox='0 0 114 84' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_99_2712)'%3e%3cpath d='M4.5 4H109.5V27.5C109.5 56.4949 85.9949 80 57 80V80C28.0051 80 4.5 56.4949 4.5 27.5V4Z' fill='%230A0B18'/%3e%3cpath d='M109 4.5V27.5C109 56.2188 85.7188 79.5 57 79.5C28.2812 79.5 5 56.2188 5 27.5V4.5H109Z' stroke='white' stroke-opacity='0.5'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_99_2712' x='0.5' y='0' width='113' height='84' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='2'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_99_2712'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_99_2712' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_99_2712'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+.anyPairShadow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 114px;
+    height: 81px;
+    background-image: url("data:image/svg+xml,%3csvg width='114' height='81' viewBox='0 0 114 81' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_99_2724)'%3e%3cpath d='M4.5 16.0001C4.5 9.37265 9.87258 4.00006 16.5 4.00006H97.5C104.127 4.00006 109.5 9.37264 109.5 16.0001V77.0001H4.5V16.0001Z' fill='%230A0B18'/%3e%3cpath d='M16.5 4.50006H97.5C103.851 4.50006 109 9.64879 109 16.0001V76.5001H5V16.0001C5 9.64879 10.1487 4.50006 16.5 4.50006Z' stroke='white' stroke-opacity='0.5'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_99_2724' x='0.5' y='6.10352e-05' width='113' height='80.9999' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='2'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_99_2724'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_99_2724' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_99_2724'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+/* Desktop viewport styles */
+@media (min-width: 768px) {
+    .mainOptionsRow {
+        gap: 8px; /* Increased gap for desktop */
+    }
+
+    /* Desktop Player Theme - Updated SVG background */
+    .playerTheme {
+        background: url("data:image/svg+xml,%3csvg width='236' height='185' viewBox='0 0 236 185' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_109_2856)'%3e%3cpath d='M146.741 8H32C18.7452 8 8 18.7452 8 32V153C8 166.255 18.7452 177 32 177H226C227.105 177 228 176.105 228 175V170.637C228 167.759 225.744 165.386 222.87 165.241C186.94 163.425 158.741 133.764 158.741 97.7892V20C158.741 13.3726 153.368 8 146.741 8Z' fill='%230A0B17'/%3e%3c/g%3e%3cpath d='M32 8.5H146.741C153.092 8.50025 158.241 13.6489 158.241 20V97.7891C158.241 134.031 186.649 163.911 222.845 165.74C225.453 165.872 227.5 168.025 227.5 170.637V175C227.5 175.828 226.828 176.5 226 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32L8.50781 31.3936C8.82948 18.6951 19.2241 8.5 32 8.5Z' stroke='%2300E6FF'/%3e%3cmask id='mask0_109_2856' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='8' y='8' width='220' height='169'%3e%3cpath d='M32 8.5H146.741C153.092 8.50025 158.241 13.6489 158.241 20V97.7891C158.241 134.031 186.649 163.911 222.845 165.74C225.453 165.872 227.5 168.025 227.5 170.637V175C227.5 175.828 226.828 176.5 226 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32L8.50781 31.3936C8.82948 18.6951 19.2241 8.5 32 8.5Z' fill='%230A0B17' stroke='%2300E6FF'/%3e%3c/mask%3e%3cg mask='url(%23mask0_109_2856)'%3e%3cg filter='url(%23filter1_f_109_2856)'%3e%3cellipse cx='92.2583' cy='152.538' rx='63' ry='58.8509' fill='%2325DEFF' fill-opacity='0.5'/%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_i_109_2856' x='8' y='8' width='220' height='169' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.783333 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_109_2856'/%3e%3c/filter%3e%3cfilter id='filter1_f_109_2856' x='-160.742' y='-96.3127' width='506' height='497.702' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeGaussianBlur stdDeviation='95' result='effect1_foregroundBlur_109_2856'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                    no-repeat center center;
+    }
+
+    /* Desktop Banker Theme - Updated SVG background */
+    .bankerTheme {
+        background: url('data:image/svg+xml,<svg width="236" height="185" viewBox="0 0 236 185" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(%23filter0_i_230_19089)"><path d="M89.2592 8H204C217.255 8 228 18.7452 228 32V153C228 166.255 217.255 177 204 177H9.99998C8.89542 177 7.99998 176.105 7.99998 175V170.637C7.99998 167.759 10.256 165.386 13.1303 165.241C49.0596 163.425 77.2592 133.764 77.2592 97.7892V20C77.2592 13.3726 82.6318 8 89.2592 8Z" fill="%230A0B17"/></g><path d="M204 8.5H89.2588C82.9077 8.50025 77.7588 13.6489 77.7588 20V97.7891C77.7588 134.031 49.3505 163.911 13.1553 165.74C10.5471 165.872 8.50007 168.025 8.5 170.637V175C8.5 175.828 9.17157 176.5 10 176.5H204C216.979 176.5 227.5 165.979 227.5 153V32L227.492 31.3936C227.171 18.6951 216.776 8.5 204 8.5Z" stroke="%23FF7B7B"/><mask id="mask0_230_19089" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="220" height="169"><path d="M204 8.5H89.2588C82.9077 8.50025 77.7588 13.6489 77.7588 20V97.7891C77.7588 134.031 49.3505 163.911 13.1553 165.74C10.5471 165.872 8.50007 168.025 8.5 170.637V175C8.5 175.828 9.17157 176.5 10 176.5H204C216.979 176.5 227.5 165.979 227.5 153V32L227.492 31.3936C227.171 18.6951 216.776 8.5 204 8.5Z" fill="%230A0B17" stroke="%23FF7B7B"/></mask><g mask="url(%23mask0_230_19089)"><g filter="url(%23filter1_f_230_19089)"><ellipse cx="139.2" cy="152.538" rx="63" ry="58.8509" fill="%23FF3F42" fill-opacity="0.5"/></g></g><defs><filter id="filter0_i_230_19089" x="8" y="8" width="220" height="169" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="6"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.247059 0 0 0 0 0.247059 0 0 0 0.8 0"/><feBlend mode="normal" in2="shape" result="effect1_innerShadow_230_19089"/></filter><filter id="filter1_f_230_19089" x="-123.8" y="-106.313" width="526" height="517.702" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="100" result="effect1_foregroundBlur_230_19089"/></filter></defs></svg>')
+                    no-repeat center center;
+    }
+
+    /* Desktop Tie Theme - Updated SVG background */
+    .tieTheme {
+        background: url("data:image/svg+xml,%3csvg width='148' height='84' viewBox='0 0 148 84' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_109_2870)'%3e%3cpath d='M4 4H143.602V14C143.602 50.4508 114.052 80 77.6016 80H70C33.5492 80 4 50.4508 4 14V4Z' fill='%230A0B18'/%3e%3cpath d='M143.102 4.5V14C143.102 50.1746 113.776 79.5 77.6016 79.5H70C33.8254 79.5 4.5 50.1746 4.5 14V4.5H143.102Z' stroke='white' stroke-opacity='0.5'/%3e%3c/g%3e%3cmask id='mask0_109_2870' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='4' y='4' width='140' height='76'%3e%3cpath d='M4 4H143.602V14C143.602 50.4508 114.052 80 77.6016 80H70C33.5492 80 4 50.4508 4 14V4Z' fill='%230A0B18'/%3e%3cpath d='M143.102 4.5V14C143.102 50.1746 113.776 79.5 77.6016 79.5H70C33.8254 79.5 4.5 50.1746 4.5 14V4.5H143.102Z' stroke='white' stroke-opacity='0.5'/%3e%3c/mask%3e%3cg mask='url(%23mask0_109_2870)'%3e%3cg filter='url(%23filter1_f_109_2870)'%3e%3cellipse cx='74.1995' cy='68' rx='89.345' ry='26' fill='%23C5EAD3' fill-opacity='0.4'/%3e%3c/g%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_109_2870' x='0' y='0' width='147.602' height='84' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='2'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_109_2870'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_109_2870' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_109_2870'/%3e%3c/filter%3e%3cfilter id='filter1_f_109_2870' x='-95.1455' y='-38' width='338.69' height='212' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeGaussianBlur stdDeviation='40' result='effect1_foregroundBlur_109_2870'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                    no-repeat center center;
+        background-size: 148px 84px;
+    }
+
+    /* Desktop AnyPair Theme - Updated SVG background */
+    .anyPairTheme {
+        background: url("data:image/svg+xml,%3csvg width='140' height='73' viewBox='0 0 140 73' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_i_109_2883)'%3e%3cpath d='M0.558105 12C0.558105 5.37259 5.93069 0 12.5581 0H128C134.628 0 140 5.37258 140 12V73H0.558105V12Z' fill='%230A0B18'/%3e%3c/g%3e%3cpath d='M12.5581 0.5H128C134.352 0.500208 139.5 5.64885 139.5 12V72.5H1.05811V12C1.05811 5.64873 6.20683 0.5 12.5581 0.5Z' stroke='white' stroke-opacity='0.5'/%3e%3cdefs%3e%3cfilter id='filter0_i_109_2883' x='0.558105' y='0' width='139.442' height='73' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect1_innerShadow_109_2883'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e")
+                    no-repeat;
+        background-size: 100% 100%;
+    }
+
+    /* Desktop Shadow styles - Updated for new dimensions */
+    .playerShadow {
+        top: -8px;
+        left: -8px;
+        width: 236px;
+        height: 185px;
+        background-image: url("data:image/svg+xml,%3csvg width='236' height='185' viewBox='0 0 236 185' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_109_2857)'%3e%3cpath d='M146.741 8H32C18.7452 8 8 18.7452 8 32V153C8 166.255 18.7452 177 32 177H226C227.105 177 228 176.105 228 175V170.637C228 167.759 225.744 165.386 222.87 165.241C186.94 163.425 158.741 133.764 158.741 97.7892V20C158.741 13.3726 153.368 8 146.741 8Z' fill='%230A0B17'/%3e%3cpath d='M32 8.5H146.741C153.092 8.50025 158.241 13.6489 158.241 20V97.7891C158.241 134.031 186.649 163.911 222.845 165.74C225.453 165.872 227.5 168.025 227.5 170.637V175C227.5 175.828 226.828 176.5 226 176.5H32C19.0213 176.5 8.5 165.979 8.5 153V32L8.50781 31.3936C8.82948 18.6951 19.2241 8.5 32 8.5Z' stroke='%2300E6FF'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_109_2857' x='0' y='0' width='236' height='185' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='4'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.784314 0 0 0 0 1 0 0 0 1 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_109_2857'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_109_2857' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0.783333 0 0 0 0 1 0 0 0 0.8 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_109_2857'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    }
+
+    .bankerShadow {
+        top: -8px;
+        left: -8px;
+        width: 236px;
+        height: 185px;
+        background-image: url('data:image/svg+xml,<svg width="236" height="185" viewBox="0 0 236 185" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(%23filter0_di_219_17276)"><path d="M89.2592 8H204C217.255 8 228 18.7452 228 32V153C228 166.255 217.255 177 204 177H9.99998C8.89542 177 7.99998 176.105 7.99998 175V170.637C7.99998 167.759 10.256 165.386 13.1303 165.241C49.0596 163.425 77.2592 133.764 77.2592 97.7892V20C77.2592 13.3726 82.6318 8 89.2592 8Z" fill="%230A0B17"/><path d="M204 8.5H89.2588C82.9077 8.50025 77.7588 13.6489 77.7588 20V97.7891C77.7588 134.031 49.3505 163.911 13.1553 165.74C10.5471 165.872 8.50007 168.025 8.5 170.637V175C8.5 175.828 9.17157 176.5 10 176.5H204C216.979 176.5 227.5 165.979 227.5 153V32L227.492 31.3936C227.171 18.6951 216.776 8.5 204 8.5Z" stroke="%23FF7B7B"/></g><defs><filter id="filter0_di_219_17276" x="0" y="0" width="236" height="185" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="4"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.101961 0 0 0 0 0.101961 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_219_17276"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_219_17276" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="6"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.247059 0 0 0 0 0.247059 0 0 0 0.8 0"/><feBlend mode="normal" in2="shape" result="effect2_innerShadow_219_17276"/></filter></defs></svg>');
+    }
+
+    .tieShadow {
+        top: -4px;
+        left: -4px;
+        width: 148px;
+        height: 84px;
+        background-image: url("data:image/svg+xml,%3csvg width='148' height='84' viewBox='0 0 148 84' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_109_2871)'%3e%3cpath d='M4 4H143.602V14C143.602 50.4508 114.052 80 77.6016 80H70C33.5492 80 4 50.4508 4 14V4Z' fill='%230A0B18'/%3e%3cpath d='M143.102 4.5V14C143.102 50.1746 113.776 79.5 77.6016 79.5H70C33.8254 79.5 4.5 50.1746 4.5 14V4.5H143.102Z' stroke='white' stroke-opacity='0.5'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_109_2871' x='0' y='0' width='147.602' height='84' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='2'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_109_2871'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_109_2871' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_109_2871'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    }
+
+    .anyPairShadow {
+        top: -4px;
+        left: -4px;
+        width: 148px;
+        height: 81px;
+        background-image: url("data:image/svg+xml,%3csvg width='148' height='81' viewBox='0 0 148 81' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cg filter='url(%23filter0_di_109_2883)'%3e%3cpath d='M4.55811 16C4.55811 9.37259 9.93069 4 16.5581 4H132C138.628 4 144 9.37258 144 16V77H4.55811V16Z' fill='%230A0B18'/%3e%3cpath d='M16.5581 4.5H132C138.352 4.50021 143.5 9.64885 143.5 16V76.5H5.05811V16C5.05811 9.64873 10.2068 4.5 16.5581 4.5Z' stroke='white' stroke-opacity='0.5'/%3e%3c/g%3e%3cdefs%3e%3cfilter id='filter0_di_109_2883' x='0.558105' y='0' width='147.442' height='81' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3e%3cfeFlood flood-opacity='0' result='BackgroundImageFix'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='2'/%3e%3cfeComposite in2='hardAlpha' operator='out'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3e%3cfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_109_2883'/%3e%3cfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_109_2883' result='shape'/%3e%3cfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3e%3cfeOffset/%3e%3cfeGaussianBlur stdDeviation='6'/%3e%3cfeComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1'/%3e%3cfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3e%3cfeBlend mode='normal' in2='shape' result='effect2_innerShadow_109_2883'/%3e%3c/filter%3e%3c/defs%3e%3c/svg%3e");
+    }
+
+    /* Desktop clickable shapes - Updated for new dimensions */
+    .playerShape {
+        clip-path: path("M24 0.5H138.741C145.092 0.500247 150.241 5.64888 150.241 12V89.7891C150.241 126.031 178.649 155.911 214.845 157.74C217.453 157.872 219.5 160.025 219.5 162.637V167C219.5 167.828 218.828 168.5 218 168.5H24C11.0213 168.5 0.5 157.979 0.5 145V24L0.507812 23.3936C0.829477 10.6951 11.2241 0.5 24 0.5Z");
+    }
+
+    .bankerShape {
+        clip-path: path('M81.2592 0H196C209.255 0 220 10.7452 220 24V145C220 158.255 209.255 169 196 169H1.99998C0.895416 169 -1.52588e-05 168.105 -1.52588e-05 167V162.637C-1.52588e-05 159.759 2.25597 157.386 5.13031 157.241C41.0596 155.425 69.2592 125.764 69.2592 89.7892V12C69.2592 5.37258 74.6318 0 81.2592 0Z');
+    }
+
+    .tieShape {
+        clip-path: path("M0 0H139.602V10C139.602 46.4508 110.052 76 73.6016 76H66C29.5492 76 0 46.4508 0 10V0Z");
+    }
+
+    .anyPairShape {
+        clip-path: path("M0.558105 12C0.558105 5.37259 5.93069 0 12.5581 0H128C134.628 0 140 5.37258 140 12V73H0.558105V12Z");
+    }
+
+    /* Desktop spacing for sub-options */
+    .subOptionsColumn {
+        transform: translateX(-50%);
+    }
+}
+

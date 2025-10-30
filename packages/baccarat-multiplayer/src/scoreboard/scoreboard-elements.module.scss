@@ -1,0 +1,357 @@
+@import "@shared/components/game-components/statistic/statistic.module.scss";
+%statistic-icon {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    font-size: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    font-weight: 500;
+    color: var(--colorText);
+}
+
+%big-road-tie-with-bet-choice {
+    color: #fff;
+    font-size: 9px;
+
+    &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 1px;
+        right: -1px;
+        width: 7px;
+        height: 2px;
+        border-radius: 10px;
+        background: #3eac3e;
+        transform: rotate(-50deg);
+    }
+}
+
+.statistic-container {
+    position: relative;
+    background: linear-gradient(180deg, rgba(19, 47, 81, 1) 0%, rgba(12, 45, 64, 1) 100%);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 4px 9px;
+    padding-top: 5px;
+    margin-bottom: 2px;
+    color: white;
+    font-size: 12px;
+    gap: 15px;
+    height: 36px;
+    :hover {
+        cursor: pointer;
+    }
+    &.other {
+        justify-content: space-between;
+    }
+}
+
+.statistic-tab-container {
+    gap: 10px;
+}
+
+.statistic-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    .number {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -1px;
+    }
+
+    [class^="icon-"] {
+        font-size: 16px;
+    }
+}
+
+.statistic-choices {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #021522;
+    border: 1px solid #021522;
+    border-radius: 60px;
+    padding: 4px 8px;
+
+    &.selected {
+        border-color: #3382b8;
+    }
+}
+
+.statistic-choice-icon {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+
+    &.over,
+    &.under,
+    &.odd,
+    &.even {
+        padding-left: 0;
+        font-size: 16px;
+    }
+}
+
+.red {
+    @extend %statistic-icon;
+    --colorText: #ff5e5e;
+    background: url("#{$base-path}/static/images/dot/dot-red-medium.svg?v=#{$version-image}") no-repeat;
+    background-size: contain;
+
+    &.big-road-tie {
+        @extend %big-road-tie-with-bet-choice;
+    }
+}
+
+.blue {
+    @extend %statistic-icon;
+    --colorText: #1c7bdf;
+    background: url("#{$base-path}/static/images/dot/dot-blue-medium.svg?v=#{$version-image}") no-repeat;
+    background-size: contain;
+
+    &.big-road-tie {
+        @extend %big-road-tie-with-bet-choice;
+    }
+}
+
+.green {
+    @extend %statistic-icon;
+    --colorText: #3eac3e;
+    background: url("#{$base-path}/static/images/dot/dot-green-medium.svg?v=#{$version-image}") no-repeat;
+    background-size: contain;
+}
+
+.blink {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #fff38b;
+    opacity: 0.7;
+    animation: 0.5s ease-in-out 0s infinite normal both running pulsate-bck;
+}
+
+@keyframes pulsate-bck {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(0.9);
+        transform: scale(0.9);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+$red_choices: under, even, banker, small;
+$blue_choices: over, odd, player, big;
+$green_choices: tie;
+
+@each $choice in $red_choices {
+    .#{$choice} {
+        @extend .red;
+    }
+}
+
+@each $choice in $blue_choices {
+    .#{$choice} {
+        @extend .blue;
+    }
+}
+
+@each $choice in $green_choices {
+    .#{$choice} {
+        @extend .green;
+    }
+}
+
+.value {
+    font-size: 8px;
+}
+
+@keyframes pulsate-bck {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(0.9);
+        transform: scale(0.9);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+
+%icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    position: relative;
+}
+%border {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.bead-road-icon {
+    .text {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 9px;
+        text-align: center;
+        font-weight: 600;
+        color: #fff;
+        line-height: 100%;
+    }
+    &.player-item {
+        @extend %icon;
+        background: #960322;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #a10325 0%, #fb2956 100%);
+        }
+    }
+    &.banker-item {
+        @extend %icon;
+        background: #2741c2;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #274dc2 0%, #3d81ff 100%);
+        }
+    }
+
+    &.tie-item {
+        @extend %icon;
+        background: #1B9603;
+        .border {
+            @extend %border;
+            background: linear-gradient(180deg, #10b981 0%, #0e2e18 100%);
+        }
+    }
+}
+
+.dot-image {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        position: relative;
+        z-index: 1;
+    }
+
+    .pair-dot {
+        position: absolute !important;
+        width: 10px;
+        height: 10px;
+        object-fit: contain;
+        z-index: 2;
+
+        &.player-pair {
+            bottom: 0px;
+            right: 0px;
+            width: 10px;
+            height: 10px;
+        }
+
+        &.banker-pair {
+            top: -1px;
+            left: -1px;
+            width: 10px;
+            height: 10px;
+        }
+    }
+
+    .natural-image {
+        position: absolute !important;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 12px;
+        height: 12px;
+        object-fit: contain;
+        z-index: 0;
+    }
+
+    .tie-image {
+        position: absolute !important;
+        top: -2px;
+        right: -1px;
+        width: 8px;
+        height: 8px;
+        object-fit: contain;
+        z-index: 6;
+    }
+
+    .tie-count {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #212529;
+        font-size: 13px;
+        font-weight: bold;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-shadow:
+            -1px -1px 0 #fff,
+            1px -1px 0 #fff,
+            -1px 1px 0 #fff,
+            1px 1px 0 #fff;
+    }
+}
+
+.player-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--player-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.banker-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--banker-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none;
+}

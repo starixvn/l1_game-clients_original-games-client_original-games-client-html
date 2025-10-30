@@ -1,0 +1,91 @@
+.bettingBlock {
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    border: 2px solid #0f3460;
+    margin: 16px 0;
+}
+
+.bettingArea {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bettingArea h3 {
+    color: #e94560;
+    text-align: center;
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.betOptions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.playerBet,
+.bankerBet,
+.tieBet {
+    display: flex;
+    flex-direction: column;
+}
+
+.betButton {
+    background: linear-gradient(135deg, #0f3460 0%, #16537e 100%);
+    border: 2px solid #e94560;
+    border-radius: 8px;
+    padding: 16px 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    min-height: 80px;
+    justify-content: center;
+}
+
+.betButton:hover {
+    background: linear-gradient(135deg, #e94560 0%, #f27121 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+}
+
+.betButton:active {
+    transform: translateY(0);
+}
+
+.betAmount {
+    font-size: 9px;
+    opacity: 0.9;
+    font-weight: normal;
+}
+
+.betControls {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 9px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .betOptions {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .betButton {
+        padding: 12px 8px;
+        min-height: 60px;
+    }
+    
+    .bettingArea h3 {
+        font-size: 12px;
+    }
+}

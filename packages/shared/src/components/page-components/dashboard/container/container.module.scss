@@ -1,0 +1,59 @@
+[data-theme="light"] .wrapper {
+    --page-background: #242c32;
+    --page-border: #585858;
+    --page-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+}
+
+.wrapper {
+    display: grid;
+    justify-content: stretch;
+    align-items: center;
+    height: 100%;
+    margin: 0 auto;
+
+    @media screen and (min-width: 500px) {
+        max-width: 375px;
+    }
+}
+
+.page-bg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 96%;
+    padding: 28px 20px;
+    border-radius: 15px;
+    background-color: var(--page-background);
+    border: 1px solid var(--page-border);
+    margin: auto;
+    overflow: hidden;
+}
+
+.first-login {
+    position: relative;
+    color: #e6e6e6;
+
+    .page-bg:before {
+        position: absolute;
+        top: 1px;
+        left: -226px;
+        width: 500px;
+        height: 500px;
+        content: "";
+        background: #ffd427;
+        background: radial-gradient(circle, rgba(255, 239, 0, 0.2) -50%, rgba(255, 239, 0, 0) 70%);
+    }
+}
+
+.bg {
+    height: 100%;
+    background-color: var(--page-background);
+}
+
+.page-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin: 0 auto;
+    line-height: 24px;
+}

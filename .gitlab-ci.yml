@@ -5,3 +5,8 @@ include:
   - project: "ci/core-cicd"
     ref: main
     file: "luminet.gitlab-ci.yml"
+
+".unit_test_js":
+  before_script:
+  - yarn global add jest@29.0.0
+  - yarn install --frozen-lockfile

@@ -1,0 +1,434 @@
+# Baccarat Multiplayer Game - Specific Rules
+
+## Game Overview
+
+This is the Baccarat Multiplayer game (Game ID: 150) built as part of the monorepo structure.
+
+## Game Specifications
+
+### Game Flow
+
+1. **Betting Phase**: Players place bets on Player/Banker/Tie/Any Pair
+2. **Block Bet**: 3-second wait period after betting closes
+3. **Settlement**: 6 cards dealt in 7 seconds with win highlighting
+4. **Result Display**: Popup shows win amount and multiplier
+5. **Statistics**: Horizontal bar showing previous round results
+
+### Bet Options & Payouts
+
+-   **Player**: 1:2 payout, Player total > Banker
+-   **Banker**: 1:1.95 payout, Banker total > Player
+-   **Tie**: 1:9 payout, equal totals
+-   **Any Pair**: 1:7 payout, Player or Banker has pair
+
+### Key Components
+
+-   **PlayerResultBoard**: Shows current round data from Zustand store
+-   **Statistics**: Big Road/Bead Plate with 102 round history
+-   **Provably Fair**: SHA256 server seed, client seed management
+-   **Sound System**: Confetti sounds for winning effects
+
+## Common Features (Shared Across All Games)
+
+### Theme Support
+
+-   **Desktop**: Light Theme (3 sites) and Dark Theme (1 site)
+-   **Mobile**: Dark theme only, full-screen modal (393 x 852 px)
+-   **Header Height**: 140px to 175px (varies by site)
+
+### Chip Selection
+
+-   **Default**: Minimum value chip selected on game entry
+-   **Navigation**: +/- buttons to move through chip sequence
+-   **Chip Row**: Click current chip to show 5-chip row with horizontal scroll
+-   **Selection**: Click chip to select and auto-close row
+
+### Place Bet
+
+-   **Real-time Updates**: Total Bet field updates immediately
+-   **Pool Stake**: Display other players' stakes converted to player's currency
+-   **Validation**:
+    -   "Insufficient balance" if chip value > balance
+    -   "Max bet for this option is {maxbet}" if exceeds per-option limit
+    -   "Max total stake on this round is {maxbet}" if exceeds round limit
+-   **Hedge Bet Prevention**: Cannot bet on both sides in same round
+
+### Rebet System
+
+-   **Double Button**: Replicates previous round bets with 2x amount
+-   **Auto Rebet**: Configurable rounds (10, 25, 50, 75, 100, 500, 1000, ∞)
+-   **Custom Input**: Numeric keyboard on mobile, default ∞
+-   **Stop Conditions**: Balance insufficient, manual stop, rounds complete
+-   **Button States**: Disabled until player places first bet
+
+### Player Result Board (Multiplayer)
+
+-   **Display**: Round ID, total players, player list
+-   **Player Name Format**: First char + **_ + last 3 chars (e.g., J_**ith)
+-   **Sorting**: Most recent bet appears on top
+-   **Mobile**: 10 entries max with scroll
+-   **Updates**: Real-time bet amount, win amount after settlement
+-   **Clear**: All records cleared after round end
+
+### My Bet (Bet History)
+
+-   **Data Range**: Last 7 days only
+-   **Display**: Time, RoundID, Total Stake, Win (gross)
+-   **Sorting**: Round ID descending (newest first)
+-   **Pagination**: 10 records per page, "Show More/Less" toggle
+-   **Bet Details**: Click RoundID for detailed breakdown
+
+### High Roller
+
+-   **List**: Recent high-value wins across all games
+-   **Display**: Game name, player name, bet amount, win
+-   **Limit**: 10 entries max, newest on top
+-   **Bet Slip**: Click game name for detailed popup with "Play Now" button
+
+### Error Messages
+
+-   **Insufficient Balance**: "Insufficient balance"
+-   **Block Bet**: "Please wait for the next round"
+-   **Max Bet Per Choice**: "Max bet for this option is {maxbet}"
+-   **Max Bet Per Round**: "Max total stake on this round is {maxbet}"
+-   **Maintenance**: "The game is under maintenance"
+-   **Session Timeout**: "Your session has timed out or you have not logged in yet"
+
+### Statistics System
+
+-   **Big Road**: 6x17 matrix (102 cells), Dragon/Phoenix consecutive wins
+-   **Bead Road**: 6x17 matrix (102 cells), full board display
+-   **Dragon Tail**: Forms when column filled, turns right at bottom
+-   **Tie Display**: Green slash "/" embedded in last round circle
+-   **Color Coding**: Red (Banker), Blue (Player), Green (Tie)
+
+### Provably Fair (MD5)
+
+-   **MD5 Key**: 32 characters, generated during betting phase
+-   **Result String**: {result}\_{#roundidSALT}, 21 character SALT
+-   **Copy Function**: Click "Copy" button to copy strings
+-   **Timing**: Show latest result before betting, MD5 key during betting, result after settlement
+
+## Baccarat-Specific Patterns
+
+### Component Structure
+
+```typescript
+// Baccarat game components with theme support
+const BaccaratGame: React.FC<BaccaratGameProps> = () => {
+    const gameData = useGameStore((state) => state.playerResultBoard);
+    const bettingData = useBettingStore((state) => state.bettingInfo);
+    const { isMobile, theme } = useTheme(); // Light/Dark theme support
+
+    return (
+        <div className={`baccarat-game-container ${theme} ${isMobile ? "mobile-fullscreen" : ""}`}>
+            {/* Game content with responsive design */}
+        </div>
+    );
+};
+```
+
+### Chip Selection Component
+
+```typescript
+// Chip selection with common features
+const BaccaratChipSelection: React.FC = () => {
+    const [selectedChip, setSelectedChip] = useState(minChipValue);
+    const [showChipRow, setShowChipRow] = useState(false);
+
+    const handleChipSelect = (chipValue: number) => {
+        setSelectedChip(chipValue);
+        setShowChipRow(false);
+    };
+
+    return (
+        <div className="chip-selection">
+            <button onClick={() => setShowChipRow(!showChipRow)}>{selectedChip}</button>
+            {showChipRow && (
+                <div className="chip-row">
+                    {chips.map((chip) => (
+                        <button key={chip.value} onClick={() => handleChipSelect(chip.value)}>
+                            {chip.value}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+```
+
+### Betting Validation
+
+```typescript
+// Betting validation with common error messages
+const validateBet = (betAmount: number, betOption: string, playerBalance: number) => {
+    if (betAmount > playerBalance) {
+        return "Insufficient balance";
+    }
+    if (betAmount > maxBetPerOption[betOption]) {
+        return `Max bet for this option is ${maxBetPerOption[betOption]}`;
+    }
+    if (totalBetAmount + betAmount > maxBetPerRound) {
+        return `Max total stake on this round is ${maxBetPerRound}`;
+    }
+    return null;
+};
+```
+
+### Player Result Board
+
+```typescript
+// Player result board with common formatting
+const BaccaratPlayerResultBoard: React.FC = () => {
+    const players = useGameStore((state) => state.playerResultBoard?.players || []);
+
+    const formatPlayerName = (name: string) => {
+        if (name.length <= 4) return name;
+        return `${name[0]}***${name.slice(-3)}`;
+    };
+
+    return (
+        <div className="player-result-board">
+            {players.slice(0, 10).map((player, index) => (
+                <div key={player.id} className="player-row">
+                    <span className="player-name">{formatPlayerName(player.name)}</span>
+                    <span className="bet-amount">{player.betAmount}</span>
+                    <span className="win-amount">{player.winAmount === null ? "-" : player.winAmount}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
+```
+
+### Rebet System
+
+```typescript
+// Rebet functionality with common features
+const BaccaratRebet: React.FC = () => {
+    const [autoRebetRounds, setAutoRebetRounds] = useState<number | null>(null);
+    const [isAutoRebetActive, setIsAutoRebetActive] = useState(false);
+
+    const handleDouble = () => {
+        const doubledBets = previousRoundBets.map((bet) => ({
+            ...bet,
+            amount: bet.amount * 2,
+        }));
+        placeBets(doubledBets);
+    };
+
+    const handleAutoRebet = (rounds: number) => {
+        setAutoRebetRounds(rounds);
+        setIsAutoRebetActive(true);
+        // Auto place bets for specified rounds
+    };
+
+    return (
+        <div className="rebet-controls">
+            <button onClick={handleDouble} disabled={!hasPreviousBets || hasCurrentBets}>
+                Double
+            </button>
+            <button onClick={() => setShowAutoRebetModal(true)} disabled={!hasPreviousBets}>
+                Auto
+            </button>
+        </div>
+    );
+};
+```
+
+### Statistics Display
+
+```typescript
+// Statistics with Big Road/Bead Road patterns
+const BaccaratStatistics: React.FC = () => {
+    const roundHistory = useGameStore((state) => state.roundHistory);
+
+    const getResultColor = (result: string) => {
+        switch (result) {
+            case "Banker":
+                return "red";
+            case "Player":
+                return "blue";
+            case "Tie":
+                return "green";
+            default:
+                return "gray";
+        }
+    };
+
+    const renderBigRoad = () => {
+        // 6x17 matrix implementation
+        // Red = Banker, Blue = Player, Green = Tie
+        return <div className="big-road">{/* Big Road matrix implementation */}</div>;
+    };
+
+    return (
+        <div className="statistics">
+            <div className="horizontal-bar">
+                {roundHistory.slice(-102).map((round, index) => (
+                    <div key={index} className={`result-dot ${getResultColor(round.result)}`} />
+                ))}
+            </div>
+            {renderBigRoad()}
+        </div>
+    );
+};
+```
+
+### Event Handling
+
+```typescript
+// Baccarat-specific event handlers with common features
+const handleBaccaratEvent = (message: any) => {
+    // Handle Baccarat-specific events
+    if (message.playerResultBoard) {
+        // Update player result board with common formatting
+        updatePlayerResultBoard(message.playerResultBoard);
+    }
+    if (message.totalBets) {
+        // Update betting information with pool stake
+        updateBettingInfo(message.totalBets);
+    }
+    if (message.roundHistory) {
+        // Update statistics with Big Road/Bead Road
+        updateStatistics(message.roundHistory);
+    }
+};
+```
+
+### Game Logic
+
+```typescript
+// Baccarat game logic helpers
+const calculateBaccaratTotal = (cards: Card[]) => {
+    // Baccarat scoring logic
+    let total = 0;
+    cards.forEach((card) => {
+        const value = card.value > 9 ? 0 : card.value;
+        total = (total + value) % 10;
+    });
+    return total;
+};
+
+const determineWinner = (playerTotal: number, bankerTotal: number) => {
+    if (playerTotal > bankerTotal) return "Player";
+    if (bankerTotal > playerTotal) return "Banker";
+    return "Tie";
+};
+
+const checkForPair = (cards: Card[]) => {
+    // Check if any two cards have same value
+    return cards.some((card, index) => cards.slice(index + 1).some((otherCard) => card.value === otherCard.value));
+};
+```
+
+## Baccarat-Specific Rules
+
+### File Naming
+
+-   Components: `Baccarat*.tsx` (e.g., `BaccaratGame.tsx`, `BaccaratStatistics.tsx`)
+-   Handlers: `baccarat-*-handler.ts` (e.g., `baccarat-game-round-data-handler.ts`)
+-   Helpers: `baccarat-helper.ts`
+-   Types: `BaccaratTypes.ts`
+
+### Import Patterns
+
+```typescript
+// Baccarat-specific imports
+import { BaccaratGame } from "./baccarat-game";
+import { useBaccaratGame } from "./hooks/use-baccarat-game";
+import { BaccaratTypes } from "./types/baccarat-types";
+```
+
+### State Management
+
+-   Use `useGameStore` for game state
+-   Use `useBettingStore` for betting state
+-   Store `playerResultBoard` in `GameStateSlice`
+-   Use `registerGameConfigEvent` for websocket updates
+
+### Websocket Events
+
+-   Event name: `'BaccaratMultiplayer'` (no spaces)
+-   Listen for both `gameName` and `websocketEventName` variants
+-   Handle `playerResultBoard` and `totalBets` events
+
+### Sound Effects
+
+-   Use `useConfettiFallingSound` for win celebrations
+-   Use `useConfettiPopParticlesSpillSound` for win effects
+-   Trigger sounds when `showResultInfo` is true and `multiplier > 0`
+
+### Statistics Display
+
+-   Red color for Banker wins
+-   Blue color for Player wins
+-   Green color for Tie results
+-   Show pair indicators when applicable
+-   Display last 102 rounds
+
+### Provably Fair
+
+-   Server seed: SHA256 hash (64 digits)
+-   Client seed: 0-9999 range
+-   Deck result format: `6♦5♣7♥10♦9♥7♦...`
+-   Show encrypted nicknames for other players
+-   Highlight main player
+
+## Common Baccarat Issues
+
+### Data Not Displaying
+
+-   Check websocket event name: `'BaccaratMultiplayer'`
+-   Verify `playerResultBoard` in `GameStateSlice`
+-   Ensure `registerGameConfigEvent` is called
+
+### Sound Effects Not Playing
+
+-   Check sound file paths in `public/static/sounds/`
+-   Verify `useConfettiFallingSound` and `useConfettiPopParticlesSpillSound` imports
+-   Ensure `useEffect` dependencies include sound functions
+
+### Statistics Not Updating
+
+-   Check `roundHistory` in `GameStateSlice`
+-   Verify statistics component receives correct props
+-   Ensure color coding matches: Red=Banker, Blue=Player, Green=Tie
+
+## Development Notes
+
+### Baccarat-Specific
+
+-   Baccarat uses 6 cards per round
+-   Pool Stake only shown on Player and Banker bets
+-   Any Pair shows both result and pair indicator
+-   Confetti sounds trigger on wins
+-   Statistics bar always visible
+-   Scoreboard shows Big Road expanded by default
+
+### Common Features Integration
+
+-   **Theme Support**: Implement light/dark theme with mobile fullscreen
+-   **Chip Selection**: Default to minimum chip, +/- navigation, 5-chip row
+-   **Betting Validation**: Standard error messages for balance/limits
+-   **Player Names**: Format as First**_Last (e.g., J_**ith)
+-   **Rebet System**: Double and Auto Rebet with proper state management
+-   **Statistics**: Big Road (6x17), Bead Road (6x17), Dragon Tail logic
+-   **Error Handling**: Standard messages for all common scenarios
+-   **Mobile Responsive**: 393x852px baseline, dark theme only
+-   **Pool Stake**: Convert other players' stakes to player's currency
+-   **Bet History**: 7-day limit, 10 records per page, detailed breakdown
+-   **High Roller**: Cross-game high-value wins display
+-   **Provably Fair**: MD5 key (32 chars) and result string with SALT (21 chars)
+
+### Implementation Priorities
+
+1. **Core Game Logic**: Baccarat rules and card dealing
+2. **Common Features**: Theme, chip selection, betting validation
+3. **Multiplayer Features**: Player result board, pool stake
+4. **Statistics**: Big Road/Bead Road with proper color coding
+5. **Rebet System**: Double and Auto Rebet functionality
+6. **Error Handling**: All standard error messages
+7. **Mobile Optimization**: Fullscreen modal with dark theme
+8. **Provably Fair**: MD5 implementation for transparency

@@ -1,0 +1,18 @@
+{
+    "bet_option_red2": "2 Vermelho",
+    "bet_option_red3": "3 Vermelho",
+    "bet_option_red4": "4 Vermelhos",
+    "bet_option_white3": "1 Vermelho",
+    "bet_option_white4": "4 Brancos",
+    "even_win": "GANHOS PARES",
+    "game_icon_name": "Grande e Pequeno",
+    "game_name": "Se Die",
+    "game_name_148": "Se Die",
+    "glossary_even": "Par",
+    "glossary_odd": "Ímpar",
+    "glossary_red": "Vermelho",
+    "glossary_white": "Branco",
+    "odd_win": "GANHOS ÍMPARES",
+    "pf_verifier_tool_button": "Botão {value}",
+    "pf_verifier_tool_para_24": "Converter cada grupo de 2 caracteres no SHA512 para Decimal"
+}

@@ -1,0 +1,103 @@
+%highlight-option {
+    --animation-duration: 2s;
+    --border-radius: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.highlight {
+    @extend %highlight-option;
+    width: 74px;
+    height: 120px;
+
+    @media (width >= 48rem) {
+        width: 93px;
+    }
+
+    &.odd,
+    &.even {
+        width: 180px;
+        height: 138px;
+        @media (width >= 48rem) {
+            width: 229px;
+        }
+    }
+
+    .white4,
+    .red4,
+    .white3,
+    .red3,
+    .red2,
+    .odd,
+    .even {
+        border-radius: var(--border-radius);
+    }
+}
+.bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(255, 204, 0, 0.5) 131.67%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    animation: fade-in-out var(--animation-duration) ease-in infinite;
+}
+.border {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 217, 5, 0.3) 0%, #ffffff 50%, #ffea00 100%) border-box;
+    border: 2px solid transparent;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+}
+.border::before,
+.border::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    background: conic-gradient(from var(--angle), rgba(255, 217, 5, 0.3), #000000, #ffffff, #000000, #ffea00);
+    animation: glowing-border var(--animation-duration) linear infinite, blur-effect var(--animation-duration) linear infinite;
+    filter: blur(20px);
+}
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 53deg;
+    inherits: false;
+}
+
+@keyframes glowing-border {
+    from {
+        --angle: 53deg;
+    }
+
+    to {
+        --angle: 413deg;
+    }
+}
+
+@keyframes blur-effect {
+    from {
+        filter: blur(20px);
+    }
+
+    to {
+        filter: blur(19px);
+    }
+}
+@keyframes fade-in-out {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

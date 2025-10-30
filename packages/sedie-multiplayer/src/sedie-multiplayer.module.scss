@@ -1,0 +1,17 @@
+// This file contains only the necessary styles for the sedie multiplayer game
+// All commented out code has been removed for cleaner maintenance 
+
+.ball-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+} 

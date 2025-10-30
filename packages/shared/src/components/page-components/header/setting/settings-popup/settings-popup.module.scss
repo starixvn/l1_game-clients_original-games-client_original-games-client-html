@@ -1,0 +1,106 @@
+.settings {
+    top: 0px;
+    z-index: var(--setting-index);
+
+    .setting-title {
+        font-weight: 500;
+        font-size: 19px;
+    }
+
+    .settings-popup {
+        background: var(--sound-setting-background);
+        border-radius: 16px !important;
+        color: #e6e6e6;
+        padding: 5px;
+        top: 23%;
+        min-width: 360px;
+
+        .row {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text {
+            line-height: 30px;
+        }
+
+        .settings-header {
+            border-bottom: none;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 38px;
+            padding-top: 10px;
+        }
+    }
+
+    .settings-content {
+        position: relative;
+        z-index: 2;
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 15px 10px 5px;
+            text-align: left;
+
+            .setting-item-container {
+                display: grid;
+                grid-template-columns: 30px 1fr;
+                grid-template-rows: 36px;
+                grid-gap: 10px;
+                align-items: center;
+
+                .icon {
+                    display: flex;
+                    justify-content: center;
+
+                    .button {
+                        background: transparent;
+                        border: 0;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Global icon overrides scoped under local `.settings` to satisfy CSS Modules
+.settings :global(.icon-sound-on) {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.settings :global(.icon-sound-off) {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.settings :global(.icon-music-on) {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.settings :global(.icon-music-off) {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}

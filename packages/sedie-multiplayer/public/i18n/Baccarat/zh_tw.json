@@ -1,0 +1,23 @@
+{
+    "banker_pair_shorten": "莊對子",
+    "banker_win": "莊家贏！",
+    "dealing_cards": "發牌",
+    "game_icon_name": "百家樂",
+    "game_name": "百家樂",
+    "game_name_150": "百家樂多人遊戲",
+    "glossary_anypair": "任意對子",
+    "glossary_banker": "莊家",
+    "glossary_banker_pair": "莊家一對",
+    "glossary_big": "大",
+    "glossary_natural": "自然",
+    "glossary_player": "閒家",
+    "glossary_player_pair": "閒家一對",
+    "glossary_small": "小",
+    "glossary_tie": "和",
+    "player_pair_shorten": "閒對子",
+    "player_win": "閒家獲勝",
+    "short_banker": "莊",
+    "short_player": "閒",
+    "short_tie": "三",
+    "tie_win": "和"
+}

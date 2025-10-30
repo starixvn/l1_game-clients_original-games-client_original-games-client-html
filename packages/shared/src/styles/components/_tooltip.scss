@@ -1,0 +1,108 @@
+[data-theme="light"] .tooltip {
+    --tooltip-round-history-background: rgba(255, 172, 43, 0.6);
+    --tooltip-round-history-text-color: #2c2f3e;
+}
+
+.tooltip {
+    position: relative;
+    width: 0;
+    margin: auto;
+    opacity: 0;
+
+    .arrow {
+        position: absolute;
+
+        &:before {
+            content: "";
+            position: absolute;
+            right: 0;
+            height: 0;
+            width: 0;
+            border: solid transparent;
+            z-index: 1;
+        }
+
+        &.down {
+            bottom: 0;
+            transform: rotate(180deg);
+        }
+
+        &.up {
+            top: 0;
+        }
+    }
+
+    &.show {
+        opacity: 1;
+        z-index: 1070;
+    }
+
+    &.mini-round-history {
+        .tooltip-inner {
+            position: fixed;
+            top: -60px;
+            will-change: transform;
+            max-width: 200px;
+            padding: 3px 5px;
+            background: var(--tooltip-round-history-background);
+            color: var(--tooltip-round-history-text-color);
+            text-align: center;
+            border-radius: 3px;
+        }
+
+        .tooltip-number,
+        .tooltip-round {
+            font-size: 11px;
+            font-family: var(--font-number);
+        }
+
+        .tooltip-title {
+            font-size: 11px;
+            margin-right: 3px;
+        }
+
+        .tooltip-result {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .arrow {
+            position: absolute;
+            bottom: 34px;
+            left: 5px;
+
+            &:before {
+                left: 0;
+                top: -22px;
+                border-width: 5px;
+                border-bottom-color: var(--tooltip-round-history-background);
+            }
+
+            &:after {
+                display: none;
+            }
+        }
+    }
+
+    &.info {
+        position: absolute;
+
+        .tooltip-inner {
+            position: absolute;
+            padding: 5px 8px;
+            border-radius: 4px;
+            background: #fff1b2;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+            text-align: left;
+            font: 13px/18px var(--font-family);
+            color: #2c2f3e;
+        }
+
+        .arrow:before {
+            left: 0;
+            top: -18px;
+            border-width: 9px;
+            border-bottom-color: #fff1b2;
+        }
+    }
+}

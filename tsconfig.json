@@ -1,7 +1,11 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": false,
@@ -14,8 +18,49 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "incremental": true,
-        "types": ["node", "jest"]
+        "types": [
+            "node",
+            "jest"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "packages/baccarat-multiplayer/src/*"
+            ],
+            "@shared": [
+                "packages/shared/src"
+            ],
+            "@shared/*": [
+                "packages/shared/src/*"
+            ],
+            "@sedie-multiplayer": [
+                "packages/sedie-multiplayer/src"
+            ],
+            "@sedie-multiplayer/*": [
+                "packages/sedie-multiplayer/src/*"
+            ],
+            "@baccarat-multiplayer": [
+                "packages/baccarat-multiplayer/src"
+            ],
+            "@baccarat-multiplayer/*": [
+                "packages/baccarat-multiplayer/src/*"
+            ]
+        }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "jest.config.ts"],
-    "exclude": ["node_modules"]
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "jest.config.ts",
+        "packages/sedie-multiplayer/src/**/*",
+        "packages/baccarat-multiplayer/src/**/*",
+        "packages/shared/src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "packages/sedie-multiplayer/dist",
+        "packages/baccarat-multiplayer/dist",
+        "packages/shared/dist"
+    ]
 }

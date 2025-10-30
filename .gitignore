@@ -33,3 +33,9 @@ yarn-error.log*
 # stryker temp files
 stryker-tmp
 /public/i18n
+
+sonar-reports
+.scannerwork
+packages/sedie-multiplayer/.next
+packages/baccarat/.next
+packages/baccarat-multiplayer/.next

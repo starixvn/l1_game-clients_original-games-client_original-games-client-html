@@ -1,0 +1,175 @@
+# Monorepo Game Platform - Cursor Rules
+
+## Project Overview
+
+This is a Next.js-based monorepo containing multiple multiplayer games built with TypeScript, React, and Zustand for state management. The platform follows a shared component architecture with game-specific implementations.
+
+## Architecture & Tech Stack
+
+-   **Framework**: Next.js (Pages Router)
+-   **Language**: TypeScript
+-   **State Management**: Zustand stores
+-   **Styling**: Tailwind CSS + SCSS modules
+-   **Real-time**: Socket.IO
+-   **Testing**: Jest + React Testing Library
+-   **Structure**: Monorepo with packages/shared and game-specific packages
+
+## Monorepo Structure
+
+```
+packages/
+├── shared/                    # Shared components, hooks, stores
+│   ├── src/components/        # Reusable UI components
+│   ├── src/stores/           # Zustand stores
+│   ├── src/react-hooks/      # Custom hooks
+│   └── src/helpers/          # Utility functions
+├── baccarat-multiplayer/     # Baccarat game (Game ID: 150)
+│   ├── src/games/            # Game components
+│   ├── src/handlers/         # Event handlers
+│   └── .cursorrules          # Baccarat-specific rules
+├── sedie-multiplayer/        # SeDie game (Game ID: 148)
+│   ├── src/games/            # Game components
+│   ├── src/handlers/         # Event handlers
+│   └── .cursorrules          # SeDie-specific rules
+└── [other-games]/            # Additional games
+```
+
+## Game-Specific Rules
+
+Each game package has its own `.cursorrules` file with specific patterns and requirements:
+
+-   **Baccarat Multiplayer**: `packages/baccarat-multiplayer/.cursorrules`
+-   **SeDie Multiplayer**: `packages/sedie-multiplayer/.cursorrules`
+-   **Shared Components**: `packages/shared/.cursorrules`
+
+## General Coding Standards
+
+### File Structure
+
+-   Follow monorepo structure with packages/
+-   Keep shared code in packages/shared/
+-   Game-specific code in respective packages/
+-   Use consistent naming conventions
+
+### State Management
+
+-   Use Zustand stores for global state
+-   Avoid React Context for game data
+-   Store game data in appropriate slices
+-   Use registerEvent for websocket data
+
+### Socket.IO Integration
+
+-   Event names must match exactly
+-   Listen for both gameName and websocketEventName variants
+-   Use GameMessageHandler for broadcasting events
+-   Register events in stores via registerEvent
+
+### Component Patterns
+
+```typescript
+// Functional components with TypeScript
+const GameComponent: React.FC<Props> = ({ prop1, prop2 }) => {
+    const gameData = useGameStore((state) => state.playerResultBoard);
+
+    return <div className="tailwind-classes">{/* Component content */}</div>;
+};
+
+// Custom hooks for game logic
+const useGameHook = () => {
+    const [gameState, setGameState] = useState();
+
+    useEffect(() => {
+        // Game logic
+    }, []);
+
+    return { gameState };
+};
+```
+
+### Error Handling
+
+-   Wrap API calls in try-catch blocks
+-   Provide user-friendly error messages
+-   Log errors for debugging
+-   Handle websocket connection failures gracefully
+
+### Performance Optimization
+
+-   Use React.memo for expensive components
+-   Minimize re-renders with proper dependency arrays
+-   Lazy load non-critical components
+-   Optimize images with next/image
+
+### Testing Requirements
+
+-   Run unit tests and make sure it passes all unit tests when updating them
+-   Test websocket event handling
+-   Mock Zustand stores in tests
+-   Test error scenarios and edge cases
+
+## Security Considerations
+
+-   Validate all user inputs
+-   Sanitize data before displaying
+-   Use secure defaults for Socket.IO connections
+-   Implement proper authentication checks
+
+## Common Issues & Solutions
+
+### Websocket Data Not Displaying
+
+-   Check event name matching
+-   Verify GameMessageHandler registration
+-   Ensure Zustand store is receiving events via registerEvent
+
+### Game Configuration Loading
+
+-   Verify next.config.js loads correct game-settings.json
+-   Check webpack aliases for game packages
+-   Ensure gameId is properly configured
+
+### State Management
+
+-   Use Zustand stores, not React Context for game data
+
+## Development Guidelines
+
+-   Follow TypeScript strict mode
+-   Use descriptive variable names
+-   Add comprehensive logging for debugging
+-   Write self-documenting code
+-   Update tests when adding features
+-   Follow Next.js best practices
+
+## File Naming Conventions
+
+-   Components: PascalCase (GameComponent.tsx)
+-   Hooks: camelCase with use prefix (useGameHook.ts)
+-   Stores: camelCase (game-store.ts)
+-   Utilities: camelCase (game-helper.ts)
+-   Types: PascalCase (GameTypes.ts)
+
+## Import Patterns
+
+```typescript
+// Shared components
+import { Component } from "@shared/components/component";
+
+// Game-specific
+import { GameComponent } from "../game-component";
+
+// External libraries
+import { io } from "socket.io-client";
+```
+
+## How to Use Multiple Rules
+
+When working on specific games or components, Cursor will automatically detect and apply the appropriate rules:
+
+-   **Root level**: General monorepo rules
+-   **packages/baccarat-multiplayer/**: Baccarat-specific rules
+-   **packages/sedie-multiplayer/**: SeDie-specific rules
+-   **packages/shared/**: Shared component rules
+
+This allows for game-specific patterns while maintaining consistency across the platform.

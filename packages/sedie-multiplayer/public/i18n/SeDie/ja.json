@@ -1,0 +1,18 @@
+{
+    "bet_option_red2": "赤2",
+    "bet_option_red3": "赤3",
+    "bet_option_red4": "赤4",
+    "bet_option_white3": "赤1",
+    "bet_option_white4": "白4",
+    "even_win": "偶数勝ち\n",
+    "game_icon_name": "ソックディア",
+    "game_name": "ソックディア",
+    "game_name_148": "Se Die Multiplayer",
+    "glossary_even": "偶数",
+    "glossary_odd": "奇数",
+    "glossary_red": "赤",
+    "glossary_white": "白",
+    "odd_win": "奇数勝ち",
+    "pf_verifier_tool_button": "ボタン{value}",
+    "pf_verifier_tool_para_24": "SHA512を2文字ずつ区切り、10進数に変換"
+}

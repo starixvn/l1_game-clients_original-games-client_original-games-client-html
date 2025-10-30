@@ -1,0 +1,99 @@
+// style for scoreboard
+
+.swiper-scoreboard {
+    --width: calc(100vw - 320px);
+    width: 100%;
+    height: 100%;
+
+    .swiper-wrapper {
+        display: flex!important;
+        align-items: flex-start!important;
+        justify-content: flex-start!important;
+    }
+
+    .swiper-slide {
+        width: auto;
+
+        &:first-child {
+            margin-right: 12px!important;
+        }
+        &:last-child {
+            margin-right: -12px!important;
+        }
+    }
+
+    .swiper-slide-next,
+    .swiper-slide-prev {
+        position: relative;
+        border-radius: 8px;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 38px;
+            height: 100%;
+            border-radius: 8px;
+            z-index: 10;
+        }
+    }
+    .swiper-slide-next::after {
+        left: 0;
+        background: linear-gradient(270deg, rgba(0, 0, 0, 0.00) 0%, #2D53AA 100%);
+    }
+
+    .swiper-slide-prev::after {
+        right: 0;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.00) 0%, #2D53AA 100%);
+    }
+
+    .swiper-button-prev {
+        position: absolute;
+        height: 100%;
+        width: calc(100% - 322px); // scoreboard width + margin
+        top: 0;
+        z-index: 10;
+        cursor: pointer;
+        left: 0;
+
+        &.swiper-button-disabled {
+            background: transparent;
+        }
+    }
+    .swiper-button-next {
+        position: absolute;
+        height: 100%;
+        width: calc(100% - 287px); // scoreboard width + margin
+        top: 0;
+        z-index: 10;
+        cursor: pointer;
+        right: 0;
+
+        &.swiper-button-disabled {
+            background: transparent;
+        }
+    }
+}
+
+@media screen and (min-width: 500px) {
+    .swiper-scoreboard {
+        --width: calc(369px - 320px);
+    }
+}
+
+//For IOS (IPhone and IPAD) - and Mozilla on Android:
+
+@media only screen and (hover: none) and (pointer: coarse) {
+    .swiper-button-prev,
+    .swiper-button-next {
+        z-index: 0;
+    }
+}
+
+//for Chromium on Android:
+@media only screen and (hover: hover) and (pointer: coarse) {
+    .swiper-button-prev,
+    .swiper-button-next {
+        z-index: 0;
+    }
+}

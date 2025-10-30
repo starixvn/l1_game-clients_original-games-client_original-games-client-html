@@ -1,0 +1,12 @@
+@import "@shared/components/game-components/statistic/statistic.module.scss";
+
+.value {
+    font-size: 8px;
+}
+
+.icon {
+    @extend %statistic-icon;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}

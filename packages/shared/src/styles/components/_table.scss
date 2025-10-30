@@ -1,0 +1,28 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    th {
+        color: var(--color-table-title);
+    }
+    tbody {
+        td {
+            color: var(--color-table-content);
+
+            &.clickable {
+                cursor: pointer;
+                color: var(--color-table-text-clickable);
+            }
+        }
+    }
+}
+
+.table-border-bottom {
+    th {
+        padding: var(--spacing-size-2);
+    }
+    tbody {
+        tr {
+            border-bottom: 1px solid #27303f;
+        }
+    }
+}
