@@ -5,7 +5,6 @@ import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
 import { URLParams } from "@shared/constants/url-params";
-import { useSettingStore } from "@shared/stores/setting-store/setting-store";
 
 export type URLContextModel = {
     token?: string;
@@ -70,6 +69,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
 const handleURLParams = (param: string) => {
     if (param) {
         const decodedUrl = GameUtils.base64Decode(param);
+        console.log("decodedUrl", decodedUrl)
         const urlSearchParams = new URLSearchParams(decodedUrl);
         StorageHelper.set(localStorageKeys.session, { 
             ss: urlSearchParams.get(URLParams.session), 
