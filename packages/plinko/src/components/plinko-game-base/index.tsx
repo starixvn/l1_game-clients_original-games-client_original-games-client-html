@@ -198,9 +198,9 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderBackToLobbyButton() {
-        const appType = StorageHelper.get<number>(localStorageKeys.appType);
+        const appType = StorageHelper.get<string>(localStorageKeys.appType);
 
-        if(this.props.id === 159 && appType === 1) {
+        if(this.props.id === 159 && appType !== "7") {
             return <LobbyMenu />;
         }
 
