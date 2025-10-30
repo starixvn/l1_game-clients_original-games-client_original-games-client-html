@@ -23,6 +23,9 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import UserInfo from "@shared/components/page-components/header/user-info";
+import { isMobileOnly } from "react-device-detect";
+import { ResourceTypes } from "@shared/resources";
 
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
@@ -65,7 +68,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameMessageHandler: gameMessageHandler,
                 durations: props.durations,
                 roundStateHandler,
-                runGame: () => {}, // Will be set by GameBase
+                runGame: () => { }, // Will be set by GameBase
                 gameId: props.id,
                 gameStateContextModel: () => props.gameStateContextModel,
                 gameRoundDataHandler: gameRoundDataHandler,
@@ -195,6 +198,20 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     renderBackToLobbyButton() {
         return <LobbyMenu />;
+    }
+
+    renderMenuLeftSide() {
+        if (isMobileOnly) {
+            return <></>;
+        }
+        return (
+            <div className="flex items-center gap-2">
+                <span className="text-sm md:text-base font-semibold">
+                    {this.props.translate(`${ResourceTypes.COMMON}.balance`)}:
+                </span>
+                <UserInfo customizeClass="text-yellow-400" />
+            </div>
+        );
     }
 }
 

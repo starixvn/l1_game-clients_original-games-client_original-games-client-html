@@ -453,12 +453,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                        this.roundStateHandler.determineRoundBaseState({
-                            roundRemainingTime: this.roundTimeCounter,
-                            wholeRound: durations.wholeRound,
-                            remainingTime,
-                            durations,
-                        })
+                    this.roundStateHandler.determineRoundBaseState({
+                        roundRemainingTime: this.roundTimeCounter,
+                        wholeRound: durations.wholeRound,
+                        remainingTime,
+                        durations,
+                    })
                     ],
                 ...newGameState,
             });
@@ -604,14 +604,18 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <MenuIconWrapper items={[<SoundIcon key="sound-icon" />, <GuideIcon key="guide-icon" />]} />;
     }
 
+    renderMenuLeftSide() {
+        return (
+            <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-semibold text-sm tracking-wider align-middle md:text-base">
+                Nova88 Original
+            </div>
+        );
+    }
+
     renderMenu() {
         return (
             <Menu
-                leftSide={
-                    <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-semibold text-sm tracking-wider align-middle md:text-base">
-                        Nova88 Original
-                    </div>
-                }
+                leftSide={this.renderMenuLeftSide()}
                 rightSide={this.renderMenuIcons()}
             />
         );
