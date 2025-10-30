@@ -15,14 +15,5 @@ export function createBetHistoryHandler(props: BetHistoryHandlerProps): BetHisto
         }
     }
 
-    // Add other game-specific handlers here as needed
-    // if (gameId === '148') { // SeDie
-    //     // SeDie handler logic
-    // }
-    // if (gameId === '150') { // Baccarat
-    //     // Baccarat handler logic
-    // }
-
-    // Default to base handler for all other games
     return new BetHistoryHandler(props);
 }
