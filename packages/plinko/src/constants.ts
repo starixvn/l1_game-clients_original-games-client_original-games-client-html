@@ -34,3 +34,8 @@ export function getMultiplierColors(mode: number): string[] {
 export const PLINKO_STORAGE_KEYS = {
     NUMBER_OF_BETS: buildLocalStorageKey("numberOfBets"),
 };
+
+export const PLINKO_GAME_IDS = {
+    PLINKO: 145,
+    PLINKO_X: 159,
+};
