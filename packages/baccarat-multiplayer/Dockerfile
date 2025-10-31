@@ -40,6 +40,9 @@ COPY packages/baccarat-multiplayer/custom-server.js packages/baccarat-multiplaye
 COPY packages/baccarat-multiplayer/configs.json packages/baccarat-multiplayer/configs.json
 COPY packages/baccarat-multiplayer/game-settings.json packages/baccarat-multiplayer/game-settings.json
 
+# Copy shared fonts from root directory
+COPY packages/shared/public/static/fonts packages/baccarat-multiplayer/public/static/fonts
+
 # Copy source code
 COPY packages/baccarat-multiplayer/src packages/baccarat-multiplayer/src
 COPY packages/baccarat-multiplayer/public packages/baccarat-multiplayer/public

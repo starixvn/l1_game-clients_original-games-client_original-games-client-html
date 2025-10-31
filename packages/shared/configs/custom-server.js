@@ -131,8 +131,16 @@ function createCustomServer(gameName) {
             server.use("/static", (req, res, next) => {
                 console.log(`📁 [Static] Processing: ${req.url}`);
 
-                // For direct access or reverse proxy scenarios, serve static files
-                express.static(path.join(__dirname, "..", "..", gameName, "public"), {
+                let staticPath;
+                if (req.url.startsWith("/static/fonts/")) {
+                    // Serve fonts from shared location to avoid duplication
+                    staticPath = path.join(__dirname, "..", "public");
+                } else {
+                    // Serve other static files from game package
+                    staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                }
+
+                express.static(staticPath, {
                     maxAge: "1y",
                 })(req, res, (err) => {
                     if (err) {
@@ -146,7 +154,17 @@ function createCustomServer(gameName) {
             server.use((req, res, next) => {
                 if (req.url.startsWith("/static/")) {
                     console.log(`📁 [Static Fallback] Processing: ${req.url}`);
-                    express.static(path.join(__dirname, "..", "..", gameName, "public"), {
+
+                    let staticPath;
+                    if (req.url.startsWith("/static/fonts/")) {
+                        // Serve fonts from shared location to avoid duplication
+                        staticPath = path.join(__dirname, "..", "public");
+                    } else {
+                        // Serve other static files from game package
+                        staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                    }
+
+                    express.static(staticPath, {
                         maxAge: "1y",
                     })(req, res, (err) => {
                         if (err) {
