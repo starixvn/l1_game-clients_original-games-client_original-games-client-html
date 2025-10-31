@@ -80,7 +80,7 @@ export function getCurrentGameId(): number {
         console.log(`Game config not initialized, using default game ID: ${defaultGameId} (Plinko)`);
         return defaultGameId;
     }
-    console.log(`Using game ID: ${currentGameId} (${currentGameId === 145 ? 'Plinko' : 'Plinko X'})`);
+    
     return currentGameId;
 }
 

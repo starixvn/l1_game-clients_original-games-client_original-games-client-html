@@ -67,7 +67,7 @@ const Slots = () => {
     }, []);
 
     const odds = useMemo(() => {
-        return gameConfigs?.odds?.[gameMode][numberOfRows] as unknown as number[];
+        return gameConfigs?.odds?.[gameMode]?.[numberOfRows] as unknown as number[];
     }, [gameMode, numberOfRows, gameConfigs]);
 
     useEffect(() => {
