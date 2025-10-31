@@ -24,7 +24,7 @@ export class DashboardHandler {
     };
 
     reset = () => {
-        console.log("[DashboardHandler] reset called");
+        
         // Custom version: No lobby connection to reset
     };
 }

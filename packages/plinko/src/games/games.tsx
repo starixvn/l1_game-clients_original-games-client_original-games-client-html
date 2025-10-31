@@ -28,7 +28,7 @@ export const updateGameConfig = (gameId: number) => {
         component: PlinkoGame,
         name: gameId === 145 ? "Plinko" : "Plinko X",
     };
-    console.log(`Games config updated for game ID: ${gameId} (${currentGameConfig.name})`);
+    
 };
 
 export const PlinkoGames: React.FC<any> = (props) => {

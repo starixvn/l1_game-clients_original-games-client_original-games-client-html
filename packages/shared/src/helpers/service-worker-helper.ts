@@ -17,7 +17,7 @@ class ServiceWorkerHelper {
     private constructor() {
         this.isSupported = 'serviceWorker' in navigator;
         this.basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-        console.log('[ServiceWorkerHelper] Service Worker supported:', this.isSupported);
+        
     }
 
     static getInstance(): ServiceWorkerHelper {
@@ -34,13 +34,13 @@ class ServiceWorkerHelper {
         }
 
         try {
-            console.log('[ServiceWorkerHelper] Registering service worker...');
+            
 
             this.registration = await navigator.serviceWorker.register('/sw.js', {
                 scope: '/'
             });
 
-            console.log('[ServiceWorkerHelper] Service Worker registered successfully:', this.registration);
+            
 
             // Send basePath to service worker
             if (this.registration.active) {
@@ -48,18 +48,18 @@ class ServiceWorkerHelper {
                     type: 'SET_BASE_PATH',
                     basePath: this.basePath
                 });
-                console.log('[ServiceWorkerHelper] Sent basePath to service worker:', this.basePath);
+                
             }
 
             // Handle service worker updates
             this.registration.addEventListener('updatefound', () => {
-                console.log('[ServiceWorkerHelper] Service Worker update found');
+                
                 const newWorker = this.registration ? this.registration.installing : null;
 
                 if (newWorker) {
                     newWorker.addEventListener('statechange', () => {
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.log('[ServiceWorkerHelper] New service worker installed, ready to activate');
+                            
                             this.showUpdateNotification();
                         }
                     });
@@ -68,7 +68,7 @@ class ServiceWorkerHelper {
 
             // Handle service worker state changes
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('[ServiceWorkerHelper] Service Worker controller changed');
+                
 
                 // Send basePath to new active service worker
                 setTimeout(() => {
@@ -77,7 +77,7 @@ class ServiceWorkerHelper {
                             type: 'SET_BASE_PATH',
                             basePath: this.basePath
                         });
-                        console.log('[ServiceWorkerHelper] Sent basePath to new controller:', this.basePath);
+                        
                     }
                 }, 100); // Small delay to ensure controller is ready
             });
@@ -96,7 +96,7 @@ class ServiceWorkerHelper {
 
         try {
             const result = await this.registration.unregister();
-            console.log('[ServiceWorkerHelper] Service Worker unregistered:', result);
+            
             this.registration = null;
             return result;
         } catch (error) {
@@ -112,7 +112,7 @@ class ServiceWorkerHelper {
         }
 
         try {
-            console.log('[ServiceWorkerHelper] Checking for service worker updates...');
+            
             await this.registration.update();
         } catch (error) {
             console.error('[ServiceWorkerHelper] Failed to update service worker:', error);
@@ -125,7 +125,7 @@ class ServiceWorkerHelper {
         }
 
         try {
-            console.log('[ServiceWorkerHelper] Skipping waiting...');
+            
             this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         } catch (error) {
             console.error('[ServiceWorkerHelper] Failed to skip waiting:', error);
@@ -138,7 +138,7 @@ class ServiceWorkerHelper {
         }
 
         try {
-            console.log('[ServiceWorkerHelper] Clearing cache...');
+            
             if (this.registration.active) {
                 this.registration.active.postMessage({ type: 'CLEAR_CACHE' });
             }
@@ -156,7 +156,7 @@ class ServiceWorkerHelper {
             const messageChannel = new MessageChannel();
 
             messageChannel.port1.onmessage = (event) => {
-                console.log('[ServiceWorkerHelper] Cache info received:', event.data);
+                
                 resolve(event.data);
             };
 
@@ -184,7 +184,7 @@ class ServiceWorkerHelper {
         }
 
         try {
-            console.log('[ServiceWorkerHelper] Requesting background sync...');
+            
             await (this.registration as any).sync.register('background-sync');
         } catch (error) {
             console.error('[ServiceWorkerHelper] Failed to request background sync:', error);
@@ -203,7 +203,7 @@ class ServiceWorkerHelper {
         }
 
         // You can also show an in-app notification here
-        console.log('[ServiceWorkerHelper] Update notification shown');
+        
     }
 
     isRegistered(): boolean {
@@ -226,7 +226,7 @@ export const serviceWorkerHelper = ServiceWorkerHelper.getInstance();
 if (typeof window !== 'undefined') {
     serviceWorkerHelper.register().then((success) => {
         if (success) {
-            console.log('[ServiceWorkerHelper] Auto-registration successful');
+            
         }
     });
 }

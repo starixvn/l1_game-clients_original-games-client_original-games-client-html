@@ -28,8 +28,8 @@ const devCommand = `cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=${gameId} NEXT_PUBLIC_
 
 const fullCommand = `${generateTolgeeCommand} && ${devCommand}`;
 
-console.log(`Running dev server for game ID: ${gameId}`);
-console.log("Command:", fullCommand);
+
+
 
 const child = exec(fullCommand, {
     stdio: "inherit",

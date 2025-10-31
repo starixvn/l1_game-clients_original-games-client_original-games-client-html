@@ -8,7 +8,7 @@ import { getGameAssets, getGameMultipliers, getGameUITheme } from "./game-config
  * Supports both Plinko (145) and Plinko X (159) games.
  */
 export function initializeGameConfig(gameId: number): GameConfig {
-    console.log(`Initializing game config for game ID: ${gameId} (${gameId === 145 ? 'Plinko' : 'Plinko X'})`);
+    
 
     let gameConfig: GameConfig;
 
@@ -43,7 +43,7 @@ export function initializeGameConfig(gameId: number): GameConfig {
     // Store current game ID for runtime access
     currentGameId = gameId;
 
-    console.log(`Game config initialized successfully for: ${gameConfig.gameName}`);
+    
     return gameConfig;
 }
 
@@ -56,7 +56,7 @@ const defaultGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
 if (defaultGameId && !isNaN(Number(defaultGameId))) {
     try {
         const envGameId = Number(defaultGameId);
-        console.log(`Module-level game config initialization with env var: ${envGameId}`);
+        
         initializeGameConfig(envGameId);
     } catch (error) {
         // Silently fail during initialization - configuration will be set later
@@ -77,7 +77,7 @@ export function getCurrentGameId(): number {
         } catch (error) {
             // If initialization fails, config might already be set - continue silently
         }
-        console.log(`Game config not initialized, using default game ID: ${defaultGameId} (Plinko)`);
+        
         return defaultGameId;
     }
     

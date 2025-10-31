@@ -19,32 +19,32 @@ export const ConnectFailedMessage: React.FC<{
     reason: string;
     enableBackdrop: boolean;
 }> = ({ tolgeeNamespace, id, onReconnect, reason, enableBackdrop }) => {
-    console.log("[ConnectFailedMessage] rendering with:", { tolgeeNamespace, id, reason, enableBackdrop });
+    
     const { t } = useTranslator([tolgeeNamespace]);
     const clickSound = useClickSound();
     const { backToRedirectUrl, redirectUrl } = useContext(URLContext);
 
     const handleBackToLobby = () => {
-        console.log("[ConnectFailedMessage] handleBackToLobby called");
+        
         clickSound();
         backToRedirectUrl?.(redirectUrl);
     };
 
     const handleBackToLobbyWithReload = () => {
-        console.log("[ConnectFailedMessage] handleBackToLobbyWithReload called");
+        
         clickSound();
         updateURLContext({ backToLobby: true });
         redirectUrl ? backToRedirectUrl?.(redirectUrl) : window.location.reload();
     };
 
     const handleReconnect = () => {
-        console.log("[ConnectFailedMessage] handleReconnect called");
+        
         clickSound();
         onReconnect();
     };
 
     const renderLostConnectionButtons = () => {
-        console.log("[ConnectFailedMessage] rendering lost connection buttons");
+        
         return (
             <div className="flex justify-center gap-8">
                 <PopupButton
@@ -62,7 +62,7 @@ export const ConnectFailedMessage: React.FC<{
     };
 
     const renderButtons = () => {
-        console.log("[ConnectFailedMessage] renderButtons called, reason:", reason);
+        
         if (reason === ConnectFailedReasonKey.lostConnection) {
             return redirectUrl ? (
                 renderLostConnectionButtons()

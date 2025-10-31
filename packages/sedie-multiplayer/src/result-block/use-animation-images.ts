@@ -5,8 +5,8 @@ import { SeDieBetOptions } from "../sedie-multiplayer-constants";
 import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-console.log(`[use-animation-images] basePath: "${basePath}"`);
-console.log(`[use-animation-images] NEXT_PUBLIC_BASE_PATH: "${process.env.NEXT_PUBLIC_BASE_PATH}"`);
+
+
 
 interface AnimationImages {
     animationPhase1: any;

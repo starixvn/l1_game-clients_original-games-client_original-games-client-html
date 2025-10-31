@@ -75,7 +75,7 @@ gameConfigsToProcess.forEach(config => {
 // Always include Common and SabaNumber
 const namespaces = ["SabaNumber", "Common", ...Array.from(allNamespaces)].filter((value, index, arr) => arr.indexOf(value) === index);
 
-console.log("[TolgeeGenerator] Tolgee generator starting");
+
 
 // Standalone locales definition
 const locales = {
@@ -93,11 +93,11 @@ const locales = {
 };
 
 function writeFile(fileName: string, content: string, extension = "json") {
-    console.log("[TolgeeGenerator] writeFile called for:", fileName);
+    
     const dirname = path.dirname(fileName);
 
     if (!fs.existsSync(dirname)) {
-        console.log("[TolgeeGenerator] creating directory:", dirname);
+        
         fs.mkdirSync(dirname, { recursive: true });
     }
 
@@ -105,11 +105,11 @@ function writeFile(fileName: string, content: string, extension = "json") {
         encoding: "utf8",
         flag: "w",
     });
-    console.log("[TolgeeGenerator] file written successfully:", `${fileName}.${extension}`);
+    
 }
 
-console.log("[TolgeeGenerator] Processing", gameConfigsToProcess.length, "game(s)");
-console.log("[TolgeeGenerator] Namespaces:", namespaces);
+
+
 
 const tg = Tolgee().use(DevTools()).init({
     defaultLanguage: "en",
@@ -122,12 +122,12 @@ const tg = Tolgee().use(DevTools()).init({
     ns: namespaces,
 });
 
-console.log("[TolgeeGenerator] Tolgee initialized, starting run");
+
 
 tg.run();
 
 tg.on("initialLoad", async () => {
-    console.log("[TolgeeGenerator] initialLoad event triggered");
+    
     const languages: {
         [languageId: string]: {
             [ns: string]: {
@@ -138,7 +138,7 @@ tg.on("initialLoad", async () => {
 
     // Process each language
     for (const languageId of Object.values(locales)) {
-        console.log("[TolgeeGenerator] processing language:", languageId);
+        
         await tg.changeLanguage(languageId);
         languages[languageId] = {};
 
@@ -164,5 +164,5 @@ tg.on("initialLoad", async () => {
         }
     }
 
-    console.log("[TolgeeGenerator] initialLoad completed");
+    
 });

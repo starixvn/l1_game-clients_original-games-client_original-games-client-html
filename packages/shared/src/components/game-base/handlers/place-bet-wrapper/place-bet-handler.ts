@@ -24,7 +24,6 @@ import { NoticeModel, RoundState } from "../../type";
 import { broadcastCloseDialog } from '@shared/helpers/global-events-helper';
 import { useSettingStore } from "@shared/stores/setting-store";
 import useNoticeStore from "@shared/stores/notice-store/notice-store";
-import { logger } from "@shared/services/logger";
 
 export type PlaceBetHandlerProps = {
     tolgeeNamespace: string;
@@ -158,21 +157,10 @@ export class PlaceBetHandler {
         this.clearRetryInterval();
 
         if (endBet === -1) {
-            logger.error('Bet placement failed', {
-                gameName: this.props.gameName,
-                endBet,
-                notice,
-                kickedOut,
-                apiError
-            });
+            
             !apiError && this.handleBetFailed({ notice, kickedOut }, signOut);
         } else {
-            logger.info('Bet placement successful', {
-                gameName: this.props.gameName,
-                endBet,
-                ownBets,
-                betCount: Object.keys(ownBets || {}).length
-            });
+            
             enableSound && playPlaceBetSound();
             this.placeBetDispatch({
                 type: PlaceBetEventActionType.OWN_BETS,
@@ -195,32 +183,16 @@ export class PlaceBetHandler {
     };
 
     placeBet = (betChoice: string, amount: number, enabledQuickBet: boolean, gameStateContext: GameStateContextModel) => {
-        logger.info('Place bet initiated', {
-            gameName: this.props.gameName,
-            betChoice,
-            amount,
-            roundState: gameStateContext.roundState,
-            enabledQuickBet,
-            gameId: this.props.gameId
-        });
+        
 
         if (isInPhasePreventBet(gameStateContext.roundState)) {
-            logger.warn('Bet prevented - invalid round state', {
-                gameName: this.props.gameName,
-                betChoice,
-                amount,
-                roundState: gameStateContext.roundState
-            });
+            
             this.handlePreventBet(gameStateContext.roundState);
             return;
         }
 
         if (this.isProcessingBet) {
-            logger.warn('Bet prevented - already processing bet', {
-                gameName: this.props.gameName,
-                betChoice,
-                amount
-            });
+            
             this.handleProcessingBet();
             return;
         }
@@ -235,34 +207,18 @@ export class PlaceBetHandler {
                 enabledQuickBet
             )
         ) {
-            logger.warn('Bet prevented - insufficient balance', {
-                gameName: this.props.gameName,
-                betChoice,
-                amount,
-                playerBalance,
-                roundState: gameStateContext.roundState
-            });
+            
             this.broadcastNotice(this.getNotice(NoticeErrorCode.notEnoughMoney));
             return;
         }
 
         if (isHedgeBet(findHedgeBetGroup(this.props?.hedgeBetGroups, betChoice), betChoice, amount, this.placeBetContext?.ownBets)) {
-            logger.warn('Bet prevented - hedge bet restriction', {
-                gameName: this.props.gameName,
-                betChoice,
-                amount,
-                hedgeBetGroups: this.props.hedgeBetGroups
-            });
+            
             this.broadcastNotice(this.getNotice(NoticeErrorCode.hedgeBet, true, betChoice));
             return;
         }
 
-        logger.info('Bet validated successfully, proceeding to place bet', {
-            gameName: this.props.gameName,
-            betChoice,
-            amount,
-            playerBalance
-        });
+        
         this.handleValidBetChoice(amount, betChoice);
     };
 
@@ -319,12 +275,7 @@ export class PlaceBetHandler {
 
     protected sendBetMessage(betChoice: string, amount: number) {
         this.isProcessingBet = true;
-        logger.info('Sending bet message to server', {
-            gameName: this.props.gameName,
-            betChoice,
-            amount,
-            betPayloadFormat: this.props.betPayloadFormat ?? "map"
-        });
+        
 
         if ((this.props.betPayloadFormat ?? "map") === "single") {
             this.props.gameMessageHandler.broadcastGameEvent({

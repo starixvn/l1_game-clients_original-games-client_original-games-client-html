@@ -6,7 +6,7 @@ export const setSentryUser = (user) => {
             try {
                 Sentry.setUser(user);
             } catch (ex) {
-                console.log(ex);
+                // Error setting Sentry user
             }
         }, 5000);
     }
@@ -21,7 +21,7 @@ const setTag = (tag) => {
         try {
             Sentry.setTag(tag.id, tag.value);
         } catch (ex) {
-            console.log(ex);
+            // Error setting Sentry tag
         }
     }
 };

@@ -55,13 +55,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                 analyticsStorage.splice(0, analyticsStorage.length - 1000);
             }
 
-            console.log(`[Analytics] Stored preload data for game ${analyticsData.gameId}:`, {
-                totalTime: analyticsData.totalLoadTime,
-                images: `${analyticsData.loadedImages}/${analyticsData.totalImages}`,
-                cacheHits: analyticsData.cacheHits,
-                compression: analyticsData.compressionRatio
-            });
-
             res.status(200).json({ success: true, message: 'Analytics data stored' });
         } catch (error) {
             console.error('[Analytics] Error storing data:', error);

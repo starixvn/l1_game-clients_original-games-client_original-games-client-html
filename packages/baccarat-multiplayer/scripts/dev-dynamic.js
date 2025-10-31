@@ -12,10 +12,10 @@ const path = require("path");
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "150";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-150";
 
-console.log(`Starting baccarat-multiplayer development server with:`);
-console.log(`  Game ID: ${gameId}`);
-console.log(`  Base Path: ${basePath}`);
-console.log("");
+
+
+
+
 
 // Set environment variables for the dev process
 const env = {
@@ -28,7 +28,7 @@ const env = {
 const devCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const devArgs = ["run", "dev:standalone"];
 
-console.log(`Running: ${devCommand} ${devArgs.join(" ")}`);
+
 
 const child = spawn(devCommand, devArgs, {
     stdio: "inherit",

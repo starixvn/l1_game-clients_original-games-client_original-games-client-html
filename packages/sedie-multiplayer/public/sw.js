@@ -8,17 +8,17 @@ const CRITICAL_ASSETS = ["/static/images/countdown-timer/", "/static/images/ball
 
 // Install event - cache critical assets
 self.addEventListener("install", (event) => {
-    console.log("[SW] Installing service worker...");
+    
 
     event.waitUntil(
         caches
             .open(STATIC_CACHE_NAME)
             .then((cache) => {
-                console.log("[SW] Caching critical assets");
+                
                 return cache.addAll(CRITICAL_ASSETS);
             })
             .then(() => {
-                console.log("[SW] Critical assets cached successfully");
+                
                 return self.skipWaiting();
             })
             .catch((error) => {
@@ -29,7 +29,7 @@ self.addEventListener("install", (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener("activate", (event) => {
-    console.log("[SW] Activating service worker...");
+    
 
     event.waitUntil(
         caches
@@ -38,14 +38,14 @@ self.addEventListener("activate", (event) => {
                 return Promise.all(
                     cacheNames.map((cacheName) => {
                         if (cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE_NAME && cacheName !== DYNAMIC_CACHE_NAME) {
-                            console.log("[SW] Deleting old cache:", cacheName);
+                            
                             return caches.delete(cacheName);
                         }
                     })
                 );
             })
             .then(() => {
-                console.log("[SW] Service worker activated");
+                
                 return self.clients.claim();
             })
     );
@@ -61,13 +61,13 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    console.log("[SW] Fetching:", request.url);
+    
 
     event.respondWith(
         caches.match(request).then((response) => {
             // Return cached version if available
             if (response) {
-                console.log("[SW] Serving from cache:", request.url);
+                
                 return response;
             }
 
@@ -86,7 +86,7 @@ self.addEventListener("fetch", (event) => {
                     caches
                         .open(DYNAMIC_CACHE_NAME)
                         .then((cache) => {
-                            console.log("[SW] Caching new asset:", request.url);
+                            
                             cache.put(request, responseToCache);
                         })
                         .catch((error) => {
@@ -100,7 +100,7 @@ self.addEventListener("fetch", (event) => {
 
                     // Return a fallback response for critical assets
                     if (CRITICAL_ASSETS.some((asset) => request.url.includes(asset))) {
-                        console.log("[SW] Returning fallback for critical asset:", request.url);
+                        
                         return new Response("", {
                             status: 404,
                             statusText: "Not Found",
@@ -116,14 +116,14 @@ self.addEventListener("fetch", (event) => {
 // Background sync for failed requests
 self.addEventListener("sync", (event) => {
     if (event.tag === "background-sync") {
-        console.log("[SW] Background sync triggered");
+        
         event.waitUntil(doBackgroundSync());
     }
 });
 
 // Push notification for cache updates
 self.addEventListener("push", (event) => {
-    console.log("[SW] Push notification received");
+    
 
     const options = {
         body: "Game assets updated",
@@ -142,7 +142,7 @@ self.addEventListener("push", (event) => {
 // Background sync function
 async function doBackgroundSync() {
     try {
-        console.log("[SW] Performing background sync...");
+        
 
         // Sync any pending cache operations
         const cache = await caches.open(DYNAMIC_CACHE_NAME);
@@ -153,14 +153,14 @@ async function doBackgroundSync() {
                 const response = await fetch(request);
                 if (response.ok) {
                     await cache.put(request, response);
-                    console.log("[SW] Background sync updated:", request.url);
+                    
                 }
             } catch (error) {
                 console.error("[SW] Background sync failed for:", request.url, error);
             }
         }
 
-        console.log("[SW] Background sync completed");
+        
     } catch (error) {
         console.error("[SW] Background sync error:", error);
     }
@@ -173,7 +173,7 @@ async function clearOldCaches() {
 
     await Promise.all(oldCaches.map((name) => caches.delete(name)));
 
-    console.log("[SW] Old caches cleared");
+    
 }
 
 // Message handling for cache management
@@ -204,4 +204,4 @@ self.addEventListener("message", (event) => {
     }
 });
 
-console.log("[SW] Service worker script loaded");
+

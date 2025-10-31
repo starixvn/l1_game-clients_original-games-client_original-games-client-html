@@ -12,10 +12,10 @@ const path = require("path");
 const gameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID || "148";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/site-148";
 
-console.log(`Building sedie-multiplayer with:`);
-console.log(`  Game ID: ${gameId}`);
-console.log(`  Base Path: ${basePath}`);
-console.log("");
+
+
+
+
 
 // Set environment variables for the build process
 const env = {
@@ -28,7 +28,7 @@ const env = {
 const buildCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const buildArgs = ["run", "build:standalone"];
 
-console.log(`Running: ${buildCommand} ${buildArgs.join(" ")}`);
+
 
 const child = spawn(buildCommand, buildArgs, {
     stdio: "inherit",
