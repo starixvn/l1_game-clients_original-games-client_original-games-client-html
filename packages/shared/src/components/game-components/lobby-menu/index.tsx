@@ -10,6 +10,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const LobbyMenu = () => {
     const sessionInfo = StorageHelper.get<SSOResponse & Partial<StandaloneMode>>(localStorageKeys.session);
+    const returnUrl = StorageHelper.get<string>(localStorageKeys.returnUrl);
 
     const handleBackToLobby = () => {
         if(sessionInfo?.isStandalone) {
@@ -21,7 +22,6 @@ const LobbyMenu = () => {
     };
 
     const handleStandaloneNavigation = () => {
-        const returnUrl = StorageHelper.get<string>(localStorageKeys.returnUrl);
         const decodedReturnUrl = GameUtils.base64Decode(returnUrl);
         const mainParams = buildMainParams();
         const otherParams = buildOtherParams();
@@ -74,6 +74,10 @@ const LobbyMenu = () => {
             [URLParams.sfxEnable]: enabledSound ?? false,
         };
     };
+
+    if(!returnUrl) {
+        return null;
+    }
 
     return (
         <button className="fixed top-[90px] right-[20px] z-[9999]" onClick={handleBackToLobby}>

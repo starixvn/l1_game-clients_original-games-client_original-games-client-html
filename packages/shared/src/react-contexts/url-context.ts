@@ -38,11 +38,15 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const op = params.get("op");
     const appType = params.get("appType");
 
-    if(appType) {
+    if (token || param) {
+        clearStorage();
+    }
+
+    if (appType) {
         StorageHelper.set(localStorageKeys.appType, appType);
     }
-    
-    if(isStandalone) {
+
+    if (isStandalone) {
         const standaloneMode = {
             isStandalone: isStandalone === "true",
             cg: currencyGroup,
@@ -55,10 +59,28 @@ export function parseContextFromURL(): URLContextModel | undefined {
         StorageHelper.set(localStorageKeys.standaloneMode, standaloneMode);
     }
 
+    if (lobbyUrl) {
+        StorageHelper.set(localStorageKeys.lobbyUrl, lobbyUrl);
+    }
+    if (returnUrl) {
+        StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
+    }
+
     handleURLParams(param);
 
     return { token, language, redirectUrl };
 }
+
+const clearStorage = () => {
+    StorageHelper.remove(localStorageKeys.session);
+    StorageHelper.remove(localStorageKeys.settingStore);
+    StorageHelper.remove(localStorageKeys.lobbyUrl);
+    StorageHelper.remove(localStorageKeys.returnUrl);
+    StorageHelper.remove(localStorageKeys.standaloneMode);
+    StorageHelper.remove(localStorageKeys.appType);
+    StorageHelper.remove(localStorageKeys.parentUrl);
+    StorageHelper.remove(localStorageKeys.umInfo);
+};
 
 const handleURLParams = (param: any) => {
     if (param) {
@@ -67,27 +89,28 @@ const handleURLParams = (param: any) => {
         const lobbyUrl = urlSearchParams.get(URLParams.lobbyUrl);
         const parentUrl = urlSearchParams.get(URLParams.parentUrl);
         const returnUrl = urlSearchParams.get(URLParams.returnUrl);
-        StorageHelper.set(localStorageKeys.session, { 
-            ss: urlSearchParams.get(URLParams.session), 
-            username: urlSearchParams.get(URLParams.username), 
-            language: urlSearchParams.get(URLParams.language) });
-       
+        StorageHelper.set(localStorageKeys.session, {
+            ss: urlSearchParams.get(URLParams.session),
+            username: urlSearchParams.get(URLParams.username),
+            language: urlSearchParams.get(URLParams.language),
+        });
+
         StorageHelper.set(localStorageKeys.settingStore, {
             enabledMusic: urlSearchParams.get(URLParams.musicEnable),
             enabledSound: urlSearchParams.get(URLParams.sfxEnable),
         });
 
-        if(lobbyUrl) {
+        if (lobbyUrl) {
             StorageHelper.set(localStorageKeys.lobbyUrl, lobbyUrl);
         }
-        if(parentUrl) {
+        if (parentUrl) {
             StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
         }
-        if(returnUrl) {
+        if (returnUrl) {
             StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
         }
     }
-}
+};
 
 export function loadURLContext(): URLContextModel {
     const contextFromURL = parseContextFromURL();
@@ -96,9 +119,8 @@ export function loadURLContext(): URLContextModel {
     if (!!contextFromURL) {
         const contextString = { ...contextFromURL, token: undefined };
         // Keep URL params during development to make debugging easier
-        const isLocalhost = typeof window !== "undefined"
-            && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
-        const isNonProductionEnv = (typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production");
+        const isLocalhost = typeof window !== "undefined" && /^(localhost|127\.0\.0\.1)/.test(window.location?.hostname || "");
+        const isNonProductionEnv = typeof process !== "undefined" && (process.env?.NODE_ENV || "").toLowerCase() !== "production";
         if (!isLocalhost && !isNonProductionEnv) {
             globalThis.history.pushState(null, "", globalThis.location?.href.split("?")[0]);
         }
