@@ -74,7 +74,9 @@ export const usePathPreview = ({ pathPreviewsRef }: { pathPreviewsRef: React.Ref
 
     const drawPathPreview = useCallback(
         (context: CanvasRenderingContext2D) => {
-            if (!pathPreviewsRef.current) return;
+            if (!pathPreviewsRef.current) {
+                return;
+            }
 
             const now = Date.now();
 
@@ -88,22 +90,6 @@ export const usePathPreview = ({ pathPreviewsRef }: { pathPreviewsRef: React.Ref
                 context.save();
 
                 // Draw main path line with glow effect
-                // context.strokeStyle = `rgba(254, 215, 1, 0.3)`; // Yellow with transparency
-                // context.lineWidth = 10;
-                // context.lineCap = "round";
-                // context.lineJoin = "round";
-                // context.shadowBlur = 10;
-                // context.shadowColor = `rgba(254, 215, 1, 0.5)`;
-
-                // context.beginPath();
-                // path.points.forEach((point, index) => {
-                //     if (index === 0) {
-                //         context.moveTo(point.x, point.y);
-                //     } else {
-                //         context.lineTo(point.x, point.y);
-                //     }
-                // });
-                // context.stroke();
 
                 // Draw brighter center line (solid)
                 context.shadowBlur = 0;
@@ -113,8 +99,12 @@ export const usePathPreview = ({ pathPreviewsRef }: { pathPreviewsRef: React.Ref
                 let minY = Infinity,
                     maxY = -Infinity;
                 path.points.forEach((point) => {
-                    if (point.y < minY) minY = point.y;
-                    if (point.y > maxY) maxY = point.y;
+                    if (point.y < minY) {
+                        minY = point.y;
+                    }
+                    if (point.y > maxY) {
+                        maxY = point.y;
+                    }
                 });
 
                 // If all y are the same (should not happen), set a default gradient span
