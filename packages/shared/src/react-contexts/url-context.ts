@@ -28,7 +28,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
 
     let token = params.get("token");
     const language = params.get("lang");
-    const redirectUrl = params.get("rurl");
+    let redirectUrl = params.get("rurl");
 
     const param = params.get("params");
     const lobbyUrl = params.get("lurl");
@@ -66,23 +66,6 @@ export function parseContextFromURL(): URLContextModel | undefined {
         StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
     }
 
-    handleURLParams(param);
-
-    return { token, language, redirectUrl };
-}
-
-const clearStorage = () => {
-    StorageHelper.remove(localStorageKeys.session);
-    StorageHelper.remove(localStorageKeys.settingStore);
-    StorageHelper.remove(localStorageKeys.lobbyUrl);
-    StorageHelper.remove(localStorageKeys.returnUrl);
-    StorageHelper.remove(localStorageKeys.standaloneMode);
-    StorageHelper.remove(localStorageKeys.appType);
-    StorageHelper.remove(localStorageKeys.parentUrl);
-    StorageHelper.remove(localStorageKeys.umInfo);
-};
-
-const handleURLParams = (param: any) => {
     if (param) {
         const decodedUrl = GameUtils.base64Decode(param);
         const urlSearchParams = new URLSearchParams(decodedUrl);
@@ -108,8 +91,22 @@ const handleURLParams = (param: any) => {
         }
         if (returnUrl) {
             StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
+            redirectUrl = returnUrl;
         }
     }
+
+    return { token, language, redirectUrl };
+}
+
+const clearStorage = () => {
+    StorageHelper.remove(localStorageKeys.session);
+    StorageHelper.remove(localStorageKeys.settingStore);
+    StorageHelper.remove(localStorageKeys.lobbyUrl);
+    StorageHelper.remove(localStorageKeys.returnUrl);
+    StorageHelper.remove(localStorageKeys.standaloneMode);
+    StorageHelper.remove(localStorageKeys.appType);
+    StorageHelper.remove(localStorageKeys.parentUrl);
+    StorageHelper.remove(localStorageKeys.umInfo);
 };
 
 export function loadURLContext(): URLContextModel {

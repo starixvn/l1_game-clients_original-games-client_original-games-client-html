@@ -453,12 +453,12 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 prevRoundState: RoundState[gameStateContextModel.roundState],
                 newRoundState:
                     RoundState[
-                    this.roundStateHandler.determineRoundBaseState({
-                        roundRemainingTime: this.roundTimeCounter,
-                        wholeRound: durations.wholeRound,
-                        remainingTime,
-                        durations,
-                    })
+                        this.roundStateHandler.determineRoundBaseState({
+                            roundRemainingTime: this.roundTimeCounter,
+                            wholeRound: durations.wholeRound,
+                            remainingTime,
+                            durations,
+                        })
                     ],
                 ...newGameState,
             });
@@ -613,12 +613,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderMenu() {
-        return (
-            <Menu
-                leftSide={this.renderMenuLeftSide()}
-                rightSide={this.renderMenuIcons()}
-            />
-        );
+        return <Menu leftSide={this.renderMenuLeftSide()} rightSide={this.renderMenuIcons()} />;
     }
 
     renderGameFrame() {
@@ -673,21 +668,20 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     getRenderTemplate() {
         return (
-            <>
-                <div className={`game-${this.props.id}`}>
-                    <div className="grid grid-cols-12 gap-0">
-                        {this.renderLeftSide()}
-                        {this.renderRightSide()}
-                        <div className="col-span-12 mb-3 px-3">{this.renderRTP()}</div>
-                        <div className="col-span-12 mb-3 px-3">{this.renderBetHistoryTable()}</div>
-                    </div>
-                    {this.renderPFSettingModal()}
-                    {this.renderBetDetailModal()}
-                    {this.renderGameGuideModal()}
-                    {this.renderLiveStatsModal()}
-                    {this.renderHotKeyModal()}
+            <div className={`game-${this.props.id}`}>
+                {this.renderBackToLobbyButton()}
+                <div className="grid grid-cols-12 gap-0">
+                    {this.renderLeftSide()}
+                    {this.renderRightSide()}
+                    <div className="col-span-12 mb-3 px-3">{this.renderRTP()}</div>
+                    <div className="col-span-12 mb-3 px-3">{this.renderBetHistoryTable()}</div>
                 </div>
-            </>
+                {this.renderPFSettingModal()}
+                {this.renderBetDetailModal()}
+                {this.renderGameGuideModal()}
+                {this.renderLiveStatsModal()}
+                {this.renderHotKeyModal()}
+            </div>
         );
     }
 
@@ -719,9 +713,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
                     {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
                     {this.renderConnectFailed(roundState, disconnectReason)}
-                    {this.renderBackToLobbyButton()}
                 </GameContainer>
-
             </>
         );
     }
