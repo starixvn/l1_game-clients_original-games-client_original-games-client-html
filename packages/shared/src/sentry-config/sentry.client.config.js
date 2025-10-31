@@ -20,15 +20,15 @@ if (sentryConfig) {
 
             if (transaction.transaction === "/") {
                 const urlParams = new URLSearchParams(window.location.search);
-                const gameId = urlParams.get("game") || process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+                const gameId = urlParams.get("gameId") || process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
                 const gameSettings = appSettings.gameSettings?.[gameId];
-                const gameName = gameSettings?.gameName || `Game-${gameId}`;
+                const gameName = gameSettings?.gameName;
 
                 transaction.transaction = `${gameName} ${transaction.transaction}`;
                 transaction.tags = {
                     ...transaction.tags,
                     gameId,
-                    gameName: gameSettings?.gameName || `Game-${gameId}`,
+                    gameName,
                 };
             }
 
