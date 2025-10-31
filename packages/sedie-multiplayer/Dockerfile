@@ -40,6 +40,9 @@ COPY packages/sedie-multiplayer/custom-server.js packages/sedie-multiplayer/cust
 COPY packages/sedie-multiplayer/configs.json packages/sedie-multiplayer/configs.json
 COPY packages/sedie-multiplayer/game-settings.json packages/sedie-multiplayer/game-settings.json
 
+# Copy shared fonts from root directory
+COPY packages/shared/public/static/fonts packages/sedie-multiplayer/public/static/fonts
+
 # Copy source code
 COPY packages/sedie-multiplayer/src packages/sedie-multiplayer/src
 COPY packages/sedie-multiplayer/public packages/sedie-multiplayer/public

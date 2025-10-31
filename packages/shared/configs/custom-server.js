@@ -9,6 +9,7 @@ function createCustomServer(gameName) {
     const hostname = process.env.HOSTNAME || "localhost";
     const port = parseInt(process.env.PORT, 10) || 3000;
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    const FONTS_PATH_PREFIX = "/static/fonts/";
 
     console.log(`🚀 Starting server with config:`);
     console.log(`  - Environment: ${process.env.NODE_ENV}`);
@@ -144,9 +145,30 @@ function createCustomServer(gameName) {
             // Serve static files from public with basePath support
             server.use("/static", (req, res, next) => {
                 console.log(`📁 [Static] Processing: ${req.url}`);
+                
+                let staticPath;
+                if (req.url.startsWith(FONTS_PATH_PREFIX)) {
+                    // Check game package first for fonts, fallback to shared
+                    const gameFontsPath = path.join(__dirname, "..", "..", gameName, "public", "static", "fonts");
 
-                // For direct access or reverse proxy scenarios, serve static files
-                express.static(path.join(__dirname, "..", "..", gameName, "public"), {
+                    // Check if file exists in game package
+                    const fs = require("fs");
+                    const relativePath = req.url.replace(FONTS_PATH_PREFIX, "");
+                    const gameFilePath = path.join(gameFontsPath, relativePath);
+
+                    if (fs.existsSync(gameFilePath)) {
+                        console.log(`📁 [Fonts] Using game-specific font: ${req.url}`);
+                        staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                    } else {
+                        console.log(`📁 [Fonts] Using shared font: ${req.url}`);
+                        staticPath = path.join(__dirname, "..", "public");
+                    }
+                } else {
+                    // Serve other static files from game package
+                    staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                }
+
+                express.static(staticPath, {
                     maxAge: "1y",
                 })(req, res, (err) => {
                     if (err) {
@@ -160,7 +182,30 @@ function createCustomServer(gameName) {
             server.use((req, res, next) => {
                 if (req.url.startsWith("/static/")) {
                     console.log(`📁 [Static Fallback] Processing: ${req.url}`);
-                    express.static(path.join(__dirname, "..", "..", gameName, "public"), {
+
+                    let staticPath;
+                    if (req.url.startsWith(FONTS_PATH_PREFIX)) {
+                        // Check game package first for fonts, fallback to shared
+                        const gameFontsPath = path.join(__dirname, "..", "..", gameName, "public", "static", "fonts");
+
+                        // Check if file exists in game package
+                        const fs = require("fs");
+                        const relativePath = req.url.replace(FONTS_PATH_PREFIX, "");
+                        const gameFilePath = path.join(gameFontsPath, relativePath);
+
+                        if (fs.existsSync(gameFilePath)) {
+                            console.log(`📁 [Fonts Fallback] Using game-specific font: ${req.url}`);
+                            staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                        } else {
+                            console.log(`📁 [Fonts Fallback] Using shared font: ${req.url}`);
+                            staticPath = path.join(__dirname, "..", "public");
+                        }
+                    } else {
+                        // Serve other static files from game package
+                        staticPath = path.join(__dirname, "..", "..", gameName, "public");
+                    }
+
+                    express.static(staticPath, {
                         maxAge: "1y",
                     })(req, res, (err) => {
                         if (err) {
