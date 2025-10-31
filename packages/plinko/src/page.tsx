@@ -53,81 +53,9 @@ const PlinkoPage = (props: any) => {
         initializeGameConfig(gameId);
         updateGameConfig(gameId);
 
-        // Debug: Monitor for unexpected redirects (comprehensive)
-
-
-        let redirectCheckCount = 0;
-        const maxChecks = 20; // Check for 20 seconds
-
-        const checkRedirect = () => {
-            redirectCheckCount++;
-            const expectedPath = gameId === 159 ? '/site-159/' : '/site-145/';
-            const currentPath = window.location.pathname;
-            const currentHref = window.location.href;
-
-            if (currentPath !== expectedPath) {
-                console.error('🚨 REDIRECT DETECTED:', {
-                    checkNumber: redirectCheckCount,
-                    expected: expectedPath,
-                    actual: currentPath,
-                    href: currentHref,
-                    gameId: gameId,
-                    timestamp: new Date().toISOString()
-                });
-
-                // Stop checking once we detect a redirect
-                return true;
-            }
-            return false;
-        };
-
-        // Check immediately
-        if (!checkRedirect()) {
-            // Continue checking every 1 second for 20 seconds if no redirect detected
-            const intervalId = setInterval(() => {
-                if (checkRedirect() || redirectCheckCount >= maxChecks) {
-                    clearInterval(intervalId);
-                }
-            }, 1000);
-        }
-
-        // Also monitor for external navigation (popstate, beforeunload)
-        const handleNavigation = (event: Event) => {
-            console.warn('🚨 EXTERNAL NAVIGATION DETECTED:', {
-                type: event.type,
-                currentPath: window.location.pathname,
-                currentHref: window.location.href,
-                gameId: gameId,
-                timestamp: new Date().toISOString()
-            });
-        };
-
-        window.addEventListener('popstate', handleNavigation);
-        window.addEventListener('beforeunload', handleNavigation);
-
-        // Additional monitoring: Check for URL changes via location.href polling
-        let lastHref = window.location.href;
-        const pollForUrlChanges = () => {
-            const currentHref = window.location.href;
-            if (currentHref !== lastHref) {
-                console.error('🚨 URL CHANGE DETECTED (polling):', {
-                    from: lastHref,
-                    to: currentHref,
-                    gameId: gameId,
-                    timestamp: new Date().toISOString()
-                });
-                lastHref = currentHref;
-            }
-        };
-
-        // Poll every 500ms for URL changes
-        const pollIntervalId = setInterval(pollForUrlChanges, 500);
-
         // Return cleanup function for useEffect
         return () => {
-            window.removeEventListener('popstate', handleNavigation);
-            window.removeEventListener('beforeunload', handleNavigation);
-            clearInterval(pollIntervalId);
+            // No cleanup needed as no event listeners or intervals were added
         };
     }, [router.asPath]);
 

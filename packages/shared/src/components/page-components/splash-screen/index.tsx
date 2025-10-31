@@ -353,10 +353,10 @@ const SplashScreen: React.FC = () => {
 
             {isDoneLoadConfig && currentGameId >= 0 && (
                 <>
-                    {
-                    }}
-                    gameId={currentGameId}
-                    onProgressUpdate={handlePreloadProgress}
+                    <PreloadResources
+                        setIsDonePreload={() => setIsRenderDashboard(true)}
+                        gameId={currentGameId}
+                        onProgressUpdate={handlePreloadProgress}
                     />
                 </>
             )}
