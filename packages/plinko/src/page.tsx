@@ -24,9 +24,7 @@ const getGameId = (urlPath?: string): number => {
 
 
     if (envGameId && !isNaN(Number(envGameId))) {
-        const parsedEnvId = Number(envGameId);
-
-        return parsedEnvId;
+        return Number(envGameId);
     }
 
     // Second priority: Extract from URL path (for multi-game deployments)
@@ -35,11 +33,8 @@ const getGameId = (urlPath?: string): number => {
 
 
         if (urlGameId !== null) {
-
             return urlGameId;
         }
-    } else {
-
     }
 
     // Default fallback
@@ -92,9 +87,6 @@ const PlinkoPage = (props: any) => {
             const intervalId = setInterval(() => {
                 if (checkRedirect() || redirectCheckCount >= maxChecks) {
                     clearInterval(intervalId);
-                    if (redirectCheckCount >= maxChecks) {
-
-                    }
                 }
             }, 1000);
         }
