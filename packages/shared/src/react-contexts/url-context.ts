@@ -5,6 +5,9 @@ import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
 import { URLParams } from "@shared/constants/url-params";
+import { BrowserDomUtils } from "../utils/browser-dom-utils";
+import { SSOResponse } from "sc-user-service-client/dist/auth";
+import { backToLobby } from "@shared/utils/game-utils";
 
 export type URLContextModel = {
     token?: string;
@@ -16,8 +19,8 @@ export type URLContextModel = {
 
 export function parseContextFromURL(): URLContextModel | undefined {
     // Fix: Handle HTML-encoded ampersands by decoding them first
-    const rawSearch = globalThis.location?.search || '';
-    const decodedSearch = rawSearch.replace(/&amp;/g, '&');
+    const rawSearch = globalThis.location?.search || "";
+    const decodedSearch = rawSearch.replace(/&amp;/g, "&");
 
     const params = new URLSearchParams(decodedSearch);
 
@@ -129,12 +132,27 @@ export function loadURLContext(): URLContextModel {
     return contextFromLocalStorage;
 }
 
+const redirectParentWindow = (decodedUrl: string): boolean => {
+    const parentUrl = StorageHelper.get<string>(localStorageKeys.parentUrl);
+
+    if (parentUrl) {
+        backToLobby();
+        return true;
+    }
+
+    return false;
+};
+
 export const initialURLContextData = {
     ...loadURLContext(),
     backToRedirectUrl: (redirectUrl: string) => {
         if (!isEmpty(redirectUrl)) {
             const decodedUrl = GameUtils.base64Decode(redirectUrl);
-            globalThis.location.href = decodedUrl;
+            const parentRedirected = redirectParentWindow(decodedUrl);
+
+            if (!parentRedirected) {
+               globalThis.location.href = decodedUrl;
+            }
         } else {
             updateURLContext({ backToLobby: true });
             broadcastBackToLobby();

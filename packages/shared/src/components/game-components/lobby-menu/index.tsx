@@ -1,11 +1,11 @@
 import { URLParams } from "@shared/constants/url-params";
 import { localStorageKeys, StorageHelper } from "@shared/helpers/storage-helper";
-import { BrowserDomUtils } from "@shared/utils/browser-dom-utils";
 import { SSOResponse } from "sc-user-service-client/dist/auth";
 import Image from "next/image";
 import { useSettingStore } from "@shared/stores/setting-store/setting-store";
 import { GameUtils } from "@shared/helpers/base-64-helper";
 import { StandaloneMode } from "@shared/utils/constant";
+import { backToLobby, getBaseSessionInfo } from "@shared/utils/game-utils";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const LobbyMenu = () => {
@@ -36,22 +36,8 @@ const LobbyMenu = () => {
     }
 
     const handleIframeNavigation = () => {
-        const params = getBaseSessionInfo();
-        BrowserDomUtils.postMessageToParent({ ...params, backLobby: true });
+        backToLobby();
     }
-
-    const getBaseSessionInfo = () => {
-        const sessionInfo = StorageHelper.get<SSOResponse & { ssoTime: Date }>(localStorageKeys.session);
-
-        return {
-            [URLParams.session]: sessionInfo?.ss,
-            [URLParams.time]: new Date(sessionInfo?.ssoTime).getTime(),
-            username: sessionInfo?.username,
-            [URLParams.isAuthenticated]: sessionInfo?.isAuthenticated,
-            [URLParams.memberName]: sessionInfo?.memberName,
-            language: sessionInfo?.language,
-        };
-    };
 
     const buildMainParams = () => {
         return {
