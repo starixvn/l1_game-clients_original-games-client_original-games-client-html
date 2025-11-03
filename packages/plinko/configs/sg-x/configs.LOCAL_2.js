@@ -1,19 +1,19 @@
 window.envConfig = {
     proxy: {
         ssl: true,
-        subDomain: "l2-proxy1",
+        subDomain: "l1-proxy2",
         path: "",
     },
     sentry: {
-        dsn: "https://2af29bdacdbf4d9ba2db6600b450541f@sentry.lumigame.com/28",
-        environment: "LOCAL2",
+        dsn: "https://289e71b8cf3992d7e184e21f63aed0b5@sentry-k8s.lumigame.com/29",
+        environment: "LOCAL",
     },
     enableSourceMap: true,
-    subGuideDomain: "l2-guide",
+    subGuideDomain: "l1-guide-2",
     enableMsgpackParser: false,
     system: "SG",
     appType: 1,
     enableDebugLogs: true,
     socketGatewayPath: "gateway",
-    useTolgeeStatic: true,
+    useTolgeeStatic: false,
 };

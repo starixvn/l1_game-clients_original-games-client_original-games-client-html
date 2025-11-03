@@ -5,7 +5,7 @@ window.envConfig = {
         path: "/sit",
     },
     sentry: {
-        dsn: "https://eb5f1c92d1da4cb6a059fa40c1276a9d@sentry.lumigame.com/48",
+        dsn: "https://fd677e044f1d2fcd9d20164a79bd0742@sentrysc.playonesit.com/28",
         environment: "SIT",
     },
     enableSourceMap: false,
