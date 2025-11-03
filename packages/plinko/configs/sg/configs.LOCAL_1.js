@@ -5,11 +5,11 @@ window.envConfig = {
         path: "",
     },
     sentry: {
-        dsn: "https://2af29bdacdbf4d9ba2db6600b450541f@sentry.lumigame.com/28",
+        dsn: "https://289e71b8cf3992d7e184e21f63aed0b5@sentry-k8s.lumigame.com/29",
         environment: "LOCAL1",
     },
     enableSourceMap: true,
-    subGuideDomain: "l1-guide",
+    subGuideDomain: "l1-guide-1",
     enableMsgpackParser: false,
     system: "SG",
     appType: 10,
@@ -17,3 +17,4 @@ window.envConfig = {
     socketGatewayPath: "gateway",
     useTolgeeStatic: true,
 };
+

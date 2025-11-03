@@ -1,19 +1,19 @@
 window.envConfig = {
     proxy: {
         ssl: true,
-        subDomain: "l1proxy",
+        subDomain: "sit-proxy",
         path: "/sit",
     },
     sentry: {
-        dsn: "https://19b3909c434341f0b13eb3a8529e5862@sentry.lumigame.com/9",
+        dsn: "https://b0c34c0de99d7652157835bfa3c07d56@sentrysc.playonesit.com/27",
         environment: "SIT",
     },
     enableSourceMap: false,
-    subGuideDomain: "l1guides",
+    subGuideDomain: "sit-guide",
     enableMsgpackParser: true,
     system: "SG",
     appType: 1,
     enableDebugLogs: true,
-    socketGatewayPath: "l1gwsit",
+    socketGatewayPath: "gateway",
     useTolgeeStatic: true,
 };

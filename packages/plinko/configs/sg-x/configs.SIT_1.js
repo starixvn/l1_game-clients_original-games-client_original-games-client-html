@@ -1,19 +1,19 @@
 window.envConfig = {
     proxy: {
         ssl: true,
-        subDomain: "uat-proxy",
-        path: "/uat",
+        subDomain: "l1proxy",
+        path: "/sit",
     },
     sentry: {
-        dsn: "https://19b3909c434341f0b13eb3a8529e5862@sentry.lumigame.com/9",
-        environment: "UAT",
+        dsn: "https://b0c34c0de99d7652157835bfa3c07d56@sentrysc.playonesit.com/27",
+        environment: "SIT",
     },
     enableSourceMap: false,
-    subGuideDomain: "uat-guide",
+    subGuideDomain: "l1guides",
     enableMsgpackParser: true,
     system: "SG",
     appType: 1,
     enableDebugLogs: true,
-    socketGatewayPath: "gateway",
+    socketGatewayPath: "l1gwsit",
     useTolgeeStatic: true,
 };
