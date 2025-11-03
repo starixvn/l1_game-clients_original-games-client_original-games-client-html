@@ -15,7 +15,13 @@ const MODAL_SIZE = {
     HEIGHT: 320,
 };
 
-const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number } }): ReactElement => {
+interface LiveStatsProps {
+    winAmount: number;
+    amount: number;
+    isWin: boolean;
+}
+
+const LiveStatsModal = ({ data }: { data?: LiveStatsProps }): ReactElement => {
     const { isShowLiveStats, toggleLiveStats, x, y } = usePopupStore(
         useShallow((state) => ({ isShowLiveStats: state.isShowLiveStats, toggleLiveStats: state.toggleLiveStats, x: state.x, y: state.y }))
     );
@@ -50,10 +56,10 @@ const LiveStatsModal = ({ data }: { data?: { winAmount?: number; amount?: number
         setTotalWinAmount((prev) => prev + winAmount);
 
         if (data) {
-            if (roundNetProfit < 0) {
-                setLostRound((prev) => prev + 1);
-            } else {
+            if (data.isWin) {
                 setWinRound((prev) => prev + 1);
+            } else {
+                setLostRound((prev) => prev + 1);
             }
         }
 
@@ -222,7 +228,7 @@ const LiveStats = ({
                         </div>
                     </div>
                 </div>
-                <div id="my-chart" className="w-full h-auto">
+                <div id="my-chart" className="w-full h-auto [&_svg]:outline-none [&_svg:focus]:outline-none [&_*]:outline-none">
                     <AreaChart width={228} height={150} data={netProfitHistory}>
                         <XAxis dataKey="x" hide />
                         <YAxis hide domain={[-100, 100]} />
