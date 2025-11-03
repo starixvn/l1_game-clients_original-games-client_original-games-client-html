@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { usePlinkoGameStore } from "../stores/plinko-game-store";
+import usePlinkoGameStore from "../stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
 import { useBalance, useClientSeedPF } from "@shared/react-hooks";
 import { useCallback } from "react";

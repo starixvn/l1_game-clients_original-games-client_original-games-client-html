@@ -9,11 +9,16 @@ jest.mock("zustand/shallow", () => ({
 
 // Mock the stores
 const mockSendSocketEvent = jest.fn();
+const mockSocket = {
+    connected: true,
+    emit: jest.fn(),
+};
 jest.mock("@shared/stores/game-store", () => ({
     useGameStore: jest.fn((selector) => {
         if (typeof selector === "function") {
             return selector({
                 sendSocketEvent: mockSendSocketEvent,
+                socket: mockSocket,
                 gameConfigs: {
                     minBet: 1,
                     maxBet: 1000,
@@ -26,6 +31,7 @@ jest.mock("@shared/stores/game-store", () => ({
         }
         return {
             sendSocketEvent: mockSendSocketEvent,
+            socket: mockSocket,
             gameConfigs: {
                 minBet: 1,
                 maxBet: 1000,
@@ -74,6 +80,7 @@ jest.mock("@shared/react-hooks", () => ({
         t: (key: string) => key,
     })),
     useHotKey: jest.fn(),
+    useBalance: jest.fn(() => 1000),
 }));
 
 jest.mock("@shared/react-contexts", () => ({
@@ -120,10 +127,26 @@ jest.mock("../bet-form", () => {
     };
 });
 
+// Mock usePlaceBet hook
+const mockHandlePlaceBet = jest.fn((amount: number) => true);
+jest.mock("@plinko/shared/hooks/use-place-bet", () => ({
+    usePlaceBet: jest.fn(() => ({
+        handlePlaceBet: mockHandlePlaceBet,
+    })),
+}));
+
+// Mock helpers
+jest.mock("@shared/helpers", () => ({
+    broadcastNotice: jest.fn(),
+    createNoticeFromErrorCode: jest.fn(() => ({})),
+}));
+
 describe("BetControl", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockSetBetAmount.mockClear();
+        mockHandlePlaceBet.mockClear();
+        mockHandlePlaceBet.mockReturnValue(true);
     });
 
     describe("Rendering", () => {
@@ -225,12 +248,7 @@ describe("BetControl", () => {
             fireEvent.click(screen.getByRole("button", { name: "glossary_bet" }));
 
             // Assert
-            expect(mockSendSocketEvent).toHaveBeenCalledWith("bet", {
-                amount: 100,
-                gameMode: "normal",
-                numberOfRows: 16,
-                clientSeed: "test-seed-123",
-            });
+            expect(mockHandlePlaceBet).toHaveBeenCalledWith(100);
         });
 
         it("should set processing state when bet is placed", () => {
@@ -259,12 +277,7 @@ describe("BetControl", () => {
             // Assert
             expect(screen.getByRole("button", { name: "stop_auto_bet" })).toBeInTheDocument();
             expect(screen.getByTestId("bet-form")).toHaveAttribute("data-auto-bet", "true");
-            expect(mockSendSocketEvent).toHaveBeenCalledWith("bet", {
-                amount: 100,
-                gameMode: "normal",
-                numberOfRows: 16,
-                clientSeed: "test-seed-123",
-            });
+            expect(mockHandlePlaceBet).toHaveBeenCalledWith(100);
         });
 
         it("should stop auto bet when stop auto bet button is clicked", () => {
@@ -416,12 +429,7 @@ describe("BetControl", () => {
             }
 
             // Assert
-            expect(mockSendSocketEvent).toHaveBeenCalledWith("bet", {
-                amount: 100,
-                gameMode: "normal",
-                numberOfRows: 16,
-                clientSeed: "test-seed-123",
-            });
+            expect(mockHandlePlaceBet).toHaveBeenCalledWith(100);
         });
 
         it("should double bet amount when D key is pressed (via onDKey callback)", () => {
@@ -477,7 +485,7 @@ describe("BetControl", () => {
             }
 
             // Assert - Should only be called once (from button click)
-            expect(mockSendSocketEvent).toHaveBeenCalledTimes(1);
+            expect(mockHandlePlaceBet).toHaveBeenCalledTimes(1);
         });
 
         it("should not trigger bet when space key is pressed in auto bet mode", () => {
@@ -498,7 +506,7 @@ describe("BetControl", () => {
             }
 
             // Assert - Should only be called once (from auto bet start)
-            expect(mockSendSocketEvent).toHaveBeenCalledTimes(1);
+            expect(mockHandlePlaceBet).toHaveBeenCalledTimes(1);
         });
     });
 });
