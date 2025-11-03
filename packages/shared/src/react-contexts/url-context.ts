@@ -5,8 +5,6 @@ import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
 import { URLParams } from "@shared/constants/url-params";
-import { BrowserDomUtils } from "../utils/browser-dom-utils";
-import { SSOResponse } from "sc-user-service-client/dist/auth";
 import { backToLobby } from "@shared/utils/game-utils";
 
 export type URLContextModel = {
@@ -36,6 +34,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const param = params.get("params");
     const lobbyUrl = params.get("lurl");
     const returnUrl = params.get("rurl");
+    const parentUrl = params.get("purl");
     const isStandalone = params.get("isStandalone");
     const currencyGroup = params.get("cg");
     const op = params.get("op");
@@ -67,6 +66,9 @@ export function parseContextFromURL(): URLContextModel | undefined {
     }
     if (returnUrl) {
         StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
+    }
+    if (parentUrl) {
+        StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
     }
 
     if (param) {
