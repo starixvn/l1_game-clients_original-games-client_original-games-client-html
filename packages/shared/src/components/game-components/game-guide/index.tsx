@@ -10,6 +10,7 @@ import { LoadingSpinner } from "../game-loading/loading-spinner";
 import ModalContainer from "../modal-container";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
 import { themeGuide } from "./constants";
+import { useGameStore } from "@shared/stores";
 
 const GameGuideModal: FC = () => {
     const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);
@@ -30,7 +31,8 @@ const GameGuideModal: FC = () => {
 };
 
 const GameGuide: FC = () => {
-    const { userStakeLevel, gameConfigs } = useGameStateContext();
+    const { gameConfigs } = useGameStateContext();
+    const userStakeLevel = useGameStore((state) => state.userStakeLevel);
     const { currentTheme } = useAppTheme();
     const language = tolgee.getLanguage() ?? "en";
     const wrapperRef = useRef<HTMLIFrameElement>();
@@ -39,7 +41,7 @@ const GameGuide: FC = () => {
     const { fractionalOddsFormat } = usePlayerContext();
     const minMaxBetParams = `&minBet=${userStakeLevel?.minBet}&maxBet=${userStakeLevel?.maxBet}`;
     const guideUrl = buildGameGuideUrl();
-    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}`;
+    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}&f=sc&c=0`;
 
     const hideSpinner = () => {
         setIsLoading(false);
