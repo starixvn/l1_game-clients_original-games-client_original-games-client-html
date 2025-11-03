@@ -1,20 +1,14 @@
 import dynamic from "next/dynamic";
-import { useGameStateContext } from "@shared/react-contexts/game-state-context/game-state-context";
 import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
-import { RoundState } from "../../game-base/type";
 import Styles from "./menu-icon.module.scss";
 const Tooltip = dynamic(() => import("../tooltip"), { ssr: false });
 type Props = { name: string; iconName?: string; onClick?: (e?: any) => void; isActive?: boolean };
 
 export const MenuIcon = ({ name, iconName, onClick, isActive = false }: Props) => {
-    const { roundState } = useGameStateContext();
     const clickSound = useClickSound();
     const { t } = useCommonTranslate();
 
     const handleClick = (e?: any) => {
-        if (roundState === RoundState.None) {
-            return;
-        }
         clickSound();
         onClick?.(e);
     };
@@ -23,7 +17,7 @@ export const MenuIcon = ({ name, iconName, onClick, isActive = false }: Props) =
         <div className="relative group">
             <Tooltip message={t(`tooltip_${name}`)}>
                 <div className="cursor-pointer w-8 h-8 flex items-center justify-center" onClick={handleClick}>
-                    <i className={`icon-${iconName ? iconName : name} ${Styles.menuIcon} ${isActive ? Styles.active : ""}`}></i>
+                    <i className={`icon-${iconName ?? name} ${Styles.menuIcon} ${isActive ? Styles.active : ""}`}></i>
                 </div>
             </Tooltip>
         </div>
