@@ -2,31 +2,29 @@ import React, { memo, useCallback, useEffect, useState, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
-import { useClientSeedPF, useCommonTranslate, useHotKey } from "@shared/react-hooks";
+import { useCommonTranslate, useHotKey } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
+import { usePlaceBet } from "@plinko/shared/hooks/use-place-bet";
 import TabNavigation from "./tab-navigation";
 import BetForm from "./bet-form";
 
 const BetControl = () => {
-    const { sendSocketEvent, gameConfigs, userStakeLevel } = useGameStore(
+    const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
-            sendSocketEvent: state.sendSocketEvent,
             gameConfigs: state.gameConfigs,
             userStakeLevel: state.userStakeLevel,
         }))
     );
-    const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, numberOfDroppingBall, setBetAmount } = usePlinkoGameStore(
+    const { betAmount, numberOfDroppingBall, setBetAmount } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
-            gameMode: state.gameMode,
-            numberOfRows: state.numberOfRows,
             numberOfDroppingBall: state.numberOfDroppingBall,
             setBetAmount: state.actions.setBetAmount,
         }))
     );
     const { gameMessageHandler } = useGameContext();
+    const { handlePlaceBet } = usePlaceBet();
 
     const [tabIndex, setTabIndex] = useState(0);
     const [isAutoBet, setIsAutoBet] = useState(false);
@@ -43,9 +41,11 @@ const BetControl = () => {
     }, [gameConfigs?.minBet, gameConfigs?.maxBet, userStakeLevel]);
 
     const handleBetClick = useCallback(() => {
-        sendSocketEvent("bet", { amount: betAmount, gameMode, numberOfRows, clientSeed });
-        setIsProcessing(true);
-    }, [sendSocketEvent, betAmount, gameMode, numberOfRows, clientSeed]);
+        const success = handlePlaceBet(betAmount);
+        if (success) {
+            setIsProcessing(true);
+        }
+    }, [handlePlaceBet, betAmount]);
 
     useEffect(() => {
         const endBetHandlerId = gameMessageHandler?.register(messageEventType.END_BET, ({ endBet }) => {

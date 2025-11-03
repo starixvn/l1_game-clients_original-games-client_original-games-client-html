@@ -1,11 +1,12 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
-import { ResourceTypes, useClientSeedPF, useGameStore } from "@shared";
+import { ResourceTypes } from "@shared";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { PercentageControl, StopOnControl, NumberOfBetsControl } from "../form-components";
 import { useTranslate } from "@tolgee/react";
 import { StorageHelper } from "@shared/helpers";
 import { PLINKO_STORAGE_KEYS } from "@plinko/constants";
+import { usePlaceBet } from "@plinko/shared/hooks/use-place-bet";
 
 const AutoBetGroup = ({
     isDisabled,
@@ -36,25 +37,14 @@ const AutoBetGroup = ({
     const [stopOnLoss, setStopOnLoss] = useState(0);
     const [totalNetProfit, setTotalNetProfit] = useState(0);
     const { t } = useTranslate(ResourceTypes.COMMON);
-    const socket = useGameStore((state) => state.socket);
-    const { clientSeed } = useClientSeedPF();
-    const { betAmount, gameMode, numberOfRows, finish } = usePlinkoGameStore(
+    const { betAmount, finish } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
-            gameMode: state.gameMode,
-            numberOfRows: state.numberOfRows,
             finish: state.finish,
         }))
     );
+    const { handlePlaceBet } = usePlaceBet();
     const [initialBetAmount, setInitialBetAmount] = useState(0);
-    const handleBetClick = useCallback(
-        (amount: number) => {
-            if (socket?.connected) {
-                socket.emit("bet", { amount, gameMode, numberOfRows, clientSeed });
-            }
-        },
-        [socket, gameMode, numberOfRows, clientSeed]
-    );
 
     const isReachStopCondition = (profit: number) => {
         return (stopOnWin > 0 && profit >= stopOnWin) || (stopOnLoss > 0 && -profit >= stopOnLoss);
@@ -120,7 +110,12 @@ const AutoBetGroup = ({
         setNumberOfBets(newNumberOfBets);
         if (newNumberOfBets > 0) {
             const ms = newBetAmount === 0 ? Math.floor(Math.random() * 101) + 200 : 0; // NOSONAR
-            setTimeout(() => handleBetClick(newBetAmount), ms);
+            setTimeout(() => {
+                const success = handlePlaceBet(newBetAmount);
+                if (!success) {
+                    setIsAutoBet(false);
+                }
+            }, ms);
         } else {
             const oldValue = StorageHelper.get<number>(PLINKO_STORAGE_KEYS.NUMBER_OF_BETS);
             if (oldValue === 0) {
