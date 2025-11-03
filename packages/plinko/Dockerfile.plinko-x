@@ -40,6 +40,9 @@ COPY packages/plinko/custom-server.js packages/plinko/custom-server.js
 COPY packages/plinko/configs.json packages/plinko/configs.json
 COPY packages/plinko/game-settings.json packages/plinko/game-settings.json
 
+# Copy shared fonts from root directory
+COPY packages/shared/public/static/fonts packages/plinko/public/static/fonts
+
 # Copy source code
 COPY packages/plinko/src packages/plinko/src
 COPY packages/plinko/public packages/plinko/public
