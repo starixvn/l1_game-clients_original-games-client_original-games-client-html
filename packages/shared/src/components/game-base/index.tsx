@@ -666,6 +666,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         return <></>;
     }
 
+    renderHeader() {
+        return <Header />;
+    }
+
     getRenderTemplate() {
         return (
             <div className={`game-${this.props.id}`}>
@@ -707,7 +711,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
         return (
             <>
-                <Header />
+                {this.renderHeader()}
                 <GameContainer>
                     {!isLoaded && this.preloadResource()}
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}

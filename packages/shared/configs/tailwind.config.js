@@ -4,6 +4,13 @@ module.exports = {
     darkMode: "class",
     important: true,
     theme: {
+        screens: {
+            sm: "635px",
+            md: "768px",
+            lg: "1024px",
+            xl: "1280px",
+            "2xl": "1536px",
+        },
         extend: {
             colors: {
                 "primary-bg": "var(--primary-background-color)",

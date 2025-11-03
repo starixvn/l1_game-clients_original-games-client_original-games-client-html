@@ -225,6 +225,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             </div>
         );
     }
+
+    renderHeader() {
+        return <></>;
+    }
 }
 
 const PlinkoWrapper = (props: any) => {

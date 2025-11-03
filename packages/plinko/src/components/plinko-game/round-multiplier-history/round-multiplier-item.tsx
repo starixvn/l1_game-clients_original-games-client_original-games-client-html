@@ -12,7 +12,7 @@ const RoundMultiplierItem: React.FC<RoundMultiplierItemProps> = ({ round, isWin,
     return (
         <div
             className={cn(
-                `flex items-center justify-center rounded-[6px] border-none whitespace-nowrap min-w-10 text-xs font-semibold h-5 sm:h-[25px] sm:w-[60px] md:text-sm md:min-w-auto md:px-1 md:py-0.5`,
+                `flex items-center justify-center rounded-[6px] border-none whitespace-nowrap min-w-10 text-xs font-semibold h-5 sm:h-[25px] sm:w-[60px] sm:text-sm sm:min-w-auto sm:px-1 sm:py-0.5`,
                 isWin ? "text-black" : "text-[#BFBCBC]",
                 className
             )}
