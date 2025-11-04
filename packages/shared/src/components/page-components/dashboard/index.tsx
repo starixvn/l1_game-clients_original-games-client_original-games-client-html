@@ -280,7 +280,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
-                    <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : ""}`}>
+                    <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : styles["mobile-dashboard"]}`}>
                         <SoundSettings />
 
                         {renderOfferGameContainer()}

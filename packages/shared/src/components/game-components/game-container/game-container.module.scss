@@ -26,6 +26,7 @@
 @media (-webkit-min-device-pixel-ratio: 1.5) {
     .game-container {
         &.desktop {
+            scale: var(--scale-factor, 1);
             transform-origin: top;
         }
     }

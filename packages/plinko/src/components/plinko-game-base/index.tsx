@@ -224,6 +224,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderHeader() {
+        console.log("isMobileOnly", isMobileOnly);
         if (isMobileOnly) {
             return <Header />;
         }
