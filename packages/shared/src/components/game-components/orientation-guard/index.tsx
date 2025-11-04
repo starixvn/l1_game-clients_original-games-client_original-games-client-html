@@ -19,6 +19,7 @@ export const OrientationGuard = ({ children }: { children: React.ReactNode }) =>
         dashboard.style["-webkit-transform"] = "rotate(-90deg)";
         //dashboard.classList.add("rotate-90");
       }
+      console.log("isLandscape", isLandscape);
       setIsLandscapeOnMobile(isMobile && isLandscape);
     };
     check();
