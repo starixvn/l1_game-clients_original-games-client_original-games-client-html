@@ -66,7 +66,7 @@ const LobbyMenu = () => {
     }
 
     return (
-        <button className="fixed top-[90px] right-[20px] z-[9999]" onClick={handleBackToLobby}>
+        <button className="fixed top-[90px] right-[300px] z-[9999]" onClick={handleBackToLobby}>
             <Image src={`${basePath}/static/images/icons/home-icon.webp`} alt="Back to Lobby" width={60} height={60} />
         </button>
     );

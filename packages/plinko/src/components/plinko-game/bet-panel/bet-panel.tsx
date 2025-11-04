@@ -45,6 +45,7 @@ const BetControl = () => {
         if (success) {
             setIsProcessing(true);
         }
+        return success;
     }, [handlePlaceBet, betAmount]);
 
     useEffect(() => {
@@ -64,7 +65,11 @@ const BetControl = () => {
             setIsAutoBet(false);
         } else {
             setIsAutoBet(true);
-            handleBetClick();
+            const success = handleBetClick();
+            
+            if (!success) {
+                setIsAutoBet(false);
+            }
         }
     }, [isAutoBet, handleBetClick]);
 
