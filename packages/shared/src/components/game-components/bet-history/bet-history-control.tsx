@@ -54,7 +54,7 @@ export const BetHistoryControl: React.FC<BetHistoryControlProps> = ({ tabContent
                 role="tablist"
                 aria-orientation="horizontal"
                 className={cn(
-                    "bg-primary max-w-[611px] rounded-[12px] border-stroke flex items-center justify-center w-full overflow-hidden  h-12 top-0 z-[100]  border-input sticky mb-3"
+                    "bg-primary max-w-[611px] rounded-[12px] border-stroke flex items-center justify-center w-full overflow-hidden  h-12 top-0 z-[100]  border-input relative mb-3"
                 )}
             >
                 {tabs.map((tab, index) => (

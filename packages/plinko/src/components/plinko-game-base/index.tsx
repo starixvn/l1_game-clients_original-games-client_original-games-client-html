@@ -26,9 +26,8 @@ import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import UserInfo from "@shared/components/page-components/header/user-info";
 import { isMobileOnly } from "react-device-detect";
 import { ResourceTypes } from "@shared/resources";
-import { localStorageKeys, StorageHelper } from "@shared/helpers/storage-helper";
 import { PLINKO_GAME_IDS } from "@plinko/constants";
-import { getAppSettings, getGameSettings } from "@shared/app-settings";
+import { getAppSettings } from "@shared/app-settings";
 
 // Dynamic imports side components
 const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
@@ -202,7 +201,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderBackToLobbyButton() {
         const appType = getAppSettings().appType;
 
-        if (this.props.id === PLINKO_GAME_IDS.PLINKO_X && appType == 1) {
+        if (this.props.id === PLINKO_GAME_IDS.PLINKO_X && appType === 1) {
             return <LobbyMenu />;
         }
 
