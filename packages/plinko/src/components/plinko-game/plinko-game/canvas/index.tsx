@@ -52,47 +52,62 @@ const PlinkoCanvas = () => {
     const playPlinkoBallHitWinSoundRef = useRef(playPlinkoBallHitWinSound);
     playPlinkoBallHitWinSoundRef.current = playPlinkoBallHitWinSound;
 
+    // Handle peg collision
+    const handlePegCollision = useCallback((ball: Body, peg: Body) => {
+        createPegEffect(peg);
+        const ballBody = ball as BallBody;
+        const pegBody = peg as PegBody;
+
+        // Check if this is the first collision with this peg row
+        const isFirstCollision = !ballBody.collidedRowIndexes?.includes(pegBody.rowIndex);
+
+        handleRoad(ball, peg);
+
+        // Trigger multiplier animation for lightning pegs only on first collision
+        if (isFirstCollision && pegBody.lightningMultiplier && pegBody.lightningMultiplier > 1) {
+            triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.lightningMultiplier);
+        }
+    }, [createPegEffect, handleRoad, triggerMultiplierAnimation]);
+
+    // Handle slot collision
+    const handleSlotCollision = useCallback((ball: Body) => {
+        const ballBody = ball as BallBody;
+
+        setFinishedBall(ballBody.finish);
+        playPlinkoBallHitWinSoundRef.current();
+        createExplosionEffect(ball);
+
+        // remove ball
+        if (engineRef.current) {
+            Composite.remove(engineRef.current.world, [ball]);
+        }
+        ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
+    }, [setFinishedBall, createExplosionEffect]);
+
     // Collision handler
     const handleCollision = useCallback(
         (event: IEventCollision<Engine>) => {
-            const pairs = event.pairs;
             if (!engineRef.current) {
                 return;
             }
-            for (const pair of pairs) {
+
+            for (const pair of event.pairs) {
                 const { bodyA, bodyB } = pair;
                 const ball = bodyA.label === PLINKO_OBJECTS.BALL ? bodyA : bodyB;
                 const object = bodyA.label === PLINKO_OBJECTS.BALL ? bodyB : bodyA;
+
                 if (!ball) {
                     continue;
                 }
-                // collision with peg
+
                 if (object?.label === PLINKO_OBJECTS.PEG) {
-                    createPegEffect(object);
-                    handleRoad(ball, object);
-
-                    // Trigger multiplier animation for lightning pegs
-                    const pegBody = object as PegBody;
-                    if (pegBody.lightningMultiplier && pegBody.lightningMultiplier > 1) {
-                        triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.lightningMultiplier);
-                    }
-                }
-                // collision with slot
-                if (object?.label === PLINKO_OBJECTS.SLOT) {
-                    const ballBody = ball as BallBody;
-
-                    setFinishedBall(ballBody.finish);
-                    playPlinkoBallHitWinSoundRef.current();
-
-                    createExplosionEffect(ball);
-
-                    // remove ball
-                    Composite.remove(engineRef.current.world, [ball]);
-                    ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
+                    handlePegCollision(ball, object);
+                } else if (object?.label === PLINKO_OBJECTS.SLOT) {
+                    handleSlotCollision(ball);
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect, triggerMultiplierAnimation]
+        [handlePegCollision, handleSlotCollision]
     );
 
     // Draw scene object

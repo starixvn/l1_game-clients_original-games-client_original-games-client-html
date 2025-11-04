@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
+import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
 import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning-key-utils";
 import { GET_LIGHTNING_CONFIG_EVENT } from "@plinko/shared/hooks/use-get-lightning-board";
 
 const LightningKey: React.FC = () => {
     const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(useShallow((state) => ({ isLightningMode: state.isLightningMode, lightningConfig: state.lightningConfig })));
+    const { numberOfDroppingBall } = usePlinkoGameStore(useShallow((state) => ({ numberOfDroppingBall: state.numberOfDroppingBall })));
     const { sendSocketEvent } = useGameStore(useShallow((state) => ({ sendSocketEvent: state.sendSocketEvent })));
 
     const [isOpen, setIsOpen] = useState(false);
@@ -29,8 +31,10 @@ const LightningKey: React.FC = () => {
         setLightningKeyValue(randomString);
     };
 
+    const isChangeDisabled = numberOfDroppingBall > 0 || !lightningKeyValue.trim();
+
     const handleChangeLightningKey = () => {
-        if (lightningKeyValue.trim()) {
+        if (lightningKeyValue.trim() && numberOfDroppingBall === 0) {
             sendSocketEvent(GET_LIGHTNING_CONFIG_EVENT, { lightningKey: lightningKeyValue });
         }
     };
@@ -65,7 +69,11 @@ const LightningKey: React.FC = () => {
                             <i className="icon-reset text-xl"></i>
                         </button>
                     </div>
-                    <button className="flex items-center justify-center h-8 bg-[#2A4770] text-white text-sm px-3 py-2 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200" onClick={handleChangeLightningKey}>
+                    <button
+                        className="flex items-center justify-center h-8 bg-[#2A4770] text-white text-sm px-3 py-2 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
+                        onClick={handleChangeLightningKey}
+                        disabled={isChangeDisabled}
+                    >
                         Change
                     </button>
                 </div>

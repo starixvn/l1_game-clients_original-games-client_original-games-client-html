@@ -16,6 +16,12 @@ interface FlyingMultiplier {
     startTime: number;
 }
 
+const generateSecureId = (): string => {
+    const array = new Uint32Array(2);
+    crypto.getRandomValues(array);
+    return `multiplier-${Date.now()}-${array[0].toString(16)}${array[1].toString(16)}`;
+};
+
 export const usePeg = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
 
@@ -30,7 +36,7 @@ export const usePeg = () => {
 
     const triggerMultiplierAnimation = useCallback((x: number, y: number, multiplier: number) => {
         const newAnimation: FlyingMultiplier = {
-            id: `multiplier-${Date.now()}-${Math.random()}`,
+            id: generateSecureId(),
             x,
             y,
             multiplier,
@@ -84,7 +90,7 @@ export const usePeg = () => {
 
                 if (pegMultipliers) {
                     const lightningPeg = pegMultipliers.find(
-                        (peg) => peg.row === row - 1 && peg.column === col - 1
+                        (peg) => peg.row === row - 1 && peg.column === col - 2
                     );
                     if (lightningPeg) {
                         body.lightningMultiplier = lightningPeg.multiplier;
@@ -127,20 +133,15 @@ export const usePeg = () => {
         context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
         context.fill();
 
-        // Draw multiplier text on top of the peg (if lightning peg)
         if (isLightningPeg) {
-            const badgeY = -pegRadius - 12; // Position above the peg
+            const badgeY = -pegRadius - 12; 
 
             // Draw multiplier text
             context.fillStyle = "#FFF600";
-            context.lineWidth = 1;
-            context.font = "bold 30px Arial";
+            context.font = "bold 30px Inter, sans-serif";
             context.textAlign = "center";
             context.textBaseline = "middle";
 
-            // Text stroke (outline)
-            context.strokeText(`${body.lightningMultiplier}x`, 0, badgeY);
-            // Text fill
             context.fillText(`${body.lightningMultiplier}x`, 0, badgeY);
         }
     }, []);
@@ -159,7 +160,7 @@ export const usePeg = () => {
             context.fillStyle = `rgba(255, 246, 0, ${opacity})`;
             context.strokeStyle = `rgba(255, 165, 0, ${opacity})`;
             context.lineWidth = 2;
-            context.font = "bold 24px Arial";
+            context.font = "bold 24px Inter, sans-serif";
             context.textAlign = "center";
             context.textBaseline = "middle";
 

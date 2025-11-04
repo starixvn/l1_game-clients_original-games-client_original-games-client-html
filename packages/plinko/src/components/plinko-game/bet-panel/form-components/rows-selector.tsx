@@ -5,6 +5,7 @@ import { NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
 import { useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
+import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 
 const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { numberOfRows, setNumberOfRows } = usePlinkoGameStore(
@@ -24,6 +25,17 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
             setNumberOfRows(newValue);
         }
     }, [numberOfRows, setNumberOfRows]);
+
+    const { isLightningMode } = usePlinkoLightningModeGameStore(
+        useShallow((state) => ({
+            isLightningMode: state.isLightningMode,
+            setIsLightningMode: state.actions.setIsLightningMode,
+        }))
+    );
+
+    if (isLightningMode) {
+        return null;
+    }
 
     return (
         <div className={`div-setting-row`}>

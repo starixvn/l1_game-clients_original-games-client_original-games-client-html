@@ -1,10 +1,15 @@
 export const generateRandomLightningKey = (maxLength = 8): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const randomStringLength = Math.floor(Math.random() * maxLength) + 1;
+    const randomStringLength = Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] / (2 ** 32) * maxLength) + 1;
+
+    const randomValues = new Uint32Array(randomStringLength);
+    crypto.getRandomValues(randomValues);
+
     let randomString = '';
     for (let i = 0; i < randomStringLength; i++) {
-        randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+        randomString += characters.charAt(randomValues[i] % characters.length);
     }
+
     return randomString;
 };
 

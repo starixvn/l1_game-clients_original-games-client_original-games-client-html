@@ -129,9 +129,9 @@ const Slots = () => {
 
     const getFontSize = () => {
         if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
-            return `8px !important`;
+            return `text-[11px]`;
         }
-        return  `12px !important`;
+        return  `text-[12px]`;
     }
 
     const getBackgroundColor = (item: number, index: number) => { 
