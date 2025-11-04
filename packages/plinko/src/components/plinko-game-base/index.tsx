@@ -49,7 +49,7 @@ const WinningAmountEffect = dynamic(() => import("../plinko-game/winning-amount-
 const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu/icons/hot-key-icon"), { ssr: false });
 const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot-key"), { ssr: false });
 const LobbyMenu = dynamic(() => import("@shared/components/game-components/lobby-menu"), { ssr: false });
-
+const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
@@ -70,7 +70,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameMessageHandler: gameMessageHandler,
                 durations: props.durations,
                 roundStateHandler,
-                runGame: () => { }, // Will be set by GameBase
+                runGame: () => {}, // Will be set by GameBase
                 gameId: props.id,
                 gameStateContextModel: () => props.gameStateContextModel,
                 gameRoundDataHandler: gameRoundDataHandler,
@@ -107,7 +107,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 <div>
                     <RoundMultiplierHistory />
                     <PlinkoGame />
-                    <WinningAmountEffect />
                     <div> {this.renderNotice()}</div>
                 </div>
             </div>
@@ -218,15 +217,16 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         }
         return (
             <div className="flex items-center gap-2">
-                <span className="text-sm md:text-base font-semibold">
-                    {this.props.translate(`${ResourceTypes.COMMON}.balance`)}:
-                </span>
+                <span className="text-sm md:text-base font-semibold">{this.props.translate(`${ResourceTypes.COMMON}.balance`)}:</span>
                 <UserInfo customizeClass="text-yellow-400" />
             </div>
         );
     }
 
     renderHeader() {
+        if (isMobileOnly) {
+            return <Header />;
+        }
         return <></>;
     }
 }

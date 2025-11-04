@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { initializeGameConfig } from "./game-config";
 import { updateGameConfig } from "./games/games";
 import PlinkoGameBase from "./components/plinko-game-base";
-
+import { OrientationGuard } from "@shared/components/game-components/orientation-guard";
 // Helper function to extract game ID from URL path
 const extractGameIdFromPath = (path: string): number => {
     const pathGameIdMatch = path.match(/\/site-(\d+)/);
@@ -59,7 +59,7 @@ const PlinkoPage = (props: any) => {
         };
     }, [router.asPath]);
 
-    return <PlinkoGameBase {...props} />;
+    return <OrientationGuard> <PlinkoGameBase {...props} /></OrientationGuard>;
 };
 
 // Server-side initialization - Next.js will call this during SSR
