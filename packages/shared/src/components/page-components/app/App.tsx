@@ -39,7 +39,7 @@ interface AppTitleProps {
 export const AppTitle = ({ gameConfig }: AppTitleProps) => {
     return (
         <Head>
-            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
             <title>Original Games</title>
             <link
                 rel="shortcut icon"
