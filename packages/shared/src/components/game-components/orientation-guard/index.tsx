@@ -2,27 +2,28 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { buildVersion } from "@shared/constants";
 import { useCommonTranslate } from "@shared/react-hooks";
+import { isMobile } from "react-device-detect";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const OrientationGuard = ({ children }: { children: React.ReactNode }) => {
-    const [isLandscape, setIsLandscape] = useState(false);
-    const { t } = useCommonTranslate();
+  const [isLandscapeOnMobile, setIsLandscapeOnMobile] = useState(false);
+  const { t } = useCommonTranslate();
+
+  useEffect(() => {
+    const check = () => {
+      const isLandscape = globalThis.window.matchMedia("(orientation: landscape)").matches;
+      setIsLandscapeOnMobile(isMobile && isLandscape);
+    };
+    check();
+    globalThis.window.addEventListener("resize", check);
+    globalThis.window.addEventListener("orientationchange", check);
+    return () => {
+      globalThis.window.removeEventListener("resize", check);
+      globalThis.window.removeEventListener("orientationchange", check);
+    };
+  }, []);
   
-    useEffect(() => {
-      const check = () => {
-        setIsLandscape(globalThis.window.matchMedia("(orientation: landscape)").matches);
-      };
-  
-      check();
-      globalThis.window.addEventListener("resize", check);
-      globalThis.window.addEventListener("orientationchange", check);
-      return () => {
-        globalThis.window.removeEventListener("resize", check);
-        globalThis.window.removeEventListener("orientationchange", check);
-      };
-    }, []);
-  
-    if (isLandscape) {
+    if (isLandscapeOnMobile) {
       return (
         <div
           className="fixed inset-0 flex flex-col items-center justify-center z-9999 text-center"
