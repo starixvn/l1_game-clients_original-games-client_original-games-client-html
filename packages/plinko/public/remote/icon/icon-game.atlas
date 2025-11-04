@@ -1,69 +1,69 @@
 
 icon-game.png
-size: 1024,256
+size: 410,205
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+1000
+  rotate: false
+  xy: 315, 111
+  size: 78, 37
+  orig: 78, 37
+  offset: 0, 0
+  index: -1
+800
+  rotate: false
+  xy: 315, 77
+  size: 56, 32
+  orig: 56, 32
+  offset: 0, 0
+  index: -1
+900
+  rotate: false
+  xy: 315, 43
+  size: 56, 32
+  orig: 56, 32
+  offset: 0, 0
+  index: -1
+anh sang 3D
+  rotate: false
+  xy: 206, 150
+  size: 195, 53
+  orig: 195, 75
+  offset: 0, 22
+  index: -1
+ball
+  rotate: false
+  xy: 206, 26
+  size: 107, 122
+  orig: 113, 127
+  offset: 3, 3
+  index: -1
+ball 2
+  rotate: false
+  xy: 373, 89
+  size: 20, 20
+  orig: 22, 21
+  offset: 1, 0
+  index: -1
 bg
-  rotate: false
-  xy: 2, 51
-  size: 202, 202
-  orig: 202, 202
-  offset: 0, 0
-  index: -1
-blink
-  rotate: false
-  xy: 206, 58
-  size: 137, 195
-  orig: 137, 195
-  offset: 0, 0
-  index: -1
-coin-1
-  rotate: false
-  xy: 63, 15
-  size: 33, 34
-  orig: 33, 34
-  offset: 0, 0
-  index: -1
-coin-2
   rotate: true
   xy: 2, 2
-  size: 47, 59
-  orig: 47, 59
+  size: 201, 202
+  orig: 201, 202
   offset: 0, 0
   index: -1
-layer-3d
-  rotate: true
-  xy: 345, 54
-  size: 199, 75
-  orig: 199, 75
-  offset: 0, 0
-  index: -1
-light
-  rotate: true
-  xy: 522, 47
-  size: 95, 94
-  orig: 95, 94
-  offset: 0, 0
-  index: -1
-x1
-  rotate: true
-  xy: 422, 144
-  size: 109, 104
-  orig: 109, 104
-  offset: 0, 0
-  index: -1
-x2
+hover
   rotate: false
-  xy: 422, 43
-  size: 98, 99
-  orig: 98, 99
-  offset: 0, 0
+  xy: 373, 71
+  size: 16, 16
+  orig: 18, 18
+  offset: 1, 1
   index: -1
-x3
+multifiler-slot-1
   rotate: false
-  xy: 528, 170
-  size: 83, 83
-  orig: 83, 83
+  xy: 206, 4
+  size: 202, 20
+  orig: 202, 20
   offset: 0, 0
   index: -1
