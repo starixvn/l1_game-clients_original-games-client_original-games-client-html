@@ -12,6 +12,13 @@ export const OrientationGuard = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     const check = () => {
       const isLandscape = globalThis.window.matchMedia("(orientation: landscape)").matches;
+      const dashboard = document.getElementById("dashboard");
+
+      if (dashboard && isMobile) {
+        dashboard.style.transform = "rotate(90deg)";
+        dashboard.style["-webkit-transform"] = "rotate(90deg)";
+        dashboard.classList.add("rotate90");
+      }
       setIsLandscapeOnMobile(isMobile && isLandscape);
     };
     check();
