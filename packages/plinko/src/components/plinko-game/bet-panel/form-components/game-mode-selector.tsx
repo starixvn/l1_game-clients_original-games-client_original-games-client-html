@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-import { GAME_MODES } from "@plinko/constants";
+import { GAME_MODES, NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
 import { useClickSound, useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
@@ -36,10 +36,11 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const { gameMode, setGameMode } = usePlinkoGameStore(
+    const { gameMode, setGameMode, setNumberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             gameMode: state.gameMode,
             setGameMode: state.actions.setGameMode,
+            setNumberOfRows: state.actions.setNumberOfRows,
         }))
     );
 
@@ -47,6 +48,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         clickSound();
         if (option.isLightning) {
             setIsLightningMode(true);
+            setNumberOfRows(NUMBER_OF_ROWS.MAX);
             getLightningConfig();
         } else if (option.value !== undefined) {
             setIsLightningMode(false);

@@ -23,7 +23,11 @@ const generateSecureId = (): string => {
 };
 
 export const usePeg = () => {
-    const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
+    const {numberOfRows} = usePlinkoGameStore(
+        useShallow((state) => ({
+            numberOfRows: state.numberOfRows,
+        }))
+    );
 
     const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(
         useShallow((state) => ({
