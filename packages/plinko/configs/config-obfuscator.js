@@ -41,6 +41,14 @@ const doObfuscationDirectory = async (dirName, outputDir) => {
     }
 };
 
+const getConfigDirectories = async (baseDir) => {
+    const entries = await fsPromise.readdir(baseDir, { withFileTypes: true });
+    const directories = entries
+        .filter((entry) => entry.isDirectory() && entry.name !== "obfuscations")
+        .map((entry) => `${baseDir}${entry.name}/`);
+    return directories;
+};
+
 const runObfuscationProcess = async (dirNames) => {
     for (const dirName of dirNames) {
         try {
@@ -58,4 +66,9 @@ const runObfuscationProcess = async (dirNames) => {
     }
 };
 
-runObfuscationProcess(["./configs/vg/", "./configs/sg/", "./configs/vg-x/", "./configs/sg-x/", "./configs/vg-x-direct/", "./configs/sg-x-direct/"]);
+const main = async () => {
+    const configDirs = await getConfigDirectories("./configs/");
+    await runObfuscationProcess(configDirs);
+};
+
+main();
