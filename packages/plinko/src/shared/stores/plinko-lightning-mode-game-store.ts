@@ -12,7 +12,6 @@ export type PlinkoLightningModeGameStore = {
         setIsLightningMode: (isLightningMode: boolean) => void;
         setLightningConfig: (lightningConfig: { lightningKey: string; lightningBoard: LightningBoard }) => void;
     };
-    reset: () => void;
 };
 
 export const usePlinkoLightningModeGameStore = create<PlinkoLightningModeGameStore>()(
@@ -24,11 +23,6 @@ export const usePlinkoLightningModeGameStore = create<PlinkoLightningModeGameSto
                 setLightningConfig: (lightningConfig: { lightningKey: string; lightningBoard: LightningBoard }) => set({ lightningConfig }),
                 setIsLightningMode: (isLightningMode: boolean) => set({ isLightningMode }),
             },
-            reset: () =>
-                set({
-                    isLightningMode: false,
-                    lightningConfig: null,
-                }),
         };
     })
 );

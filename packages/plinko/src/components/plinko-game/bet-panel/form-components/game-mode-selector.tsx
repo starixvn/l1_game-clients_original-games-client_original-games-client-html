@@ -8,22 +8,27 @@ import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-board";
 
-const gameModes = [
-    {
-        text: "mode_low",
-        value: GAME_MODES.LOW,
-    },
-    {
-        text: "mode_medium",
-        value: GAME_MODES.MEDIUM,
-    },
-    {
-        text: "mode_high",
-        value: GAME_MODES.HIGH,
-    },
-] as const;
+interface GameModeOption {
+    key: string;
+    label: string;
+    value?: number;
+    icon?: string;
+    isLightning?: boolean;
+}
+
+const gameModes: GameModeOption[] = [
+    { key: "lightning", label: "lightning", icon: "icon-lightning", isLightning: true },
+    { key: "low", label: "mode_low", value: GAME_MODES.LOW },
+    { key: "medium", label: "mode_medium", value: GAME_MODES.MEDIUM },
+    { key: "high", label: "mode_high", value: GAME_MODES.HIGH },
+];
 
 const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
+    const { tolgeeNamespace } = useGameContext();
+    const { t } = useTranslator([tolgeeNamespace]);
+    const clickSound = useClickSound();
+    const { getLightningConfig } = useGetLightningConfig();
+
     const { isLightningMode, setIsLightningMode } = usePlinkoLightningModeGameStore(
         useShallow((state) => ({
             isLightningMode: state.isLightningMode,
@@ -38,53 +43,48 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         }))
     );
 
-    const { tolgeeNamespace } = useGameContext();
-    const { t } = useTranslator([tolgeeNamespace]);
-    const clickSound = useClickSound();
-
-    const { getLightningConfig } = useGetLightningConfig();
-
-    const onClick = (mode: number) => {
+    const handleSelectMode = (option: GameModeOption) => {
         clickSound();
-        setGameMode(mode);
-        setIsLightningMode(false);
+        if (option.isLightning) {
+            setIsLightningMode(true);
+            getLightningConfig();
+        } else if (option.value !== undefined) {
+            setIsLightningMode(false);
+            setGameMode(option.value);
+        }
     };
 
-    const onClickLightningMode = () => {
-        clickSound();
-        setIsLightningMode(true);
-        getLightningConfig();
+    const isActive = (option: GameModeOption): boolean => {
+        if (option.isLightning) {
+            return isLightningMode;
+        }
+        return !isLightningMode && gameMode === option.value;
     };
 
     return (
         <div className="span-game-mode">
             <Label title={t("mode")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
-                <button
-                    key={`mode-lightning`}
-                    className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none focus-visible:!outline-none focus-visible:!outline-0 
-                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
-                    type="button"
-                    onClick={() => onClickLightningMode()}
-                    aria-pressed={isLightningMode}
-                    disabled={isDisabled}
-                >
-                    <span className="flex justify-center items-center">
-                        <i className="icon-lightning text-2xl bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent"></i>
-                        <span>{t("lightning")}</span>
-                    </span>
-                </button>
-                {gameModes.map((mode) => (
+                {gameModes.map((option) => (
                     <button
-                        key={`mode-${mode.value}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none focus-visible:!outline-none focus-visible:!outline-0 
-                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
+                        key={option.key}
                         type="button"
-                        onClick={() => onClick(mode.value)}
-                        aria-pressed={gameMode === mode.value && !isLightningMode}
+                        onClick={() => handleSelectMode(option)}
+                        aria-pressed={isActive(option)}
                         disabled={isDisabled}
+                        className={`
+                            inline-flex items-center justify-center flex-1 text-sm px-3 h-full rounded-lg transition-all
+                            disabled:opacity-50 disabled:pointer-events-none
+                            focus-visible:outline-none
+                            ${isActive(option) ? "bg-[#2a4770]" : ""}
+                        `}
                     >
-                        <span>{t(mode.text)}</span>
+                        <span className="flex justify-center items-center gap-1">
+                            {option.icon && (
+                                <i className={`${option.icon} text-2xl bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent`} />
+                            )}
+                            <span>{t(option.label)}</span>
+                        </span>
                     </button>
                 ))}
             </div>

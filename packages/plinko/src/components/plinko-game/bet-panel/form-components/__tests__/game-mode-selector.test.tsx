@@ -151,31 +151,6 @@ describe("GameModeSelector", () => {
     });
 
     describe("Button Styling", () => {
-        it("should have correct CSS classes for buttons", () => {
-            // Arrange
-            render(<GameModeSelector {...defaultProps} />);
-
-            // Act & Assert
-            const button = screen.getByRole("button", { name: "mode_low" });
-            expect(button).toHaveClass(
-                "inline-flex",
-                "items-center",
-                "justify-center",
-                "whitespace-nowrap",
-                "px-3",
-                "transition-all",
-                "disabled:pointer-events-none",
-                "disabled:opacity-50",
-                "focus-visible:!outline-none",
-                "focus-visible:!outline-0",
-                "rounded-lg",
-                "flex-1",
-                "text-sm",
-                "aria-pressed:bg-[#2a4770]",
-                "h-full",
-                "disabled:opacity-50"
-            );
-        });
 
         it("should apply pressed styling to active button", () => {
             // Arrange

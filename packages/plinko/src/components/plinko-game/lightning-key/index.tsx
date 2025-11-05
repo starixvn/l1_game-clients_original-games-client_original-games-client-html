@@ -5,11 +5,28 @@ import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
 import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning-key-utils";
 import { GET_LIGHTNING_CONFIG_EVENT } from "@plinko/shared/hooks/use-get-lightning-board";
+import { useClickSound, useCommonTranslate } from "@shared";
 
 const LightningKey: React.FC = () => {
-    const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(useShallow((state) => ({ isLightningMode: state.isLightningMode, lightningConfig: state.lightningConfig })));
-    const { numberOfDroppingBall } = usePlinkoGameStore(useShallow((state) => ({ numberOfDroppingBall: state.numberOfDroppingBall })));
-    const { sendSocketEvent } = useGameStore(useShallow((state) => ({ sendSocketEvent: state.sendSocketEvent })));
+    const clickSound = useClickSound();
+    const { t } = useCommonTranslate();
+    
+    const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(
+        useShallow((state) => ({
+            isLightningMode: state.isLightningMode,
+            lightningConfig: state.lightningConfig,
+        }))
+    );
+    const { numberOfDroppingBall } = usePlinkoGameStore(
+        useShallow((state) => ({
+            numberOfDroppingBall: state.numberOfDroppingBall,
+        }))
+    );
+    const { sendSocketEvent } = useGameStore(
+        useShallow((state) => ({
+            sendSocketEvent: state.sendSocketEvent,
+        }))
+    );
 
     const [isOpen, setIsOpen] = useState(false);
     const [lightningKeyValue, setLightningKeyValue] = useState(lightningConfig?.lightningKey || "");
@@ -17,8 +34,11 @@ const LightningKey: React.FC = () => {
     useEffect(() => {
         setLightningKeyValue(lightningConfig?.lightningKey || "");
     }, [lightningConfig?.lightningKey]);
-
-    const toggleLightningKey = () => setIsOpen((prev) => !prev);
+    
+    const toggleLightningKey = () => {
+        clickSound();
+        setIsOpen((prev) => !prev);
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -27,13 +47,15 @@ const LightningKey: React.FC = () => {
     };
 
     const handleClickRandom = () => {
+        clickSound();
         const randomString = generateRandomLightningKey();
         setLightningKeyValue(randomString);
     };
 
     const isChangeDisabled = numberOfDroppingBall > 0 || !lightningKeyValue.trim();
 
-    const handleChangeLightningKey = () => {
+    const handleClickChange = () => {
+        clickSound();
         if (lightningKeyValue.trim() && numberOfDroppingBall === 0) {
             sendSocketEvent(GET_LIGHTNING_CONFIG_EVENT, { lightningKey: lightningKeyValue });
         }
@@ -44,9 +66,7 @@ const LightningKey: React.FC = () => {
     }
 
     return (
-        <div
-            className="absolute top-10 left-4 flex items-center min-w-8 max-h-10 w-auto bg-[linear-gradient(0deg,#04172E_0%,#052D5D_100%)] rounded-lg z-[1000] p-1 cursor-pointer"
-        >
+        <div className="absolute top-10 left-4 flex items-center min-w-8 max-h-10 w-auto bg-[linear-gradient(0deg,#04172E_0%,#052D5D_100%)] rounded-lg z-[1000] p-1 cursor-pointer">
             <button type="button" onClick={toggleLightningKey} className="flex items-center justify-center h-full text-2xl p-1">
                 <i className="icon-lightning-key text-2xl"></i>
             </button>
@@ -71,10 +91,10 @@ const LightningKey: React.FC = () => {
                     </div>
                     <button
                         className="flex items-center justify-center h-8 bg-[#2A4770] text-white text-sm px-3 py-2 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
-                        onClick={handleChangeLightningKey}
+                        onClick={handleClickChange}
                         disabled={isChangeDisabled}
                     >
-                        Change
+                        {t("button_change")}
                     </button>
                 </div>
             )}
