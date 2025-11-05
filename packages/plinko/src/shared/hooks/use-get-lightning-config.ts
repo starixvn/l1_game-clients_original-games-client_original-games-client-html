@@ -11,9 +11,9 @@ export const useGetLightningConfig = () => {
         }))
     );
 
-    const getLightningConfig = () => {
+    const getLightningConfig = (lightningKey?: string) => {
         if (socket?.connected) {
-            sendSocketEvent(GET_LIGHTNING_CONFIG_EVENT, {});
+            sendSocketEvent(GET_LIGHTNING_CONFIG_EVENT, lightningKey ? { lightningKey } : {});
         }
     };
 

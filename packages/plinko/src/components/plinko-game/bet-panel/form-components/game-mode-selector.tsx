@@ -6,7 +6,7 @@ import Label from "./label";
 import { useClickSound, useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
-import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-board";
+import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
 
 interface GameModeOption {
     key: string;

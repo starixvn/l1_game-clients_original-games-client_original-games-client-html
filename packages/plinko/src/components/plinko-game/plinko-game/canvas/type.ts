@@ -27,7 +27,7 @@ export interface PegBody extends Body {
     rowIndex?: number;
     circleRadius?: number;
     side?: string;
-    lightningMultiplier?: number;
+    multiplier?: number;
 }
 
 export interface PegEffect {

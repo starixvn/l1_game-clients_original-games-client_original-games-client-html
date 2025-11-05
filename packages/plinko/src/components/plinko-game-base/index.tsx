@@ -28,7 +28,6 @@ import UserInfo from "@shared/components/page-components/header/user-info";
 import { isMobileOnly } from "react-device-detect";
 import { ResourceTypes } from "@shared/resources";
 import { PLINKO_GAME_IDS } from "@plinko/constants";
-import LightningKey from "../plinko-game/lightning-key";
 import { getAppSettings } from "@shared/app-settings";
 
 // Dynamic imports side components
@@ -52,6 +51,7 @@ const HotKeyIcon = dynamic(() => import("@shared/components/game-components/menu
 const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot-key"), { ssr: false });
 const LobbyMenu = dynamic(() => import("@shared/components/game-components/lobby-menu"), { ssr: false });
 const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
+const LightningKey = dynamic(() => import("@plinko/components/plinko-game/lightning-key"), { ssr: false });
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;

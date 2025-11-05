@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
-import { useGameStore } from "@shared/stores/game-store";
 import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning-key-utils";
-import { GET_LIGHTNING_CONFIG_EVENT } from "@plinko/shared/hooks/use-get-lightning-board";
+import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
 import { useClickSound, useCommonTranslate } from "@shared";
 
 const LightningKey: React.FC = () => {
@@ -17,16 +16,10 @@ const LightningKey: React.FC = () => {
             lightningConfig: state.lightningConfig,
         }))
     );
-    const { numberOfDroppingBall } = usePlinkoGameStore(
-        useShallow((state) => ({
-            numberOfDroppingBall: state.numberOfDroppingBall,
-        }))
+    const numberOfDroppingBall = usePlinkoGameStore(
+        (state) => state.numberOfDroppingBall
     );
-    const { sendSocketEvent } = useGameStore(
-        useShallow((state) => ({
-            sendSocketEvent: state.sendSocketEvent,
-        }))
-    );
+    const { getLightningConfig } = useGetLightningConfig();
 
     const [isOpen, setIsOpen] = useState(false);
     const [lightningKeyValue, setLightningKeyValue] = useState(lightningConfig?.lightningKey || "");
@@ -57,7 +50,7 @@ const LightningKey: React.FC = () => {
     const handleClickChange = () => {
         clickSound();
         if (lightningKeyValue.trim() && numberOfDroppingBall === 0) {
-            sendSocketEvent(GET_LIGHTNING_CONFIG_EVENT, { lightningKey: lightningKeyValue });
+            getLightningConfig(lightningKeyValue);
         }
     };
 

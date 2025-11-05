@@ -109,7 +109,7 @@ export const usePeg = () => {
                         (peg) => peg.row === row - 1 && peg.column === col - 2
                     );
                     if (lightningPeg) {
-                        body.lightningMultiplier = lightningPeg.multiplier;
+                        body.multiplier = lightningPeg.multiplier;
                     }
                 }
 
@@ -124,7 +124,7 @@ export const usePeg = () => {
             return;
         }
         const { pegRadius } = PlinkoCanvasConfig;
-        const isLightningPeg = body.lightningMultiplier && body.lightningMultiplier > 1;
+        const isLightningPeg = body.multiplier && body.multiplier > 1;
 
         if (isLightningPeg && lightningPegImageRef.current) {
             // Draw lightning peg using image
@@ -184,7 +184,7 @@ export const usePeg = () => {
 
             // Draw text with gradient
             context.fillStyle = gradient;
-            context.fillText(`${body.lightningMultiplier}x`, 0, badgeY);
+            context.fillText(`${body.multiplier}x`, 0, badgeY);
 
             // Reset shadow
             context.shadowColor = 'transparent';

@@ -64,8 +64,8 @@ const PlinkoCanvas = () => {
         handleRoad(ball, peg);
 
         // Trigger multiplier animation for lightning pegs only on first collision
-        if (isFirstCollision && pegBody.lightningMultiplier && pegBody.lightningMultiplier > 1) {
-            triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.lightningMultiplier);
+        if (isFirstCollision && pegBody.multiplier && pegBody.multiplier > 1) {
+            triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.multiplier);
         }
     }, [createPegEffect, handleRoad, triggerMultiplierAnimation]);
 
