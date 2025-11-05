@@ -15,6 +15,7 @@ import { DashboardProps, DashboardState } from "./type";
 import { LoadingSpinner } from "../../game-components/game-loading/loading-spinner";
 import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 import { BASE_PATH } from "@shared/constants/base-path";
+import { getAppSettings } from "@shared/app-settings";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
 // @ts-ignore - Next.js dynamic imports resolve at runtime
@@ -258,7 +259,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     renderDashBoard() {
         const dashboardPath = BASE_PATH || "/";
-
+        const appType = getAppSettings().appType;
 
         window.history.pushState(null, null, dashboardPath);
 
@@ -280,7 +281,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
-                    <div id={"dashboard"} className={`${isDesktop ? styles["desktop-dashboard"] : styles["mobile-dashboard"]}`}>
+                    <div id={"dashboard"} className={`${isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""}`}>
                         <SoundSettings />
 
                         {renderOfferGameContainer()}
