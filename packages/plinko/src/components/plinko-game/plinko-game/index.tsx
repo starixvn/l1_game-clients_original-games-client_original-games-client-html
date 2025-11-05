@@ -5,15 +5,15 @@ import { PLINKO_CANVAS_SCALE } from "./constant";
 import Slots from "./slots";
 
 const widthSlots = {
-    8: 88,
-    9: 88,
-    10: 88,
-    11: 86,
-    12: 86,
-    13: 85,
-    14: 85,
-    15: 84,
-    16: 84,
+    8: 87,
+    9: 87,
+    10: 86,
+    11: 85,
+    12: 85,
+    13: 84,
+    14: 84,
+    15: 83,
+    16: 83,
 };
 const Game = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
