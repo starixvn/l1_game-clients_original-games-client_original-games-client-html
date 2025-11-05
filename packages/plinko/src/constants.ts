@@ -39,3 +39,7 @@ export const PLINKO_GAME_IDS = {
     PLINKO: 145,
     PLINKO_X: 159,
 };
+
+export const MESSAGE_EVENT_TYPE = {
+    LIGHTNING_CONFIG: "lightningConfig",
+};

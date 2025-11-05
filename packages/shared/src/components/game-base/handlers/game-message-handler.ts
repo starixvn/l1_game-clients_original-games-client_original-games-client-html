@@ -44,7 +44,6 @@ export const messageEventType = {
     PF: "pf",
     END_PLACE_BET: "epb",
     PLAYER_BET: "playerBet",
-    LIGHTNING_CONFIG: "lightningConfig",
 };
 
 export class GameMessageHandler {
