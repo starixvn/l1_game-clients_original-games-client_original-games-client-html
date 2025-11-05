@@ -67,7 +67,7 @@ const LightningKey: React.FC = () => {
 
     return (
         <div className="absolute top-10 left-4 flex items-center min-w-8 max-h-10 w-auto bg-[linear-gradient(0deg,#04172E_0%,#052D5D_100%)] rounded-lg z-[1000] p-1 cursor-pointer">
-            <button type="button" onClick={toggleLightningKey} className="flex items-center justify-center h-full text-2xl p-1">
+            <button type="button" onClick={toggleLightningKey} className="flex items-center justify-center h-full text-2xl p-1 hover:scale-105">
                 <i className="icon-lightning-key text-2xl"></i>
             </button>
 
@@ -79,12 +79,12 @@ const LightningKey: React.FC = () => {
                             value={lightningKeyValue}
                             onChange={handleInputChange}
                             maxLength={8}
-                            className="text-white text-sm rounded-lg pl-2 pr-8 w-[120px] h-8 bg-[#101721] border border-[#2B3648] focus:outline-none focus:border-[#2B3648]"
+                            className="text-[#B3BEC1] text-sm font-medium rounded-lg pl-2 pr-8 w-[120px] h-8 bg-[#101721] border border-[#2B3648] focus:outline-none focus:border-[#2B3648]"
                         />
                         <button
                             type="button"
                             onClick={handleClickRandom}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-gray-700 rounded transition-colors duration-200"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-0 hover:bg-gray-700 hover:scale-105 rounded transition-colors duration-200"
                         >
                             <i className="icon-reset text-xl"></i>
                         </button>

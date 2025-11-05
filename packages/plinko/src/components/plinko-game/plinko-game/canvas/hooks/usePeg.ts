@@ -1,10 +1,12 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { Bodies } from "matter-js";
 import { PegBody } from "../type";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { useShallow } from "zustand/shallow";
+import { buildVersion } from "@shared/constants";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 interface FlyingMultiplier {
     id: string;
@@ -37,6 +39,16 @@ export const usePeg = () => {
     );
 
     const flyingMultipliersRef = useRef<FlyingMultiplier[]>([]);
+    const lightningPegImageRef = useRef<HTMLImageElement | null>(null);
+
+    // Load lightning peg image
+    useEffect(() => {
+        const img = new Image();
+        img.src = `${basePath}/static/images/icons/lightning-peg.svg?v=${buildVersion}`;
+        img.onload = () => {
+            lightningPegImageRef.current = img;
+        };
+    }, []);
 
     const triggerMultiplierAnimation = useCallback((x: number, y: number, multiplier: number) => {
         const newAnimation: FlyingMultiplier = {
@@ -114,39 +126,71 @@ export const usePeg = () => {
         const { pegRadius } = PlinkoCanvasConfig;
         const isLightningPeg = body.lightningMultiplier && body.lightningMultiplier > 1;
 
-        // Layer 1: Bottom layer
-        context.fillStyle = "#000";
-        context.beginPath();
-        context.arc(0, 2.5, pegRadius + 2.5, 0, Math.PI * 2);
-        context.fill();
+        if (isLightningPeg && lightningPegImageRef.current) {
+            // Draw lightning peg using image
+            const imageSize = pegRadius * 3;
+            context.drawImage(
+                lightningPegImageRef.current,
+                -imageSize / 3,
+                -imageSize / 3,
+                imageSize,
+                imageSize
+            );
+        } else {
+            // Draw regular peg with CSS colors
+            // Layer 1: Bottom layer
+            context.fillStyle = "#000";
+            context.beginPath();
+            context.arc(0, 2.5, pegRadius + 2.5, 0, Math.PI * 2);
+            context.fill();
 
-        // Layer 2 - Use different color for lightning pegs
-        context.fillStyle = isLightningPeg ? "#FFD700" : "#6542FF";
-        context.beginPath();
-        context.arc(0, 2.5, pegRadius, 0, Math.PI * 2);
-        context.fill();
+            // Layer 2
+            context.fillStyle = "#6542FF";
+            context.beginPath();
+            context.arc(0, 2.5, pegRadius, 0, Math.PI * 2);
+            context.fill();
 
-        // Layer 3
-        context.fillStyle = "#FFFFFF";
-        context.beginPath();
-        context.arc(0, 0, pegRadius, 0, Math.PI * 2);
-        context.fill();
+            // Layer 3
+            context.fillStyle = "#FFFFFF";
+            context.beginPath();
+            context.arc(0, 0, pegRadius, 0, Math.PI * 2);
+            context.fill();
 
-        context.fillStyle = isLightningPeg ? "#FFA500" : "#BDD9E4";
-        context.beginPath();
-        context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
-        context.fill();
+            // Layer 4
+            context.fillStyle = "#BDD9E4";
+            context.beginPath();
+            context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
+            context.fill();
+        }
 
         if (isLightningPeg) {
-            const badgeY = -pegRadius - 12; 
+            const badgeY = -pegRadius - 16; 
 
-            // Draw multiplier text
-            context.fillStyle = "#FFF600";
-            context.font = "bold 30px Inter, sans-serif";
+            // Draw multiplier text with gradient
+            context.font = "bold 28px Inter, sans-serif";
             context.textAlign = "center";
             context.textBaseline = "middle";
 
+            // Create gradient for text
+            const gradient = context.createLinearGradient(0, badgeY - 11, 0, badgeY + 11);
+            gradient.addColorStop(0, '#FFFC9E');
+            gradient.addColorStop(1, '#FFF600');
+
+            // Draw text shadow
+            context.shadowColor = '#000';
+            context.shadowBlur = 3;
+            context.shadowOffsetX = 2;
+            context.shadowOffsetY = 3;
+
+            // Draw text with gradient
+            context.fillStyle = gradient;
             context.fillText(`${body.lightningMultiplier}x`, 0, badgeY);
+
+            // Reset shadow
+            context.shadowColor = 'transparent';
+            context.shadowBlur = 0;
+            context.shadowOffsetX = 0;
+            context.shadowOffsetY = 0;
         }
     }, []);
 
@@ -168,8 +212,8 @@ export const usePeg = () => {
             context.textAlign = "center";
             context.textBaseline = "middle";
 
-            // Add slight scale animation
-            const scale = 1 + (animation.progress * 0.3);
+            // Add scale animation from 1 to 1.5
+            const scale = 1 + (animation.progress * 0.5);
             context.scale(scale, scale);
 
             // Draw text with glow effect

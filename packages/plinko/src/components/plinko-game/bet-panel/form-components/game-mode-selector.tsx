@@ -75,13 +75,11 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                         aria-pressed={isActive(option)}
                         disabled={isDisabled}
                         className={`
-                            inline-flex items-center justify-center flex-1 text-sm px-3 h-full rounded-lg transition-all
-                            disabled:opacity-50 disabled:pointer-events-none
-                            focus-visible:outline-none
+                            inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none focus-visible:!outline-none focus-visible:!outline-0 rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50
                             ${isActive(option) ? "bg-[#2a4770]" : ""}
                         `}
                     >
-                        <span className="flex justify-center items-center gap-1">
+                        <span className="flex justify-center items-center gap-[2px]">
                             {option.icon && (
                                 <i className={`${option.icon} text-2xl bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent`} />
                             )}
