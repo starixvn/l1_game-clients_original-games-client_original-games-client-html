@@ -1,4 +1,4 @@
-import { FC, memo, useMemo, useRef, useState } from "react";
+import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
 
 import { buildVersion } from "@shared/constants";
 import { buildGameGuideUrl } from "@shared/helpers";
@@ -11,6 +11,7 @@ import ModalContainer from "../modal-container";
 import usePopupStore from "@shared/stores/popup-store/popup-store";
 import { themeGuide } from "./constants";
 import { useGameStore } from "@shared/stores";
+import { getSubDomain } from "@shared/utils/url-utils";
 
 const GameGuideModal: FC = () => {
     const isShowGameGuide = usePopupStore((state) => state.isShowGameGuide);
@@ -41,7 +42,12 @@ const GameGuide: FC = () => {
     const { fractionalOddsFormat } = usePlayerContext();
     const minMaxBetParams = `&minBet=${userStakeLevel?.minBet}&maxBet=${userStakeLevel?.maxBet}`;
     const guideUrl = buildGameGuideUrl();
-    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}&f=sc&c=0`;
+    const srcPath = `${guideUrl}/${language}/?gId=${gameConfigs["gameId"]}&t=${themeGuide}${minMaxBetParams}&dy=1&v=${buildVersion}&fof=${fractionalOddsFormat}&currentTheme=${currentTheme}&f=sc`;
+    const subDomain = getSubDomain(srcPath);
+
+    useEffect(() => {
+        (document.getElementById("game-guide-iframe") as HTMLIFrameElement)?.contentWindow.postMessage(JSON.stringify(gameConfigs), subDomain);
+    }, []);
 
     const hideSpinner = () => {
         setIsLoading(false);
@@ -52,15 +58,13 @@ const GameGuide: FC = () => {
 
     return useMemo(() => {
         return (
-            <div
-                className="h-full border-none"
-                ref={wrapperRef as React.RefObject<HTMLDivElement>}
-            >
+            <div className="h-full border-none" ref={wrapperRef as React.RefObject<HTMLDivElement>}>
                 {isLoading && <LoadingSpinner />}
                 <iframe
                     style={{
                         display: isLoading ? "none" : "block",
                     }}
+                    id="game-guide-iframe"
                     ref={wrapperIframeRef as React.RefObject<HTMLIFrameElement>}
                     className="h-full w-full border-none bg-transparent"
                     allowTransparency={true}
