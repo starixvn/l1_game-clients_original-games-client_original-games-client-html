@@ -1,11 +1,15 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
+import Image from "next/image";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import useGameStore from "@shared/stores/game-store/game-store";
 import Tooltip from "./tooltip";
-import { getMultiplierColor } from "@plinko/shared/colors-util";
+import { getLightningMultiplierColor, getMultiplierColor } from "@plinko/shared/colors-util";
 import { cn } from "@shared";
 import { isDesktop } from "react-device-detect";
+import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
+import { buildVersion } from "@shared/constants";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const fontSizes = {
     8: 18,
@@ -42,6 +46,13 @@ const Slots = () => {
         }))
     );
 
+    const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(
+        useShallow((state) => ({
+            isLightningMode: state.isLightningMode,
+            lightningConfig: state.lightningConfig,
+        }))
+    );
+
     const [localFinishedBall, setLocalFinishedBall] = useState(finishedBall);
     const [slotDimensions, setSlotDimensions] = useState({ width: 57, marginX: 2 });
 
@@ -66,9 +77,21 @@ const Slots = () => {
         return odds;
     }, []);
 
+    // Calculate effective numberOfRows for lightning mode
+    const effectiveNumberOfRows = useMemo(() => {
+        if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
+            return lightningConfig.lightningBoard.odds.length - 1;
+        }
+        return numberOfRows;
+    }, [numberOfRows, isLightningMode, lightningConfig]);
+
     const odds = useMemo(() => {
-        return gameConfigs?.odds?.[gameMode]?.[numberOfRows] as unknown as number[];
-    }, [gameMode, numberOfRows, gameConfigs]);
+        // Use lightning config odds if in lightning mode
+        if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
+            return lightningConfig.lightningBoard.odds;
+        }
+        return gameConfigs?.odds?.[gameMode]?.[effectiveNumberOfRows] as unknown as number[];
+    }, [gameMode, effectiveNumberOfRows, gameConfigs, isLightningMode, lightningConfig]);
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -102,7 +125,21 @@ const Slots = () => {
         }
 
         return () => resizeObserver.disconnect();
-    }, [odds, numberOfRows]);
+    }, [odds, effectiveNumberOfRows]);
+
+    const getFontSize = () => {
+        if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
+            return `8px !important`;
+        }
+        return  `12px !important`;
+    }
+
+    const getBackgroundColor = (item: number, index: number) => { 
+        if(isLightningMode && lightningConfig?.lightningBoard?.odds) {
+            return getLightningMultiplierColor(item);
+        }
+        return getMultiplierColor(index, gameMode || 0, effectiveNumberOfRows);
+    };
 
     return (
         <div ref={containerRef} className="flex items-center justify-center">
@@ -110,22 +147,33 @@ const Slots = () => {
                 const isHit = localFinishedBall?.settlementResult?.slotIndex === index;
 
                 return (
-                    <Tooltip key={`slot-${index}-${numberOfRows}`} index={index} totalItems={odds.length} odds={item}>
+                    <Tooltip key={`slot-${index}-${effectiveNumberOfRows}`} index={index} totalItems={odds.length} odds={item}>
                         <span
                             key={`${index}-${item}`}
                             className={cn(
                                 isHit ? "animate-slide-down" : "",
                                 "flex items-center justify-center text-white font-bold h-[30px]",
-                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
+                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]",
+                                getFontSize()
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
-                                backgroundColor: getMultiplierColor(index, gameMode, numberOfRows),
-                                fontSize: isDesktop ? `${fontSizesDesktop[numberOfRows]}px` : `${fontSizes[numberOfRows]}px`,
+                                backgroundColor: getBackgroundColor(item, index),
+                                fontSize: isDesktop ? `${fontSizesDesktop[effectiveNumberOfRows]}px` : `${fontSizes[effectiveNumberOfRows]}px`,
                             }}
                         >
-                            {formatOdds(item)}
+                            {isLightningMode && item === 0 ? (
+                                <Image
+                                    src={`${basePath}/static/images/icons/hell.svg?v=${buildVersion}`}
+                                    alt="hell"
+                                    width={24}
+                                    height={24}
+                                    className="w-6 h-6"
+                                />
+                            ) : (
+                                formatOdds(item)
+                            )}
                         </span>
                     </Tooltip>
                 );

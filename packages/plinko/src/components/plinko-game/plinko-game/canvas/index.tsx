@@ -2,7 +2,7 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect, PathPreview } from "./type";
+import { BallBody, ExplosionEffect, PegEffect, PathPreview, PegBody } from "./type";
 import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
@@ -30,7 +30,7 @@ const PlinkoCanvas = () => {
     const isInstantMode = usePlinkoSettingStore((state) => state.isInstantMode);
 
     // Peg hook
-    const { createPegs, drawPeg } = usePeg();
+    const { createPegs, drawPeg, drawFlyingMultipliers, triggerMultiplierAnimation, updateFlyingMultipliers } = usePeg();
 
     // Multiplier hook
     const { createSlot } = useSlot();
@@ -70,6 +70,12 @@ const PlinkoCanvas = () => {
                 if (object?.label === PLINKO_OBJECTS.PEG) {
                     createPegEffect(object);
                     handleRoad(ball, object);
+
+                    // Trigger multiplier animation for lightning pegs
+                    const pegBody = object as PegBody;
+                    if (pegBody.lightningMultiplier && pegBody.lightningMultiplier > 1) {
+                        triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.lightningMultiplier);
+                    }
                 }
                 // collision with slot
                 if (object?.label === PLINKO_OBJECTS.SLOT) {
@@ -86,7 +92,7 @@ const PlinkoCanvas = () => {
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect]
+        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect, triggerMultiplierAnimation]
     );
 
     // Draw scene object
@@ -166,6 +172,9 @@ const PlinkoCanvas = () => {
             return;
         }
 
+        // Update animations
+        updateFlyingMultipliers();
+
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw all scene objects
@@ -182,11 +191,14 @@ const PlinkoCanvas = () => {
         // draw balls
         drawBalls?.(context);
 
+        // Draw flying multipliers
+        drawFlyingMultipliers?.(context);
+
         // Draw explosion effects
         drawExplosionEffect?.(context);
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview]);
+    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview, drawFlyingMultipliers, updateFlyingMultipliers]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {

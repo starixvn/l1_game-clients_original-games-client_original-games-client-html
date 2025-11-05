@@ -16,6 +16,7 @@ import {
     PlinkoGameRoundDataHandler,
     PlinkoGameSoundHandler,
     PlinkoInGameHandler,
+    PlinkoLightningConfigHandler,
     PlinkoStateHandler,
     PlinkoSyncBalanceHandler,
 } from "./handlers";
@@ -27,6 +28,7 @@ import UserInfo from "@shared/components/page-components/header/user-info";
 import { isMobileOnly } from "react-device-detect";
 import { ResourceTypes } from "@shared/resources";
 import { PLINKO_GAME_IDS } from "@plinko/constants";
+import LightningKey from "../plinko-game/lightning-key";
 import { getAppSettings } from "@shared/app-settings";
 
 // Dynamic imports side components
@@ -53,6 +55,7 @@ const Header = dynamic(() => import("@shared/components/page-components/header")
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly inGameHandler: PlinkoInGameHandler;
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
+    private readonly lightningConfigHandler: PlinkoLightningConfigHandler;
 
     constructor(props: GameBaseProps) {
         // Create a basic gameMessageHandler for the handlers (GameBase will create its own)
@@ -83,12 +86,16 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             gameMessageHandler: gameMessageHandler,
         });
         this.syncBalanceHandler = new PlinkoSyncBalanceHandler();
+        this.lightningConfigHandler = new PlinkoLightningConfigHandler({
+            gameMessageHandler: gameMessageHandler,
+        });
     }
 
     registerHandlers() {
         super.registerHandlers();
         this.inGameHandler.registerEvents();
         this.syncBalanceHandler.registerEvents();
+        this.lightningConfigHandler.registerEvents();
     }
 
     handleRemainingTime(_): void {
@@ -105,6 +112,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             <div className="relative h-full">
                 <Background />
                 <div>
+                    <LightningKey />
                     <RoundMultiplierHistory />
                     <PlinkoGame />
                     <div> {this.renderNotice()}</div>

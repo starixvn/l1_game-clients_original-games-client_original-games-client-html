@@ -257,3 +257,14 @@ export type PlinkoFinish = {
     gameMode: number;
     numberOfRows: number;
 };
+
+export type PegMultiplier = {
+    row: number;
+    column: number;
+    multiplier: number;
+};
+
+export type LightningBoard = {
+    odds: number[];
+    pegMultipliers: PegMultiplier[];
+};

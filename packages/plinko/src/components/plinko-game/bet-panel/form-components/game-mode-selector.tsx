@@ -5,6 +5,8 @@ import { GAME_MODES } from "@plinko/constants";
 import Label from "./label";
 import { useClickSound, useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
+import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
+import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-board";
 
 const gameModes = [
     {
@@ -22,6 +24,13 @@ const gameModes = [
 ] as const;
 
 const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
+    const { isLightningMode, setIsLightningMode } = usePlinkoLightningModeGameStore(
+        useShallow((state) => ({
+            isLightningMode: state.isLightningMode,
+            setIsLightningMode: state.actions.setIsLightningMode,
+        }))
+    );
+
     const { gameMode, setGameMode } = usePlinkoGameStore(
         useShallow((state) => ({
             gameMode: state.gameMode,
@@ -33,23 +42,46 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { t } = useTranslator([tolgeeNamespace]);
     const clickSound = useClickSound();
 
+    const { getLightningConfig } = useGetLightningConfig();
+
     const onClick = (mode: number) => {
         clickSound();
         setGameMode(mode);
+        setIsLightningMode(false);
+    };
+
+    const onClickLightningMode = () => {
+        clickSound();
+        setIsLightningMode(true);
+        getLightningConfig();
     };
 
     return (
         <div className="span-game-mode">
             <Label title={t("mode")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
+                <button
+                    key={`mode-lightning`}
+                    className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none focus-visible:!outline-none focus-visible:!outline-0 
+                            rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
+                    type="button"
+                    onClick={() => onClickLightningMode()}
+                    aria-pressed={isLightningMode}
+                    disabled={isDisabled}
+                >
+                    <span className="flex justify-center items-center">
+                        <i className="icon-lightning text-2xl bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent"></i>
+                        <span>{t("lightning")}</span>
+                    </span>
+                </button>
                 {gameModes.map((mode) => (
                     <button
                         key={`mode-${mode.value}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none disabled:opacity-40 focus-visible:!outline-none focus-visible:!outline-0 
+                        className="inline-flex items-center justify-center whitespace-nowrap px-3 transition-all disabled:pointer-events-none focus-visible:!outline-none focus-visible:!outline-0 
                             rounded-lg flex-1 text-sm aria-pressed:bg-[#2a4770] h-full disabled:opacity-50"
                         type="button"
                         onClick={() => onClick(mode.value)}
-                        aria-pressed={gameMode === mode.value}
+                        aria-pressed={gameMode === mode.value && !isLightningMode}
                         disabled={isDisabled}
                     >
                         <span>{t(mode.text)}</span>

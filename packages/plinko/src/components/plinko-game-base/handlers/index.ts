@@ -5,3 +5,4 @@ export { PlinkoBetHistoryHandler } from "./plinko-bet-history-handler";
 export { PlinkoGameFinishHandler } from "./plinko-game-finish-handler";
 export { PlinkoInGameHandler } from "./plinko-in-game-handler";
 export { PlinkoSyncBalanceHandler } from "./plinko-sync-balance-handler";
+export { PlinkoLightningConfigHandler } from "./plinko-lightning-config-handler";

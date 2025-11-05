@@ -21,6 +21,10 @@
     @extend %icon-style;
 }
 
+.icon-lightning-key:before {
+    content: "\e92b";
+    color: #fff;
+}
 .icon-sound-on:before {
     content: "\e900";
 }

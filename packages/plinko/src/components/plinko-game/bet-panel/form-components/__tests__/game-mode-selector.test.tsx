@@ -165,7 +165,7 @@ describe("GameModeSelector", () => {
                 "px-3",
                 "transition-all",
                 "disabled:pointer-events-none",
-                "disabled:opacity-40",
+                "disabled:opacity-50",
                 "focus-visible:!outline-none",
                 "focus-visible:!outline-0",
                 "rounded-lg",
