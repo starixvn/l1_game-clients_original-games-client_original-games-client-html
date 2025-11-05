@@ -276,7 +276,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             locale: this.props.tolgee.getLanguage(),
         };
 
-
+console.log("appType",appType);
 
         return (
             <PlayerContextProvider value={authContextValue}>
