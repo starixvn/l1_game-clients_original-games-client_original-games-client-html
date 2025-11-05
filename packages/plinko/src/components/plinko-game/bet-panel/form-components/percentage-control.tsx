@@ -39,7 +39,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Math.abs(parseInt(e.target.value || "0"));
+        const value = Math.abs(Number(Number.parseFloat(e.target.value || "0").toFixed(2)));
         const maxValue = 10000;
         setPercentage(Math.min(value, maxValue));
     };
@@ -68,7 +68,7 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                 <div className="flex-1 relative">
                     <input
                         type="number"
-                        step={1}
+                        step={0.01}
                         pattern="[0-9]*"
                         value={percentage?.toString() || "0"}
                         onChange={onChange}
