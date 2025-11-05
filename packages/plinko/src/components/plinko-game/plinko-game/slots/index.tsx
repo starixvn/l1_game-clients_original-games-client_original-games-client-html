@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
@@ -9,6 +9,7 @@ import { cn } from "@shared";
 import { isDesktop } from "react-device-detect";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { buildVersion } from "@shared/constants";
+import { formatPlinkoOdds } from "./slot-utils";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const fontSizes = {
@@ -70,13 +71,6 @@ const Slots = () => {
         return () => clearTimeout(timer);
     }, [finishedBall]);
 
-    const formatOdds = useCallback((odds: number) => {
-        if (odds >= 1000) {
-            return `${odds / 1000}K`;
-        }
-        return odds;
-    }, []);
-
     // Calculate effective numberOfRows for lightning mode
     const effectiveNumberOfRows = useMemo(() => {
         if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
@@ -131,11 +125,11 @@ const Slots = () => {
         if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
             return `text-[11px]`;
         }
-        return  `text-[12px]`;
-    }
+        return `text-[12px]`;
+    };
 
-    const getBackgroundColor = (item: number, index: number) => { 
-        if(isLightningMode && lightningConfig?.lightningBoard?.odds) {
+    const getBackgroundColor = (item: number, index: number) => {
+        if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
             return getLightningMultiplierColor(item);
         }
         return getMultiplierColor(index, gameMode || 0, effectiveNumberOfRows);
@@ -153,14 +147,15 @@ const Slots = () => {
                             className={cn(
                                 isHit ? "animate-slide-down" : "",
                                 "flex items-center justify-center text-white font-bold h-[30px]",
-                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]",
-                                getFontSize()
+                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getBackgroundColor(item, index),
-                                fontSize: isDesktop ? `${fontSizesDesktop[effectiveNumberOfRows]}px` : `${fontSizes[effectiveNumberOfRows]}px`,
+                                fontSize: isDesktop
+                                    ? `${fontSizesDesktop[effectiveNumberOfRows]}px`
+                                    : `${fontSizes[effectiveNumberOfRows]}px`,
                             }}
                         >
                             {isLightningMode && item === 0 ? (
@@ -172,7 +167,7 @@ const Slots = () => {
                                     className="w-6 h-6"
                                 />
                             ) : (
-                                formatOdds(item)
+                                <span className={cn(getFontSize(), "tracking-[0px] drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}>{formatPlinkoOdds(item)}</span>
                             )}
                         </span>
                     </Tooltip>
