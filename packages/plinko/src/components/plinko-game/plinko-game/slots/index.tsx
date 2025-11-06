@@ -162,9 +162,9 @@ const Slots = () => {
                                 <Image
                                     src={`${basePath}/static/images/icons/hell.svg?v=${buildVersion}`}
                                     alt="hell"
-                                    width={24}
-                                    height={24}
-                                    className="w-6 h-6"
+                                    width={20}
+                                    height={20}
+                                    className="w-4 h-4"
                                 />
                             ) : (
                                 <span className={cn(getFontSize(), "tracking-[0px] drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}>{formatPlinkoOdds(item)}</span>

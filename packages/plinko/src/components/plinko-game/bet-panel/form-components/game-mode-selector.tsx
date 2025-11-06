@@ -8,17 +8,19 @@ import { useClickSound, useTranslator } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
+import { buildVersion } from "@shared";
+import Image from "next/image";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 interface GameModeOption {
     key: string;
     label: string;
     value?: number;
-    icon?: string;
     isLightning?: boolean;
 }
 
 const gameModes: GameModeOption[] = [
-    { key: "lightning", label: "lightning", icon: "icon-lightning", isLightning: true },
+    { key: "lightning", label: "lightning", isLightning: true },
     { key: "low", label: "mode_low", value: GAME_MODES.LOW },
     { key: "medium", label: "mode_medium", value: GAME_MODES.MEDIUM },
     { key: "high", label: "mode_high", value: GAME_MODES.HIGH },
@@ -91,9 +93,15 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                             ${isActive(option) ? "bg-[#2a4770]" : ""}
                         `}
                     >
-                        <span className="flex justify-center items-center gap-[2px]">
-                            {option.icon && (
-                                <i className={`${option.icon} text-2xl bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent`} />
+                        <span className="flex justify-center items-center gap-1">
+                            {option.isLightning && (
+                                <Image
+                                    src={`${basePath}/static/images/icons/lightning-mode.svg?v=${buildVersion}`}
+                                    alt="lightning"
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5"
+                                />
                             )}
                             <span>{t(option.label)}</span>
                         </span>

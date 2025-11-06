@@ -36,17 +36,19 @@ export function getMultiplierColor(slotIndex: number, gameMode: number, numberOf
 }
 
 export function getLightningMultiplierColor(multiplier: number): string {
-    if (multiplier >= 0 && multiplier <= 0.5) {
-        return "#004A24";
-    } else if (multiplier > 0.5 && multiplier <= 1) {
-        return "#0D5B10";
+    if (multiplier >= 0 && multiplier <= 0.1) {
+        return "#C2FFCD";
+    } else if (multiplier > 0.1 && multiplier <= 1) {
+        return "#9EFFD5";
+    } else if (multiplier > 1 && multiplier <= 2) {
+        return "#6DFFBB";
     } else if (multiplier > 1 && multiplier <= 10) {
-        return "#187C19";
+        return "#31FF9F";
     } else if (multiplier > 10 && multiplier < 100) {
-        return "#69B31E";
-    } else if (multiplier >= 100) {
-        return "#8DC71D";
+        return "#09FF94";
+    } else if (multiplier >= 100 && multiplier < 1000) {
+        return "#10DD7E";
     }
 
-    return "#004A24";
+    return "#00AE77";
 }

@@ -164,27 +164,27 @@ export const usePeg = () => {
         }
 
         if (isLightningPeg) {
-            const badgeY = -pegRadius - 16; 
+            const badgeY = -pegRadius - 10;
 
-            // Draw multiplier text with gradient
-            context.font = "bold 28px Inter, sans-serif";
+            // Draw multiplier text
+            context.font = "700 28px Inter, sans-serif";
             context.textAlign = "center";
             context.textBaseline = "middle";
 
-            // Create gradient for text
-            const gradient = context.createLinearGradient(0, badgeY - 11, 0, badgeY + 11);
-            gradient.addColorStop(0, '#FFFC9E');
-            gradient.addColorStop(1, '#FFF600');
+            // Set text shadow
+            context.shadowColor = '#001A11';
+            context.shadowBlur = 4;
+            context.shadowOffsetX = 0;
+            context.shadowOffsetY = 4;
 
-            // Draw text shadow
-            context.shadowColor = '#000';
-            context.shadowBlur = 3;
-            context.shadowOffsetX = 2;
-            context.shadowOffsetY = 3;
+            // Set text stroke (webkit-text-stroke simulation)
+            context.strokeStyle = '#161616';
+            context.lineWidth = 6;
+            context.strokeText(`${body.multiplier}x`, 30, badgeY);
 
-            // Draw text with gradient
-            context.fillStyle = gradient;
-            context.fillText(`${body.multiplier}x`, 0, badgeY);
+            // Set text fill color
+            context.fillStyle = '#FFF';
+            context.fillText(`${body.multiplier}x`, 30, badgeY);
 
             // Reset shadow
             context.shadowColor = 'transparent';
