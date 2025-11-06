@@ -9,6 +9,7 @@ import { ResourceTypes } from "@shared/resources/type";
 import { numberWithCommas } from "@shared/helpers";
 import { AreaChart, Area, XAxis, YAxis } from "recharts";
 import { useShallow } from "zustand/shallow";
+import Image from "next/image";
 
 const MODAL_SIZE = {
     WIDTH: 250,
@@ -87,7 +88,7 @@ const LiveStatsModal = ({ data }: { data?: LiveStatsProps }): ReactElement => {
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName="absolute h-fit min-h-[320px] w-[250px] top-0 rounded-b-xl"
+                    extendedClassName="absolute h-fit min-h-[320px] w-[254px] top-0 rounded-b-xl"
                 >
                     <div
                         id="live-stats"
@@ -205,24 +206,24 @@ const LiveStats = ({
             <div className="h-full border-none flex flex-col justify-center items-center ">
                 <div
                     id="information"
-                    className="text-sm md:text-base font-semibold flex justify-between items-center w-[228px] min-h-[102px] bg-[#00000080] rounded-[16px] "
+                    className="px-4 py-1 text-sm md:text-base font-semibold flex justify-between  w-[228px] min-h-[102px] bg-[#00000080] rounded-[16px] "
                 >
-                    <div className="flex flex-col items-start flex-1 px-3">
-                        <div className="flex flex-col items-start">
+                    <div className="flex flex-col items-start flex-1 gap-1">
+                        <div className="flex flex-col items-start gap-1">
                             {t("profit")}
                             <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
                         </div>
-                        <div className="flex flex-col items-start">
+                        <div className="flex flex-col items-start gap-1">
                             {t("bet_amount")}
                             <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
                         </div>
                     </div>
-                    <div className="flex flex-col items-start flex-1 px-3">
-                        <div className="flex flex-col items-start">
+                    <div className="flex flex-col items-start flex-1 gap-1">
+                        <div className="flex flex-col items-start gap-1">
                             {t("wins")}
                             <div className={`${winsColorClass} font-[400]`}>{numberWithCommas(winRound)}</div>
                         </div>
-                        <div className="flex flex-col items-start">
+                        <div className="flex flex-col items-start gap-1">
                             {t("losses")}
                             <div className={cn(lostRound > 0 ? "text-red-500" : "", "font-[400]")}>{numberWithCommas(lostRound)}</div>
                         </div>

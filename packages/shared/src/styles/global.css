@@ -53,7 +53,7 @@ html[data-theme="dark"] {
     --icon-favorite-game-guide: #fff;
 
     --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #fff600;
+    --color-winning-highlight: #fffa67;
 
     --modal-background: #1b293f;
     --text-content-color: #ced8e6;
@@ -87,7 +87,7 @@ html[data-theme="light"] {
     --icon-favorite-game-guide: #2c2f3e;
 
     --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #fff600;
+    --color-winning-highlight: #fffa67;
 
     --table-header: #ebebeb;
     --bet-detail-row-1: #102136;

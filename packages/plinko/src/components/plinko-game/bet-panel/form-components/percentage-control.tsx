@@ -72,7 +72,6 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                         pattern="[0-9]*"
                         value={percentage?.toString() || "0"}
                         onChange={onChange}
-                        inputMode="numeric"
                         disabled={!isIncreaseOn || isDisabled}
                         className="input text-white text-sm rounded-lg px-3 input-focus w-full h-11 disabled:opacity-50 pr-6"
                     />

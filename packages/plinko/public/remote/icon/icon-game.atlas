@@ -1,47 +1,40 @@
 
 icon-game.png
-size: 410,205
+size: 351,205
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 1000
-  rotate: false
-  xy: 315, 111
-  size: 78, 37
-  orig: 78, 37
-  offset: 0, 0
+  rotate: true
+  xy: 273, 105
+  size: 98, 47
+  orig: 100, 47
+  offset: 1, 0
   index: -1
 800
   rotate: false
-  xy: 315, 77
-  size: 56, 32
-  orig: 56, 32
+  xy: 273, 56
+  size: 76, 47
+  orig: 77, 47
   offset: 0, 0
   index: -1
 900
   rotate: false
-  xy: 315, 43
-  size: 56, 32
-  orig: 56, 32
+  xy: 261, 7
+  size: 76, 47
+  orig: 77, 47
   offset: 0, 0
   index: -1
 anh sang 3D
-  rotate: false
-  xy: 206, 150
+  rotate: true
+  xy: 206, 8
   size: 195, 53
   orig: 195, 75
   offset: 0, 22
   index: -1
-ball
-  rotate: false
-  xy: 206, 26
-  size: 107, 122
-  orig: 113, 127
-  offset: 3, 3
-  index: -1
 ball 2
   rotate: false
-  xy: 373, 89
+  xy: 322, 183
   size: 20, 20
   orig: 22, 21
   offset: 1, 0
@@ -55,15 +48,15 @@ bg
   index: -1
 hover
   rotate: false
-  xy: 373, 71
+  xy: 322, 165
   size: 16, 16
   orig: 18, 18
   offset: 1, 1
   index: -1
 multifiler-slot-1
-  rotate: false
-  xy: 206, 4
-  size: 202, 20
-  orig: 202, 20
+  rotate: true
+  xy: 261, 67
+  size: 136, 10
+  orig: 136, 10
   offset: 0, 0
   index: -1
