@@ -44,7 +44,7 @@ export const usePeg = () => {
     // Load lightning peg image
     useEffect(() => {
         const img = new Image();
-        img.src = `${basePath}/static/images/icons/lightning-peg.svg?v=${buildVersion}`;
+        img.src = `${basePath}/static/images/plinko/lightning-peg.svg?v=${buildVersion}`;
         img.onload = () => {
             lightningPegImageRef.current = img;
         };

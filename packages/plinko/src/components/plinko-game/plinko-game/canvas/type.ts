@@ -20,6 +20,8 @@ export interface BallBody extends Body {
     finish?: PlinkoFinish;
     collidedRowIndexes?: number[];
     slotIndex?: number;
+    isLightning?: boolean;
+    multiplier?: number;
 }
 
 export interface PegBody extends Body {
