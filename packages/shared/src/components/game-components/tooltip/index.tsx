@@ -7,7 +7,8 @@ export const Tooltip: React.FC<{
     classArrow?: string;
     children: React.ReactNode;
     touchDelay?: number;
-}> = ({ message, className, classArrow, children, touchDelay = 500 }) => {
+    forceVisible?: boolean;
+}> = ({ message, className, classArrow, children, touchDelay = 500, forceVisible = false }) => {
     const [isVisible, setIsVisible] = useState(false);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
@@ -40,13 +41,13 @@ export const Tooltip: React.FC<{
     }, [isVisible]);
 
     const handleMouseEnter = () => {
-        if (!isTouchDevice.current) {
+        if (!isTouchDevice.current && !forceVisible) {
             setIsVisible(true);
         }
     };
 
     const handleMouseLeave = () => {
-        if (!isTouchDevice.current) {
+        if (!isTouchDevice.current && !forceVisible) {
             setIsVisible(false);
         }
     };
@@ -59,6 +60,10 @@ export const Tooltip: React.FC<{
     };
 
     const handleTouchStart = () => {
+        if (forceVisible) {
+            return;
+        }
+
         clearTouchTimeout();
 
         touchTimeoutRef.current = setTimeout(() => {
@@ -89,7 +94,7 @@ export const Tooltip: React.FC<{
                 ref={tooltipRef}
                 className={cn(
                     `absolute -top-10 left-1/2 -translate-x-1/2 bg-[#2993f5] text-white text-sm md:text-base px-3 py-2 rounded-lg whitespace-nowrap transition-opacity duration-300 pointer-events-none z-10`,
-                    isVisible ? "opacity-100" : "opacity-0",
+                    (forceVisible || isVisible) ? "opacity-100" : "opacity-0",
                     className
                 )}
             >

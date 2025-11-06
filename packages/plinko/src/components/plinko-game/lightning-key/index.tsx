@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useShallow } from "zustand/shallow";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning-key-utils";
 import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
-import { useClickSound, useCommonTranslate, useClickOutside, cn } from "@shared";
+import { useClickSound, useCommonTranslate, useClickOutside, cn, ResourceTypes } from "@shared";
+import { useTranslate } from "@tolgee/react";
+import { useLightningKeyTooltip } from "./use-lightning-key-tooltip";
+const Tooltip = dynamic(() => import("../../../../../shared/src/components/game-components/tooltip"), { ssr: false });
 
 const LightningKey: React.FC = () => {
     const clickSound = useClickSound();
-    const { t } = useCommonTranslate();
+    const { t: translateCommon } = useCommonTranslate();
+    const { t: translatePlinko } = useTranslate(ResourceTypes.PLINKO);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const { isLightningMode, lightningConfig } = usePlinkoLightningModeGameStore(
@@ -23,9 +28,12 @@ const LightningKey: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [lightningKeyValue, setLightningKeyValue] = useState(lightningConfig?.lightningKey || "");
 
+    const forceShowTooltip = useLightningKeyTooltip(isLightningMode);
+
     useEffect(() => {
         setLightningKeyValue(lightningConfig?.lightningKey || "");
     }, [lightningConfig?.lightningKey]);
+
 
     const closeLightningKey = useCallback(() => {
         setIsOpen(false);
@@ -71,17 +79,24 @@ const LightningKey: React.FC = () => {
         <div
             ref={containerRef}
             className={cn(
-                "absolute top-10 left-4 flex items-center min-w-8 max-h-10 w-auto p-1 z-[1000] cursor-pointer rounded-lg",
+                "absolute top-12 left-4 flex items-center min-w-8 max-h-10 w-auto p-1 z-[1000] cursor-pointer rounded-lg",
                 "bg-[linear-gradient(0deg,#04172E_0%,#052D5D_100%)]"
             )}
         >
-            <button
-                type="button"
-                onClick={toggleLightningKey}
-                className="flex items-center justify-center h-full text-2xl p-1 hover:scale-105"
+            <Tooltip
+                message={translatePlinko("tooltip_lightning")}
+                forceVisible={forceShowTooltip}
+                className="-translate-x-[calc(50%-180px)]"
+                classArrow="-translate-x-[calc(50%+180px)]"
             >
-                <i className="icon-lightning-key text-2xl"></i>
-            </button>
+                <button
+                    type="button"
+                    onClick={toggleLightningKey}
+                    className="flex items-center justify-center h-full text-2xl p-1 hover:scale-105"
+                >
+                    <i className="icon-lightning-key text-2xl"></i>
+                </button>
+            </Tooltip>
 
             {isOpen && (
                 <div className="flex items-center gap-1 ml-1">
@@ -117,7 +132,7 @@ const LightningKey: React.FC = () => {
                         onClick={handleClickChange}
                         disabled={isChangeDisabled}
                     >
-                        {t("button_change")}
+                        {translateCommon("button_change")}
                     </button>
                 </div>
             )}
