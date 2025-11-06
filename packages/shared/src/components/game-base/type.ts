@@ -228,6 +228,8 @@ export interface DrawInfo {
     pfResult: PFResult;
     clientSeed: string;
     reachMaxWin?: boolean;
+    lightningBoard?: any;
+    lightningKey?: string;
 }
 
 export interface IUserStakeLevel {

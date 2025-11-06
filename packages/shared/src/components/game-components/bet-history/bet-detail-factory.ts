@@ -14,6 +14,7 @@ export function createBetDetailData(
     roundId: number,
     row: BetHistoryTableRow
 ): BetDetailData {
+    
     // Plinko-specific bet detail logic
     if (gameId === '145' || gameId === '159') {
         return {
@@ -23,6 +24,8 @@ export function createBetDetailData(
                 odds: row.originalBetLog?.odds,
                 settlementResult: row.originalBetLog?.settlementResult,
                 reachMaxWin: row.originalBetLog?.reachMaxWin,
+                lightningBoard: row.originalBetLog?.lightningBoard,
+                lightningKey: row.originalBetLog?.lightningKey,
                 pfResult: {
                     roundId: row.originalBetLog?.roundId,
                     serverSeedHash: "",

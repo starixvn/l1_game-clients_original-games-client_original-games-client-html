@@ -3,6 +3,7 @@ import { messageEventType } from "@shared/components/game-base/handlers/game-mes
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePFStore from "@shared/stores/pf-store/pf-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     private static readonly PAGE_SIZE = 10;
@@ -209,10 +210,14 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     ) {
         const baseBetLog = super.createBetLog(roundId, totalAmount, betwin, pendingDetails, firstBetTime, resultData);
 
-        // Add reachMaxWin flag to the bet log (use from the specific bet)
+        const lightningModeStore = usePlinkoLightningModeGameStore.getState();
+        const lightningConfig = lightningModeStore.lightningConfig;
+
         return {
             ...baseBetLog,
             reachMaxWin: pendingDetails[0]?.reachMaxWin || false,
+            lightningBoard: lightningConfig?.lightningBoard,
+            lightningKey: lightningConfig?.lightningKey,
         };
     }
 

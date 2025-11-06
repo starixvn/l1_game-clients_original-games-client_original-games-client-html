@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
-import { useCommonTranslate  } from "@shared/react-hooks";
+import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
 import { gameModeMap } from "@shared/helpers/plinko";
 import useBetDetailStore from "@shared/stores/bet-detail-store";
@@ -94,6 +94,56 @@ const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
     );
 };
 
+const renderLightningModeRow = (pegMultipliers: any[], translateCommon: any, translatePlinko: any) => {
+    if (!pegMultipliers || pegMultipliers.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className="mt-4">
+            <div className="font-semibold py-3 text-sm md:text-base">
+                {translatePlinko("multiplier_position").capitalizeFirstLetter()}
+            </div>
+            <div className="bg-table-header rounded-t-lg">
+                <Table className="rounded-t-lg w-full">
+                    <TableHeader className="sticky top-0 z-10 bg-table-header">
+                        <TableRow>
+                            <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
+                                {translatePlinko("column").capitalizeFirstLetter()}
+                            </TableHead>
+                            <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
+                                {translatePlinko("row").capitalizeFirstLetter()}
+                            </TableHead>
+                            <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
+                                {translateCommon("title_multiplier").capitalizeFirstLetter()}
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                </Table>
+            </div>
+            <div className="w-full">
+                <Table className="w-full">
+                    <TableBody>
+                        {pegMultipliers.map((peg, index) => (
+                            <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
+                                <TableCell className={cn("w-1/3 text-sm md:text-base text-secondary-text text-center p-3", index ===pegMultipliers.length - 1 && "rounded-bl-lg")}>
+                                    {peg.column + 2}
+                                </TableCell>
+                                <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
+                                    {peg.row + 1 }
+                                </TableCell>
+                                <TableCell className={cn("w-1/3 text-sm md:text-base text-secondary-text text-center p-3", index === pegMultipliers.length - 1 && "rounded-br-lg")}>
+                                    {peg.multiplier}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
+    );
+};
+
 const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, emptyMessage }, ref) => {
     const { t: translateCommon } = useCommonTranslate();
     const betDetailData = useBetDetailStore((state) => state.betDetailData);
@@ -138,10 +188,12 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
                 </Table>
             </div>
 
+            {drawInfo?.lightningBoard?.pegMultipliers && renderLightningModeRow(drawInfo.lightningBoard.pegMultipliers, translateCommon, translatePlinko)}
+
             {reachMaxWin && (
                 <div className="font-semibold py-3 text-sm md:text-base">
                     <span>
-                        You reached the max win: {numberWithCommas(maxWinRow?.win as number, 2)}
+                    {`${translateCommon("you_reach_max_win")}: ${numberWithCommas(maxWinRow?.win as number, 2)}`}
                     </span>
                 </div>
             )}

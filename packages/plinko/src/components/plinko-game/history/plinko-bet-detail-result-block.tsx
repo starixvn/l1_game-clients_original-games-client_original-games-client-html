@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { DrawInfo } from "@shared/components/game-base/type";
+import { LightningBoard } from "@plinko/shared/types";
 
 
 export type PlinkoSettlementResult = {
@@ -17,6 +18,8 @@ export interface RoundInfoPlinko extends DrawInfo {
         | Record<string, boolean>;
     settlementResult: PlinkoSettlementResult;
     numberOfRows?: number;
+    lightningBoard?: LightningBoard;
+    lightningKey?: string;
 }
 
 export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ roundInfo: drawInfo }) => {
