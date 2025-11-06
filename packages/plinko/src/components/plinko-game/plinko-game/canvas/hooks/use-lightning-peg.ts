@@ -37,7 +37,7 @@ export const useLightningPeg = () => {
         const glowProgress = (glowAnimationTimeRef.current / 2000) * Math.PI * 2;
         const glowOpacity = (Math.sin(glowProgress) + 1) / 2;
 
-        const glowRadius = pegRadius * 3;
+        const glowRadius = pegRadius * 4;
         context.save();
         context.globalAlpha = glowOpacity * 0.6;
 

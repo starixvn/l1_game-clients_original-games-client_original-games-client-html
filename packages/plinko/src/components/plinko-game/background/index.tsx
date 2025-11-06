@@ -2,16 +2,28 @@ import { memo } from "react";
 import Image from "next/image";
 import { buildVersion } from "@shared/constants";
 import { getCurrentGameAssets } from "../../../game-config";
+import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
+import { useShallow } from "zustand/shallow";
 import ParticlesContainer from "./particles";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const Background: React.FC = () => {
     const gameAssets = getCurrentGameAssets();
 
+    const { isLightningMode } = usePlinkoLightningModeGameStore(
+        useShallow((state) => ({
+            isLightningMode: state.isLightningMode,
+        }))
+    );
+
+    const backgroundImage = isLightningMode
+        ? `${basePath}/static/images/background/lightning-bg.webp?v=${buildVersion}`
+        : `${basePath}${gameAssets.backgroundImage}?v=${buildVersion}`;
+
     return (
         <>
             <Image
-                src={`${basePath}${gameAssets.backgroundImage}?v=${buildVersion}`}
+                src={backgroundImage}
                 alt="Background"
                 fill
                 className={`absolute top-0 z-[-100] bg-size-[100%_100%] bg-position-center bg-no-repeat w-[calc(100%+24px)] h-full md:left-0 md:w-full md:rounded-tr-xl`}
