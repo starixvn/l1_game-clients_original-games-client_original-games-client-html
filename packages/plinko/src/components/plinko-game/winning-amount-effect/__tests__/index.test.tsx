@@ -88,7 +88,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(screen.getByText("win 1,000.00")).toBeInTheDocument();
+            expect(screen.getByText("+1,000.00")).toBeInTheDocument();
         });
     });
 
@@ -103,7 +103,7 @@ describe("WinningAmountEffect", () => {
             render(<WinningAmountEffect />);
 
             // Assert
-            expect(screen.getByText("win 800.00")).toBeInTheDocument();
+            expect(screen.getByText("+800.00")).toBeInTheDocument();
         });
 
         it("should handle undefined winAmount gracefully", () => {
@@ -140,7 +140,7 @@ describe("WinningAmountEffect", () => {
 
             // Act
             const { rerender } = render(<WinningAmountEffect />);
-            expect(screen.getByText("win 1,000.00")).toBeInTheDocument();
+            expect(screen.getByText("+1,000.00")).toBeInTheDocument();
 
             // Fast-forward time by 3 seconds
             act(() => {
@@ -149,7 +149,7 @@ describe("WinningAmountEffect", () => {
             rerender(<WinningAmountEffect />);
 
             // Assert
-            expect(screen.queryByText("win 1,000.00")).not.toBeInTheDocument();
+            expect(screen.queryByText("+1,000.00")).not.toBeInTheDocument();
         });
 
         it("should clear previous timeout when finish changes", () => {
@@ -182,17 +182,6 @@ describe("WinningAmountEffect", () => {
     });
 
     describe("Translation Integration", () => {
-        it("should use translation for win text", () => {
-            // Arrange
-            mockUsePlinkoGameStore.mockReturnValueOnce(mockFinish);
-
-            // Act
-            render(<WinningAmountEffect />);
-
-            // Assert
-            expect(mockT).toHaveBeenCalledWith("win");
-        });
-
         it("should format number with commas using helper function", () => {
             // Arrange
             mockUsePlinkoGameStore.mockReturnValueOnce(mockFinish);
@@ -214,7 +203,7 @@ describe("WinningAmountEffect", () => {
 
             // Assert
             expect(mockNumberWithCommas).toHaveBeenCalledWith(1234567.89, 2);
-            expect(screen.getByText("win 1,234,567.89")).toBeInTheDocument();
+            expect(screen.getByText("+1,234,567.89")).toBeInTheDocument();
         });
     });
 });
