@@ -1,12 +1,30 @@
-import { cn, numberWithCommas } from "@shared";
+import { buildVersion, cn, numberWithCommas } from "@shared";
 import React from "react";
+import Image from "next/image";
 import { PlinkoRound } from "./round-multiplier-history";
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 interface RoundMultiplierItemProps {
     round: PlinkoRound;
     isWin: boolean;
     className?: string;
 }
+
+const renderMultiplierContent = (multiplier: number) => {
+    if (multiplier === 0) {
+        return (
+            <Image
+                src={`${basePath}/static/images/icons/hell-multiplier.svg?v=${buildVersion}`}
+                alt="Hell multiplier"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+            />
+        );
+    }
+    return `${numberWithCommas(multiplier)}x`;
+};
 
 const RoundMultiplierItem: React.FC<RoundMultiplierItemProps> = ({ round, isWin, className = "" }) => {
     return (
@@ -18,7 +36,7 @@ const RoundMultiplierItem: React.FC<RoundMultiplierItemProps> = ({ round, isWin,
             )}
             style={{ backgroundColor: isWin ? "#00FF11" : "#3B4A58" }}
         >
-            {numberWithCommas(round.settlementResult.multiplier)}x
+            {renderMultiplierContent(round.settlementResult.multiplier)}
         </div>
     );
 };
