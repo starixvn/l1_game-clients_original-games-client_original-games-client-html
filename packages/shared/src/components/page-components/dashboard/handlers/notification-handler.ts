@@ -59,10 +59,11 @@ export class NotificationHandler {
 
     updateSSOTime = () => {
         const session = StorageHelper.get<SSOResponse & { ssoTime: Date }>(localStorageKeys.session);
-        if (session?.ssoTime) {
-            session.ssoTime = new Date();
-            StorageHelper.set(localStorageKeys.session, session);
-        }
+        const newSession = {
+            ...session,
+            ssoTime: new Date(),
+        };
+        StorageHelper.set(localStorageKeys.session, newSession);
     };
 
     handleShowApiErrorMessage = (errorCode: string, isDisableAccount = false) => {

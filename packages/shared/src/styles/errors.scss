@@ -84,7 +84,6 @@
         url("#{$base-path}/static/images/error-page/1x/spaceman-um.png?v=#{$version-image}") 1x,
         url("#{$base-path}/static/images/error-page/2x/spaceman-um.png?v=#{$version-image}") 2x
     );
-    animation: spin 9s linear infinite;
 }
 
 .um-star-tail {
