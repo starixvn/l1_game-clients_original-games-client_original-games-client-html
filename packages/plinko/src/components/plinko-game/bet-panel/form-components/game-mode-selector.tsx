@@ -1,6 +1,7 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
+import { useGameStore } from "@shared/stores/game-store";
 import { GAME_MODES, NUMBER_OF_ROWS } from "@plinko/constants";
 import Label from "./label";
 import { useClickSound, useTranslator } from "@shared/react-hooks";
@@ -29,6 +30,10 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const clickSound = useClickSound();
     const { getLightningConfig } = useGetLightningConfig();
 
+    const gameConfigs: any = useGameStore(
+        (state) => state.gameConfigs
+    );
+
     const { isLightningMode, setIsLightningMode } = usePlinkoLightningModeGameStore(
         useShallow((state) => ({
             isLightningMode: state.isLightningMode,
@@ -43,6 +48,13 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
             setNumberOfRows: state.actions.setNumberOfRows,
         }))
     );
+
+    const availableGameModes = useMemo(() => {
+        if (gameConfigs?.enabledLightningMode) {
+            return gameModes;
+        }
+        return gameModes.filter((mode) => !mode.isLightning);
+    }, [gameConfigs?.enabledLightningMode]);
 
     const handleSelectMode = (option: GameModeOption) => {
         clickSound();
@@ -67,7 +79,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
         <div className="span-game-mode">
             <Label title={t("mode")} />
             <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
-                {gameModes.map((option) => (
+                {availableGameModes.map((option) => (
                     <button
                         key={option.key}
                         type="button"
