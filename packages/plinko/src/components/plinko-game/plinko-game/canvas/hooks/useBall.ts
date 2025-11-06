@@ -73,35 +73,32 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
                 const imageRef = isLightning ? lightningBallImageRef.current : ballImageRef.current;
                 const imageLoaded = isLightning ? lightningImageLoadedRef.current : imageLoadedRef.current;
 
+                const scale = isLightning ? 1.2 : 1;
+                const radius = ballConfig.radius * scale;
+
                 if (imageLoaded && imageRef) {
-                    context.drawImage(
-                        imageRef,
-                        -ballConfig.radius,
-                        -ballConfig.radius,
-                        ballConfig.radius * 2,
-                        ballConfig.radius * 2
-                    );
+                    context.drawImage(imageRef, -radius, -radius, radius * 2, radius * 2);
 
                     if (isLightning && ballBody.multiplier && ballBody.multiplier > 0) {
                         context.font = "700 36px Inter, sans-serif";
                         context.textAlign = "center";
                         context.textBaseline = "middle";
 
-                        context.shadowColor = 'rgba(23, 255, 162, 0.80)';
+                        context.shadowColor = "rgba(23, 255, 162, 0.80)";
                         context.shadowBlur = 6;
                         context.shadowOffsetX = 0;
                         context.shadowOffsetY = 1;
 
                         const textY = -ballConfig.radius - 8;
 
-                        context.strokeStyle = '#007C51';
+                        context.strokeStyle = "#007C51";
                         context.lineWidth = 6;
                         context.strokeText(`${ballBody.multiplier}x`, 0, textY);
 
-                        context.fillStyle = '#FFF';
+                        context.fillStyle = "#FFF";
                         context.fillText(`${ballBody.multiplier}x`, 0, textY);
 
-                        context.shadowColor = 'transparent';
+                        context.shadowColor = "transparent";
                         context.shadowBlur = 0;
                         context.shadowOffsetX = 0;
                         context.shadowOffsetY = 0;

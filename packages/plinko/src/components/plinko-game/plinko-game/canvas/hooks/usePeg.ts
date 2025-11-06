@@ -40,6 +40,7 @@ export const usePeg = () => {
 
     const flyingMultipliersRef = useRef<FlyingMultiplier[]>([]);
     const lightningPegImageRef = useRef<HTMLImageElement | null>(null);
+    const glowAnimationTimeRef = useRef(0);
 
     // Load lightning peg image
     useEffect(() => {
@@ -48,6 +49,16 @@ export const usePeg = () => {
         img.onload = () => {
             lightningPegImageRef.current = img;
         };
+    }, []);
+
+    // Glow animation loop for lightning pegs
+    useEffect(() => {
+        const animationDuration = 2000; // 2000ms as requested
+        const interval = setInterval(() => {
+            glowAnimationTimeRef.current = (glowAnimationTimeRef.current + 50) % animationDuration;
+        }, 50); // Update every 50ms for smooth animation
+
+        return () => clearInterval(interval);
     }, []);
 
     const triggerMultiplierAnimation = useCallback((x: number, y: number, multiplier: number) => {
@@ -65,7 +76,7 @@ export const usePeg = () => {
 
     const updateFlyingMultipliers = useCallback(() => {
         const currentTime = Date.now();
-        const animationDuration = 1000; // 1 second animation
+        const animationDuration = 2000; // 1 second animation
 
         flyingMultipliersRef.current = flyingMultipliersRef.current
             .map(animation => {
@@ -125,6 +136,36 @@ export const usePeg = () => {
         }
         const { pegRadius } = PlinkoCanvasConfig;
         const isLightningPeg = body.multiplier && body.multiplier > 1;
+
+        // Draw glow effect for lightning pegs
+        if (isLightningPeg) {
+            // Calculate glow opacity using sine wave for blinking effect
+            const glowProgress = (glowAnimationTimeRef.current / 2000) * Math.PI * 2; // 2000ms cycle
+            const glowOpacity = (Math.sin(glowProgress) + 1) / 2; // Range from 0 to 1
+
+            // Draw outer glow circle - centered on lightning peg image
+            const glowRadius = pegRadius * 3;
+            context.save();
+            context.globalAlpha = glowOpacity * 0.6; // Max opacity 0.6
+
+            // Lightning peg image is centered at (pegRadius/2, pegRadius/2), so move glow there
+            const pegCenterX = pegRadius / 2;
+            const pegCenterY = pegRadius / 2;
+
+            // Create centered gradient for glow effect
+            const gradient = context.createRadialGradient(pegCenterX, pegCenterY, 0, pegCenterX, pegCenterY, glowRadius);
+            gradient.addColorStop(0, 'rgba(23, 255, 162, 1)');
+            gradient.addColorStop(0.3, 'rgba(0, 124, 81, 0.8)');
+            gradient.addColorStop(0.7, 'rgba(23, 255, 162, 0.4)');
+            gradient.addColorStop(1, 'rgba(23, 255, 162, 0)');
+
+            context.fillStyle = gradient;
+            context.beginPath();
+            context.arc(pegCenterX, pegCenterY, glowRadius, 0, Math.PI * 2);
+            context.fill();
+
+            context.restore();
+        }
 
         if (isLightningPeg && lightningPegImageRef.current) {
             // Draw lightning peg using image
