@@ -5,17 +5,18 @@ import { BALL_BODY_OPTIONS, PLINKO_OBJECTS, PlinkoCanvasConfig } from "../consta
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { buildVersion } from "@shared/constants";
 import { usePlinkoBallHitPinSound } from "@plinko/shared/hooks/use-sound";
+import { useLightningBall } from "./use-lightning-ball";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => {
     const ballImageRef = useRef<HTMLImageElement | null>(null);
-    const lightningBallImageRef = useRef<HTMLImageElement | null>(null);
     const imageLoadedRef = useRef(false);
-    const lightningImageLoadedRef = useRef(false);
     const playPlinkoBallHitPinSound = usePlinkoBallHitPinSound();
     const playPlinkoBallHitPinSoundRef = useRef(playPlinkoBallHitPinSound);
     playPlinkoBallHitPinSoundRef.current = playPlinkoBallHitPinSound;
+
+    const { drawLightningBall, drawLightningBallMultiplier, updateBallLightningStatus } = useLightningBall();
 
     useEffect(() => {
         const image = new Image();
@@ -28,19 +29,6 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
         };
         image.src = `${basePath}/static/images/plinko/ball.svg?v=${buildVersion}`;
         ballImageRef.current = image;
-    }, []);
-
-    useEffect(() => {
-        const lightningImage = new Image();
-        lightningImage.onload = () => {
-            lightningImageLoadedRef.current = true;
-        };
-        lightningImage.onerror = () => {
-            console.error("Failed to load lightning ball image");
-            lightningImageLoadedRef.current = false;
-        };
-        lightningImage.src = `${basePath}/static/images/plinko/lightning-ball.svg?v=${buildVersion}`;
-        lightningBallImageRef.current = lightningImage;
     }, []);
 
     const createBall = useCallback((finish: PlinkoFinish) => {
@@ -70,49 +58,25 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
                 context.translate(x, y);
 
                 const isLightning = ballBody.isLightning;
-                const imageRef = isLightning ? lightningBallImageRef.current : ballImageRef.current;
-                const imageLoaded = isLightning ? lightningImageLoadedRef.current : imageLoadedRef.current;
 
-                const scale = isLightning ? 1.2 : 1;
-                const radius = ballConfig.radius * scale;
-
-                if (imageLoaded && imageRef) {
-                    context.drawImage(imageRef, -radius, -radius, radius * 2, radius * 2);
-
-                    if (isLightning && ballBody.multiplier && ballBody.multiplier > 0) {
-                        context.font = "700 36px Inter, sans-serif";
-                        context.textAlign = "center";
-                        context.textBaseline = "middle";
-
-                        context.shadowColor = "rgba(23, 255, 162, 0.80)";
-                        context.shadowBlur = 6;
-                        context.shadowOffsetX = 0;
-                        context.shadowOffsetY = 1;
-
-                        const textY = -ballConfig.radius - 8;
-
-                        context.strokeStyle = "#007C51";
-                        context.lineWidth = 6;
-                        context.strokeText(`${ballBody.multiplier}x`, 0, textY);
-
-                        context.fillStyle = "#FFF";
-                        context.fillText(`${ballBody.multiplier}x`, 0, textY);
-
-                        context.shadowColor = "transparent";
-                        context.shadowBlur = 0;
-                        context.shadowOffsetX = 0;
-                        context.shadowOffsetY = 0;
-                    }
+                if (isLightning) {
+                    drawLightningBall(context, ballBody);
+                    drawLightningBallMultiplier(context, ballBody);
                 } else {
-                    context.fillStyle = "#FED701";
-                    context.beginPath();
-                    context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
-                    context.fill();
+                    if (imageLoadedRef.current && ballImageRef.current) {
+                        context.drawImage(ballImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2, ballConfig.radius * 2);
+                    } else {
+                        context.fillStyle = "#FED701";
+                        context.beginPath();
+                        context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
+                        context.fill();
+                    }
                 }
+
                 context.restore();
             });
         },
-        [ballsRef]
+        [ballsRef, drawLightningBall, drawLightningBallMultiplier]
     );
 
     const handleRoad = useCallback((body: BallBody, peg: PegBody) => {
@@ -128,14 +92,10 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
             playPlinkoBallHitPinSoundRef.current();
             body.collidedRowIndexes?.push(peg.rowIndex);
 
-            if (peg.multiplier && peg.multiplier > 0) {
-                console.log("peg.multiplier", peg.multiplier);
-                body.isLightning = true;
-                body.multiplier = (body.multiplier || 0) + peg.multiplier;
-            }
+            updateBallLightningStatus(body, peg);
         }
         Body.setStatic(body, false);
-    }, []);
+    }, [updateBallLightningStatus]);
 
     return {
         drawBalls,

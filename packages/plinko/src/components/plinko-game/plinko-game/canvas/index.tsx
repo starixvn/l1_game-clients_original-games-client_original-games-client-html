@@ -2,7 +2,7 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect, PathPreview, PegBody } from "./type";
+import { BallBody, ExplosionEffect, PegEffect, PathPreview } from "./type";
 import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
@@ -30,7 +30,7 @@ const PlinkoCanvas = () => {
     const isInstantMode = usePlinkoSettingStore((state) => state.isInstantMode);
 
     // Peg hook
-    const { createPegs, drawPeg, drawFlyingMultipliers, triggerMultiplierAnimation, updateFlyingMultipliers } = usePeg();
+    const { createPegs, drawPeg } = usePeg();
 
     // Multiplier hook
     const { createSlot } = useSlot();
@@ -52,38 +52,6 @@ const PlinkoCanvas = () => {
     const playPlinkoBallHitWinSoundRef = useRef(playPlinkoBallHitWinSound);
     playPlinkoBallHitWinSoundRef.current = playPlinkoBallHitWinSound;
 
-    // Handle peg collision
-    const handlePegCollision = useCallback((ball: Body, peg: Body) => {
-        createPegEffect(peg);
-        const ballBody = ball as BallBody;
-        const pegBody = peg as PegBody;
-
-        // Check if this is the first collision with this peg row
-        const isFirstCollision = !ballBody.collidedRowIndexes?.includes(pegBody.rowIndex);
-
-        handleRoad(ball, peg);
-
-        // Trigger multiplier animation for lightning pegs only on first collision
-        if (isFirstCollision && pegBody.multiplier && pegBody.multiplier > 1) {
-            triggerMultiplierAnimation(pegBody.position.x, pegBody.position.y, pegBody.multiplier);
-        }
-    }, [createPegEffect, handleRoad, triggerMultiplierAnimation]);
-
-    // Handle slot collision
-    const handleSlotCollision = useCallback((ball: Body) => {
-        const ballBody = ball as BallBody;
-
-        setFinishedBall(ballBody.finish);
-        playPlinkoBallHitWinSoundRef.current();
-        createExplosionEffect(ball);
-
-        // remove ball
-        if (engineRef.current) {
-            Composite.remove(engineRef.current.world, [ball]);
-        }
-        ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
-    }, [setFinishedBall, createExplosionEffect]);
-
     // Collision handler
     const handleCollision = useCallback(
         (event: IEventCollision<Engine>) => {
@@ -99,15 +67,27 @@ const PlinkoCanvas = () => {
                 if (!ball) {
                     continue;
                 }
-
+                // collision with peg
                 if (object?.label === PLINKO_OBJECTS.PEG) {
-                    handlePegCollision(ball, object);
-                } else if (object?.label === PLINKO_OBJECTS.SLOT) {
-                    handleSlotCollision(ball);
+                    createPegEffect(object);
+                    handleRoad(ball, object);
+                }
+                // collision with slot
+                if (object?.label === PLINKO_OBJECTS.SLOT) {
+                    const ballBody = ball as BallBody;
+
+                    setFinishedBall(ballBody.finish);
+                    playPlinkoBallHitWinSoundRef.current();
+
+                    createExplosionEffect(ball);
+
+                    // remove ball
+                    Composite.remove(engineRef.current.world, [ball]);
+                    ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
                 }
             }
         },
-        [handlePegCollision, handleSlotCollision]
+        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect]
     );
 
     // Draw scene object
@@ -187,9 +167,6 @@ const PlinkoCanvas = () => {
             return;
         }
 
-        // Update animations
-        updateFlyingMultipliers();
-
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw all scene objects
@@ -206,14 +183,11 @@ const PlinkoCanvas = () => {
         // draw balls
         drawBalls?.(context);
 
-        // Draw flying multipliers
-        drawFlyingMultipliers?.(context);
-
         // Draw explosion effects
         drawExplosionEffect?.(context);
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview, drawFlyingMultipliers, updateFlyingMultipliers]);
+    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
