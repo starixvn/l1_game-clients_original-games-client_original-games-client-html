@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@shared/utils/merge-tailwind-util";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@shared/components/game-components/table";
-import { gameModeMap } from "@shared/helpers/plinko";
+import { GAME_MODES, gameModeMap } from "@shared/helpers/plinko";
 import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { numberWithCommas } from "@shared/helpers";
 import { ResourceTypes } from "@shared/resources";
@@ -10,17 +10,21 @@ import { useTranslate } from "@tolgee/react";
 
 interface BetDetailRow {
     gameMode: number;
-    betChoice: React.ReactNode;
-    stake: React.ReactNode;
-    win: React.ReactNode;
+    betChoice: string;
+    stake: number;
+    win: number;
     isWinningBet?: boolean;
     reachMaxWin?: boolean;
+    payoutSlot?: number;
+    totalPegMultipliers?: number;
 }
 
 interface BetDetailTableProps {
     data: BetDetailRow[];
     emptyMessage: string;
 }
+
+const TEXT_RIGHT_ALIGN = "text-right";
 
 const createBetDetailRowData = (row: BetDetailRow) => {
     return [
@@ -39,22 +43,55 @@ const createBetDetailRowData = (row: BetDetailRow) => {
         {
             content: row.win,
             isWinningBet: row.isWinningBet,
-            className: "text-right",
+            className: TEXT_RIGHT_ALIGN,
+        },
+    ];
+};
+
+const createLightningBetDetailRowData = (row: BetDetailRow) => {
+    return [
+        {
+            content: `${row.payoutSlot}x`,
+            isWinningBet: row.isWinningBet,
+        },
+        {
+            content: `${row.totalPegMultipliers}x`,
+            isWinningBet: row.isWinningBet,
+        },
+        {
+            content: row.stake,
+            isWinningBet: row.isWinningBet,
+        },
+        {
+            content: row.win,
+            isWinningBet: row.isWinningBet,
+            className: TEXT_RIGHT_ALIGN,
         },
     ];
 };
 
 
-const renderBetDetailHeader = (translateCommon: any, translatePlinko: any) => {
-    const headerColumns = [
+const renderBetDetailHeader = (isLightningMode: boolean, translateCommon: any, translatePlinko: any) => {
+    const defaultHeaderColumns = [
         { key: "gameMode", label: translatePlinko("mode").capitalizeFirstLetter() },
         { key: "bet_choice", label: translatePlinko("row").capitalizeFirstLetter() },
         { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
         { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
     ];
 
+    const lightningHeaderColumns = [
+        { key: "payoutSlot", label: translatePlinko("payout_slot").capitalizeFirstLetter() },
+        { key: "totalPegMultipliers", label: translateCommon("title_multiplier").capitalizeFirstLetter() },
+        { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
+        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
+    ];
+
+    const headerColumns = isLightningMode ? lightningHeaderColumns : defaultHeaderColumns;
+
     return (
-        <TableHeader className="sticky top-0 z-10 bg-table-header">
+        <div className="bg-table-header rounded-t-lg shrink-0 pr-3">
+                <Table className="rounded-t-lg w-full">
+                <TableHeader className="sticky top-0 z-10 bg-table-header">
             <TableRow>
                 {headerColumns.map((column, index) => (
                     <TableHead
@@ -69,11 +106,13 @@ const renderBetDetailHeader = (translateCommon: any, translatePlinko: any) => {
                 ))}
             </TableRow>
         </TableHeader>
+                </Table>
+            </div>
     );
 };
 
-const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
-    const rowData = createBetDetailRowData(data[0]);
+const renderBetDetailRows = (data: BetDetailRow[], isLightningMode: boolean, translateCommon: any) => {
+    const rowData = isLightningMode ? createLightningBetDetailRowData(data[0]) : createBetDetailRowData(data[0]);
     return (
         <TableRow className={cn("border-none bg-bet-detail-row-1")}>
             {rowData.map((cell, cellIndex) => (
@@ -94,10 +133,21 @@ const renderBetDetailRows = (data: BetDetailRow[], translateCommon: any) => {
     );
 };
 
-const renderLightningModeRow = (pegMultipliers: any[], translateCommon: any, translatePlinko: any) => {
+const renderLightningModeRow = (pegMultipliers: any[], reachedPegMultipliers: any[], translateCommon: any, translatePlinko: any) => {
     if (!pegMultipliers || pegMultipliers.length === 0) {
         return null;
     }
+
+    const isReachedPeg = (peg: any) => {
+        if (!reachedPegMultipliers || reachedPegMultipliers.length === 0) {
+            return false;
+        }
+        return reachedPegMultipliers.some((reachedPeg: any) =>
+            reachedPeg.row === peg.row &&
+            reachedPeg.column === peg.column &&
+            reachedPeg.multiplier === peg.multiplier
+        );
+    };
 
     return (
         <div className="mt-4">
@@ -124,19 +174,34 @@ const renderLightningModeRow = (pegMultipliers: any[], translateCommon: any, tra
             <div className="w-full">
                 <Table className="w-full">
                     <TableBody>
-                        {pegMultipliers.map((peg, index) => (
-                            <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
-                                <TableCell className={cn("w-1/3 text-sm md:text-base text-secondary-text text-center p-3", index ===pegMultipliers.length - 1 && "rounded-bl-lg")}>
-                                    {peg.column + 2}
-                                </TableCell>
-                                <TableCell className="w-1/3 text-sm md:text-base text-secondary-text text-center p-3">
-                                    {peg.row + 1 }
-                                </TableCell>
-                                <TableCell className={cn("w-1/3 text-sm md:text-base text-secondary-text text-center p-3", index === pegMultipliers.length - 1 && "rounded-br-lg")}>
-                                    {peg.multiplier}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {pegMultipliers.map((peg, index) => {
+                            const reached = isReachedPeg(peg);
+                            const tableCellStyles = cn(
+                                "w-1/3 text-sm md:text-base text-center p-3",
+                                reached ? "text-winning-highlight" : "text-secondary-text"
+                            );
+                            return (
+                                <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
+                                    <TableCell className={cn(
+                                       tableCellStyles,
+                                        index === pegMultipliers.length - 1 && "rounded-bl-lg"
+                                    )}>
+                                        {peg.column + 2}
+                                    </TableCell>
+                                    <TableCell className={cn(
+                                       tableCellStyles,
+                                    )}>
+                                        {peg.row + 1}
+                                    </TableCell>
+                                    <TableCell className={cn(
+                                       tableCellStyles,
+                                        index === pegMultipliers.length - 1 && "rounded-br-lg"
+                                    )}>
+                                        {peg.multiplier}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </div>
@@ -154,13 +219,12 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
     const maxWinRow = data.find(row => row.reachMaxWin);
     const reachMaxWin = maxWinRow?.reachMaxWin || drawInfo?.reachMaxWin;
 
+    const isLightningMode = drawInfo?.gameMode === GAME_MODES.LIGHTNING && !!drawInfo?.lightningBoard;
 
     if (!data || data.length === 0) {
         return (
             <div ref={ref} className="flex flex-col h-full min-h-0 w-full">
-                <div className="bg-table-header rounded-t-lg flex-shrink-0">
-                    <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon, translatePlinko)}</Table>
-                </div>
+                {renderBetDetailHeader(isLightningMode, translateCommon, translatePlinko)}
                 <div className="flex-1 min-h-0 overflow-y-auto w-full">
                     <Table className="w-full">
                         <TableBody>
@@ -178,17 +242,15 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
 
     return (
         <div ref={ref} className="flex flex-col h-full w-full">
-            <div className="bg-table-header rounded-t-lg shrink-0 pr-3">
-                <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon, translatePlinko)}</Table>
-            </div>
+            {renderBetDetailHeader(isLightningMode, translateCommon, translatePlinko)}
 
             <div className="w-full">
                 <Table className="w-full pr-3">
-                    <TableBody>{renderBetDetailRows(data, translatePlinko)}</TableBody>
+                    <TableBody>{renderBetDetailRows(data, isLightningMode,translatePlinko)}</TableBody>
                 </Table>
             </div>
 
-            {drawInfo?.lightningBoard?.pegMultipliers && renderLightningModeRow(drawInfo.lightningBoard.pegMultipliers, translateCommon, translatePlinko)}
+            {drawInfo?.lightningBoard?.pegMultipliers && renderLightningModeRow(drawInfo.lightningBoard.pegMultipliers, drawInfo.settlementResult?.reachedPegMultipliers, translateCommon, translatePlinko)}
 
             {reachMaxWin && (
                 <div className="font-semibold py-3 text-sm md:text-base">

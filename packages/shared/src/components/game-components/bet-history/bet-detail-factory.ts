@@ -24,6 +24,7 @@ export function createBetDetailData(
                 odds: row.originalBetLog?.odds,
                 settlementResult: row.originalBetLog?.settlementResult,
                 reachMaxWin: row.originalBetLog?.reachMaxWin,
+                gameMode: row.originalBetLog?.gameMode,
                 lightningBoard: row.originalBetLog?.lightningBoard,
                 lightningKey: row.originalBetLog?.lightningKey,
                 pfResult: {

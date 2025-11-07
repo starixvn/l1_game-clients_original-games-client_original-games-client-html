@@ -4,6 +4,7 @@ import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-sto
 import usePFStore from "@shared/stores/pf-store/pf-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
+import { LightningBoard } from "@plinko/shared/types";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     private static readonly PAGE_SIZE = 10;
@@ -16,6 +17,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
         amount: number;
         reachMaxWin?: boolean;
         odds?: any;
+        gameMode?: number
+        lightningBoard?: LightningBoard;
     } | null = null;
 
     // Plinko-specific state for rolling window display
@@ -68,6 +71,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             result: bet.result,
             settlementResult: bet.settlementResult,
             odds: bet.odds || {},
+            lightningBoard: bet.lightningBoard || undefined,
+            gameMode: bet.gameMode || undefined,
         };
 
         const betLog = this.createPlinkoBetLog(
@@ -140,7 +145,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             return;
         }
 
-        const { roundId, result, settlementResult, winAmount, amount, reachMaxWin, odds } = finish;
+        const { roundId, result, settlementResult, winAmount, amount, reachMaxWin, odds, gameMode, lightningBoard } = finish;
         this.latestFinish = {
             roundId: Number(roundId) || 0,
             result,
@@ -149,6 +154,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
             amount: Number(amount) || 0,
             reachMaxWin: Boolean(reachMaxWin),
             odds,
+            gameMode,
+            lightningBoard,
         };
     }
 
@@ -189,6 +196,8 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
                 result: action.finish.result,
                 settlementResult: action.finish.settlementResult,
                 odds: action.finish.odds || {},
+                gameMode: action.finish.gameMode,
+                lightningBoard: action.finish.lightningBoard || undefined,
             };
 
             // Store this bet for the specific round ID
@@ -210,14 +219,11 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     ) {
         const baseBetLog = super.createBetLog(roundId, totalAmount, betwin, pendingDetails, firstBetTime, resultData);
 
-        const lightningModeStore = usePlinkoLightningModeGameStore.getState();
-        const lightningConfig = lightningModeStore.lightningConfig;
-
         return {
             ...baseBetLog,
             reachMaxWin: pendingDetails[0]?.reachMaxWin || false,
-            lightningBoard: lightningConfig?.lightningBoard,
-            lightningKey: lightningConfig?.lightningKey,
+            lightningBoard: resultData.lightningBoard,
+            gameMode: resultData.gameMode,
         };
     }
 

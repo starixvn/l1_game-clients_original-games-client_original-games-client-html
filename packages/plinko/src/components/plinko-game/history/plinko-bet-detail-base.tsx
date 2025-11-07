@@ -19,6 +19,8 @@ const PlinkoBetDetailBase: FC<{
     const { togglePFVerify } = usePopupStore(useShallow((state) => ({ togglePFVerify: state.togglePFVerify })));
 
     const { drawInfo, betLogDetails } = betDetailData || {};
+
+    console.log("ZLOG betDetailData::: ", betDetailData);
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
@@ -26,6 +28,14 @@ const PlinkoBetDetailBase: FC<{
         if (!drawInfo || !betLogDetails) {
             return [];
         }
+
+        const slotIndex = drawInfo.settlementResult?.slotIndex;
+        const payoutSlot = drawInfo?.lightningBoard?.odds?.[slotIndex] || 0;
+
+        const totalPegMultipliers = drawInfo.settlementResult?.reachedPegMultipliers?.reduce((total, reachedPeg) => {
+            return total + (reachedPeg.multiplier || 0);
+        }, 0) || 0;
+
         return betLogDetails.map((betLogDetail) => {
             return {
                 gameMode: betLogDetail.gameMode,
@@ -34,6 +44,8 @@ const PlinkoBetDetailBase: FC<{
                 win: displayWinAmount(betLogDetail.win),
                 isWinningBet: betLogDetail.win > betLogDetail.amount,
                 reachMaxWin: betLogDetail.reachMaxWin,
+                payoutSlot,
+                totalPegMultipliers,
             };
         });
     }, [betLogDetails, drawInfo]);

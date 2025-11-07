@@ -228,6 +228,7 @@ export interface DrawInfo {
     pfResult: PFResult;
     clientSeed: string;
     reachMaxWin?: boolean;
+    gameMode?: number;
     lightningBoard?: any;
     lightningKey?: string;
 }

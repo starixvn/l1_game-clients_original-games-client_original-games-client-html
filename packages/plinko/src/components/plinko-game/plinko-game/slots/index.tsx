@@ -167,7 +167,7 @@ const Slots = () => {
                                     className="w-4 h-4"
                                 />
                             ) : (
-                                <span className={cn(getFontSize(), "tracking-[0px] drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}>{formatPlinkoOdds(item)}</span>
+                                <span className={cn(getFontSize(), "tracking-[0px] font-semibold drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}>{formatPlinkoOdds(item)}</span>
                             )}
                         </span>
                     </Tooltip>
