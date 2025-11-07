@@ -122,9 +122,6 @@ const Slots = () => {
     }, [odds, effectiveNumberOfRows]);
 
     const getFontSize = () => {
-        if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
-            return `text-[11px]`;
-        }
         return isDesktop ? `text-[${fontSizesDesktop[effectiveNumberOfRows]}px]` : `text-[${fontSizes[effectiveNumberOfRows]}px]`;
     };
 
@@ -147,15 +144,13 @@ const Slots = () => {
                             className={cn(
                                 isHit ? "animate-slide-down" : "",
                                 "flex items-center justify-center text-white font-bold h-[30px]",
-                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
+                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]",
+                                isLightningMode && "h-[28px]"
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getBackgroundColor(item, index),
-                                fontSize: isDesktop
-                                    ? `${fontSizesDesktop[effectiveNumberOfRows]}px`
-                                    : `${fontSizes[effectiveNumberOfRows]}px`,
                             }}
                         >
                             {isLightningMode && item === 0 ? (
@@ -164,7 +159,7 @@ const Slots = () => {
                                     alt="hell"
                                     width={20}
                                     height={20}
-                                    className="w-4 h-4"
+                                    className="w-[18px] h-[18px]"
                                 />
                             ) : (
                                 <span
