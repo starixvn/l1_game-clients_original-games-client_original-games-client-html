@@ -12,8 +12,8 @@ import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
 interface BetDetailRow {
     gameMode: number;
     betChoice: string;
-    stake: number;
-    win: number;
+    stake: string | number;
+    win: string | number;
     isWinningBet?: boolean;
     reachMaxWin?: boolean;
     payoutSlot?: number;
@@ -256,7 +256,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
             {reachMaxWin && (
                 <div className="font-semibold py-3 text-sm md:text-base">
                     <span>
-                    {`${translateCommon("you_reach_max_win")}: ${numberWithCommas(maxWinRow?.win, 2)}`}
+                    {`${translateCommon("you_reach_max_win")}: ${numberWithCommas(Number(maxWinRow?.win), 2)}`}
                     </span>
                 </div>
             )}

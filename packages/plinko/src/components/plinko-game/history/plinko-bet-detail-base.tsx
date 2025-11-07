@@ -20,7 +20,6 @@ const PlinkoBetDetailBase: FC<{
 
     const { drawInfo, betLogDetails } = betDetailData || {};
 
-    console.log("ZLOG betDetailData::: ", betDetailData);
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
