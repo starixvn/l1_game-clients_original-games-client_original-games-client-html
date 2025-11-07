@@ -1,8 +1,10 @@
-interface String {
-    replaceTolgeeFormat(): string;
-    capitalizeFirstLetter(): string;
-    appendBuildVersion(): string;
-    removeBuildVersion(): string;
+declare global {
+    interface String {
+        replaceTolgeeFormat(): string;
+        capitalizeFirstLetter(): string;
+        appendBuildVersion(): string;
+        removeBuildVersion(): string;
+    }
 }
 
 String.prototype.replaceTolgeeFormat = function () {
@@ -19,4 +21,8 @@ String.prototype.appendBuildVersion = function () {
 
 String.prototype.removeBuildVersion = function () {
     return this.replace(/\?v=[a-zA-Z0-9]*/, "");
+};
+
+export const capitalizeFirstLetter = (str: string) => {
+    return str.replace(/(^|\s)[a-z]/g, (letter) => letter.toUpperCase());
 };

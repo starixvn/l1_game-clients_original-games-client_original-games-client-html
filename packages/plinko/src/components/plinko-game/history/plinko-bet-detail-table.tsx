@@ -7,6 +7,7 @@ import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { numberWithCommas } from "@shared/helpers";
 import { ResourceTypes } from "@shared/resources";
 import { useTranslate } from "@tolgee/react";
+import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
 
 interface BetDetailRow {
     gameMode: number;
@@ -73,17 +74,17 @@ const createLightningBetDetailRowData = (row: BetDetailRow) => {
 
 const renderBetDetailHeader = (isLightningMode: boolean, translateCommon: any, translatePlinko: any) => {
     const defaultHeaderColumns = [
-        { key: "gameMode", label: translatePlinko("mode").capitalizeFirstLetter() },
-        { key: "bet_choice", label: translatePlinko("row").capitalizeFirstLetter() },
-        { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
-        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
+        { key: "gameMode", label: capitalizeFirstLetter(translatePlinko("mode")) },
+        { key: "bet_choice", label: capitalizeFirstLetter(translatePlinko("row")) },
+        { key: "stake", label: capitalizeFirstLetter(translateCommon("bet_amount")) },
+        { key: "win", label: capitalizeFirstLetter(translateCommon("win")), align: "right" },
     ];
 
     const lightningHeaderColumns = [
-        { key: "payoutSlot", label: translatePlinko("payout_slot").capitalizeFirstLetter() },
-        { key: "totalPegMultipliers", label: translateCommon("title_multiplier").capitalizeFirstLetter() },
-        { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
-        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
+        { key: "payoutSlot", label: capitalizeFirstLetter(translatePlinko("payout_slot")) },
+        { key: "totalPegMultipliers", label: capitalizeFirstLetter(translateCommon("title_multiplier")) },
+        { key: "stake", label: capitalizeFirstLetter(translateCommon("bet_amount")) },
+        { key: "win", label: capitalizeFirstLetter(translateCommon("win")), align: "right" },
     ];
 
     const headerColumns = isLightningMode ? lightningHeaderColumns : defaultHeaderColumns;
@@ -152,20 +153,20 @@ const renderLightningModeRow = (pegMultipliers: any[], reachedPegMultipliers: an
     return (
         <div className="mt-4">
             <div className="font-semibold py-3 text-sm md:text-base">
-                {translatePlinko("multiplier_position").capitalizeFirstLetter()}
+                {capitalizeFirstLetter(translatePlinko("multiplier_position"))}
             </div>
             <div className="bg-table-header rounded-t-lg">
                 <Table className="rounded-t-lg w-full">
                     <TableHeader className="sticky top-0 z-10 bg-table-header">
                         <TableRow>
                             <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
-                                {translatePlinko("column").capitalizeFirstLetter()}
+                                {capitalizeFirstLetter(translatePlinko("column"))}
                             </TableHead>
                             <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
-                                {translatePlinko("row").capitalizeFirstLetter()}
+                                {capitalizeFirstLetter(translatePlinko("row"))}
                             </TableHead>
                             <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
-                                {translateCommon("title_multiplier").capitalizeFirstLetter()}
+                                {capitalizeFirstLetter(translateCommon("title_multiplier"))}
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -255,7 +256,7 @@ const PlinkoBetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProp
             {reachMaxWin && (
                 <div className="font-semibold py-3 text-sm md:text-base">
                     <span>
-                    {`${translateCommon("you_reach_max_win")}: ${numberWithCommas(maxWinRow?.win as number, 2)}`}
+                    {`${translateCommon("you_reach_max_win")}: ${numberWithCommas(maxWinRow?.win, 2)}`}
                     </span>
                 </div>
             )}
