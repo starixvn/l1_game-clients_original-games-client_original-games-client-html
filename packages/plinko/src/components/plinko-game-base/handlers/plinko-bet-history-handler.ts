@@ -3,7 +3,6 @@ import { messageEventType } from "@shared/components/game-base/handlers/game-mes
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
 import usePFStore from "@shared/stores/pf-store/pf-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { LightningBoard } from "@plinko/shared/types";
 
 export class PlinkoBetHistoryHandler extends BetHistoryHandler {
