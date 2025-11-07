@@ -2,13 +2,14 @@ const express = require("express");
 const path = require("path");
 const next = require("next");
 const cors = require("cors");
+const { getAppSettings } = require("@shared/helpers/app-settings-helper");
 
 // Factory function to create a custom server for a specific game
 function createCustomServer(gameName) {
     const dev = process.env.NODE_ENV !== "production";
     const hostname = process.env.HOSTNAME || "localhost";
     const port = parseInt(process.env.PORT, 10) || 3000;
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    const basePath = (getAppSettings().proxy?.path || "") + (process.env.NEXT_PUBLIC_BASE_PATH || "");
     const FONTS_PATH_PREFIX = "/static/fonts/";
 
     console.log(`🚀 Starting server with config:`);
@@ -16,6 +17,8 @@ function createCustomServer(gameName) {
     console.log(`  - Hostname: ${hostname}`);
     console.log(`  - Port: ${port}`);
     console.log(`  - Base Path: ${basePath || "(none)"}`);
+    console.log(`  - Proxy Path: ${getAppSettings().proxy?.path || "(none)"}`);
+    console.log(`  - Next Public Base Path: ${process.env.NEXT_PUBLIC_BASE_PATH || "(none)"}`);
     console.log(`  - Dev Mode: ${dev}`);
     console.log(`  - Working Directory: ${__dirname}`);
     console.log(`  - Game: ${gameName}`);
@@ -62,12 +65,14 @@ function createCustomServer(gameName) {
             const server = express();
 
             // Configure CORS
-            server.use(cors({
-                origin: "*",
-                credentials: true,
-                methods: ["GET", "POST", "OPTIONS"],
-                allowedHeaders: ["Content-Type", "Authorization"],
-            }));
+            server.use(
+                cors({
+                    origin: "*",
+                    credentials: true,
+                    methods: ["GET", "POST", "OPTIONS"],
+                    allowedHeaders: ["Content-Type", "Authorization"],
+                })
+            );
 
             // Add comprehensive logging middleware FIRST to catch ALL requests
             server.use((req, res, next) => {
@@ -103,7 +108,7 @@ function createCustomServer(gameName) {
             server.get("/health", (req, res) => {
                 res.status(200).send("healthy");
             });
-            
+
             // Handle Next.js image optimization URLs before Next.js processes them
             server.use("/_next/image", (req, res, next) => {
                 console.log(`🖼️  [Image Optimization] Intercepting Next.js image URL: ${req.url}`);
@@ -145,7 +150,7 @@ function createCustomServer(gameName) {
             // Serve static files from public with basePath support
             server.use("/static", (req, res, next) => {
                 console.log(`📁 [Static] Processing: ${req.url}`);
-                
+
                 let staticPath;
                 if (req.url.startsWith(FONTS_PATH_PREFIX)) {
                     // Check game package first for fonts, fallback to shared
