@@ -151,6 +151,7 @@ const Slots = () => {
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getBackgroundColor(item, index),
+                                fontSize: getFontSize(),
                             }}
                         >
                             {isLightningMode && item === 0 ? (
