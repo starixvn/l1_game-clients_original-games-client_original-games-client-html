@@ -3,17 +3,18 @@ import PlinkoCanvas from "./canvas";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { PLINKO_CANVAS_SCALE } from "./constant";
 import Slots from "./slots";
+import { cn } from "@shared/utils";
 
 const widthSlots = {
-    8: 87,
-    9: 87,
-    10: 86,
-    11: 85,
-    12: 85,
-    13: 84,
-    14: 84,
-    15: 83,
-    16: 83,
+    8: 96,
+    9: 94.5,
+    10: 94,
+    11: 93,
+    12: 92,
+    13: 91.5,
+    14: 91,
+    15: 91,
+    16: 90.5,
 };
 const Game = () => {
     const numberOfRows = usePlinkoGameStore((state) => state.numberOfRows);
@@ -29,7 +30,7 @@ const Game = () => {
                 >
                     <PlinkoCanvas />
                 </div>
-                <div className="relative aspect-[660/550] mx-auto">
+                <div className={cn("relative mx-auto w-full")} style={{ paddingBottom: "89%" }}>
                     <div
                         className="absolute -bottom-[14px] left-1/2 -translate-x-1/2 h-[30px] translate-y-[100%]"
                         style={{ width: `${widthSlots[numberOfRows]}%` }}
