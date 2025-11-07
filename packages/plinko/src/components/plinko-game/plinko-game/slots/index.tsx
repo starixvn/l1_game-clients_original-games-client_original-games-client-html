@@ -125,7 +125,7 @@ const Slots = () => {
         if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
             return `text-[11px]`;
         }
-        return `text-[12px]`;
+        return isDesktop ? `text-[${fontSizesDesktop[effectiveNumberOfRows]}px]` : `text-[${fontSizes[effectiveNumberOfRows]}px]`;
     };
 
     const getBackgroundColor = (item: number, index: number) => {
@@ -167,7 +167,11 @@ const Slots = () => {
                                     className="w-4 h-4"
                                 />
                             ) : (
-                                <span className={cn(getFontSize(), "tracking-[0px] font-semibold drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}>{formatPlinkoOdds(item)}</span>
+                                <span
+                                    className={cn(getFontSize(), "tracking-[0px] font-semibold drop-shadow-[1px_2px_1px_rgba(0,0,0,0.8)]")}
+                                >
+                                    {formatPlinkoOdds(item)}
+                                </span>
                             )}
                         </span>
                     </Tooltip>
