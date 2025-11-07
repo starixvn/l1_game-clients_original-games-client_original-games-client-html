@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const next = require("next");
 const cors = require("cors");
-const { getAppSettings } = require("@shared/helpers/app-settings-helper");
+const { getAppSettings } = require("../src/app-settings/index");
 
 // Factory function to create a custom server for a specific game
 function createCustomServer(gameName) {
