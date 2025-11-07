@@ -281,7 +281,7 @@ console.log("appType",appType);
         return (
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
-                    <div id={"dashboard"} className={`${isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""}`}>
+                    <div id={"dashboard"} className={`overflow-x-hidden ${isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""}`}>
                         <SoundSettings />
 
                         {renderOfferGameContainer()}

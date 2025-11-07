@@ -26,7 +26,7 @@ export default class extends Document<{ headScript?: string }> {
                     <meta name="mobile-web-app-capable" content="yes" />
                     <script type="text/javascript" src={configFileWithVersion}></script>
                 </Head>
-                <body style={{ overflowX: 'hidden' }}>
+                <body>
                     <Main />
                     <NextScript />
                 </body>
