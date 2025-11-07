@@ -49,8 +49,8 @@
         "gamePath": "plinko-x",
         "gameResourceConfigs": {
             "path": "plinko-x",
-            "optionalPaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.svg"],
-            "cachePaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.svg"]
+            "optionalPaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.webp"],
+            "cachePaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.webp"]
         }
     }
 }

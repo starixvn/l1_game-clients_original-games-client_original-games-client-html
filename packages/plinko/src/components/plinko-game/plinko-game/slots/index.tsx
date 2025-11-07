@@ -155,7 +155,7 @@ const Slots = () => {
                         >
                             {isLightningMode && item === 0 ? (
                                 <Image
-                                    src={`${basePath}/static/images/icons/hell.svg?v=${buildVersion}`}
+                                    src={`${basePath}/static/images/icons/hell.webp?v=${buildVersion}`}
                                     alt="hell"
                                     width={20}
                                     height={20}
