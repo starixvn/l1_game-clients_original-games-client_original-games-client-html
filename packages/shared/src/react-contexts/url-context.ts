@@ -134,15 +134,27 @@ export function loadURLContext(): URLContextModel {
     return contextFromLocalStorage;
 }
 
+const redirectParentWindow = (decodedUrl: string): boolean => {
+    const parentUrl = StorageHelper.get<string>(localStorageKeys.parentUrl);
+
+    if (parentUrl) {
+        backToLobby();
+        return true;
+    }
+
+    return false;
+};
 
 export const initialURLContextData = {
     ...loadURLContext(),
     backToRedirectUrl: (redirectUrl: string) => {
         if (!isEmpty(redirectUrl)) {
             const decodedUrl = GameUtils.base64Decode(redirectUrl);
+            const parentRedirected = redirectParentWindow(decodedUrl);
 
-            globalThis.location.href = decodedUrl;
-            
+            if (!parentRedirected) {
+               globalThis.location.href = decodedUrl;
+            }
         } else {
             updateURLContext({ backToLobby: true });
             broadcastBackToLobby();
