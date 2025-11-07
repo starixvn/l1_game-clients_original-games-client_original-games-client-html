@@ -244,28 +244,55 @@ function createCustomServer(gameName) {
                 let transformedUrl = url;
                 let shouldServeIndex = false;
 
-                if (url === basePath || url === basePath + "/") {
-                    // Root page request with basePath - convert to internal root
+                // Normalize basePath (remove trailing slash for matching)
+                const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+                
+                // Check if basePath appears anywhere in the URL (not just at the start)
+                // This handles nested paths like /sit/site-159
+                const basePathIndex = url.indexOf(normalizedBasePath);
+                
+                if (basePathIndex !== -1) {
+                    // Verify that the match is at a path boundary (start of URL or after a slash)
+                    const isAtPathBoundary = basePathIndex === 0 || url[basePathIndex - 1] === "/";
+                    
+                    if (isAtPathBoundary) {
+                        // Extract the part after basePath
+                        const afterBasePath = url.slice(basePathIndex + normalizedBasePath.length);
+                        
+                        if (afterBasePath === "" || afterBasePath === "/") {
+                            // BasePath is at the end or exact match - convert to root
+                            transformedUrl = "/";
+                            console.log(`✅ [BasePath] Root request transformed: "${originalUrl}" → "/"`);
+                        } else if (afterBasePath.startsWith("/")) {
+                            // BasePath followed by a path - extract the path
+                            transformedUrl = afterBasePath;
+                            console.log(`✅ [BasePath] Nested path transformed: "${originalUrl}" → "${transformedUrl}"`);
+                            
+                            // Check if this is a potential SPA route that should fall back to index
+                            if (isSPARoute(transformedUrl)) {
+                                shouldServeIndex = true;
+                                console.log(`🏠 [SPA Fallback] Will serve index.html for potential SPA route: "${originalUrl}"`);
+                            }
+                        } else if (afterBasePath.startsWith("?")) {
+                            // BasePath with query parameters (e.g., /site-159?token=...)
+                            transformedUrl = "/" + afterBasePath;
+                            console.log(`✅ [BasePath] Root with query params transformed: "${originalUrl}" → "${transformedUrl}"`);
+                        } else {
+                            // BasePath in the middle of path (e.g., /sit/site-159) - treat as root
+                            transformedUrl = "/";
+                            console.log(`✅ [BasePath] BasePath found in nested path, treating as root: "${originalUrl}" → "/"`);
+                        }
+                    } else {
+                        // Match found but not at path boundary - treat as reverse proxy scenario
+                        console.log(`🔄 [BasePath] BasePath found but not at path boundary: "${originalUrl}" (reverse proxy scenario)`);
+                    }
+                } else if (url === basePath || url === basePath + "/") {
+                    // Exact match (fallback for edge cases)
                     transformedUrl = "/";
                     console.log(`✅ [BasePath] Root request transformed: "${originalUrl}" → "/"`);
-                } else if (url.startsWith(basePath + "/")) {
-                    // Request has basePath prefix - remove it for Next.js (which has no basePath configured)
-                    const newUrl = url.slice(basePath.length);
-                    transformedUrl = newUrl;
-                    console.log(`✅ [BasePath] Prefixed request transformed: "${originalUrl}" → "${newUrl}"`);
-
-                    // Check if this is a potential SPA route that should fall back to index
-                    if (isSPARoute(newUrl)) {
-                        shouldServeIndex = true;
-                        console.log(`🏠 [SPA Fallback] Will serve index.html for potential SPA route: "${originalUrl}"`);
-                    }
-                } else if (url.startsWith(basePath + "?")) {
-                    // Handle basePath with query parameters (e.g., /game-150?token=...)
-                    transformedUrl = "/" + url.slice(basePath.length);
-                    console.log(`✅ [BasePath] Root with query params transformed: "${originalUrl}" → "${transformedUrl}"`);
                 } else {
-                    // Request does NOT have basePath prefix - this is normal for reverse proxy
-                    console.log(`🔄 [BasePath] No prefix needed: "${originalUrl}" (reverse proxy scenario)`);
+                    // Request does NOT contain basePath - this is normal for reverse proxy
+                    console.log(`🔄 [BasePath] No basePath found in URL: "${originalUrl}" (reverse proxy scenario)`);
                 }
 
                 return { transformedUrl, shouldServeIndex };
@@ -328,7 +355,6 @@ function createCustomServer(gameName) {
 
                 // Process the URL for basePath handling
                 const { transformedUrl, shouldServeIndex } = processBasePathRouting(req, originalUrl, basePath);
-
                 req.url = transformedUrl;
                 console.log(`🎯 [Next.js Handler] Final URL for Next.js: "${req.url}"`);
 
