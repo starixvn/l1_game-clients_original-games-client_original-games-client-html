@@ -17,6 +17,7 @@ export const useGameStore = create<GameStore>()((set, ...args) => {
         ...gameConfigSlice,
         ...createSocketSlice(set, ...args),
         registerEvent: (message) => {
+            console.log("[GameStore] Registering event", { message });
             bettingInfoSlice.registerBettingInfoEvent(message);
             gameConfigSlice.registerGameConfigEvent(message);
         },

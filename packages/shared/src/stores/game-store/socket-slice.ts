@@ -9,8 +9,12 @@ export interface SocketSlice {
 
 export const createSocketSlice: StateCreator<SocketSlice> = (set, get) => ({
     socket: null,
-    setSocket: (socket) => set({ socket }),
+    setSocket: (socket) => {
+        console.log("[SocketSlice] Setting socket", { socketId: socket?.id, previousSocketId: get().socket?.id });
+        set({ socket });
+    },
     sendSocketEvent: (event, data) => {
+        console.log("[SocketSlice] Sending socket event", { event, data, socketId: get().socket?.id });
         get().socket?.emit(event, data);
     },
 });

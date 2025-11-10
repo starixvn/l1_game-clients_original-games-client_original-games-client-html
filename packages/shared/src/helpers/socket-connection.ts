@@ -19,48 +19,65 @@ export function InitSocketIO(socketInfo: SocketInfo, session: any, gameName: str
         parser: enableMsgpackParser ? MsgpackParser : undefined,
     };
 
+    console.log("[InitSocketIO] Initializing socket", {
+        gameName,
+        socketUri,
+        socketOption: { ...socketOption, parser: socketOption.parser ? "MsgpackParser" : undefined },
+        namespace: socketInfo.namespace,
+        path: socketInfo.path
+    });
+
     const socket = io(socketUri, socketOption);
 
     if (socket) {
+        console.log("[InitSocketIO] Socket created, registering events", { socketId: socket.id, gameName });
         gameMessageHandler.registerSocketEvents();
         useGameStore.getState().setSocket(socket);
 
         socket.off(gameName).on(gameName, (message) => {
+            console.log("[InitSocketIO] Received game message", { gameName, message, socketId: socket.id });
             gameMessageHandler.broadcastGameEvent(message);
             useGameStore.getState().registerEvent(message);
             useBettingStore.getState().registerEvent(message);
             usePFStore.getState().registerEvent(message);
         });
         socket.off("message").on("message", (message) => {
+            console.log("[InitSocketIO] Received message event", { message, socketId: socket.id });
             gameMessageHandler.broadcastGameMessage(message);
             useGameStore.getState().registerEvent(message);
         });
 
         // Handle game-event messages (used by Plinko and other games)
         socket.off("game-event").on("game-event", (message) => {
+            console.log("[InitSocketIO] Received game-event", { message, socketId: socket.id });
             gameMessageHandler.broadcastGameEvent(message);
             useGameStore.getState().registerEvent(message);
             useBettingStore.getState().registerEvent(message);
         });
 
         socket.on(messageEventType.SOCKET_CONNECTED, () => {
+            console.log("[InitSocketIO] Socket connected, emitting signin", { socketId: socket.id, gameName });
             socket.emit("signin", session);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_CONNECTED]: true });
         });
 
         socket.on(messageEventType.SIGNED_IN, () => {
+            console.log("[InitSocketIO] Signed in, emitting inGame", { socketId: socket.id, gameName });
             socket.emit("inGame", gameName);
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SIGNED_IN]: true });
         });
 
         socket.on(messageEventType.SOCKET_CONNECT_ERROR, (error) => {
+            console.error("[InitSocketIO] Socket connection error", { error, socketId: socket.id, gameName });
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_CONNECT_ERROR]: true });
         });
         socket.on(messageEventType.SOCKET_DISCONNECTED, (reason, details) => {
+            console.warn("[InitSocketIO] Socket disconnected", { reason, details, socketId: socket.id, gameName });
             gameMessageHandler.broadcastGameEvent({ [messageEventType.SOCKET_DISCONNECTED]: true });
         });
     }
 
+    console.log("[InitSocketIO] Socket initialization complete", { socketId: socket?.id, gameName });
     return { socket };
 }
 

@@ -83,6 +83,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: bool
 
         if (data?.__pfMode === "clientSeedOnly") {
             const { __pfMode, ...rest } = data;
+            console.log("[PFSetting] Sending socket message with client seed", { event, clientSeed, socketId: socket?.id });
             socket.emit(event, { ...rest, clientSeed });
         }
     };

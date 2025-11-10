@@ -1,0 +1,19 @@
+{
+    "chance": "Cơ Hội",
+    "column": "Cột",
+    "fast_mode": "Chơi Nhanh",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "Độ Rủi Ro",
+    "mode_high": "Cao",
+    "mode_low": "Thấp",
+    "mode_medium": "Trung Bình",
+    "multiplier_position": "Vị Trí Hệ Số Nhân",
+    "payout_slot": "Ô Trả Thưởng",
+    "pf_verifier_tool_para_24": "Chuyển đổi mỗi cặp 2 chữ số trong SHA512 thành số thập phân, sau đó mod 2",
+    "row": "Số Hàng",
+    "slot_index": "Vị trí ô",
+    "tooltip_lightning": "Thay đổi chuỗi để cập nhật vị trí hệ số nhân và giá trị thưởng",
+    "win_amount": "Thắng"
+}

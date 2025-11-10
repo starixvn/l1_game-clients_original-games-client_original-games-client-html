@@ -1,0 +1,19 @@
+{
+    "chance": "Chance",
+    "column": "Coluna",
+    "fast_mode": "Modo Rápido",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "Nível de Risco",
+    "mode_high": "Alto",
+    "mode_low": "Baixo",
+    "mode_medium": "Médio",
+    "multiplier_position": "Posição do Multiplicador",
+    "payout_slot": "Slot de Pagamento",
+    "pf_verifier_tool_para_24": "Converta cada par de 2 dígitos no SHA512 para Decimal e, em seguida, mod 2",
+    "row": "Linha",
+    "slot_index": "Índice de slots",
+    "tooltip_lightning": "Mude a chave para atualizar as posições do multiplicador e os valores de pagamento",
+    "win_amount": "Ganhar"
+}

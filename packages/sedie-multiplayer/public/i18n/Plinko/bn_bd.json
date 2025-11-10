@@ -1,0 +1,19 @@
+{
+    "chance": "সুযোগ",
+    "column": "কলাম",
+    "fast_mode": "দ্রুত মোড",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko",
+    "lightning": "Lightning",
+    "mode": "ঝুঁকির মাত্রা",
+    "mode_high": "উচ্চ",
+    "mode_low": "নিম্ন",
+    "mode_medium": "মাঝারি",
+    "multiplier_position": "গুণক অবস্থান",
+    "payout_slot": "পেআউট স্লট",
+    "pf_verifier_tool_para_24": "SHA512-এর প্রতিটি 2 অঙ্কের জোড়াকে দশমিকে রূপান্তর করুন, তারপর মড 2 করুন",
+    "row": "সারি",
+    "slot_index": "স্লট সূচী",
+    "tooltip_lightning": "গুণক অবস্থান এবং পেআউট মান আপডেট করতে কী পরিবর্তন করুন",
+    "win_amount": "জেতা"
+}

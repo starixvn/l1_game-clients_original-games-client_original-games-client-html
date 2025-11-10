@@ -1,0 +1,19 @@
+{
+    "chance": "Peluang",
+    "column": "Lajur",
+    "fast_mode": "Mod Pantas",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "Tahap Risiko",
+    "mode_high": "Tinggi",
+    "mode_low": "Rendah",
+    "mode_medium": "Sederhana",
+    "multiplier_position": "Kedudukan Pengganda",
+    "payout_slot": "Slot Pembayaran",
+    "pf_verifier_tool_para_24": "Tukar setiap pasangan 2 digit dalam SHA512 kepada Perpuluhan, kemudian mod 2",
+    "row": "Baris",
+    "slot_index": "Indeks Slot",
+    "tooltip_lightning": "Tukar kekunci untuk mengemas kini kedudukan pengganda dan nilai pembayaran",
+    "win_amount": "Menang"
+}

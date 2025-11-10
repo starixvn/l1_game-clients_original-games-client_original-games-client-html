@@ -42,7 +42,9 @@ export class NotificationHandler {
             parser: enableMsgpackParser ? MsgpackParser : undefined,
         };
 
+        console.log("[NotificationHandler] Connecting notification socket", { socketUri, socketOption: { ...socketOption, auth: { ...socketOption.auth } } });
         this.notificationSocket = io(socketUri, socketOption);
+        console.log("[NotificationHandler] Notification socket created", { socketId: this.notificationSocket?.id });
         this.registerNotificationSocketEvent();
     };
 
@@ -85,9 +87,19 @@ export class NotificationHandler {
     };
 
     registerNotificationSocketEvent = () => {
-        this.notificationSocket.on("auth", this.handleAuth);
-        this.notificationSocket.on("kickedOut", this.handleKickedOut);
-        this.notificationSocket.on("reload", this.handleReload);
+        console.log("[NotificationHandler] Registering notification socket events", { socketId: this.notificationSocket?.id });
+        this.notificationSocket.on("auth", (data) => {
+            console.log("[NotificationHandler] Received auth event", { data, socketId: this.notificationSocket?.id });
+            this.handleAuth(data);
+        });
+        this.notificationSocket.on("kickedOut", (data) => {
+            console.warn("[NotificationHandler] Received kickedOut event", { data, socketId: this.notificationSocket?.id });
+            this.handleKickedOut(data);
+        });
+        this.notificationSocket.on("reload", () => {
+            console.log("[NotificationHandler] Received reload event", { socketId: this.notificationSocket?.id });
+            this.handleReload();
+        });
     };
 
     handleAuth = (data: { authorized: boolean }) => {
@@ -120,6 +132,7 @@ export class NotificationHandler {
     };
 
     reset = () => {
+        console.log("[NotificationHandler] Resetting notification handler", { socketId: this.notificationSocket?.id });
         this.notificationSocket?.close();
         clearInterval(this.reCheckInInterval);
     };

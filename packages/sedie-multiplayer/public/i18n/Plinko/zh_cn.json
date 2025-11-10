@@ -1,0 +1,19 @@
+{
+    "chance": "机会",
+    "column": "列",
+    "fast_mode": "快速模式",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "闪电",
+    "mode": "风险等级",
+    "mode_high": "高",
+    "mode_low": "低",
+    "mode_medium": "中",
+    "multiplier_position": "倍数位置",
+    "payout_slot": "赔付Slot",
+    "pf_verifier_tool_para_24": "将 SHA512 中的每 2 位数字转换为十进制，然后模 2",
+    "row": "行",
+    "slot_index": "老虎机索引",
+    "tooltip_lightning": "更改密钥以更新乘数位置和赔付值",
+    "win_amount": "赢"
+}

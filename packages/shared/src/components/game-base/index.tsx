@@ -192,6 +192,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onDestroy() {
+        console.log("[GameBase] Destroying game base, disconnecting socket", { socketId: this.socket?.id });
         this.props.dispatch({
             type: GameEventActionType.SIGN_OUT,
             payload: { roundState: RoundState.None },
@@ -209,6 +210,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onStart() {
+        console.log("[GameBase] Starting game", { gameId: this.props.id, gameName: this.props.gameName });
         this.socket?.disconnect();
         this.socket = null;
         this.gameMessageHandler.clearAllHandlers();
@@ -231,9 +233,11 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     protected async connectToGameService() {
         const { session } = this.context as PlayerContextModel;
         const { socketInfo, gameName } = this.props;
+        console.log("[GameBase] Connecting to game service", { gameName, socketInfo });
         const { socket } = InitSocketIO(socketInfo, session, gameName, this.gameMessageHandler);
 
         this.socket = socket;
+        console.log("[GameBase] Socket connected", { socketId: socket?.id, gameName });
     }
 
     onVisibilityChange = () => {
@@ -241,6 +245,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onConnectFailed() {
+        console.error("[GameBase] Connection failed", { gameId: this.props.id, gameName: this.props.gameName });
         this.onDestroy();
         useGameStore.getState().setRoundState(RoundState.ConnectFailed);
         this.props.dispatch({
@@ -250,10 +255,17 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onSocketDisconnect() {
+        console.warn("[GameBase] Socket disconnected", { 
+            gameId: this.props.id, 
+            gameName: this.props.gameName,
+            signedIn: this.props.gameStateContextModel.signedIn,
+            socketId: this.socket?.id 
+        });
         this.onDestroy();
         const { dispatch } = this.props;
         this.disconnectTimeout = setTimeout(
             () => {
+                console.log("[GameBase] Disconnect timeout triggered");
                 dispatch({ type: GameEventActionType.DISCONNECT, payload: {} });
                 if (!this.props.gameStateContextModel.signedIn) {
                     useGameStore.getState().setRoundState(RoundState.ConnectFailed);
@@ -269,6 +281,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onGameServiceConnected() {
+        console.log("[GameBase] Game service connected", { gameId: this.props.id, gameName: this.props.gameName, socketId: this.socket?.id });
         this.clearDisconnectTimeout();
         this.props.dispatch({
             type: GameEventActionType.CONNECT,
@@ -305,6 +318,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     sendSocketMessage = (message) => {
         const { event, data } = message[messageEventType.SEND_SOCKET_MESSAGE];
+        console.log("[GameBase] Sending socket message", { event, data, socketId: this.socket?.id });
         this.socket.emit(event, data);
     };
 

@@ -1,0 +1,19 @@
+{
+    "chance": "โอกาส",
+    "column": "คอลัมน์",
+    "fast_mode": "โหมดรวดเร็ว",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "ฟ้าผ่า",
+    "mode": "ระดับความเสี่ยง",
+    "mode_high": "สูง",
+    "mode_low": "ต่ำ",
+    "mode_medium": "ปานกลาง",
+    "multiplier_position": "ตำแหน่งตัวคูณ",
+    "payout_slot": "ช่องจ่ายเงิน",
+    "pf_verifier_tool_para_24": "แปลงแต่ละคู่ของตัวเลข 2 หลักใน SHA512 เป็นทศนิยม จากนั้น mod 2",
+    "row": "แถว",
+    "slot_index": "ดัชนีสล็อต",
+    "tooltip_lightning": "เปลี่ยนคีย์เพื่ออัปเดตตำแหน่งตัวคูณและค่าการจ่ายเงิน",
+    "win_amount": "ชนะ"
+}

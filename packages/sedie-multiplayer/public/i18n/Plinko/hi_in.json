@@ -1,0 +1,19 @@
+{
+    "chance": "मौका",
+    "column": "कॉलम",
+    "fast_mode": "फास्ट मोड",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "जोखिम स्तर",
+    "mode_high": "उच्च",
+    "mode_low": "निम्न",
+    "mode_medium": "मध्यम",
+    "multiplier_position": "गुणक स्थिति",
+    "payout_slot": "पेआउट स्लॉट",
+    "pf_verifier_tool_para_24": "SHA512 में प्रत्येक 2 अंकों के जोड़े को दशमलव में बदलें, फिर मॉड 2 करें",
+    "row": "पंक्ति",
+    "slot_index": "स्लॉट इंडेक्स",
+    "tooltip_lightning": "गुणक स्थान और भुगतान मूल्यों को अपडेट करने के लिए कुंजी बदलें",
+    "win_amount": "जीत"
+}

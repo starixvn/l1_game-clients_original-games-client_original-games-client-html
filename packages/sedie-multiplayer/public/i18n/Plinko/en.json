@@ -1,0 +1,19 @@
+{
+    "chance": "Chance",
+    "column": "Column",
+    "fast_mode": "Fast Mode",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "Risk Level",
+    "mode_high": "High",
+    "mode_low": "Low",
+    "mode_medium": "Medium",
+    "multiplier_position": "Multiplier Position",
+    "payout_slot": "Payout Slot",
+    "pf_verifier_tool_para_24": "Convert each pair of 2 digits in the SHA512 to Decimal, then mod 2",
+    "row": "Row",
+    "slot_index": "Slot index",
+    "tooltip_lightning": "Change key to update multiplier positions and payout values",
+    "win_amount": "Win"
+}

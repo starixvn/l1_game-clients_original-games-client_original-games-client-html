@@ -1,0 +1,19 @@
+{
+    "chance": "기회",
+    "column": "열",
+    "fast_mode": "빠른 모드",
+    "game_name_145": "Plinko",
+    "game_name_159": "Plinko X",
+    "lightning": "Lightning",
+    "mode": "위험 수준",
+    "mode_high": "높음",
+    "mode_low": "낮음",
+    "mode_medium": "중간",
+    "multiplier_position": "배수 위치",
+    "payout_slot": "지불 슬롯",
+    "pf_verifier_tool_para_24": "SHA512의 각 2자리 쌍을 10진수로 변환한 다음 mod 2",
+    "row": "줄",
+    "slot_index": "슬롯 색인",
+    "tooltip_lightning": "키를 변경하여 배율기 위치와 지불 금액 값을 업데이트합니다.",
+    "win_amount": "승리"
+}
