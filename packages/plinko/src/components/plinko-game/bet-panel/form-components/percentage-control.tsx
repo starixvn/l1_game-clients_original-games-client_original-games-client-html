@@ -69,7 +69,6 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
                     <input
                         type="number"
                         step={0.01}
-                        pattern="[0-9]*"
                         value={percentage?.toString() || "0"}
                         onChange={onChange}
                         disabled={!isIncreaseOn || isDisabled}

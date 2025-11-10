@@ -180,7 +180,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (isMobile) {
             this.changeOrientation();
             window.addEventListener("resize", this.changeOrientation);
-            window.addEventListener("touchmove", this.preventZoomBehavior, { passive: false });
         }
 
         const { queryGame } = this.props;
@@ -199,14 +198,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }, 100);
     }
 
-    private preventZoomBehavior(event: TouchEvent) {
-        if (event.touches.length > 1) {
-
-            event.preventDefault();
-            event.stopImmediatePropagation();
-        }
-    }
-
     componentWillUnmount() {
 
 
@@ -219,12 +210,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
 
         document.removeEventListener("visibilitychange", this.onVisibilityChange);
-
-        // Clean up mobile-specific event listeners
-        if (isMobile) {
-
-            window.removeEventListener("touchmove", this.preventZoomBehavior);
-        }
 
 
         this.notificationHandler.reset();
@@ -284,8 +269,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             enableQuickBet: true,
             locale: this.props.tolgee.getLanguage(),
         };
-
-console.log("appType",appType);
 
         return (
             <PlayerContextProvider value={authContextValue}>

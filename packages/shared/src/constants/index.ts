@@ -21,6 +21,7 @@ export interface Round {
 }
 
 export const systemName = getAppSettings().system.toLocaleLowerCase();
+export const appType = getAppSettings().appType;
 
 export const locales = { en: "en", vi: "vi", th: "th", id: "id", zh_cn: "zh_cn", zh_tw: "zh_tw", ms_my: "ms_my", hi_in: "hi_in", bn_bd: "bn_bd", ko: "ko", pt_br: "pt_br", ja: "ja" };
 
@@ -79,9 +80,6 @@ export const sabaNumberName = "Saba.numbers";
 export const sabaClubName = "Saba.games";
 
 export const buildVersion = process?.env?.buildVersion || 111;
-export const AppTypes = {
-    mobile: 1,
-};
 
 export const confirmBet = "confirmBet";
 

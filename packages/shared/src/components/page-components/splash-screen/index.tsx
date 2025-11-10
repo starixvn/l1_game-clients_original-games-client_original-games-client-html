@@ -6,7 +6,7 @@ import { memo, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AuthorizeResponse, SSOResponse } from "sc-user-service-client/dist/auth";
 import { getAppSettings } from "@shared/app-settings";
-import { Themes, languageMapper, locales } from "@shared/constants";
+import { Themes, languageMapper, locales, systemName, appType } from "@shared/constants";
 import { AnalyticsHelper, StorageHelper, getRenderGameSettings, localStorageKeys, randomInteger } from "@shared/helpers";
 import { getDefaultGameId } from "@shared/utils";
 import PreloadResources from "@shared/helpers/preload-resources";
@@ -20,6 +20,9 @@ import { MAX_AVATAR_ID } from "@shared/helpers/avatar-helper";
 import NameGenerator from "@shared/helpers/name-generator";
 import Styles from "./splash-screen.module.scss";
 import FadeContent from "./fade-content";
+import Image from "next/image";
+import { BASE_PATH } from "@shared/constants/base-path";
+import { useRandomWaitingMessage } from "@shared/react-hooks/use-random-waiting-message";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {
@@ -63,38 +66,23 @@ const isTimeoutSession = (session: SSOResponse) => {
 };
 
 const getSession = async (token: string) => {
-
-
     const session = token ? sso(token, getAppSettings().appType) : verifySession();
-
-
 
     return session;
 };
 
 const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
-
-
     const nickname = NameGenerator.generateName();
     const maxAvatarId = MAX_AVATAR_ID;
     const selectedAvatarId = randomInteger(1, maxAvatarId);
 
-
-
     const authorizeResponse = (await createNickname(session, nickname, selectedAvatarId)) as AuthorizeResponse;
 
-
-
     if (authorizeResponse?.authorized) {
-
-
         Object.assign(authorizeResponse.user, { settings: { theme: Themes.light } });
         authorizeResponse.user.isSignedInSM = true;
         updateSignInSMStatus(session);
-
-
     } else {
-
         signOut?.();
     }
 
@@ -103,11 +91,6 @@ const autoCreateNickname = async (session: SSOResponse, signOut: Function) => {
 
 const SplashScreen: React.FC = () => {
     const { token, language } = useContext(URLContext);
-
-
-
-
-
 
     const router = useRouter();
     const player = usePlayerContext();
@@ -122,83 +105,61 @@ const SplashScreen: React.FC = () => {
     const [isDoneLoadConfig, setIsDoneLoadConfig] = useState<boolean>(false);
     const [preloadProgress, setPreloadProgress] = useState<number>(0);
 
-
-
     const signOut = () => {
-
         router.push("timeout");
     };
 
     const handlePreloadProgress = (progress: number) => {
-
         setPreloadProgress(progress);
     };
 
     const handleUM = (session: SSOResponse) => {
-
         StorageHelper.set(localStorageKeys.umInfo, session.umInfo);
         player.session = session;
         setIsUm(true);
     };
 
     const loadLanguage = async (session: SSOResponse) => {
-
-
         const lang = languageMapper[session?.language] || languageMapper[language] || locales.en;
-
-
 
         await tolgee.changeLanguage(lang);
         setLocale(lang);
-
 
         return lang;
     };
 
     // Initialize progress bar when component mounts
     useEffect(() => {
-
         setPreloadProgress(0);
     }, []);
 
     useEffect(() => {
         let authorizeInfo;
         const handleInitialization = async () => {
-
-
             const session = await getSession(token);
-
 
             const lang = await loadLanguage(session);
 
             if (!session || isTimeoutSession(session)) {
-
                 signOut();
                 return;
             }
 
             if (session?.isUM) {
-
                 handleUM(session);
                 return;
             }
 
-
             authorizeInfo = await authorize(session);
 
-
-
             if (authorizeInfo.errorCode === "SB0002") {
-
                 signOut();
                 return;
             }
 
             if (!authorizeInfo?.authorized) {
-
                 authorizeInfo = await autoCreateNickname(session, signOut);
                 if (!authorizeInfo?.authorized) {
-
                     signOut();
                     return;
                 }
@@ -207,11 +168,10 @@ const SplashScreen: React.FC = () => {
             // Get default game ID from environment or fallback
             const defaultGameId = getDefaultGameId();
 
-
             let toLoadGameId = defaultGameId;
 
             // Check for URL path-based game ID (e.g., /game-159/)
-            const urlPath = typeof window !== 'undefined' ? window.location.pathname : '';
+            const urlPath = typeof window !== "undefined" ? window.location.pathname : "";
             const pathGameIdMatch = urlPath.match(/\/game-(\d+)/);
             if (pathGameIdMatch) {
                 const pathGameId = parseInt(pathGameIdMatch[1]);
@@ -221,56 +181,42 @@ const SplashScreen: React.FC = () => {
                 if (process.env.NEXT_PUBLIC_DEFAULT_GAME_ID) {
                     // Dedicated server: keep environment variable priority
                     toLoadGameId = defaultGameId;
-
                 } else {
                     // Multi-game server: use URL path
                     toLoadGameId = pathGameId;
-
                 }
             }
 
             // Check for URL query parameter gameId (fallback for external systems)
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
                 const urlParams = new URLSearchParams(window.location.search);
-                const queryGameId = urlParams.get('gameId');
+                const queryGameId = urlParams.get("gameId");
                 if (queryGameId && !isNaN(Number(queryGameId))) {
                     const parsedQueryGameId = Number(queryGameId);
 
                     // Only override if we don't have a path-based or environment-based game ID
                     if (!pathGameIdMatch && !process.env.NEXT_PUBLIC_DEFAULT_GAME_ID) {
                         toLoadGameId = parsedQueryGameId;
-
                     } else {
-
                     }
                 }
             }
 
-
-
             // Validate if the gameId is available in the enabled games
             const enabledRenderGameSettings = getRenderGameSettings(authorizeInfo);
-
-
 
             // Bypass validation for known games (SeDie: 148, Plinko: 145, Plinko X: 159, Baccarat: 150) so we can deep-link even if not in lobby/offer
             const knownGameIds = [145, 148, 159, 150]; // Plinko, SeDie Multiplayer, Plinko X and Baccarat
             let isGameAvailable = knownGameIds.includes(toLoadGameId);
 
-
-
             if (!isGameAvailable) {
                 isGameAvailable = enabledRenderGameSettings.some((game) => game.id === toLoadGameId);
-
             }
 
             // If game is not available, use default game
             if (!isGameAvailable) {
-
                 toLoadGameId = getDefaultGameId();
             }
-
-
 
             setCurrentGameId(toLoadGameId);
 
@@ -278,19 +224,15 @@ const SplashScreen: React.FC = () => {
                 setAuthorizeResponse(authorizeInfo);
 
                 try {
-
                     await customStartup(session, lang, router, player, authorizeInfo);
                     setIsDoneLoadConfig(true);
                 } catch (error) {
-
                     console.error("[SplashScreen] custom startup error:", error);
                     onStartupError(error);
                 }
             } else {
-
             }
         };
-
 
         handleInitialization();
         // Intentional: run once on mount; values used are stable for the session
@@ -298,12 +240,10 @@ const SplashScreen: React.FC = () => {
     }, []);
 
     if (player?.session?.isUM || isUm) {
-
         return <UMPage data-testid="um-page" />;
     }
 
     if (isRenderDashboard) {
-
         return (
             <Dashboard
                 data-testid="dashboard-component"
@@ -316,38 +256,15 @@ const SplashScreen: React.FC = () => {
         );
     }
 
-
+    if (!locale) {
+        return <></>;
+    }
 
     return (
         <>
-            <div className={Styles.page} data-testid="splash-screen">
-                <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0}>
-                    <div className={Styles["center"]}>
-                        <div className={`${Styles["logo"]}`}>
-                            <Logo />
-                        </div>
-                        <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
-                            {locale && t("Common.original_tagline")}
-                        </div>
-                    </div>
-                </FadeContent>
-
-                <div className={"loading"}>
-                    <div className={"progress"}>
-                        <div
-                            className={"progress-bar"}
-                            id="progress-bar"
-                            data-testid="progress-bar"
-                            style={{ width: `${preloadProgress}%` }}
-                        ></div>
-                    </div>
-                    <p className={"text-first-download"} data-testid="download-message">
-                        {locale && t("Common.message_download_first_visit")}
-                        {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
-                        {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
-                    </p>
-                </div>
-            </div>
+            {systemName === "vg" && appType !== 10 && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {systemName === "sg" && appType !== 10 && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress}/>}
+            {appType === 10 && <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />}
 
             {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
 
@@ -365,6 +282,49 @@ const SplashScreen: React.FC = () => {
 };
 
 export default memo(SplashScreen);
+
+export const OriginalLogo = ({
+    locale,
+    t,
+    preloadProgress,
+    isDoneLoadConfig,
+}: {
+    locale: string;
+    t: any;
+    preloadProgress: any;
+    isDoneLoadConfig: any;
+}) => {
+    return (
+        <div className={Styles.page} data-testid="splash-screen">
+            <FadeContent blur={true} duration={200} easing="ease-out" initialOpacity={0}>
+                <div className={Styles["center"]}>
+                    <div className={`${Styles["logo"]}`}>
+                        <Logo />
+                    </div>
+                    <div className={Styles["slogan"]} data-testid="splash-screen-slogan">
+                        {locale && t("Common.original_tagline")}
+                    </div>
+                </div>
+            </FadeContent>
+
+            <div className={"loading"}>
+                <div className={"progress"}>
+                    <div
+                        className={"progress-bar"}
+                        id="progress-bar"
+                        data-testid="progress-bar"
+                        style={{ width: `${preloadProgress}%` }}
+                    ></div>
+                </div>
+                <p className={"text-first-download"} data-testid="download-message">
+                    {locale && t("Common.message_download_first_visit")}
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                    {preloadProgress === 0 && isDoneLoadConfig && <span> (Initializing...)</span>}
+                </p>
+            </div>
+        </div>
+    );
+};
 
 export const Logo = () => {
     return (
@@ -456,5 +416,97 @@ export const Logo = () => {
                 </filter>
             </defs>
         </svg>
+    );
+};
+
+export const LogoVG = ({
+    locale = "en",
+    t,
+    preloadProgress,
+}: {
+    locale: string;
+    t: any;
+    preloadProgress: any;
+}) => {
+    return (
+        <div className="flex flex-col w-full h-full items-center justify-center relative">
+            <Image
+                src={`${BASE_PATH}/static/images/splash-screen/logo-vgaming.webp`}
+                alt="logo-vg"
+                width="0"
+                height="0"
+                className="w-[500px] h-auto"
+                priority
+            />
+            <Image
+                src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                alt="text-splash"
+                width="0"
+                height="0"
+                className="w-[300px] h-auto"
+            />
+            <Image
+                className="mt-[80px] w-[200px] h-auto"
+                src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
+                alt="text-splash"
+                width="0"
+                height="0"
+            />
+            <WaitingMessage locale={locale} />
+            <p className={"text-first-download"} data-testid="download-message">
+                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+            </p>
+        </div>
+    );
+};
+
+export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
+    return (
+        <div className="flex flex-col w-full h-full items-center justify-center relative">
+            <Image
+                src={`${BASE_PATH}/static/images/splash-screen/logo-saba.webp`}
+                alt="logo-saba"
+                width="0"
+                height="0"
+                className="w-[500px] h-auto"
+                priority
+            />
+            <Image
+                src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                alt="text-splash"
+                width="0"
+                height="0"
+                className="w-[300px] h-auto"
+            />
+            <Image
+                className="mt-[80px] w-[200px] h-auto"
+                src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
+                alt="text-splash"
+                width="0"
+                height="0"
+            />
+            <WaitingMessage locale={locale} />
+            <p className={"text-first-download"} data-testid="download-message">
+                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+            </p>
+        </div>
+    );
+};
+
+export const WaitingMessage = ({ locale }: { locale: string }) => {
+    const { message, isVisible, isFadingOut, className } = useRandomWaitingMessage({
+        locale: locale,
+        interval: 5000,
+        showDuration: 4000,
+    });
+
+    const messageClassName = [Styles["waiting-message"], isVisible && Styles.show, isFadingOut && Styles["fade-out"], className]
+        .filter(Boolean)
+        .join(" ");
+
+    return (
+        <div className={messageClassName} id="waiting-message">
+            {message}
+        </div>
     );
 };

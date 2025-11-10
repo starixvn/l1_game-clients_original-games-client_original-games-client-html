@@ -5,7 +5,6 @@ import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
 import { URLParams } from "@shared/constants/url-params";
-import { backToLobby } from "@shared/utils/game-utils";
 
 export type URLContextModel = {
     token?: string;
