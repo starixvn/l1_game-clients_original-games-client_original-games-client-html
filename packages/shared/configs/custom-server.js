@@ -2,14 +2,14 @@ const express = require("express");
 const path = require("path");
 const next = require("next");
 const cors = require("cors");
-const { getAppSettings } = require("../src/app-settings/index");
 
 // Factory function to create a custom server for a specific game
 function createCustomServer(gameName) {
     const dev = process.env.NODE_ENV !== "production";
     const hostname = process.env.HOSTNAME || "localhost";
     const port = parseInt(process.env.PORT, 10) || 3000;
-    const basePath = (getAppSettings().proxy?.path || "") + (process.env.NEXT_PUBLIC_BASE_PATH || "");
+
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
     const FONTS_PATH_PREFIX = "/static/fonts/";
 
     console.log(`🚀 Starting server with config:`);
@@ -17,8 +17,6 @@ function createCustomServer(gameName) {
     console.log(`  - Hostname: ${hostname}`);
     console.log(`  - Port: ${port}`);
     console.log(`  - Base Path: ${basePath || "(none)"}`);
-    console.log(`  - Proxy Path: ${getAppSettings().proxy?.path || "(none)"}`);
-    console.log(`  - Next Public Base Path: ${process.env.NEXT_PUBLIC_BASE_PATH || "(none)"}`);
     console.log(`  - Dev Mode: ${dev}`);
     console.log(`  - Working Directory: ${__dirname}`);
     console.log(`  - Game: ${gameName}`);
@@ -286,6 +284,17 @@ function createCustomServer(gameName) {
                 );
             }
 
+            // Helper function to strip environment prefixes (sit/uat) from URLs
+            function stripEnvironmentPrefixes(url) {
+                let transformedUrl = url;
+                if (url.startsWith("/sit/")) {
+                    transformedUrl = url.replace("/sit/", "/");
+                } else if (url.startsWith("/uat/")) {
+                    transformedUrl = url.replace("/uat/", "/");
+                }
+                return transformedUrl;
+            }
+
             // Helper function to setup redirect interception
             function setupRedirectInterception(res, basePath) {
                 const originalRedirect = res.redirect;
@@ -330,6 +339,13 @@ function createCustomServer(gameName) {
             server.all("*", (req, res) => {
                 const originalUrl = req.url;
                 console.log(`🔄 [Next.js Handler] Processing: ${originalUrl}`);
+
+                // Strip environment prefixes (sit/uat) from incoming URLs before processing
+                const urlWithoutEnvPrefix = stripEnvironmentPrefixes(req.url);
+                if (urlWithoutEnvPrefix !== req.url) {
+                    req.url = urlWithoutEnvPrefix;
+                    console.log(`🔄 [Environment Strip] URL transformed: "${originalUrl}" → "${req.url}"`);
+                }
 
                 // Process the URL for basePath handling
                 const { transformedUrl, shouldServeIndex } = processBasePathRouting(req, originalUrl, basePath);
