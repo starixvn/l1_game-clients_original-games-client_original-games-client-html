@@ -3,19 +3,13 @@ import Image from "next/image";
 import { buildVersion } from "@shared/constants";
 import { useCommonTranslate } from "@shared/react-hooks";
 import { isMobile } from "react-device-detect";
-import { getAppSettings } from "@shared/app-settings";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const OrientationGuard = ({ children }: { children: React.ReactNode }) => {
     const [isLandscapeOnMobile, setIsLandscapeOnMobile] = useState(false);
     const { t } = useCommonTranslate();
-    const appType = getAppSettings().appType;
 
     useEffect(() => {
-        if (appType === 10) {
-            return;
-        }
-        
         const check = () => {
             const isLandscape = globalThis.window.matchMedia("(orientation: landscape)").matches;
 

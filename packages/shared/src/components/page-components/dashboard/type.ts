@@ -26,6 +26,7 @@ export type DashboardState = {
     queryGame: number;
     openGameId: number;
     openGameName: string;
+    isLandscapeMode: boolean;
 };
 
 export type GameOffer = {

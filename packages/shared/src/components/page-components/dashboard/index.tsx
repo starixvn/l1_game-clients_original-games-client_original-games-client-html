@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { withRouter } from "next/router";
 import React from "react";
 import styles from "./dashboard.module.scss";
-import { isMobile, isDesktop } from "react-device-detect";
+import { isMobile, isDesktop, isMobileOnly } from "react-device-detect";
 import { ErrorNoGameOffer } from "@shared/constants/error-code-dictionary";
 import { localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "@shared/helpers";
 import { broadcastUserInfoRed } from "@shared/helpers/global-events-helper";
@@ -21,6 +21,7 @@ const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), 
 // @ts-ignore - Next.js dynamic imports resolve at runtime
 const Games = dynamic(() => import("@/games/games"), { loading: () => <LoadingSpinner /> }) as React.ComponentType<GamesProps>;
 const MusicPlayer = dynamic(() => import("../music-player"), { ssr: false });
+const LandscapeMode = dynamic(() => import("./landscape-mode/landscape-mode"), { ssr: false });
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
     private readonly dashboardHandler: DashboardHandler;
@@ -45,6 +46,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             queryGame: this.props.queryGame,
             openGameId: null,
             openGameName: "",
+            isLandscapeMode: false,
         };
 
 
@@ -55,6 +57,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         this.onVisibilityChange = this.onVisibilityChange.bind(this);
         this.resetGameIdDashboardEvent = this.resetGameIdDashboardEvent.bind(this);
         this.updateUserBalance = this.updateUserBalance.bind(this);
+        this.changeOrientation = this.changeOrientation.bind(this);
 
         const buildId = process.env.buildVersion;
         const buildVersion = StorageHelper.get(localStorageKeys.buildVersion) ?? 0;
@@ -175,7 +178,8 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         }
 
         if (isMobile) {
-
+            this.changeOrientation();
+            window.addEventListener("resize", this.changeOrientation);
             window.addEventListener("touchmove", this.preventZoomBehavior, { passive: false });
         }
 
@@ -183,11 +187,16 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (queryGame) {
 
             this.openGame(queryGame);
-        } else {
-
         }
 
 
+    }
+
+    changeOrientation() {
+        setTimeout(() => {
+            const isLandscapeMode = window.innerHeight < window.innerWidth;
+            this.setState({ isLandscapeMode });
+        }, 100);
     }
 
     private preventZoomBehavior(event: TouchEvent) {
@@ -296,6 +305,10 @@ console.log("appType",appType);
     }
 
     render() {
+        if (this.state.isLandscapeMode && isMobileOnly) {
+            return <LandscapeMode />;
+        }
+        
         return this.renderDashBoard();
     }
 }
