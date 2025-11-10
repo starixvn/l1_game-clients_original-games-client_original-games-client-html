@@ -56,7 +56,7 @@ const createLightningBetDetailRowData = (row: BetDetailRow) => {
             isWinningBet: row.isWinningBet,
         },
         {
-            content: `${row.totalPegMultipliers}x`,
+            content: row.totalPegMultipliers > 0 ? `${row.totalPegMultipliers}x` : '-',
             isWinningBet: row.isWinningBet,
         },
         {
