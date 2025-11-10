@@ -37,3 +37,4 @@ stryker-tmp
 sonar-reports
 .scannerwork
 packages/*/.next
+packages/*/public/i18n

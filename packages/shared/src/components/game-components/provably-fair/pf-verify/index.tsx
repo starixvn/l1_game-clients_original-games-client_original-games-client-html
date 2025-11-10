@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useClickSound, useCommonTranslate, useSNTranslate } from "@shared/react-hooks";
 import Styles from "../provably-fair.module.scss";
@@ -9,17 +9,17 @@ import { useShallow } from "zustand/react/shallow";
 import { useGameContext } from "@shared/react-contexts/game-context/game-context";
 import { messageEventType } from "../../../game-base/handlers/game-message-handler";
 import { usePopupStore } from "@shared/stores/popup-store/popup-store";
-import { useBetDetailStore } from "@shared/stores/bet-detail-store/bet-detail-store";
 import ModalContainer from "../../modal-container";
 import { ButtonPFGuide } from "../pf-guide";
+import { usePFStore } from "@shared/stores";
 
 const GetPFInfoMessage = "getRoundPF";
 const PFResultMessage = "roundPFResult";
 
 const PFVerifyModal: FC<{
-    renderResultBlock: Function;
+    ResultBlock: FC<any>;
     isMergeClientSeed?: boolean;
-}> = ({ renderResultBlock, isMergeClientSeed = true }) => {
+}> = ({ ResultBlock, isMergeClientSeed = true }) => {
     const { t: translateCommon } = useCommonTranslate();
     const { isShowPFVerify, togglePFVerify } = usePopupStore(
         useShallow((state) => ({
@@ -47,7 +47,7 @@ const PFVerifyModal: FC<{
                 isOverlap={true}
                 onCloseModal={handleCloseModal}
             >
-                <PFVerify renderResultBlock={renderResultBlock} isMergeClientSeed={isMergeClientSeed} />
+                <PFVerify ResultBlock={ResultBlock} isMergeClientSeed={isMergeClientSeed} />
             </ModalContainer>,
             document.getElementById("dashboard")
         )
@@ -73,13 +73,7 @@ const useClickOutside = (callback: Function) => {
     return ref;
 };
 
-const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> = ({ renderResultBlock, isMergeClientSeed }) => {
-    const { betDetailData, updateBetDetail } = useBetDetailStore(
-        useShallow((state) => ({
-            betDetailData: state.betDetailData,
-            updateBetDetail: state.updateBetDetail,
-        }))
-    );
+const PFVerify: FC<{ ResultBlock: FC<any>; isMergeClientSeed: boolean }> = ({ ResultBlock, isMergeClientSeed }) => {
     const { gameMessageHandler } = useGameContext();
 
     const { t: translateCommon } = useCommonTranslate();
@@ -91,8 +85,14 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
             togglePFVerification: state.togglePFVerification,
         }))
     );
-
-    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
+    const { roundIdPfVerify, updatePFVerify, pfVerifyModalData } = usePFStore(
+        useShallow((state) => ({
+            roundIdPfVerify: state.roundIdPfVerify,
+            updatePFVerify: state.updatePFVerify,
+            pfVerifyModalData: state.pfVerifyModalData,
+        }))
+    );
+    const isFirstFetchRef = useRef(true);
 
     const handleClickOutSide = (target: any, clickedElement: any, except: any) => {
         if (!target.classList.contains(Styles["hide"]) && !except.contains(clickedElement)) {
@@ -130,24 +130,18 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
     };
 
     useEffect(() => {
-        if (isFirstFetch) {
+        if (isFirstFetchRef.current) {
             gameMessageHandler.broadcastGameEvent({
-                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: betDetailData.drawInfo.roundId } },
+                [messageEventType.SEND_SOCKET_MESSAGE]: { event: GetPFInfoMessage, data: { roundId: roundIdPfVerify } },
             });
-            setIsFirstFetch(false);
+            isFirstFetchRef.current = false;
         }
-    }, [isFirstFetch]);
+    }, [gameMessageHandler, roundIdPfVerify]);
 
     useEffect(() => {
         const handlePFResult = (pfResult: any) => {
-            if (pfResult.roundId === betDetailData.drawInfo.roundId) {
-                updateBetDetail({
-                    ...betDetailData,
-                    drawInfo: {
-                        ...betDetailData.drawInfo,
-                        pfResult: pfResult,
-                    },
-                });
+            if (pfResult.roundId === roundIdPfVerify) {
+                updatePFVerify(pfResult);
             }
         };
 
@@ -159,19 +153,25 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
             gameMessageHandler.removeHandler(pfResultHandler);
         };
     }, []);
-   
+
+    if (!pfVerifyModalData || !pfVerifyModalData.roundId) {
+        return null;
+    }
+
     return (
         <div className={Styles["pf-setting-container"]}>
-            <div className="result-block">{renderResultBlock(betDetailData.drawInfo)}</div>
+            <div className="result-block">
+                <ResultBlock />
+            </div>
             <ClientSeedForm>
                 <Section title={translateCommon("pf_header_server_seed_sha256")}>
                     <div className="input-group width-full">
-                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.serverSeedHash} id="server-seed-sha256" />
+                        <CopyableTextInput value={pfVerifyModalData?.serverSeedHash} id="server-seed-sha256" />
                     </div>
                 </Section>
                 <Section title={translateCommon("pf_header_server_seed")} customTitleStyles="mt-3">
                     <div className="input-group width-full">
-                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.serverSeed} id="server-seed" />
+                        <CopyableTextInput value={pfVerifyModalData?.serverSeed} id="server-seed" />
                     </div>
                 </Section>
             </ClientSeedForm>
@@ -202,12 +202,12 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
                         </div>
 
                         <div className="input-group width-full">
-                            <CopyableTextInput value={betDetailData.drawInfo.pfResult?.mergeClientSeed} id="merge-client-seed" />
+                            <CopyableTextInput value={pfVerifyModalData?.mergeClientSeed} id="merge-client-seed" />
                         </div>
                     </>
                 ) : (
                     <div className="input-group width-full">
-                        <CopyableTextInput value={betDetailData.drawInfo.pfResult?.clientSeeds[0]?.clientSeed} id="merge-client-seed" />
+                        <CopyableTextInput value={pfVerifyModalData?.clientSeeds[0]?.clientSeed} id="merge-client-seed" />
                     </div>
                 )}
             </ClientSeedForm>
@@ -223,7 +223,7 @@ const PFVerify: FC<{ renderResultBlock: Function; isMergeClientSeed: boolean }> 
                     </div>
                 </Section>
                 <div className="input-group width-full mt-4">
-                    <CopyableTextInput value={betDetailData.drawInfo.pfResult?.finalHash} id="combined-sha512-hash" />
+                    <CopyableTextInput value={pfVerifyModalData?.finalHash} id="combined-sha512-hash" />
                 </div>
             </ClientSeedForm>
             <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>

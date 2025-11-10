@@ -1,189 +1,84 @@
-import { useEffect, useRef, useState, useCallback, useLayoutEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
-import { useGameContext } from "@shared/react-contexts";
+import { useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo } from "react";
+import { Table, TableBody, TableCell, TableRow } from "../table";
 import { useCommonTranslate, useClickSound } from "@shared/react-hooks";
 import useBetHistoryStore from "@shared/stores/bet-history-store/bet-history-store";
-import usePopupStore from "@shared/stores/popup-store/popup-store";
-import { createBetHistoryHandler } from "../../game-base/handlers/bet-history-handler-factory";
-import { BetHistoryHandler } from "../../game-base/handlers/bet-history-handler";
-import { transformBetLogsToDisplayData, getWinValueColorClass, scrollBetHistoryToTop, BetHistoryDisplayData } from "./bet-history-utils";
 import styles from "./bet-history.module.scss";
-import useBetDetailStore from "@shared/stores/bet-detail-store";
 import { cn } from "@shared/utils/merge-tailwind-util";
+import { useGameStore } from "@shared/stores";
+import BetHistoryHeader from "./bet-history-header";
+import BetHistoryBodyItem from "./bet-history-body-item";
 import BouncingDotsLoader from "./bouncing-dots-loader";
-import { createBetDetailData } from "./bet-detail-factory";
+import { useShallow } from "zustand/react/shallow";
 
-// Types for customizable functions (like BetDetailBase pattern)
-export interface BetHistoryTableProps {
-    gameId?: string;
-    getDisplayedBetLogs?: (handler: BetHistoryHandler | null, betLogs: any[], isExpanded: boolean) => any[];
-    getHeaderColumns?: (translateCommon: any) => any[];
-    renderToggleButton?: (
-        totalPages: number,
-        isExpanded: boolean,
-        isLoading: boolean,
-        handleToggle: () => void,
-        styles: any,
-        t: any,
-        handler?: BetHistoryHandler
-    ) => React.ReactNode;
-}
-
-// Function to create row data for bet history table
-const createBetHistoryRowData = (
-    row: BetHistoryDisplayData,
-    rowIndex: number,
-    handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
-    getWinValueColorClass: (win: string, betAmount?: string) => string
-) => {
-    return [
-        {
-            content: <div style={{ whiteSpace: "pre-line" }}>{row.time}</div>,
-        },
-        {
-            content: <span className="text-table-text-clickable cursor-pointer">{row.round}</span>,
-            className: "text-table-text-clickable cursor-pointer",
-            onClick: () => handleCellClick("round", row, rowIndex),
-        },
-        {
-            content: row.betAmount,
-        },
-        {
-            content: <div className={getWinValueColorClass(row.win, row.betAmount)}>{row.win}</div>,
-            className: "text-right",
-        },
-    ];
-};
-
-// Function to render bet history table rows
-const renderBetHistoryRows = (
-    tableData: any[],
-    handleCellClick: (columnKey: string, row: BetHistoryDisplayData, index: number) => void,
-    getWinValueColorClass: (win: string, betAmount?: string) => string
-) => {
-    return tableData.map((row, rowIndex) => {
-        const rowData = createBetHistoryRowData(row, rowIndex, handleCellClick, getWinValueColorClass);
-
-        return (
-            <TableRow
-                key={rowIndex}
-                className={cn("border-none text-center", rowIndex % 2 === 0 ? "bg-bet-history-row-1" : "bg-bet-history-row-2")}
-            >
-                {rowData.map((cell, cellIndex) => (
-                    <TableCell
-                        key={cellIndex}
-                        className={cn("text-secondary-text h-[60px] py-2 px-2 md:text-base", cell.className)}
-                        onClick={cell.onClick}
-                    >
-                        {cell.content}
-                    </TableCell>
-                ))}
-            </TableRow>
-        );
-    });
-};
-
-// Function to render bet history table header
-const renderBetHistoryHeader = (headerColumns: any[]) => {
-    return (
-        <TableRow className="bg-table-header border-none h-[36px]">
-            {headerColumns.map((column, index) => (
-                <TableHead
-                    key={column.key}
-                    className={cn(
-                        "text-primary-text p-2 md:p-3 h-full font-semibold text-sm md:text-base",
-                        column.align === "right" ? "text-right" : "text-center",
-                        index === 0 && "rounded-tl-lg rounded-bl-lg",
-                        index === headerColumns.length - 1 && "rounded-tr-lg rounded-br-lg"
-                    )}
-                >
-                    {column.label}
-                </TableHead>
-            ))}
-        </TableRow>
-    );
-};
-
-// Default implementations
-const defaultGetDisplayedBetLogs = (handler: BetHistoryHandler | null, betLogs: any[], isExpanded: boolean) => {
-    return isExpanded ? betLogs : betLogs.slice(0, 10);
-};
-
-const defaultGetHeaderColumns = (translateCommon: any) => [
-    { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
-    { key: "round", label: translateCommon("round").capitalizeFirstLetter() },
-    { key: "total_stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
-    { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
-];
-
-export const BetHistoryTable = ({
-    gameId,
-    getDisplayedBetLogs: customGetDisplayedBetLogs,
-    getHeaderColumns: customGetHeaderColumns,
-    renderToggleButton: customRenderToggleButton,
-}: BetHistoryTableProps) => {
-    const { gameMessageHandler } = useGameContext();
+export const BetHistoryTable = ({ Header = BetHistoryHeader, BodyItem = BetHistoryBodyItem, pageSize = 10 }: any) => {
     const { t: translateCommon } = useCommonTranslate();
     const clickSound = useClickSound();
 
     // Store state
-    const betLogs = useBetHistoryStore((state) => state.betLogs);
-    const isLoading = useBetHistoryStore((state) => state.isLoading);
-    const isExpanded = useBetHistoryStore((state) => state.isExpanded);
-    const totalPages = useBetHistoryStore((state) => state.totalPages);
-
-    const toggleBetDetail = usePopupStore((state) => state.toggleBetDetail);
-    const updateBetDetail = useBetDetailStore((state) => state.updateBetDetail);
+    const { betLogs, totalBetLogs, isLoading, setBetLogs, setIsLoading } = useBetHistoryStore(
+        useShallow((state) => ({
+            betLogs: state.betLogs,
+            totalBetLogs: state.totalBetLogs,
+            isLoading: state.isLoading,
+            setBetLogs: state.setBetLogs,
+            setIsLoading: state.setIsLoading,
+        }))
+    );
+    const socket = useGameStore((state) => state.socket);
 
     // Local state
-    const [betHistoryHandler, setBetHistoryHandler] = useState<BetHistoryHandler | null>(null);
     const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("640px");
+    const [page, setPage] = useState(1);
+    const [isExpanded, setIsExpanded] = useState(false);
     const isInitialized = useRef(false);
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
-    useEffect(() => {
-        if (!isInitialized.current && gameMessageHandler) {
-            const handler = createBetHistoryHandler({ gameMessageHandler, gameId });
-            setBetHistoryHandler(handler);
-            handler.requestHistory(1);
-            isInitialized.current = true;
+    const getHistory = useCallback(
+        (page: number) => {
+            socket.emit("getHistory", {
+                page,
+                pageSize,
+            });
+            setIsLoading(true);
+        },
+        [pageSize, socket, setIsLoading]
+    );
 
-            return () => {
-                handler.cleanup();
-            };
+    useEffect(() => {
+        if (!isInitialized.current && socket) {
+            isInitialized.current = true;
+            getHistory(1);
         }
         return () => {};
-    }, [gameMessageHandler, gameId]);
+    }, [socket, getHistory]);
 
-    // Handle cell click for round column
-    const handleCellClick = (columnKey: string, row: BetHistoryDisplayData, index: number) => {
-        if (columnKey === "round") {
-            clickSound();
-            // Update bet detail data in store
-            const roundId = row.originalBetLog?.roundId;
-            const currentGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
+    const showMore = useCallback(() => {
+        clickSound();
+        setIsExpanded(true);
+        getHistory(page + 1);
+    }, [page, getHistory, clickSound]);
 
-            // Use centralized factory to create bet detail data
-            const betDetailData = createBetDetailData(currentGameId, roundId, row);
+    const showLess = useCallback(() => {
+        clickSound();
+        tableBodyRef.current?.scrollTo({ top: 0 });
+        setIsExpanded(false);
+        setBetLogs(betLogs.slice(0, pageSize));
+    }, [betLogs, pageSize, setBetLogs, clickSound]);
 
-            updateBetDetail(betDetailData);
-            toggleBetDetail(true);
+    const displayedBetLogs = useMemo(() => {
+        return betLogs.slice(0, isExpanded ? betLogs.length : pageSize);
+    }, [betLogs, isExpanded, pageSize]);
+
+    useEffect(() => {
+        if (displayedBetLogs?.length) {
+            setPage(Math.ceil(displayedBetLogs?.length / pageSize));
         }
-    };
-
-    // Get displayed data using custom function or default
-    const getDisplayedBetLogs = customGetDisplayedBetLogs || defaultGetDisplayedBetLogs;
-    const displayedBetLogs = getDisplayedBetLogs(betHistoryHandler, betLogs, isExpanded);
-    const tableData = transformBetLogsToDisplayData(displayedBetLogs);
+    }, [pageSize, displayedBetLogs?.length]);
 
     // Calculate dynamic max height based on CSS breakpoints and row count
     const calculateDynamicMaxHeight = useCallback(() => {
         const minHeight = 300;
-        const rowCount = Math.min(displayedBetLogs.length, 10);
-
-        if (rowCount === 0) {
-            return `${minHeight}px`;
-        }
+        const rowCount = Math.min(10, displayedBetLogs?.length || 0);
 
         // This matches the h-[60px] class used in table cells
         const baseRowHeight = 60;
@@ -191,107 +86,72 @@ export const BetHistoryTable = ({
         const calculatedHeight = baseRowHeight * rowCount + buffer;
 
         return `${Math.max(calculatedHeight, minHeight)}px`;
-    }, [displayedBetLogs.length]);
+    }, [displayedBetLogs?.length]);
 
     // Update dynamic max height when data changes
     useLayoutEffect(() => {
         const newHeight = calculateDynamicMaxHeight();
         setDynamicMaxHeight(newHeight);
-    }, [displayedBetLogs, calculateDynamicMaxHeight]);
-
-    // Handle toggle expand/collapse
-    const handleToggleExpand = () => {
-        if (!betHistoryHandler) {
-            return;
-        }
-
-        const wasExpanded = isExpanded;
-        betHistoryHandler.toggleExpanded();
-        clickSound();
-
-        // Scroll to top when collapsing
-        if (wasExpanded) {
-            setTimeout(scrollBetHistoryToTop, 100);
-        }
-    };
-
-    // Define header columns configuration
-    const getHeaderColumns = customGetHeaderColumns || defaultGetHeaderColumns;
-    const headerColumns = getHeaderColumns(translateCommon);
+    }, [calculateDynamicMaxHeight]);
 
     return (
         <>
             {/* Sticky Header Table */}
-            <Table className="bet-history-table sticky top-[50px] lg:static lg:top-0">
-                <TableHeader>{renderBetHistoryHeader(headerColumns)}</TableHeader>
-            </Table>
+            <Header />
 
             {/* Scrollable Body */}
             <div
-                key={isExpanded ? "expanded" : "collapsed"}
-                className={`bet-history-scroll-wrapper min-h-[300px] ${styles["table-scroll-wrapper"]} ${
-                    isExpanded ? styles.expanded : ""
-                }`}
+                className={cn(
+                    "bet-history-scroll-wrapper min-h-[300px]",
+                    styles["table-scroll-wrapper"],
+                    betLogs?.length > 10 && "overflow-y-auto"
+                )}
                 style={{ maxHeight: dynamicMaxHeight }}
+                ref={tableBodyRef}
             >
-                <Table className="bet-history-table">
-                    <TableBody ref={tableBodyRef}>
-                        {tableData.length === 0 ? (
+                <Table className="bet-history-table table-striped table-fixed">
+                    <TableBody>
+                        {displayedBetLogs?.length > 0 ? (
+                            displayedBetLogs.map((item, index) => <BodyItem key={index} data={item} />)
+                        ) : (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center text-secondary-text">
                                     {translateCommon("no_data")}
                                 </TableCell>
                             </TableRow>
-                        ) : (
-                            renderBetHistoryRows(tableData, handleCellClick, getWinValueColorClass)
                         )}
                     </TableBody>
                 </Table>
             </div>
 
-            {customRenderToggleButton
-                ? customRenderToggleButton(
-                      totalPages,
-                      isExpanded,
-                      isLoading,
-                      handleToggleExpand,
-                      styles,
-                      translateCommon,
-                      betHistoryHandler || undefined
-                  )
-                : renderToggleButton(totalPages, isExpanded, isLoading, handleToggleExpand, styles, translateCommon)}
+            <div className={`${styles["toggle-button-container"]} gap-2`}>
+                {isLoading ? (
+                    <BouncingDotsLoader />
+                ) : (
+                    <>
+                        {totalBetLogs > displayedBetLogs?.length && (
+                            <button
+                                className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`}
+                                disabled={isLoading}
+                                onClick={showMore}
+                            >
+                                {translateCommon("show_more")}
+                            </button>
+                        )}
+                        {displayedBetLogs?.length > pageSize && (
+                            <button
+                                className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`}
+                                disabled={isLoading}
+                                onClick={showLess}
+                            >
+                                {translateCommon("show_less")}
+                            </button>
+                        )}
+                    </>
+                )}
+            </div>
         </>
     );
 };
-
-// Extracted function for rendering toggle button
-function renderToggleButton(
-    totalPages: number,
-    isExpanded: boolean,
-    isLoading: boolean,
-    handleToggleExpand: () => void,
-    styles: any,
-    t: any
-) {
-    if (totalPages <= 1) {
-        return null;
-    }
-
-    return (
-        <div className={`${styles["toggle-button-container"]}`}>
-            {isLoading ? (
-                <BouncingDotsLoader />
-            ) : (
-                <button
-                    className={`${styles["toggle-button"]} rounded-lg text-sm md:text-base`}
-                    onClick={handleToggleExpand}
-                    disabled={isLoading}
-                >
-                    {isExpanded ? t("show_less") : t("show_more")}
-                </button>
-            )}
-        </div>
-    );
-}
 
 export default BetHistoryTable;

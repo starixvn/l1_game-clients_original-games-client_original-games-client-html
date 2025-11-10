@@ -177,3 +177,12 @@ img {
         opacity: 0;
     }
 }
+
+.table-striped {
+    tbody tr:nth-child(odd) {
+        background-color: var(--bet-history-row-1);
+    }
+    tbody tr:nth-child(even) {
+        background-color: var(--bet-history-row-2);
+    }
+}

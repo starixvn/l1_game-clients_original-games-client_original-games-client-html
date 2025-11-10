@@ -19,8 +19,8 @@ import { SeDieGameRoundDataHandler } from "./sedie-multiplayer-game-round-data-h
 import SedieCup from "./result-block/sedie-cup";
 import SeDieMultiplayerBettingBlock from "./sedie-multiplayer-betting-block";
 import { SedieMultiplayerRoundHistory } from "./round-history/sedie-multiplayer-round-history";
-import SeDieMultiplayerBetDetailModal from "./history";
 import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
+
 const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
 const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own-total-bet/own-total-bet"), { ssr: false });
 const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
@@ -29,7 +29,7 @@ const PFIcon = dynamic(() => import("@shared/components/game-components/menu/ico
 const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound-icon"), { ssr: false });
 const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide-icon"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
-
+const SeDieMultiplayerBetDetailModal = dynamic(() => import("./history"), { ssr: false });
 class SeDieMultiPlayer extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;
 

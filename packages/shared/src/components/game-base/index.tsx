@@ -35,11 +35,13 @@ import { GameStateHandler, IGameStateHandler } from "./handlers/game-state-handl
 import { PlaceBetHandlerWrapper } from "./handlers/place-bet-wrapper/place-bet-handler-wrapper";
 import { GameBaseHandlers, GameBaseProps, GameBaseState, RoundState } from "./type";
 import PreloadResources from "@shared/helpers/preload-resources";
-import { BetHistoryTable } from "../game-components/bet-history/bet-history-table";
 import ChipControlPanel from "../game-components/chip-slider";
 import useGameStore from "@shared/stores/game-store/game-store";
-import BetHistoryControl from "../game-components/bet-history/bet-history-control";
 import { usePFStore } from "@shared/stores";
+import { BetHistoryHandler } from "./handlers/bet-history-handler";
+
+const BetHistoryTable = dynamic(() => import("../game-components/bet-history/bet-history-table"), { ssr: false });
+const BetHistoryControl = dynamic(() => import("../game-components/bet-history/bet-history-control"), { ssr: false });
 const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
 const PFSettingModal = dynamic(() => import("../game-components/provably-fair/pf-setting"), { ssr: false });
 const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false });
@@ -67,6 +69,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     private readonly gameRoundHistoryHandler?: GameRoundHistoryHandler;
     private readonly gameSoundHandler: IGameSoundHandler;
     private readonly gameRoundDataHandler?: GameRoundDataHandler;
+    private readonly betHistoryHandler?: BetHistoryHandler;
 
     constructor(props: P, handlers: GameBaseHandlers) {
         super(props);
@@ -86,6 +89,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
             gameDisabledHandler,
             gameRoundHistoryHandler,
             gameSoundHandler,
+            betHistoryHandler,
         } = handlers;
 
         this.roundStateHandler = roundStateHandler;
@@ -150,6 +154,13 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.gameRoundHistoryHandler =
             gameRoundHistoryHandler ??
             new GameRoundHistoryHandler({ dispatch, gameStateContextModel: this.getGameStateContext.bind(this) });
+
+        this.betHistoryHandler =
+            betHistoryHandler ??
+            new BetHistoryHandler({
+                gameMessageHandler: this.gameMessageHandler,
+                gameId: this.props.id.toString(),
+            });
 
         this.gameSoundHandler =
             gameSoundHandler ??
@@ -286,6 +297,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
         this.gameMessageHandler.register(messageEventType.REMAINING_TIME, this.handleRemainingTime.bind(this));
         this.gameMessageHandler.register(messageEventType.ROUND_HISTORY, this.handleRoundHistory.bind(this));
         this.gameFinishHandler.registerEvents();
+        this.betHistoryHandler.registerEvents();
 
         this.gameMessageHandler.register(messageEventType.GAME_DESTROY, this.onDestroy.bind(this));
         this.gameMessageHandler.register(messageEventType.CLEAR_GAME_TIMEOUT_AND_INTERVAL, this.clearGameTimeoutAndInterval.bind(this));

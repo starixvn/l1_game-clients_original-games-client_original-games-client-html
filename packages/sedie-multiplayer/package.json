@@ -6,10 +6,10 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "clean": "rimraf dist",
-        "generate-tolgee-data": "cd ../.. && npm run generate-tolgee-data && cd packages/sedie-multiplayer",
+        "generate-tolgee-data": "cd ../.. && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 npm run generate-tolgee-data && cd packages/sedie-multiplayer",
         "dev": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH= PORT=3001 FAST_REFRESH=false node custom-server.js",
-        "build:standalone": "npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/site-148 next build",
-        "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH=/site-148 PORT=3001 node custom-server.js",
+        "build:standalone": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 npm run generate-tolgee-data && cross-env NEXT_PUBLIC_BASE_PATH=/site-148 next build",
+        "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=148 NEXT_PUBLIC_BASE_PATH= PORT=3001 node custom-server.js",
         "dev:dynamic": "node scripts/dev-dynamic.js",
         "build:dynamic": "node scripts/build-dynamic.js",
         "proxy": "node ../../reverse-proxy.js",

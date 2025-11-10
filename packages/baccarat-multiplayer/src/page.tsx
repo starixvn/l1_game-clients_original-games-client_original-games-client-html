@@ -1,5 +1,6 @@
 import { withRouter } from "next/router";
-import { JSX, lazy } from "react";
+import { JSX } from "react";
+import dynamic from "next/dynamic";
 
 import GameBase from "@shared/components/game-base";
 import { GameMessageHandler } from "@shared/components/game-base/handlers";
@@ -18,13 +19,14 @@ import { BaccaratGameRoundDataHandler } from "./baccarat-game-round-data-handler
 import { PlayerResultBoard } from "@shared/components/game-components/player-result-board/player-result-board";
 import { BaccaratBetOptions } from "./baccarat-multiplayer-constants";
 import BaccaratBettingBlock from "./betting-block/baccarat-betting-block";
-import BaccaratMultiplayerBetDetailModal from "./history";
 import BaccaratSettlementResult from "./result-block/baccarat-settlement-result";
 import { BaccaratMultiplayerRoundHistory } from "./round-history/baccarat-multiplayer-round-history";
-import Background from "@shared/components/game-components/background";
-const OwnTotalBet = lazy(() => import("@shared/components/game-components/own-total-bet/own-total-bet"));
-const DoubleBetIcon = lazy(() => import("@shared/components/game-components/rebet/double-bet-icon"));
-const AutoRebetIcon = lazy(() => import("@shared/components/game-components/rebet/auto-rebet-icon"));
+
+const OwnTotalBet = dynamic(() => import("@shared/components/game-components/own-total-bet/own-total-bet"), { ssr: false });
+const DoubleBetIcon = dynamic(() => import("@shared/components/game-components/rebet/double-bet-icon"), { ssr: false });
+const AutoRebetIcon = dynamic(() => import("@shared/components/game-components/rebet/auto-rebet-icon"), { ssr: false });
+const BaccaratMultiplayerBetDetailModal = dynamic(() => import("./history"), { ssr: false });
+const Background = dynamic(() => import("@shared/components/game-components/background"), { ssr: false });
 
 class Baccarat extends GameBase<GameBaseProps, GameBaseState> {
     private readonly roundIdHandler?: RoundIdHandler;

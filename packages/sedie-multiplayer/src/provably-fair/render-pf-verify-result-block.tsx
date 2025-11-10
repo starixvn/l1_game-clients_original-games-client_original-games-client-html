@@ -1,22 +1,26 @@
 import { FC } from "react";
 import { useTranslator } from "@shared/react-hooks";
-import { DrawInfo } from "@shared/components/game-base/type";
 import { ResourceTypes } from "@shared/resources";
 import { getWinningSubOption } from "../history/sedie-multiplayer-bet-detail-result-block";
 import Image from "next/image";
+import { useBetDetailStore } from "@shared";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
+const PFVerifyResultBlock: FC = () => {
     const { t } = useTranslator();
-    const winningSubOption = getWinningSubOption(pfResult.settlementResult);
-    const IMAGE_SIZE = 36;
 
+    const betDetailData = useBetDetailStore((state) => state.data);
+    if (!betDetailData || !betDetailData.roundId) {
+        return null;
+    }
+    const winningSubOption = getWinningSubOption(betDetailData.settlementResult);
+    const IMAGE_SIZE = 36;
     return (
         <>
             <div className="flex justify-between gap-6 text-sm md:text-base">
                 <div className="flex items-center gap-1.5 font-[400] text-[var(--text-content-color)]">
-                    {t(`${ResourceTypes.COMMON}.round`).capitalizeFirstLetter()}: {pfResult?.roundId}
+                    {t(`${ResourceTypes.COMMON}.round`).capitalizeFirstLetter()}: {betDetailData.roundId}
                 </div>
                 <div className="flex items-center gap-1.5">
                     {winningSubOption ? (
@@ -38,8 +42,8 @@ const PFVerifyResultBlock: FC<{ pfResult: DrawInfo }> = ({ pfResult }) => {
     );
 };
 
-const renderPFVerifyResultBlock = (pfResult: DrawInfo) => {
-    return <PFVerifyResultBlock pfResult={pfResult} />;
+const renderPFVerifyResultBlock = () => {
+    return <PFVerifyResultBlock />;
 };
 
 export default renderPFVerifyResultBlock;

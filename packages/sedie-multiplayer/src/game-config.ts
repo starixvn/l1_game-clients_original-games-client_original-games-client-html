@@ -1,5 +1,4 @@
 import { setGameConfig, type GameConfig } from "@shared/game-config";
-import "./history/sedie-multiplayer-bet-history-calculator"; // Register calculators when config loads
 
 /**
  * SeDie Multiplayer Game Configuration
@@ -13,7 +12,7 @@ const gameConfig: GameConfig = {
     gameVersion: "1.0.0",
     gameDescription: "Multiplayer SeDie Game",
     assetPath: "/site-148",
-    serviceName: "sedie-multiplayer"
+    serviceName: "sedie-multiplayer",
 };
 
 // Set the game configuration with validation

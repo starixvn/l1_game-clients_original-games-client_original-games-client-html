@@ -35,7 +35,7 @@ const PlinkoBetDetailModal: FC<{ children: ReactNode }> = ({ children }) => {
                 isOpen={isShowBetDetail}
                 onCloseModal={handleCloseModal}
                 enableBackdrop={true}
-                extendedClassName="w-full bg-image-none top-auto md:top-1/2 md:-translate-y-1/2 md:h-fit md:left-1/2 md:-translate-x-1/2 md:max-w-3xl bg-[linear-gradient(180deg,_#0854B2_0%,_#05264D_38.5%,_#060D15_100%)]"
+                extendedClassName="w-full bg-image-none top-1/2 md:-translate-y-1/2 md:h-fit md:left-1/2 md:-translate-x-1/2 md:max-w-3xl bg-[linear-gradient(180deg,_#0854B2_0%,_#05264D_38.5%,_#060D15_100%)]"
             >
                 <div
                     id="plinko-bet-detail-modal"

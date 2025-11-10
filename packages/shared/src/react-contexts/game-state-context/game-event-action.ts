@@ -1,4 +1,4 @@
-import { DrawInfo, GameConfigs, GameDurations, PlayerResultBoard, RoundState } from '@shared/components/game-base/type';
+import { BetLog, GameConfigs, GameDurations, PlayerResultBoard, RoundState } from "@shared/components/game-base/type";
 
 export enum GameEventActionType {
     CONNECT = "CONNECT",
@@ -71,10 +71,7 @@ export interface GameEventPayload {
     isShowBetHistory?: boolean;
     isShowGameGuide?: boolean;
     isShowBetDetail?: boolean;
-    betDetailModalData?: {
-        drawInfo: DrawInfo;
-        betLogDetails: any[];
-    };
+    betDetailModalData?: BetLog;
     isPlayStartRoundAnimation?: boolean;
     isScoreboardTab?: boolean;
     playerResultBoard?: PlayerResultBoard;

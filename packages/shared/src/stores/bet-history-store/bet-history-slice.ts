@@ -1,29 +1,5 @@
+import { BetLog } from "@shared/components/game-base/type";
 import { StateCreator } from "zustand";
-
-export interface BetLog {
-    freeBet: boolean;
-    roundId: number;
-    appType: number;
-    betwin: number;
-    clientSeed: string;
-    name: string;
-    odds: Record<string, number>;
-    rate: number;
-    time: string;
-    totalAmount: number;
-    phien: number;
-    result: any;
-    settlementResult: any;
-    betLogDetails: Array<{
-        freeBet: boolean;
-        amount: number;
-        appType: number;
-        time: string;
-        choice: string;
-    }>;
-    // Game-specific fields - these will vary by game
-    [key: string]: any;
-}
 
 export interface BetHistoryData {
     betLogs: BetLog[];
@@ -39,11 +15,10 @@ export interface BetHistorySlice {
     totalPages: number;
     serverTotalPages: number; // Server-provided total pages (independent of local pagination)
     isLoading: boolean;
-    isExpanded: boolean;
-    hasMoreData: boolean;
+    totalBetLogs: number;
 
     // Pending bet tracking (persists across refreshes)
-    pendingBetDetails: Array<{ time: string; amount: number; choice: string; clientSeed: string }>;
+    pendingBetDetails: Array<{ time: string; amount: number; choice: string; gameId: string }>;
     pendingBetRoundId: number | null;
     pendingFirstBetTime: string | null;
 
@@ -54,20 +29,14 @@ export interface BetHistorySlice {
     setTotalPages: (totalPages: number) => void;
     setServerTotalPages: (serverTotalPages: number) => void;
     setIsLoading: (loading: boolean) => void;
-    setIsExpanded: (expanded: boolean) => void;
-    setHasMoreData: (hasMore: boolean) => void;
     resetBetHistory: () => void;
 
     // Pending bet actions
-    addPendingBet: (bet: { time: string; amount: number; choice: string; clientSeed: string }) => void;
+    addPendingBet: (bet: { time: string; amount: number; choice: string; gameId: string }) => void;
     setPendingBetRoundId: (roundId: number) => void;
     setPendingFirstBetTime: (time: string) => void;
     clearPendingBets: () => void;
     hasPendingBets: () => boolean;
-
-    // Computed getters
-    getDisplayedBetLogs: () => BetLog[];
-    getWinValue: (betLog: BetLog) => number;
 
     // Event handlers
     registerBetHistoryEvent: (message: any) => void;
@@ -78,9 +47,8 @@ const INITIAL_STATE = {
     currentPage: 1,
     totalPages: 1,
     serverTotalPages: 1,
+    totalBetLogs: 0,
     isLoading: false,
-    isExpanded: false,
-    hasMoreData: true,
     pendingBetDetails: [],
     pendingBetRoundId: null,
     pendingFirstBetTime: null,
@@ -105,9 +73,7 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
             if (updatePagination) {
                 const newTotalPages = Math.ceil(updatedLogs.length / 10);
-                const hasMoreData = updatedLogs.length > 10 && currentState.currentPage < newTotalPages;
                 updateObj.totalPages = newTotalPages;
-                updateObj.hasMoreData = hasMoreData;
             }
 
             set(updateObj);
@@ -122,10 +88,6 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
     setIsLoading: (loading) => set({ isLoading: loading }),
 
-    setIsExpanded: (expanded) => set({ isExpanded: expanded }),
-
-    setHasMoreData: (hasMore) => set({ hasMoreData: hasMore }),
-
     resetBetHistory: () => set(INITIAL_STATE),
 
     addPendingBet: (bet) => {
@@ -138,32 +100,16 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
 
     setPendingFirstBetTime: (time) => set({ pendingFirstBetTime: time }),
 
-    clearPendingBets: () => set({
-        pendingBetDetails: [],
-        pendingBetRoundId: null,
-        pendingFirstBetTime: null
-    }),
+    clearPendingBets: () =>
+        set({
+            pendingBetDetails: [],
+            pendingBetRoundId: null,
+            pendingFirstBetTime: null,
+        }),
 
     hasPendingBets: () => {
         const state = get();
         return state.pendingBetDetails.length > 0 && state.pendingBetRoundId !== null;
-    },
-
-    getDisplayedBetLogs: () => {
-        const state = get();
-        const { betLogs, isExpanded } = state;
-
-        if (isExpanded) {
-            return betLogs;
-        } else {
-            // Show only first 10 records when collapsed
-            return betLogs.slice(0, 10);
-        }
-    },
-
-    getWinValue: (betLog: BetLog) => {
-        // Win value = betWin - total bet amount (net profit/loss)
-        return betLog.betwin - betLog.totalAmount;
     },
 
     registerBetHistoryEvent: (message) => {
@@ -186,7 +132,7 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
                 }));
 
                 if (history.page === 1) {
-                    if (state.isExpanded && state.betLogs.length > 0) {
+                    if (state.betLogs.length > 0) {
                         const existingLogs = state.betLogs;
                         const page1Logs = normalizedBetLogs;
                         const page1Ids = new Set(page1Logs.map((log: any) => getRoundKey(log)));
@@ -198,16 +144,11 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
                 } else {
                     state.appendBetLogs(sortByRoundDesc(normalizedBetLogs), {
                         updatePagination: false,
-                        source: "server_page"
+                        source: "server_page",
                     });
                 }
-
-                const serverExpectedCount = (history.page * pageSize);
-                const hasMoreData = serverExpectedCount < total;
-                state.setHasMoreData(hasMoreData);
-            } else {
-                state.setHasMoreData(false);
             }
+            set({ totalBetLogs: total });
         }
     },
 });

@@ -1,30 +1,16 @@
 import { FC } from "react";
 import { useCommonTranslate } from "@shared/react-hooks";
-import { DrawInfo } from "@shared/components/game-base/type";
-import { LightningBoard } from "@plinko/shared/types";
-
 
 export type PlinkoSettlementResult = {
     slotIndex: number;
     multiplier: number;
 };
 
-export interface RoundInfoPlinko extends DrawInfo {
-    roundId: number;
-    result:
-        | {
-              balls?: Array<number>;
-          }
-        | Record<string, boolean>;
-    settlementResult: PlinkoSettlementResult;
-    numberOfRows?: number;
-    lightningBoard?: LightningBoard;
-    lightningKey?: string;
-}
-
-export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ roundInfo: drawInfo }) => {
+export const PlinkoBetDetailResultBlock: FC<{ roundId: number; settlementResult: PlinkoSettlementResult }> = ({
+    roundId,
+    settlementResult,
+}) => {
     const { t: translateCommon } = useCommonTranslate();
-    const { roundId, settlementResult } = drawInfo;
 
     return (
         <div className="flex justify-between text-secondary-text text-sm md:text-base mt-2">
@@ -43,13 +29,4 @@ export const BetDetailResultBlock: FC<{ roundInfo: RoundInfoPlinko }> = ({ round
             </div>
         </div>
     );
-};
-
-export const produceDataBetDetailRow = (item: any) => {
-    return {
-        gameMode: item.gameMode,
-        amount: item.amount,
-        choice: item.choice,
-        win: item.win,
-    };
 };

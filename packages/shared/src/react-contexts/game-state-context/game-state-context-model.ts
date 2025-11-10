@@ -1,4 +1,4 @@
-import { DrawInfo, GameConfigs, IUserStakeLevel, Round, RoundState } from '@shared/components/game-base/type';
+import { BetLog, GameConfigs, IUserStakeLevel, Round, RoundState } from "@shared/components/game-base/type";
 
 export interface GameStateContextModel {
     isConnect: boolean;
@@ -29,10 +29,7 @@ export interface GameStateContextModel {
     isShowBetHistory: boolean;
     isShowBetDetail: boolean;
     isShowGameGuide: boolean;
-    betDetailModalData?: {
-        drawInfo: DrawInfo;
-        betLogDetails: any[];
-    };
+    betDetailModalData?: BetLog;
     isPlayStartRoundAnimation?: boolean;
     isScoreboardTab?: boolean;
     availableInGameData?: boolean;

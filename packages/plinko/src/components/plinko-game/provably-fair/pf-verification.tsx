@@ -6,32 +6,26 @@ import { Section } from "@shared/components/game-components/provably-fair/pf-for
 import PfRoundBaseHelper from "@shared/helpers/pf/pf-round-base-helper";
 import { ResourceTypes } from "@shared/resources";
 import { useGameContext } from "@shared/react-contexts";
-import { useShallow } from "zustand/react/shallow";
 import { useBetDetailStore } from "@shared/stores/bet-detail-store/bet-detail-store";
-import { gameModeMap } from "@shared/helpers/plinko";
+import { usePFStore } from "@shared/stores";
+import { GAME_MODE_MAP } from "@plinko/constants";
 
 const PFVerification: FC = () => {
     const { tolgeeNamespace } = useGameContext();
-    const { betDetailData, updateBetDetail } = useBetDetailStore(
-        useShallow((state) => ({
-            betDetailData: state.betDetailData,
-            updateBetDetail: state.updateBetDetail,
-        }))
-    );
+    const pfVerifyModalData = usePFStore((state) => state.pfVerifyModalData);
+    const betDetailData = useBetDetailStore((state) => state.data);
 
-    const [mergeClientSeed, setMergeClientSeed] = useState(
-        betDetailData.drawInfo.pfResult?.editedMergeClientSeed || betDetailData.drawInfo.pfResult?.mergeClientSeed || ""
-    );
+    const [mergeClientSeed, setMergeClientSeed] = useState(pfVerifyModalData?.mergeClientSeed);
     const { t } = useTranslator();
-    const [combinedHash, setCombinedHash] = useState(betDetailData.drawInfo.pfResult.finalHash);
+    const [combinedHash, setCombinedHash] = useState(pfVerifyModalData?.finalHash);
 
-    const NUMBER_OF_ROWS = useMemo(() => betDetailData.betLogDetails[0]?.choice, [betDetailData.betLogDetails[0]?.choice]);
-    const gameMode = useMemo(() => betDetailData.betLogDetails[0]?.gameMode, [betDetailData.betLogDetails[0]?.gameMode]);
+    const NUMBER_OF_ROWS = useMemo(() => betDetailData.numberOfRows, [betDetailData.numberOfRows]);
+    const gameMode = useMemo(() => betDetailData.gameMode, [betDetailData.gameMode]);
 
     const verifyInfo = useMemo(
         () =>
             PfRoundBaseHelper.buildVerifyInfoPlinko({
-                pfResult: betDetailData.drawInfo.pfResult,
+                pfResult: pfVerifyModalData,
                 combinedHash,
                 numberOfRows: NUMBER_OF_ROWS,
             }),
@@ -44,22 +38,9 @@ const PFVerification: FC = () => {
     };
 
     useEffect(() => {
-        const mergeSeed = `${betDetailData.drawInfo.pfResult.serverSeed}${mergeClientSeed}`;
+        const mergeSeed = `${pfVerifyModalData?.serverSeed}${mergeClientSeed}`;
         const hash = createHash("sha512").update(mergeSeed).digest("hex");
         setCombinedHash(hash);
-
-        return () => {
-            updateBetDetail({
-                ...betDetailData,
-                drawInfo: {
-                    ...betDetailData.drawInfo,
-                    pfResult: {
-                        ...betDetailData.drawInfo.pfResult,
-                        editedMergeClientSeed: mergeClientSeed,
-                    },
-                },
-            });
-        };
     }, [mergeClientSeed]);
 
     return (
@@ -67,9 +48,9 @@ const PFVerification: FC = () => {
             <PFVerificationHeaderBlockBase
                 handleChangeMergeClientSeed={handleChangeMergeClientSeed}
                 mergeClientSeed={mergeClientSeed}
-                severSeed={betDetailData.drawInfo.pfResult?.serverSeed}
+                severSeed={pfVerifyModalData?.serverSeed}
                 combinedHash={combinedHash}
-                finalHash={betDetailData.drawInfo.pfResult?.finalHash}
+                finalHash={pfVerifyModalData?.finalHash}
             />
 
             <div className={`${Styles["client-seed-form"]} mt-3`}>
@@ -78,12 +59,12 @@ const PFVerification: FC = () => {
                         title={t(`${ResourceTypes.COMMON}.pf_verification_para_1`)}
                         customTitleStyles={`m-0 ${Styles["title-fix-width"]}`}
                     ></Section>
-                    <div className="flex gap-2 items-center">{betDetailData.drawInfo.settlementResult.multiplier}x</div>
+                    <div className="flex gap-2 items-center">{betDetailData.settlementResult.multiplier}x</div>
                 </div>
                 <div className="flex items-center justify-between gap-4 ">
-                    {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}: {t(`${tolgeeNamespace}.${gameModeMap[gameMode]}`)}
+                    {t(`${tolgeeNamespace}.mode`).capitalizeFirstLetter()}: {t(`${tolgeeNamespace}.${GAME_MODE_MAP[gameMode]}`)}
                     <div className="flex gap-2 items-center">
-                        {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.betLogDetails[0]?.choice}
+                        {t(`${tolgeeNamespace}.row`).capitalizeFirstLetter()}: {betDetailData.numberOfRows}
                     </div>
                 </div>
                 <Section title={t(`${ResourceTypes.COMMON}.pf_header_combined_sha512_hash`)} customTitleStyles="mt-1">
@@ -111,15 +92,15 @@ const PFVerification: FC = () => {
                                     </span>
                                 );
                             })}{" "}
-                            {betDetailData.drawInfo.settlementResult.slotIndex}
+                            {betDetailData.settlementResult.slotIndex}
                         </p>
                         <div className="flex items-center gap-5 overflow-x-auto">
-                            {betDetailData.drawInfo.odds?.[gameMode]?.[NUMBER_OF_ROWS]?.map((item, index) => {
+                            {betDetailData.odds?.[gameMode]?.[NUMBER_OF_ROWS]?.map((item, index) => {
                                 return (
                                     <div
                                         key={`${item}-${index}`}
                                         className={`flex flex-col items-center  ${
-                                            index === betDetailData.drawInfo.settlementResult.slotIndex ? Styles["text-successful"] : ""
+                                            index === betDetailData.settlementResult.slotIndex ? Styles["text-successful"] : ""
                                         }`}
                                     >
                                         <span>{index} </span>

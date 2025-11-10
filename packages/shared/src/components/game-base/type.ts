@@ -1,7 +1,7 @@
 import { TFnType, TranslationKey } from "@tolgee/react";
 import { WithRouterProps } from "next/dist/client/with-router";
-import { GameEventAction } from '@shared/react-contexts/game-state-context/game-event-action';
-import { GameStateContextModel } from '@shared/react-contexts/game-state-context/game-state-context-model';
+import { GameEventAction } from "@shared/react-contexts/game-state-context/game-event-action";
+import { GameStateContextModel } from "@shared/react-contexts/game-state-context/game-state-context-model";
 import { IRoundStateHandler } from "../round-base/round-state-handler";
 import { IGameSoundHandler } from "../round-base/round-game-sound-handler";
 import {
@@ -15,6 +15,7 @@ import {
 import { GameMessageHandler } from "./handlers/game-message-handler";
 import { GameRoundDataHandler } from "./handlers/game-round-data-handler";
 import { IGameStateHandler } from "./handlers/game-state-handler";
+import { BetHistoryHandler } from "./handlers/bet-history-handler";
 
 export interface GameConfigs {
     odds: { [key: string]: number };
@@ -214,23 +215,27 @@ export interface PFResult {
     clientSeeds: ClientSeed[];
     mergeSeed: string;
     mergeClientSeed: string;
-    roundResult: any[];
     finalHash: string;
     clientSeed: string;
     editedMergeClientSeed: string;
 }
 
-export interface DrawInfo {
+export interface BetLog {
     roundId: number;
+    betwin: number;
+    betWin: number;
+    odds: Record<string, number>;
+    time: string;
+    totalAmount: number;
     result: any;
     settlementResult: any;
-    odds?: any;
-    pfResult: PFResult;
-    clientSeed: string;
-    reachMaxWin?: boolean;
-    gameMode?: number;
-    lightningBoard?: any;
-    lightningKey?: string;
+    betLogDetails: Array<{
+        amount: number;
+        time: string;
+        choice: string;
+    }>;
+    // Game-specific fields - these will vary by game
+    [key: string]: any;
 }
 
 export interface IUserStakeLevel {
@@ -250,6 +255,7 @@ export type GameBaseHandlers = {
     gameDisabledHandler?: GameDisableHandler;
     gameRoundHistoryHandler?: GameRoundHistoryHandler;
     gameSoundHandler?: IGameSoundHandler;
+    betHistoryHandler?: BetHistoryHandler;
 };
 
 export interface PlayerInPlayerResultBoard {

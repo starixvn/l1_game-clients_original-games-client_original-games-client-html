@@ -1,5 +1,5 @@
-import { numberWithCommas, separateDateTime } from '@shared/helpers';
-import { BetLog } from '@shared/stores/bet-history-store/bet-history-slice';
+import { numberWithCommas, separateDateTime } from "@shared/helpers";
+import { BetLog } from "@shared/components/game-base/type";
 
 export interface BetHistoryDisplayData {
     time: string;
@@ -59,8 +59,8 @@ export function formatWinValue(totalWin: number): string {
  * Gets the appropriate CSS class for win value coloring
  */
 export function getWinValueColorClass(winValue: string, betAmount?: string): string {
-    const winNumericValue = parseFloat(winValue.replace(/[+,]/g, ''));
-    const betNumericValue = betAmount ? parseFloat(betAmount.replace(/[+,]/g, '')) : 0;
+    const winNumericValue = parseFloat(winValue.replace(/[+,]/g, ""));
+    const betNumericValue = betAmount ? parseFloat(betAmount.replace(/[+,]/g, "")) : 0;
 
     if (winNumericValue > betNumericValue) {
         return "text-winning-highlight font-normal";
@@ -93,7 +93,7 @@ export function filterValidBetLogs(betLogs: BetLog[]): BetLog[] {
  * Scrolls the bet history table to the top
  */
 export function scrollBetHistoryToTop(): void {
-    const scrollWrapper = document.querySelector('.bet-history-scroll-wrapper');
+    const scrollWrapper = document.querySelector(".bet-history-scroll-wrapper");
     if (scrollWrapper) {
         scrollWrapper.scrollTop = 0;
     }
@@ -103,17 +103,14 @@ export function scrollBetHistoryToTop(): void {
  * Gets the scroll position of the bet history table
  */
 export function getBetHistoryScrollPosition(): number {
-    const scrollWrapper = document.querySelector('.bet-history-scroll-wrapper');
+    const scrollWrapper = document.querySelector(".bet-history-scroll-wrapper");
     return scrollWrapper?.scrollTop ?? 0;
 }
 
 /**
  * Debounce function for performance optimization
  */
-export function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    delay: number
-): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => any>(func: T, delay: number): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout;
 
     return (...args: Parameters<T>) => {

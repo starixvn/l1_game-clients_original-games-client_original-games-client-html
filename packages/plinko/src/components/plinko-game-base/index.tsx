@@ -12,6 +12,7 @@ import GameBase from "@shared/components/game-base/";
 import { GameMessageHandler } from "@shared/components/game-base/handlers";
 import { GameBaseHandlers, GameBaseProps, GameBaseState } from "@shared/components/game-base/type";
 import {
+    PlinkoBetHistoryHandler,
     PlinkoGameFinishHandler,
     PlinkoGameRoundDataHandler,
     PlinkoGameSoundHandler,
@@ -40,7 +41,7 @@ const PFSettingModal = dynamic(() => import("@shared/components/game-components/
 const LiveStatsIcon = dynamic(() => import("@shared/components/game-components/menu/icons/live-stats-icon"), { ssr: false });
 const LiveStats = dynamic(() => import("@plinko/components/plinko-game/live-stats"), { ssr: false });
 const BetHistoryControl = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-control"), { ssr: false });
-const PlinkoBetHistoryTable = dynamic(() => import("../plinko-game/history/plinko-bet-history-table"), { ssr: false });
+const BetHistoryTable = dynamic(() => import("@shared/components/game-components/bet-history/bet-history-table"), { ssr: false });
 const PlayerResultBoardTable = dynamic(() => import("@plinko/components/plinko-game/player-result-board/player-result-board-table"), {
     ssr: false,
 });
@@ -77,6 +78,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                 gameId: props.id,
                 gameStateContextModel: () => props.gameStateContextModel,
                 gameRoundDataHandler: gameRoundDataHandler,
+            }),
+            betHistoryHandler: new PlinkoBetHistoryHandler({
+                gameMessageHandler: gameMessageHandler,
+                gameId: props.id.toString(),
             }),
         };
         super(props, gameBaseHandlers);
@@ -116,7 +121,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                     <RoundMultiplierHistory />
                     <PlinkoGame />
                     <div> {this.renderNotice()}</div>
-                    <WinningAmountEffect />
                 </div>
             </div>
         );
@@ -198,10 +202,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         // Plinko handles its own bet history table within the PlinkoGame component
         return (
             <BetHistoryControl
-                tabContent={[
-                    <PlayerResultBoardTable key="player-result-board" />,
-                    <PlinkoBetHistoryTable key="bet-history-table" gameId={this.props.id?.toString()} />,
-                ]}
+                tabContent={[<PlayerResultBoardTable key="player-result-board" />, <BetHistoryTable key="bet-history-table" />]}
             />
         );
     }

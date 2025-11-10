@@ -1,144 +1,46 @@
-import useGameStore from '@shared/stores/game-store/game-store';
-import useBetHistoryStore from '@shared/stores/bet-history-store/bet-history-store';
-import usePFStore from '@shared/stores/pf-store/pf-store';
-import { GameMessageHandler, messageEventType } from "./game-message-handler";
+import { useBetHistoryStore, useGameStore, usePFStore } from "@shared";
+import { GameMessageHandler, messageEventType } from "@shared/components/game-base/handlers";
 import { RoundState } from "../type";
-import { BetWinCalculatorRegistry } from "@shared/helpers/bet-history/bet-history-calculator";
 
 export type BetHistoryHandlerProps = {
     gameMessageHandler: GameMessageHandler;
-    gameId?: string;
+    gameId: string;
 };
-
-interface BetResultData {
-    result: any;
-    settlementResult: any;
-    odds: Record<string, number>;
-}
-
 export class BetHistoryHandler {
-    protected readonly GET_HISTORY = "getHistory";
-    protected readonly HISTORY_EVENT = "history";
-    protected handlerIds: string[] = [];
     protected lastRoundState: RoundState | null = null;
     protected latestOdds: Record<string, number> = {};
     protected latestFinish: { roundId?: number; result?: any; settlementResult?: any } | null = null;
-    protected gameId: string;
+    protected betWin: number = 0;
 
-    protected shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
-        return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
+    constructor(private readonly props: BetHistoryHandlerProps) {}
+
+    registerEvents() {
+        this.props.gameMessageHandler.register(messageEventType.GAME_CONFIG, this.handleGameConfig.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.BET_HISTORY, this.handleBetHistory.bind(this));
+        this.registerDurationEvents();
     }
 
-    protected calculateBetWin(pendingDetails: any[], resultData: BetResultData): number {
-        // Use game-specific calculator from registry
-        const calculator = BetWinCalculatorRegistry.getCalculator(this.gameId);
-        if (calculator) {
-            return calculator.calculateBetWin(pendingDetails, resultData);
+    registerDurationEvents() {
+        this.props.gameMessageHandler.register(messageEventType.OWN_BETS, this.handleOwnBets.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.FINISH, this.handleFinish.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.STATUS, this.handleStatus.bind(this));
+        this.props.gameMessageHandler.register(messageEventType.ROUND_STATE, this.handleRoundState.bind(this));
+    }
+
+    protected handleGameConfig(data: any) {
+        if (data?.gameConfig?.odds) {
+            this.latestOdds = { ...this.latestOdds, ...data.gameConfig.odds };
         }
-
-        // Fallback to generic calculation
-        let betwin = 0;
-        for (const detail of pendingDetails) {
-            const didWin = !!resultData.settlementResult[detail.choice];
-            const betOdds = Number(resultData.odds?.[detail.choice] ?? 0);
-            if (didWin && betOdds > 0) {
-                betwin += detail.amount * betOdds;
-            }
+        if (data?.odds) {
+            this.latestOdds = { ...this.latestOdds, ...data.odds };
         }
-        return betwin;
     }
 
-    protected createBetLog(
-        roundId: number,
-        totalAmount: number,
-        betwin: number,
-        pendingDetails: any[],
-        firstBetTime: string,
-        resultData: BetResultData
-    ) {
-        // Use client seed from the first pending bet (all bets in a round use same client seed)
-        const clientSeed = pendingDetails.length > 0 ? pendingDetails[0].clientSeed : "";
-
-        return {
-            freeBet: false,
-            roundId,
-            phien: roundId,
-            appType: 0,
-            betwin,
-            clientSeed,
-            name: "",
-            rate: 0,
-            time: firstBetTime,
-            totalAmount,
-            result: resultData.result,
-            settlementResult: resultData.settlementResult,
-            odds: resultData.odds,
-            betLogDetails: pendingDetails.map((d: any) => ({
-                freeBet: false,
-                amount: d.amount,
-                appType: 0,
-                time: d.time,
-                choice: d.choice,
-            })),
-        };
-    }
-
-    private sendHistoryRequest(page: number) {
-        const betHistoryStore = useBetHistoryStore.getState();
-        betHistoryStore.setIsLoading(true);
-        betHistoryStore.setCurrentPage(page);
-
-        this.props.gameMessageHandler.broadcastGameEvent({
-            [messageEventType.SEND_SOCKET_MESSAGE]: {
-                event: this.GET_HISTORY,
-                data: { page },
-            },
-        });
-    }
-
-    constructor(protected readonly props: BetHistoryHandlerProps) {
-        this.gameId = props.gameId || 'generic';
-        this.registerHistoryEvents();
-    }
-
-    protected registerHistoryEvents() {
-        const events = [
-            [this.HISTORY_EVENT, this.handleHistoryResponse],
-            [messageEventType.ROUND_STATE, this.handleRoundState],
-            [messageEventType.OWN_BETS, this.handleOwnBets],
-            [messageEventType.ODDS, this.handleOdds],
-            [messageEventType.GAME_CONFIG, this.handleGameConfig],
-            [messageEventType.FINISH, this.handleFinish],
-        ] as const;
-
-        events.forEach(([event, handler]) => {
-            const id = this.props.gameMessageHandler.register(event, handler.bind(this));
-            this.handlerIds.push(id);
-        });
-    }
-
-    private handleHistoryResponse(data: any) {
+    protected handleBetHistory(data: any) {
         useBetHistoryStore.getState().registerBetHistoryEvent(data);
     }
 
-    private handleRoundState({ roundState }: { roundState: RoundState }) {
-        const isEnteringNewRoundBetting = roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound && this.lastRoundState !== null;
-
-        if (isEnteringNewRoundBetting) {
-            this.flushLocalBetLogIfAny();
-
-            const betHistoryStore = useBetHistoryStore.getState();
-            if (betHistoryStore.hasPendingBets()) {
-                betHistoryStore.clearPendingBets();
-            }
-        }
-
-        this.lastRoundState = roundState;
-    }
-
-
-
-    private handleOwnBets({ ownBets, betChoice, ownChip }: any) {
+    protected handleOwnBets({ ownChip }: any) {
         const gameStore = useGameStore.getState() as any;
         const betHistoryStore = useBetHistoryStore.getState();
         const nowIso = new Date().toISOString();
@@ -162,22 +64,9 @@ export class BetHistoryHandler {
                 time: nowIso,
                 amount: ownChip.amount,
                 choice: String(ownChip.betChoice),
-                clientSeed,
+                gameId: this.props.gameId,
             };
             betHistoryStore.addPendingBet(betData);
-        }
-    }
-
-    private handleOdds({ odds }: { odds: Record<string, number> }) {
-        this.latestOdds = odds || {};
-    }
-
-    private handleGameConfig(data: any) {
-        if (data?.gameConfig?.odds) {
-            this.latestOdds = { ...this.latestOdds, ...data.gameConfig.odds };
-        }
-        if (data?.odds) {
-            this.latestOdds = { ...this.latestOdds, ...data.odds };
         }
     }
 
@@ -185,9 +74,29 @@ export class BetHistoryHandler {
         if (!finish) {
             return;
         }
-
         const { roundId, result, settlementResult } = finish;
         this.latestFinish = { roundId, result, settlementResult };
+    }
+
+    protected handleStatus({ status }: any) {
+        const { bet, win } = status;
+        this.betWin = win ? bet : 0;
+    }
+
+    protected handleRoundState({ roundState }: { roundState: RoundState }) {
+        const isEnteringNewRoundBetting =
+            roundState === RoundState.InRound && this.lastRoundState !== RoundState.InRound && this.lastRoundState !== null;
+
+        if (isEnteringNewRoundBetting) {
+            this.flushLocalBetLogIfAny();
+
+            const betHistoryStore = useBetHistoryStore.getState();
+            if (betHistoryStore.hasPendingBets()) {
+                betHistoryStore.clearPendingBets();
+            }
+        }
+
+        this.lastRoundState = roundState;
     }
 
     protected flushLocalBetLogIfAny() {
@@ -198,115 +107,52 @@ export class BetHistoryHandler {
             return;
         }
 
-        const pendingDetails = betHistoryStore.pendingBetDetails;
+        const pendingDetails = betHistoryStore.pendingBetDetails.filter((d: any) => d.gameId === this.props.gameId);
         const totalAmount = pendingDetails.reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0);
 
         if (Object.keys(this.latestOdds).length === 0 && gameStore.gameConfigs?.odds) {
             this.latestOdds = gameStore.gameConfigs.odds;
         }
 
-        const resultData: BetResultData = {
+        const resultData = {
             result: this.latestFinish.result,
             settlementResult: this.latestFinish.settlementResult,
-            odds: this.latestOdds || {}
+            odds: this.latestOdds || {},
         };
 
-        const betwin = this.calculateBetWin(pendingDetails, resultData);
         const actualBettingRoundId = betHistoryStore.pendingBetRoundId || 0;
 
-        const betLog = this.createBetLog(
-            actualBettingRoundId,
+        const betLog = {
+            roundId: actualBettingRoundId,
+            betwin: this.betWin,
+            betWin: this.betWin,
             totalAmount,
-            betwin,
-            pendingDetails,
-            betHistoryStore.pendingFirstBetTime,
-            resultData
-        );
+            amount: totalAmount,
+            time: betHistoryStore.pendingFirstBetTime,
+            result: resultData.result,
+            settlementResult: resultData.settlementResult,
+            odds: resultData.odds,
+            betLogDetails: pendingDetails.map((d: any) => ({
+                amount: d.amount,
+                time: d.time,
+                choice: d.choice,
+            })),
+        };
 
         const exists = betHistoryStore.betLogs.some((log: any) => (log?.phien || log?.roundId) === actualBettingRoundId);
 
         if (!exists && actualBettingRoundId) {
             betHistoryStore.appendBetLogs([betLog], {
                 updatePagination: true,
-                source: "pending_bet_flush"
+                source: "pending_bet_flush",
             });
         }
 
         betHistoryStore.clearPendingBets();
-        this.resetPendingLocalCache();
-    }
-
-    protected resetPendingLocalCache() {
         this.latestFinish = null;
     }
 
-    requestHistory(page = 1) {
-        this.sendHistoryRequest(page);
-    }
-
-    loadNextPage() {
-        const betHistoryStore = useBetHistoryStore.getState();
-        const nextPage = betHistoryStore.currentPage + 1;
-
-        if (nextPage <= betHistoryStore.totalPages && betHistoryStore.hasMoreData) {
-            this.requestHistory(nextPage);
-        }
-    }
-
-    loadAllRemainingPages() {
-        const betHistoryStore = useBetHistoryStore.getState();
-        const { currentPage, serverTotalPages } = betHistoryStore;
-
-        for (let page = currentPage + 1; page <= serverTotalPages; page++) {
-            this.requestHistory(page);
-        }
-    }
-
-    toggleExpanded() {
-        const betHistoryStore = useBetHistoryStore.getState();
-        const newExpandedState = !betHistoryStore.isExpanded;
-
-        betHistoryStore.setIsExpanded(newExpandedState);
-
-        if (newExpandedState && betHistoryStore.hasMoreData && betHistoryStore.currentPage < betHistoryStore.serverTotalPages) {
-            this.loadAllRemainingPages();
-        }
-    }
-
-    scrollToTop() {
-        const scrollWrapper = document.querySelector(".bet-history-scroll-wrapper");
-        if (scrollWrapper) {
-            scrollWrapper.scrollTop = 0;
-        }
-    }
-
-    resetHistory() {
-        useBetHistoryStore.getState().resetBetHistory();
-    }
-
-    cleanup() {
-        this.handlerIds.forEach((id) => this.props.gameMessageHandler.removeHandler(id));
-        this.handlerIds = [];
-    }
-
-    // Utility methods
-    getDisplayedBetLogs() {
-        return useBetHistoryStore.getState().getDisplayedBetLogs();
-    }
-
-    getWinValue(betLog: any) {
-        return useBetHistoryStore.getState().getWinValue(betLog);
-    }
-
-    isLoading() {
-        return useBetHistoryStore.getState().isLoading;
-    }
-
-    isExpanded() {
-        return useBetHistoryStore.getState().isExpanded;
-    }
-
-    hasMultiplePages() {
-        return useBetHistoryStore.getState().totalPages > 1;
+    protected shouldUpdateRoundId(currentRoundId: number, pendingRoundId: number | null): boolean {
+        return !pendingRoundId || (pendingRoundId !== currentRoundId && pendingRoundId !== null);
     }
 }

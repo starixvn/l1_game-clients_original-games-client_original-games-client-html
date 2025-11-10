@@ -1,5 +1,4 @@
 import { setGameConfig, type GameConfig } from "@shared/game-config";
-import "./history/baccarat-multiplayer-bet-history-calculator"; // Register calculators when config loads
 
 /**
  * Baccarat Multiplayer Game Configuration
@@ -13,7 +12,7 @@ const gameConfig: GameConfig = {
     gameVersion: "1.0.0",
     gameDescription: "Multiplayer Baccarat Game",
     assetPath: "/site-150",
-    serviceName: "baccarat-multiplayer"
+    serviceName: "baccarat-multiplayer",
 };
 
 // Set the game configuration with validation

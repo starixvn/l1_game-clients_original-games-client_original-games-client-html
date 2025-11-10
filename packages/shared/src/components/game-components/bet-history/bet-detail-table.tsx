@@ -1,166 +1,35 @@
-import * as React from "react";
-import { cn } from "@shared/utils/merge-tailwind-util";
-import { useCommonTranslate } from "@shared/react-hooks";
-import { formatNumber, calculateTotalWinFromTable } from "./bet-detail-utils";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../table";
+import { memo } from "react";
+import BetDetailTableHeader from "./bet-detail-table-header";
+import BetDetailTableSummary from "./bet-detail-table-summary";
+import { Table } from "../table";
+import { TableBody } from "../table";
+import { useBetDetailStore } from "@shared/stores";
+import BetDetailTableBodyItem from "./bet-detail-table-body-item";
 
-interface BetDetailRow {
-    time: React.ReactNode;
-    betChoice: React.ReactNode;
-    stake: React.ReactNode;
-    win: React.ReactNode;
-    isWinningBet?: boolean;
-}
-
-interface BetDetailTableProps {
-    data: BetDetailRow[];
-    totalStake: number;
-    netProfit: number;
-    emptyMessage: string;
-}
-
-const createBetDetailRowData = (row: BetDetailRow) => {
-    return [
-        {
-            content: row.time,
-            isWinningBet: false,
-        },
-        {
-            content: row.betChoice,
-            isWinningBet: row.isWinningBet,
-        },
-        {
-            content: row.stake,
-            isWinningBet: false,
-        },
-        {
-            content: row.win,
-            isWinningBet: row.isWinningBet,
-            className: "text-right",
-        },
-    ];
-};
-
-const renderBetDetailHeader = (translateCommon: any) => {
-    const headerColumns = [
-        { key: "time", label: translateCommon("time").capitalizeFirstLetter() },
-        { key: "bet_choice", label: translateCommon("bet_choice").capitalizeFirstLetter() },
-        { key: "stake", label: translateCommon("bet_amount").capitalizeFirstLetter() },
-        { key: "win", label: translateCommon("win").capitalizeFirstLetter(), align: "right" },
-    ];
-
+const BetDetailTable: React.FC<any> = ({
+    Header = BetDetailTableHeader,
+    BodyItem = BetDetailTableBodyItem,
+    Summary = BetDetailTableSummary,
+    isShowSummary = true,
+}) => {
+    const betDetailData = useBetDetailStore((state) => state.data);
     return (
-        <TableHeader className="sticky top-0 z-10 bg-table-header">
-            <TableRow>
-                {headerColumns.map((column, index) => (
-                    <TableHead
-                        key={column.key}
-                        className={cn(
-                            "w-1/4 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base",
-                            column.align === "right" ? "text-right" : "text-center"
-                        )}
-                    >
-                        {column.label}
-                    </TableHead>
-                ))}
-            </TableRow>
-        </TableHeader>
-    );
-};
-
-const renderBetDetailRows = (data: BetDetailRow[]) => {
-    return data.map((row, index) => {
-        const rowData = createBetDetailRowData(row);
-
-        return (
-            <TableRow key={index} className={cn("border-none", index % 2 === 0 ? "bg-bet-detail-row-1" : "bg-bet-detail-row-2")}>
-                {rowData.map((cell, cellIndex) => (
-                    <TableCell
-                        key={cellIndex}
-                        className={cn(
-                            "w-1/4 text-sm md:text-base text-secondary-text p-3",
-                            cell.className || "text-center",
-                            cellIndex === 1 && "font-semibold",
-                            cell.isWinningBet && "text-winning-highlight font-normal",
-                            cell.isWinningBet && cellIndex === 1 && "font-semibold",
-                        )}
-                    >
-                        {cell.content}
-                    </TableCell>
-                ))}
-            </TableRow>
-        );
-    });
-};
-
-const renderSummaryRows = (translateCommon: any, totalStake: number, netProfit: number, data: BetDetailRow[]) => {
-    return (
-        <>
-            <TableRow className="border-none font-semibold text-secondary-text text-sm md:text-base bg-[#31415B] table w-full table-fixed">
-                <TableCell colSpan={2} className="w-1/2 text-center p-3 px-0">
-                    {translateCommon("total")}
-                </TableCell>
-                <TableCell className="w-1/4 text-center p-3 px-0 font-normal">{formatNumber(totalStake)}</TableCell>
-                <TableCell className={cn("w-1/4 font-normal text-right p-3 px-0 pr-3", calculateTotalWinFromTable(data) > 0 && "text-winning-highlight")}>
-                    {formatNumber(calculateTotalWinFromTable(data))}
-                </TableCell>
-            </TableRow>
-            <TableRow className="border-none font-semibold text-secondary-text text-sm md:text-base bg-[#253248] table w-full table-fixed rounded-b-lg">
-                <TableCell colSpan={2} className="w-1/2 text-center p-3 px-0">
-                    {translateCommon("win_loss")}
-                </TableCell>
-                <TableCell className="w-1/4 text-center p-3 px-0 font-normal"></TableCell>
-                <TableCell className={cn("w-1/4 text-right p-3 px-0 pr-3 font-normal", netProfit > 0 && "text-winning-highlight")}>
-                    {formatNumber(netProfit)}
-                </TableCell>
-            </TableRow>
-        </>
-    );
-};
-
-const BetDetailTable = React.forwardRef<HTMLDivElement, BetDetailTableProps>(({ data, totalStake, netProfit, emptyMessage }, ref) => {
-    const { t: translateCommon } = useCommonTranslate();
-
-    if (!data || data.length === 0) {
-        return (
-            <div ref={ref} className="flex flex-col h-full min-h-0 w-full">
-                <div className="bg-table-header rounded-t-lg flex-shrink-0">
-                    <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
-                </div>
-                <div className="flex-1 min-h-0 overflow-y-auto w-full">
-                    <Table className="w-full">
-                        <TableBody>
-                            <TableRow className="border-none bg-bet-detail-row-1">
-                                <TableCell className="w-1/4 text-sm md:text-base text-secondary-text text-center p-3">{emptyMessage}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div ref={ref} className="flex flex-col h-full w-full">
-            <div className="bg-table-header rounded-t-lg shrink-0 pr-3">
-                <Table className="rounded-t-lg w-full">{renderBetDetailHeader(translateCommon)}</Table>
-            </div>
+        <div className="flex flex-col h-full w-full">
+            <Header />
 
             <div className="overflow-y-auto w-full max-h-[calc(100%-92px)]">
-                <Table className="w-full pr-3">
-                    <TableBody>{renderBetDetailRows(data)}</TableBody>
+                <Table className="w-full pr-3 table-striped table-fixed">
+                    <TableBody>
+                        {betDetailData?.betLogDetails?.map((row, index) => (
+                            <BodyItem key={index} data={row} />
+                        ))}
+                    </TableBody>
                 </Table>
             </div>
 
-            <div className="shrink-0 w-full">
-                <Table className="w-full pr-3">
-                    <TableBody>{renderSummaryRows(translateCommon, totalStake, netProfit, data)}</TableBody>
-                </Table>
-            </div>
+            {isShowSummary && <Summary />}
         </div>
     );
-});
+};
 
-BetDetailTable.displayName = "BetDetailTable";
-
-export { BetDetailTable };
+export default memo(BetDetailTable);

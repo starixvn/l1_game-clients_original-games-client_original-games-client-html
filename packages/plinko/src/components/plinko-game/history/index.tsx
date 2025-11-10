@@ -1,11 +1,7 @@
 import { FC } from "react";
-import {
-    BetDetailResultBlock,
-    produceDataBetDetailRow,
-} from "./plinko-bet-detail-result-block";
-import PlinkoBetDetailBase from "./plinko-bet-detail-base";
+import PlinkoBetDetailContent from "./plinko-bet-detail-content";
 import PFVerificationModal from "@shared/components/game-components/provably-fair/pf-verify/pf-verification-modal";
-import { PFVerifyModal } from "@shared/components/game-components/provably-fair";
+import PFVerifyModal from "@shared/components/game-components/provably-fair/pf-verify";
 import { PFVerification, renderPFVerifyResultBlock } from "../provably-fair";
 import PlinkoBetDetailModal from "./plinko-bet-detail-modal";
 
@@ -13,14 +9,9 @@ const PlinkoBetDetail: FC = () => {
     return (
         <>
             <PlinkoBetDetailModal>
-                <PlinkoBetDetailBase
-                    isTurnBase={false}
-                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
-                    produceDataBetDetailRow={produceDataBetDetailRow}
-                    isEnableProvablyFair={true}
-                />
+                <PlinkoBetDetailContent />
             </PlinkoBetDetailModal>
-            <PFVerifyModal renderResultBlock={renderPFVerifyResultBlock} isMergeClientSeed={false}></PFVerifyModal>
+            <PFVerifyModal ResultBlock={renderPFVerifyResultBlock} isMergeClientSeed={false}></PFVerifyModal>
             <PFVerificationModal>{<PFVerification />}</PFVerificationModal>
         </>
     );

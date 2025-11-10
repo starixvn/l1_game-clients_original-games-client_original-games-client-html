@@ -2,7 +2,6 @@ export * from "./use-auto-rebet";
 export * from "./use-background-music";
 export * from "./use-balance-sync";
 export * from "./use-balance";
-export * from "./use-bet-history";
 export * from "./use-click-outside";
 export * from "./use-client-seed-pf";
 export * from "./use-debounce";

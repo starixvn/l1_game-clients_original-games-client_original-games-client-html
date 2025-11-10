@@ -1,19 +1,19 @@
 import { FC } from "react";
 
-import BetDetailBase from "@shared/components/game-components/bet-history/bet-detail-base";
+import BetDetailContent from "@shared/components/game-components/bet-history/bet-detail-content";
 import BetDetailModal from "@shared/components/game-components/bet-history/bet-detail-modal";
-import { BetChoice, BetDetailResultBlock, produceDataBetDetailRow } from "./baccarat-multiplayer-bet-detail-result-block";
+import BaccaratMultiplayerBetDetailResultBlock from "./baccarat-multiplayer-bet-detail-result-block";
+import BetDetailTable from "@shared/components/game-components/bet-history/bet-detail-table";
+import BaccaratMultiplayerBetDetailBodyItem from "./baccarat-multiplayer-bet-detail-body-item";
 
 const BaccaratMultiplayerBetDetailModal: FC = () => {
     return (
         <>
             <BetDetailModal>
-                <BetDetailBase
-                    isTurnBase={false}
-                    renderBetDetailResultBlock={(drawInfo) => <BetDetailResultBlock roundInfo={drawInfo} />}
-                    produceDataBetDetailRow={produceDataBetDetailRow}
-                    renderBetChoice={(choice) => <BetChoice choice={choice} />}
+                <BetDetailContent
                     isEnableProvablyFair={false}
+                    ResultBlock={<BaccaratMultiplayerBetDetailResultBlock />}
+                    Table={<BetDetailTable BodyItem={BaccaratMultiplayerBetDetailBodyItem} />}
                 />
             </BetDetailModal>
         </>
