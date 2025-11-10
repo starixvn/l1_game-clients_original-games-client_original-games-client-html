@@ -41,8 +41,8 @@ export const useLightningPeg = () => {
         context.save();
         context.globalAlpha = glowOpacity * 0.6;
 
-        const pegCenterX = pegRadius / 2;
-        const pegCenterY = pegRadius / 2;
+        const pegCenterX = 0;
+        const pegCenterY = 2;
 
         const gradient = context.createRadialGradient(pegCenterX, pegCenterY, 0, pegCenterX, pegCenterY, glowRadius);
         gradient.addColorStop(0, 'rgba(23, 255, 162, 1)');
@@ -66,11 +66,11 @@ export const useLightningPeg = () => {
             return;
         }
 
-        const imageSize = pegRadius * 3;
+        const imageSize = pegRadius * 4.2;
         context.drawImage(
             lightningPegImageRef.current,
-            -imageSize / 3,
-            -imageSize / 3,
+            -imageSize / 2,
+            -imageSize / 2.5,
             imageSize,
             imageSize
         );

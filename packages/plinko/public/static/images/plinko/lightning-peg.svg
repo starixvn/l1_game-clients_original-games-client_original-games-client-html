@@ -1,23 +1,6 @@
-<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="5" cy="5" r="5" fill="#0AA98F"/>
-<circle cx="5" cy="5" r="3.75" fill="#005940"/>
-<g filter="url(#filter0_i_7554_11831)">
-<circle cx="5" cy="3.75" r="3.75" fill="#A7FFE6"/>
-</g>
-<path d="M4.82065 1.3634C4.89402 1.21475 5.10598 1.21475 5.17935 1.3634L5.83514 2.69219C5.86428 2.75121 5.92059 2.79213 5.98573 2.80159L7.45214 3.01468C7.61618 3.03851 7.68168 3.24011 7.56298 3.35581L6.50188 4.39013C6.45474 4.43608 6.43323 4.50228 6.44436 4.56716L6.69485 6.02764C6.72287 6.19102 6.55139 6.31561 6.40466 6.23847L5.09307 5.54893C5.0348 5.5183 4.9652 5.5183 4.90693 5.54893L3.59534 6.23847C3.44861 6.31561 3.27713 6.19102 3.30515 6.02764L3.55564 4.56716C3.56677 4.50228 3.54526 4.43608 3.49812 4.39013L2.43702 3.35581C2.31832 3.24011 2.38382 3.03851 2.54786 3.01468L4.01427 2.80159C4.07941 2.79213 4.13572 2.75121 4.16486 2.69219L4.82065 1.3634Z" fill="url(#paint0_linear_7554_11831)"/>
-<defs>
-<filter id="filter0_i_7554_11831" x="1.25" y="0" width="7.5" height="7.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="1"/>
-<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
-<feBlend mode="normal" in2="shape" result="effect1_innerShadow_7554_11831"/>
-</filter>
-<linearGradient id="paint0_linear_7554_11831" x1="5" y1="1" x2="5" y2="7" gradientUnits="userSpaceOnUse">
-<stop stop-color="#08CFC5"/>
-<stop offset="1" stop-color="#007872"/>
-</linearGradient>
-</defs>
+<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="6" cy="6" r="6" fill="#76FF6E" fill-opacity="0.6"/>
+<circle cx="6" cy="6" r="4" fill="black"/>
+<circle cx="6" cy="6" r="3" fill="#008900"/>
+<circle cx="6" cy="5" r="3" fill="#C0FF2F"/>
 </svg>
