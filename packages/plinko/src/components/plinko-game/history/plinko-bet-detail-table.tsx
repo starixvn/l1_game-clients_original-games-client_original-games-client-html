@@ -82,7 +82,7 @@ const renderBetDetailHeader = (isLightningMode: boolean, translateCommon: any, t
 
     const lightningHeaderColumns = [
         { key: "payoutSlot", label: capitalizeFirstLetter(translatePlinko("payout_slot")) },
-        { key: "totalPegMultipliers", label: capitalizeFirstLetter(translateCommon("title_multiplier")) },
+        { key: "totalPegMultipliers", label: capitalizeFirstLetter(translateCommon("title_total_multiplier")) },
         { key: "stake", label: capitalizeFirstLetter(translateCommon("bet_amount")) },
         { key: "win", label: capitalizeFirstLetter(translateCommon("win")), align: "right" },
     ];
@@ -166,7 +166,7 @@ const renderLightningModeRow = (pegMultipliers: any[], reachedPegMultipliers: an
                                 {capitalizeFirstLetter(translatePlinko("row"))}
                             </TableHead>
                             <TableHead className="w-1/3 py-3 px-0 font-semibold text-white rounded-t-lg border-b border-primary-border text-sm md:text-base text-center">
-                                {capitalizeFirstLetter(translateCommon("title_multiplier"))}
+                                {capitalizeFirstLetter(translateCommon("title_total_multiplier"))}
                             </TableHead>
                         </TableRow>
                     </TableHeader>
