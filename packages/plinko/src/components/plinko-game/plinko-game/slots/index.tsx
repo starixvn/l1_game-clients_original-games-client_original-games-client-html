@@ -10,6 +10,7 @@ import { isDesktop } from "react-device-detect";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { buildVersion } from "@shared/constants";
 import { formatPlinkoOdds } from "./slot-utils";
+import { NUMBER_OF_ROWS } from "@plinko/constants";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const fontSizes = {
@@ -74,7 +75,7 @@ const Slots = () => {
     // Calculate effective numberOfRows for lightning mode
     const effectiveNumberOfRows = useMemo(() => {
         if (isLightningMode && lightningConfig?.lightningBoard?.odds) {
-            return lightningConfig.lightningBoard.odds.length - 1;
+            return NUMBER_OF_ROWS.MAX;
         }
         return numberOfRows;
     }, [numberOfRows, isLightningMode, lightningConfig]);
@@ -151,7 +152,7 @@ const Slots = () => {
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getBackgroundColor(item, index),
-                                fontSize: getFontSize(),
+                                fontSize: isDesktop ? `${fontSizesDesktop[effectiveNumberOfRows]}px` : `${fontSizes[effectiveNumberOfRows]}px`,
                             }}
                         >
                             {isLightningMode && item === 0 ? (
