@@ -49,15 +49,15 @@ export const useLightningBall = () => {
         context.textAlign = "center";
         context.textBaseline = "middle";
 
-        context.shadowColor = "rgba(23, 255, 162, 0.80)";
+        context.shadowColor = "#001A11";
         context.shadowBlur = 6;
         context.shadowOffsetX = 0;
-        context.shadowOffsetY = 1;
+        context.shadowOffsetY = 4;
 
-        const textY = -ballConfig.radius - 8;
+        const textY = -ballConfig.radius - 24;
 
-        context.strokeStyle = "#007C51";
-        context.lineWidth = 6;
+        context.strokeStyle = "#008400";
+        context.lineWidth = 8;
         context.strokeText(`${ballBody.multiplier}x`, 0, textY);
 
         context.fillStyle = "#FFF";
