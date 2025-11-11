@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { numberRoundDownWithCommas } from '@shared/helpers/number-helper';
-import { usePlayerContext } from '@shared/react-contexts';
-import { useGlobalEventsStore } from '@shared/stores/global-events-store/global-events-store';
+import { numberRoundDownWithCommas } from "@shared/helpers/number-helper";
+import { usePlayerContext } from "@shared/react-contexts";
+import { useGlobalEventsStore } from "@shared/stores/global-events-store/global-events-store";
 
 export const UserInfo: React.FC<{
     customizeClass?: string;
@@ -14,7 +14,6 @@ export const UserInfo: React.FC<{
         ...authorizeInfo?.user,
         red: userInfoRed === null ? authorizeInfo?.user?.red || 0 : userInfoRed,
     };
-
 
     return (
         <div className={`${customizeClass} flex-shrink-0`} data-testid="balance">
@@ -31,7 +30,7 @@ const UserAmount: React.FC<{ amount: number }> = ({ amount }) => {
         return (
             <>
                 <span data-testid="amount" className="font-semibold text-base leading-[26px] flex-shrink-0">
-                    {numberRoundDownWithCommas(amount)}
+                    {amount > 0 ? numberRoundDownWithCommas(amount) : 0}
                 </span>
                 <span className="flex-shrink-0">{` `}</span>
             </>

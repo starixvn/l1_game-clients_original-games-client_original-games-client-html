@@ -10,7 +10,8 @@ export const useBalanceSync = () => {
 
     // Track last sent values to avoid duplicate messages
     const lastBalanceRef = useRef<number | null>(null);
-    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const getBalanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const getBalanceTimeout = 1000;
 
     const userInfo = useMemo(
         () => ({
@@ -66,17 +67,14 @@ export const useBalanceSync = () => {
         }
 
         // Initial poll
-        pollBalance();
-
-        // Set up polling interval (5 seconds)
-        pollingIntervalRef.current && clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = setInterval(pollBalance, 5000);
+        getBalanceTimeoutRef.current && clearTimeout(getBalanceTimeoutRef.current);
+        getBalanceTimeoutRef.current = setTimeout(pollBalance, getBalanceTimeout);
 
         // Cleanup function
         return () => {
-            if (pollingIntervalRef.current) {
-                clearInterval(pollingIntervalRef.current);
-                pollingIntervalRef.current = null;
+            if (getBalanceTimeoutRef.current) {
+                clearTimeout(getBalanceTimeoutRef.current);
+                getBalanceTimeoutRef.current = null;
             }
         };
     }, [session, userInfo]);

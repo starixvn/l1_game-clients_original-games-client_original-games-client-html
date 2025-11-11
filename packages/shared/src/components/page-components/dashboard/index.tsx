@@ -49,8 +49,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
             isLandscapeMode: false,
         };
 
-
-
         this.handleUpdateUserStakeLevel = this.handleUpdateUserStakeLevel.bind(this);
         this.signOut = this.signOut.bind(this);
         this.openGame = this.openGame.bind(this);
@@ -62,59 +60,41 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         const buildId = process.env.buildVersion;
         const buildVersion = StorageHelper.get(localStorageKeys.buildVersion) ?? 0;
 
-
-
         if (buildId !== buildVersion) {
-
             StorageHelper.set(localStorageKeys.buildVersion, buildId);
             buildVersion && location.reload();
         }
 
         this.dashboardHandler = dashboardHandler ?? new DashboardHandler(this.props);
 
-
         this.notificationHandler =
             notificationHandler ?? new NotificationHandler(this.props.session, this.props.setIsUm, this.updateUserBalance, this.signOut);
 
-
         broadcastUserInfoRed(this.props.authorizeResponse.user.red);
-
     }
 
     updateUserBalance = (balance: number, setBalanceByPlaceBet = true) => {
-
-
         const authorizeInfo = { ...this.state.authorizeInfo };
         if (authorizeInfo.user.red !== balance) {
             authorizeInfo.user.red = balance;
             broadcastUserInfoRed(authorizeInfo.user.red);
             this.isUpdatingBalance = setBalanceByPlaceBet;
             this.setState({ authorizeInfo });
-
-
-        } else {
-
         }
     };
 
     onVisibilityChange() {
-
-
         if (!document["hidden"]) {
-
             this.notificationHandler.handleReCheckIn();
         }
     }
 
     resetGameIdDashboardEvent() {
-
         this.setState({ openGameId: 0 });
         this.forceUpdate();
     }
 
     shouldComponentUpdate(nextProps: Readonly<DashboardProps>, nextState: Readonly<DashboardState>, nextContext: any): boolean {
-
-
         if (this.state.openGameId > 0 && this.isUpdatingBalance) {
             this.isUpdatingBalance = false;
 
@@ -125,17 +105,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     async componentDidMount() {
-
-
         // Prevent double initialization
         if (this.backToLobbyEventId !== null) {
-
             return;
         }
 
-
         this.notificationHandler?.init();
-
 
         document.addEventListener("visibilitychange", this.onVisibilityChange);
 
@@ -143,7 +118,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         const unsubscribe = useGlobalEventsStore.subscribe((state) => {
             if (state.backToLobby) {
-
                 this.resetGameIdDashboardEvent();
                 // Reset the flag
                 useGlobalEventsStore.getState().setBackToLobby(false);
@@ -152,15 +126,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         this.backToLobbyEventId = unsubscribe;
 
         const checkGameOffer = () => {
-
             if (this.dashboardHandler.checkIsNotOfferGame()) {
-
                 broadcastNotice({
                     ...getNotice(ErrorNoGameOffer, false),
-                    onClose: () => { },
+                    onClose: () => {},
                 });
             } else {
-
             }
         };
 
@@ -170,9 +141,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         // If data might not be ready, retry after a short delay
         if (!this.props.authorizeResponse) {
-
             setTimeout(() => {
-
                 checkGameOffer();
             }, 1000);
         }
@@ -184,11 +153,8 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
         const { queryGame } = this.props;
         if (queryGame) {
-
             this.openGame(queryGame);
         }
-
-
     }
 
     changeOrientation() {
@@ -199,46 +165,33 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     }
 
     componentWillUnmount() {
-
-
         // Clean up event listeners and subscriptions
         if (this.backToLobbyEventId) {
-
             this.backToLobbyEventId();
             this.backToLobbyEventId = null;
         }
 
-
         document.removeEventListener("visibilitychange", this.onVisibilityChange);
-
 
         this.notificationHandler.reset();
 
-
         this.dashboardHandler.reset();
-
-
     }
 
     signOut() {
-
         this.props.router.push("/timeout", "/timeout", { locale: this.props.tolgee.getLanguage() });
     }
 
     handleUpdateUserStakeLevel(userStakeLevel: UserStakeLevel) {
-
         this.setState({ userStakeLevel });
     }
 
     openGame(gameId: number) {
-
         this.setState({ queryGame: gameId, openGameId: gameId });
     }
 
     renderGames() {
         const { userStakeLevel, openGameName, openGameId } = this.state;
-
-
 
         return (
             <Games
@@ -273,7 +226,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PlayerContextProvider value={authContextValue}>
                 <BalanceSyncProvider>
-                    <div id={"dashboard"} className={`overflow-x-hidden ${isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""}`}>
+                    <div
+                        id={"dashboard"}
+                        className={`overflow-x-hidden ${
+                            isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""
+                        }`}
+                    >
                         <SoundSettings />
 
                         {renderOfferGameContainer()}
@@ -291,7 +249,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         if (this.state.isLandscapeMode && isMobileOnly) {
             return <LandscapeMode />;
         }
-        
+
         return this.renderDashBoard();
     }
 }

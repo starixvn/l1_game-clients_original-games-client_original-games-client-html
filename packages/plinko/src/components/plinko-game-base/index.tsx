@@ -90,7 +90,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
             dispatch: props.dispatch,
             gameMessageHandler: gameMessageHandler,
         });
-        this.syncBalanceHandler = new PlinkoSyncBalanceHandler();
+        this.syncBalanceHandler = new PlinkoSyncBalanceHandler({ gameMessageHandler });
         this.lightningConfigHandler = new PlinkoLightningConfigHandler({
             gameMessageHandler: gameMessageHandler,
         });
@@ -121,6 +121,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                     <RoundMultiplierHistory />
                     <PlinkoGame />
                     <div> {this.renderNotice()}</div>
+                    <WinningAmountEffect />
                 </div>
             </div>
         );
