@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState, useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import { useGameStore } from "@shared/stores/game-store";
-import { useCommonTranslate, useHotKey } from "@shared/react-hooks";
+import { useClickSound, useCommonTranslate, useHotKey } from "@shared/react-hooks";
 import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "@shared/components/game-base/handlers/game-message-handler";
 import { usePlaceBet } from "@plinko/shared/hooks/use-place-bet";
@@ -25,6 +25,7 @@ const BetControl = () => {
     );
     const { gameMessageHandler } = useGameContext();
     const { handlePlaceBet } = usePlaceBet();
+    const clickSound = useClickSound();
 
     const [tabIndex, setTabIndex] = useState(0);
     const [isAutoBet, setIsAutoBet] = useState(false);
@@ -41,6 +42,7 @@ const BetControl = () => {
     }, [gameConfigs?.minBet, gameConfigs?.maxBet, userStakeLevel]);
 
     const handleBetClick = useCallback(() => {
+        clickSound();
         const success = handlePlaceBet(betAmount);
         if (success) {
             setIsProcessing(true);
@@ -62,11 +64,12 @@ const BetControl = () => {
 
     const handleAutoBetClick = useCallback(() => {
         if (isAutoBet) {
+            clickSound();
             setIsAutoBet(false);
         } else {
             setIsAutoBet(true);
             const success = handleBetClick();
-            
+
             if (!success) {
                 setIsAutoBet(false);
             }

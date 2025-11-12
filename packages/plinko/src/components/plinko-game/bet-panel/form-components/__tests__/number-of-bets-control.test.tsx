@@ -5,6 +5,7 @@ import NumberOfBetsControl from "../number-of-bets-control";
 // Mock the hooks
 jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn(),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 describe("NumberOfBetsControl", () => {

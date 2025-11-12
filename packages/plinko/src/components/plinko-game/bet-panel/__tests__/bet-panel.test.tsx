@@ -81,6 +81,7 @@ jest.mock("@shared/react-hooks", () => ({
     })),
     useHotKey: jest.fn(),
     useBalance: jest.fn(() => 1000),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 jest.mock("@shared/react-contexts", () => ({

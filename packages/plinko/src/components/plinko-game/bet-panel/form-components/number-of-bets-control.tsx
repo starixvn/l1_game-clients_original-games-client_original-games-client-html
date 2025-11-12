@@ -1,6 +1,6 @@
 import { memo } from "react";
 import Label from "./label";
-import { useCommonTranslate } from "@shared/react-hooks";
+import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
 
 const BUTTONS_NUMBER_OF_BETS = [
     { text: "10", value: 10 },
@@ -18,6 +18,7 @@ const NumberOfBetsControl = ({
     isDisabled: boolean;
 }) => {
     const { t } = useCommonTranslate();
+    const clickSound = useClickSound();
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Math.abs(parseInt(e.target.value || "0"));
         const maxValue = 99999999;
@@ -49,7 +50,10 @@ const NumberOfBetsControl = ({
                     {BUTTONS_NUMBER_OF_BETS.map((button, index) => (
                         <button
                             className="h-9 bg-[#2A4770] text-white text-sm px-4 rounded-lg disabled:opacity-50 hover:scale-105 transition-all duration-200"
-                            onClick={() => setNumberOfBets(button.value)}
+                            onClick={() => {
+                                clickSound();
+                                setNumberOfBets(button.value);
+                            }}
                             key={index}
                             disabled={isDisabled}
                         >

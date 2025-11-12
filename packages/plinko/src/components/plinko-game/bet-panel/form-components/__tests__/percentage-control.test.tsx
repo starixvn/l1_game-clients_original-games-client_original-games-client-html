@@ -5,6 +5,7 @@ import PercentageControl from "../percentage-control";
 // Mock the hooks
 jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn().mockReturnValue({ t: jest.fn((key) => key) }),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 jest.mock("../icon-info-percentage-control", () => {

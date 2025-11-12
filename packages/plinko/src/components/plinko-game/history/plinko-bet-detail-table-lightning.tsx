@@ -1,5 +1,4 @@
 import { GAME_MODES } from "@plinko/constants";
-import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
 import { useBetDetailStore } from "@shared/stores";
 import { useTranslator } from "@shared/react-hooks";
 import { ResourceTypes } from "@shared/resources";
@@ -31,22 +30,22 @@ const PlinkoBetDetailTableLightning = () => {
     const headers = [
         {
             key: "column",
-            label: capitalizeFirstLetter(t(`${ResourceTypes.PLINKO}.column`)),
+            label: t(`${ResourceTypes.PLINKO}.column`).capitalizeFirstLetter(),
         },
         {
             key: "row",
-            label: capitalizeFirstLetter(t(`${ResourceTypes.PLINKO}.row`)),
+            label: t(`${ResourceTypes.PLINKO}.row`).capitalizeFirstLetter(),
         },
         {
             key: "multiplier",
-            label: capitalizeFirstLetter(t(`${ResourceTypes.COMMON}.title_multiplier`)),
+            label: t(`${ResourceTypes.COMMON}.title_multiplier`).capitalizeFirstLetter(),
         },
     ];
 
     return (
         <div className="mt-4">
             <div className="font-semibold py-3 text-sm md:text-base">
-                {capitalizeFirstLetter(t(`${ResourceTypes.PLINKO}.multiplier_position`))}
+                {t(`${ResourceTypes.PLINKO}.multiplier_position`).capitalizeFirstLetter()}
             </div>
             <div className="bg-table-header rounded-lg">
                 <Table className="rounded-lg w-full table-fixed table-striped">

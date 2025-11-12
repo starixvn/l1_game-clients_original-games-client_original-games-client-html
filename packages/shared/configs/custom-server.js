@@ -62,12 +62,14 @@ function createCustomServer(gameName) {
             const server = express();
 
             // Configure CORS
-            server.use(cors({
-                origin: "*",
-                credentials: true,
-                methods: ["GET", "POST", "OPTIONS"],
-                allowedHeaders: ["Content-Type", "Authorization"],
-            }));
+            server.use(
+                cors({
+                    origin: "*",
+                    credentials: true,
+                    methods: ["GET", "POST", "OPTIONS"],
+                    allowedHeaders: ["Content-Type", "Authorization"],
+                })
+            );
 
             // Add comprehensive logging middleware FIRST to catch ALL requests
             server.use((req, res, next) => {
@@ -103,7 +105,7 @@ function createCustomServer(gameName) {
             server.get("/health", (req, res) => {
                 res.status(200).send("healthy");
             });
-            
+
             // Handle Next.js image optimization URLs before Next.js processes them
             server.use("/_next/image", (req, res, next) => {
                 console.log(`🖼️  [Image Optimization] Intercepting Next.js image URL: ${req.url}`);
@@ -145,7 +147,7 @@ function createCustomServer(gameName) {
             // Serve static files from public with basePath support
             server.use("/static", (req, res, next) => {
                 console.log(`📁 [Static] Processing: ${req.url}`);
-                
+
                 let staticPath;
                 if (req.url.startsWith(FONTS_PATH_PREFIX)) {
                     // Check game package first for fonts, fallback to shared

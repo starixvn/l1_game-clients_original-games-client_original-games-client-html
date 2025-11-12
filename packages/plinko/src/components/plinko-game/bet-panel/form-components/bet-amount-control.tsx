@@ -3,7 +3,7 @@ import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store/game-store";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import Label from "./label";
-import { useClickOutside, useCommonTranslate } from "@shared/react-hooks";
+import { useClickOutside, useClickSound, useCommonTranslate } from "@shared/react-hooks";
 
 const BetAmountControl = ({
     handleBetAmountChange,
@@ -15,6 +15,7 @@ const BetAmountControl = ({
     const [isShowPopOver, setIsShowPopOver] = useState(false);
     const popOverRef = useRef<HTMLDivElement>(null);
     useClickOutside([popOverRef], () => setIsShowPopOver(false));
+    const clickSound = useClickSound();
     const { gameConfigs, userStakeLevel } = useGameStore(
         useShallow((state) => ({
             gameConfigs: state.gameConfigs,
@@ -84,13 +85,34 @@ const BetAmountControl = ({
                     disabled={isDisabled}
                 />
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
-                    <button className={buttonClass} onClick={() => handleBetAmountChange(+amount / 2)} disabled={isDisabled}>
+                    <button
+                        className={buttonClass}
+                        onClick={() => {
+                            clickSound();
+                            handleBetAmountChange(+amount / 2);
+                        }}
+                        disabled={isDisabled}
+                    >
                         1/2
                     </button>
-                    <button className={buttonClass} onClick={() => handleBetAmountChange(+amount * 2)} disabled={isDisabled}>
+                    <button
+                        className={buttonClass}
+                        onClick={() => {
+                            clickSound();
+                            handleBetAmountChange(+amount * 2);
+                        }}
+                        disabled={isDisabled}
+                    >
                         2x
                     </button>
-                    <button className={buttonClass} onClick={() => handleBetAmountChange(maxBet)} disabled={isDisabled}>
+                    <button
+                        className={buttonClass}
+                        onClick={() => {
+                            clickSound();
+                            handleBetAmountChange(maxBet);
+                        }}
+                        disabled={isDisabled}
+                    >
                         {t("max")}
                     </button>
                 </div>

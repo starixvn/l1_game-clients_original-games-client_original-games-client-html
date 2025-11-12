@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { useCommonTranslate } from "@shared/react-hooks";
+import { numberWithCommas } from "@shared/helpers";
 
 export type PlinkoSettlementResult = {
     slotIndex: number;
@@ -21,7 +22,7 @@ export const PlinkoBetDetailResultBlock: FC<{ roundId: number; settlementResult:
                 {settlementResult ? (
                     <span className="flex items-center gap-1.5">
                         <span className="text-secondary-text">{translateCommon("result")}</span>
-                        <div className="text-winning-highlight">{settlementResult.multiplier}x</div>
+                        <div className="text-winning-highlight">{numberWithCommas(settlementResult.multiplier)}x</div>
                     </span>
                 ) : (
                     <span aria-label="no result">—</span>

@@ -24,7 +24,7 @@
     --bet-history-row-1: #182130;
     --bet-history-row-2: #1f2a3b;
     --bet-detail-row-1: #182130;
-    --bet-detail-row-2: #1F2A3B;
+    --bet-detail-row-2: #1f2a3b;
 
     --modal-text-color: #e6e6e6;
     --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
@@ -53,14 +53,14 @@ html[data-theme="dark"] {
     --icon-favorite-game-guide: #fff;
 
     --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #fffa67;
+    --color-winning-highlight: #fff600;
 
     --modal-background: #1b293f;
     --text-content-color: #ced8e6;
 
     --table-header: #233046;
     --bet-detail-row-1: #182130;
-    --bet-detail-row-2: #1F2A3B;
+    --bet-detail-row-2: #1f2a3b;
 
     --modal-text-color: #e6e6e6;
     --sound-setting-background: linear-gradient(180deg, #0854b2 0%, #05264d 38.43%, #060d15 99.85%);
@@ -87,7 +87,7 @@ html[data-theme="light"] {
     --icon-favorite-game-guide: #2c2f3e;
 
     --color-table-text-clickable: #0990ff;
-    --color-winning-highlight: #fffa67;
+    --color-winning-highlight: #fff600;
 
     --table-header: #ebebeb;
     --bet-detail-row-1: #102136;
@@ -175,17 +175,16 @@ html[data-theme="light"] {
         }
     }
 
-.scrollbar-hide-on-idle {
-    overflow-y: auto;
-  }
-  
-  .scrollbar-hide-on-idle::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-  }
-  
-  .scrollbar-hide-on-idle:hover::-webkit-scrollbar {
-    width: 3px;
-  }
-  
+    .scrollbar-hide-on-idle {
+        overflow-y: auto;
+    }
+
+    .scrollbar-hide-on-idle::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+    .scrollbar-hide-on-idle:hover::-webkit-scrollbar {
+        width: 3px;
+    }
 }

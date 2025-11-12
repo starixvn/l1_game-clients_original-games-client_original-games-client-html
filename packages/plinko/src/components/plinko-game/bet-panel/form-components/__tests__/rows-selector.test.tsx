@@ -11,6 +11,7 @@ jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
 // Mock the hooks
 jest.mock("@shared/react-hooks", () => ({
     useTranslator: jest.fn().mockReturnValue({ t: jest.fn((key) => key) }),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 jest.mock("@shared/react-contexts", () => ({

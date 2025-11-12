@@ -12,7 +12,7 @@ String.prototype.replaceTolgeeFormat = function () {
 };
 String.prototype.capitalizeFirstLetter = function () {
     return this.split(/\s+/)
-        .map((word) => word.charAt(0).toLocaleUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase())
         .join(" ");
 };
 
@@ -25,5 +25,5 @@ String.prototype.removeBuildVersion = function () {
 };
 
 export const capitalizeFirstLetter = (str: string) => {
-    return str.replace(/(^|\s)[a-z]/g, (letter) => letter.toUpperCase());
+    return str.capitalizeFirstLetter();
 };

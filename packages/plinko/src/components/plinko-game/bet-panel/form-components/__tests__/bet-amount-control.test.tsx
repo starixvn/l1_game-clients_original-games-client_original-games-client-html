@@ -16,6 +16,7 @@ jest.mock("@plinko/shared/stores/plinko-game-store", () => ({
 jest.mock("@shared/react-hooks", () => ({
     useCommonTranslate: jest.fn(),
     useClickOutside: jest.fn(),
+    useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
 describe("BetAmountControl", () => {

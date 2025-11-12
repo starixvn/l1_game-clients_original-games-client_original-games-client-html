@@ -82,9 +82,7 @@ const BaseDialog: React.FC<Props> = ({
 
     return (
         <div onClick={handleClickOutside} className="relative">
-            {enableBackdrop && (
-                <div className={cn("fixed inset-0 z-[300] bg-black/40", type === ModalType.Rebet && "md:hidden")} />
-            )}
+            {enableBackdrop && <div className={cn("fixed inset-0 z-[300] bg-black/40", type === ModalType.Rebet && "md:hidden")} />}
 
             <div
                 style={{

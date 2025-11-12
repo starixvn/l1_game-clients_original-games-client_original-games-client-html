@@ -64,7 +64,7 @@ const nextConfig = withSentryConfig({
         };
 
         config.module.rules.push({
-            test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2|mp3|webp)$/,
+            test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2|mp3|webp|ico)$/,
             use: {
                 loader: "url-loader",
                 options: {
@@ -146,7 +146,7 @@ const nextConfig = withSentryConfig({
     async headers() {
         return [
             {
-                source: "/:all*(js|png|json|mp3|webp|svg|jpg|gif)",
+                source: "/:all*(js|png|json|mp3|webp|svg|jpg|gif|ico)",
                 locale: false,
                 headers: [
                     {

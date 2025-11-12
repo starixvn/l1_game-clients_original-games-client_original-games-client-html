@@ -7,11 +7,15 @@ import { TolgeeProvider } from "@tolgee/react";
 import { ThemeProvider } from "next-themes";
 import App, { AppContext, AppProps } from "next/app";
 import Head from "next/head";
-import { buildVersion, Themes } from "@shared/constants";
+import { AppTypes, buildVersion, Themes } from "@shared/constants";
 import { tolgee } from "@shared/tolgee";
 import { LoadingSpinner } from "@shared/components/game-components/game-loading/loading-spinner";
 import { GoogleAnalytic } from "@shared/components/page-components/google-analytics";
 import { getGameConfig } from "@shared/game-config";
+import { getAppSettings } from "@shared/app-settings";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { getLanguage, getOperator } from "@shared/helpers/router-helper";
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();
@@ -36,26 +40,60 @@ interface AppTitleProps {
     };
 }
 
+const getTitleAndFavicon = (operator: string, language: string) => {
+    switch (operator) {
+        case "SP":
+            return {
+                title: "Saba Play",
+                favicon: "favicon.ico",
+            };
+        case "VG":
+            return {
+                title: "Vgaming",
+                favicon: "favicon-vgaming.ico",
+            };
+        case "SG":
+            return {
+                title: language === "vi" ? "Cổng Game SABA" : "SABA.games",
+                favicon: "favicon-saba.ico",
+            };
+        case "TIP88":
+            return {
+                title: "SoiBet",
+                favicon: "favicon-tip88.ico",
+            };
+        default:
+            return {
+                title: "Original Games",
+                favicon: "favicon.ico",
+            };
+    }
+};
+
 export const AppTitle = ({ gameConfig }: AppTitleProps) => {
+    const appSettings = getAppSettings();
+    const router = useRouter();
+
+    const [title, setTitle] = useState<string>("Original Games");
+    const [favicon, setFavicon] = useState<string>("favicon.ico");
+
+    useEffect(() => {
+        if (!router.isReady || appSettings.appType === AppTypes.ORIGINAL) {
+            return;
+        }
+        const { op, lang } = router.query;
+        const operator = getOperator(op as string);
+        const language = getLanguage(lang as string);
+        const { title, favicon } = getTitleAndFavicon(operator, language);
+        setTitle(title);
+        setFavicon(favicon);
+    }, [router.isReady]);
+
     return (
         <Head>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>Original Games</title>
-            <link
-                rel="shortcut icon"
-                type="image/x-icon"
-                href={`${gameConfig.assetPath}/favicons/favicon.ico?v=${buildVersion}`}
-                sizes="any"
-            />
-            <link rel="icon" type="image/png" href={`${gameConfig.assetPath}/favicons/favicon2.png?v=${buildVersion}`} sizes="16x16" />
-            <link
-                rel="apple-touch-icon"
-                type="image/png"
-                href={`${gameConfig.assetPath}/favicons/favicon.png?v=${buildVersion}`}
-                sizes="any"
-            />
-            {/* Favicon for browsers that request /favicon.ico */}
-            <link rel="icon" type="image/x-icon" href={`${gameConfig.assetPath}/favicons/favicon.ico?v=${buildVersion}`} />
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+            <title>{title}</title>
+            <link rel="shortcut icon" href={`${gameConfig.assetPath}/favicons/${favicon}?v=${buildVersion}`} />
         </Head>
     );
 };

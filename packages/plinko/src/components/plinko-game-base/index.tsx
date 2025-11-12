@@ -240,6 +240,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         }
         return <></>;
     }
+
+    get RTP() {
+        return 99;
+    }
 }
 
 const PlinkoWrapper = (props: any) => {

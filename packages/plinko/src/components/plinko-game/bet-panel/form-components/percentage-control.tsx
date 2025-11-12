@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Label from "./label";
-import { useCommonTranslate } from "@shared/react-hooks";
+import { useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import IconInfoPercentageControl from "./icon-info-percentage-control";
 
 interface PercentageControlProps {
@@ -32,8 +32,9 @@ const PercentageControl: React.FC<PercentageControlProps> = ({
     type,
 }) => {
     const { t } = useCommonTranslate();
-
+    const clickSound = useClickSound();
     const onClick = (value: boolean) => {
+        clickSound();
         setIsIncreaseOn(value);
         setPercentage(0);
     };

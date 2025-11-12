@@ -2,8 +2,7 @@ import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { usePlinkoSettingStore } from "@plinko/shared/stores/plinko-setting-store";
 import Label from "./label";
-import { useTranslator } from "@shared";
-import { useGameContext } from "@shared/react-contexts";
+import { useClickSound, useGameContext, useTranslator } from "@shared";
 
 export const FastModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     const { isInstantMode, toggleInstantMode } = usePlinkoSettingStore(
@@ -11,6 +10,7 @@ export const FastModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     );
     const { tolgeeNamespace } = useGameContext();
     const { t } = useTranslator([tolgeeNamespace]);
+    const clickSound = useClickSound();
     return (
         <div className="flex items-center justify-between pr-1">
             <Label title={t("fast_mode")} />
@@ -18,7 +18,10 @@ export const FastModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                 type="checkbox"
                 className="input-checkbox disabled:opacity-50 mb-2"
                 checked={isInstantMode}
-                onChange={toggleInstantMode}
+                onChange={() => {
+                    clickSound();
+                    toggleInstantMode();
+                }}
                 disabled={isDisabled}
             />
         </div>

@@ -1,5 +1,11 @@
 import { getAppSettings } from "../app-settings";
 
+export const AppTypes = {
+    CLUB: 1,
+    DIRECT: 7,
+    ORIGINAL: 10,
+};
+
 export interface BetOptionData {
     betChoice: string;
     odds: number;
@@ -23,7 +29,20 @@ export interface Round {
 export const systemName = getAppSettings().system.toLocaleLowerCase();
 export const appType = getAppSettings().appType;
 
-export const locales = { en: "en", vi: "vi", th: "th", id: "id", zh_cn: "zh_cn", zh_tw: "zh_tw", ms_my: "ms_my", hi_in: "hi_in", bn_bd: "bn_bd", ko: "ko", pt_br: "pt_br", ja: "ja" };
+export const locales = {
+    en: "en",
+    vi: "vi",
+    th: "th",
+    id: "id",
+    zh_cn: "zh_cn",
+    zh_tw: "zh_tw",
+    ms_my: "ms_my",
+    hi_in: "hi_in",
+    bn_bd: "bn_bd",
+    ko: "ko",
+    pt_br: "pt_br",
+    ja: "ja",
+};
 
 export const languageMapper = {
     "en-US": "en",
@@ -67,7 +86,7 @@ export const languageNameMapper = {
     bn_bd: "বাংলা",
     ko: "한국어",
     pt_br: "Português",
-    ja: "日本語"
+    ja: "日本語",
 };
 
 export const Themes = {

@@ -118,6 +118,8 @@ const LATEST_GAME_ID_KEY = "latest-game-id";
 
 export const localStorageKeys = {
     session: buildLocalStorageKey("auth-data"),
+    operator: buildLocalStorageKey("operator"),
+    language: buildLocalStorageKey("language"),
     rebet: buildLocalStorageKey("rebet"),
     umInfo: buildLocalStorageKey("um_info"),
     loginStatus: buildLocalStorageKey("login-status"),

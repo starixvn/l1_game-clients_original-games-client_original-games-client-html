@@ -5,16 +5,17 @@ import { getCurrentGameAssets } from "../../../game-config";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { useShallow } from "zustand/shallow";
 import ParticlesContainer from "./particles";
+import { useLowPerformanceDevice } from "@shared";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const gameAssets = getCurrentGameAssets();
 
 const Background: React.FC = () => {
-    const gameAssets = getCurrentGameAssets();
-
     const { isLightningMode } = usePlinkoLightningModeGameStore(
         useShallow((state) => ({
             isLightningMode: state.isLightningMode,
         }))
     );
+    const isLowPerformance = useLowPerformanceDevice();
 
     const backgroundImage = isLightningMode
         ? `${basePath}/static/images/background/lightning-bg.webp?v=${buildVersion}`
@@ -32,7 +33,7 @@ const Background: React.FC = () => {
 
             <div className="absolute z-[-100] h-[862px] w-full overflow-hidden md:h-full">
                 {/* CSS-based particle effects */}
-                <ParticlesContainer />
+                {!isLowPerformance && <ParticlesContainer />}
 
                 <div
                     id="background-polygon"

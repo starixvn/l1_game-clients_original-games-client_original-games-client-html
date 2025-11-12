@@ -23,13 +23,13 @@ export const WinningAmountEffect = () => {
     }, [finish]);
 
     if (!winAmount) {
-        return <div className="h-7 md:h-10"></div>;
+        return <div className="h-8"></div>;
     }
 
     return (
         <div
             key={animationKey}
-            className={`${styles["win-animation"]} h-7 pt-1 text-center text-[var(--color-winning-highlight)] text-sm font-bold uppercase md:text-base md:h-10`}
+            className={`${styles["win-animation"]} h-8 pt-2 text-center text-[#FFFA67] text-xl font-bold uppercase md:text-2xl`}
         >
             +{numberWithCommas(winAmount, 2)}
         </div>

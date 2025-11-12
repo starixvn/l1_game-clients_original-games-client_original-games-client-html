@@ -1,4 +1,3 @@
-export * from "./ball-color-helper";
 export * from "./debug-helper";
 export * from "./lobby-helper";
 export * from "./message-transmitter/index";

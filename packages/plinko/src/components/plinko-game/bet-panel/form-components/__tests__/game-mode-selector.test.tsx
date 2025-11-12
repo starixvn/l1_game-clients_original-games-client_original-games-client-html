@@ -151,7 +151,6 @@ describe("GameModeSelector", () => {
     });
 
     describe("Button Styling", () => {
-
         it("should apply pressed styling to active button", () => {
             // Arrange
             render(<GameModeSelector {...defaultProps} />);

@@ -30,7 +30,7 @@ const RoundMultiplierHistory = () => {
 
     useEffect(() => {
         if (roundHistory?.length && !isInitializedRef.current) {
-            setData(roundHistory.toReversed() as PlinkoRound[]);
+            setData([...roundHistory].reverse() as PlinkoRound[]);
             isInitializedRef.current = true;
         }
     }, [roundHistory]);
