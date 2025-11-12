@@ -14,6 +14,14 @@ const PlinkoBetDetailTableBody = () => {
     const isLightningMode = data.gameMode === GAME_MODES.LIGHTNING && !!data.lightningBoard;
     const { settlementResult, lightningBoard } = data;
     const isWin = data?.betwin > data.amount;
+
+    const getLightningTotalMultiplierDisplay = () => {
+        const totalMultiplier = settlementResult.reachedPegMultipliers?.reduce((total, reachedPeg) => {
+            return total + (reachedPeg.multiplier || 0);
+        }, 0) || 0;
+        return totalMultiplier === 0 ? "-" : `${numberWithCommas(totalMultiplier)}x`;
+    };
+
     const rowData = [
         {
             content: isLightningMode
@@ -22,13 +30,7 @@ const PlinkoBetDetailTableBody = () => {
             isWinningBet: isLightningMode && isWin,
         },
         {
-            content: isLightningMode
-                ? `${numberWithCommas(
-                      settlementResult.reachedPegMultipliers?.reduce((total, reachedPeg) => {
-                          return total + (reachedPeg.multiplier || 0);
-                      }, 0) || 0
-                  )}x`
-                : data.numberOfRows,
+            content: isLightningMode ? getLightningTotalMultiplierDisplay() : data.numberOfRows,
             isWinningBet: isLightningMode && isWin,
         },
         {
