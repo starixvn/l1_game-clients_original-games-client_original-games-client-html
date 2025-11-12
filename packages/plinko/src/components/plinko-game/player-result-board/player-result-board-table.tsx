@@ -47,20 +47,20 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
                             key={index}
                             className="text-center border-b border-primary-border hover:bg-secondary-bg/50 transition-colors"
                         >
-                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
+                            <TableCell className="h-[65px] py-2 px-2 md:px-3 text-secondary-text text-center md:text-base">
                                 {row.playerName}
                             </TableCell>
-                            <TableCell className="py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base">
+                            <TableCell className="h-[65px] py-2 px-2 md:px-3 text-secondary-text text-center md:text-base">
                                 {row.betAmount}
                             </TableCell>
                             <TableCell className={
-                                cn("py-[10.3px] md:py-[12.5px] px-2 md:px-3 text-secondary-text text-center md:text-base", 
+                                cn("h-[65px] py-2 px-2 md:px-3 text-secondary-text text-center md:text-base",
                                 Number.parseFloat(row.multiplier) >= 1 ? "text-winning-highlight" : "text-secondary-text")}>
                                 {row.multiplier}x
                             </TableCell>
                             <TableCell
                                 className={cn(
-                                    "py-[10.3px] md:py-[12.5px] px-2 md:px-3 font-normal text-right pl-0 md:text-base",
+                                    "h-[65px] py-2 px-2 md:px-3 font-normal text-right pl-0 md:text-base",
                                     Number.parseFloat(row.multiplier) >= 1 ? "text-winning-highlight" : "text-secondary-text"
                                 )}
                             >
@@ -74,7 +74,7 @@ export const PlayerResultBoardTable = React.forwardRef<HTMLDivElement>((props, r
     };
 
     return (
-        <div ref={ref} className={cn("h-[450px] w-full overflow-hidden flex flex-col")}>
+        <div ref={ref} className={cn("w-full overflow-hidden flex flex-col")}>
             <div className="flex-shrink-0 mb-1">
                 <Table className="w-full table-fixed">{renderTableHeader()}</Table>
             </div>
