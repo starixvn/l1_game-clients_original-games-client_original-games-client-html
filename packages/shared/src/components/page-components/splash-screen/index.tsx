@@ -438,7 +438,7 @@ export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; 
                 className="w-[300px] h-auto"
             />
             <Image
-                className="mt-[80px] w-[200px] h-auto"
+                className="mt-[80px] w-[100px] h-auto"
                 src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
                 alt="text-splash"
                 width="0"

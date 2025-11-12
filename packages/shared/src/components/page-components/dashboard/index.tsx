@@ -228,14 +228,14 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 <BalanceSyncProvider>
                     <div
                         id={"dashboard"}
-                        className={`overflow-x-hidden relative  ${
+                        className={`overflow-x-hidden relative ${
                             isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""
                         }`}
                     >
                         {appType === 1 && (
                             <>
+                                <div className="absolute w-full h-full bg-[#020C1C] z-[-2]"></div>
                                 <div className={`${styles["top-half"]} absolute top-0 left-0 w-full h-full  z-[-1]`}></div>
-                                <div className="absolute h-full w-full bg-[#020C1C] z-[-2]"></div>
                             </>
                         )}
 

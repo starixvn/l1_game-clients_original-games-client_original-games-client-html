@@ -1,3 +1,5 @@
+@import "@shared/styles/constants/base-path";
+
 @media (-webkit-min-device-pixel-ratio: 1.5) {
     .desktop-dashboard {
         --scale-factor: 0.75;
@@ -8,6 +10,6 @@
 }
 
 .top-half {
-    background: url("/static/images/lobby/game-bg.webp") no-repeat;
-    background-size: 100% auto;
+    background: url("#{$base-path}/static/images/lobby/game-bg.webp") no-repeat;
+    background-size: 100% 60%;
 }
