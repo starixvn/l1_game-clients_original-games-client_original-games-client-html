@@ -50,7 +50,7 @@ const BetHistoryBodyItem = ({ data, mapDataToCells }: BetHistoryBodyItemProps) =
             {
                 content: (
                     <div className={getWinValueColorClass(formatWinValue(data.betWin ?? data.betwin ?? 0), data.totalAmount.toString())}>
-                        {data.betWin}
+                        {numberWithCommas(data.betWin)}
                     </div>
                 ),
                 className: "text-right",
