@@ -23,7 +23,7 @@ const LobbyMenu = () => {
     }
 
     return (
-        <button className="absolute top-10 md:top-[70px] right-[10px] md:right-[70px] z-[9999]" onClick={handleBackToLobby}>
+        <button className="absolute top-[90px] md:top-[70px] right-[10px] md:right-[70px] z-[9999]" onClick={handleBackToLobby}>
             <Image src={`${basePath}/static/images/icons/home-icon.webp`} alt="Back to Lobby" className="w-10 h-10 md:w-20 md:h-20" width={42} height={42} />
         </button>
     );
