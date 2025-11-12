@@ -82,6 +82,7 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
             return;
         }
         const { op, lang } = router.query;
+        console.log("op", op);
         const operator = getOperator(op as string);
         const language = getLanguage(lang as string);
         const { title, favicon } = getTitleAndFavicon(operator, language);
