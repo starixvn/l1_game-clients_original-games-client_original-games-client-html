@@ -5,6 +5,7 @@ import { AnalyticsHelper } from "../helpers/analytic-helper";
 import { GameUtils } from "../helpers/base-64-helper";
 import { broadcastBackToLobby } from "../helpers/global-events-helper";
 import { URLParams } from "@shared/constants/url-params";
+import { backToLobbyRedirect } from "@shared/utils/game-utils";
 
 export type URLContextModel = {
     token?: string;
@@ -34,6 +35,7 @@ export function parseContextFromURL(): URLContextModel | undefined {
     const lobbyUrl = params.get("lurl");
     const returnUrl = params.get("rurl");
     const parentUrl = params.get("purl");
+    const ref = params.get("ref");
     const isStandalone = params.get("isStandalone");
     const currencyGroup = params.get("cg");
     const op = params.get("op");
@@ -68,6 +70,9 @@ export function parseContextFromURL(): URLContextModel | undefined {
     }
     if (parentUrl) {
         StorageHelper.set(localStorageKeys.parentUrl, parentUrl);
+    }
+    if (ref) {
+        StorageHelper.set(localStorageKeys.ref, ref);
     }
 
     if (param) {
@@ -111,6 +116,7 @@ const clearStorage = () => {
     StorageHelper.remove(localStorageKeys.appType);
     StorageHelper.remove(localStorageKeys.parentUrl);
     StorageHelper.remove(localStorageKeys.umInfo);
+    StorageHelper.remove(localStorageKeys.ref);
 };
 
 export function loadURLContext(): URLContextModel {
@@ -137,15 +143,26 @@ export const initialURLContextData = {
     ...loadURLContext(),
     backToRedirectUrl: (redirectUrl: string) => {
         if (!isEmpty(redirectUrl)) {
-            const decodedUrl = GameUtils.base64Decode(redirectUrl);
+            const ref = StorageHelper.get<string>(localStorageKeys.ref);
+            
+            if (ref) {
+                handleDirectModeNavigation();
+            }
 
-            globalThis.location.href = decodedUrl;
+            backToLobbyRedirect();
         } else {
             updateURLContext({ backToLobby: true });
             broadcastBackToLobby();
         }
     },
 };
+
+const handleDirectModeNavigation = () => {
+    const returnUrl = StorageHelper.get<string>(localStorageKeys.returnUrl);
+    if (returnUrl) {
+        globalThis.location.replace(returnUrl);
+    }
+}
 
 export const URLContext = createContext<URLContextModel>(initialURLContextData);
 
