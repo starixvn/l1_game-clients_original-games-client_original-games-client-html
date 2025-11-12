@@ -263,7 +263,7 @@ const SplashScreen: React.FC = () => {
     return (
         <>
             {systemName === "vg" && appType !== 10 && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {systemName === "sg" && appType !== 10 && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress}/>}
+            {systemName === "sg" && appType !== 10 && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />}
             {appType === 10 && <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />}
 
             {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
@@ -419,15 +419,7 @@ export const Logo = () => {
     );
 };
 
-export const LogoVG = ({
-    locale = "en",
-    t,
-    preloadProgress,
-}: {
-    locale: string;
-    t: any;
-    preloadProgress: any;
-}) => {
+export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
     return (
         <div className="flex flex-col w-full h-full items-center justify-center relative">
             <Image
@@ -462,26 +454,35 @@ export const LogoVG = ({
 
 export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
     return (
-        <div className="flex flex-col w-full h-full items-center justify-center relative">
+        <div className="flex flex-col w-full h-full items-center justify-end relative">
+            <div className="flex flex-col w-full h-full items-center justify-center relative">
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/logo-saba.webp`}
+                    alt="logo-saba"
+                    width="0"
+                    height="0"
+                    className="w-[300px] h-auto"
+                    priority
+                />
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                    className="w-[300px] h-auto"
+                />
+                <Image
+                    className="mt-[50px] w-[100px] h-auto"
+                    src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                />
+            </div>
             <Image
-                src={`${BASE_PATH}/static/images/splash-screen/logo-saba.webp`}
-                alt="logo-saba"
-                width="0"
-                height="0"
-                className="w-[500px] h-auto"
-                priority
-            />
-            <Image
-                src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
-                alt="text-splash"
-                width="0"
-                height="0"
-                className="w-[300px] h-auto"
-            />
-            <Image
-                className="mt-[80px] w-[200px] h-auto"
-                src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
-                alt="text-splash"
+                className="absolute w-[100px] bottom-[120px] h-auto"
+                src={`${BASE_PATH}/static/images/splash-screen/powered_by.webp`}
+                alt="power-by"
                 width="0"
                 height="0"
             />

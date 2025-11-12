@@ -108,7 +108,7 @@ const BetControl = () => {
     const isManualTab = tabIndex === 0;
 
     return (
-        <div className="flex flex-col gap-3 px-3 mt-3 rounded-t-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full lg:min-h-[38.5rem]">
+        <div className="flex flex-col gap-3 px-3 mt-3 rounded-tl-xl justify-end lg:flex-col-reverse lg:bg-primary-bg lg:py-4 lg:px-0 lg:mt-0 lg:h-full lg:min-h-[38.5rem]">
             <div className="relative">
                 <div className="lg:px-3">
                     {isManualTab ? (
