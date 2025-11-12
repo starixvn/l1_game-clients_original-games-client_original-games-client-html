@@ -16,4 +16,5 @@ window.envConfig = {
     enableDebugLogs: true,
     socketGatewayPath: "l1gwsit",
     useTolgeeStatic: true,
+    googleAnalyticId: "G-XT6JT7CYPD",
 };
