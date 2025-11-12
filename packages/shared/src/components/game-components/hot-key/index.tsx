@@ -42,7 +42,7 @@ const HotKeyModal = () => {
                                 handleCloseModal();
                             }}
                         >
-                            <i className="icon-close text-sm right-5"></i>
+                            <i className="icon-close text-sm md:text-base right-5"></i>
                         </button>
                     </div>
 

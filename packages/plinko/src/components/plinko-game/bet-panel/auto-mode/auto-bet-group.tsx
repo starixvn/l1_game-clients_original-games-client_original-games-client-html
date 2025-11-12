@@ -181,8 +181,8 @@ const AutoBetGroup = ({
             </div>
             <div>
                 <div className="flex items-start gap-2">
-                    <i className="icon icon-guide text-xl before:text-[#9C9C9C] before:content-['\e90a']" />
-                    <span className="text-sm font-semibold text-[#9C9C9C]">{t("auto_bet_warning")}</span>
+                    <i className="icon icon-guide text-xl before:text-[#9C9C9C] before:content-['\e910']" />
+                    <span className="text-sm font-meidum text-[#9C9C9C]">{t("auto_bet_warning")}</span>
                 </div>
             </div>
         </div>

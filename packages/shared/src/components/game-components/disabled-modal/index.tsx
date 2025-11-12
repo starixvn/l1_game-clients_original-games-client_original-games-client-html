@@ -25,7 +25,7 @@ const DisabledModal: React.FC<{ disableMessage: string }> = ({ disableMessage })
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={true}>
             <div
                 className={cn(
-                    "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-w-[343px] font-normal",
+                    "absolute text-center py-4 px-3 rounded-2xl text-sm md:text-base left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-w-[343px] font-normal",
                     "bottom-1/2 translate-y-1/2 z-modal overflow-hidden",
                     "bg-modal-bg border border-modal-border-color shadow-modal",
                 )}

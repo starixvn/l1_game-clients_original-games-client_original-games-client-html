@@ -25,7 +25,7 @@ const TabNavigation = ({
                     <button
                         key={tab}
                         onClick={() => handleClick(index)}
-                        className={`flex-1 p-2 text-sm relative text-white md:pt-0 disabled:opacity-50`}
+                        className={`flex-1 p-2 text-sm md:text-base relative text-white md:pt-0 disabled:opacity-50`}
                         disabled={isDisabled}
                     >
                         {t(tab)}

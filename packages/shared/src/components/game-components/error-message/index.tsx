@@ -85,7 +85,7 @@ export const ConnectFailedMessage: React.FC<{
         <BaseDialog type={ModalType.Center} isOpen={true} enableBackdrop={enableBackdrop}>
             <div
                 className={cn(
-                    "absolute text-center py-4 px-3 rounded-2xl text-sm left-1/2 transform -translate-x-1/2 min-w-[343px] font-normal",
+                    "absolute text-center py-4 px-3 rounded-2xl text-sm md:text-base left-1/2 transform -translate-x-1/2 min-w-[343px] font-normal",
                     "bottom-1/2 translate-y-1/2 z-modal overflow-hidden",
                     "bg-modal-bg border border-modal-border-color shadow-modal",
                     "p-5"
@@ -103,7 +103,7 @@ export const ConnectFailedMessage: React.FC<{
                         <Image src={`${basePath}/static/images/icons/warning.svg`} alt="warning" width={33} height={29} className="md:w-[44px] md:h-[38px]" />
                     </div>
                     <div className="text-base md:text-lg leading-[22px] font-semibold mb-[15px]">{t(`${tolgeeNamespace}.game_name_${id}`)}</div>
-                    <div className="text-sm font-normal text-modal-text md:text-base">
+                    <div className="text-sm md:text-base font-normal text-modal-text">
                         {t(reason, { gameName: tolgeeNamespace }).replaceTolgeeFormat().replace(tolgeeNamespace, "")}
                     </div>
                 </div>

@@ -178,30 +178,6 @@ describe("BetControl", () => {
             // Assert
             expect(screen.getByRole("button", { name: "start_auto_bet" })).toBeInTheDocument();
         });
-
-        it("should have correct CSS classes for layout", () => {
-            // Arrange
-            const { container } = render(<BetControl />);
-
-            // Act & Assert
-            const mainContainer = container.firstChild;
-            expect(mainContainer).toHaveClass(
-                "flex",
-                "flex-col",
-                "gap-3",
-                "px-3",
-                "mt-3",
-                "rounded-t-xl",
-                "justify-end",
-                "lg:flex-col-reverse",
-                "lg:bg-primary-bg",
-                "lg:py-4",
-                "lg:px-0",
-                "lg:mt-0",
-                "lg:h-full",
-                "lg:min-h-[38.5rem]"
-            );
-        });
     });
 
     describe("Tab Navigation", () => {

@@ -107,7 +107,7 @@ const LightningKey: React.FC = () => {
                             onChange={handleInputChange}
                             maxLength={8}
                             className={cn(
-                                "text-[#B3BEC1] text-sm font-medium rounded-lg pl-2 pr-8 w-[120px] h-8",
+                                "text-[#B3BEC1] text-sm md:text-base font-medium rounded-lg pl-2 pr-8 w-[120px] h-8",
                                 "bg-[#101721] border border-[#2B3648]",
                                 "focus:outline-none focus:border-[#2B3648]"
                             )}
@@ -125,7 +125,7 @@ const LightningKey: React.FC = () => {
                     </div>
                     <button
                         className={cn(
-                            "flex items-center justify-center h-8 text-white text-sm px-3 py-2 rounded-lg",
+                            "flex items-center justify-center h-8 text-white text-sm md:text-base px-3 py-2 rounded-lg",
                             "bg-[#2A4770] transition-all duration-200 hover:scale-105",
                             "disabled:opacity-50"
                         )}

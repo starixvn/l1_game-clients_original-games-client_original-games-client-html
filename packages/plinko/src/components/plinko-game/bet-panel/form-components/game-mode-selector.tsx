@@ -93,7 +93,7 @@ const GameModeSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                             ${isActive(option) ? "bg-[#2a4770]" : ""}
                         `}
                     >
-                        <span className="flex justify-center items-center gap-1">
+                        <span className="flex justify-center items-center gap-1 text-sm md:text-base">
                             {option.isLightning && (
                                 <Image
                                     src={`${basePath}/static/images/icons/lightning-mode.svg?v=${buildVersion}`}
