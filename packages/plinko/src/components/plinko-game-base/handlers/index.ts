@@ -3,6 +3,6 @@ export { PlinkoGameRoundDataHandler } from "./plinko-game-round-data-handler";
 export { PlinkoGameSoundHandler } from "./plinko-game-sound-handler";
 export { PlinkoBetHistoryHandler } from "./plinko-bet-history-handler";
 export { PlinkoGameFinishHandler } from "./plinko-game-finish-handler";
-export { PlinkoInGameHandler } from "./plinko-in-game-handler";
+export { PlinkoRoundStateHandler } from "./plinko-round-state-handler";
 export { PlinkoSyncBalanceHandler } from "./plinko-sync-balance-handler";
 export { PlinkoLightningConfigHandler } from "./plinko-lightning-config-handler";

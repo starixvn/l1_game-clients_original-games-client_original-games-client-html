@@ -16,7 +16,7 @@ import {
     PlinkoGameFinishHandler,
     PlinkoGameRoundDataHandler,
     PlinkoGameSoundHandler,
-    PlinkoInGameHandler,
+    PlinkoRoundStateHandler,
     PlinkoLightningConfigHandler,
     PlinkoStateHandler,
     PlinkoSyncBalanceHandler,
@@ -54,7 +54,7 @@ const LobbyMenu = dynamic(() => import("@shared/components/game-components/lobby
 const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
 const LightningKey = dynamic(() => import("@plinko/components/plinko-game/lightning-key"), { ssr: false });
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
-    private readonly inGameHandler: PlinkoInGameHandler;
+    private readonly plinkoRoundStateHandler: PlinkoRoundStateHandler;
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
     private readonly lightningConfigHandler: PlinkoLightningConfigHandler;
 
@@ -86,9 +86,10 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         };
         super(props, gameBaseHandlers);
 
-        this.inGameHandler = new PlinkoInGameHandler({
+        this.plinkoRoundStateHandler = new PlinkoRoundStateHandler({
             dispatch: props.dispatch,
             gameMessageHandler: gameMessageHandler,
+            gameStateContextModel: props.gameStateContextModel,
         });
         this.syncBalanceHandler = new PlinkoSyncBalanceHandler({ gameMessageHandler });
         this.lightningConfigHandler = new PlinkoLightningConfigHandler({
@@ -98,7 +99,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
 
     registerHandlers() {
         super.registerHandlers();
-        this.inGameHandler.registerEvents();
+        this.plinkoRoundStateHandler.registerEvents();
         this.syncBalanceHandler.registerEvents();
         this.lightningConfigHandler.registerEvents();
     }
