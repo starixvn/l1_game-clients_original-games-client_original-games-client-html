@@ -264,12 +264,13 @@ const SplashScreen: React.FC = () => {
 
     return (
         <>
-            {operator === "VG" && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {operator === "SG" && <LogoSaba locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {operator === "SP" && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {operator === "TIP88" && <LogoTip88 locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {appType === 10 && <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />}
-
+            <SplashScreenGame
+                operator={operator}
+                locale={locale}
+                t={t}
+                preloadProgress={preloadProgress}
+                isDoneLoadConfig={isDoneLoadConfig}
+            />
             {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
 
             {isDoneLoadConfig && currentGameId >= 0 && (
@@ -465,7 +466,7 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                     alt="logo-saba"
                     width="0"
                     height="0"
-                    className="w-[300px] h-auto"
+                    className="w-[270px] h-auto"
                     priority
                 />
                 <Image
@@ -476,12 +477,16 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                     className="w-[300px] h-auto"
                 />
                 <Image
-                    className="mt-[50px] w-[100px] h-auto"
+                    className="mt-[30px] w-[100px] h-auto"
                     src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
                     alt="text-splash"
                     width="0"
                     height="0"
                 />
+
+                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                </p>
             </div>
             <Image
                 className="absolute w-[100px] bottom-[120px] h-auto"
@@ -491,9 +496,6 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                 height="0"
             />
             <WaitingMessage locale={locale} />
-            <p className={"text-first-download"} data-testid="download-message">
-                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
-            </p>
         </div>
     );
 };
@@ -568,8 +570,6 @@ export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: a
     );
 };
 
-
-
 export const WaitingMessage = ({ locale }: { locale: string }) => {
     const { message, isVisible, isFadingOut, className } = useRandomWaitingMessage({
         locale: locale,
@@ -586,4 +586,31 @@ export const WaitingMessage = ({ locale }: { locale: string }) => {
             {message}
         </div>
     );
+};
+
+const SplashScreenGame = ({
+    operator,
+    locale,
+    t,
+    preloadProgress,
+    isDoneLoadConfig,
+}: {
+    operator: string;
+    locale: string;
+    t: any;
+    preloadProgress: any;
+    isDoneLoadConfig: boolean;
+}) => {
+    switch (operator) {
+        case "SP":
+            return <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />;
+        case "VG":
+            return <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />;
+        case "SG":
+            return <LogoSaba locale={locale} t={t} preloadProgress={preloadProgress} />;
+        case "TIP88":
+            return <LogoTip88 locale={locale} t={t} preloadProgress={preloadProgress} />;
+        default:
+            return <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />;
+    }
 };
