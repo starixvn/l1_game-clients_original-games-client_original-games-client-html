@@ -16,9 +16,7 @@ import { getAppSettings } from "@shared/app-settings";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getLanguage, getOperator } from "@shared/helpers/router-helper";
-import { GameUtils } from "@shared/helpers/base-64-helper";
-import { URLParams } from "@shared/constants/url-params";
-import { localStorageKeys, StorageHelper } from "@shared/helpers/storage-helper";
+
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();

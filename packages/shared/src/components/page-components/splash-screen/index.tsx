@@ -264,8 +264,8 @@ const SplashScreen: React.FC = () => {
 
     return (
         <>
-            {operator === "SG" && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {operator === "VG" && <LogoSaba locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "VG" && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "SG" && <LogoSaba locale={locale} t={t} preloadProgress={preloadProgress} />}
             {operator === "SP" && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />}
             {operator === "TIP88" && <LogoTip88 locale={locale} t={t} preloadProgress={preloadProgress} />}
             {appType === 10 && <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />}
