@@ -23,6 +23,7 @@ import FadeContent from "./fade-content";
 import Image from "next/image";
 import { BASE_PATH } from "@shared/constants/base-path";
 import { useRandomWaitingMessage } from "@shared/react-hooks/use-random-waiting-message";
+import { getOperator } from "@shared/helpers/router-helper";
 
 export type SplashScreenProps = WithRouterProps;
 export type SplashScreenState = {
@@ -94,6 +95,7 @@ const SplashScreen: React.FC = () => {
 
     const router = useRouter();
     const player = usePlayerContext();
+    const operator = getOperator();
     const { t } = useTranslator();
 
     const [isUm, setIsUm] = useState(player?.session?.isUM);
@@ -262,8 +264,10 @@ const SplashScreen: React.FC = () => {
 
     return (
         <>
-            {systemName === "vg" && appType !== 10 && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
-            {systemName === "sg" && appType !== 10 && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "SG" && <LogoVG locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "VG" && <LogoSaba locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "SP" && <LogoSabaPlay locale={locale} t={t} preloadProgress={preloadProgress} />}
+            {operator === "TIP88" && <LogoTip88 locale={locale} t={t} preloadProgress={preloadProgress} />}
             {appType === 10 && <OriginalLogo locale={locale} t={t} preloadProgress={preloadProgress} isDoneLoadConfig={isDoneLoadConfig} />}
 
             {/* <LoggerControls className="fixed top-4 right-4 z-50" /> */}
@@ -452,7 +456,7 @@ export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; 
     );
 };
 
-export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
+export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
     return (
         <div className="flex flex-col w-full h-full items-center justify-end relative">
             <div className="flex flex-col w-full h-full items-center justify-center relative">
@@ -493,6 +497,78 @@ export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t
         </div>
     );
 };
+
+export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
+    return (
+        <div className="flex flex-col w-full h-full items-center justify-end relative">
+            <div className="flex flex-col w-full h-full items-center justify-center relative">
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/logo-sabaplay.webp`}
+                    alt="logo-sabaplay"
+                    width="0"
+                    height="0"
+                    className="w-[200px] h-auto"
+                    priority
+                />
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                    className="w-[300px] h-auto"
+                />
+                <Image
+                    className="mt-[50px] w-[100px] h-auto"
+                    src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                />
+            </div>
+            <WaitingMessage locale={locale} />
+            <p className={"text-first-download"} data-testid="download-message">
+                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+            </p>
+        </div>
+    );
+};
+
+export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: any; preloadProgress: any }) => {
+    return (
+        <div className="flex flex-col w-full h-full items-center justify-end relative">
+            <div className="flex flex-col w-full h-full items-center justify-center relative">
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/logo-tip88.webp`}
+                    alt="logo-tip88"
+                    width="0"
+                    height="0"
+                    className="w-[300px] h-auto"
+                    priority
+                />
+                <Image
+                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                    className="w-[300px] h-auto"
+                />
+                <Image
+                    className="mt-[50px] w-[100px] h-auto"
+                    src={`${BASE_PATH}/static/images/splash-screen/loading-bar-sabaplay.gif`}
+                    alt="text-splash"
+                    width="0"
+                    height="0"
+                />
+            </div>
+            <WaitingMessage locale={locale} />
+            <p className={"text-first-download"} data-testid="download-message">
+                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+            </p>
+        </div>
+    );
+};
+
+
 
 export const WaitingMessage = ({ locale }: { locale: string }) => {
     const { message, isVisible, isFadingOut, className } = useRandomWaitingMessage({

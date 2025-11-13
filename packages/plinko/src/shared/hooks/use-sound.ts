@@ -48,7 +48,8 @@ export const usePlinkoBallHitPinSound = () => {
 };
 
 const getRandomResourceMp3 = () => {
-    const random = Math.random();
+    const random = Math.random(); // NOSONAR
+
     if (random < 0.33) {
         return resourceMp3.plinkoBallHitPinHigh;
     } else if (random < 0.66) {
