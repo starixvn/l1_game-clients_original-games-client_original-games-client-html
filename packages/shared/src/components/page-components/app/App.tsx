@@ -16,6 +16,8 @@ import { getAppSettings } from "@shared/app-settings";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getLanguage, getOperator } from "@shared/helpers/router-helper";
+import { GameUtils } from "@shared/helpers/base-64-helper";
+import { URLParams } from "@shared/constants/url-params";
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();
@@ -81,10 +83,19 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
         if (!router.isReady || appSettings.appType === AppTypes.ORIGINAL) {
             return;
         }
-        const { op, lang } = router.query;
-        console.log("op", op);
-        const operator = getOperator(op as string);
-        const language = getLanguage(lang as string);
+        
+        const { op, lang, param } = router.query;
+        let operator = getOperator(op as string);
+        let language = getLanguage(lang as string);
+
+        if (param) {
+            const decodedUrl = GameUtils.base64Decode(param as string);
+            const urlSearchParams = new URLSearchParams(decodedUrl);
+
+            operator = urlSearchParams.get(URLParams.operator);
+            language = urlSearchParams.get(URLParams.language);
+        }
+
         const { title, favicon } = getTitleAndFavicon(operator, language);
         setTitle(title);
         setFavicon(favicon);
