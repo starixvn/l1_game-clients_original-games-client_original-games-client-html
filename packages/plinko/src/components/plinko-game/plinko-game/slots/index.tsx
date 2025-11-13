@@ -157,7 +157,7 @@ const Slots = () => {
                         >
                             {isLightningMode && item === 0 ? (
                                 <CachedImage
-                                    src={`${basePath}/static/images/plinko/hell.webp`}
+                                    src={`${basePath}/static/images/plinko/hell.svg`}
                                     alt="hell"
                                     width={18}
                                     height={18}

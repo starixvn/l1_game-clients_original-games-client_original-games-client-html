@@ -26,20 +26,20 @@ const Background: React.FC = () => {
         <>
             <BgCachedImage
                 pathImage={backgroundImage}
-                className={`absolute top-0 z-[-100] w-[calc(100%+24px)] h-[610px] md:h-full md:left-0 md:w-full md:rounded-tr-xl`}
+                className={`absolute top-0 z-[-100] w-[calc(100%+24px)] h-[calc(100%+50px)] md:h-full md:left-0 md:w-full md:rounded-tr-xl`}
                 backgroundSize="100% 100%"
                 backgroundRepeat="no-repeat"
                 backgroundPosition="center"
             />
             <div className="absolute z-[-10] top-0 w-full h-[100px] opacity-70 bg-gradient-to-b from-[#070D16] to-[#17193F00]"></div>
 
-            <div className="absolute z-[-100] h-[862px] w-full overflow-hidden md:h-full">
+            <div className="absolute z-[-100] h-[calc(100%+50px)] w-full overflow-hidden md:h-full">
                 {/* CSS-based particle effects */}
                 {!isLowPerformance && <ParticlesContainer />}
 
                 <BgCachedImage
                     pathImage={`${basePath}/static/images/background/polygon.webp`}
-                    className="relative h-[610px] md:h-full w-full"
+                    className="relative h-full w-full"
                     backgroundRepeat="no-repeat"
                     backgroundPosition="top center"
                 />
