@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { getLanguage, getOperator } from "@shared/helpers/router-helper";
 import { GameUtils } from "@shared/helpers/base-64-helper";
 import { URLParams } from "@shared/constants/url-params";
+import { localStorageKeys, StorageHelper } from "@shared/helpers/storage-helper";
 
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();
@@ -84,20 +85,12 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
             return;
         }
 
-        const { op, lang, param } = router.query;
-        console.log("op", op);
-        console.log("param", param);
+        const { op, lang } = router.query;
+
         let operator = getOperator(op as string);
         let language = getLanguage(lang as string);
 
-        if (param) {
-            const decodedUrl = GameUtils.base64Decode(param as string);
-            const urlSearchParams = new URLSearchParams(decodedUrl);
 
-            operator = urlSearchParams.get(URLParams.operator);
-            language = urlSearchParams.get(URLParams.language);
-        }
-console.log("operator", operator);
         const { title, favicon } = getTitleAndFavicon(operator, language);
         setTitle(title);
         setFavicon(favicon);

@@ -81,6 +81,9 @@ export function parseContextFromURL(): URLContextModel | undefined {
         const lobbyUrl = urlSearchParams.get(URLParams.lobbyUrl);
         const parentUrl = urlSearchParams.get(URLParams.parentUrl);
         const returnUrl = urlSearchParams.get(URLParams.returnUrl);
+        const operator = urlSearchParams.get(URLParams.operator);
+        const language = urlSearchParams.get(URLParams.language);
+
         StorageHelper.set(localStorageKeys.session, {
             ss: urlSearchParams.get(URLParams.session),
             username: urlSearchParams.get(URLParams.username),
@@ -102,6 +105,13 @@ export function parseContextFromURL(): URLContextModel | undefined {
             StorageHelper.set(localStorageKeys.returnUrl, returnUrl);
             redirectUrl = returnUrl;
         }
+
+        if (operator) {
+            StorageHelper.set(localStorageKeys.operator, operator);
+        }
+        if (language) {
+            StorageHelper.set(localStorageKeys.language, language);
+        }
     }
 
     return { token, language, redirectUrl };
@@ -117,6 +127,8 @@ const clearStorage = () => {
     StorageHelper.remove(localStorageKeys.parentUrl);
     StorageHelper.remove(localStorageKeys.umInfo);
     StorageHelper.remove(localStorageKeys.ref);
+    StorageHelper.remove(localStorageKeys.operator);
+    StorageHelper.remove(localStorageKeys.language);
 };
 
 export function loadURLContext(): URLContextModel {
