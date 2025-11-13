@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
-import Image from "next/image";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 import useGameStore from "@shared/stores/game-store/game-store";
 import Tooltip from "./tooltip";
@@ -8,9 +7,9 @@ import { getLightningMultiplierColor, getMultiplierColor } from "@plinko/shared/
 import { cn } from "@shared";
 import { isDesktop } from "react-device-detect";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
-import { buildVersion } from "@shared/constants";
 import { formatPlinkoOdds } from "./slot-utils";
 import { NUMBER_OF_ROWS } from "@plinko/constants";
+import { CachedImage } from "@shared/components/game-components/cached-image";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const fontSizes = {
@@ -144,23 +143,24 @@ const Slots = () => {
                             key={`${index}-${item}`}
                             className={cn(
                                 isHit ? "animate-slide-down" : "",
-                                "flex items-center justify-center text-white font-bold h-[30px]",
-                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]",
-                                isLightningMode && "h-[28px]"
+                                "flex items-center justify-center text-white font-bold h-[28px]",
+                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
                                 margin: `0 ${slotDimensions.marginX}px`,
                                 backgroundColor: getBackgroundColor(item, index),
-                                fontSize: isDesktop ? `${fontSizesDesktop[effectiveNumberOfRows]}px` : `${fontSizes[effectiveNumberOfRows]}px`,
+                                fontSize: isDesktop
+                                    ? `${fontSizesDesktop[effectiveNumberOfRows]}px`
+                                    : `${fontSizes[effectiveNumberOfRows]}px`,
                             }}
                         >
                             {isLightningMode && item === 0 ? (
-                                <Image
-                                    src={`${basePath}/static/images/icons/hell.webp?v=${buildVersion}`}
+                                <CachedImage
+                                    src={`${basePath}/static/images/plinko/hell.webp`}
                                     alt="hell"
-                                    width={20}
-                                    height={20}
+                                    width={18}
+                                    height={18}
                                     className="w-[18px] h-[18px]"
                                 />
                             ) : (

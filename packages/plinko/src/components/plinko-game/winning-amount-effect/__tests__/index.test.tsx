@@ -49,7 +49,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-8");
+            expect(container.firstChild).toHaveClass("h-6");
             expect(container.textContent).toBe("");
         });
 
@@ -61,7 +61,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-8");
+            expect(container.firstChild).toHaveClass("h-6");
             expect(container.textContent).toBe("");
         });
 
@@ -73,7 +73,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-8");
+            expect(container.firstChild).toHaveClass("h-6");
             expect(container.textContent).toBe("");
         });
 
@@ -111,7 +111,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-8");
+            expect(container.firstChild).toHaveClass("h-6");
             expect(container.textContent).toBe("");
         });
 
@@ -123,7 +123,7 @@ describe("WinningAmountEffect", () => {
             const { container } = render(<WinningAmountEffect />);
 
             // Assert
-            expect(container.firstChild).toHaveClass("h-8");
+            expect(container.firstChild).toHaveClass("h-6");
             expect(container.textContent).toBe("");
         });
     });

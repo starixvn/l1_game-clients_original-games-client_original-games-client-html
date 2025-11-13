@@ -56,12 +56,15 @@ const BetAmountControl = ({
             <div className="flex items-center gap-2">
                 <Label title={t("bet_amount")} />
                 <div>
-                    <i className="icon-circle-info text-lg cursor-pointer mb-2" onClick={() => setIsShowPopOver(true)} />
+                    <i
+                        className="absolute -translate-y-[70%] icon-circle-info text-lg cursor-pointer"
+                        onClick={() => setIsShowPopOver(true)}
+                    />
 
                     {isShowPopOver && (
                         <div
                             ref={popOverRef}
-                            className={`absolute -translate-y-[200%] -translate-x-[calc(50%-35px)] bg-[#2993f5] text-white text-sm px-4 py-2 rounded-lg pointer-events-none flex flex-col gap-1 z-10`}
+                            className={`absolute -translate-y-[170%] -translate-x-[calc(50%-40px)] bg-[#2993f5] text-white text-sm px-4 py-2 rounded-lg pointer-events-none flex flex-col gap-1 z-10`}
                         >
                             <div
                                 className={`absolute -bottom-[6px] left-[calc(35%+10px)] -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#2993f5]`}

@@ -11,13 +11,13 @@ const IconInfoPercentageControl = ({ type }: { type: "on_win" | "on_loss" }) => 
         <>
             <div className="relative">
                 <i
-                    className="icon-circle-info text-lg cursor-pointer"
+                    className="absolute -top-1 md:-top-0.5 left-0 icon-circle-info text-lg cursor-pointer"
                     data-testid="icon-guide-testid"
                     onClick={() => setIsShowGuide(true)}
                 />
                 {isShowGuide && (
                     <div
-                        className={`absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#2993f5]`}
+                        className={`absolute -top-2 left-1 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#2993f5]`}
                     ></div>
                 )}
             </div>

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Games, GameConfig } from "@shared/components/game-components/games";
 import PlinkoGame from "../page";
+import LobbyBackground from "@plinko/components/lobby-background";
 
 // Function to get game ID (prioritizes env var over URL extraction)
 const getGameId = (): number => {
@@ -28,11 +29,18 @@ export const updateGameConfig = (gameId: number) => {
         component: PlinkoGame,
         name: gameId === 145 ? "Plinko" : "Plinko X",
     };
-    
 };
 
 export const PlinkoGames: React.FC<any> = (props) => {
-    return <Games {...props} gameConfig={currentGameConfig} />;
+    useEffect(() => {
+        updateGameConfig(getGameId());
+    }, []);
+    return (
+        <>
+            <LobbyBackground />
+            <Games {...props} gameConfig={currentGameConfig} />
+        </>
+    );
 };
 
 export default PlinkoGames;

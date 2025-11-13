@@ -17,7 +17,7 @@ export class PlinkoBetHistoryHandler extends BetHistoryHandler {
     }
 
     handleFinishedBall(finishedBall: any) {
-        if (finishedBall) {
+        if (finishedBall && finishedBall.amount) {
             const {
                 roundId,
                 result,

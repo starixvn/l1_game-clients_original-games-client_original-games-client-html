@@ -1,6 +1,6 @@
-import { buildVersion, cn, numberWithCommas } from "@shared";
+import { cn, numberWithCommas } from "@shared";
 import React from "react";
-import Image from "next/image";
+import { CachedImage } from "@shared/components/game-components/cached-image";
 import { PlinkoRound } from "./round-multiplier-history";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -14,8 +14,8 @@ interface RoundMultiplierItemProps {
 const renderMultiplierContent = (multiplier: number) => {
     if (multiplier === 0) {
         return (
-            <Image
-                src={`${basePath}/static/images/icons/hell-multiplier.svg?v=${buildVersion}`}
+            <CachedImage
+                src={`${basePath}/static/images/plinko/hell-multiplier.svg`}
                 alt="Hell multiplier"
                 width={20}
                 height={20}

@@ -22,8 +22,14 @@
         "gamePath": "plinko",
         "gameResourceConfigs": {
             "path": "plinko",
-            "optionalPaths": ["/static/images/icons/hell-multiplier.svg"],
-            "cachePaths": ["/static/images/icons/hell-multiplier.svg"]
+            "optionalPaths": ["/static/images/background"],
+            "cachePaths": [
+                "/static/images/plinko/hell-multiplier.svg",
+                "/static/images/plinko/hell.webp",
+                "/static/images/background/bg.webp",
+                "/static/images/background/polygon.webp",
+                "/static/images/background/lightning-bg.webp"
+            ]
         }
     },
     "159": {
@@ -46,11 +52,16 @@
             "startNewRoundAnim": 0
         },
         "numberOfRoundHistory": 10,
-        "gamePath": "plinko-x",
+        "gamePath": "plinko",
         "gameResourceConfigs": {
-            "path": "plinko-x",
-            "optionalPaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.webp"],
-            "cachePaths": ["/static/images/icons/hell-multiplier.svg", "/static/images/icons/hell.webp"]
+            "path": "plinko",
+            "optionalPaths": ["/static/images/background", "/static/images/lobby"],
+            "cachePaths": [
+                "/static/images/plinko/hell-multiplier.svg",
+                "/static/images/plinko/hell.webp",
+                "/static/images/background/",
+                "/static/images/lobby/game-bg.webp"
+            ]
         }
     }
 }

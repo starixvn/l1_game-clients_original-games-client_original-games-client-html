@@ -25,14 +25,13 @@ import BetPanel from "@plinko/components/plinko-game/bet-panel/bet-panel";
 import { createPortal } from "react-dom";
 import PlinkoGame from "../plinko-game/plinko-game";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
-import UserInfo from "@shared/components/page-components/header/user-info";
 import { isMobileOnly } from "react-device-detect";
 import { ResourceTypes } from "@shared/resources";
 import { PLINKO_GAME_IDS } from "@plinko/constants";
 import { getAppSettings } from "@shared/app-settings";
+import Background from "@plinko/components/plinko-game/background";
 
 // Dynamic imports side components
-const Background = dynamic(() => import("@plinko/components/plinko-game/background"), { ssr: false });
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
 const SoundIcon = dynamic(() => import("@shared/components/game-components/menu/icons/sound-icon"), { ssr: false });
 const GuideIcon = dynamic(() => import("@shared/components/game-components/menu/icons/guide-icon"), { ssr: false });
@@ -53,6 +52,8 @@ const HotKeyModal = dynamic(() => import("@shared/components/game-components/hot
 const LobbyMenu = dynamic(() => import("@shared/components/game-components/lobby-menu"), { ssr: false });
 const Header = dynamic(() => import("@shared/components/page-components/header"), { ssr: false });
 const LightningKey = dynamic(() => import("@plinko/components/plinko-game/lightning-key"), { ssr: false });
+const UserInfo = dynamic(() => import("@shared/components/page-components/header/user-info"), { ssr: false });
+
 class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     private readonly plinkoRoundStateHandler: PlinkoRoundStateHandler;
     private readonly syncBalanceHandler: PlinkoSyncBalanceHandler;
@@ -230,7 +231,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
         return (
             <div className="flex items-center gap-2">
                 <span className="text-sm md:text-base font-semibold">{this.props.translate(`${ResourceTypes.COMMON}.balance`)}:</span>
-                <UserInfo customizeClass="text-yellow-400" />
+                <UserInfo customizeClass="text-winning-highlight" />
             </div>
         );
     }
