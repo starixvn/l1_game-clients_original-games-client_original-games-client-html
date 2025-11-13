@@ -17,8 +17,13 @@ const plinkoBallHitWin = `${path}ball-hit-win.mp3?v=${buildVersion}`;
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
 
 export const usePlinkoBallHitPinSound = () => {
-    const randomResourceMp3 = getRandomResourceMp3();
-    const [play, { sound: ctx }] = useSound(randomResourceMp3, {
+    const [playHigh, { sound: ctxHigh }] = useSound(resourceMp3.plinkoBallHitPinHigh, {
+        interrupt: false,
+    });
+    const [playMedium, { sound: ctxMedium }] = useSound(resourceMp3.plinkoBallHitPinMedium, {
+        interrupt: false,
+    });
+    const [playLow, { sound: ctxLow }] = useSound(resourceMp3.plinkoBallHitPinLow, {
         interrupt: false,
     });
 
@@ -33,16 +38,29 @@ export const usePlinkoBallHitPinSound = () => {
  
     const playPlinkoBallHitPinSound = () => {
         if (canPlayHit() && enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
-            play();
+            const randomSound = getRandomResourceMp3();
+            if (randomSound === resourceMp3.plinkoBallHitPinHigh) {
+                playHigh();
+            } else if (randomSound === resourceMp3.plinkoBallHitPinMedium) {
+                playMedium();
+            } else {
+                playLow();
+            }
             updateHitTime();
         }
     };
 
     useEffect(() => {
-        if (ctx) {  
-            ctx.volume(formatVolume(volumeSFX));
+        if (ctxHigh) {  
+            ctxHigh.volume(formatVolume(volumeSFX));
         }
-    }, [volumeSFX]);
+        if (ctxMedium) {  
+            ctxMedium.volume(formatVolume(volumeSFX));
+        }
+        if (ctxLow) {  
+            ctxLow.volume(formatVolume(volumeSFX));
+        }
+    }, [volumeSFX, ctxHigh, ctxMedium, ctxLow]);
 
     return playPlinkoBallHitPinSound;
 };
