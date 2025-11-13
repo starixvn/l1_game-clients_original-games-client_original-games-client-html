@@ -33,16 +33,15 @@ const Background: React.FC = () => {
             />
             <div className="absolute z-[-10] top-0 w-full h-[100px] opacity-70 bg-gradient-to-b from-[#070D16] to-[#17193F00]"></div>
 
-            <div className="absolute z-[-100] h-[calc(100%+50px)] w-full overflow-hidden md:h-full">
+            <div className="absolute z-[-100] h-[calc(100%+50px)] w-full md:h-full">
                 {/* CSS-based particle effects */}
                 {!isLowPerformance && <ParticlesContainer />}
 
                 <BgCachedImage
                     pathImage={`${basePath}/static/images/background/polygon.webp`}
-                    className="relative h-full w-full"
-                    backgroundRepeat="no-repeat"
-                    backgroundPosition="top center"
+                    className="relative h-full w-full bg-no-repeat bg-top bg-[length:100%_100%] md:bg-[length:100%_auto]"
                 />
+                <div className="md:hidden absolute bottom-0 w-full h-[250px] translate-y-full bg-gradient-to-b from-[#0C1421] to-[#020C1C]"></div>
             </div>
             <div className="hidden md:block absolute bottom-0 w-full h-[100px] z-[-10] bg-gradient-to-b from-[#17193F00] to-[#070D16]"></div>
         </>
