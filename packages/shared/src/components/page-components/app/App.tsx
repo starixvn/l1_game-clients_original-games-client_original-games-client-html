@@ -83,8 +83,10 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
         if (!router.isReady || appSettings.appType === AppTypes.ORIGINAL) {
             return;
         }
-        
+
         const { op, lang, param } = router.query;
+        console.log("op", op);
+        console.log("param", param);
         let operator = getOperator(op as string);
         let language = getLanguage(lang as string);
 
@@ -95,7 +97,7 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
             operator = urlSearchParams.get(URLParams.operator);
             language = urlSearchParams.get(URLParams.language);
         }
-
+console.log("operator", operator);
         const { title, favicon } = getTitleAndFavicon(operator, language);
         setTitle(title);
         setFavicon(favicon);
