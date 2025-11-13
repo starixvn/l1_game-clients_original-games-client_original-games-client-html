@@ -10,7 +10,7 @@ import { usePlinkoGameStore } from "../stores";
 const mp3File = {
     plinkoBallHitPinHigh: `ball-hit-pin-high`,
     plinkoBallHitPinMedium: `ball-hit-pin-medium`,
-    plinkoBallHitPinLow: `ball-hit-pin-low`,
+    plinkoBallHitPinLow: `ball-hit-win`,
 };
 const plinkoBallHitWin = `${path}ball-hit-win.mp3?v=${buildVersion}`;
 
@@ -39,11 +39,14 @@ export const usePlinkoBallHitPinSound = () => {
     const playPlinkoBallHitPinSound = () => {
         if (canPlayHit() && enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
             const randomSound = getRandomResourceMp3();
-            if (randomSound === resourceMp3.plinkoBallHitPinHigh) {
+            if (randomSound === resourceMp3.plinkoBallHitPinHigh || numberOfDroppingBall <= 3) {
                 playHigh();
+                console.log("playHigh");
             } else if (randomSound === resourceMp3.plinkoBallHitPinMedium) {
                 playMedium();
+                console.log("playMedium");
             } else {
+                console.log("playLow");
                 playLow();
             }
             updateHitTime();

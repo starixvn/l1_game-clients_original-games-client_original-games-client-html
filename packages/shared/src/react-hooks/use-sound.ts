@@ -16,9 +16,7 @@ const mp3File = {
     showBallResult: `show-ball-result`,
     blockBet: `block-bet`,
     popUpWinning: `pop-up-winning`,
-    diceShakingRolling: `dice-shaking-rolling`,
-    plinkoBallHitPin: `ball-hit-pin`,
-    plinkoBallHitWin: `ball-hit-win`,
+    diceShakingRolling: `dice-shaking-rolling`
 };
 
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
