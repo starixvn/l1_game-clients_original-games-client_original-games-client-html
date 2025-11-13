@@ -10,7 +10,7 @@ import { usePlinkoGameStore } from "../stores";
 const mp3File = {
     plinkoBallHitPinHigh: `ball-hit-pin-high`,
     plinkoBallHitPinMedium: `ball-hit-pin-medium`,
-    plinkoBallHitPinLow: `ball-hit-win`,
+    plinkoBallHitPinLow: `ball-hit-pin-low`,
 };
 const plinkoBallHitWin = `${path}ball-hit-win.mp3?v=${buildVersion}`;
 
@@ -27,8 +27,6 @@ export const usePlinkoBallHitPinSound = () => {
         interrupt: false,
     });
 
-    const canPlayHit = useSettingStore(useShallow((state) => state.canPlayHit));
-    const updateHitTime = useSettingStore(useShallow((state) => state.updateHitTime));
     const numberOfDroppingBall = usePlinkoGameStore(useShallow((state) => state.numberOfDroppingBall));
 
     const { volumeSFX, enabledSound } = useSettingStore(useShallow((state) => ({
@@ -37,7 +35,7 @@ export const usePlinkoBallHitPinSound = () => {
     })));    
  
     const playPlinkoBallHitPinSound = () => {
-        if (canPlayHit() && enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
+        if (enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
             const randomSound = getRandomResourceMp3();
             if (randomSound === resourceMp3.plinkoBallHitPinHigh || numberOfDroppingBall <= 3) {
                 playHigh();
@@ -49,21 +47,16 @@ export const usePlinkoBallHitPinSound = () => {
                 console.log("playLow");
                 playLow();
             }
-            updateHitTime();
         }
     };
 
     useEffect(() => {
-        if (ctxHigh) {  
+        if (ctxHigh && ctxMedium && ctxLow) {  
             ctxHigh.volume(formatVolume(volumeSFX));
-        }
-        if (ctxMedium) {  
             ctxMedium.volume(formatVolume(volumeSFX));
-        }
-        if (ctxLow) {  
             ctxLow.volume(formatVolume(volumeSFX));
         }
-    }, [volumeSFX, ctxHigh, ctxMedium, ctxLow]);
+    }, [volumeSFX]);
 
     return playPlinkoBallHitPinSound;
 };

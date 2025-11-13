@@ -449,10 +449,10 @@ export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; 
                 width="0"
                 height="0"
             />
-            <WaitingMessage locale={locale} />
-            <p className={"text-first-download"} data-testid="download-message">
-                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+            <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                50
             </p>
+            <WaitingMessage locale={locale} />
         </div>
     );
 };
@@ -526,11 +526,11 @@ export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t
                     width="0"
                     height="0"
                 />
+                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                </p>
             </div>
             <WaitingMessage locale={locale} />
-            <p className={"text-first-download"} data-testid="download-message">
-                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
-            </p>
         </div>
     );
 };
@@ -561,11 +561,11 @@ export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: a
                     width="0"
                     height="0"
                 />
+                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                </p>
             </div>
             <WaitingMessage locale={locale} />
-            <p className={"text-first-download"} data-testid="download-message">
-                {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
-            </p>
         </div>
     );
 };
