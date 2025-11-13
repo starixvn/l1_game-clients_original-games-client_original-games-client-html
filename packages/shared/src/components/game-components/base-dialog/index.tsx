@@ -58,25 +58,13 @@ const BaseDialog: React.FC<Props> = ({
     }, [isOpen]);
 
     useEffect(() => {
-        if (!isBlockScroll || !isOpen) {
+        if (!isBlockScroll) {
             return undefined;
         }
-
-        const preventDefault = (e: Event) => {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        };
-
         const className = "overflow-hidden";
         if (enableBackdrop) {
             document.getElementById("dashboard")?.classList.add(className);
             document.body.classList.add(className);
-
-            // Prevent scroll events
-            document.addEventListener('wheel', preventDefault, { passive: false });
-            document.addEventListener('touchmove', preventDefault, { passive: false });
-            document.addEventListener('scroll', preventDefault, { passive: false });
         }
 
         return () => {
@@ -84,13 +72,8 @@ const BaseDialog: React.FC<Props> = ({
             if (enableBackdrop && !isOverlap) {
                 document.getElementById("dashboard")?.classList.remove(className);
             }
-
-            // Remove scroll event listeners
-            document.removeEventListener('wheel', preventDefault);
-            document.removeEventListener('touchmove', preventDefault);
-            document.removeEventListener('scroll', preventDefault);
         };
-    }, [enableBackdrop, isOverlap, isBlockScroll, isOpen]);
+    }, [enableBackdrop, isOverlap, isBlockScroll]);
 
     const handleClickOutside = (event: any) => {
         clickSound();
