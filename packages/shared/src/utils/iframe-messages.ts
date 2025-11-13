@@ -12,11 +12,8 @@ export const sendMessageToParent = (action: string, payload?: any): void => {
     try {
         if (window.parent && window.parent !== window) {
             window.parent.postMessage({ action, payload }, "*");
-        } else {
-            console.warn("No parent window found - not running in iframe");
         }
     } catch (error) {
-        console.error("Error sending message to parent:", error);
     }
 };
 

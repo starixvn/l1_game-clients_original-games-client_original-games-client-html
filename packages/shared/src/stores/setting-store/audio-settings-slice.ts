@@ -6,6 +6,7 @@ export interface AudioSettingsSlice {
     enabledSound: boolean;
     volumeMusic: number;
     volumeSFX: number;
+    lastHitTime: number;
 
     // Actions
     toggleMusic: (enabled?: boolean) => void;
@@ -13,6 +14,8 @@ export interface AudioSettingsSlice {
     updateVolumeMusic: (volume: number) => void;
     updateVolumeSFX: (volume: number) => void;
     resetAudioSettings: () => void;
+    canPlayHit: () => boolean;
+    updateHitTime: () => void;
 }
 
 const initialAudioState = {
@@ -20,6 +23,7 @@ const initialAudioState = {
     enabledSound: true,
     volumeMusic: 50,
     volumeSFX: 50,
+    lastHitTime: 0,
 };
 
 export const createAudioSettingsSlice: StateCreator<AudioSettingsSlice> = (set, get) => ({
@@ -50,4 +54,10 @@ export const createAudioSettingsSlice: StateCreator<AudioSettingsSlice> = (set, 
     resetAudioSettings: () => {
         set(initialAudioState);
     },
+
+    canPlayHit: () => {
+        const now = Date.now();
+        return now - get().lastHitTime > 300;
+      },
+    updateHitTime: () => set({ lastHitTime: Date.now() }),
 });
