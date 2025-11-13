@@ -435,7 +435,7 @@ export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; 
                 priority
             />
             <Image
-                src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                src={`${BASE_PATH}/static/images/splash-screen/splash-text/splash_text_${locale}.webp`}
                 alt="text-splash"
                 width="0"
                 height="0"
@@ -469,7 +469,7 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                     priority
                 />
                 <Image
-                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    src={`${BASE_PATH}/static/images/splash-screen/splash-text/splash_text_${locale}.webp`}
                     alt="text-splash"
                     width="0"
                     height="0"
@@ -511,7 +511,7 @@ export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t
                     priority
                 />
                 <Image
-                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    src={`${BASE_PATH}/static/images/splash-screen/splash-text/slogan-sabaplay-${locale}.webp`}
                     alt="text-splash"
                     width="0"
                     height="0"
@@ -546,7 +546,7 @@ export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: a
                     priority
                 />
                 <Image
-                    src={`${BASE_PATH}/static/images/splash-screen/splash_text_${locale}.webp`}
+                    src={`${BASE_PATH}/static/images/splash-screen/splash-text/splash_text_${locale}.webp`}
                     alt="text-splash"
                     width="0"
                     height="0"
