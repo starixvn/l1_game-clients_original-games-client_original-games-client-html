@@ -42,6 +42,7 @@ export const locales = {
     ko: "ko",
     pt_br: "pt_br",
     ja: "ja",
+    es: "es",
 };
 
 export const languageMapper = {
@@ -57,6 +58,7 @@ export const languageMapper = {
     "ko-KR": "ko",
     "pt-BR": "pt_br",
     "ja-JP": "ja",
+    "es-ES": "es",
 };
 
 export const LanguageLocaleMapper = {
@@ -72,6 +74,7 @@ export const LanguageLocaleMapper = {
     ko: "ko-KR",
     pt_br: "pt-BR",
     ja: "ja-JP",
+    es: "es-ES",
 };
 
 export const languageNameMapper = {
@@ -87,6 +90,7 @@ export const languageNameMapper = {
     ko: "한국어",
     pt_br: "Português",
     ja: "日本語",
+    es: "Español",
 };
 
 export const Themes = {

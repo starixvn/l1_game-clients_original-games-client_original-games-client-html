@@ -90,6 +90,8 @@ const locales = {
     bn_bd: "bn_bd",
     ko: "ko",
     pt_br: "pt_br",
+    ja: "ja",
+    es: "es",
 };
 
 function writeFile(fileName: string, content: string, extension = "json") {
@@ -108,9 +110,6 @@ function writeFile(fileName: string, content: string, extension = "json") {
     
 }
 
-
-
-
 const tg = Tolgee().use(DevTools()).init({
     defaultLanguage: "en",
     fallbackLanguage: "en",
@@ -121,8 +120,6 @@ const tg = Tolgee().use(DevTools()).init({
     defaultNs: "SabaNumber",
     ns: namespaces,
 });
-
-
 
 tg.run();
 
