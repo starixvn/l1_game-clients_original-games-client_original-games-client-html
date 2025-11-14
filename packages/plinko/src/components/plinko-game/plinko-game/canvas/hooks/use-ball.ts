@@ -5,7 +5,7 @@ import { BALL_BODY_OPTIONS, PLINKO_OBJECTS, PlinkoCanvasConfig } from "../consta
 import { PlinkoFinish } from "@plinko/shared/types/types";
 import { usePlinkoBallHitPinSound } from "@plinko/shared/hooks/use-sound";
 import { useLightningBall } from "./use-lightning-ball";
-import { downloadAndCacheImage } from "@shared/helpers/image-cache-controller";
+import { buildVersion } from "@shared";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -28,9 +28,7 @@ export const useBall = () => {
             console.error("Failed to load ball image");
             imageLoadedRef.current = false;
         };
-        downloadAndCacheImage(`${basePath}/static/images/plinko/ball.svg`).then((result) => {
-            image.src = result.imageBase64;
-        });
+        image.src = `${basePath}/static/images/plinko/ball.svg?v=${buildVersion}`;
         ballImageRef.current = image;
     }, []);
 
@@ -102,13 +100,13 @@ export const useBall = () => {
                 });
                 playPlinkoBallHitPinSoundRef.current();
                 body.collidedRowIndexes?.push(peg.rowIndex);
-
                 updateBallLightningStatus(body, peg);
             }
             Body.setStatic(body, false);
         },
         [updateBallLightningStatus]
     );
+
     const removeBall = useCallback((ball: BallBody) => {
         ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
     }, []);

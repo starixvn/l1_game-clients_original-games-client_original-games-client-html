@@ -1,7 +1,7 @@
 import { useCallback, useRef, useEffect } from "react";
 import { BallBody, PegBody } from "../type";
 import { PlinkoCanvasConfig } from "../constant";
-import { downloadAndCacheImage } from "@shared/helpers/image-cache-controller";
+import { buildVersion } from "@shared";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -18,9 +18,7 @@ export const useLightningBall = () => {
             console.error("Failed to load lightning ball image");
             lightningImageLoadedRef.current = false;
         };
-        downloadAndCacheImage(`${basePath}/static/images/plinko/lightning-ball.svg`).then((result) => {
-            lightningImage.src = result.imageBase64;
-        });
+        lightningImage.src = `${basePath}/static/images/plinko/lightning-ball.svg?v=${buildVersion}`;
         lightningBallImageRef.current = lightningImage;
     }, []);
 
