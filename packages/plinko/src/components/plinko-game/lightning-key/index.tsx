@@ -86,8 +86,8 @@ const LightningKey: React.FC = () => {
             <Tooltip
                 message={translatePlinko("tooltip_lightning")}
                 forceVisible={forceShowTooltip}
-                className="-translate-x-[calc(50%-180px)]"
-                classArrow="-translate-x-[calc(50%+180px)]"
+                className="-translate-x-[calc(50%-144px)]"
+                classArrow="-translate-x-[calc(50%+140px)]"
             >
                 <button
                     type="button"
