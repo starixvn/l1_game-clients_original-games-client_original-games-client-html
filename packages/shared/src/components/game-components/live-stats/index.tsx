@@ -10,6 +10,7 @@ import { numberWithCommas } from "@shared/helpers";
 import { AreaChart, Area, XAxis, YAxis } from "recharts";
 import { useShallow } from "zustand/shallow";
 import Image from "next/image";
+import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
 
 const MODAL_SIZE = {
     WIDTH: 250,
@@ -210,21 +211,21 @@ const LiveStats = ({
                 >
                     <div className="flex flex-col items-start flex-1 gap-1">
                         <div className="flex flex-col items-start gap-1">
-                            {t("profit")}
+                            {capitalizeFirstLetter(t("profit"))}
                             <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            {t("bet_amount")}
+                            {capitalizeFirstLetter(t("bet_amount"))}
                             <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
                         </div>
                     </div>
                     <div className="flex flex-col items-start flex-1 gap-1">
                         <div className="flex flex-col items-start gap-1">
-                            {t("wins")}
+                            {capitalizeFirstLetter(t("wins"))}
                             <div className={`${winsColorClass} font-[400]`}>{numberWithCommas(winRound)}</div>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            {t("losses")}
+                            {capitalizeFirstLetter(t("losses"))}
                             <div className={cn(lostRound > 0 ? "text-red-500" : "", "font-[400]")}>{numberWithCommas(lostRound)}</div>
                         </div>
                     </div>
