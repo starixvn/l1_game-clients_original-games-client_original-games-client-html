@@ -17,11 +17,9 @@ window.envConfig = {
         dsn: "https://9c999f9b51e3b4543cb160b946b5bcbe@sentry-k8s.lumigame.com/30",
         environment: "DEV",
     },
-    enableSourceMap: true,
     subGuideDomain: "l2-guide-1",
     enableMsgpackParser: false,
     system: "VG",
     appType: 1,
-    useTolgeeStatic: false,
     googleAnalyticId: "G-F4HZV0YQ73",
 };

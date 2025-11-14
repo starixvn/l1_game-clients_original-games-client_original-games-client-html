@@ -1,4 +1,4 @@
-import { GameSettings } from '@shared/components/game-base/type';
+import { GameSettings } from "@shared/components/game-base/type";
 
 interface ProxySetting {
     ssl: string;
@@ -13,7 +13,6 @@ interface SentryOptions {
 
 export default interface AppSettings {
     serverDomainMapper: Array<string>;
-    socketGatewayPath: string;
     proxy: ProxySetting;
     sentry: SentryOptions;
     gameSettings: { [id: string]: GameSettings };
@@ -22,7 +21,6 @@ export default interface AppSettings {
     enableMsgpackParser: boolean;
     system: string;
     appType: number;
-    useTolgeeStatic: boolean;
     enableDebugLogs: boolean;
     gamePath: string;
     enablePreloadResource?: boolean;

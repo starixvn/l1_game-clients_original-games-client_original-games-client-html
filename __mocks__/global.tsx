@@ -24,13 +24,10 @@ jest.mock("next/config", () => () => ({
             environment: "",
             tracesSampleRate: 1,
         },
-        enableSourceMap: true,
         subGuideDomain: "gn-guide",
         enableMsgpackParser: false,
         system: "GN",
         appType: 10,
-        useTolgeeStatic: false,
-        socketGatewayPath: "gateway",
         gameSettings: {
             "1005": {
                 id: 1005,
@@ -71,6 +68,8 @@ if (!(global as any).IntersectionObserver) {
         observe() {}
         unobserve() {}
         disconnect() {}
-        takeRecords() { return []; }
+        takeRecords() {
+            return [];
+        }
     };
 }

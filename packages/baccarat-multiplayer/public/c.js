@@ -17,11 +17,9 @@ window.envConfig = {
         dsn: "",
         environment: "DEV",
     },
-    enableSourceMap: true,
     subGuideDomain: "l2-guide-1",
     enableMsgpackParser: false,
     system: "VG",
     appType: 10,
-    useTolgeeStatic: false,
     googleAnalyticId: "G-F4HZV0YQ73",
 };

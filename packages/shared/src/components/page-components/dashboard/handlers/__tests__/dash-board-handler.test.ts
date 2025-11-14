@@ -1,7 +1,7 @@
 import { DashboardHandler } from "../dash-board-handler";
-import { getAppSettings } from '@shared/app-settings';
-import { getOfferGamesIds, StorageHelper } from '@shared/helpers';
-import { loadURLContext } from '@shared/react-contexts';
+import { getAppSettings } from "@shared/app-settings";
+import { getOfferGamesIds, StorageHelper } from "@shared/helpers";
+import { loadURLContext } from "@shared/react-contexts";
 import { TolgeeInstance } from "@tolgee/core";
 import { SSOResponse, AuthorizeResponse } from "sc-user-service-client/dist/auth";
 
@@ -41,7 +41,6 @@ const mockGetOfferGamesIds = getOfferGamesIds as jest.MockedFunction<typeof getO
 mockGetAppSettings.mockReturnValue({
     appType: 10,
     serverDomainMapper: [],
-    socketGatewayPath: "",
     proxy: { ssl: "", subDomain: "", path: "" },
     sentry: {
         dsn: "test-dsn",
@@ -55,7 +54,6 @@ mockGetAppSettings.mockReturnValue({
     googleAnalyticId: "",
     enableMsgpackParser: false,
     system: "",
-    useTolgeeStatic: false,
     enableDebugLogs: false,
     gamePath: "",
 });
@@ -140,7 +138,6 @@ describe("DashboardHandler", () => {
         mockGetAppSettings.mockReturnValue({
             appType: 10,
             serverDomainMapper: [],
-            socketGatewayPath: "",
             proxy: { ssl: "", subDomain: "", path: "" },
             sentry: {
                 dsn: "test-dsn",
@@ -155,7 +152,6 @@ describe("DashboardHandler", () => {
             googleAnalyticId: "",
             enableMsgpackParser: false,
             system: "",
-            useTolgeeStatic: false,
             enableDebugLogs: false,
             gamePath: "",
         });
