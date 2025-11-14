@@ -4,6 +4,7 @@ import { MoneyFlyAnimationEffect } from "../type";
 const MONEY_FLY_ANIM_DURATION = 600;
 const MONEY_START_OFFSET = -10;
 const MONEY_END_OFFSET = -80;
+const MAX_CONCURRENT_ANIMATIONS = 30; // Limit to prevent memory issues
 
 export const useMoneyFlyAnimation = ({
     moneyFlyAnimationsRef
@@ -15,6 +16,10 @@ export const useMoneyFlyAnimation = ({
             const anims = moneyFlyAnimationsRef.current;
             if (!anims) {
                 return;
+            }
+
+            if (anims.length >= MAX_CONCURRENT_ANIMATIONS) {
+                anims.shift();
             }
 
             anims.push({
@@ -33,18 +38,20 @@ export const useMoneyFlyAnimation = ({
     const drawMoneyFlyAnimations = useCallback(
         (ctx: CanvasRenderingContext2D) => {
             const anims = moneyFlyAnimationsRef.current;
-            if (!anims) {
+            if (!anims || anims.length === 0) {
                 return;
             }
 
             const now = Date.now();
+            const toRemove: number[] = [];
 
             for (let i = anims.length - 1; i >= 0; i--) {
                 const a = anims[i];
-                const progress = Math.max(0, Math.min(1, (now - a.createdAt) / a.duration));
+                const elapsed = now - a.createdAt;
+                const progress = Math.min(1, elapsed / a.duration);
 
                 if (progress >= 1) {
-                    anims.splice(i, 1);
+                    toRemove.push(i);
                     continue;
                 }
 
@@ -67,6 +74,11 @@ export const useMoneyFlyAnimation = ({
                 ctx.fillText(`+${a.amount}`, a.x, y);
 
                 ctx.restore();
+            }
+
+            const sortedToRemove = [...toRemove].sort((a, b) => b - a);
+            for (const index of sortedToRemove) {
+                anims.splice(index, 1);
             }
         },
         [moneyFlyAnimationsRef]
