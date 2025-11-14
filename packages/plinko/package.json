@@ -19,7 +19,6 @@
         "docker:build:plinko-x": "docker build -f Dockerfile.plinko-x -t plinko-x:latest .",
         "docker:run:plinko": "docker run -p 5000:5000 plinko:latest",
         "docker:run:plinko-x": "docker run -p 5001:5000 plinko-x:latest",
-        "proxy": "node ../../reverse-proxy.js",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },
     "dependencies": {
