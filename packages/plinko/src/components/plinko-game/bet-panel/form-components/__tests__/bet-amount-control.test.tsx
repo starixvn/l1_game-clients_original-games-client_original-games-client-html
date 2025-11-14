@@ -61,7 +61,7 @@ describe("BetAmountControl", () => {
             const { container } = render(<BetAmountControl {...defaultProps} />);
 
             // Act & Assert
-            expect(screen.getByText("bet_amount")).toBeInTheDocument();
+            expect(screen.getByText("Bet_amount")).toBeInTheDocument();
         });
 
         it("should render control buttons", () => {

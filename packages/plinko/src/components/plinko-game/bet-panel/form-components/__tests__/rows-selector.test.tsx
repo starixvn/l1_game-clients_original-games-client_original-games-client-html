@@ -55,7 +55,7 @@ describe("RowsSelector", () => {
             const { container } = render(<RowsSelector {...defaultProps} />);
 
             // Act & Assert
-            expect(screen.getByText("row")).toBeInTheDocument();
+            expect(screen.getByText("Row")).toBeInTheDocument();
             expect(screen.getByRole("slider")).toBeInTheDocument();
         });
 

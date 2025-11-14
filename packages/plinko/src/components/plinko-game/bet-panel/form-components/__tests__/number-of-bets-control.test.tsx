@@ -32,7 +32,7 @@ describe("NumberOfBetsControl", () => {
             const { container } = render(<NumberOfBetsControl {...defaultProps} />);
 
             // Act & Assert
-            expect(screen.getByText("number_of_bet")).toBeInTheDocument();
+            expect(screen.getByText("Number_of_bet")).toBeInTheDocument();
             expect(screen.getByRole("spinbutton")).toBeInTheDocument();
         });
 
