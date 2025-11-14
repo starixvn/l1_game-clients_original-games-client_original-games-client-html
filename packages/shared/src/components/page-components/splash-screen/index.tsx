@@ -485,7 +485,7 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                 />
 
                 <p className={"text-first-download mt-[20px]"} data-testid="download-message">
-                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
             <Image
@@ -527,7 +527,7 @@ export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t
                     height="0"
                 />
                 <p className={"text-first-download mt-[20px]"} data-testid="download-message">
-                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
             <WaitingMessage locale={locale} />
@@ -562,7 +562,7 @@ export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: a
                     height="0"
                 />
                 <p className={"text-first-download mt-[20px]"} data-testid="download-message">
-                    {preloadProgress > 0 && preloadProgress < 100 && <span> ({Math.floor(preloadProgress)}%)</span>}
+                    {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
             <WaitingMessage locale={locale} />
