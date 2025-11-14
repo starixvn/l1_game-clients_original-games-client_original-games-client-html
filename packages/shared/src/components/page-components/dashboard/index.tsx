@@ -228,7 +228,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 <BalanceSyncProvider>
                     <div
                         id={"dashboard"}
-                        className={`overflow-hidden relative min-h-screen ${
+                        className={`overflow-hidden relative min-h-screen min-w-[400px] ${
                             isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""
                         }`}
                     >

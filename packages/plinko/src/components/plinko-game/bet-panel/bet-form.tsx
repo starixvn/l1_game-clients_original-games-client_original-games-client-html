@@ -54,7 +54,7 @@ const BetForm = ({
     return (
         <div
             className={cn(
-                "flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 md:max-h-[30.75rem] md:overflow-y-auto scrollbar-hide-on-idle",
+                "flex flex-col gap-3 p-3 md:gap-4 md:px-3 md:py-3 lg:max-h-[30.75rem] lg:overflow-y-auto scrollbar-hide-on-idle",
                 !isManualTab && "lg:hover:pr-[9px]"
             )}
         >
