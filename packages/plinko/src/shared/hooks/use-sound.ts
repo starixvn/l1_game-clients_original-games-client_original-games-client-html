@@ -8,22 +8,15 @@ import { useShallow } from "zustand/shallow";
 import { usePlinkoGameStore } from "../stores";
 
 const mp3File = {
-    plinkoBallHitPinHigh: `ball-hit-pin-high`,
-    plinkoBallHitPinMedium: `ball-hit-pin-medium`,
-    plinkoBallHitPinLow: `ball-hit-pin-low`,
+    plinkoBallHitPin: `ball-hit-pin`,
 };
+
 const plinkoBallHitWin = `${path}ball-hit-win.mp3?v=${buildVersion}`;
 
 const resourceMp3 = objectMap(mp3File, (v) => `${path}${v}.mp3?v=${buildVersion}`);
 
 export const usePlinkoBallHitPinSound = () => {
-    const [playHigh, { sound: ctxHigh }] = useSound(resourceMp3.plinkoBallHitPinHigh, {
-        interrupt: false,
-    });
-    const [playMedium, { sound: ctxMedium }] = useSound(resourceMp3.plinkoBallHitPinMedium, {
-        interrupt: false,
-    });
-    const [playLow, { sound: ctxLow }] = useSound(resourceMp3.plinkoBallHitPinLow, {
+    const [play, { sound: ctx }] = useSound(resourceMp3.plinkoBallHitPin, {
         interrupt: false,
     });
 
@@ -38,38 +31,17 @@ export const usePlinkoBallHitPinSound = () => {
 
     const playPlinkoBallHitPinSound = () => {
         if (enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
-            const randomSound = getRandomResourceMp3();
-            if (randomSound === resourceMp3.plinkoBallHitPinHigh || numberOfDroppingBall <= 3) {
-                playHigh();
-            } else if (randomSound === resourceMp3.plinkoBallHitPinMedium) {
-                playMedium();
-            } else {
-                playLow();
-            }
+           play();
         }
     };
 
     useEffect(() => {
-        if (ctxHigh && ctxMedium && ctxLow) {
-            ctxHigh.volume(formatVolume(volumeSFX));
-            ctxMedium.volume(formatVolume(volumeSFX));
-            ctxLow.volume(formatVolume(volumeSFX));
+        if (ctx) {  
+            ctx.volume(formatVolume(volumeSFX));
         }
     }, [volumeSFX]);
 
     return playPlinkoBallHitPinSound;
-};
-
-const getRandomResourceMp3 = () => {
-    const random = Math.random(); // NOSONAR
-
-    if (random < 0.33) {
-        return resourceMp3.plinkoBallHitPinHigh;
-    } else if (random < 0.66) {
-        return resourceMp3.plinkoBallHitPinMedium;
-    } else {
-        return resourceMp3.plinkoBallHitPinLow;
-    }
 };
 
 export const usePlinkoBallHitWinSound = () => {

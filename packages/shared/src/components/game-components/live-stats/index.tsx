@@ -215,7 +215,7 @@ const LiveStats = ({
                             <div className={`${profitColorClass} font-[400]`}>{numberWithCommas(profitAmount)}</div>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            {capitalizeFirstLetter(t("bet_amount"))}
+                            {capitalizeFirstLetter(t("wagered"))}
                             <div className="font-[400]">{numberWithCommas(totalBetAmount)}</div>
                         </div>
                     </div>
