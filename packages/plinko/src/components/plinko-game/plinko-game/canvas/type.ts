@@ -63,4 +63,16 @@ export interface PathPreview {
     points: { x: number; y: number }[];
     createdAt: number;
     duration: number;
+    animationDuration: number;
+}
+
+export interface MultiplierAnimationEffect {
+    x: number;
+    y: number;
+    multiplier: number;
+    startY: number;
+    endY: number;
+    opacity: number;
+    createdAt: number;
+    duration: number;
 }

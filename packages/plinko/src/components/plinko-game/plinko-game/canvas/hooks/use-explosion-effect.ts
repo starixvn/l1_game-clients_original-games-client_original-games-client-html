@@ -14,6 +14,13 @@ export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) 
 
     const createExplosionEffect = useCallback(
         (body: Body) => {
+            createExplosionEffectAtPosition(body.position.x, body.position.y);
+        },
+        [explosionEffectsRef]
+    );
+
+    const createExplosionEffectAtPosition = useCallback(
+        (x: number, y: number) => {
             // Fire colors for slot firing effect
             const fireColors = ["#ff6b35", "#ff8c42", "#ffa726", "#ffb74d"]; // orange fire
             const color = fireColors[Math.floor(random(0, fireColors.length))];
@@ -25,8 +32,8 @@ export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) 
 
             // Phase 1: Initial impact boom effect
             const impactEffect: ExplosionEffect = {
-                x: body.position.x,
-                y: body.position.y,
+                x,
+                y,
                 radius: 0,
                 maxRadius: 30, // Small impact radius
                 color: color,
@@ -48,8 +55,8 @@ export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) 
                 const vy = -Math.abs(Math.sin(angle)) * velocity; // Always upward
 
                 const explosionParticle: ExplosionEffect = {
-                    x: body.position.x,
-                    y: body.position.y,
+                    x,
+                    y,
                     radius: random(2, 5),
                     maxRadius: random(42, 45),
                     color: color,
@@ -139,6 +146,7 @@ export const useExplosionEffect = ({ explosionEffectsRef }: UseSlotEffectProps) 
 
     return {
         createExplosionEffect,
+        createExplosionEffectAtPosition,
         drawExplosionEffect,
     };
 };

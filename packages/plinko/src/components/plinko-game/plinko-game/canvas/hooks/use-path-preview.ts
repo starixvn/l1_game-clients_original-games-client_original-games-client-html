@@ -1,14 +1,20 @@
 import { useCallback } from "react";
 import { PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
+import { PegBody, MultiplierAnimationEffect, PathPreview } from "../type";
+import { useLightningPathPreview } from "./use-lightning-path-preview";
 
-interface PathPreview {
-    points: { x: number; y: number }[];
-    createdAt: number;
-    duration: number;
-}
+export const usePathPreview = ({
+    pathPreviewsRef,
+    pegsRef,
+    multiplierAnimationsRef
+}: {
+    pathPreviewsRef: React.RefObject<PathPreview[]>;
+    pegsRef: React.RefObject<PegBody[]>;
+    multiplierAnimationsRef: React.RefObject<MultiplierAnimationEffect[]>;
+}) => {
+    const { drawLightningPathPreview } = useLightningPathPreview({ pathPreviewsRef, pegsRef, multiplierAnimationsRef });
 
-export const usePathPreview = ({ pathPreviewsRef }: { pathPreviewsRef: React.RefObject<PathPreview[]> }) => {
     const createPathPreview = useCallback(
         (finish: PlinkoFinish) => {
             const { width, pegRadius, mapGap } = PlinkoCanvasConfig;
@@ -65,73 +71,19 @@ export const usePathPreview = ({ pathPreviewsRef }: { pathPreviewsRef: React.Ref
                 points,
                 createdAt: Date.now(),
                 duration: 500, // 0.5 seconds
+                animationDuration: 300, // 0.3 seconds for path to fully appear
             };
 
             pathPreviewsRef.current?.push(pathPreview);
         },
-        [pathPreviewsRef]
+        [pathPreviewsRef, pegsRef]
     );
 
     const drawPathPreview = useCallback(
         (context: CanvasRenderingContext2D) => {
-            if (!pathPreviewsRef.current) {
-                return;
-            }
-
-            const now = Date.now();
-
-            // Remove expired paths (modify array in place)
-            const activePaths = pathPreviewsRef.current.filter((path) => now - path.createdAt < path.duration);
-            pathPreviewsRef.current.length = 0;
-            pathPreviewsRef.current.push(...activePaths);
-
-            // Draw each active path
-            pathPreviewsRef.current.forEach((path) => {
-                context.save();
-
-                // Draw main path line with glow effect
-
-                // Draw brighter center line (solid)
-                context.shadowBlur = 0;
-                context.lineWidth = 6;
-
-                // Create a vertical linear gradient for the stroke
-                let minY = Infinity,
-                    maxY = -Infinity;
-                path.points.forEach((point) => {
-                    if (point.y < minY) {
-                        minY = point.y;
-                    }
-                    if (point.y > maxY) {
-                        maxY = point.y;
-                    }
-                });
-
-                // If all y are the same (should not happen), set a default gradient span
-                if (minY === maxY) {
-                    minY -= 1;
-                    maxY += 1;
-                }
-
-                const gradient = context.createLinearGradient(0, minY, 0, maxY);
-                gradient.addColorStop(0, "#FFFDBF");
-                gradient.addColorStop(1, "#FFE100");
-                context.strokeStyle = gradient;
-
-                context.beginPath();
-                path.points.forEach((point, index) => {
-                    if (index === 0) {
-                        context.moveTo(point.x, point.y);
-                    } else {
-                        context.lineTo(point.x, point.y);
-                    }
-                });
-                context.stroke();
-
-                context.restore();
-            });
+            drawLightningPathPreview(context);
         },
-        [pathPreviewsRef]
+        [drawLightningPathPreview, pegsRef]
     );
 
     return {

@@ -2,23 +2,29 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect, PathPreview } from "./type";
+import { BallBody, ExplosionEffect, PegEffect, PathPreview, MultiplierAnimationEffect } from "./type";
 import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "@shared/stores/game-store";
 import { usePlinkoBallHitWinSound } from "@plinko/shared/hooks/use-sound";
+import { PlinkoFinish } from "@plinko/shared/types/types";
 
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine | null>(null);
     const sceneObjectsRef = useRef<Body[]>([]);
     const ballsRef = useRef<Body[]>([]);
+    const pegsRef = useRef<Body[]>([]);
     const animationRef = useRef<number | null>(null);
     const pegEffectsRef = useRef<PegEffect[]>([]);
     const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
     const pathPreviewsRef = useRef<PathPreview[]>([]);
+    const multiplierAnimationsRef = useRef<MultiplierAnimationEffect[]>([]);
+    const explosionTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+    const PATH_ANIMATION_DURATION = 300;
 
     const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
@@ -28,6 +34,29 @@ const PlinkoCanvas = () => {
         }))
     );
     const isInstantMode = usePlinkoSettingStore((state) => state.isInstantMode);
+
+    // Calculate final ball position for fast mode
+    const calculateFinalBallPosition = useCallback((finish: PlinkoFinish) => {
+        const { width, pegRadius, mapGap } = PlinkoCanvasConfig;
+        const initialColumns = 3;
+        const finalRow = finish.result.length;
+        const finalColumnsInRow = initialColumns + finalRow;
+        const gap = pegRadius * 2 * mapGap;
+        const space = (width - gap * finalColumnsInRow) / 2;
+
+        // Calculate final column position
+        let currentColumnIndex = 1; // middle of first row
+        for (const direction of finish.result) {
+            if (direction === 1) {
+                currentColumnIndex += 1;
+            }
+        }
+        const finalColNumber = currentColumnIndex + 1;
+        const slotX = space + finalColNumber * gap - pegRadius * mapGap;
+        const slotY = (finalRow + 1) * gap;
+
+        return { x: slotX, y: slotY };
+    }, []);
 
     // Peg hook
     const { createPegs, drawPeg } = usePeg();
@@ -42,10 +71,10 @@ const PlinkoCanvas = () => {
     const { createPegEffect, drawPegEffect } = usePegEffect({ pegEffectsRef });
 
     // Explosion effect hook
-    const { createExplosionEffect, drawExplosionEffect } = useExplosionEffect({ explosionEffectsRef });
+    const { createExplosionEffect, createExplosionEffectAtPosition, drawExplosionEffect } = useExplosionEffect({ explosionEffectsRef });
 
     // Path preview hook
-    const { createPathPreview, drawPathPreview } = usePathPreview({ pathPreviewsRef });
+    const { createPathPreview, drawPathPreview } = usePathPreview({ pathPreviewsRef, pegsRef, multiplierAnimationsRef });
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -116,6 +145,7 @@ const PlinkoCanvas = () => {
         }
         sceneObjectsRef.current = [];
         ballsRef.current = [];
+        pegsRef.current = [];
         pegEffectsRef.current = [];
         explosionEffectsRef.current = [];
         pathPreviewsRef.current = [];
@@ -152,6 +182,7 @@ const PlinkoCanvas = () => {
         clear();
         const pegs = createPegs();
         const slot = createSlot();
+        pegsRef.current = pegs;
         addObjects([...pegs, slot]);
     }, [clear, createPegs, createSlot, addObjects]);
 
@@ -238,35 +269,68 @@ const PlinkoCanvas = () => {
         };
     }, [initializeEngine, generateMap, handleCollision, startRunner, animate]);
 
+    // Handle instant mode finish
+    const handleInstantModeFinish = useCallback(
+        (finish: PlinkoFinish) => {
+            createPathPreview(finish);
+
+            const finishKey = `finish_${Date.now()}_${Math.random()}`; // NOSONAR
+            const timeout = setTimeout(() => {
+                setFinishedBall(finish);
+                playPlinkoBallHitWinSoundRef.current?.();
+
+                const finalPosition = calculateFinalBallPosition(finish);
+                createExplosionEffectAtPosition(finalPosition.x, finalPosition.y);
+                explosionTimeoutsRef.current.delete(finishKey);
+            }, PATH_ANIMATION_DURATION);
+
+            explosionTimeoutsRef.current.set(finishKey, timeout);
+        },
+        [createPathPreview, setFinishedBall, calculateFinalBallPosition, createExplosionEffectAtPosition]
+    );
+
     // Add ball
     useEffect(() => {
         if (finish) {
             if (document.hidden) {
                 setFinishedBall(finish);
-                return;
+            } else if (!engineRef.current) {
+                // Engine not ready, skip
+            } else if (isInstantMode) {
+                handleInstantModeFinish(finish);
+            } else {
+                const ballBody = createBall(finish);
+                Composite.add(engineRef.current.world, ballBody);
+                ballsRef.current.push(ballBody);
             }
-            if (!engineRef.current) {
-                return;
-            }
-            if (isInstantMode) {
-                createPathPreview(finish);
-                setFinishedBall(finish);
-                playPlinkoBallHitWinSoundRef.current?.();
-
-                return;
-            }
-
-            const ballBody = createBall(finish);
-            Composite.add(engineRef.current.world, ballBody);
-            ballsRef.current.push(ballBody);
         }
-    }, [finish, createBall, addObjects, setFinishedBall, createPathPreview]);
+    }, [
+        finish,
+        createBall,
+        addObjects,
+        setFinishedBall,
+        createPathPreview,
+        calculateFinalBallPosition,
+        createExplosionEffectAtPosition,
+        isInstantMode,
+        handleInstantModeFinish,
+    ]);
 
     useEffect(() => {
         if (numberOfDroppingBall === 0) {
             useGameStore.getState().resetBettingInfo();
         }
     }, [numberOfDroppingBall]);
+
+    // Cleanup timeouts when component unmounts
+    useEffect(() => {
+        return () => {
+            explosionTimeoutsRef.current.forEach((timeout) => {
+                clearTimeout(timeout);
+            });
+            explosionTimeoutsRef.current.clear();
+        };
+    }, []);
 
     return <canvas ref={canvasRef} />;
 };
