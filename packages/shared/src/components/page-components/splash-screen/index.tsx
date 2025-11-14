@@ -449,8 +449,8 @@ export const LogoVG = ({ locale = "en", t, preloadProgress }: { locale: string; 
                 width="0"
                 height="0"
             />
-            <p className={"text-first-download mt-[20px]"} data-testid="download-message">
-                50
+            <p className={"text-first-download text-sm md:text-base mt-[20px]"} data-testid="download-message">
+                {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
             </p>
             <WaitingMessage locale={locale} />
         </div>
@@ -484,7 +484,7 @@ export const LogoSaba = ({ locale, t, preloadProgress }: { locale: string; t: an
                     height="0"
                 />
 
-                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                <p className={"text-first-download text-sm md:text-base mt-[20px]"} data-testid="download-message">
                     {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
@@ -526,7 +526,7 @@ export const LogoSabaPlay = ({ locale, t, preloadProgress }: { locale: string; t
                     width="0"
                     height="0"
                 />
-                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                <p className={"text-first-download text-sm md:text-base mt-[20px]"} data-testid="download-message">
                     {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
@@ -561,7 +561,7 @@ export const LogoTip88 = ({ locale, t, preloadProgress }: { locale: string; t: a
                     width="0"
                     height="0"
                 />
-                <p className={"text-first-download mt-[20px]"} data-testid="download-message">
+                <p className={"text-first-download text-sm md:text-base mt-[20px]"} data-testid="download-message">
                     {preloadProgress > 0 && preloadProgress < 100 && <span> {Math.floor(preloadProgress)}%</span>}
                 </p>
             </div>
