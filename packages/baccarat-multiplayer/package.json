@@ -12,7 +12,6 @@
         "start": "cross-env NEXT_PUBLIC_DEFAULT_GAME_ID=150 NEXT_PUBLIC_BASE_PATH= PORT=3002 node custom-server.js",
         "dev:dynamic": "node scripts/dev-dynamic.js",
         "build:dynamic": "node scripts/build-dynamic.js",
-        "proxy": "node ../../reverse-proxy.js",
         "obfuscator-config-file": "node ./configs/config-obfuscator.js"
     },
     "dependencies": {
