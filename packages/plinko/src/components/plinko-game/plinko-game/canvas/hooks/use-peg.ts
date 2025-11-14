@@ -8,7 +8,7 @@ import { useShallow } from "zustand/shallow";
 import { useLightningPeg } from "./use-lightning-peg";
 
 export const usePeg = () => {
-    const {numberOfRows} = usePlinkoGameStore(
+    const { numberOfRows } = usePlinkoGameStore(
         useShallow((state) => ({
             numberOfRows: state.numberOfRows,
         }))
@@ -47,9 +47,7 @@ export const usePeg = () => {
                 body.rowIndex = row - 1;
 
                 if (pegMultipliers) {
-                    const lightningPeg = pegMultipliers.find(
-                        (peg) => peg.row === row - 1 && peg.column === col - 2
-                    );
+                    const lightningPeg = pegMultipliers.find((peg) => peg.row === row - 1 && peg.column === col - 2);
                     if (lightningPeg) {
                         body.multiplier = lightningPeg.multiplier;
                     }
@@ -61,44 +59,51 @@ export const usePeg = () => {
         return pegs;
     }, [numberOfRows, isLightningMode, lightningConfig]);
 
-    const drawPeg = useCallback((body: PegBody, context: CanvasRenderingContext2D) => {
-        if (body.label !== PLINKO_OBJECTS.PEG) {
-            return;
-        }
-        const { pegRadius } = PlinkoCanvasConfig;
-        const isLightningPeg = body.multiplier && body.multiplier > 1;
+    const drawPeg = useCallback(
+        (body: PegBody, context: CanvasRenderingContext2D) => {
+            if (body.label !== PLINKO_OBJECTS.PEG) {
+                return;
+            }
+            const { pegRadius } = PlinkoCanvasConfig;
+            const isLightningPeg = body.multiplier && body.multiplier > 1;
 
-        
-        if (isLightningPeg) {
-            drawLightningPegGlow(context, body);
-            drawLightningPegImage(context, body);
-            drawLightningPegMultiplier(context, body);
-        } else {
-            // Layer 1: Bottom layer
-            context.fillStyle = "#000";
-            context.beginPath();
-            context.arc(0, 2.5, pegRadius + 2.5, 0, Math.PI * 2);
-            context.fill();
+            const x = body.position.x;
+            const y = body.position.y;
+            context.save();
+            context.translate(x, y);
+            if (isLightningPeg) {
+                drawLightningPegGlow(context, body);
+                drawLightningPegImage(context, body);
+                drawLightningPegMultiplier(context, body);
+            } else {
+                // Layer 1: Bottom layer
+                context.fillStyle = "#000";
+                context.beginPath();
+                context.arc(0, 2.5, pegRadius + 2.5, 0, Math.PI * 2);
+                context.fill();
 
-            // Layer 2
-            context.fillStyle = "#6542FF";
-            context.beginPath();
-            context.arc(0, 2.5, pegRadius, 0, Math.PI * 2);
-            context.fill();
+                // Layer 2
+                context.fillStyle = "#6542FF";
+                context.beginPath();
+                context.arc(0, 2.5, pegRadius, 0, Math.PI * 2);
+                context.fill();
 
-            // Layer 3
-            context.fillStyle = "#FFFFFF";
-            context.beginPath();
-            context.arc(0, 0, pegRadius, 0, Math.PI * 2);
-            context.fill();
+                // Layer 3
+                context.fillStyle = "#FFFFFF";
+                context.beginPath();
+                context.arc(0, 0, pegRadius, 0, Math.PI * 2);
+                context.fill();
 
-            // Layer 4
-            context.fillStyle = "#BDD9E4";
-            context.beginPath();
-            context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
-            context.fill();
-        }
-    }, [drawLightningPegGlow, drawLightningPegImage, drawLightningPegMultiplier]);
+                // Layer 4
+                context.fillStyle = "#BDD9E4";
+                context.beginPath();
+                context.arc(0, 1, pegRadius * 0.9, 0, Math.PI * 2);
+                context.fill();
+            }
+            context.restore();
+        },
+        [drawLightningPegGlow, drawLightningPegImage, drawLightningPegMultiplier]
+    );
 
     return {
         createPegs,

@@ -2,7 +2,7 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect, PathPreview, MultiplierAnimationEffect, MoneyFlyAnimationEffect } from "./type";
+import { BallBody } from "./type";
 import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview, useMoneyFlyAnimation } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
@@ -14,15 +14,8 @@ import { PlinkoFinish } from "@plinko/shared/types/types";
 const PlinkoCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<Engine | null>(null);
-    const sceneObjectsRef = useRef<Body[]>([]);
-    const ballsRef = useRef<Body[]>([]);
     const pegsRef = useRef<Body[]>([]);
     const animationRef = useRef<number | null>(null);
-    const pegEffectsRef = useRef<PegEffect[]>([]);
-    const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
-    const pathPreviewsRef = useRef<PathPreview[]>([]);
-    const multiplierAnimationsRef = useRef<MultiplierAnimationEffect[]>([]);
-    const moneyFlyAnimationsRef = useRef<MoneyFlyAnimationEffect[]>([]);
     const explosionTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const PATH_ANIMATION_DURATION = 300;
@@ -66,19 +59,19 @@ const PlinkoCanvas = () => {
     const { createSlot } = useSlot();
 
     // Ball hook
-    const { createBall, drawBalls, handleRoad } = useBall({ ballsRef });
+    const { createBall, drawBalls, handleRoad, removeBall } = useBall();
 
     // Peg effect hook
-    const { createPegEffect, drawPegEffect } = usePegEffect({ pegEffectsRef });
+    const { createPegEffect, drawPegEffect } = usePegEffect();
 
     // Explosion effect hook
-    const { createExplosionEffect, createExplosionEffectAtPosition, drawExplosionEffect } = useExplosionEffect({ explosionEffectsRef });
+    const { createExplosionEffect, createExplosionEffectAtPosition, drawExplosionEffect } = useExplosionEffect();
 
     // Path preview hook
-    const { createPathPreview, drawPathPreview } = usePathPreview({ pathPreviewsRef, pegsRef, multiplierAnimationsRef });
+    const { createPathPreview, drawPathPreview } = usePathPreview({ pegsRef });
 
     // Money fly animation hook
-    const { createMoneyFlyAnimation, drawMoneyFlyAnimations } = useMoneyFlyAnimation({ moneyFlyAnimationsRef });
+    const { createMoneyFlyAnimation, drawMoneyFlyAnimations } = useMoneyFlyAnimation();
 
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
@@ -122,30 +115,11 @@ const PlinkoCanvas = () => {
 
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
-                    ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
+                    removeBall(ball);
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect, createMoneyFlyAnimation]
-    );
-
-    // Draw scene object
-    const drawSceneObject = useCallback(
-        (body: Body) => {
-            const context = canvasRef.current?.getContext("2d");
-            if (!context) {
-                return;
-            }
-            const x = body.position.x;
-            const y = body.position.y;
-            const angle = body.angle;
-            context.save();
-            context.translate(x, y);
-            context.rotate(angle);
-            drawPeg(body, context);
-            context.restore();
-        },
-        [drawPeg]
+        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect, createMoneyFlyAnimation, removeBall]
     );
 
     // Clear all objects
@@ -153,13 +127,7 @@ const PlinkoCanvas = () => {
         if (engineRef.current) {
             Composite.clear(engineRef.current.world, true);
         }
-        sceneObjectsRef.current = [];
-        ballsRef.current = [];
         pegsRef.current = [];
-        pegEffectsRef.current = [];
-        explosionEffectsRef.current = [];
-        pathPreviewsRef.current = [];
-        moneyFlyAnimationsRef.current = [];
         if (canvasRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -167,17 +135,6 @@ const PlinkoCanvas = () => {
             }
         }
     }, []);
-
-    const addObjects = useCallback(
-        (bodies: Body[]) => {
-            if (!engineRef.current) {
-                return;
-            }
-            Composite.add(engineRef.current.world, [...bodies]);
-            sceneObjectsRef.current.push(...bodies);
-        },
-        [sceneObjectsRef]
-    );
 
     // Generate map
     const generateMap = useCallback(() => {
@@ -193,9 +150,9 @@ const PlinkoCanvas = () => {
         clear();
         const pegs = createPegs();
         const slot = createSlot();
+        Composite.add(engineRef.current.world, [...pegs, slot]);
         pegsRef.current = pegs;
-        addObjects([...pegs, slot]);
-    }, [clear, createPegs, createSlot, addObjects]);
+    }, [clear, createPegs, createSlot]);
 
     // Animation loop
     const animate = useCallback(() => {
@@ -212,8 +169,8 @@ const PlinkoCanvas = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw all scene objects
-        sceneObjectsRef.current.forEach((obj) => {
-            drawSceneObject(obj);
+        pegsRef.current.forEach((obj) => {
+            drawPeg(obj, context);
         });
 
         // draw effects first (behind objects)
@@ -232,7 +189,7 @@ const PlinkoCanvas = () => {
         drawMoneyFlyAnimations?.(context);
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview, drawMoneyFlyAnimations]);
+    }, [drawPeg, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview, drawMoneyFlyAnimations]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
@@ -322,15 +279,9 @@ const PlinkoCanvas = () => {
             } else {
                 const ballBody = createBall(finish);
                 Composite.add(engineRef.current.world, ballBody);
-                ballsRef.current.push(ballBody);
             }
         }
-    }, [
-        finish,
-        createBall,
-        setFinishedBall,
-        handleInstantModeFinish,
-    ]);
+    }, [finish, createBall, setFinishedBall, handleInstantModeFinish]);
 
     useEffect(() => {
         if (numberOfDroppingBall === 0) {

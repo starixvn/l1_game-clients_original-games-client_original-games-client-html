@@ -1,21 +1,15 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { PegBody, MultiplierAnimationEffect, PathPreview } from "../type";
 
 const MULTIPLIER_ANIM_DURATION = 400;
 const MULTIPLIER_START_OFFSET = -10;
 const MULTIPLIER_END_OFFSET = -50;
 
-export const useLightningPathMultiplier = ({
-    pegsRef,
-    multiplierAnimationsRef
-}: {
-    pegsRef: React.RefObject<PegBody[]>;
-    multiplierAnimationsRef: React.RefObject<MultiplierAnimationEffect[]>;
-}) => {
+export const useLightningPathMultiplier = ({ pegsRef }: { pegsRef: React.RefObject<PegBody[]> }) => {
+    const multiplierAnimationsRef = useRef<MultiplierAnimationEffect[]>([]);
 
     const findPeg = useCallback(
-        (x: number, y: number) =>
-            pegsRef.current?.find((peg) => peg.position.x === x && peg.position.y === y),
+        (x: number, y: number) => pegsRef.current?.find((peg) => peg.position.x === x && peg.position.y === y),
         [pegsRef]
     );
 
@@ -69,26 +63,22 @@ export const useLightningPathMultiplier = ({
 
     // Multiplier Animations
     const hasAnimation = useCallback(
-        (x: number, y: number) =>
-            multiplierAnimationsRef.current?.some((anim) => anim.x === x && anim.y === y) ?? false,
-        [multiplierAnimationsRef]
+        (x: number, y: number) => multiplierAnimationsRef.current?.some((anim) => anim.x === x && anim.y === y) ?? false,
+        []
     );
 
-    const addAnimation = useCallback(
-        (x: number, y: number, multiplier: number) => {
-            multiplierAnimationsRef.current?.push({
-                x,
-                y,
-                multiplier,
-                opacity: 1,
-                startY: y + MULTIPLIER_START_OFFSET,
-                endY: y + MULTIPLIER_END_OFFSET,
-                createdAt: Date.now(),
-                duration: MULTIPLIER_ANIM_DURATION,
-            });
-        },
-        [multiplierAnimationsRef]
-    );
+    const addAnimation = useCallback((x: number, y: number, multiplier: number) => {
+        multiplierAnimationsRef.current?.push({
+            x,
+            y,
+            multiplier,
+            opacity: 1,
+            startY: y + MULTIPLIER_START_OFFSET,
+            endY: y + MULTIPLIER_END_OFFSET,
+            createdAt: Date.now(),
+            duration: MULTIPLIER_ANIM_DURATION,
+        });
+    }, []);
 
     const processMultiplierAnimations = useCallback(
         (path: PathPreview, visiblePoints: number) => {
@@ -108,51 +98,48 @@ export const useLightningPathMultiplier = ({
         [findPeg, hasAnimation, getAccumulatedMultiplier, addAnimation]
     );
 
-    const drawMultiplierAnimations = useCallback(
-        (ctx: CanvasRenderingContext2D) => {
-            const anims = multiplierAnimationsRef.current;
-            if (!anims) {
-                return;
+    const drawMultiplierAnimations = useCallback((ctx: CanvasRenderingContext2D) => {
+        const anims = multiplierAnimationsRef.current;
+        if (!anims) {
+            return;
+        }
+
+        const now = Date.now();
+
+        for (let i = anims.length - 1; i >= 0; i--) {
+            const a = anims[i];
+            const progress = Math.max(0, Math.min(1, (now - a.createdAt) / a.duration));
+
+            if (progress >= 1) {
+                anims.splice(i, 1);
+                continue;
             }
 
-            const now = Date.now();
+            const y = a.startY + (a.endY - a.startY) * progress;
+            const opacity = 1 - progress * 0.5;
 
-            for (let i = anims.length - 1; i >= 0; i--) {
-                const a = anims[i];
-                const progress = Math.max(0, Math.min(1, (now - a.createdAt) / a.duration));
+            ctx.save();
+            ctx.globalAlpha = opacity;
 
-                if (progress >= 1) {
-                    anims.splice(i, 1);
-                    continue;
-                }
+            ctx.font = "700 36px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
 
-                const y = a.startY + (a.endY - a.startY) * progress;
-                const opacity = 1 - progress * 0.5;
+            ctx.shadowColor = "#001A11";
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
 
-                ctx.save();
-                ctx.globalAlpha = opacity;
+            ctx.strokeStyle = "#008400";
+            ctx.lineWidth = 8;
+            ctx.strokeText(`${a.multiplier}x`, a.x, y);
 
-                ctx.font = "700 36px Inter, sans-serif";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
+            ctx.fillStyle = "#FFF";
+            ctx.fillText(`${a.multiplier}x`, a.x, y);
 
-                ctx.shadowColor = "#001A11";
-                ctx.shadowBlur = 6;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 4;
-
-                ctx.strokeStyle = "#008400";
-                ctx.lineWidth = 8;
-                ctx.strokeText(`${a.multiplier}x`, a.x, y);
-
-                ctx.fillStyle = "#FFF";
-                ctx.fillText(`${a.multiplier}x`, a.x, y);
-
-                ctx.restore();
-            }
-        },
-        [multiplierAnimationsRef]
-    );
+            ctx.restore();
+        }
+    }, []);
 
     return {
         getFirstMultiplierPegIndex,

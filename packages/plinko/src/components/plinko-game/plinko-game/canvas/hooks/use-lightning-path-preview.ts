@@ -1,11 +1,10 @@
 import { useCallback } from "react";
-import { PegBody, MultiplierAnimationEffect, PathPreview } from "../type";
+import { PegBody, PathPreview } from "../type";
 import { calculateProgress, getVisiblePoints, interpolatePoint } from "../utils";
 import { useLightningPathMultiplier } from "./use-lightning-path-multiplier";
 import { LIGHTNING_PATH_COLOR } from "../constant";
 
 const MIN_VISIBLE_POINTS = 2;
-
 
 interface DrawSegmentOptions {
     ctx: CanvasRenderingContext2D;
@@ -21,20 +20,12 @@ interface DrawSegmentOptions {
 export const useLightningPathPreview = ({
     pathPreviewsRef,
     pegsRef,
-    multiplierAnimationsRef
 }: {
     pathPreviewsRef: React.RefObject<PathPreview[]>;
     pegsRef: React.RefObject<PegBody[]>;
-    multiplierAnimationsRef: React.RefObject<MultiplierAnimationEffect[]>;
 }) => {
-
-    const {
-        getFirstMultiplierPegIndex,
-        processMultiplierAnimations,
-        drawMultiplierAnimations,
-    } = useLightningPathMultiplier({
+    const { getFirstMultiplierPegIndex, processMultiplierAnimations, drawMultiplierAnimations } = useLightningPathMultiplier({
         pegsRef,
-        multiplierAnimationsRef,
     });
 
     // Drawing Logic
@@ -45,21 +36,12 @@ export const useLightningPathPreview = ({
     };
 
     const drawSegment = useCallback(
-        ({
-            ctx,
-            points,
-            start,
-            end,
-            color,
-            progress,
-            total,
-            visible
-        }: DrawSegmentOptions) => {
+        ({ ctx, points, start, end, color, progress, total, visible }: DrawSegmentOptions) => {
             ctx.strokeStyle = color;
             ctx.beginPath();
-    
+
             const actualEnd = Math.min(end, visible - 1);
-    
+
             for (let i = start; i <= actualEnd; i++) {
                 const pt = points[i];
                 if (i === start) {
@@ -68,7 +50,7 @@ export const useLightningPathPreview = ({
                     ctx.lineTo(pt.x, pt.y);
                 }
             }
-    
+
             if (progress < 1 && actualEnd === visible - 1 && visible < total) {
                 const last = points[visible - 1];
                 const next = points[visible];
@@ -108,7 +90,7 @@ export const useLightningPathPreview = ({
                     color: LIGHTNING_PATH_COLOR.DEFAULT,
                     progress,
                     total,
-                    visible
+                    visible,
                 });
                 return;
             }
@@ -122,7 +104,7 @@ export const useLightningPathPreview = ({
                 color: LIGHTNING_PATH_COLOR.DEFAULT,
                 progress,
                 total,
-                visible
+                visible,
             });
 
             // Multiplier part
@@ -134,7 +116,7 @@ export const useLightningPathPreview = ({
                 color: LIGHTNING_PATH_COLOR.PEG_MULTIPLIER,
                 progress,
                 total,
-                visible
+                visible,
             });
         },
         [processMultiplierAnimations, getFirstMultiplierPegIndex, drawSegment]

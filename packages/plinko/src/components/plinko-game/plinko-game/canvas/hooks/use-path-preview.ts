@@ -1,19 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
-import { PegBody, MultiplierAnimationEffect, PathPreview } from "../type";
+import { PegBody, PathPreview } from "../type";
 import { useLightningPathPreview } from "./use-lightning-path-preview";
 
-export const usePathPreview = ({
-    pathPreviewsRef,
-    pegsRef,
-    multiplierAnimationsRef
-}: {
-    pathPreviewsRef: React.RefObject<PathPreview[]>;
-    pegsRef: React.RefObject<PegBody[]>;
-    multiplierAnimationsRef: React.RefObject<MultiplierAnimationEffect[]>;
-}) => {
-    const { drawLightningPathPreview } = useLightningPathPreview({ pathPreviewsRef, pegsRef, multiplierAnimationsRef });
+export const usePathPreview = ({ pegsRef }: { pegsRef: React.RefObject<PegBody[]> }) => {
+    const pathPreviewsRef = useRef<PathPreview[]>([]);
+    const { drawLightningPathPreview } = useLightningPathPreview({ pathPreviewsRef, pegsRef });
 
     const createPathPreview = useCallback(
         (finish: PlinkoFinish) => {

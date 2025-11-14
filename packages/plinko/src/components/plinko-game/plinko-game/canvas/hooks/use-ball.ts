@@ -9,7 +9,8 @@ import { downloadAndCacheImage } from "@shared/helpers/image-cache-controller";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => {
+export const useBall = () => {
+    const ballsRef = useRef<Body[]>([]);
     const ballImageRef = useRef<HTMLImageElement | null>(null);
     const imageLoadedRef = useRef(false);
     const playPlinkoBallHitPinSound = usePlinkoBallHitPinSound();
@@ -42,6 +43,7 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
         ball.collidedRowIndexes = [];
         ball.isLightning = false;
         ball.multiplier = 0;
+        ballsRef.current.push(ball);
         return ball;
     }, []);
 
@@ -107,10 +109,14 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
         },
         [updateBallLightningStatus]
     );
+    const removeBall = useCallback((ball: BallBody) => {
+        ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
+    }, []);
 
     return {
         drawBalls,
         createBall,
         handleRoad,
+        removeBall,
     };
 };
