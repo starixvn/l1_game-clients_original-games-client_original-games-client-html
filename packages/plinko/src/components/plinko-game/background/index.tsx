@@ -26,24 +26,24 @@ const Background: React.FC = () => {
         <>
             <BgCachedImage
                 pathImage={backgroundImage}
-                className={`absolute top-0 z-[-100] w-[calc(100%+24px)] h-[calc(100%+50px)] md:h-full md:left-0 md:w-full md:rounded-tr-xl`}
+                className={`absolute top-0 z-[-100] w-full h-[calc(100%+50px)] lg:h-full lg:left-0 lg:rounded-tr-xl`}
                 backgroundSize="100% 100%"
                 backgroundRepeat="no-repeat"
                 backgroundPosition="center"
             />
             <div className="absolute z-[-10] top-0 w-full h-[100px] opacity-70 bg-gradient-to-b from-[#070D16] to-[#17193F00]"></div>
 
-            <div className="absolute z-[-100] h-[calc(100%+50px)] w-full md:h-full">
+            <div className="absolute z-[-100] h-[calc(100%+50px)] w-full lg:h-full">
                 {/* CSS-based particle effects */}
                 {!isLowPerformance && <ParticlesContainer />}
 
                 <BgCachedImage
                     pathImage={`${basePath}/static/images/background/polygon.webp`}
-                    className="relative h-full w-full bg-no-repeat bg-top bg-[length:100%_100%] md:bg-[length:100%_auto]"
+                    className="relative h-full w-full bg-no-repeat bg-top bg-[length:100%_100%] lg:bg-[length:100%_auto]"
                 />
-                <div className="md:hidden absolute bottom-0 w-full h-[250px] translate-y-full bg-gradient-to-b from-[#0C1421] to-[#020C1C]"></div>
+                <div className="lg:hidden absolute bottom-0 w-full h-[250px] translate-y-full bg-gradient-to-b from-[#0C1421] to-[#020C1C]"></div>
             </div>
-            <div className="hidden md:block absolute bottom-0 w-full h-[100px] z-[-10] bg-gradient-to-b from-[#17193F00] to-[#070D16]"></div>
+            <div className="hidden lg:block absolute bottom-0 w-full h-[100px] z-[-10] bg-gradient-to-b from-[#17193F00] to-[#070D16]"></div>
         </>
     );
 };
