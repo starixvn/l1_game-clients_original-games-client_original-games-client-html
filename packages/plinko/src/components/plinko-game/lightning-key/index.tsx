@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useShallow } from "zustand/shallow";
 import { usePlinkoLightningModeGameStore } from "@plinko/shared/stores";
 import { usePlinkoGameStore } from "@plinko/shared/stores/plinko-game-store";
 import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning-key-utils";
 import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
-import { useClickSound, useCommonTranslate, useClickOutside, cn, ResourceTypes } from "@shared";
+import { useClickSound, useCommonTranslate, useClickOutside, cn, ResourceTypes, buildVersion } from "@shared";
 import { useTranslate } from "@tolgee/react";
 import { useLightningKeyTooltip } from "./use-lightning-key-tooltip";
 const Tooltip = dynamic(() => import("../../../../../shared/src/components/game-components/tooltip"), { ssr: false });
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const LightningKey: React.FC = () => {
     const clickSound = useClickSound();
@@ -92,9 +95,15 @@ const LightningKey: React.FC = () => {
                 <button
                     type="button"
                     onClick={toggleLightningKey}
-                    className="flex items-center justify-center h-full text-2xl p-1 hover:scale-105"
+                    className="flex items-center justify-center h-full p-1 hover:scale-105"
                 >
-                    <i className="icon-lightning-key text-2xl"></i>
+                    <Image
+                        src={`${basePath}/static/images/icons/lightning-key-icon.svg?v=${buildVersion}`}
+                        alt="Lightning Key"
+                        width={24}
+                        height={24}
+                        className="w-6 h-6"
+                    />
                 </button>
             </Tooltip>
 

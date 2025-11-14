@@ -1,4 +1,4 @@
-import { cn, numberWithCommas } from "@shared";
+import { buildVersion, cn, numberWithCommas } from "@shared";
 import React from "react";
 import { CachedImage } from "@shared/components/game-components/cached-image";
 import { PlinkoRound } from "./round-multiplier-history";
@@ -15,11 +15,11 @@ const renderMultiplierContent = (multiplier: number) => {
     if (multiplier === 0) {
         return (
             <CachedImage
-                src={`${basePath}/static/images/plinko/hell-multiplier.svg`}
+                src={`${basePath}/static/images/plinko/hell.svg?v=${buildVersion}`}
                 alt="Hell multiplier"
                 width={20}
                 height={20}
-                className="w-5 h-5"
+                className="w-4 h-4 md:w-[18px] md:h-[18px]"
             />
         );
     }

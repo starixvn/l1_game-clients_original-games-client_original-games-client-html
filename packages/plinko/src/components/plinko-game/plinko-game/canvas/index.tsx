@@ -312,7 +312,6 @@ const PlinkoCanvas = () => {
         createPathPreview,
         calculateFinalBallPosition,
         createExplosionEffectAtPosition,
-        isInstantMode,
         handleInstantModeFinish,
     ]);
 
