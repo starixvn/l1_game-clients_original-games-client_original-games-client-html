@@ -36,7 +36,7 @@ describe("TabNavigation", () => {
             const { container } = render(<TabNavigation {...defaultProps} activeIndex={1} />);
 
             // Act & Assert
-            const activeIndicator = document.querySelector(".bg-green-500");
+            const activeIndicator = document.querySelector("[style*='transform: translateX(100%)']");
             expect(activeIndicator).toBeInTheDocument();
             expect(activeIndicator).toHaveStyle({
                 transform: "translateX(100%)",
@@ -48,7 +48,7 @@ describe("TabNavigation", () => {
             render(<TabNavigation {...defaultProps} activeIndex={0} />);
 
             // Act & Assert
-            const activeIndicator = document.querySelector(".bg-green-500");
+            const activeIndicator = document.querySelector("[style*='transform: translateX(0%)']");
             expect(activeIndicator).toHaveStyle({
                 transform: "translateX(0%)",
             });
@@ -102,7 +102,7 @@ describe("TabNavigation", () => {
             render(<TabNavigation {...defaultProps} activeIndex={0} />);
 
             // Act & Assert
-            const activeIndicator = document.querySelector(".bg-green-500");
+            const activeIndicator = document.querySelector("[style*='transform: translateX(0%)']");
             expect(activeIndicator).toHaveStyle({
                 transform: "translateX(0%)",
                 width: "50%",
@@ -114,7 +114,7 @@ describe("TabNavigation", () => {
             render(<TabNavigation {...defaultProps} activeIndex={1} />);
 
             // Act & Assert
-            const activeIndicator = document.querySelector(".bg-green-500");
+            const activeIndicator = document.querySelector("[style*='transform: translateX(100%)']");
             expect(activeIndicator).toHaveStyle({
                 transform: "translateX(100%)",
                 width: "50%",
@@ -126,7 +126,7 @@ describe("TabNavigation", () => {
             render(<TabNavigation {...defaultProps} activeIndex={0} />);
 
             // Act & Assert
-            const activeIndicator = document.querySelector(".bg-green-500");
+            const activeIndicator = document.querySelector("[style*='width: 50%']");
             expect(activeIndicator).toHaveStyle({
                 width: "50%", // 100 / 2 tabs = 50%
             });
