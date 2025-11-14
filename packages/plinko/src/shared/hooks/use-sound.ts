@@ -29,29 +29,28 @@ export const usePlinkoBallHitPinSound = () => {
 
     const numberOfDroppingBall = usePlinkoGameStore(useShallow((state) => state.numberOfDroppingBall));
 
-    const { volumeSFX, enabledSound } = useSettingStore(useShallow((state) => ({
-        volumeSFX: state.volumeSFX,
-        enabledSound: state.enabledSound,
-    })));    
- 
+    const { volumeSFX, enabledSound } = useSettingStore(
+        useShallow((state) => ({
+            volumeSFX: state.volumeSFX,
+            enabledSound: state.enabledSound,
+        }))
+    );
+
     const playPlinkoBallHitPinSound = () => {
         if (enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
             const randomSound = getRandomResourceMp3();
             if (randomSound === resourceMp3.plinkoBallHitPinHigh || numberOfDroppingBall <= 3) {
                 playHigh();
-                console.log("playHigh");
             } else if (randomSound === resourceMp3.plinkoBallHitPinMedium) {
                 playMedium();
-                console.log("playMedium");
             } else {
-                console.log("playLow");
                 playLow();
             }
         }
     };
 
     useEffect(() => {
-        if (ctxHigh && ctxMedium && ctxLow) {  
+        if (ctxHigh && ctxMedium && ctxLow) {
             ctxHigh.volume(formatVolume(volumeSFX));
             ctxMedium.volume(formatVolume(volumeSFX));
             ctxLow.volume(formatVolume(volumeSFX));

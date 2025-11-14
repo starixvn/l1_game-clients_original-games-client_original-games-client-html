@@ -24,11 +24,10 @@
             "path": "plinko",
             "optionalPaths": ["/static/images/background"],
             "cachePaths": [
-                "/static/images/plinko/hell-multiplier.svg",
-                "/static/images/plinko/hell.webp",
-                "/static/images/background/bg.webp",
-                "/static/images/background/polygon.webp",
-                "/static/images/background/lightning-bg.webp"
+                "/static/images/plinko/hell.svg",
+                "/static/images/plinko/ball.svg",
+                "/static/images/plinko/lightning-ball.svg",
+                "/static/images/background/"
             ]
         }
     },
@@ -57,8 +56,9 @@
             "path": "plinko",
             "optionalPaths": ["/static/images/background", "/static/images/lobby"],
             "cachePaths": [
-                "/static/images/plinko/hell-multiplier.svg",
-                "/static/images/plinko/hell.webp",
+                "/static/images/plinko/hell.svg",
+                "/static/images/plinko/ball.svg",
+                "/static/images/plinko/lightning-ball.svg",
                 "/static/images/background/",
                 "/static/images/lobby/game-bg.webp"
             ]

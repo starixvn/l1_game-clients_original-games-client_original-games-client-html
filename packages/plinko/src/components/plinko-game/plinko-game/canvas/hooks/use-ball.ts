@@ -3,9 +3,9 @@ import { Bodies, Body } from "matter-js";
 import { BallBody, PegBody } from "../type";
 import { BALL_BODY_OPTIONS, PLINKO_OBJECTS, PlinkoCanvasConfig } from "../constant";
 import { PlinkoFinish } from "@plinko/shared/types/types";
-import { buildVersion } from "@shared/constants";
 import { usePlinkoBallHitPinSound } from "@plinko/shared/hooks/use-sound";
 import { useLightningBall } from "./use-lightning-ball";
+import { downloadAndCacheImage } from "@shared/helpers/image-cache-controller";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -27,7 +27,9 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
             console.error("Failed to load ball image");
             imageLoadedRef.current = false;
         };
-        image.src = `${basePath}/static/images/plinko/ball.svg?v=${buildVersion}`;
+        downloadAndCacheImage(`${basePath}/static/images/plinko/ball.svg`).then((result) => {
+            image.src = result.imageBase64;
+        });
         ballImageRef.current = image;
     }, []);
 
@@ -64,7 +66,13 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
                     drawLightningBallMultiplier(context, ballBody);
                 } else {
                     if (imageLoadedRef.current && ballImageRef.current) {
-                        context.drawImage(ballImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2, ballConfig.radius * 2);
+                        context.drawImage(
+                            ballImageRef.current,
+                            -ballConfig.radius,
+                            -ballConfig.radius,
+                            ballConfig.radius * 2,
+                            ballConfig.radius * 2
+                        );
                     } else {
                         context.fillStyle = "#FED701";
                         context.beginPath();
@@ -79,23 +87,26 @@ export const useBall = ({ ballsRef }: { ballsRef: React.RefObject<Body[]> }) => 
         [ballsRef, drawLightningBall, drawLightningBallMultiplier]
     );
 
-    const handleRoad = useCallback((body: BallBody, peg: PegBody) => {
-        Body.setStatic(body, true);
-        const { pegRadius, ballConfig } = PlinkoCanvasConfig;
-        if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
-            const road = body.finish?.result[peg.rowIndex];
-            Body.setPosition(body, { x: peg.position.x, y: peg.position.y - pegRadius - ballConfig.radius });
-            Body.setVelocity(body, {
-                x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,
-                y: ballConfig.offsetVelocityY,
-            });
-            playPlinkoBallHitPinSoundRef.current();
-            body.collidedRowIndexes?.push(peg.rowIndex);
+    const handleRoad = useCallback(
+        (body: BallBody, peg: PegBody) => {
+            Body.setStatic(body, true);
+            const { pegRadius, ballConfig } = PlinkoCanvasConfig;
+            if (!body.collidedRowIndexes?.includes(peg.rowIndex)) {
+                const road = body.finish?.result[peg.rowIndex];
+                Body.setPosition(body, { x: peg.position.x, y: peg.position.y - pegRadius - ballConfig.radius });
+                Body.setVelocity(body, {
+                    x: road === 0 ? -ballConfig.offsetVelocityX : ballConfig.offsetVelocityX,
+                    y: ballConfig.offsetVelocityY,
+                });
+                playPlinkoBallHitPinSoundRef.current();
+                body.collidedRowIndexes?.push(peg.rowIndex);
 
-            updateBallLightningStatus(body, peg);
-        }
-        Body.setStatic(body, false);
-    }, [updateBallLightningStatus]);
+                updateBallLightningStatus(body, peg);
+            }
+            Body.setStatic(body, false);
+        },
+        [updateBallLightningStatus]
+    );
 
     return {
         drawBalls,
