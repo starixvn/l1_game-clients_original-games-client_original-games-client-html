@@ -273,7 +273,7 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         <div className={Styles["pf-setting-container"] + " bg-none"}>
             <div>
                 <ul>
-                    <li className="text-sm md:text-base">{customClientSeedInfo || translateSNGames("pf_settings_para_1")}</li>
+                    <li className="text-sm md:text-base">{customClientSeedInfo || translateCommon("turn_based_pf_settings_para_1")}</li>
                     <li className="text-sm md:text-base">{translateCommon("pf_settings_para_2")}</li>
                 </ul>
             </div>

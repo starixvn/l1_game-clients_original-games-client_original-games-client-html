@@ -7,6 +7,11 @@ export const PLINKO_OBJECTS = {
     SLOT: "slot",
 } as const;
 
+export const LIGHTNING_PATH_COLOR = {
+    PEG_MULTIPLIER: "#91ff31",
+    DEFAULT: "#ffeeaa",
+};
+
 export const PlinkoCanvasConfig: IPlinkoCanvasConfig = {
     width: 1050,
     height: 1000,
