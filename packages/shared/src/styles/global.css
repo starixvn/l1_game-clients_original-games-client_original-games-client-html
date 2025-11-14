@@ -11,7 +11,7 @@
     --opacity-background-grey: rgba(50, 50, 50, 0.6);
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 30.38%, #0b1624 78.94%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -45,7 +45,7 @@ html[data-theme="dark"] {
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
 
-    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 30.38%, #0b1624 78.94%);
     --popup-color: #fff;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     --container-color-bg: #182130;
@@ -78,7 +78,7 @@ html[data-theme="light"] {
     --opacity-background-grey: rgba(221, 221, 221, 0.6);
     --scrollbar-background: #00000080;
     --scrollbar-thumb-background: rgba(77, 134, 202, 0.6);
-    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #060d15 25.58%);
+    --popup-background: linear-gradient(180deg, #0854b2 0%, #05264d 30.38%, #0b1624 78.94%);
     --popup-color: #2c2f3e;
     --popup-bet-form-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 

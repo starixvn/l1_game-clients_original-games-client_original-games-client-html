@@ -19,7 +19,9 @@ const baseAppSettings = createAppSettings(configs);
 
 const nextConfig = {
     compiler: {
-        removeConsole: true,
+        removeConsole: {
+            exclude: ["error"],
+        },
     },
     publicRuntimeConfig: baseAppSettings,
     productionBrowserSourceMaps: false,

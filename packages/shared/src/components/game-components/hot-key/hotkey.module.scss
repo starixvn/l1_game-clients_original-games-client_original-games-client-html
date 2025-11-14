@@ -1,12 +1,12 @@
 .hotkeyPopup {
-    background: var(--sound-setting-background);
+    background: var(--popup-background);
     border-radius: 16px !important;
     color: #b3bec1;
     padding: 12px 16px;
     top: 23%;
     min-width: 320px;
     height: 265px;
-    border: 2px solid #293E56;
+    border: 2px solid #052142;
     box-shadow: 0px 0px 20px 0px #00000080;
 }
 
@@ -15,7 +15,7 @@
     align-items: center;
     justify-content: center;
     padding: 6px 12px;
-    background: #0C141F99;
+    background: #0c141f99;
     border-radius: 8px;
     color: #fff;
     font-style: bold;

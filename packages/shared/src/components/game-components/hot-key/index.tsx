@@ -29,8 +29,8 @@ const HotKeyModal = () => {
 
     return (
         isShowHotKey && (
-            <BaseDialog type={ModalType.Center} isOpen={isShowHotKey} enableBackdrop={true} onCloseModal={handleCloseModal} >
-                <div ref={wrapperRef} id="hot-key" className={`modal-center bg-gradient-to-b from-[#102E62] to-[#0C1F3F] flex flex-col gap-3 rounded-t-2xl ${styles.hotkeyPopup}`}>
+            <BaseDialog type={ModalType.Center} isOpen={isShowHotKey} enableBackdrop={true} onCloseModal={handleCloseModal}>
+                <div ref={wrapperRef} id="hot-key" className={`modal-center flex flex-col gap-3 rounded-t-2xl ${styles.hotkeyPopup}`}>
                     {/* Header */}
                     <div className="flex items-center px-5 pt-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
                         <div className="flex flex-1 items-center justify-center font-semibold text-[24px]">{translate("hot_key")}</div>
