@@ -728,7 +728,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
                 <GameContainer>
                     {!isLoaded && this.preloadResource()}
                     {signedIn && isLoaded ? this.renderGame() : <GameLoading />}
-                    {this.renderDisableGamePopup(isDisabledGame && !!disabledMessage, disabledMessage)}
+                    {this.renderDisableGamePopup(isDisabledGame, disabledMessage)}
                     {this.renderConnectFailed(roundState, disconnectReason)}
                 </GameContainer>
             </>
