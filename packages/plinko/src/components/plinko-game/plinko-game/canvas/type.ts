@@ -76,3 +76,13 @@ export interface MultiplierAnimationEffect {
     createdAt: number;
     duration: number;
 }
+
+export interface MoneyFlyAnimationEffect {
+    x: number;
+    y: number;
+    amount: number;
+    startY: number;
+    endY: number;
+    createdAt: number;
+    duration: number;
+}

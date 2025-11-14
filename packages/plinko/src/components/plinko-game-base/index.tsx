@@ -123,7 +123,6 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
                     <RoundMultiplierHistory />
                     <PlinkoGame />
                     <div> {this.renderNotice()}</div>
-                    <WinningAmountEffect />
                 </div>
             </div>
         );

@@ -2,8 +2,8 @@
 
 import { Engine, Runner, Composite, Events, IEventCollision, Body } from "matter-js";
 import { useEffect, useRef, useCallback } from "react";
-import { BallBody, ExplosionEffect, PegEffect, PathPreview, MultiplierAnimationEffect } from "./type";
-import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview } from "./hooks";
+import { BallBody, ExplosionEffect, PegEffect, PathPreview, MultiplierAnimationEffect, MoneyFlyAnimationEffect } from "./type";
+import { useSlot, usePeg, useBall, usePegEffect, useExplosionEffect, usePathPreview, useMoneyFlyAnimation } from "./hooks";
 import { PLINKO_OBJECTS, PlinkoCanvasConfig } from "./constant";
 import { usePlinkoSettingStore, usePlinkoGameStore } from "@plinko/shared/stores";
 import { useShallow } from "zustand/shallow";
@@ -22,6 +22,7 @@ const PlinkoCanvas = () => {
     const explosionEffectsRef = useRef<ExplosionEffect[]>([]);
     const pathPreviewsRef = useRef<PathPreview[]>([]);
     const multiplierAnimationsRef = useRef<MultiplierAnimationEffect[]>([]);
+    const moneyFlyAnimationsRef = useRef<MoneyFlyAnimationEffect[]>([]);
     const explosionTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const PATH_ANIMATION_DURATION = 300;
@@ -76,6 +77,9 @@ const PlinkoCanvas = () => {
     // Path preview hook
     const { createPathPreview, drawPathPreview } = usePathPreview({ pathPreviewsRef, pegsRef, multiplierAnimationsRef });
 
+    // Money fly animation hook
+    const { createMoneyFlyAnimation, drawMoneyFlyAnimations } = useMoneyFlyAnimation({ moneyFlyAnimationsRef });
+
     // Sound hook
     const playPlinkoBallHitWinSound = usePlinkoBallHitWinSound();
     const playPlinkoBallHitWinSoundRef = useRef(playPlinkoBallHitWinSound);
@@ -110,13 +114,19 @@ const PlinkoCanvas = () => {
 
                     createExplosionEffect(ball);
 
+                    // Create money fly animation at ball position
+                    const winningAmount = ballBody.finish?.winAmount || 0;
+                    if (winningAmount > 0) {
+                        createMoneyFlyAnimation(ball.position.x, ball.position.y, winningAmount);
+                    }
+
                     // remove ball
                     Composite.remove(engineRef.current.world, [ball]);
                     ballsRef.current.splice(ballsRef.current.indexOf(ball), 1);
                 }
             }
         },
-        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect]
+        [createPegEffect, handleRoad, setFinishedBall, createExplosionEffect, createMoneyFlyAnimation]
     );
 
     // Draw scene object
@@ -149,6 +159,7 @@ const PlinkoCanvas = () => {
         pegEffectsRef.current = [];
         explosionEffectsRef.current = [];
         pathPreviewsRef.current = [];
+        moneyFlyAnimationsRef.current = [];
         if (canvasRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -217,8 +228,11 @@ const PlinkoCanvas = () => {
         // Draw explosion effects
         drawExplosionEffect?.(context);
 
+        // Draw money fly animations
+        drawMoneyFlyAnimations?.(context);
+
         animationRef.current = requestAnimationFrame(animate);
-    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview]);
+    }, [drawSceneObject, drawBalls, drawPegEffect, drawExplosionEffect, drawPathPreview, drawMoneyFlyAnimations]);
 
     // Initialize Matter.js engine
     const initializeEngine = useCallback(() => {
@@ -281,12 +295,19 @@ const PlinkoCanvas = () => {
 
                 const finalPosition = calculateFinalBallPosition(finish);
                 createExplosionEffectAtPosition(finalPosition.x, finalPosition.y);
+
+                // Create money fly animation at final slot position
+                const winningAmount = finish.winAmount || 0;
+                if (winningAmount > 0) {
+                    createMoneyFlyAnimation(finalPosition.x, finalPosition.y, winningAmount);
+                }
+
                 explosionTimeoutsRef.current.delete(finishKey);
             }, PATH_ANIMATION_DURATION);
 
             explosionTimeoutsRef.current.set(finishKey, timeout);
         },
-        [createPathPreview, setFinishedBall, calculateFinalBallPosition, createExplosionEffectAtPosition]
+        [createPathPreview, setFinishedBall, calculateFinalBallPosition, createExplosionEffectAtPosition, createMoneyFlyAnimation]
     );
 
     // Add ball
