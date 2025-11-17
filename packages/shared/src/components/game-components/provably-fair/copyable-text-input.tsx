@@ -28,7 +28,7 @@ const CopyableTextInput: FC<{ value: string; id: string; position?: string; clas
                 <span className="icon-copy" />
             </button>
             {isCopySuccess && (
-                <div className={`${Styles["copy-success"]} ${Styles[position]}`}>{translateCommon("pf_copy_successfully ")}</div>
+                <div className={cn(`${Styles["copy-success"]} ${Styles[position]}`, "z-10")}>{translateCommon("pf_copy_successfully ")}</div>
             )}
         </>
     );
