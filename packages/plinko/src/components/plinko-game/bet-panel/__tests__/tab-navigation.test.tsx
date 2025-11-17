@@ -10,6 +10,8 @@ jest.mock("@shared", () => ({
     useClickSound: jest.fn().mockReturnValue(jest.fn()),
 }));
 
+jest.mock("@plinko/shared/stores/plinko-game-store", () => jest.fn().mockReturnValue(false));
+
 describe("TabNavigation", () => {
     const defaultProps = {
         activeIndex: 0,

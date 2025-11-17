@@ -20,11 +20,11 @@ const PlinkoCanvas = () => {
 
     const PATH_ANIMATION_DURATION = 300;
 
-    const { finish, setFinishedBall, numberOfDroppingBall } = usePlinkoGameStore(
+    const { finish, setFinishedBall, isDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
             finish: state.finish,
             setFinishedBall: state.actions.setFinishedBall,
-            numberOfDroppingBall: state.numberOfDroppingBall,
+            isDroppingBall: state.numberOfDroppingBall > 0,
         }))
     );
     const isInstantMode = usePlinkoSettingStore((state) => state.isInstantMode);
@@ -284,10 +284,10 @@ const PlinkoCanvas = () => {
     }, [finish, createBall, setFinishedBall, handleInstantModeFinish]);
 
     useEffect(() => {
-        if (numberOfDroppingBall === 0) {
+        if (!isDroppingBall) {
             useGameStore.getState().resetBettingInfo();
         }
-    }, [numberOfDroppingBall]);
+    }, [isDroppingBall]);
 
     // Cleanup timeouts when component unmounts
     useEffect(() => {

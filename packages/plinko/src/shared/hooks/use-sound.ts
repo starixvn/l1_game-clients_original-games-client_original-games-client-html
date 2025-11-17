@@ -20,7 +20,7 @@ export const usePlinkoBallHitPinSound = () => {
         interrupt: false,
     });
 
-    const numberOfDroppingBall = usePlinkoGameStore(useShallow((state) => state.numberOfDroppingBall));
+    const isDroppingBall = usePlinkoGameStore(useShallow((state) => state.numberOfDroppingBall > 0));
 
     const { volumeSFX, enabledSound } = useSettingStore(
         useShallow((state) => ({
@@ -30,13 +30,13 @@ export const usePlinkoBallHitPinSound = () => {
     );
 
     const playPlinkoBallHitPinSound = () => {
-        if (enabledSound && volumeSFX > 0 && numberOfDroppingBall > 0) {
-           play();
+        if (enabledSound && volumeSFX > 0 && isDroppingBall) {
+            play();
         }
     };
 
     useEffect(() => {
-        if (ctx) {  
+        if (ctx) {
             ctx.volume(formatVolume(volumeSFX));
         }
     }, [volumeSFX]);

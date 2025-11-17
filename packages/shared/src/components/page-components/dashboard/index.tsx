@@ -16,6 +16,7 @@ import { LoadingSpinner } from "../../game-components/game-loading/loading-spinn
 import BalanceSyncProvider from "@shared/react-hooks/providers/balance-sync-provider";
 import { BASE_PATH } from "@shared/constants/base-path";
 import { getAppSettings } from "@shared/app-settings";
+import { cn } from "@shared/utils";
 
 const SoundSettings = dynamic(() => import("../header/setting/settings-popup"), { ssr: false });
 // @ts-ignore - Next.js dynamic imports resolve at runtime
@@ -228,9 +229,11 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 <BalanceSyncProvider>
                     <div
                         id={"dashboard"}
-                        className={`overflow-hidden relative min-h-screen min-w-[400px] ${
-                            isDesktop ? (appType === 7 ? styles["mobile-dashboard"] : styles["desktop-dashboard"]) : ""
-                        }`}
+                        className={cn(
+                            `overflow-hidden relative min-h-screen`,
+                            isDesktop && styles[appType === 7 ? "mobile-dashboard" : "desktop-dashboard"],
+                            isDesktop && "min-w-[400px]"
+                        )}
                     >
                         <SoundSettings />
 

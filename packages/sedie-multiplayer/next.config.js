@@ -18,11 +18,6 @@ const createAppSettings = (config) => ({
 const baseAppSettings = createAppSettings(configs);
 
 const nextConfig = {
-    compiler: {
-        removeConsole: {
-            exclude: ["error"],
-        },
-    },
     publicRuntimeConfig: baseAppSettings,
     productionBrowserSourceMaps: false,
     pageExtensions: ["tsx", "ts", "jsx", "js"],

@@ -16,10 +16,9 @@ const BetControl = () => {
             userStakeLevel: state.userStakeLevel,
         }))
     );
-    const { betAmount, numberOfDroppingBall, setBetAmount } = usePlinkoGameStore(
+    const { betAmount, setBetAmount } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
-            numberOfDroppingBall: state.numberOfDroppingBall,
             setBetAmount: state.actions.setBetAmount,
         }))
     );
@@ -133,11 +132,7 @@ const BetControl = () => {
                     isAutoBet={isAutoBet}
                     setIsAutoBet={setIsAutoBet}
                 />
-                <TabNavigation
-                    activeIndex={tabIndex}
-                    onChangeTab={setTabIndex}
-                    isDisabled={isProcessing || isAutoBet || numberOfDroppingBall > 0}
-                />
+                <TabNavigation activeIndex={tabIndex} onChangeTab={setTabIndex} isDisabled={isProcessing || isAutoBet} />
             </div>
         </div>
     );

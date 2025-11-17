@@ -32,11 +32,11 @@ const BetForm = ({
         }
         return { minBet: 0, maxBet: 0 };
     }, [gameMinBet, gameMaxBet, userStakeLevel]);
-    const { betAmount, setBetAmount, numberOfDroppingBall } = usePlinkoGameStore(
+    const { betAmount, setBetAmount, isDroppingBall } = usePlinkoGameStore(
         useShallow((state) => ({
             betAmount: state.betAmount,
             setBetAmount: state.actions.setBetAmount,
-            numberOfDroppingBall: state.numberOfDroppingBall,
+            isDroppingBall: state.numberOfDroppingBall > 0,
         }))
     );
 
@@ -59,12 +59,12 @@ const BetForm = ({
             )}
         >
             <BetAmountControl handleBetAmountChange={handleBetAmountChange} isDisabled={isDisabled} />
-            <GameModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
-            <RowsSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
-            <FastModeSelector isDisabled={isDisabled || numberOfDroppingBall > 0} />
+            <GameModeSelector isDisabled={isDisabled || isDroppingBall} />
+            <RowsSelector isDisabled={isDisabled || isDroppingBall} />
+            <FastModeSelector isDisabled={isDisabled || isDroppingBall} />
             {!isManualTab && (
                 <AutoBetGroup
-                    isDisabled={isDisabled || numberOfDroppingBall > 0}
+                    isDisabled={isDisabled || isDroppingBall}
                     isAutoBet={isAutoBet}
                     setIsAutoBet={setIsAutoBet}
                     handleBetAmountChange={handleBetAmountChange}

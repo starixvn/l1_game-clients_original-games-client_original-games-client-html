@@ -25,7 +25,7 @@ const LightningKey: React.FC = () => {
             lightningConfig: state.lightningConfig,
         }))
     );
-    const numberOfDroppingBall = usePlinkoGameStore((state) => state.numberOfDroppingBall);
+    const isDroppingBall = usePlinkoGameStore((state) => state.numberOfDroppingBall > 0);
     const { getLightningConfig } = useGetLightningConfig();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +36,6 @@ const LightningKey: React.FC = () => {
     useEffect(() => {
         setLightningKeyValue(lightningConfig?.lightningKey || "");
     }, [lightningConfig?.lightningKey]);
-
 
     const closeLightningKey = useCallback(() => {
         setIsOpen(false);
@@ -67,12 +66,12 @@ const LightningKey: React.FC = () => {
 
     const handleClickChange = useCallback(() => {
         clickSound();
-        if (lightningKeyValue.trim() && numberOfDroppingBall === 0) {
+        if (lightningKeyValue.trim() && !isDroppingBall) {
             getLightningConfig(lightningKeyValue);
         }
-    }, [clickSound, lightningKeyValue, numberOfDroppingBall, getLightningConfig]);
+    }, [clickSound, lightningKeyValue, isDroppingBall, getLightningConfig]);
 
-    const isChangeDisabled = numberOfDroppingBall > 0 || !lightningKeyValue.trim();
+    const isChangeDisabled = isDroppingBall || !lightningKeyValue.trim();
 
     if (!isLightningMode) {
         return null;
@@ -92,11 +91,7 @@ const LightningKey: React.FC = () => {
                 className="-translate-x-[0] left-[-20px]"
                 classArrow="-translate-x-[0] left-[30px]"
             >
-                <button
-                    type="button"
-                    onClick={toggleLightningKey}
-                    className="flex items-center justify-center h-full p-1 hover:scale-105"
-                >
+                <button type="button" onClick={toggleLightningKey} className="flex items-center justify-center h-full p-1 hover:scale-105">
                     <Image
                         src={`${basePath}/static/images/icons/lightning-key-icon.svg?v=${buildVersion}`}
                         alt="Lightning Key"

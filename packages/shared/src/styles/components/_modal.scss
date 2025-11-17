@@ -97,3 +97,8 @@
         transform: translate(-50%, -10px);
     }
 }
+
+.popup-modal {
+    background: var(--popup-background, linear-gradient(180deg, #0854b2 0%, #05264d 9.84%, #0b1625 25.58%));
+    border: 2px solid #052142;
+}

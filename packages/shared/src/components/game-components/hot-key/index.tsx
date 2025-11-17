@@ -3,7 +3,6 @@ import BaseDialog from "../base-dialog";
 import { ModalType } from "../base-dialog/type";
 import { useClickOutside, useClickSound, useCommonTranslate } from "@shared/react-hooks";
 import { DefaultParamType, TFnType, TranslationKey } from "@tolgee/react";
-import styles from "./hotkey.module.scss";
 import { useSettingStore } from "@shared/stores/setting-store";
 import { useRef } from "react";
 
@@ -30,9 +29,9 @@ const HotKeyModal = () => {
     return (
         isShowHotKey && (
             <BaseDialog type={ModalType.Center} isOpen={isShowHotKey} enableBackdrop={true} onCloseModal={handleCloseModal}>
-                <div ref={wrapperRef} id="hot-key" className={`modal-center flex flex-col gap-3 rounded-t-2xl ${styles.hotkeyPopup}`}>
+                <div ref={wrapperRef} id="hot-key" className={`modal-center popup-modal px-4 py-3`}>
                     {/* Header */}
-                    <div className="flex items-center px-5 pt-2 text-base font-semibold text-primary-text text-center flex-shrink-0">
+                    <div className="flex items-center px-5 py-2 text-base font-semibold text-primary-text text-center flex-shrink-0 mb-2">
                         <div className="flex flex-1 items-center justify-center font-semibold text-[24px]">{translate("hot_key")}</div>
                         <button
                             className="cursor-pointer z-10"
@@ -47,7 +46,7 @@ const HotKeyModal = () => {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 min-h-0 ">
+                    <div>
                         {<HotKeyContent translate={translate} isToggleHotKey={isToggleHotKey} handleToggleHotKey={handleToggleHotKey} />}
                     </div>
                 </div>
@@ -65,23 +64,25 @@ const HotKeyContent = ({
     isToggleHotKey: boolean;
     handleToggleHotKey: () => void;
 }) => {
+    const keyStyle = "flex items-center justify-center px-4 py-1.5 bg-[#FFFFFF33] rounded-lg text-white font-bold text-sm md:text-base h-8";
+    const keyTextStyle = "text-[#B3BEC1]";
     return (
         <div className="flex flex-col gap-2 text-sm md:text-base leading-1">
-            <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("hot_key_place_bet")}:</div>
-                <div className={styles.key}>Space</div>
+            <div className="flex flex-row items-center justify-between">
+                <div className={keyTextStyle}>{translate("hot_key_place_bet")}:</div>
+                <div className={keyStyle}>Space</div>
             </div>
-            <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("hot_key_double_bet")}:</div>
-                <div className={styles.key}>D</div>
+            <div className="flex flex-row items-center justify-between">
+                <div className={keyTextStyle}>{translate("hot_key_double_bet")}:</div>
+                <div className={keyStyle}>D</div>
             </div>
-            <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("hot_key_half_bet")}:</div>
-                <div className={styles.key}>S</div>
+            <div className="flex flex-row items-center justify-between">
+                <div className={keyTextStyle}>{translate("hot_key_half_bet")}:</div>
+                <div className={keyStyle}>S</div>
             </div>
-            <div className="flex flex-row items-center justify-between gap-2">
-                <div>{translate("hot_key_min_bet")}:</div>
-                <div className={styles.key}>A</div>
+            <div className="flex flex-row items-center justify-between">
+                <div className={keyTextStyle}>{translate("hot_key_min_bet")}:</div>
+                <div className={keyStyle}>A</div>
             </div>
             <div className="flex items-center gap-2 ">
                 <input className="input-checkbox" type="checkbox" checked={isToggleHotKey} onChange={handleToggleHotKey} />

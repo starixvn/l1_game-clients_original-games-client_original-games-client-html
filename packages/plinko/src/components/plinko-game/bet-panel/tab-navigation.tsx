@@ -1,6 +1,7 @@
 import { useClickSound, useCommonTranslate } from "@shared";
 import { memo } from "react";
 import Image from "next/image";
+import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
 
 const tabs = ["manual", "auto"];
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -20,6 +21,7 @@ const TabNavigation = ({
         clickSound();
         onChangeTab(index);
     };
+    const isDroppingBall = usePlinkoGameStore((state) => state.numberOfDroppingBall > 0);
     return (
         <div className="md:px-3">
             <div className="flex">
@@ -30,7 +32,7 @@ const TabNavigation = ({
                         className={`flex-1 p-2 py-[2px] text-sm md:text-base relative md:pt-0 disabled:opacity-50 font-semibold ${
                             activeIndex === index ? "text-[#3FEC83]" : "text-white"
                         }`}
-                        disabled={isDisabled}
+                        disabled={isDisabled || isDroppingBall}
                     >
                         {t(tab)}
                     </button>
