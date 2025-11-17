@@ -144,7 +144,9 @@ const Slots = () => {
                             className={cn(
                                 isHit ? "animate-slide-down" : "",
                                 "flex items-center justify-center text-white font-bold h-[28px]",
-                                "rounded-[4px] transition-transform duration-200 [text-shadow:_-1px_-1px_0_#262626,_1px_-1px_0_#262626,_-1px_1px_0_#262626,_1px_1px_0_#262626]"
+                                "rounded-[4px] transition-transform duration-200",
+                                "drop-shadow",
+                                "[text-shadow:0_0_1px_#262626,0_1px_1px_#262626,1px_0_1px_#262626,-1px_0_1px_#262626,0_-1px_1px_#262626,1px_1px_1px_#262626,-1px_1px_1px_#262626,1px_-1px_1px_#262626]"
                             )}
                             style={{
                                 width: `${slotDimensions.width}px`,
