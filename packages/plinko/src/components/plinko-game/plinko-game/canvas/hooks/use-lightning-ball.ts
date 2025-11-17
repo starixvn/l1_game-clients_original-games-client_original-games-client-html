@@ -28,12 +28,12 @@ export const useLightningBall = () => {
         if (!lightningImageLoadedRef.current || !lightningBallImageRef.current) {
             context.fillStyle = "#FED701";
             context.beginPath();
-            context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2.5);
+            context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
             context.fill();
             return;
         }
         
-        context.drawImage(lightningBallImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2.5, ballConfig.radius * 2.5);
+        context.drawImage(lightningBallImageRef.current, -ballConfig.radius, -ballConfig.radius, ballConfig.radius * 2, ballConfig.radius * 2);
     }, []);
 
     const drawLightningBallMultiplier = useCallback((context: CanvasRenderingContext2D, ballBody: BallBody) => {
