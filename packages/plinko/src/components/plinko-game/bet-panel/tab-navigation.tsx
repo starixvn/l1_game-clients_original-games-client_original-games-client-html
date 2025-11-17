@@ -62,7 +62,7 @@ const TabNavigation = ({
 
                 {/* Main active line */}
                 <div
-                    className="absolute bottom-0 border-t-[2px] border-[#3FEC83] transition-all duration-300 ease-in-out z-10"
+                    className="absolute bottom-0 border-t-[2px] border-[#3FEC83] transition-all duration-300 ease-in-out z-1"
                     style={{
                         width: `${100 / tabs.length}%`,
                         transform: `translateX(${activeIndex * 100}%)`,
