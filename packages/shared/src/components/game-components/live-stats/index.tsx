@@ -7,10 +7,10 @@ import { ModalType } from "../base-dialog/type";
 import { useTranslate } from "@tolgee/react";
 import { ResourceTypes } from "@shared/resources/type";
 import { numberWithCommas } from "@shared/helpers";
-import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useShallow } from "zustand/shallow";
-import Image from "next/image";
 import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
+import { isMobile } from "react-device-detect";
 
 const MODAL_SIZE = {
     WIDTH: 250,
@@ -89,7 +89,7 @@ const LiveStatsModal = ({ data }: { data?: LiveStatsProps }): ReactElement => {
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName="absolute h-fit min-h-[320px] w-[254px] top-0 rounded-b-xl"
+                    extendedClassName="absolute h-fit min-h-[320px] min-w-[254px] w-fit top-0 rounded-b-xl"
                 >
                     <div
                         id="live-stats"
@@ -207,7 +207,7 @@ const LiveStats = ({
             <div className="h-full border-none flex flex-col justify-center items-center ">
                 <div
                     id="information"
-                    className="px-4 py-1 text-sm md:text-base font-semibold flex justify-between  w-[228px] min-h-[102px] bg-[#00000080] rounded-[16px] "
+                    className="px-4 py-1 text-sm md:text-base font-semibold flex justify-between  min-w-[228px] w-fit min-h-[102px] bg-[#00000080] rounded-[16px] whitespace-nowrap"
                 >
                     <div className="flex flex-col items-start flex-1 gap-1">
                         <div className="flex flex-col items-start gap-1">
@@ -231,17 +231,26 @@ const LiveStats = ({
                     </div>
                 </div>
                 <div id="my-chart" className="w-full h-auto [&_svg]:outline-none [&_svg:focus]:outline-none [&_*]:outline-none">
-                    <AreaChart width={228} height={150} data={netProfitHistory}>
-                        <XAxis dataKey="x" hide />
-                        <YAxis hide domain={[-100, 100]} />
-                        <defs>
-                            <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
-                                <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
-                            </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="y" stroke="#000" fill="url(#splitColor)" isAnimationActive={false} baseLine={0} />
-                    </AreaChart>
+                    <ResponsiveContainer width="100%" height={150}>
+                        <AreaChart  data={netProfitHistory}>
+                            <XAxis dataKey="x" hide />
+                            <YAxis hide domain={[-100, 100]} />
+                            <defs>
+                                <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
+                                    <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
+                                </linearGradient>
+                            </defs>
+                            <Area
+                                type="monotone"
+                                dataKey="y"
+                                stroke="#000"
+                                fill="url(#splitColor)"
+                                isAnimationActive={false}
+                                baseLine={0}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         );
