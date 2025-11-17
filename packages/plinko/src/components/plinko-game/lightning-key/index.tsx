@@ -8,7 +8,6 @@ import { generateRandomLightningKey, filterLightningKeyInput } from "./lightning
 import { useGetLightningConfig } from "@plinko/shared/hooks/use-get-lightning-config";
 import { useClickSound, useCommonTranslate, useClickOutside, cn, ResourceTypes, buildVersion } from "@shared";
 import { useTranslate } from "@tolgee/react";
-import { useLightningKeyTooltip } from "./use-lightning-key-tooltip";
 const Tooltip = dynamic(() => import("../../../../../shared/src/components/game-components/tooltip"), { ssr: false });
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -31,7 +30,28 @@ const LightningKey: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [lightningKeyValue, setLightningKeyValue] = useState(lightningConfig?.lightningKey || "");
 
-    const forceShowTooltip = useLightningKeyTooltip(isLightningMode);
+    const [forceShowTooltip, setForceShowTooltip] = useState(false);
+    const forceShowTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const prevIsLightningModeRef = useRef(isLightningMode);
+
+    useEffect(() => {
+        const prevIsLightningMode = prevIsLightningModeRef.current;
+        prevIsLightningModeRef.current = isLightningMode;
+        if (!prevIsLightningMode && isLightningMode) {
+            setIsOpen(true);
+            setTimeout(() => {
+                setForceShowTooltip(true);
+            }, 500);
+            forceShowTimeoutRef.current && clearTimeout(forceShowTimeoutRef.current);
+            forceShowTimeoutRef.current = setTimeout(() => {
+                setForceShowTooltip(false);
+                setIsOpen(false);
+            }, 3000);
+        }
+        return () => {
+            forceShowTimeoutRef.current && clearTimeout(forceShowTimeoutRef.current);
+        };
+    }, [isLightningMode]);
 
     useEffect(() => {
         setLightningKeyValue(lightningConfig?.lightningKey || "");
