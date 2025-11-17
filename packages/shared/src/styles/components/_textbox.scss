@@ -1,10 +1,10 @@
 %input-style {
-    height: var(--input-height, 36px);
+    height: var(--input-height, 44px);
     width: var(--input-width, 150px);
-    border: var(--input-border, 1px solid #3c3e43);
+    border: var(--input-border, 1px solid #2B3648);
     background: var(--input-background-color, #191a1e);
     padding: var(--input-padding, 0 12px);
-    border-radius: var(--input-border-radius, 5px);
+    border-radius: var(--input-border-radius, 8px);
     color: var(--input-text-color, --text-content-color);
     font-family: var(--font-family);
     font-size: var(--input-font-size, 12px);

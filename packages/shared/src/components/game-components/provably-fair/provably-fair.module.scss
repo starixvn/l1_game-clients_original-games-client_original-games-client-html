@@ -262,11 +262,10 @@
 
 .client-seed-form {
     position: relative;
-    padding: 16px 12px;
+    padding: 12px;
     background: var(--primary-background-color);
-    border: 1px solid #3c3e43;
+    border: 1px solid var(--primary-border-color);
     border-radius: 10px;
-    margin-bottom: var(--spacing-size-4);
 }
 
 .form-overlay {

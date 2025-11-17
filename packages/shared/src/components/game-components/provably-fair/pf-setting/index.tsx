@@ -28,7 +28,7 @@ const handleOnKeyDown = (event: any) => {
     const chr = event.key;
     const target = event.target;
     const isTextSelected = target.selectionStart !== target.selectionEnd;
-    
+
     // Allow typing if text is selected (for replace behavior)
     if (isTextSelected) {
         if (NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) {
@@ -36,14 +36,17 @@ const handleOnKeyDown = (event: any) => {
         }
         return;
     }
-    
+
     // Original logic for when no text is selected
     if ((NUMBER_VALUES.indexOf(chr) < 0 && event.which !== 8) || (target.value.length >= 4 && event.which !== 8)) {
         event.preventDefault();
     }
 };
 
-const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: boolean}> = ({ customClientSeedInfo, isSinglePlayer = false }) => {
+const PFSettingModal: FC<{ customClientSeedInfo?: string; isSinglePlayer?: boolean }> = ({
+    customClientSeedInfo,
+    isSinglePlayer = false,
+}) => {
     const { pfClientSeedSetting, updatePFClientSeedSetting, isShowPFSetting, togglePFSetting, serverSeedHash } = usePFStore(
         useShallow((state: any) => ({
             pfClientSeedSetting: state.pfClientSeedSetting,
@@ -93,8 +96,8 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: bool
     };
 
     useEffect(() => {
-        if(isSinglePlayer) {
-            if(serverSeedHash) {
+        if (isSinglePlayer) {
+            if (serverSeedHash) {
                 handleSavePFSetting({
                     [messageEventType.SAVE_PF_SETTING]: {
                         pfClientSeedSetting: {
@@ -122,7 +125,6 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: bool
         }
     };
 
-
     const handleCloseModal = () => {
         togglePFSetting(false);
     };
@@ -140,7 +142,7 @@ const PFSettingModal: FC<{ customClientSeedInfo?: string , isSinglePlayer?: bool
                 isOpen={true}
                 onCloseModal={handleCloseModal}
             >
-                <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-5">
+                <div className="ml-4 mr-4 mt-3 h-full flex flex-col gap-3">
                     <PFSetting customClientSeedInfo={customClientSeedInfo} />
                 </div>
             </ModalContainer>
@@ -186,7 +188,6 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
         setIsManualMode(pfClientSeedSetting?.useManualClientSeed || false);
     }, [pfClientSeedSetting]);
 
-
     useEffect(() => {
         if (!serverSeedHash) {
             gameMessageHandler.broadcastGameEvent({
@@ -200,12 +201,10 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
     }, []);
 
     useEffect(() => {
-
         const handleServerSeed = (pfServerSeed: PFSeverSeed) => {
             updateServerSeedHash(pfServerSeed.serverSeedHash);
             setIsLoading(false);
         };
-
 
         const pfResultHandler = gameMessageHandler.register(PFResultMessage, ({ roundPFResult }) => {
             handleServerSeed(roundPFResult);
@@ -277,89 +276,105 @@ const PFSetting: FC<{ customClientSeedInfo?: string }> = ({ customClientSeedInfo
                     <li className="text-sm md:text-base">{translateCommon("pf_settings_para_2")}</li>
                 </ul>
             </div>
-            <h3 className={cn(SECTION_TITLE_CLASS, "mt-4")}>{translateCommon("pf_header_client_seed")}</h3>
-            <div className={Styles["client-seed-form"]}>
-                {Object.keys(ownBets).length > 0 && <div className={Styles["form-overlay"]}></div>}
-                {isLoading ? (
-                    <LoadingSpinner />
-                ) : (
-                    <div className={Styles["client-seed-options"]}>
-                        <div className={Styles["client-seed-option"]}>
-                            <div className="form-check flex align-items-center">
-                                <input
-                                    className="form-check-input h-0"
-                                    ref={randomRadio}
-                                    type="radio"
-                                    id="random-seed"
-                                    name="client-seed"
-                                    checked={!isManualMode}
-                                    onChange={handleCheckRadio}
-                                />
-                                <label className="form-check-label h-8" htmlFor="random-seed">
-                                    <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
-                                        {translateCommon("pf_client_seed_para_4")}
-                                    </span>
-                                </label>
-                            </div>
-
-                            <input
-                                className={cn("form-control", isManualMode ? "" : " checked", "text-sm md:text-base font-normal text-white")}
-                                ref={randomSeed}
-                                type="text"
-                                id="random-client-seed"
-                                value={randomClientSeed || ""}
-                                readOnly={true}
-                                disabled={isManualMode}
-                                style={INTER_FONT_STYLE}
-                            />
-                        </div>
-                        <div className={Styles["client-seed-option"]}>
-                            <div className="form-check flex align-items-center">
-                                <input
-                                    ref={manualRadio}
-                                    type="radio"
-                                    id="manual-seed"
-                                    name="client-seed"
-                                    checked={isManualMode}
-                                    onChange={handleCheckRadio}
-                                    className="form-check-input h-0"
-                                />
-                                <label className={`form-check-label ${Styles["form-check-label"]} h-8`} htmlFor="manual-seed">
-                                    <div className={Styles["form-check-label-note"]}>
-                                        <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
-                                            {`${translateCommon("pf_client_seed_para_3")}`} <br /> <span>(0 - 9999)</span>
-                                        </span>
+            <div className="flex gap-4 flex-col">
+                <div>
+                    <h3 className={cn(SECTION_TITLE_CLASS, "m-0 p-1 text-sm md:text-base")}>{translateCommon("pf_header_client_seed")}</h3>
+                    <div className={Styles["client-seed-form"]}>
+                        {Object.keys(ownBets).length > 0 && <div className={Styles["form-overlay"]}></div>}
+                        {isLoading ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <div className={Styles["client-seed-options"]}>
+                                <div className={Styles["client-seed-option"]}>
+                                    <div className="form-check flex align-items-center">
+                                        <input
+                                            className="form-check-input h-0"
+                                            ref={randomRadio}
+                                            type="radio"
+                                            id="random-seed"
+                                            name="client-seed"
+                                            checked={!isManualMode}
+                                            onChange={handleCheckRadio}
+                                        />
+                                        <label className="form-check-label h-8" htmlFor="random-seed">
+                                            <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
+                                                {translateCommon("pf_client_seed_para_4")}
+                                            </span>
+                                        </label>
                                     </div>
-                                </label>
-                            </div>
-                            <input
-                                className={cn("form-control", isManualMode ? " checked" : "", "text-sm md:text-base font-normal text-white")}
-                                id="manual-client-seed"
-                                ref={manualSeed}
-                                type="text"
-                                inputMode="numeric"
-                                data-testid="manual-client-seed"
-                                onKeyDown={handleOnKeyDown}
-                                onPaste={handlePaste}
-                                onBlur={handleOnBlur}
-                                onFocus={(e) => e.target.select()}
-                                onChange={handleOnChangeManualClientSeed}
-                                disabled={!isManualMode}
-                                value={isManualMode ? manualClientSeed || "" : ""}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
 
-            <h3 className={SECTION_TITLE_CLASS}>{translateCommon("pf_header_server_seed_sha256")}</h3>
-            <div className={Styles["client-seed-form"]}>
-                <div className="input-group width-full">
-                    <CopyableTextInput value={serverSeedHash} id="server-seed-hash" />
+                                    <input
+                                        className={cn(
+                                            "form-control",
+                                            isManualMode ? "" : " checked",
+                                            "text-sm md:text-base font-normal text-white"
+                                        )}
+                                        ref={randomSeed}
+                                        type="text"
+                                        id="random-client-seed"
+                                        value={randomClientSeed || ""}
+                                        readOnly={true}
+                                        disabled={isManualMode}
+                                        style={INTER_FONT_STYLE}
+                                    />
+                                </div>
+                                <div className={Styles["client-seed-option"]}>
+                                    <div className="form-check flex align-items-center">
+                                        <input
+                                            ref={manualRadio}
+                                            type="radio"
+                                            id="manual-seed"
+                                            name="client-seed"
+                                            checked={isManualMode}
+                                            onChange={handleCheckRadio}
+                                            className="form-check-input h-0"
+                                        />
+                                        <label className={`form-check-label ${Styles["form-check-label"]} h-8`} htmlFor="manual-seed">
+                                            <div className={Styles["form-check-label-note"]}>
+                                                <span className="text-sm md:text-base font-normal text-[#DDE2EA]" style={INTER_FONT_STYLE}>
+                                                    {`${translateCommon("pf_client_seed_para_3")}`} <br /> <span>(0 - 9999)</span>
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <input
+                                        className={cn(
+                                            "form-control",
+                                            isManualMode ? " checked" : "",
+                                            "text-sm md:text-base font-normal text-white"
+                                        )}
+                                        id="manual-client-seed"
+                                        ref={manualSeed}
+                                        type="text"
+                                        inputMode="numeric"
+                                        data-testid="manual-client-seed"
+                                        onKeyDown={handleOnKeyDown}
+                                        onPaste={handlePaste}
+                                        onBlur={handleOnBlur}
+                                        onFocus={(e) => e.target.select()}
+                                        onChange={handleOnChangeManualClientSeed}
+                                        disabled={!isManualMode}
+                                        value={isManualMode ? manualClientSeed || "" : ""}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                {Object.keys(ownBets).length > 0 && (
-                    <div className={`${Styles["pf-note"]} text-sm md:text-base text-white`}>{translateCommon("pf_client_seed_para_1")}</div>
-                )}
+
+                <div>
+                    <h3 className={cn(SECTION_TITLE_CLASS, "m-0 p-1 text-sm md:text-base")}>{translateCommon("pf_header_server_seed_sha256")}</h3>
+                    <div className={Styles["client-seed-form"]}>
+                        <div className="input-group width-full">
+                            <CopyableTextInput value={serverSeedHash} id="server-seed-hash" />
+                        </div>
+                        {Object.keys(ownBets).length > 0 && (
+                            <div className={`${Styles["pf-note"]} text-sm md:text-base text-white`}>
+                                {translateCommon("pf_client_seed_para_1")}
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

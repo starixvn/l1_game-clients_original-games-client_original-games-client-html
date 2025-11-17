@@ -226,10 +226,12 @@ const PFVerify: FC<{ ResultBlock: FC<any>; isMergeClientSeed: boolean }> = ({ Re
                     <CopyableTextInput value={pfVerifyModalData?.finalHash} id="combined-sha512-hash" />
                 </div>
             </ClientSeedForm>
-            <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
-                {translateCommon("pf_button_verify")}
-            </button>
-            <p className="text-center mt-2">{translateCommon("pf_provably_fair_para_2")}</p>
+            <div className="mt-3">
+                <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
+                    {translateCommon("pf_button_verify")}
+                </button>
+                <p className="text-center mt-2">{translateCommon("pf_provably_fair_para_2")}</p>
+            </div>
         </div>
     );
 };
