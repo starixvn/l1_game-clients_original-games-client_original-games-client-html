@@ -74,6 +74,7 @@ export const createBetHistorySlice: StateCreator<BetHistorySlice> = (set, get) =
             if (updatePagination) {
                 const newTotalPages = Math.ceil(updatedLogs.length / 10);
                 updateObj.totalPages = newTotalPages;
+                updateObj.totalBetLogs = updatedLogs.length;
             }
 
             set(updateObj);

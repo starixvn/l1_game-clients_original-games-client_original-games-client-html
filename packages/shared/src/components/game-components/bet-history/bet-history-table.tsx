@@ -30,6 +30,7 @@ export const BetHistoryTable = ({ Header = BetHistoryHeader, BodyItem = BetHisto
     const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("640px");
     const [page, setPage] = useState(1);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [totalItems, setTotalItems] = useState(pageSize);
     const isInitialized = useRef(false);
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -56,6 +57,7 @@ export const BetHistoryTable = ({ Header = BetHistoryHeader, BodyItem = BetHisto
         clickSound();
         setIsExpanded(true);
         getHistory(page + 1);
+        setTotalItems((page + 1) * pageSize);
     }, [page, getHistory, clickSound]);
 
     const showLess = useCallback(() => {
@@ -66,8 +68,8 @@ export const BetHistoryTable = ({ Header = BetHistoryHeader, BodyItem = BetHisto
     }, [betLogs, pageSize, setBetLogs, clickSound]);
 
     const displayedBetLogs = useMemo(() => {
-        return betLogs.slice(0, isExpanded ? betLogs.length : pageSize);
-    }, [betLogs, isExpanded, pageSize]);
+        return betLogs.slice(0, isExpanded ? totalItems : pageSize);
+    }, [betLogs, isExpanded, pageSize, totalItems]);
 
     useEffect(() => {
         if (displayedBetLogs?.length) {
