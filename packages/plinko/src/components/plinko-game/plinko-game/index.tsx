@@ -38,7 +38,7 @@ const Game = () => {
                         <Slots />
                     </div>
                 </div>
-                <div className="h-[46px] md:h-[50px]"></div>
+                <div className="h-[54px] md:h-[58px]"></div>
             </div>
         </div>
     );
