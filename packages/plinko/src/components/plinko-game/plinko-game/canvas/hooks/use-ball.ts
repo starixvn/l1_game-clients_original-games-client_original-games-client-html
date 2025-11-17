@@ -28,7 +28,7 @@ export const useBall = () => {
             console.error("Failed to load ball image");
             imageLoadedRef.current = false;
         };
-        image.src = `${basePath}/static/images/plinko/ball.svg?v=${buildVersion}`;
+        image.src = `${basePath}/static/images/plinko/ball.webp?v=${buildVersion}`;
         ballImageRef.current = image;
     }, []);
 

@@ -25,8 +25,8 @@
             "optionalPaths": ["/static/images/background"],
             "cachePaths": [
                 "/static/images/plinko/hell.svg",
-                "/static/images/plinko/ball.svg",
-                "/static/images/plinko/lightning-ball.svg",
+                "/static/images/plinko/ball.webp",
+                "/static/images/plinko/lightning-ball.webp",
                 "/static/images/background/"
             ]
         }
@@ -57,8 +57,8 @@
             "optionalPaths": ["/static/images/background", "/static/images/lobby"],
             "cachePaths": [
                 "/static/images/plinko/hell.svg",
-                "/static/images/plinko/ball.svg",
-                "/static/images/plinko/lightning-ball.svg",
+                "/static/images/plinko/ball.webp",
+                "/static/images/plinko/lightning-ball.webp",
                 "/static/images/background/",
                 "/static/images/lobby/game-bg.webp"
             ]

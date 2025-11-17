@@ -18,7 +18,7 @@ export const useLightningBall = () => {
             console.error("Failed to load lightning ball image");
             lightningImageLoadedRef.current = false;
         };
-        lightningImage.src = `${basePath}/static/images/plinko/lightning-ball.svg?v=${buildVersion}`;
+        lightningImage.src = `${basePath}/static/images/plinko/lightning-ball.webp?v=${buildVersion}`;
         lightningBallImageRef.current = lightningImage;
     }, []);
 

@@ -22,7 +22,7 @@ export interface GameAssetsConfig {
  */
 export const plinkoAssets: GameAssetsConfig = {
     backgroundImage: "/static/images/background/bg.webp",
-    gameIcon: "/static/images/plinko/ball.png",
+    gameIcon: "/static/images/plinko/ball.webp",
     soundFiles: {
         ballHitPin: "/static/sounds/ball-hit-pin.mp3",
         ballHitWin: "/static/sounds/ball-hit-win.mp3",
@@ -51,7 +51,7 @@ export const plinkoAssets: GameAssetsConfig = {
  */
 export const plinkoXAssets: GameAssetsConfig = {
     backgroundImage: "/static/images/background/bg.webp",
-    gameIcon: "/static/images/plinko/ball.png",
+    gameIcon: "/static/images/plinko/ball.webp",
     soundFiles: {
         ballHitPin: "/static/sounds/ball-hit-pin.mp3",
         ballHitWin: "/static/sounds/ball-hit-win.mp3",
