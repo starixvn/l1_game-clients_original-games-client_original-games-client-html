@@ -42,7 +42,7 @@ const EditableTextInput: FC<{ handleOnChangeValue: (event: React.ChangeEvent<HTM
         clickSound();
         const input = document.getElementById("merge-client-seed-verification") as HTMLInputElement;
         const inputGroupEditable = document.getElementById("merge-client-seed-group-editable") as HTMLInputElement;
-        inputGroupEditable.className = `input-group ${Styles["input-group-editable"]} width-full mb-3`;
+        inputGroupEditable.className = `input-group ${Styles["input-group-editable"]} width-full mb-3 text-sm md:text-base`;
         input.readOnly = false;
         input.className = `form-control ${Styles["form-control-editable"]}`;
         input.focus();
@@ -50,7 +50,7 @@ const EditableTextInput: FC<{ handleOnChangeValue: (event: React.ChangeEvent<HTM
     };
 
     return (
-        <div id="merge-client-seed-group-editable" className="input-group width-full mb-3">
+        <div id="merge-client-seed-group-editable" className="input-group width-full mb-3 text-sm md:text-base">
             <input
                 className="form-control text-sm md:text-base"
                 type="text"
