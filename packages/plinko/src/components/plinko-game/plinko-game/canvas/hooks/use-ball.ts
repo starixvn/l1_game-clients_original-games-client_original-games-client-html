@@ -70,13 +70,13 @@ export const useBall = () => {
                             ballImageRef.current,
                             -ballConfig.radius,
                             -ballConfig.radius,
-                            ballConfig.radius * 2,
-                            ballConfig.radius * 2
+                            ballConfig.radius * 2.5,
+                            ballConfig.radius * 2.5
                         );
                     } else {
                         context.fillStyle = "#FED701";
                         context.beginPath();
-                        context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2);
+                        context.arc(0, 0, ballConfig.radius, 0, Math.PI * 2.5);
                         context.fill();
                     }
                 }
