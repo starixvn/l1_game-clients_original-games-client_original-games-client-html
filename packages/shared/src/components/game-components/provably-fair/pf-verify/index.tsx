@@ -218,7 +218,7 @@ const PFVerify: FC<{ ResultBlock: FC<any>; isMergeClientSeed: boolean }> = ({ Re
                             <span className="icon-info" />
                         </button>
                         <div className={`${Styles["hide"]} ${Styles["pf-tooltip"]}`} ref={clickOutSideClientSeedTooltipPF}>
-                            {translateSNGames("pf_combined_sha512_hash_tooltip")}
+                            {translateCommon("pf_combined_sha512_hash_tooltip_para_1")}
                         </div>
                     </div>
                 </Section>
