@@ -28,7 +28,7 @@ const HotKeyModal = () => {
 
     return (
         isShowHotKey && (
-            <BaseDialog type={ModalType.Center} isOpen={isShowHotKey} enableBackdrop={true} onCloseModal={handleCloseModal}>
+            <BaseDialog type={ModalType.Center} isOpen={isShowHotKey} onCloseModal={handleCloseModal}>
                 <div ref={wrapperRef} id="hot-key" className={`modal-center popup-modal px-4 py-3`}>
                     {/* Header */}
                     <div className="flex items-center px-5 py-2 text-base font-semibold text-primary-text text-center flex-shrink-0 mb-2">

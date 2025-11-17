@@ -10,7 +10,6 @@ import { numberWithCommas } from "@shared/helpers";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useShallow } from "zustand/shallow";
 import { capitalizeFirstLetter } from "@shared/helpers/string-helper";
-import { isMobile } from "react-device-detect";
 
 const MODAL_SIZE = {
     WIDTH: 250,
@@ -89,7 +88,7 @@ const LiveStatsModal = ({ data }: { data?: LiveStatsProps }): ReactElement => {
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName="absolute h-fit min-h-[320px] min-w-[254px] w-fit top-0 rounded-b-xl"
+                    extendedClassName="absolute h-fit min-h-[320px] min-w-[254px] w-fit top-0 rounded-b-xl border-none"
                 >
                     <div
                         id="live-stats"
@@ -234,7 +233,7 @@ const LiveStats = ({
                     <ResponsiveContainer width="100%" height={150}>
                         <AreaChart  data={netProfitHistory}>
                             <XAxis dataKey="x" hide />
-                            <YAxis hide domain={[-100, 100]} />
+                            <YAxis hide domain={[dataMin => dataMin, dataMax => dataMax]} />
                             <defs>
                                 <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
@@ -244,7 +243,7 @@ const LiveStats = ({
                             <Area
                                 type="monotone"
                                 dataKey="y"
-                                stroke="#000"
+                                stroke="none"
                                 fill="url(#splitColor)"
                                 isAnimationActive={false}
                                 baseLine={0}
