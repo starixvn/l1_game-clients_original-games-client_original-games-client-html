@@ -22,7 +22,7 @@ const ModalContainer: FC<{
             enableBackdrop={true}
             isOverlap={isOverlap}
             onCloseModal={onCloseModal}
-            extendedClassName="md:top-[10px] md:bottom-auto md:max-w-3xl md:h-[calc(90vh/var(--scale-factor,1))] md:max-h-[calc(730px/var(--scale-factor,1))] md:mx-auto"
+            extendedClassName="md:top-[10px] md:bottom-auto md:max-w-[772px] md:h-[calc(90vh/var(--scale-factor,1))] md:max-h-[calc(730px/var(--scale-factor,1))] md:mx-auto"
         >
             <div
                 id={id}

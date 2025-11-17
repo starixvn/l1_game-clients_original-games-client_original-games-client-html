@@ -230,7 +230,7 @@ const PFVerify: FC<{ ResultBlock: FC<any>; isMergeClientSeed: boolean }> = ({ Re
                 <button className={`${Styles["btn-verify"]}`} onClick={handleOnClickVerification}>
                     {translateCommon("pf_button_verify")}
                 </button>
-                <p className="text-center mt-2">{translateCommon("pf_provably_fair_para_2")}</p>
+                <p className="text-center mt-2 text-sm md:text-base">{translateCommon("pf_provably_fair_para_2")}</p>
             </div>
         </div>
     );
