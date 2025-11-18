@@ -41,7 +41,7 @@ export class NotificationHandler {
             path: `${proxy.path}/notification/socket.io`,
             parser: enableMsgpackParser ? MsgpackParser : undefined,
             reconnection: true,
-            reconnectionAttempts: Infinity,
+            reconnectionAttempts: 100,
             reconnectionDelay: 1000,
             reconnectionDelayMax: 5000,
         };
