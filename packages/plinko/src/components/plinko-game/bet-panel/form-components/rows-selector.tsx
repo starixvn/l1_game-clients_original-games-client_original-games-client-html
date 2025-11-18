@@ -40,7 +40,7 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
     return (
         <div className={`div-setting-row`}>
             <Label title={t("row")} />
-            <div className="flex items-center input p-1 gap-1 rounded-lg h-11">
+            <div className="flex items-center input p-1 gap-1 rounded-lg h-11 py-2">
                 <div className={`min-w-4 mr-1 ml-2 ${isDisabled ? "opacity-50" : ""}`}>
                     <span className="text-sm text-white">{numberOfRows}</span>
                 </div>
@@ -51,7 +51,7 @@ const RowsSelector = ({ isDisabled }: { isDisabled: boolean }) => {
                     value={numberOfRows}
                     onChange={(e) => handleRowsChange(Number.parseInt(e.target.value))}
                     disabled={isDisabled}
-                    className="w-full disabled:opacity-50"
+                    className="w-full disabled:opacity-50 mobile-slider touch-manipulation cursor-pointer"
                     style={
                         {
                             "--input-range-progress": `${((numberOfRows - NUMBER_OF_ROWS.MIN) / (NUMBER_OF_ROWS.MAX - NUMBER_OF_ROWS.MIN)) * 100

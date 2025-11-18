@@ -165,6 +165,28 @@ input[type="range"] {
         border-radius: 50%;
         border: 1px solid var(--green-200, #8eff77);
     }
+
+    /* Mobile-optimized slider with larger touch target */
+    &.mobile-slider {
+        /* Increase touch target area */
+        padding: 12px 0;
+        margin: -12px 0;
+
+        &::-webkit-slider-thumb {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        &::-moz-range-thumb {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        &::-ms-thumb {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
 }
 
 input[type="checkbox"].input-checkbox {
