@@ -203,6 +203,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onDestroy() {
+        writeDebugLog("onDestroy");
         this.props.dispatch({
             type: GameEventActionType.SIGN_OUT,
             payload: { roundState: RoundState.None },
@@ -220,6 +221,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onStart() {
+        writeDebugLog("onStart");
         this.socket?.disconnect();
         this.socket = null;
         this.gameMessageHandler.clearAllHandlers();
@@ -715,6 +717,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
 
     protected retryConnect() {
         if (!this.socket?.connected) {
+            writeDebugLog("retryConnect");
             this.onStart();
         }
     }
