@@ -77,12 +77,8 @@ const BetControl = () => {
 
     useHotKey({
         onSpaceKey: () => {
-            if (!isProcessing) {
-                if(isManualTab){
-                    handleBetClick();
-                } else {
-                    handleAutoBetClick();
-                }
+            if (!isProcessing && !isAutoBet && isManualTab) {
+                handleBetClick();
             }
         },
         onDKey: () => {
