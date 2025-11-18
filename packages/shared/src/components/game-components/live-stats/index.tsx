@@ -88,12 +88,12 @@ const LiveStatsModal = ({ data }: { data?: LiveStatsProps }): ReactElement => {
                     isOpen={isShowLiveStats}
                     enableBackdrop={false}
                     onCloseModal={handleCloseModal}
-                    extendedClassName="absolute h-fit min-h-[320px] min-w-[254px] w-fit top-0 rounded-b-xl border-none"
+                    extendedClassName="absolute h-fit min-h-[320px] min-w-[254px] w-fit top-0 rounded-b-xl border-none p-0"
                 >
                     <div
                         id="live-stats"
                         className={cn(
-                            "flex flex-col h-full w-full gap-3 rounded-t-2xl",
+                            "flex flex-col h-full w-full gap-3 rounded-t-2xl py-4",
                             {
                                 flex: isShowLiveStats,
                                 hidden: !isShowLiveStats,
@@ -231,9 +231,9 @@ const LiveStats = ({
                 </div>
                 <div id="my-chart" className="w-full h-auto [&_svg]:outline-none [&_svg:focus]:outline-none [&_*]:outline-none">
                     <ResponsiveContainer width="100%" height={150}>
-                        <AreaChart  data={netProfitHistory}>
+                        <AreaChart data={netProfitHistory}>
                             <XAxis dataKey="x" hide />
-                            <YAxis hide domain={[dataMin => dataMin, dataMax => dataMax]} />
+                            <YAxis hide domain={[(dataMin) => dataMin, (dataMax) => dataMax]} />
                             <defs>
                                 <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
