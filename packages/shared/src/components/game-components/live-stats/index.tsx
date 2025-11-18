@@ -229,27 +229,30 @@ const LiveStats = ({
                         </div>
                     </div>
                 </div>
-                <div id="my-chart" className="w-full h-auto [&_svg]:outline-none [&_svg:focus]:outline-none [&_*]:outline-none">
-                    <ResponsiveContainer width="100%" height={150}>
-                        <AreaChart data={netProfitHistory}>
-                            <XAxis dataKey="x" hide />
-                            <YAxis hide domain={[(dataMin) => dataMin, (dataMax) => dataMax]} />
-                            <defs>
-                                <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
-                                    <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
-                                </linearGradient>
-                            </defs>
-                            <Area
-                                type="monotone"
-                                dataKey="y"
-                                stroke="none"
-                                fill="url(#splitColor)"
-                                isAnimationActive={false}
-                                baseLine={0}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                <div id="my-chart" className="w-full h-[150px] [&_svg]:outline-none [&_svg:focus]:outline-none [&_*]:outline-none">
+                    {netProfitHistory?.length > 1 && (
+                        <ResponsiveContainer width="100%" height={150}>
+                            <AreaChart data={netProfitHistory}>
+                                <XAxis dataKey="x" hide />
+                                <YAxis hide domain={[(dataMin) => dataMin, (dataMax) => dataMax]} />
+                                <defs>
+                                    <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset={off} stopColor="#00FF44" stopOpacity={1} />
+                                        <stop offset={off} stopColor="#FF000D" stopOpacity={1} />
+                                    </linearGradient>
+                                </defs>
+                                <Area
+                                    type="monotone"
+                                    dataKey="y"
+                                    stroke="none"
+                                    fill="url(#splitColor)"
+                                    isAnimationActive={false}
+                                    baseLine={0}
+                                    activeDot={false}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
             </div>
         );
