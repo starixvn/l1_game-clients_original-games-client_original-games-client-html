@@ -1,5 +1,5 @@
-import { buildUrl, isKickOutError, localStorageKeys, StorageHelper, broadcastNotice, getNotice } from '@shared/helpers';
-import { getAppSettings } from '@shared/app-settings';
+import { buildUrl, isKickOutError, localStorageKeys, StorageHelper, broadcastNotice, getNotice } from "@shared/helpers";
+import { getAppSettings } from "@shared/app-settings";
 import { io, Socket } from "socket.io-client";
 import MsgpackParser from "socket.io-msgpack-parser";
 import { reCheckIn } from "../../../../services/auth-service";
@@ -40,6 +40,10 @@ export class NotificationHandler {
             },
             path: `${proxy.path}/notification/socket.io`,
             parser: enableMsgpackParser ? MsgpackParser : undefined,
+            reconnection: true,
+            reconnectionAttempts: Infinity,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
         };
 
         this.notificationSocket = io(socketUri, socketOption);

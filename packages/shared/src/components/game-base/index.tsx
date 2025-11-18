@@ -248,7 +248,10 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     onVisibilityChange = () => {
-        // nothing
+        const { roundState } = this.props.gameStateContextModel;
+        if (document.visibilityState === "visible" && roundState === RoundState.ConnectFailed) {
+            this.retryConnect();
+        }
     };
 
     onConnectFailed() {
