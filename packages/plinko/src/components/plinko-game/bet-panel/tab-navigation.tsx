@@ -1,4 +1,4 @@
-import { cn, useClickSound, useCommonTranslate } from "@shared";
+import { useClickSound, useCommonTranslate } from "@shared";
 import { memo } from "react";
 import Image from "next/image";
 import usePlinkoGameStore from "@plinko/shared/stores/plinko-game-store";
@@ -29,9 +29,9 @@ const TabNavigation = ({
                     <button
                         key={tab}
                         onClick={() => handleClick(index)}
-                        className={cn(`flex-1 p-2 py-[2px] text-sm md:text-base relative md:pt-0 disabled:opacity-50 font-semibold ${
+                        className={`flex-1 p-2 py-[2px] text-sm md:text-base relative md:pt-0 disabled:opacity-50 font-semibold ${
                             activeIndex === index ? "text-[#3FEC83]" : "text-white"
-                        }`)}
+                        }`}
                         disabled={isDisabled || isDroppingBall}
                     >
                         {t(tab)}
@@ -55,7 +55,7 @@ const TabNavigation = ({
                         alt="glow"
                         width={200}
                         height={40}
-                        className="w-full h-auto object-contain"
+                        className="w-full h-auto object-contain "
                         style={{
                             filter: "brightness(1.2)",
                         }}
