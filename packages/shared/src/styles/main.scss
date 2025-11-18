@@ -125,6 +125,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 input[type="range"] {
@@ -138,6 +139,14 @@ input[type="range"] {
     );
     cursor: pointer;
     border-radius: 0.5rem;
+
+    /* Improve touch behavior on iOS */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none; /* Remove default WebKit thumb appearance */
@@ -164,28 +173,6 @@ input[type="range"] {
         background: var(--green-400, #05df72);
         border-radius: 50%;
         border: 1px solid var(--green-200, #8eff77);
-    }
-
-    /* Mobile-optimized slider with larger touch target */
-    &.mobile-slider {
-        /* Increase touch target area */
-        padding: 12px 0;
-        margin: -12px 0;
-
-        &::-webkit-slider-thumb {
-            height: 2rem;
-            width: 2rem;
-        }
-
-        &::-moz-range-thumb {
-            height: 2rem;
-            width: 2rem;
-        }
-
-        &::-ms-thumb {
-            height: 2rem;
-            width: 2rem;
-        }
     }
 }
 

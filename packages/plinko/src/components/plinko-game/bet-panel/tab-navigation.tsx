@@ -24,7 +24,7 @@ const TabNavigation = ({
     const isDroppingBall = usePlinkoGameStore((state) => state.numberOfDroppingBall > 0);
     return (
         <div className="md:px-3">
-            <div className="flex md:mb-[6px] lg:mb-0">
+            <div className="flex mb-[6px]">
                 {tabs.map((tab, index) => (
                     <button
                         key={tab}
