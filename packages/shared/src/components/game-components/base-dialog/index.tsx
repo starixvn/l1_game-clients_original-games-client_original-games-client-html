@@ -62,12 +62,13 @@ const BaseDialog: React.FC<Props> = ({
             return undefined;
         }
         const className = "overflow-hidden";
-        if (enableBackdrop) {
+        let isExistClassName = document.body.classList.contains(className);
+        if (enableBackdrop && !isExistClassName) {
             document.body.classList.add(className);
         }
 
         return () => {
-            document.body.classList.remove(className);
+            !isExistClassName && enableBackdrop && document.body.classList.remove(className);
         };
     }, [enableBackdrop, isOverlap, isBlockScroll]);
 

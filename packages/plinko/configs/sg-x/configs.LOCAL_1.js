@@ -13,5 +13,4 @@ window.envConfig = {
     system: "SG",
     appType: 1,
     enableDebugLogs: true,
-    googleAnalyticId: "G-XT6JT7CYPD",
 };

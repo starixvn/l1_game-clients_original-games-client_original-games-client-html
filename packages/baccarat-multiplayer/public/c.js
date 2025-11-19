@@ -21,5 +21,4 @@ window.envConfig = {
     enableMsgpackParser: false,
     system: "VG",
     appType: 10,
-    googleAnalyticId: "G-F4HZV0YQ73",
 };
