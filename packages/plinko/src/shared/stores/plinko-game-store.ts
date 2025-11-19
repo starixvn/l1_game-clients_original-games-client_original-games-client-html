@@ -24,8 +24,8 @@ export const usePlinkoGameStore = create<PlinkoGameStore>()(
     subscribeWithSelector((set) => {
         return {
             betAmount: 0,
-            gameMode: GAME_MODES.MEDIUM,
-            numberOfRows: NUMBER_OF_ROWS.MAX,
+            gameMode: GAME_MODES.LOW,
+            numberOfRows: NUMBER_OF_ROWS.DEFAULT,
             finish: null,
             numberOfDroppingBall: 0,
             finishedBall: null,
@@ -54,8 +54,8 @@ export const usePlinkoGameStore = create<PlinkoGameStore>()(
             reset: () =>
                 set({
                     betAmount: 1,
-                    gameMode: GAME_MODES.MEDIUM,
-                    numberOfRows: NUMBER_OF_ROWS.MAX,
+                    gameMode: GAME_MODES.LOW,
+                    numberOfRows: NUMBER_OF_ROWS.DEFAULT,
                     finish: null,
                     numberOfDroppingBall: 0,
                     finishedBall: null,

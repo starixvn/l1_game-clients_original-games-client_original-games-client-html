@@ -18,6 +18,7 @@ export const GAME_MODE_MAP = {
 export const NUMBER_OF_ROWS = {
     MIN: 8,
     MAX: 16,
+    DEFAULT: 12,
 };
 
 export const PLINKO_MODE = {
