@@ -204,7 +204,6 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     };
 
     onDestroy() {
-        console.trace();
         this.props.dispatch({
             type: GameEventActionType.SIGN_OUT,
             payload: { roundState: RoundState.None },
