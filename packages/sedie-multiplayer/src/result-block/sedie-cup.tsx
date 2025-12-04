@@ -9,22 +9,27 @@ import { CachedImage } from "@shared/components/game-components/cached-image";
 import { useDiceShakingRollingSound } from "@shared/react-hooks/use-sound";
 import { useAnimationImages } from "./use-animation-images";
 import dynamic from "next/dynamic";
-
-const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), { ssr: false });
+import { getOperator } from "@shared/helpers/router-helper";
+import { BASE_PATH } from "@shared/constants/base-path";
+const WinningBalanceEffect = dynamic(() => import("@shared/components/game-components/balance-effect/winning-balance-effect"), {
+    ssr: false,
+});
 
 const OPEN_DURATION = 500; // Open duration in milliseconds
 
 type AnimationState = "idle" | "shake" | "open" | "close";
 
-const operatorName = "nova88";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
+const operatorBoxMap = {
+    "12BET": "-12bet",
+    NOVA88: "-nova88",
+};
 const SedieCup = () => {
     const { durations } = useGameContext();
     const { roundState, settlementResult, playResultAnimation } = useGameStateContext();
     const [isShow, setIsShow] = useState(false);
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
     const [animationState, setAnimationState] = useState<AnimationState>("idle");
+    const operator = getOperator() || "";
 
     // Use custom hook to manage all animation images
     const { animationPhase1, animationPhase2 } = useAnimationImages(settlementResult);
@@ -106,7 +111,7 @@ const SedieCup = () => {
                 >
                     {/* Back */}
                     <CachedImage
-                        src={`${basePath}/static/images/sedie-multiplayer/result/box-back.webp`}
+                        src={`${BASE_PATH}/static/images/sedie-multiplayer/result/box-back.webp`}
                         alt="Box Back"
                         width={202}
                         height={103}
@@ -115,17 +120,18 @@ const SedieCup = () => {
 
                     {/* Inside */}
                     <CachedImage
-                        src={`${basePath}/static/images/sedie-multiplayer/result/box-inside-${operatorName}.webp`}
+                        src={`${BASE_PATH}/static/images/sedie-multiplayer/result/box-inside${operatorBoxMap[operator] || ""}.webp`}
                         alt="Box Bottom"
                         width={168}
                         height={91}
-                        className={`z-[2] absolute top-[100px] left-[99px] ${animationState === "open" ? styles["box-bottom-animation"] : ""
-                            }`}
+                        className={`z-[2] absolute top-[100px] left-[99px] ${
+                            animationState === "open" ? styles["box-bottom-animation"] : ""
+                        }`}
                     />
 
                     {/* Front */}
                     <CachedImage
-                        src={`${basePath}/static/images/sedie-multiplayer/result/box-front.webp`}
+                        src={`${BASE_PATH}/static/images/sedie-multiplayer/result/box-front.webp`}
                         alt="Box Front"
                         width={205}
                         height={120}
@@ -134,7 +140,7 @@ const SedieCup = () => {
 
                     {/*Cover */}
                     <CachedImage
-                        src={`${basePath}/static/images/sedie-multiplayer/result/box-cover.webp`}
+                        src={`${BASE_PATH}/static/images/sedie-multiplayer/result/box-cover.webp`}
                         alt="Box Cover"
                         className=" absolute top-[13px] left-[91px] scale-[98%] z-[4]"
                         width={185}
@@ -206,7 +212,6 @@ const SedieCup = () => {
             </div>
 
             <WinningBalanceEffect />
-
         </div>
     );
 };

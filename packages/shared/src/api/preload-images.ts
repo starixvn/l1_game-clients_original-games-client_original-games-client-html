@@ -57,7 +57,7 @@ const cleanupCache = () => {
 
 // Get icon paths for games
 const getPathIconGames = (gameIds: number[]): string[] => {
-    return gameIds.map(gameId => `/static/images/game-icons/${gameId}/`);
+    return gameIds.map((gameId) => `/static/images/game-icons/${gameId}/`);
 };
 
 // Get game-specific paths - can be overridden by individual games
@@ -92,10 +92,10 @@ export const getCacheSpecificPaths = (gameId?: number): string[] => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        if (req.method !== 'POST') {
+        if (req.method !== "POST") {
             return res.status(405).json({
                 status: "error",
-                message: "Method not allowed"
+                message: "Method not allowed",
             });
         }
 
@@ -105,14 +105,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const currentGameId = gameId || getGameId();
 
         // Generate cache key
-        const cacheKey = `${locale || 'default'}-${gameIdsIcon?.join(',') || 'no-icons'}-${bannerId || 'no-banner'}-${currentGameId}`;
+        const cacheKey = `${locale || "default"}-${gameIdsIcon?.join(",") || "no-icons"}-${bannerId || "no-banner"}-${currentGameId}`;
 
         // Check cache first
         const cachedEntry = imageCache.get(cacheKey);
         if (cachedEntry && Date.now() - cachedEntry.timestamp < cachedEntry.ttl) {
             return res.status(200).json({
                 status: "ok",
-                data: cachedEntry.data
+                data: cachedEntry.data,
             });
         }
 
@@ -142,7 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         for (const imagePath of imagePaths) {
             try {
-                const fullPath = path.join(process.cwd(), imagePath.replace('/static/images/', 'public/static/images/'));
+                const fullPath = path.join(process.cwd(), imagePath.replace(DEFAULT_IMG_PATH, DEFAULT_STATIC_PATH));
                 if (fs.existsSync(fullPath)) {
                     const files = fs.readdirSync(fullPath, { recursive: true });
                     const imageFiles = files
@@ -154,15 +154,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             const fileStr = file.toString();
                             const relativePath = path.relative(fullPath, path.join(fullPath, fileStr));
                             // Normalize path separators to forward slashes for web URLs
-                            const normalizedRelativePath = relativePath.replace(/\\/g, '/');
+                            const normalizedRelativePath = relativePath.replace(/\\/g, "/");
                             return `${BASE_PATH}${imagePath}${normalizedRelativePath}?v=${buildVersion}`;
-
                         });
 
                     allImageFiles.push(...imageFiles);
                 }
-            } catch (error) {
-                console.warn(`Failed to read images from ${imagePath}:`, error);
+            } catch {
+                // Ignore error
             }
         }
 
@@ -170,7 +169,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         imageCache.set(cacheKey, {
             data: allImageFiles,
             timestamp: Date.now(),
-            ttl: CACHE_TTL
+            ttl: CACHE_TTL,
         });
 
         // Periodic cache cleanup
@@ -178,15 +177,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json({
             status: "ok",
-            data: allImageFiles
+            data: allImageFiles,
         });
-
     } catch (error) {
-        console.error('Preload images error:', error);
+        console.error("Preload images error:", error);
         return res.status(500).json({
             status: "error",
             message: "Failed to preload images",
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            error: process.env.NODE_ENV === "development" ? error.message : undefined,
         });
     }
 }

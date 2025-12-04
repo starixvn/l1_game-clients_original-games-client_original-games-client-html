@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getLanguage, getOperator } from "@shared/helpers/router-helper";
 
-
 const GameApp = ({ Component, pageProps }: AppProps) => {
     const gameConfig = getGameConfig();
 
@@ -79,15 +78,17 @@ export const AppTitle = ({ gameConfig }: AppTitleProps) => {
     const [favicon, setFavicon] = useState<string>("favicon.ico");
 
     useEffect(() => {
-        if (!router.isReady || appSettings.appType === AppTypes.ORIGINAL) {
+        if (!router.isReady) {
             return;
         }
 
         const { op, lang } = router.query;
-
         let operator = getOperator(op as string);
         let language = getLanguage(lang as string);
 
+        if (appSettings.appType === AppTypes.ORIGINAL) {
+            return;
+        }
 
         const { title, favicon } = getTitleAndFavicon(operator, language);
         setTitle(title);

@@ -30,6 +30,7 @@ import { ResourceTypes } from "@shared/resources";
 import { PLINKO_GAME_IDS } from "@plinko/constants";
 import { getAppSettings } from "@shared/app-settings";
 import Background from "@plinko/components/plinko-game/background";
+import { AppTypes } from "@shared/constants";
 
 // Dynamic imports side components
 const MenuIconWrapper = dynamic(() => import("@shared/components/game-components/menu/menu-icon-wrapper"), { ssr: false });
@@ -212,7 +213,7 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     renderBackToLobbyButton() {
         const appType = getAppSettings().appType;
 
-        if (this.props.id === PLINKO_GAME_IDS.PLINKO_X && appType === 1) {
+        if (this.props.id === PLINKO_GAME_IDS.PLINKO_X && appType === AppTypes.CLUB) {
             return <LobbyMenu />;
         }
 
@@ -220,7 +221,8 @@ class PlinkoGameBase extends GameBase<GameBaseProps, GameBaseState> {
     }
 
     renderMenuLeftSide() {
-        if (this.props.id === PLINKO_GAME_IDS.PLINKO) {
+        const appType = getAppSettings().appType;
+        if (appType === AppTypes.ORIGINAL) {
             return super.renderMenuLeftSide();
         }
 

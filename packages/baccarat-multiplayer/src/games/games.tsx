@@ -1,26 +1,16 @@
-import React from "react";
-import dynamic from "next/dynamic";
+import { ComponentProps, FC } from "react";
 import { Games, GameConfig } from "@shared/components/game-components/games";
 import { GAME_ID } from "../game-config";
-
-const LoadingGameComponent = React.memo(() => (
-    <div>Loading...</div>
-));
-
-LoadingGameComponent.displayName = "LoadingGameComponent";
-
-const BaccaratMultiPlayer = dynamic(() => import("../page"), {
-    loading: () => <LoadingGameComponent />,
-    ssr: false,
-});
+import BaccaratGame from "../page";
 
 const gameConfig: GameConfig = {
     gameId: GAME_ID,
-    component: BaccaratMultiPlayer,
+    component: BaccaratGame,
     name: "Baccarat Multiplayer",
 };
+type BaccaratGamesProps = ComponentProps<typeof Games>;
 
-export const BaccaratGames: React.FC<any> = (props) => {
+export const BaccaratGames: FC<BaccaratGamesProps> = (props) => {
     return <Games {...props} gameConfig={gameConfig} />;
 };
 

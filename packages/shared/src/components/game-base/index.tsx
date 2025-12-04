@@ -45,6 +45,7 @@ const BetHistoryControl = dynamic(() => import("../game-components/bet-history/b
 const GameGuideModal = dynamic(() => import("../game-components/game-guide"), { ssr: false });
 const PFSettingModal = dynamic(() => import("../game-components/provably-fair/pf-setting"), { ssr: false });
 const Menu = dynamic(() => import("../game-components/menu/menu"), { ssr: false });
+const OperatorMenu = dynamic(() => import("../game-components/menu/operator-menu"), { ssr: false });
 const Header = dynamic(() => import("../page-components/header"), { ssr: false });
 const Background = dynamic(() => import("../game-components/background"), { ssr: false });
 const RTP = dynamic(() => import("../game-components/rtp/rtp"), { ssr: false });
@@ -621,11 +622,7 @@ abstract class GameBase<P extends GameBaseProps, S extends GameBaseState> extend
     }
 
     renderMenuLeftSide() {
-        return (
-            <div className="bg-gradient-to-br from-[#6F8FC4] via-[#455F8A] to-[#364D74] bg-clip-text text-transparent font-semibold text-sm tracking-wider align-middle md:text-base">
-                Nova88 Original
-            </div>
-        );
+        return <OperatorMenu />;
     }
 
     renderMenu() {

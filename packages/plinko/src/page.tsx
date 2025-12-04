@@ -4,23 +4,20 @@
 // Game configuration is initialized dynamically based on URL path
 
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { ComponentProps, useEffect } from "react";
 import { initializeGameConfig } from "./game-config";
 import { updateGameConfig } from "./games/games";
 import PlinkoGameBase from "./components/plinko-game-base";
 // Helper function to extract game ID from URL path
-const extractGameIdFromPath = (path: string): number => {
+const extractGameIdFromPath = (path: string): number | null => {
     const pathGameIdMatch = path.match(/\/site-(\d+)/);
     return pathGameIdMatch ? parseInt(pathGameIdMatch[1]) : null; // Return null if no match
 };
 
 // Helper function to get game ID (prioritizes env var over URL)
 const getGameId = (urlPath?: string): number => {
-
-
     // First priority: Environment variable (for dedicated game servers)
     const envGameId = process.env.NEXT_PUBLIC_DEFAULT_GAME_ID;
-
 
     if (envGameId && !isNaN(Number(envGameId))) {
         return Number(envGameId);
@@ -29,7 +26,6 @@ const getGameId = (urlPath?: string): number => {
     // Second priority: Extract from URL path (for multi-game deployments)
     if (urlPath) {
         const urlGameId = extractGameIdFromPath(urlPath);
-
 
         if (urlGameId !== null) {
             return urlGameId;
@@ -40,17 +36,21 @@ const getGameId = (urlPath?: string): number => {
 
     return 145;
 };
+type PlinkoPageProps = ComponentProps<typeof PlinkoGameBase>;
+
+const initialConfig = (gameId: number) => {
+    initializeGameConfig(gameId);
+    updateGameConfig(gameId);
+};
 
 // Dynamic page component that initializes game config based on URL path
-const PlinkoPage = (props: any) => {
+const Page = (props: PlinkoPageProps) => {
     const router = useRouter();
 
     useEffect(() => {
         const gameId = getGameId(router.asPath);
 
-
-        initializeGameConfig(gameId);
-        updateGameConfig(gameId);
+        initialConfig(gameId);
 
         // Return cleanup function for useEffect
         return () => {
@@ -62,15 +62,13 @@ const PlinkoPage = (props: any) => {
 };
 
 // Server-side initialization - Next.js will call this during SSR
-PlinkoPage.getInitialProps = async (ctx: any) => {
-    const url = ctx.req?.url || ctx.asPath || '';
+Page.getInitialProps = async (ctx: any) => {
+    const url = ctx.req?.url || ctx.asPath || "";
     const gameId = getGameId(url);
 
-
-    initializeGameConfig(gameId);
-    updateGameConfig(gameId);
+    initialConfig(gameId);
 
     return { gameId };
 };
 
-export default PlinkoPage;
+export default Page;

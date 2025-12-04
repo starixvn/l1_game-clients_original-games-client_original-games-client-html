@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { useGameContext } from '@shared/react-contexts';
+import { useGameContext } from "@shared/react-contexts";
 import { messageEventType } from "../../game-base/handlers";
 import { RoundState } from "../../game-base/type";
 import styles from "./countdown-timer.module.scss";
-import useGameStore from '@shared/stores/game-store/game-store';
-import { useCommonTranslate, useTranslator } from '@shared/react-hooks';
+import useGameStore from "@shared/stores/game-store/game-store";
+import { useCommonTranslate } from "@shared/react-hooks";
 
 export type Rotation = "clockwise" | "counterclockwise";
 
@@ -17,8 +17,7 @@ export const CountdownTimer = ({ className = "" }) => {
     const [isAnimate, setIsAnimate] = useState(false);
     const [displayText, setDisplayText] = useState("");
     const { t } = useCommonTranslate();
-    const { t: baccaratTranslate } = useTranslator(["Baccarat"]);
-    
+
     const { placingBets, lockingBet } = durations;
     useEffect(() => {
         const handlerId = gameMessageHandler?.register(messageEventType.CLIENT_REMAINING_TIME, ({ clientRemainingTime }) => {
@@ -42,7 +41,7 @@ export const CountdownTimer = ({ className = "" }) => {
 
     const calculatePercentage = (clientRemainingTime: number) => {
         if (clientRemainingTime - lockingBet <= 0) {
-            return ((1 + lockingBet - clientRemainingTime) * 100) / (lockingBet );
+            return ((1 + lockingBet - clientRemainingTime) * 100) / lockingBet;
         }
         return ((clientRemainingTime - lockingBet - 1) / (placingBets - lockingBet)) * 100;
     };
@@ -59,9 +58,6 @@ export const CountdownTimer = ({ className = "" }) => {
                 case RoundState.DisplayResult:
                     setDisplayText(t("waiting_for_the_next_round"));
                     break;
-                case RoundState.BeforePlaceBet:
-                    setDisplayText(baccaratTranslate("dealing_cards"));
-                    break;
                 default:
                     setDisplayText(t("waiting_for_the_next_round"));
             }
@@ -74,9 +70,13 @@ export const CountdownTimer = ({ className = "" }) => {
             <div className={styles["progress-bar-container-wrapper"]}>
                 <div className={`${styles["progress-bar-container"]}`}>
                     <div
-                        className={`h-full ${roundState === RoundState.LockingBet || roundState === RoundState.DisplayResult || roundState === RoundState.BeforePlaceBet ? styles["progress-bar-lock-bet"] : styles["progress-bar"]} ${
-                            isAnimate ? styles["transition"] : ""
-                        }`}
+                        className={`h-full ${
+                            roundState === RoundState.LockingBet ||
+                            roundState === RoundState.DisplayResult ||
+                            roundState === RoundState.BeforePlaceBet
+                                ? styles["progress-bar-lock-bet"]
+                                : styles["progress-bar"]
+                        } ${isAnimate ? styles["transition"] : ""}`}
                         style={{ width: `${progress}%` }}
                     />
                 </div>
